@@ -25,15 +25,17 @@ function modelOf(lock: string, irDir: string): ModelDoc {
 const MAIN = modelOf("main", "ir");
 const PRS = modelOf("with-open-prs", join("ir", "with-open-prs"));
 
-test("the SDK directory follows the IR directory", () => {
-  assert.equal(sdkDirOf("ir"), "sdk");
-  assert.equal(sdkDirOf("ir/with-open-prs"), "sdk/with-open-prs");
-  assert.throws(() => sdkDirOf("elsewhere"));
+test("the SDK directory follows the IR directory, with the as-written build as the default tree and the schemas we propose opt-in", () => {
+  assert.equal(sdkDirOf("ir", "as-written"), "sdk");
+  assert.equal(sdkDirOf("ir/with-open-prs", "as-written"), "sdk/with-open-prs");
+  assert.equal(sdkDirOf("ir", undefined), "sdk/proposed");
+  assert.equal(sdkDirOf("ir/with-open-prs", undefined), "sdk/proposed/with-open-prs");
+  assert.throws(() => sdkDirOf("elsewhere", undefined));
 });
 
 test("both locks' SDKs generate with no problem, and every schema type is declared once", () => {
-  for (const [model, dir] of [[MAIN, "sdk"], [PRS, "sdk/with-open-prs"]] as const) {
-    const out = emitSdk(model, dir);
+  for (const [model, dir, schemaDir] of [[MAIN, "sdk/proposed", "schemas"], [PRS, "sdk/proposed/with-open-prs", "schemas/with-open-prs"]] as const) {
+    const out = emitSdk(model, dir, schemaDir);
     assert.deepEqual(out.problems, []);
     const emitted = model.types.filter((t) => t.kind !== "constructor" && !(t.kind === "vocabulary" && t.attribute !== undefined)).map((t) => t.name);
     assert.deepEqual(out.sdk.emitted, [...emitted].sort());
@@ -58,8 +60,8 @@ test("a property is typed by its template applied to its arguments, and its copy
 
 test("the SDKs don't depend on the order of the model's types", () => {
   const reversed: ModelDoc = { ...MAIN, types: [...MAIN.types].reverse() };
-  const a = emitSdk(MAIN, "sdk").files;
-  const b = emitSdk(reversed, "sdk").files;
+  const a = emitSdk(MAIN, "sdk/proposed", "schemas").files;
+  const b = emitSdk(reversed, "sdk/proposed", "schemas").files;
   assert.deepEqual(b, a);
 });
 
@@ -135,11 +137,11 @@ const FORMAT_CASES: [string, string, boolean][] = [
 
 test("the TypeScript, Python, and Go runtimes read the formats alike", async () => {
   const cases: SdkCase[] = FORMAT_CASES.map(([type, value, valid]) => ({ label: `${type} ${JSON.stringify(value)}`, target: { k: "ref", name: type }, value, valid }));
-  const dir = join(ROOT, "sdk");
+  const dir = join(ROOT, "sdk", "proposed");
   const runs = [
     ["TypeScript", await runTypeScript(join(dir, "ts"), cases)],
     ["Python", runPython(ROOT, join(dir, "python"), cases)],
-    ["Go", runGo(join(dir, "go"), "sdk", join(ROOT, "build", "test", "sdk-go-formats"), cases)],
+    ["Go", runGo(join(dir, "go"), "sdk/proposed", join(ROOT, "build", "test", "sdk-go-formats"), cases)],
   ] as const;
   for (const [language, run] of runs) assert.deepEqual(compareRun(language, cases, run).problems, []);
 });
@@ -150,16 +152,16 @@ test("the TypeScript, Python, and Go runtimes read the formats alike", async () 
  * and an integer term written `1.0` is that term; `1.5` is no integer.
  */
 const INTEGRAL_CASES: [string, string, string, boolean][] = [
-  ["sdk", "Count", "1.0", true],
-  ["sdk", "Count", "1e2", true],
-  ["sdk", "Count", "1.5", false],
-  ["sdk", "Count", "-1.0", false],
-  ["sdk", "Count", "0.0", true],
-  [join("sdk", "with-open-prs"), "VendorCode", "500.0", true],
-  [join("sdk", "with-open-prs"), "VendorCode", "500.5", false],
-  [join("sdk", "with-open-prs"), "ApiFramework", "500.0", true],
-  [join("sdk", "with-open-prs"), "ApiFramework", "10.0", false],
-  [join("sdk", "with-open-prs"), "PlcmtSubtype", "9.0", true],
+  ["sdk/proposed", "Count", "1.0", true],
+  ["sdk/proposed", "Count", "1e2", true],
+  ["sdk/proposed", "Count", "1.5", false],
+  ["sdk/proposed", "Count", "-1.0", false],
+  ["sdk/proposed", "Count", "0.0", true],
+  ["sdk/proposed/with-open-prs", "VendorCode", "500.0", true],
+  ["sdk/proposed/with-open-prs", "VendorCode", "500.5", false],
+  ["sdk/proposed/with-open-prs", "ApiFramework", "500.0", true],
+  ["sdk/proposed/with-open-prs", "ApiFramework", "10.0", false],
+  ["sdk/proposed/with-open-prs", "PlcmtSubtype", "9.0", true],
 ];
 
 test("the TypeScript, Python, and Go runtimes take an integral float as an integer and encode it back as the same number", async () => {

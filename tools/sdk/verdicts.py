@@ -8,7 +8,8 @@ value is an instance of: a named type (`{"k": "ref", "name"}`), or a
 template applied to its arguments (`{"k": "apply", "template", "args"}`),
 which this builds from the SDK's generics. Each case's JSON text is
 validated as it is, as a receiver gets it, so `1.0` stays a float, and an
-accepted value is dumped back to JSON.
+accepted value is dumped back to JSON with the SDK's `dump`, which must
+write what Pydantic's `dump_python(mode="json", exclude_unset=True)` writes.
 
 Run it with the interpreter of the venv that tools/sdk/requirements.txt pins.
 """
@@ -62,8 +63,10 @@ def main() -> None:
             continue
         out["verdicts"].append(True)
         try:
-            out["dumps"].append(adapter.dump_python(value, mode="json", exclude_unset=True, by_alias=True))
-            out["errors"].append(None)
+            dumped = op.dump(value)
+            plain = adapter.dump_python(value, mode="json", exclude_unset=True, by_alias=True)
+            out["dumps"].append(dumped)
+            out["errors"].append(None if dumped == plain else f"accepted, but op.dump writes {json.dumps(dumped)[:200]} where Pydantic writes {json.dumps(plain)[:200]}")
         except Exception as e:  # noqa: BLE001
             out["dumps"].append(None)
             out["errors"].append(f"accepted, but doesn't dump: {e}")

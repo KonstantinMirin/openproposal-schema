@@ -2,6 +2,7 @@ import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { BUILD_OPTIONS, cliBuilds } from "../builds.ts";
+import { schemaDirOf } from "../emit.ts";
 import { sdkDirOf } from "../sdk.ts";
 import { emitSdk, SDK_ROOTS } from "../sdk-emit.ts";
 
@@ -9,12 +10,15 @@ import { emitSdk, SDK_ROOTS } from "../sdk-emit.ts";
  * Usage: sdk [--lock <file>] [--variant <name>] [--out <dir>]
  *
  * Stage 5c. Resolves each lock's model, as `npm run resolve` does, and
- * generates its TypeScript, Python, and Go types. The default lock's files
- * go to `sdk/`, another lock's to `sdk/<its IR directory under ir/>/`, such
- * as `sdk/with-open-prs/`, and each variant's under `sdk/<variant>/`
- * (src/variant.ts). `--lock` generates one lock, `--variant` one variant,
- * or `proposed`, and `--out` sets the directory of the one build it names. The `ts/`, `python/`, and `go/` directories under it are
- * replaced whole, so no stale file survives. Exits 1, writing nothing, if
+ * generates its TypeScript, Python, and Go types. The as-written variant's
+ * types are the default tree: the default lock's go to `sdk/`, and another
+ * lock's to `sdk/<its IR directory under ir/>/`, such as
+ * `sdk/with-open-prs/`. The schemas we propose are an opt-in tree under
+ * `sdk/proposed/`, as `sdk/proposed/` and `sdk/proposed/with-open-prs/`
+ * (`sdkDirOf`). `--lock` generates one lock, `--variant` one variant, or
+ * `proposed`, and `--out` sets the directory of the one build it names. The
+ * `ts/`, `python/`, and `go/` directories under it are replaced whole, so no
+ * stale file survives. Exits 1, writing nothing, if
  * the model doesn't resolve or an emitter finds a problem.
  */
 function main(): number {
@@ -27,8 +31,8 @@ function main(): number {
       failed = true;
       continue;
     }
-    const dir = b.dirOf(sdkDirOf(b.irDir));
-    const emitted = emitSdk(b.model, dir);
+    const dir = sdkDirOf(b.irDir, b.variant);
+    const emitted = emitSdk(b.model, dir, b.dirOf(schemaDirOf(b.irDir)));
     if (emitted.problems.length > 0) {
       for (const p of emitted.problems) console.error(`error: ${b.label}: ${p}`);
       failed = true;

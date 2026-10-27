@@ -56,7 +56,7 @@ export const workflow = defineGate<{ workflow: string; pkg: Pkg; goMods: Record<
  * that runs passes. Raise it when tests are added; lowering it is a gate
  * change a gate decision must accept.
  */
-export const MIN_TESTS = 401;
+export const MIN_TESTS = 410;
 
 /** A word for the shell, quoted. */
 const shellWord = (s: string) => `'${s.replace(/'/g, "'\\''")}'`;

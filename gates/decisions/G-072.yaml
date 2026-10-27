@@ -1,0 +1,30 @@
+format: 1
+id: G-072
+date: 2026-10-27
+question: What changes in the SDK gates when each SDK states the build it comes from?
+decision: >-
+  `emitSdk` takes the build's schema directory beside its SDK directory,
+  emits the build's schemas, and passes each emitter the build's
+  provenance: the specification's commit and blob, the lock, the variant
+  (`as-written` or `proposed`), and the schema release, the digest of the
+  schema tree that a release manifest records as its `digest`. Python and
+  TypeScript state them as `SPEC_COMMIT`, `SPEC_BLOB`, `LOCK`, `VARIANT`, and
+  `SCHEMA_RELEASE`, and Go as `SpecCommit`, `SpecBlob`, `Lock`, `Variant`, and
+  `SchemaRelease` in `provenance.go`, where a type of one of those names is
+  a problem. The sdk-generate gate passes the schema directory; its check
+  and fixture are unchanged. Two tests read the constants of all four trees
+  in the three languages, and check the schema release against each
+  committed schema tree and each release manifest; the suite holds 403
+  tests, and `MIN_TESTS` is 403.
+rationale: >-
+  Nothing in an SDK said which of the four builds it is, so a consumer
+  couldn't tell at run time which one it loaded. A digest identifies the
+  schema files exactly, and only the builds with our proposals have a
+  release manifest, so the version a manifest gives isn't a function of
+  every build's model. sdk-generate's fingerprint changes because the
+  emitters it reaches changed, guard's because the CI script did, and
+  npm-test's because of the new tests and the test floor.
+accepts:
+  - { gate: guard, fingerprint: 5bf1d7192eb29d5e04e7b9789ce77e96a880b2cfcf4c17527835dbca79409c8e }
+  - { gate: npm-test, fingerprint: d6bb29f098f485431d256f9ead8cdfea27f4712cc364f4303b6b2fe6a161be31 }
+  - { gate: sdk-generate, fingerprint: 1af65a1e0c95aa3a3eec43915f24fee829c23c83df50de232efd72f33ad5ab39 }

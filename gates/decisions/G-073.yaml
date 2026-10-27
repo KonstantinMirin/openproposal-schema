@@ -1,0 +1,30 @@
+format: 1
+id: G-073
+date: 2026-10-27
+question: What changes in the SDK gates when the Python SDK gains wire helpers and an opt-in receive mode?
+decision: >-
+  The Python SDK gains `parse` and `parse_json`, which check a JSON value or
+  text against a named type in a mode, and `dump` and `dump_json`, which
+  write a value back with every absent member left out. The strict mode
+  stays the default and the conformance check; `mode="receive"`, or the
+  validation context `{"openproposal_mode": "receive"}`, makes a closed
+  object ignore the members it doesn't name before it checks the rest. The
+  parity harness, tools/sdk/verdicts.py, now writes each accepted value with
+  `op.dump` and reports an error where it differs from Pydantic's
+  `dump_python(mode="json", exclude_unset=True)`, so the gate holds the
+  helper to the encoding it held before. No check is relaxed: every parity
+  case still parses strictly. Three tests cover the receive mode at the top,
+  in a nested object, and in a list item, an open object in both modes,
+  the seller agent's 11 mapped payloads in both modes on all four trees,
+  and the round trip of every type example; the suite holds 406 tests, and
+  `MIN_TESTS` is 406.
+rationale: >-
+  Every IAB consumer is lax about unknown members, and the agentic
+  primitives' must-ignore rule is load-bearing for them, so a receiver needs
+  a mode that ignores them without giving up the conformance verdict. A
+  plain `model_dump()` writes nulls the types reject. sdk-generate's
+  fingerprint changes because the Python emitter changed, and npm-test's
+  because of the new tests and the test floor.
+accepts:
+  - { gate: npm-test, fingerprint: cff48f3a7e30c2dea5898055574a43671f1be0d8da175617cc031b164844b5dc }
+  - { gate: sdk-generate, fingerprint: b7925ccba55f8c872a6abcac13945dda09c8fba60665a4bdd8ed80b27db4ffc1 }

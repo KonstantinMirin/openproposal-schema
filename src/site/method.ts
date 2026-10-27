@@ -208,6 +208,7 @@ export function methodPage(inputs: SiteInputs): string {
     ["beyond", "What JSON Schema can't say"],
     ["verification", "Verification"],
     ["variants", "Variants and inputs"],
+    ["sdk", "The SDK types"],
     ["example", "One field, end to end"],
     ["reproduce", "How to reproduce it"],
   ];
@@ -327,6 +328,17 @@ ${pipelineFigure()}
 <ul>
 <li><strong>Input.</strong> <code>main</code> is the specification on its <code>main</code> branch at commit <code>${esc(lock.commit.slice(0, 7))}</code>. <em>With the open PRs</em> is <code>main</code> with the pull requests that were open on the day we locked merged in, each at its head that day. We merged them ourselves, so that tree exists on no upstream branch.</li>
 <li><strong>Variant.</strong> <em>As written</em> switches our ${departures} departures off, so each field they change takes the form the text or its examples write. <em>With our proposals</em> switches them on. In both, the ${gaps} gap records stay in force. A gate checks that the two builds differ only where a switch says.</li>
+</ul>
+</section>
+
+<section id="sdk">
+<h2>The SDK types</h2>
+<p>Each build's TypeScript (Zod), Python (Pydantic), and Go types are generated from its model, not from its schema, and each language reaches the reference validator's verdict on the conformance corpus.</p>
+<ul>
+<li><strong>Which tree.</strong> The as-written build's types are the default tree in the repository, <code>sdk/</code>, because they are the closest to what a consumer of the specification writes. The types with our proposals are an opt-in tree, <code>sdk/proposed/</code>. Each lock's open-PRs build is under <code>with-open-prs/</code> in either tree.</li>
+<li><strong>Which build is loaded.</strong> Each SDK states its specification commit, its lock, its variant, and its schema release, the digest of the schema tree its types match, as constants: <code>SPEC_COMMIT</code>, <code>LOCK</code>, <code>VARIANT</code>, and <code>SCHEMA_RELEASE</code> in Python and TypeScript, and <code>SpecCommit</code> and the rest in Go.</li>
+<li><strong>Terms as constants.</strong> Each vocabulary's terms are also constants, named in the plural, such as <code>Channels.CTV</code>, a Python class and a TypeScript const object. A field still takes the vocabulary, so an open one also takes a namespaced term as a plain string. Go has a constant per term, such as <code>ChannelCTV</code>.</li>
+<li><strong>Strict, or as a receiver.</strong> In Python, <code>parse(type_name, value)</code> is the strict conformance check, the default. <code>parse(type_name, value, mode="receive")</code> is an explicit opt-in for a receiver: a closed object ignores the members it doesn't name, at any depth, and everything else is checked as strictly. <code>dump</code> and <code>dump_json</code> write a value back with every absent member left out, never as null.</li>
 </ul>
 </section>
 

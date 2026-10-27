@@ -1,0 +1,26 @@
+format: 1
+id: G-071
+date: 2026-10-27
+question: What changes in the gates when the as-written build's SDK types become the default tree under sdk/?
+decision: >-
+  `sdkDirOf` takes the build's variant. The as-written build's SDK types are
+  the default tree: `sdk/` for `main` and `sdk/with-open-prs/` for the open
+  PRs. The schemas we propose are an opt-in tree: `sdk/proposed/` and
+  `sdk/proposed/with-open-prs/`. `npm run sdk`, the CI script, and the
+  site's downloads read the build's directory from `sdkDirOf`, so every SDK
+  gate runs on each of the four trees as before, at its new path. The
+  downloads page and the How it's built page say which tree is the default.
+  No check changes. The SDK tests now name the new paths, and the test of
+  the SDK directory covers both variants; the suite still holds 401 tests,
+  and `MIN_TESTS` stays 401.
+rationale: >-
+  The as-written build is closest to what IAB code writes: the seller
+  agent's mapped payloads fail fewer checks there, and it types flight
+  dates as calendar dates, as the agentic primitives do. guard's
+  fingerprint changes because the CI script it names changed, npm-test's
+  because the tests did, and site-builds' because the site's pages and
+  builder did, not because a check did.
+accepts:
+  - { gate: guard, fingerprint: 9bc998375db00e862832c6b5fe1a57a8821689ec62ae2e2e92e029a1e2ac05d4 }
+  - { gate: npm-test, fingerprint: 361b8278b0653d2a47774dfd8942a968ea9455f2600825ae06ec690239fb8c93 }
+  - { gate: site-builds, fingerprint: aff3c2d1b20f0734c10bbc7ed82bc38947357e5bf6e61c88a1d19c7fc32de26b }

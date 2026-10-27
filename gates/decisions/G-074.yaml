@@ -1,0 +1,29 @@
+format: 1
+id: G-074
+date: 2026-10-27
+question: What changes in the SDK gates when each vocabulary's terms become constants?
+decision: >-
+  Each vocabulary with terms gains its terms as constants, named in the
+  plural: a Python class whose `Final` attributes are the terms, such as
+  `Channels.CTV`, and a TypeScript const object of the same name and
+  members. A term is in upper snake case, and an integer term is
+  `CODE_<n>`. `emitSdk` fails with a problem where a constants name is a
+  type's, a template's, or another vocabulary's, or where two terms give
+  one member name. The field types are unchanged, so an open vocabulary
+  still takes a namespaced term or a vendor's code as a plain value. Go's
+  term constants now capitalize each word of the term, read an
+  upper-snake-case term as words, and write an initialism in one case:
+  `BuyingRouteDIRECTPUBLISHER` becomes `BuyingRouteDirectPublisher`, and
+  `ChannelCtv` becomes `ChannelCTV`. Two tests cover the naming and the
+  constants of all four trees in both languages, against each vocabulary's
+  own check; the suite holds 408 tests, and `MIN_TESTS` is 408.
+rationale: >-
+  IAB code reads terms as enum members, such as `HoldState.CONVERTED`, and
+  our vocabularies are literal types with no members. Constants recover
+  that access without changing what a field accepts. Go's names ran an
+  upper-snake-case term together and broke its initialism style.
+  sdk-generate's fingerprint changes because the emitters changed, and
+  npm-test's because of the new tests and the test floor.
+accepts:
+  - { gate: npm-test, fingerprint: 187754dfa336cd091a2dea0f55a8b2ec9fe44e2df232d7da8fe7c302deb5be75 }
+  - { gate: sdk-generate, fingerprint: c4f7bfb4f236a2c4738ec5e13af641565305dadf84a6ba2220984133ae73a9ab }

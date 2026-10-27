@@ -1,0 +1,19 @@
+format: 1
+id: G-076
+date: 2026-10-27
+question: What changes in the site's gates when the How it's built page explains the SDK types?
+decision: >-
+  The How it's built page gains a section on the SDK types, in its table of
+  contents: which tree is the default, the provenance constants, the
+  vocabulary constants, and the Python strict and receive modes with the
+  wire helpers. The paragraph on the default tree moves into it. No check
+  changes: the site check holds the section to every check the page passed.
+  One test covers the downloads page's line on each build's SDK tree and the
+  new section; the suite holds 410 tests, and `MIN_TESTS` is 410.
+rationale: >-
+  A reader of the site should learn from the site which SDK tree to take
+  and what it offers. site-builds' fingerprint changes because the page's
+  code changed, and npm-test's because of the new test and the test floor.
+accepts:
+  - { gate: npm-test, fingerprint: 018c3e4c25d5d3335cfd099f2411bf08ada1efba1ced265acc1031e0cef0612c }
+  - { gate: site-builds, fingerprint: 6d49917699e32cf0c2827bd1c0d6b62ac3a362f68f6927914cea0cf7d5c60dba }

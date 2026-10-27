@@ -21,11 +21,11 @@ export const plainExemptionsFile = defineGate<{ exemptions: ExemptionsFile; pinn
   ],
 });
 
-export const sdkGenerate = defineGate<{ model: ModelDoc; dir: string }>({
+export const sdkGenerate = defineGate<{ model: ModelDoc; dir: string; schemaDir: string }>({
   id: "sdk-generate",
   title: "SDK types generate from the model",
   check: (i) => {
-    const e = emitSdk(i.model, i.dir);
+    const e = emitSdk(i.model, i.dir, i.schemaDir);
     return { problems: e.problems, note: `${e.files.length} files: ${e.sdk.emitted.length} named types and ${e.sdk.templates.size} generic templates in each of TypeScript, Python, and Go` };
   },
   fixtures: [

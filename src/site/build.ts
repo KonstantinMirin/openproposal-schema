@@ -17,7 +17,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join, posix } from "node:path";
 import { schemaDirOf } from "../emit.ts";
 import { RULES_FILE, rulesDirOf } from "../rules.ts";
-import { sdkDirOf } from "../sdk.ts";
+import { DEFAULT_SDK_VARIANT, sdkDirOf } from "../sdk.ts";
 import { TYPE_EXAMPLES_FILE, typeExamplesDirOf } from "../type-examples.ts";
 import { loadRoute, type MapRoute } from "./route.ts";
 import { buildData, loadSiteInputs, SITE_VARIANTS, type SiteInputs, type VariantSlug } from "./data.ts";
@@ -68,7 +68,7 @@ export function buildSite(root: string, inputs: SiteInputs = loadSiteInputs(root
       const name = `openproposal-${lock.name}-${slug}`;
       const at = `downloads/${lock.name}/${slug}`;
       const zipOf = (dir: string, sub: string[]) => zip(sub.map((f) => ({ path: `${name}/${f}`, data: readFileSync(join(root, dir, f)) })));
-      const sdkDir = b.dirOf(sdkDirOf(lock.ir_dir));
+      const sdkDir = sdkDirOf(lock.ir_dir, b.variant);
       const sdkFiles = (lang: string) => files(root, posix.join(sdkDir, lang)).map((f) => `${lang}/${f}`);
       const add: DownloadSet["files"] = [];
       const offer = (label: string, file: string, data: Buffer, what: string) => {
@@ -81,7 +81,7 @@ export function buildSite(root: string, inputs: SiteInputs = loadSiteInputs(root
       offer("TypeScript types", "typescript.zip", zipOf(sdkDir, sdkFiles("ts")), "Zod 4");
       offer("Python types", "python.zip", zipOf(sdkDir, sdkFiles("python")), "Pydantic 2");
       offer("Go types", "go.zip", zipOf(sdkDir, sdkFiles("go")), "the standard library only");
-      sets.push({ lock: lock.name, variant: slug, files: add, schemas: tree.map((f) => posix.join(schemaDir, f)) });
+      sets.push({ lock: lock.name, variant: slug, files: add, schemas: tree.map((f) => posix.join(schemaDir, f)), sdkDir, sdkDefault: b.variant === DEFAULT_SDK_VARIANT });
     }
   }
 

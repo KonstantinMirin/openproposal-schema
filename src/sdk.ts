@@ -26,6 +26,8 @@ import { fieldOfSources, localSchemas, locationOf, nestedIf, templatesOf } from 
 import type { TypeRef } from "./mapping.ts";
 import { KERNEL_MODULE } from "./mapping-rules.ts";
 import { extensionOf, VENDOR_CODE, type ModelDoc, type ModelProperty, type ModelType } from "./model.ts";
+import { PROPOSED } from "./builds.ts";
+import { AS_WRITTEN, variantDir } from "./variant.ts";
 
 /** A type position: a named type, the boolean, a list or map of a type, a template applied to types, or a template's parameter. */
 export type Expr =
@@ -133,6 +135,103 @@ export interface SdkTemplate {
 
 /** How an SDK names the model it comes from: "the `main` lock", and for a variant "the `main` lock, as-written variant". */
 export const lockPhrase = (input: SdkModel["input"]): string => `the \`${input.lock}\` lock${input.variant ? `, ${input.variant} variant` : ""}`;
+
+/**
+ * Where one build's SDK comes from, which each SDK states as constants, so
+ * code can tell at run time which build it loaded: the specification's
+ * commit and the blob of its file, the lock that pins them, the variant,
+ * `as-written` or `proposed`, and the schema release the types match.
+ */
+export interface Provenance {
+  commit: string;
+  blob: string;
+  lock: string;
+  variant: string;
+  /** The digest of the build's schema tree, as a release manifest's `digest` records it: the SHA-256 of the JCS bytes of `{ <path>: <schema> }` over every file. */
+  schemaRelease: string;
+}
+
+/** The provenance of an SDK model whose schema tree has the digest `schemaRelease`. */
+export const provenanceOf = (sdk: SdkModel, schemaRelease: string): Provenance => ({ commit: sdk.input.commit, blob: sdk.input.blob, lock: sdk.input.lock, variant: sdk.input.variant ?? PROPOSED, schemaRelease });
+
+/** What each SDK says of each provenance constant, for its doc comment. */
+export const PROVENANCE_DOCS = {
+  commit: "The commit of the OpenProposal specification repository that the types are generated from.",
+  blob: "The Git blob SHA of the specification file at that commit.",
+  lock: "The lock that pins the commit: `main`, or `with-open-prs`, which is `main` with the pull requests that were open on the day of the lock merged in.",
+  variant: "The build: `as-written`, the specification as its text and examples write it, or `proposed`, with the changes we propose.",
+  schemaRelease:
+    "The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it.",
+} as const;
+
+/**
+ * A vocabulary's terms as constants, the way code built around enums reads
+ * them: `Channels.DISPLAY` for the term `display` of `Channel`. The class,
+ * or the TypeScript const object, is the vocabulary's name in the plural,
+ * and each member the term in upper snake case, or `CODE_<n>` for an
+ * integer term. An open vocabulary's constants are its core terms only: a
+ * field of it still takes any namespaced term, or vendor code, as a plain
+ * value. The field types stay the vocabulary itself.
+ */
+export interface Constants {
+  name: string;
+  /** The vocabulary. */
+  of: string;
+  members: { name: string; value: string | number; label?: string }[];
+  /** The type an open vocabulary's other terms are, such as `NamespacedTerm`; undefined for a closed one. */
+  extension?: string;
+}
+
+/** A vocabulary's name in the plural: `Channels`, `HoldStates`, `CommitmentBases`, `ProposalStatuses`, `Parties`. */
+export function plural(name: string): string {
+  if (/sis$/.test(name)) return `${name.slice(0, -2)}es`;
+  if (/[^aeiou]y$/.test(name)) return `${name.slice(0, -1)}ies`;
+  if (/(s|x|z|ch|sh)$/.test(name)) return `${name}es`;
+  return `${name}s`;
+}
+
+/** A term as a constant's name: `display` gives `DISPLAY`, `PREFERRED_DEAL` stays, `oauth2_client_credentials` gives `OAUTH2_CLIENT_CREDENTIALS`, and the integer 3 gives `CODE_3`. */
+export const constantName = (term: string | number): string =>
+  typeof term === "number" ? `CODE_${term < 0 ? `MINUS_${-term}` : term}` : term.replace(/[^A-Za-z0-9]+/g, "_").replace(/^_+|_+$/g, "").toUpperCase();
+
+/** A type's constants, or null for a type that isn't a vocabulary with terms. */
+export function constantsOf(t: SdkType): Constants | null {
+  const values = t.kind === "enum" ? t.values : t.kind === "scalar" ? (t.scalar.enum ?? []) : [];
+  if (values.length === 0) return null;
+  const labels = t.kind === "enum" ? t.labels : [];
+  return {
+    name: plural(t.name),
+    of: t.name,
+    members: values.map((v, i) => ({ name: constantName(v), value: v, ...(labels[i] ? { label: labels[i] } : {}) })),
+    ...(t.kind === "enum" && t.open ? { extension: t.extension } : {}),
+  };
+}
+
+/** Every type's constants, by the type's name, with the problems their names have: a class named like a type, a template, or another class, and a member that isn't a unique name. */
+export function allConstants(sdk: SdkModel): { constants: Map<string, Constants>; problems: string[] } {
+  const constants = new Map<string, Constants>();
+  const problems: string[] = [];
+  const taken = new Set<string>([...sdk.types.keys(), ...sdk.templates.keys()]);
+  for (const t of sdk.types.values()) {
+    const c = constantsOf(t);
+    if (!c) continue;
+    if (taken.has(c.name)) problems.push(`${t.name}: its constants' name, ${c.name}, is taken`);
+    taken.add(c.name);
+    const seen = new Set<string>();
+    for (const m of c.members) {
+      if (!/^[A-Z][A-Z0-9_]*$/.test(m.name) || seen.has(m.name)) problems.push(`${t.name}: the term ${JSON.stringify(m.value)} gives the constant ${c.name}.${m.name}, which isn't a unique name`);
+      seen.add(m.name);
+    }
+    constants.set(t.name, c);
+  }
+  return { constants, problems };
+}
+
+/** What a constants class says of itself. */
+export const constantsDoc = (c: Constants): string =>
+  c.extension === undefined
+    ? `The terms of \`${c.of}\`, as constants.`
+    : `The core terms of \`${c.of}\`, as constants. The vocabulary is open, so a field of it also takes ${c.extension === "NamespacedTerm" ? "a namespaced term" : "a vendor's code"} (\`${c.extension}\`) as a plain value.`;
 
 export interface SdkModel {
   input: { lock: string; commit: string; blob: string; variant?: string };
@@ -624,11 +723,22 @@ export function applicationExpr(model: ModelDoc, constructor: string, args: Reco
   return { k: "apply", template: c.name, args: out };
 }
 
-/** A lock's SDK directory, from its IR directory, as its schema directory is: `ir` gives `sdk`, and `ir/with-open-prs` gives `sdk/with-open-prs`. */
-export function sdkDirOf(irDir: string): string {
+/** The variant whose SDK is the default tree, `sdk/`: the types as the specification writes them, which is closest to what a consumer writes. */
+export const DEFAULT_SDK_VARIANT = AS_WRITTEN;
+
+/**
+ * A build's SDK directory, from its lock's IR directory and its variant, which
+ * is undefined for the schemas we propose. The default variant's SDK is the
+ * default tree: `ir` gives `sdk`, and `ir/with-open-prs` gives
+ * `sdk/with-open-prs`. Every other build's is an opt-in tree under
+ * `sdk/<variant>/`, and the schemas we propose are `proposed`: `sdk/proposed`
+ * and `sdk/proposed/with-open-prs`.
+ */
+export function sdkDirOf(irDir: string, variant: string | undefined): string {
   const rest = irDir.split("\\").join("/").replace(/^ir\/?/, "");
   if (irDir !== "ir" && !irDir.split("\\").join("/").startsWith("ir/")) throw new Error(`the IR directory "${irDir}" isn't under ir/`);
-  return rest === "" ? "sdk" : `sdk/${rest}`;
+  const base = rest === "" ? "sdk" : `sdk/${rest}`;
+  return variant === DEFAULT_SDK_VARIANT ? base : variantDir(base, variant ?? PROPOSED);
 }
 
 /** One generated file: its path under the lock's SDK directory, and its text. */

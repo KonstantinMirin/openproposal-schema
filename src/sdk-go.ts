@@ -14,7 +14,7 @@
  * the first branch the value is valid in.
  */
 import { FORMAT_PATTERNS } from "./sdk-formats.ts";
-import { lockPhrase, type Expr, type SdkFile, type SdkModel, type SdkTemplate, type SdkType, type Shape } from "./sdk.ts";
+import { lockPhrase, PROVENANCE_DOCS, type Expr, type Provenance, type SdkFile, type SdkModel, type SdkTemplate, type SdkType, type Shape } from "./sdk.ts";
 
 /** The Go version the generated module declares; `omitzero` needs Go 1.24. */
 export const GO_VERSION = "1.25";
@@ -32,6 +32,33 @@ const pascal = (s: string) =>
     .split(/[^A-Za-z0-9]+/)
     .filter((x) => x !== "")
     .map((x) => x[0]!.toUpperCase() + x.slice(1))
+    .join("");
+
+/**
+ * The initialisms a term's words may be, which Go writes in one case, as
+ * its own names write `ID` and `URL`: the ones the terms use, and the common
+ * ones Go's style lists. `oauth2` is written `OAuth2`.
+ */
+const INITIALISMS = new Set(["API", "CPC", "CPM", "CTV", "DAI", "DOOH", "DSP", "HTTP", "HTTPS", "IAB", "ID", "IO", "IOS", "IP", "JSON", "JWT", "OIDC", "SSAI", "SSP", "TV", "UI", "URI", "URL", "UUID", "XML"]);
+const SPECIAL_WORDS = new Map([["oauth2", "OAuth2"]]);
+
+/**
+ * A term as the suffix of its constant's Go name: each word of the term,
+ * split at a character that can't be in a name, is capitalized, an
+ * initialism is in upper case, and a term in upper snake case is read as
+ * words, so `viewable_rate` gives `ViewableRate`, `PREFERRED_DEAL` gives
+ * `PreferredDeal`, and `ctv` and `DIRECT_IO` give `CTV` and `DirectIO`.
+ */
+export const goTermName = (term: string): string =>
+  term
+    .split(/[^A-Za-z0-9]+/)
+    .filter((w) => w !== "")
+    .map((w) => {
+      const lower = w.toLowerCase();
+      if (SPECIAL_WORDS.has(lower)) return SPECIAL_WORDS.get(lower)!;
+      if (INITIALISMS.has(w.toUpperCase())) return w.toUpperCase();
+      return lower[0]!.toUpperCase() + lower.slice(1);
+    })
     .join("");
 
 /** An expression as a Go type. */
@@ -229,7 +256,7 @@ ${s.json === "integer" ? integerUnmarshal(t.name) : ""}`;
 
 function enumConsts(name: string, values: (string | number)[], ctx: Ctx, consts: Set<string>): string {
   const out = values.map((v) => {
-    const c = `${name}${typeof v === "number" ? String(v).replace("-", "Minus") : pascal(v)}`;
+    const c = `${name}${typeof v === "number" ? String(v).replace("-", "Minus") : goTermName(v)}`;
     if (!/^[A-Z][A-Za-z0-9]*$/.test(c) || consts.has(c)) ctx.problems.push(`go: ${ctx.where}: the term ${JSON.stringify(v)} gives the constant ${c}, which isn't a unique Go name`);
     consts.add(c);
     return `\n${comment(`${c} is the term ${JSON.stringify(v)}.`)}const ${c} ${name} = ${typeof v === "number" ? String(v) : str(v)}\n`;
@@ -912,14 +939,24 @@ func (r *ExtensionRegistry) Len() int {
 }
 `;
 
-/** The Go module path of a lock's SDK, from its SDK directory, such as `sdk` or `sdk/with-open-prs`. */
+/** The Go module path of a build's SDK, from its SDK directory, such as `sdk` or `sdk/proposed/with-open-prs`. */
 export const goModulePath = (sdkDir: string) => `${GO_MODULE_BASE}/${sdkDir}/go`;
 
-/** The Go SDK of one lock's SDK model, as files under the lock's `go/` directory. */
-export function emitGo(sdk: SdkModel, sdkDir: string): { files: SdkFile[]; problems: string[] } {
+/** The provenance constants of `provenance.go`. */
+const PROVENANCE_NAMES: [keyof Provenance, string][] = [
+  ["commit", "SpecCommit"],
+  ["blob", "SpecBlob"],
+  ["lock", "Lock"],
+  ["variant", "Variant"],
+  ["schemaRelease", "SchemaRelease"],
+];
+
+/** The Go SDK of one build's SDK model, as files under the build's `go/` directory. */
+export function emitGo(sdk: SdkModel, sdkDir: string, prov: Provenance): { files: SdkFile[]; problems: string[] } {
   const problems: string[] = [];
   const lock = lockPhrase(sdk.input);
-  const consts = new Set<string>([...sdk.types.keys(), ...sdk.templates.keys(), ...RUNTIME_NAMES]);
+  for (const [, n] of PROVENANCE_NAMES) if (sdk.types.has(n) || sdk.templates.has(n)) problems.push(`go: the type "${n}" has the name of a provenance constant`);
+  const consts = new Set<string>([...sdk.types.keys(), ...sdk.templates.keys(), ...RUNTIME_NAMES, ...PROVENANCE_NAMES.map(([, n]) => n)]);
   for (const n of [...sdk.types.keys(), ...sdk.templates.keys()]) if (RUNTIME_NAMES.has(n)) problems.push(`go: the type "${n}" has the name of a runtime declaration`);
   const moduleOf = new Map<string, string>([...[...sdk.types.values()].map((t): [string, string] => [t.name, t.module]), ...[...sdk.templates.values()].map((t): [string, string] => [t.name, t.module])]);
   const files: SdkFile[] = [];
@@ -974,6 +1011,12 @@ ${registrations}}
 // as FormatsSelection, is an alias of one application.
 package openproposal
 `,
+  });
+  files.push({
+    path: "openproposal/provenance.go",
+    text: `${header(lock)}package openproposal
+
+${PROVENANCE_NAMES.map(([k, n]) => `${comment(`${n} is ${PROVENANCE_DOCS[k][0]!.toLowerCase()}${PROVENANCE_DOCS[k].slice(1)}`)}const ${n} = ${str(prov[k])}\n`).join("\n")}`,
   });
   files.push({ path: "openproposal/runtime.go", text: RUNTIME(lock) });
   files.push({ path: "openproposal/registry.go", text: REGISTRY(lock) });

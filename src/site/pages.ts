@@ -293,6 +293,10 @@ export interface DownloadSet {
   variant: VariantSlug;
   files: { label: string; path: string; bytes: number; what: string }[];
   schemas: string[];
+  /** The build's SDK tree in the repository, such as `sdk` for the default tree or `sdk/proposed` for an opt-in one. */
+  sdkDir: string;
+  /** Whether the build's SDK tree is the default one. */
+  sdkDefault: boolean;
 }
 
 export function downloadsPage(sets: DownloadSet[]): string {
@@ -301,12 +305,14 @@ export function downloadsPage(sets: DownloadSet[]): string {
     .map(
       (s) => `<section class="card dl"><h2>${esc(SITE_LOCKS[s.lock]!.label)} · ${esc(SITE_VARIANTS.find((v) => v.slug === s.variant)!.label)}</h2>
 <ul class="files">${s.files.map((f) => `<li><a href="${f.path}" download>${esc(f.label)}</a> <span class="note">${kb(f.bytes)} · ${esc(f.what)}</span></li>`).join("")}</ul>
+<p class="note">In the repository, these types are ${s.sdkDefault ? "the default SDK tree" : "an opt-in SDK tree"}, <code>${esc(s.sdkDir)}/</code>.</p>
 <details><summary>Browse the ${s.schemas.length} schema files</summary><ul class="tree-files">${s.schemas.map((p) => `<li><a href="${p}"><code>${esc(p)}</code></a></li>`).join("")}</ul></details></section>`,
     )
     .join("\n");
   const body = `<div class="wrap">
 <h1>Downloads</h1>
 <p class="sub">Each build's JSON Schema 2020-12 files, its rules with their test vectors, and its generated TypeScript (Zod), Python (Pydantic), and Go types. Each schema file is served at the URL its <code>$id</code> names, so a validator can resolve every <code>$ref</code> from this site.</p>
+<p class="sub">The as-written build's types are the default SDK tree, <code>sdk/</code>, since they are the closest to what a consumer of the specification writes. The types with our proposals are an opt-in tree, <code>sdk/proposed/</code>, and each lock's open-PRs build is under <code>with-open-prs/</code> in either tree.</p>
 <div class="dl-grid">${cards}</div>
 </div>`;
   return page({ path: "downloads.html", title: "Downloads · OpenProposal 3.0 JSON Schema", description: "The generated OpenProposal 3.0 JSON Schema files, rules, and TypeScript, Python, and Go types.", section: "downloads", body });

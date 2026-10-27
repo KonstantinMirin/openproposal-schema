@@ -709,12 +709,12 @@ async function checkSdkGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[],
   const absent = new Map<string, number>();
   const checked = new Set<string>();
   for (const [lock, doc] of models) {
-    const dir = sdkDirOf(lock.ir_dir);
-    if (!(await gate(S.sdkGenerate, { model: doc, dir }, lock))) {
+    const dir = sdkDirOf(lock.ir_dir, undefined);
+    if (!(await gate(S.sdkGenerate, { model: doc, dir, schemaDir: schemaDirOf(lock.ir_dir) }, lock))) {
       complete = false;
       continue;
     }
-    const emitted = emitSdk(doc, dir);
+    const emitted = emitSdk(doc, dir, schemaDirOf(lock.ir_dir));
     for (const f of emitted.files) expected.add(posix.join(dir, f.path));
     const schemas = emitSchemas(doc, schemaDirOf(lock.ir_dir));
     const schemaNames = schemas.files.flatMap((f) => (isPlainMap(f.schema.$defs) ? Object.keys(f.schema.$defs) : [String(f.schema.title)])).sort();
@@ -993,8 +993,8 @@ function expectedVariantFiles(variants: VariantBuilds[]): VariantFiles {
       for (const f of emitSchemas(b.model, schemaDir).files) files.schemas.push(posix.join(schemaDir, f.path));
       files.rules.push(posix.join(b.dirOf(rulesDirOf(b.lock.ir_dir)), RULES_FILE));
       files.typeExamples.push(posix.join(b.dirOf(typeExamplesDirOf(b.lock.ir_dir)), TYPE_EXAMPLES_FILE));
-      const sdkDir = b.dirOf(sdkDirOf(b.lock.ir_dir));
-      for (const f of emitSdk(b.model, sdkDir).files) files.sdk.push(posix.join(sdkDir, f.path));
+      const sdkDir = sdkDirOf(b.lock.ir_dir, b.variant);
+      for (const f of emitSdk(b.model, sdkDir, schemaDir).files) files.sdk.push(posix.join(sdkDir, f.path));
     }
   }
   return files;
@@ -1070,9 +1070,9 @@ async function checkVariantOutputGates(variants: VariantBuilds[], vectors: Vecto
         if (committed !== null) await gate(O.typeExamplesValid, { doc: JSON.parse(committed.toString("utf8")) as TypeExamplesDoc, model: b.model, files: emitted.files, schemaDir, codes }, at);
       }
       // SDK types.
-      const sdkDir = b.dirOf(sdkDirOf(lock.ir_dir));
-      if (!(await gate(S.sdkGenerate, { model: b.model, dir: sdkDir }, at))) continue;
-      const sdk = emitSdk(b.model, sdkDir);
+      const sdkDir = sdkDirOf(lock.ir_dir, b.variant);
+      if (!(await gate(S.sdkGenerate, { model: b.model, dir: sdkDir, schemaDir }, at))) continue;
+      const sdk = emitSdk(b.model, sdkDir, schemaDir);
       const schemaNames = emitted.files.flatMap((f) => (isPlainMap(f.schema.$defs) ? Object.keys(f.schema.$defs) : [String(f.schema.title)])).sort();
       await gate(S.sdkNames, { schemaNames, emitted: sdk.sdk.emitted, templates: [...sdk.sdk.templates.keys()] }, at);
       const sdkWant = new Map(sdk.files.map((f) => [f.path, Buffer.from(f.text)]));

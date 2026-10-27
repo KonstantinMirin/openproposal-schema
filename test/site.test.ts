@@ -134,3 +134,13 @@ test("the pipeline figure is inline SVG in a wide and a tall layout, each titled
     assert.doesNotMatch(m[0], /\s(fill|stroke)="#|\sstyle=/, "colors come from the stylesheet, so both themes apply");
   }
 });
+
+test("the downloads page names each build's SDK tree, as written the default, and the How it's built page explains the SDK types", () => {
+  const downloads = SITE.files.get("downloads.html")!.toString("utf8");
+  for (const [tree, kind] of [["sdk/", "the default"], ["sdk/with-open-prs/", "the default"], ["sdk/proposed/", "an opt-in"], ["sdk/proposed/with-open-prs/", "an opt-in"]] as const) {
+    assert.ok(downloads.includes(`these types are ${kind} SDK tree, <code>${tree}</code>`), tree);
+  }
+  const method = SITE.files.get("how-it-is-built.html")!.toString("utf8");
+  assert.ok(method.includes('<a href="#sdk">The SDK types</a>'));
+  for (const s of ["<code>sdk/proposed/</code>", "<code>SCHEMA_RELEASE</code>", "<code>Channels.CTV</code>", 'mode="receive"', "<code>dump_json</code>"]) assert.ok(method.includes(s), s);
+});

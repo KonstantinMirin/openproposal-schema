@@ -1,0 +1,22 @@
+format: 1
+id: G-075
+date: 2026-10-27
+question: What changes in the SDK gates when a bare Python template fails with a clear error?
+decision: >-
+  A Python model whose generic parameters are unbound, such as `Selectable`
+  used without arguments, raises a `TypeError` from its validator, whether
+  it is constructed or validated, that says it is a generic template, names
+  up to four of its named copies, and gives one copy's application, such as
+  `Selectable[ActivationRoute, ActivationRoute]`. Each class template holds
+  its copies as `__copies__`. An applied template and every copy check
+  values as before. One test covers each class template of all four trees
+  and a template with no copy; the suite holds 409 tests, and `MIN_TESTS`
+  is 409.
+rationale: >-
+  A bare template used directly reported `the member "max_select" is
+  null`, which blamed the caller's data for our generics. sdk-generate's
+  fingerprint changes because the Python emitter changed, and npm-test's
+  because of the new test and the test floor.
+accepts:
+  - { gate: npm-test, fingerprint: 2c38a1d8159fddccc0df5230070c1b570c1197aa93dd0030622f7b6a180864e1 }
+  - { gate: sdk-generate, fingerprint: 654990b7ddeb03a1156bfc4a8d160839decc8fcf63477d476a4cab36a60bf7b8 }
