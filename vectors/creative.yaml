@@ -1,0 +1,12 @@
+# Rule vectors for § 5.4. Regenerate a digest with `npm run cite -- <rule ID>`.
+format: 1
+module: creative
+rules:
+  # `materials_due`: a buyer MAY request a later date.
+  - rule: rule:5.4:2eaa294f
+    digest: 61f09f4e064e43f2fa580ac4cbf4d7d5c34bd64f2539c58b40351900d38338fd
+    decision: D-034
+    valid:
+      - { party: buyer, before: { materials_due: "2026-11-01T17:00:00Z" }, after: { materials_due: "2026-11-08T17:00:00Z" } }
+    invalid:
+      - { party: buyer, before: { materials_due: "2026-11-08T17:00:00Z" }, after: { materials_due: "2026-11-01T17:00:00Z" } }

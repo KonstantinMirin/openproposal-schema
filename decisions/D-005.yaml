@@ -1,0 +1,28 @@
+format: 1
+id: D-005
+status: proposed
+kind: gap
+author: agent
+question: Is a rate metric such as `viewable_rate`, `completion_rate`, or `match_rate_expected` a fraction from 0 to 1 or a percentage?
+covers:
+  - ir: field:5.7:committed_metrics[]
+    digest: 2c123e829ef892456b09671dfd52243f1bef0db8b067aa9c5d184dc07411caf5
+    quote: "`committed_metrics[]` | Array[Object] | requestable | `{ metric, value, basis }` tuples — `viewable_rate` for display, `completion_rate` for video/audio/CTV, an audience-modelled metric for DOOH. Seller declares a ceiling; a buyer MAY request above it"
+  - ir: field:5.3:buyer_supplied
+    digest: 18d87a0de58116db76d7152a7f96bc722dc700b91f053406b32e4299e7910504
+    quote: "`buyer_supplied` | Object | supplied | `{ segments_allowed, suppression_allowed, match_rate_expected, segments[], suppression_list }`. `match_rate_expected` is the seller's stated expectation; `segments[]` and `suppression_list` are buyer-populated"
+options:
+  - id: fraction
+    summary: A number from 0 to 1, so 70 % is 0.7.
+  - id: percent
+    summary: A number from 0 to 100, so 70 % is 70.
+chosen: fraction
+rationale: >-
+  A fraction has no unit and multiplies directly, as a derived figure needs.
+  With bounds of 0 and 1, the common mistake of sending 70 for 70 % fails
+  validation instead of passing as a 7000 % rate; with bounds of 0 and 100, a
+  value of 0.7 meant as 70 % would pass silently. The § 3.1 `delta_pct` is a
+  percentage by its name, so it isn't a Fraction.
+feedback: >-
+  State that rate metrics and `match_rate_expected` are fractions from 0 to 1,
+  for example 0.7 for 70 %.

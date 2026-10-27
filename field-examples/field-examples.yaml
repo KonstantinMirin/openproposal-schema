@@ -1,0 +1,266 @@
+# Per-field example values for readers' example payloads (src/field-examples.ts).
+# Each entry names a member by the IR element its property rests on and the member's name,
+# for a member the specification's examples give no value. The values are for the type
+# examples only, not conformance vectors; the type-examples gate checks each one against the
+# member's emitted schema and the rules, and fails on one the specification's examples now
+# give, or whose element or member no longer exists. A second value is for a second option.
+format: 1
+fields:
+  # Proposal ------------------------------------------------------------------------
+  - ir: field:4.1:assent
+    member: assent
+    values:
+      - seller: { version: 1, at: "2026-09-30T16:00:00Z", signature: "sig1=:K2qGT5srn2OGbOIDzQ6kYT+ruaycnDAAUpKv+ePFfD0=:" }
+    note: >-
+      The structure is our proposal in D-016's feedback, not the specification's: `{ buyer, seller }`,
+      each party's record `{ version, at, signature }`. The schema keeps `assent` an open object.
+  - ir: field:4.1:brief_ref
+    member: brief_ref
+    values: [ agency-a-brief-2026-q4-0193 ]
+  - ir: "field:4.1:negotiation_history[]#description/object:1"
+    member: version
+    values: [ 1 ]
+  - ir: "field:4.1:negotiation_history[]#description/object:1"
+    member: at
+    values: [ "2026-09-30T16:00:00Z" ]
+  - ir: "field:4.1:negotiation_history[]#description/object:1"
+    member: fields_changed
+    values: [ [ "pricing[].gross_rate", "pricing[].floor" ] ]
+
+  # Line item: identity, inventory, and audience ---------------------------------------
+  - ir: field:5.1:line_item_id
+    member: line_item_id
+    values: [ d2a7c5e8-4b1f-4f6a-9c3e-7e8f9a0b1c2d ]
+  - ir: key:5.2:apps[].bundle
+    member: bundle
+    values: [ "591283", "1459921234" ]
+    locks: [ with-open-prs ]
+  - ir: key:5.2:apps[].storeurl
+    member: storeurl
+    values: [ "https://channelstore.roku.com/details/591283", "https://apps.apple.com/us/app/id1459921234" ]
+    locks: [ with-open-prs ]
+  - ir: key:5.2.2:placement.skipafter
+    member: skipafter
+    values: [ PT5S ]
+    locks: [ with-open-prs ]
+  - ir: "key:5.2.2:placement.refresh#meaning/object:1"
+    member: min_interval_s
+    values: [ PT30S ]
+    locks: [ with-open-prs ]
+  - ir: field:5.2:properties#description/object:1
+    member: name
+    values: [ Example Publisher Business News, Markets Weekly ]
+  - ir: field:5.2:content_detail
+    member: content_detail
+    values:
+      - { shows: [ Market Open ], series: [ Earnings Season Live ], sections: [ Markets, Small Business ], network_verticals: [ Business and Finance ] }
+    note: >-
+      The structure is our proposal in D-016's feedback, not the specification's:
+      `{ shows[], series[], sections[], network_verticals[] }`. The schema keeps `content_detail` an open object.
+  - ir: field:5.3:audiences#description/object:1
+    member: name
+    values: [ SMB decision makers, High-net-worth investors ]
+  - ir: field:5.3:audiences#description/object:1
+    member: taxonomy_ref
+    values: [ "IAB-AT1.1:301", "IAB-AT1.1:476" ]
+  - ir: field:5.3:audiences#description/object:1
+    member: provenance
+    values: [ "examplepub.example:first_party", "examplepub.example:modeled" ]
+  - ir: field:5.3:buyer_supplied#description/object:1
+    member: segments
+    values: [ [ "agency-a:crm-q4-prospects", "agency-a:crm-lapsed-buyers" ] ]
+
+  # Line item: creative ----------------------------------------------------------------
+  - ir: field:5.4:specs
+    member: specs
+    values:
+      - { max_file_size_kb: 150, file_types: [ image/png, image/jpeg, text/html ], animation_max_s: 15 }
+    note: >-
+      Illustrative only: the format registry entry of each format defines `specs`, and these members are ours,
+      not the specification's. The schema keeps `specs` an open object.
+  - ir: field:5.4:third_party_tags
+    member: third_party_tags
+    values:
+      - { wrapper_types: [ javascript, iframe ], vast_versions: [ "4.1", "4.2" ] }
+    note: >-
+      The structure is our proposal in D-016's feedback, not the specification's:
+      `{ wrapper_types[], vast_versions[] }`. The schema keeps `third_party_tags` an open object.
+  - ir: field:5.4:creative_delivery#description/object:1
+    member: protocol
+    values: [ "examplepub.example:javascript_tag" ]
+  - ir: field:5.4:creative_delivery#description/object:1
+    member: endpoint
+    values: [ "https://creative.examplepub.example/v1/tags" ]
+  - ir: "field:5.4:assets[]#description/object:1"
+    member: asset_id
+    values: [ 5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b ]
+  - ir: "field:5.4:assets[]#description/object:1"
+    member: url_or_tag
+    values: [ "https://ads.agency-a.example/tags/business-daily-300x250.js" ]
+  - ir: "field:5.4:assets[]#description/object:1"
+    member: submitted_at
+    values: [ "2026-09-22T14:30:00Z" ]
+  - ir: "field:5.4:assets[]#description/object:1"
+    member: approval_status
+    values: [ "examplepub.example:pending_review" ]
+  - ir: field:5.4:materials_due
+    member: materials_due
+    values: [ "2026-09-24T17:00:00Z" ]
+  - ir: field:5.4:approval
+    member: approval
+    values:
+      - { review_sla: P2D, revision_policy: "Two rounds of revisions within the review SLA; further rounds by agreement." }
+    note: >-
+      The structure is our proposal in D-016's feedback, not the specification's: `{ review_sla, revision_policy }`,
+      the SLA a length of time. The schema keeps `approval` an open object.
+  - ir: field:5.4:production#description/object:1
+    member: custom_unit
+    values: [ Homepage takeover with a branded masthead, Interactive earnings-calendar unit ]
+  - ir: field:5.4:production#description/object:1
+    member: lead_time
+    values: [ P10D, P21D ]
+  - ir: field:5.4:production#description/object:1
+    member: cost
+    values: [ 7500, 12000 ]
+
+  # Line item: targeting ---------------------------------------------------------------
+  - ir: field:5.5:device
+    member: device
+    values: [ { allowed: [ "2", "4", "5" ] } ]
+    note: >-
+      AdCOM 1.0 device type codes, Personal Computer (2), Phone (4), and Tablet (5), the device types of
+      `web_desktop` and `web_mobile`. They're strings, since the schema types a device category as an external ID.
+
+  - ir: field:5.5:exclusions#description/object:1
+    member: url
+    values: [ "https://lists.agency-a.example/blocklists/q4-2026-domains.txt" ]
+    locks: [ with-open-prs ]
+
+  # Line item: commercial --------------------------------------------------------------
+  - ir: field:5.6:availability#description/object:1
+    member: unit
+    values: [ "examplepub.example:impressions" ]
+  - ir: field:5.6:availability#description/object:1
+    member: basis
+    values: [ "examplepub.example:ad_server_forecast" ]
+  - ir: field:5.6:availability#description/object:1
+    member: as_of
+    values: [ "2026-09-30T06:00:00Z" ]
+  - ir: field:5.6:commitment_bounds#description/object:1
+    member: min_impressions
+    values: [ 100000 ]
+  - ir: field:5.6:commitment_bounds#description/object:1
+    member: max_impressions
+    values: [ 20000000 ]
+    locks: [ main ]
+  - ir: key:5.6.1:commitment.flight_start
+    member: flight_start
+    values: [ "2026-10-06T00:00:00Z" ]
+  - ir: key:5.6.1:commitment.flight_end
+    member: flight_end
+    values: [ "2026-12-21T23:59:59Z" ]
+  - ir: key:5.6.1:commitment.idempotency_key
+    member: idempotency_key
+    values: [ 8f42c1a9-6d3e-4b7a-9c15-2e0f4a6b8d71 ]
+  - ir: field:5.6:min_spend
+    member: min_spend
+    values: [ 10000 ]
+  - ir: field:5.6:creative_policy
+    member: creative_policy
+    values:
+      - { content_restrictions: [ No political or issue advertising, No auto-playing audio ], category_restrictions: [ Tobacco, Cannabis ] }
+    note: >-
+      The structure is our proposal in D-016's feedback, not the specification's:
+      `{ content_restrictions[], category_restrictions[] }`. The schema keeps `creative_policy` an open object.
+  - ir: key:5.6.3:requires.all_of[]
+    member: all_of
+    values: [ [ "6b0e2f4a-8c1d-4e3b-9a7f-2d5c8e1b4a90" ] ]
+    locks: [ with-open-prs ]
+  - ir: key:5.6.3:requires.any_of[]
+    member: any_of
+    values: [ [ "c47d9e21-5f3a-4b8c-8e6d-0a1b2c3d4e5f", "9e8d7c6b-5a49-4382-9716-a5b4c3d2e1f0" ] ]
+    locks: [ with-open-prs ]
+  - ir: "key:5.6.3:requires.min_commitment[]#meaning/object:1"
+    member: line_item_id
+    values: [ "6b0e2f4a-8c1d-4e3b-9a7f-2d5c8e1b4a90" ]
+    locks: [ with-open-prs ]
+
+  # Line item: guarantees and reporting ------------------------------------------------
+  - ir: "field:5.7:committed_metrics[]#description/object:1"
+    member: basis
+    values: [ "examplepub.example:mrc" ]
+  - ir: field:5.7:measurement_source#description/object:1
+    member: attribution_window
+    values: [ P30D ]
+  - ir: field:5.7:measurement_source#description/object:1
+    member: qualifier
+    values: [ MRC-accredited viewability for desktop and mobile web, "Fraud-filtered impressions, with GIVT and SIVT removed" ]
+  - ir: field:5.7:reporting#description/object:1
+    member: cadence
+    values: [ P1D ]
+  - ir: field:5.7:reporting#description/object:1
+    member: latency
+    values: [ PT24H, PT6H ]
+  - ir: field:5.7:reporting#description/object:1
+    member: delivery_mechanism
+    values: [ "examplepub.example:api", "examplepub.example:s3" ]
+
+  # Line item: eligibility and execution -----------------------------------------------
+  - ir: "field:5.8:eligible_bidders[]"
+    member: eligible_bidders
+    values: [ [ seat-99812, seat-40517 ] ]
+  - ir: field:5.9:deal_id_issuance
+    member: deal_id_issuance
+    values: [ "Issued at commitment time: the seller's SSP mints one deal ID per committed line item and returns it with the commitment." ]
+  - ir: field:5.9:serving_platform
+    member: serving_platform
+    values: [ "Google Ad Manager, the seller's ad server" ]
+
+  # Line item: settlement --------------------------------------------------------------
+  - ir: field:5.10:correlation_id
+    member: correlation_id
+    values: [ 0f1e2d3c-4b5a-4968-8776-655443322110 ]
+  - ir: "field:5.10:external_references[]#description/object:1"
+    member: system
+    values: [ mediaocean-prisma ]
+  - ir: "field:5.10:external_references[]#description/object:1"
+    member: namespace
+    values: [ io_id ]
+  - ir: "field:5.10:external_references[]#description/object:1"
+    member: id
+    values: [ IO-2026-004417 ]
+  - ir: "field:5.10:external_references[]#description/object:1"
+    member: role
+    values: [ "examplepub.example:buyer_io" ]
+    locks: [ main ]
+  - ir: field:5.10:billing#description/object:1
+    member: supplier_id
+    values: [ "reg:examplepub-digital" ]
+  - ir: field:5.10:billing#description/object:1
+    member: billing_supplier_id
+    values: [ "reg:examplepub-sales-house" ]
+  - ir: field:5.10:billing#description/object:1
+    member: payment_terms
+    values: [ Net 30 from the end of the calendar month ]
+  - ir: field:5.10:billing#description/object:1
+    member: invoicing_party
+    values: [ Example Publisher Sales House LLC ]
+  - ir: "field:5.10:supported_order_systems[]"
+    member: supported_order_systems
+    values: [ [ mediaocean-prisma, basis ] ]
+  - ir: field:5.10:agreement_ref#description/object:1
+    member: agreement_id
+    values: [ AGR-2026-AGENCYA-017 ]
+    locks: [ with-open-prs ]
+  - ir: field:5.10:agreement_ref#description/object:1
+    member: parties
+    values: [ [ "reg:examplepub-digital", seat-99812 ] ]
+    locks: [ with-open-prs ]
+  - ir: field:5.10:agreement_ref#description/object:1
+    member: valid_from
+    values: [ "2026-01-01T00:00:00Z" ]
+    locks: [ with-open-prs ]
+  - ir: field:5.10:agreement_ref#description/object:1
+    member: valid_until
+    values: [ "2026-12-31T23:59:59Z" ]
+    locks: [ with-open-prs ]

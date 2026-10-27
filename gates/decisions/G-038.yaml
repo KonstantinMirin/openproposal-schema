@@ -1,0 +1,12 @@
+format: 1
+id: G-038
+date: 2026-10-26
+question: Does the test suite's floor rise with the test that keeps a point the text leaves open from asking for what a change we propose proposes?
+decision: >-
+  D-019's feedback no longer asks for an `id` on `production`'s options,
+  which D-047 proposes, and a test checks that it doesn't. The test suite
+  holds 344 tests, so its floor rises to 344.
+rationale: >-
+  Only the test floor changes, and it rises, so no gate is weaker.
+accepts:
+  - { gate: npm-test, fingerprint: f333eac8195108c870c194e77f6161bfb80fbd5ca4da3ddbab7df3512854663a }

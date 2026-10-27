@@ -1,0 +1,23 @@
+field:4.1:type#description/values:1	line 187	standard | custom
+field:4.1:status#description/values:1	line 188	draft | published | under_review | agreed | withdrawn | expired
+field:4.1:negotiation_history[]#description/object:1/actor	line 192	buyer | seller	subject=actor
+field:4.1:negotiation_history[]#description/object:1/action	line 192	proposed | countered | accepted | declined | withdrawn	subject=action
+field:5.1:status#description/values:1	line 218	draft | published | under_review | agreed | withdrawn | sold_out | expired
+field:5.1:channel#description/values:1	line 219	display | video | audio | ctv | dooh | native
+field:5.2:environments#description/values:1	line 227	web_desktop | web_mobile | app_mobile | ctv | dooh | audio_streaming	subject=available[]
+field:5.3:activation_route#description/values:1	line 235	publisher_side | clean_room | id_partner	subject=available[]
+field:5.4:creative_delivery#description/object:1/method	line 245	buyer_hosted | seller_hosted | api | platform_managed	subject=method
+field:5.5:frequency_cap#description/object:1/basis	line 261	device | household | listener	subject=basis
+field:5.6:availability#description/object:1/type	line 275	forecast | reservable	subject=type
+key:5.6.1:commitment.basis#meaning/values:1	line 291	spend | units
+key:5.6.2:hold_status.hold_scope#meaning/values:1	line 308	line_item | proposal
+key:5.6.2:hold_status.state#meaning/values:1	line 309	none | requested | held | expired | released | converted
+block:5.6.2:1/values:1	line 312	expired | released | converted
+field:5.7:shortfall_remedy#description/values:1	line 322	makegood | credit | none	subject=available[]
+field:5.7:reporting#description/object:1/feed_type	line 323	log_level | aggregate | none	subject=feed_type
+field:5.8:visibility#description/values:1	line 329	public | registry_gated | named
+field:5.8:required_credentials[]#description/object:1/type	line 330	iab_registry | dsp_seat | custom	subject=type
+field:5.8:required_credentials[]#description/object:1/scheme	line 330	api_key | oauth2_client_credentials | jwt_keypair | oidc_federated | none	subject=scheme
+field:5.9:buying_route#description/values:1	line 338	DIRECT_PUBLISHER | PUBLISHER_AD_SERVER | SSP_PLATFORM | DSP | SEARCH_SOCIAL
+field:5.9:transaction_mechanism#description/values:1	line 339	DIRECT_IO | PROGRAMMATIC_GUARANTEED | PREFERRED_DEAL | PRIVATE_AUCTION | OPEN_AUCTION	subject=available[]
+field:5.9:serving_mode#description/values:1	line 340	client_side | ssai | dai

@@ -1,0 +1,217 @@
+{
+  "$defs": {
+    "CommittedMetricsEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/BareTerm"
+        },
+        "metric": {
+          "$ref": "#/$defs/Metric"
+        },
+        "value": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Fraction"
+        }
+      },
+      "type": "object"
+    },
+    "MeasurementSourceOption": {
+      "additionalProperties": false,
+      "properties": {
+        "attribution_window": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/BareTerm"
+        },
+        "qualifier": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+        },
+        "vendor": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+        }
+      },
+      "type": "object"
+    },
+    "MeasurementSourceSelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, and `pricing` gives the change in price for each other option.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "#/$defs/MeasurementSourceOption"
+          },
+          "type": "array"
+        },
+        "included": {
+          "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the identity the seller mints for it.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        },
+        "pricing": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
+          },
+          "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the identity the seller mints for it.",
+          "propertyNames": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "available",
+        "included"
+      ],
+      "type": "object"
+    },
+    "Metric": {
+      "anyOf": [
+        {
+          "enum": [
+            "viewable_rate",
+            "completion_rate"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "ReportingFeedType": {
+      "anyOf": [
+        {
+          "enum": [
+            "log_level",
+            "aggregate",
+            "none"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "ReportingOption": {
+      "additionalProperties": false,
+      "properties": {
+        "cadence": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/BareTerm"
+        },
+        "delivery_mechanism": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/BareTerm"
+        },
+        "feed_type": {
+          "$ref": "#/$defs/ReportingFeedType"
+        },
+        "latency": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Duration"
+        },
+        "metrics_provided": {
+          "items": {
+            "$ref": "#/$defs/Metric"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ReportingSelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, and `pricing` gives the change in price for each other option.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "#/$defs/ReportingOption"
+          },
+          "type": "array"
+        },
+        "included": {
+          "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the identity the seller mints for it.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        },
+        "pricing": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
+          },
+          "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the identity the seller mints for it.",
+          "propertyNames": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "available",
+        "included"
+      ],
+      "type": "object"
+    },
+    "ShortfallRemedy": {
+      "anyOf": [
+        {
+          "enum": [
+            "makegood",
+            "credit",
+            "none"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "ShortfallRemedySelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, and `pricing` gives the change in price for each other option.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "#/$defs/ShortfallRemedy"
+          },
+          "type": "array"
+        },
+        "included": {
+          "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the identity the seller mints for it.",
+          "items": {
+            "$ref": "#/$defs/ShortfallRemedy"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        },
+        "pricing": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
+          },
+          "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the identity the seller mints for it.",
+          "propertyNames": {
+            "$ref": "#/$defs/ShortfallRemedy"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "available",
+        "included"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/modules/guarantees/1/guarantees.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `guarantees` module: the vocabularies, objects, unions, and constructor copies of § 5.7.",
+  "title": "guarantees"
+}

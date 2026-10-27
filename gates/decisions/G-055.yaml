@@ -1,0 +1,18 @@
+format: 1
+id: G-055
+date: 2026-10-27
+question: What test floor does the test suite hold after G-048, which raised it without saying so, and after this round's fixes?
+decision: >-
+  G-048's change, 18b3bc6, raised `MIN_TESTS` in `gates/setup.ts` from 348
+  to 353, the five tests it adds, but its record says only that the suite
+  gains five tests. G-050 raised the floor to 354, and G-054 to 356. The
+  test suite holds 356 tests, and `MIN_TESTS` is 356. This record changes
+  no gate; it states the floor G-048 left out.
+rationale: >-
+  The floor is part of the npm-test gate, so each record that changes it
+  says the number. G-048's fingerprint covered the change, so the gate was
+  never weaker; only the record was silent. No code, fixture, or exemption
+  changes here, so the record accepts the npm-test gate at the fingerprint
+  G-054 accepts.
+accepts:
+  - { gate: npm-test, fingerprint: e97535f803f5cc38c288568c7e9b86b9c445b11b0fc288029dd65e57062ce6d5 }

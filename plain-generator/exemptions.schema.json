@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/plain-generator/exemptions.schema.json",
+  "title": "OpenProposal plain-generator exemptions",
+  "description": "The parity cases where the classes a plain generator writes from the published schema alone differ from the reference verdict or don't encode a value back, each under a numbered exemption with the reason (type rules § 10). The plain-generator gate fails on a divergence this file doesn't list, and on a listed one that no longer occurs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "generator", "exemptions"],
+  "properties": {
+    "format": {
+      "description": "Version of this format.",
+      "const": 1
+    },
+    "generator": {
+      "description": "The generator and version the exemptions were checked against, such as `datamodel-code-generator 0.86.0`. It must be the pinned one.",
+      "type": "string",
+      "minLength": 1
+    },
+    "exemptions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/exemption" }
+    }
+  },
+  "$defs": {
+    "exemption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "reason", "cases"],
+      "properties": {
+        "id": {
+          "description": "The exemption's number, such as `PG-1`.",
+          "type": "string",
+          "pattern": "^PG-[1-9][0-9]*$"
+        },
+        "locks": {
+          "description": "The locks it applies to; every lock when absent.",
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "reason": {
+          "description": "What the generator does with the schema that makes the classes diverge.",
+          "type": "string",
+          "minLength": 1
+        },
+        "cases": {
+          "description": "The parity cases it covers, each by its label and how it diverges.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["label", "kind"],
+            "properties": {
+              "label": { "type": "string", "minLength": 1 },
+              "kind": {
+                "description": "`verdict`: the classes reach the other verdict. `error`: they raise something other than a rejection. `encoding`: they accept the value but encode it back as another JSON value.",
+                "enum": ["verdict", "error", "encoding"]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

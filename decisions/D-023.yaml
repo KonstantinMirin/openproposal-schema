@@ -1,0 +1,65 @@
+format: 1
+id: D-023
+status: proposed
+kind: gap
+author: agent
+question: Which schema type expresses each § 2.2 and § 3 element that more than one schema type rests on, or that none does?
+covers:
+  - ir: key:3.1:available[]
+    digest: e56c463d4043e1f551eae09af84db75ecf3185079f60194536361b619af55af5
+    quote: "`available[]` | REQUIRED | The options the seller offers"
+  - ir: key:3.1:pricing#meaning/object:1
+    digest: 1d2ea6996d7c3bbf4808776d7399e4719b79687764674d92f08a885763ad61fe
+    quote: "{ option_id: { delta_cpm | delta_flat | delta_pct } }"
+  - ir: rule:2.2:696ee27b
+    digest: 9b517ad2b69750533a5be0079e02aaf389a5e013eceb9c55d4f37b9bb2c67388
+    quote: A field MUST carry either an inline value or a `catalog_ref`, never both.
+  - ir: rule:3:d5ed9b66
+    digest: 8ee5c176f11c87b1a19b1e7d35fdd893497044ef77aec2ec4063f1e9b242d0de
+    quote: Each option MAY carry a price delta.
+  - ir: rule:3.2:ee009430
+    digest: b70f59e2c68b16af32a8ad7ee513de31c1f1bd7a3c1540f17ba556688780a7cf
+    quote: "Every field marked `settable` MUST declare its bounds: either `allowed[]` (an enumerated set) or `min` / `max` (a numeric or date range)."
+  - ir: rule:3.2:4f3b0a9c
+    digest: 07c583d4952414b695fe884dd3b8b2257e046904bec68931d240feef4ad28988
+    quote: A field marked `settable` that carries a bare value and no bounds MUST be treated as `seller-set`.
+  - ir: code:2.2:1
+    digest: 5b0b87b43dbc9c1a24ed8f3e2bd71d22c5d790a6f786b980bd554f64a71436a0
+    quote: |-
+      catalog_ref: "<seller_namespace>/<collection>/<entry_id>@<version>"
+      example:     "examplepub/audiences/smb-decision-makers@3"
+options:
+  - id: defining-type
+    summary: >-
+      The schema that states what the element says:
+
+      - the selectable structure of § 3.1, for the `available[]` key and the
+      price-delta sentence
+
+      - the price delta of each `pricing` entry, for the delta object
+
+      - the reference grammar of `catalog_ref`, for the grammar
+
+      - the choice of an inline value or a `catalog_ref`, for "never both"
+
+      - the settable bounds with a `min` / `max` range, for the bounds sentence
+
+      - the settable bounds, for their bare-value fallback
+  - id: first-citer
+    summary: The first schema type that rests on the element.
+chosen: defining-type
+rationale: >-
+  The mapping rule `kernel-source` maps an element in the kernel's sections to
+  the one constructor or part that cites it. These elements are cited by
+  several: `List` also cites `available[]`, `Map` also cites the delta object,
+  and the catalog grammar is cited by the primitive, the part, and the
+  constructor. Each is mapped to the type whose shell or pattern states what
+  the element says. `available[]` is a key of the selectable structure. The
+  delta object is the value of each `pricing` entry. The grammar is the
+  pattern of `CatalogRef` (D-009). "Never both" is the union `CatalogRefOr`
+  builds. The bounds sentence is mapped to `Range`, the `min` / `max`
+  form a settable field's bounds take where they are a range, in
+  `frequency_cap`'s `max`; no settable field states the range at the field,
+  so no template allows both forms. The bare-value sentence is now the
+  fallback of `Settable` alone, so the rule `kernel-source` maps it. "Each option MAY carry a price delta" is
+  the optional `pricing` of `Selectable`.

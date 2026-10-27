@@ -1,0 +1,2385 @@
+{
+  "format": 1,
+  "lock": "with-open-prs",
+  "commit": "292bb51e654c2eef563d721eb6af8317371c906a",
+  "types": {
+    "ActivationRoute": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json#/$defs/ActivationRoute",
+      "minimal": "publisher_side",
+      "full": "publisher_side"
+    },
+    "ActivationRouteSelection": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json#/$defs/ActivationRouteSelection",
+      "minimal": {
+        "available": [],
+        "included": []
+      },
+      "full": {
+        "available": [
+          "publisher_side",
+          "clean_room"
+        ],
+        "included": [
+          "publisher_side"
+        ],
+        "pricing": {
+          "clean_room": {
+            "delta_cpm": 1.5
+          }
+        },
+        "max_select": 2
+      }
+    },
+    "AgreementRef": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/settlement/1/settlement.json#/$defs/AgreementRef",
+      "minimal": {},
+      "full": {
+        "agreement_id": "AGR-2026-AGENCYA-017",
+        "parties": [
+          "reg:examplepub-digital",
+          "seat-99812"
+        ],
+        "type": "upfront",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-12-31T23:59:59Z"
+      }
+    },
+    "AgreementType": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/settlement/1/settlement.json#/$defs/AgreementType",
+      "minimal": "upfront",
+      "full": "upfront"
+    },
+    "Amount": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/Amount",
+      "minimal": 18.5,
+      "full": 18.5
+    },
+    "ApiFramework": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/ApiFramework",
+      "minimal": 6,
+      "full": 6
+    },
+    "AppBundleEntry": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/AppBundleEntry",
+      "minimal": {
+        "bundle": "123456",
+        "platform": "roku"
+      },
+      "full": {
+        "bundle": "123456",
+        "platform": "roku"
+      }
+    },
+    "Approval": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/Approval",
+      "minimal": {},
+      "full": {}
+    },
+    "AppsEntry": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/AppsEntry",
+      "minimal": {
+        "bundle": "591283",
+        "platform": "roku"
+      },
+      "full": {
+        "bundle": "591283",
+        "domain": "examplepub.example",
+        "platform": "roku",
+        "storeurl": "https://channelstore.roku.com/details/591283"
+      }
+    },
+    "Assent": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/proposal/1/proposal.json#/$defs/Assent",
+      "minimal": {},
+      "full": {}
+    },
+    "AssetApprovalStatus": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/AssetApprovalStatus",
+      "minimal": "examplepub.example:custom_term",
+      "full": "examplepub.example:custom_term"
+    },
+    "AssetsEntry": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/AssetsEntry",
+      "minimal": {},
+      "full": {
+        "approval_status": "examplepub.example:pending_review",
+        "asset_id": "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b",
+        "format_ref": "display/300x250",
+        "submitted_at": "2026-09-22T14:30:00Z",
+        "url_or_tag": "https://ads.agency-a.example/tags/business-daily-300x250.js"
+      }
+    },
+    "AudiencesOption": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json#/$defs/AudiencesOption",
+      "minimal": {
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+      },
+      "full": {
+        "addressable_scale": 250000,
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+        "name": "SMB decision makers",
+        "provenance": "examplepub.example:first_party",
+        "taxonomy_ref": "IAB-AT1.1:301"
+      }
+    },
+    "AudiencesOptionOrCatalogRef": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json#/$defs/AudiencesOptionOrCatalogRef",
+      "minimal": {
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+      },
+      "full": {
+        "addressable_scale": 250000,
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+        "name": "SMB decision makers",
+        "provenance": "examplepub.example:first_party",
+        "taxonomy_ref": "IAB-AT1.1:301"
+      }
+    },
+    "AudiencesSelection": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json#/$defs/AudiencesSelection",
+      "minimal": {
+        "available": [],
+        "included": []
+      },
+      "full": {
+        "available": [
+          {
+            "addressable_scale": 250000,
+            "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+            "name": "SMB decision makers",
+            "provenance": "examplepub.example:first_party",
+            "taxonomy_ref": "IAB-AT1.1:301"
+          },
+          {
+            "addressable_scale": 500000,
+            "id": "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93",
+            "name": "High-net-worth investors",
+            "provenance": "examplepub.example:modeled",
+            "taxonomy_ref": "IAB-AT1.1:476"
+          }
+        ],
+        "included": [
+          "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+        ],
+        "pricing": {
+          "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93": {
+            "delta_cpm": 4
+          }
+        },
+        "max_select": 2
+      }
+    },
+    "Availability": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/Availability",
+      "minimal": {},
+      "full": {
+        "as_of": "2026-09-30T06:00:00Z",
+        "basis": "examplepub.example:ad_server_forecast",
+        "granularity": "P7D",
+        "quantity": 250000,
+        "type": "forecast",
+        "unit": "examplepub.example:impressions"
+      }
+    },
+    "AvailabilityBasis": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/AvailabilityBasis",
+      "minimal": "examplepub.example:custom_term",
+      "full": "examplepub.example:custom_term"
+    },
+    "AvailabilityType": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/AvailabilityType",
+      "minimal": "forecast",
+      "full": "forecast"
+    },
+    "AvailabilityUnit": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/AvailabilityUnit",
+      "minimal": "examplepub.example:custom_term",
+      "full": "examplepub.example:custom_term"
+    },
+    "Billing": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/settlement/1/settlement.json#/$defs/Billing",
+      "minimal": {},
+      "full": {
+        "billing_supplier_id": "reg:examplepub-sales-house",
+        "invoicing_party": "Example Publisher Sales House LLC",
+        "payment_terms": "Net 30 from the end of the calendar month",
+        "supplier_id": "reg:examplepub-digital"
+      }
+    },
+    "BuyerRequirements": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/execution/1/execution.json#/$defs/BuyerRequirements",
+      "minimal": {},
+      "full": {
+        "dsp_allowed": [
+          "dsp-a",
+          "dsp-b"
+        ],
+        "dsp_id": "dsp-a-prod",
+        "dsp_seat_id": "seat-99812",
+        "seat_owner_entity": "Agency A",
+        "seat_required": true
+      }
+    },
+    "BuyerSupplied": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json#/$defs/BuyerSupplied",
+      "minimal": {},
+      "full": {
+        "match_rate_expected": 0.65,
+        "segments": [
+          "agency-a:crm-q4-prospects",
+          "agency-a:crm-lapsed-buyers"
+        ],
+        "segments_allowed": true,
+        "suppression_allowed": true,
+        "suppression_list": {
+          "source": "advertiser_crm",
+          "size": 340000,
+          "match_method": "ramp_id"
+        }
+      }
+    },
+    "BuyingRoute": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/execution/1/execution.json#/$defs/BuyingRoute",
+      "minimal": "PUBLISHER_AD_SERVER",
+      "full": "PUBLISHER_AD_SERVER"
+    },
+    "CancellationPolicyOption": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/CancellationPolicyOption",
+      "minimal": {
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+      },
+      "full": {
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+      }
+    },
+    "CancellationPolicySelection": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/CancellationPolicySelection",
+      "minimal": {
+        "available": [],
+        "included": []
+      },
+      "full": {
+        "available": [
+          {
+            "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+          },
+          {
+            "id": "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93"
+          }
+        ],
+        "included": [
+          "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+        ],
+        "pricing": {
+          "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93": {
+            "delta_cpm": 18
+          }
+        },
+        "max_select": 2
+      }
+    },
+    "CatalogRef": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/CatalogRef",
+      "minimal": "examplepub/audiences/smb-decision-makers@3",
+      "full": "examplepub/audiences/smb-decision-makers@3"
+    },
+    "CatalogReference": {
+      "kind": "part",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/CatalogReference",
+      "minimal": {
+        "catalog_ref": "examplepub/audiences/smb-decision-makers@3"
+      },
+      "full": {
+        "catalog_ref": "examplepub/audiences/smb-decision-makers@3"
+      }
+    },
+    "Channel": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/line-item/1/line-item.json#/$defs/Channel",
+      "minimal": "display",
+      "full": "display"
+    },
+    "Commitment": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/Commitment",
+      "minimal": {
+        "amount": 80000,
+        "basis": "spend",
+        "flight_end": "2026-12-21T23:59:59Z",
+        "flight_start": "2026-10-06T00:00:00Z",
+        "idempotency_key": "8f42c1a9-6d3e-4b7a-9c15-2e0f4a6b8d71",
+        "proposal_id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+        "version": 1,
+        "currency": "USD"
+      },
+      "full": {
+        "amount": 80000,
+        "basis": "spend",
+        "currency": "USD",
+        "derived_units": 3333333,
+        "flight_end": "2026-12-21T23:59:59Z",
+        "flight_start": "2026-10-06T00:00:00Z",
+        "idempotency_key": "8f42c1a9-6d3e-4b7a-9c15-2e0f4a6b8d71",
+        "proposal_id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+        "version": 1
+      }
+    },
+    "CommitmentBasis": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/CommitmentBasis",
+      "minimal": "spend",
+      "full": "spend"
+    },
+    "CommitmentBounds": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/CommitmentBounds",
+      "minimal": {},
+      "full": {
+        "max_budget": 500000,
+        "max_impressions": 500000,
+        "min_budget": 10000,
+        "min_impressions": 100000
+      }
+    },
+    "CommittedMetricsEntry": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/guarantees/1/guarantees.json#/$defs/CommittedMetricsEntry",
+      "minimal": {},
+      "full": {
+        "basis": "examplepub.example:mrc",
+        "metric": "viewable_rate",
+        "value": 0.7
+      }
+    },
+    "ContentDetail": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/ContentDetail",
+      "minimal": {},
+      "full": {}
+    },
+    "CostMethod": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/CostMethod",
+      "minimal": "CPM",
+      "full": "CPM"
+    },
+    "Count": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/Count",
+      "minimal": 250000,
+      "full": 250000
+    },
+    "CreativeDelivery": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/CreativeDelivery",
+      "minimal": {},
+      "full": {
+        "endpoint": "https://creative.examplepub.example/v1/tags",
+        "method": "buyer_hosted",
+        "protocol": "examplepub.example:javascript_tag",
+        "secure_required": true
+      }
+    },
+    "CreativeDeliveryMethod": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/CreativeDeliveryMethod",
+      "minimal": "buyer_hosted",
+      "full": "buyer_hosted"
+    },
+    "CreativeDeliveryProtocol": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/CreativeDeliveryProtocol",
+      "minimal": "examplepub.example:custom_term",
+      "full": "examplepub.example:custom_term"
+    },
+    "CreativePolicy": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/CreativePolicy",
+      "minimal": {},
+      "full": {}
+    },
+    "CredentialScheme": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/eligibility/1/eligibility.json#/$defs/CredentialScheme",
+      "minimal": "jwt_keypair",
+      "full": "jwt_keypair"
+    },
+    "CredentialType": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/eligibility/1/eligibility.json#/$defs/CredentialType",
+      "minimal": "dsp_seat",
+      "full": "dsp_seat"
+    },
+    "CurrencyCode": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/CurrencyCode",
+      "minimal": "USD",
+      "full": "USD"
+    },
+    "DayName": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/DayName",
+      "minimal": "monday",
+      "full": "monday"
+    },
+    "DaypartBounds": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/DaypartBounds",
+      "minimal": {
+        "allowed": []
+      },
+      "full": {
+        "allowed": [
+          {
+            "days": [
+              "monday",
+              "friday"
+            ],
+            "start": "06:00",
+            "end": "10:00"
+          }
+        ]
+      }
+    },
+    "DaypartWindow": {
+      "kind": "part",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/DaypartWindow",
+      "minimal": {
+        "days": [
+          "monday",
+          "friday"
+        ],
+        "end": "10:00",
+        "start": "06:00"
+      },
+      "full": {
+        "days": [
+          "monday",
+          "friday"
+        ],
+        "start": "06:00",
+        "end": "10:00"
+      }
+    },
+    "DeviceBounds": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/DeviceBounds",
+      "minimal": {
+        "allowed": []
+      },
+      "full": {
+        "allowed": [
+          "EP-104233"
+        ]
+      }
+    },
+    "Digest": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/Digest",
+      "minimal": "8bc1e566c463606f2971c6f29669a988ff5fa2e1cba04721e63b871133a4958b",
+      "full": "8bc1e566c463606f2971c6f29669a988ff5fa2e1cba04721e63b871133a4958b"
+    },
+    "Domain": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/Domain",
+      "minimal": "examplepub.example",
+      "full": "examplepub.example"
+    },
+    "Duration": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/Duration",
+      "minimal": "P7D",
+      "full": "P7D"
+    },
+    "Enforcement": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/Enforcement",
+      "minimal": "pre_serve",
+      "full": "pre_serve"
+    },
+    "Environment": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/Environment",
+      "minimal": "web_desktop",
+      "full": "web_desktop"
+    },
+    "EnvironmentsSelection": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/EnvironmentsSelection",
+      "minimal": {
+        "available": [],
+        "included": []
+      },
+      "full": {
+        "available": [
+          "web_desktop",
+          "web_mobile"
+        ],
+        "included": [
+          "web_desktop"
+        ],
+        "pricing": {
+          "web_mobile": {
+            "delta_cpm": 18
+          }
+        },
+        "max_select": 2
+      }
+    },
+    "ExclusionType": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/ExclusionType",
+      "minimal": "domain",
+      "full": "domain"
+    },
+    "Exclusions": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/Exclusions",
+      "minimal": {},
+      "full": {
+        "app_bundle": [
+          {
+            "bundle": "123456",
+            "platform": "roku"
+          }
+        ],
+        "domain": [
+          "example-gambling.example"
+        ],
+        "iab_content_category": [
+          "IAB-CT3.0:<id>"
+        ],
+        "keyword": [
+          "crypto"
+        ],
+        "list_ref": {
+          "sha256": "8bc1e566c463606f2971c6f29669a988ff5fa2e1cba04721e63b871133a4958b",
+          "url": "https://lists.agency-a.example/blocklists/q4-2026-domains.txt"
+        }
+      }
+    },
+    "ExclusionsAccepted": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/ExclusionsAccepted",
+      "minimal": {},
+      "full": {
+        "enforcement": {
+          "domain": "pre_serve"
+        },
+        "max_entries": {
+          "domain": 5000
+        },
+        "types": [
+          "domain",
+          "app_bundle"
+        ],
+        "verification": [
+          "IAS",
+          "DoubleVerify"
+        ]
+      }
+    },
+    "ExclusivityOption": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/ExclusivityOption",
+      "minimal": {
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+      },
+      "full": {
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+      }
+    },
+    "ExclusivitySelection": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/ExclusivitySelection",
+      "minimal": {
+        "available": [],
+        "included": []
+      },
+      "full": {
+        "available": [
+          {
+            "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+          },
+          {
+            "id": "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93"
+          }
+        ],
+        "included": [
+          "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+        ],
+        "pricing": {
+          "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93": {
+            "delta_cpm": 18
+          }
+        },
+        "max_select": 2
+      }
+    },
+    "ExternalId": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/ExternalId",
+      "minimal": "EP-104233",
+      "full": "EP-104233"
+    },
+    "ExternalReferenceRole": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/settlement/1/settlement.json#/$defs/ExternalReferenceRole",
+      "minimal": "io",
+      "full": "io"
+    },
+    "ExternalReferencesEntry": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/settlement/1/settlement.json#/$defs/ExternalReferencesEntry",
+      "minimal": {},
+      "full": {
+        "id": "IO-2026-004417",
+        "namespace": "io_id",
+        "role": "io",
+        "system": "mediaocean-prisma"
+      }
+    },
+    "FormatId": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/FormatId",
+      "minimal": "display/300x250",
+      "full": "display/300x250"
+    },
+    "FormatsSelection": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/FormatsSelection",
+      "minimal": {
+        "available": [],
+        "included": []
+      },
+      "full": {
+        "available": [
+          "display/300x250",
+          "display/728x90"
+        ],
+        "included": [
+          "display/300x250"
+        ],
+        "pricing": {
+          "display/728x90": {
+            "delta_cpm": 3
+          }
+        },
+        "max_select": 2
+      }
+    },
+    "Fraction": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/Fraction",
+      "minimal": 0.7,
+      "full": 0.7
+    },
+    "FrequencyCap": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/FrequencyCap",
+      "minimal": {},
+      "full": {
+        "basis": "device",
+        "max": {
+          "min": 1,
+          "max": 5
+        },
+        "period": "day"
+      }
+    },
+    "FrequencyCapBasis": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/FrequencyCapBasis",
+      "minimal": "device",
+      "full": "device"
+    },
+    "FrequencyCapPeriod": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/FrequencyCapPeriod",
+      "minimal": "day",
+      "full": "day"
+    },
+    "Geo": {
+      "kind": "union",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/Geo",
+      "minimal": {
+        "available": [],
+        "included": []
+      },
+      "full": {
+        "available": [
+          "SGP",
+          "THA"
+        ],
+        "included": [
+          "SGP"
+        ],
+        "pricing": {
+          "THA": {
+            "delta_cpm": 18
+          }
+        },
+        "max_select": 4
+      }
+    },
+    "GeoBounds": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/GeoBounds",
+      "minimal": {
+        "allowed": []
+      },
+      "full": {
+        "allowed": [
+          "US-NY",
+          "US-CA"
+        ]
+      }
+    },
+    "GeoSelection": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/GeoSelection",
+      "minimal": {
+        "available": [],
+        "included": []
+      },
+      "full": {
+        "available": [
+          "SGP",
+          "THA"
+        ],
+        "included": [
+          "SGP"
+        ],
+        "pricing": {
+          "THA": {
+            "delta_cpm": 18
+          }
+        },
+        "max_select": 4
+      }
+    },
+    "HoldScope": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/HoldScope",
+      "minimal": "line_item",
+      "full": "line_item"
+    },
+    "HoldState": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/HoldState",
+      "minimal": "none",
+      "full": "none"
+    },
+    "HoldStatus": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/HoldStatus",
+      "minimal": {},
+      "full": {
+        "hold_available": true,
+        "hold_duration": "P7D",
+        "hold_expires_at": "2026-10-01T00:00:00Z",
+        "hold_scope": "line_item",
+        "state": "none"
+      }
+    },
+    "LineItem": {
+      "kind": "document",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "minimal": {},
+      "full": {
+        "activation_route": {
+          "available": [
+            "publisher_side",
+            "clean_room"
+          ],
+          "included": [
+            "publisher_side"
+          ],
+          "pricing": {
+            "clean_room": {
+              "delta_cpm": 1.5
+            }
+          },
+          "max_select": 2
+        },
+        "addressable_scale": 3200000,
+        "agreement_ref": {
+          "agreement_id": "AGR-2026-AGENCYA-017",
+          "parties": [
+            "reg:examplepub-digital",
+            "seat-99812"
+          ],
+          "type": "upfront",
+          "valid_from": "2026-01-01T00:00:00Z",
+          "valid_until": "2026-12-31T23:59:59Z"
+        },
+        "approval": {
+          "review_sla": "P2D",
+          "revision_policy": "Two rounds of revisions within the review SLA; further rounds by agreement."
+        },
+        "assets": [
+          {
+            "approval_status": "examplepub.example:pending_review",
+            "asset_id": "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b",
+            "format_ref": "display/300x250",
+            "submitted_at": "2026-09-22T14:30:00Z",
+            "url_or_tag": "https://ads.agency-a.example/tags/business-daily-300x250.js"
+          }
+        ],
+        "audiences": {
+          "available": [
+            {
+              "addressable_scale": 250000,
+              "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+              "name": "SMB decision makers",
+              "provenance": "examplepub.example:first_party",
+              "taxonomy_ref": "IAB-AT1.1:301"
+            },
+            {
+              "addressable_scale": 500000,
+              "id": "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93",
+              "name": "High-net-worth investors",
+              "provenance": "examplepub.example:modeled",
+              "taxonomy_ref": "IAB-AT1.1:476"
+            }
+          ],
+          "included": [
+            "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+          ],
+          "pricing": {
+            "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93": {
+              "delta_cpm": 4
+            }
+          },
+          "max_select": 2
+        },
+        "availability": {
+          "as_of": "2026-09-30T06:00:00Z",
+          "basis": "examplepub.example:ad_server_forecast",
+          "granularity": "P7D",
+          "quantity": 250000,
+          "type": "forecast",
+          "unit": "examplepub.example:impressions"
+        },
+        "billing": {
+          "billing_supplier_id": "reg:examplepub-sales-house",
+          "invoicing_party": "Example Publisher Sales House LLC",
+          "payment_terms": "Net 30 from the end of the calendar month",
+          "supplier_id": "reg:examplepub-digital"
+        },
+        "buyer_requirements": {
+          "dsp_allowed": [
+            "dsp-a",
+            "dsp-b"
+          ],
+          "dsp_id": "dsp-a-prod",
+          "dsp_seat_id": "seat-99812",
+          "seat_owner_entity": "Agency A",
+          "seat_required": true
+        },
+        "buyer_supplied": {
+          "match_rate_expected": 0.65,
+          "segments": [
+            "agency-a:crm-q4-prospects",
+            "agency-a:crm-lapsed-buyers"
+          ],
+          "segments_allowed": true,
+          "suppression_allowed": true,
+          "suppression_list": {
+            "source": "advertiser_crm",
+            "size": 340000,
+            "match_method": "ramp_id"
+          }
+        },
+        "buying_route": "PUBLISHER_AD_SERVER",
+        "cancellation_policy": {
+          "available": [
+            {
+              "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+            },
+            {
+              "id": "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93"
+            }
+          ],
+          "included": [
+            "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+          ],
+          "pricing": {
+            "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93": {
+              "delta_cpm": 18
+            }
+          },
+          "max_select": 2
+        },
+        "channel": "display",
+        "commitment": {
+          "amount": 80000,
+          "basis": "spend",
+          "currency": "USD",
+          "derived_units": 3333333,
+          "flight_end": "2026-12-21T23:59:59Z",
+          "flight_start": "2026-10-06T00:00:00Z",
+          "idempotency_key": "8f42c1a9-6d3e-4b7a-9c15-2e0f4a6b8d71",
+          "proposal_id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+          "version": 1
+        },
+        "commitment_bounds": {
+          "max_budget": 500000,
+          "max_impressions": 500000,
+          "min_budget": 10000,
+          "min_impressions": 100000
+        },
+        "committed_metrics": [
+          {
+            "basis": "examplepub.example:mrc",
+            "metric": "viewable_rate",
+            "value": 0.7
+          }
+        ],
+        "content_detail": {
+          "shows": [
+            "Market Open"
+          ],
+          "series": [
+            "Earnings Season Live"
+          ],
+          "sections": [
+            "Markets",
+            "Small Business"
+          ],
+          "network_verticals": [
+            "Business and Finance"
+          ]
+        },
+        "correlation_id": "0f1e2d3c-4b5a-4968-8776-655443322110",
+        "creative_delivery": {
+          "endpoint": "https://creative.examplepub.example/v1/tags",
+          "method": "buyer_hosted",
+          "protocol": "examplepub.example:javascript_tag",
+          "secure_required": true
+        },
+        "creative_policy": {
+          "content_restrictions": [
+            "No political or issue advertising",
+            "No auto-playing audio"
+          ],
+          "category_restrictions": [
+            "Tobacco",
+            "Cannabis"
+          ]
+        },
+        "daypart": {
+          "allowed": [
+            {
+              "days": [
+                "monday",
+                "friday"
+              ],
+              "start": "06:00",
+              "end": "10:00"
+            }
+          ]
+        },
+        "deal_id_issuance": "Issued at commitment time: the seller's SSP mints one deal ID per committed line item and returns it with the commitment.",
+        "device": {
+          "allowed": [
+            "2",
+            "4",
+            "5"
+          ]
+        },
+        "eligible_bidders": [
+          "seat-99812",
+          "seat-40517"
+        ],
+        "environments": {
+          "available": [
+            "web_desktop",
+            "web_mobile"
+          ],
+          "included": [
+            "web_desktop"
+          ],
+          "pricing": {
+            "web_mobile": {
+              "delta_cpm": 18
+            }
+          },
+          "max_select": 2
+        },
+        "exclusions": {},
+        "exclusions_accepted": {
+          "enforcement": {
+            "domain": "pre_serve"
+          },
+          "max_entries": {
+            "domain": 5000
+          },
+          "types": [
+            "domain",
+            "app_bundle"
+          ],
+          "verification": [
+            "IAS",
+            "DoubleVerify"
+          ]
+        },
+        "exclusivity": {
+          "available": [
+            {
+              "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+            },
+            {
+              "id": "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93"
+            }
+          ],
+          "included": [
+            "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+          ],
+          "pricing": {
+            "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93": {
+              "delta_cpm": 18
+            }
+          },
+          "max_select": 2
+        },
+        "external_references": [
+          {
+            "id": "IO-2026-004417",
+            "namespace": "io_id",
+            "role": "io",
+            "system": "mediaocean-prisma"
+          }
+        ],
+        "formats": {
+          "available": [
+            "display/300x250",
+            "display/728x90"
+          ],
+          "included": [
+            "display/300x250"
+          ],
+          "pricing": {
+            "display/728x90": {
+              "delta_cpm": 3
+            }
+          },
+          "max_select": 2
+        },
+        "frequency_cap": {
+          "basis": "device",
+          "max": {
+            "min": 1,
+            "max": 5
+          },
+          "period": "day"
+        },
+        "geo": {
+          "available": [
+            "SGP",
+            "THA"
+          ],
+          "included": [
+            "SGP"
+          ],
+          "pricing": {
+            "THA": {
+              "delta_cpm": 18
+            }
+          },
+          "max_select": 4
+        },
+        "hold_status": {
+          "hold_available": true,
+          "hold_duration": "P7D",
+          "hold_expires_at": "2026-10-01T00:00:00Z",
+          "hold_scope": "line_item",
+          "state": "none"
+        },
+        "line_item_id": "d2a7c5e8-4b1f-4f6a-9c3e-7e8f9a0b1c2d",
+        "materials_due": "2026-09-24T17:00:00Z",
+        "measurement_source": {
+          "available": [
+            {
+              "attribution_window": "P30D",
+              "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+              "qualifier": "MRC-accredited viewability for desktop and mobile web",
+              "vendor": "IAS"
+            },
+            {
+              "attribution_window": "P30D",
+              "id": "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93",
+              "qualifier": "Fraud-filtered impressions, with GIVT and SIVT removed",
+              "vendor": "DoubleVerify"
+            }
+          ],
+          "included": [
+            "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+          ],
+          "pricing": {
+            "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93": {
+              "delta_cpm": 18
+            }
+          },
+          "max_select": 2
+        },
+        "min_spend": 10000,
+        "placement": {
+          "api": [
+            6,
+            7
+          ],
+          "instl": true,
+          "playmethod": [
+            3
+          ],
+          "plcmt": 1,
+          "refresh": {
+            "min_interval_s": "PT30S"
+          },
+          "reward": true,
+          "skip": true,
+          "skipafter": "PT5S"
+        },
+        "pricing": [
+          {
+            "agreed_rate": 24,
+            "cost_method": "CPM",
+            "currency": "USD",
+            "floor": 21,
+            "gross_rate": 24,
+            "price_valid_until": "2026-11-15T23:59:59Z",
+            "seller_rate": 20.4
+          }
+        ],
+        "production": {
+          "available": [
+            {
+              "build_owner": "seller",
+              "cost": 7500,
+              "custom_unit": "Homepage takeover with a branded masthead",
+              "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+              "lead_time": "P10D"
+            },
+            {
+              "build_owner": "buyer",
+              "cost": 12000,
+              "custom_unit": "Interactive earnings-calendar unit",
+              "id": "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93",
+              "lead_time": "P21D"
+            }
+          ],
+          "included": [
+            "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+          ],
+          "pricing": {
+            "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93": {
+              "delta_flat": 12000
+            }
+          },
+          "max_select": 2
+        },
+        "properties": {
+          "available": [
+            {
+              "apps": [
+                {
+                  "bundle": "591283",
+                  "domain": "examplepub.example",
+                  "platform": "roku",
+                  "storeurl": "https://channelstore.roku.com/details/591283"
+                }
+              ],
+              "domains": [
+                "examplepub.example"
+              ],
+              "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+              "name": "Example Publisher Business News",
+              "supported_formats": [
+                "display/300x250"
+              ]
+            },
+            {
+              "apps": [
+                {
+                  "bundle": "1459921234",
+                  "domain": "markets-weekly.example",
+                  "platform": "ios",
+                  "storeurl": "https://apps.apple.com/us/app/id1459921234"
+                }
+              ],
+              "domains": [
+                "markets-weekly.example"
+              ],
+              "id": "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93",
+              "name": "Markets Weekly",
+              "supported_formats": [
+                "display/728x90"
+              ]
+            }
+          ],
+          "included": [
+            "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+          ],
+          "pricing": {
+            "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93": {
+              "delta_cpm": 2
+            }
+          },
+          "max_select": 2
+        },
+        "reporting": {
+          "available": [
+            {
+              "cadence": "P1D",
+              "delivery_mechanism": "examplepub.example:api",
+              "feed_type": "aggregate",
+              "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+              "latency": "PT24H",
+              "metrics_provided": [
+                "viewable_rate"
+              ]
+            },
+            {
+              "cadence": "P1D",
+              "delivery_mechanism": "examplepub.example:s3",
+              "feed_type": "log_level",
+              "id": "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93",
+              "latency": "PT6H",
+              "metrics_provided": [
+                "completion_rate"
+              ]
+            }
+          ],
+          "included": [
+            "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+          ],
+          "pricing": {
+            "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93": {
+              "delta_flat": 2500
+            }
+          },
+          "max_select": 2
+        },
+        "required_credentials": [
+          {
+            "id_required": true,
+            "issuer": "dsp-a",
+            "scheme": "jwt_keypair",
+            "type": "dsp_seat"
+          }
+        ],
+        "requires": {
+          "all_of": [
+            "6b0e2f4a-8c1d-4e3b-9a7f-2d5c8e1b4a90"
+          ],
+          "any_of": [
+            "c47d9e21-5f3a-4b8c-8e6d-0a1b2c3d4e5f",
+            "9e8d7c6b-5a49-4382-9716-a5b4c3d2e1f0"
+          ],
+          "min_commitment": [
+            {
+              "amount": 50000,
+              "basis": "spend",
+              "currency": "USD",
+              "line_item_id": "6b0e2f4a-8c1d-4e3b-9a7f-2d5c8e1b4a90"
+            }
+          ]
+        },
+        "serving_mode": "client_side",
+        "serving_platform": "Google Ad Manager, the seller's ad server",
+        "shortfall_remedy": {
+          "available": [
+            "makegood",
+            "credit"
+          ],
+          "included": [
+            "makegood"
+          ],
+          "pricing": {
+            "credit": {
+              "delta_cpm": 18
+            }
+          },
+          "max_select": 2
+        },
+        "specs": {
+          "max_file_size_kb": 150,
+          "file_types": [
+            "image/png",
+            "image/jpeg",
+            "text/html"
+          ],
+          "animation_max_s": 15
+        },
+        "status": "published",
+        "supported_order_systems": [
+          "mediaocean-prisma",
+          "basis"
+        ],
+        "terms_acceptance_required": true,
+        "terms_ref": {
+          "sha256": "8bc1e566c463606f2971c6f29669a988ff5fa2e1cba04721e63b871133a4958b",
+          "url": "https://examplepub.example/legal/io-terms-2026.pdf",
+          "version": "2026.1"
+        },
+        "third_party_tags": {
+          "wrapper_types": [
+            "javascript",
+            "iframe"
+          ],
+          "vast_versions": [
+            "4.1",
+            "4.2"
+          ]
+        },
+        "time_zone": "America/New_York",
+        "transaction_mechanism": {
+          "available": [
+            "PROGRAMMATIC_GUARANTEED",
+            "PREFERRED_DEAL"
+          ],
+          "included": [
+            "PROGRAMMATIC_GUARANTEED"
+          ],
+          "pricing": {
+            "PREFERRED_DEAL": {
+              "delta_cpm": 18
+            }
+          },
+          "max_select": 2
+        },
+        "visibility": "registry_gated"
+      },
+      "notes": [
+        {
+          "path": "/exclusions",
+          "holds": "minimal",
+          "reason": "rule:5.5:2eab2842: /exclusions/iab_content_category: `exclusions_accepted.types` doesn't list `iab_content_category`"
+        }
+      ],
+      "illustrative": [
+        {
+          "path": "/approval",
+          "note": "The structure is our proposal in D-016's feedback, not the specification's: `{ review_sla, revision_policy }`, the SLA a length of time. The schema keeps `approval` an open object."
+        },
+        {
+          "path": "/content_detail",
+          "note": "The structure is our proposal in D-016's feedback, not the specification's: `{ shows[], series[], sections[], network_verticals[] }`. The schema keeps `content_detail` an open object."
+        },
+        {
+          "path": "/creative_policy",
+          "note": "The structure is our proposal in D-016's feedback, not the specification's: `{ content_restrictions[], category_restrictions[] }`. The schema keeps `creative_policy` an open object."
+        },
+        {
+          "path": "/device",
+          "note": "AdCOM 1.0 device type codes, Personal Computer (2), Phone (4), and Tablet (5), the device types of `web_desktop` and `web_mobile`. They're strings, since the schema types a device category as an external ID."
+        },
+        {
+          "path": "/specs",
+          "note": "Illustrative only: the format registry entry of each format defines `specs`, and these members are ours, not the specification's. The schema keeps `specs` an open object."
+        },
+        {
+          "path": "/third_party_tags",
+          "note": "The structure is our proposal in D-016's feedback, not the specification's: `{ wrapper_types[], vast_versions[] }`. The schema keeps `third_party_tags` an open object."
+        }
+      ]
+    },
+    "LineItemStatus": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/line-item/1/line-item.json#/$defs/LineItemStatus",
+      "minimal": "published",
+      "full": "published"
+    },
+    "LineItemSummary": {
+      "kind": "profile",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "minimal": {
+        "addressable_scale": 3200000,
+        "channel": "display",
+        "committed_metrics": [],
+        "content_detail": {},
+        "environments": {
+          "available": []
+        },
+        "formats": {
+          "included": []
+        },
+        "has_requires": true,
+        "line_item_id": "d2a7c5e8-4b1f-4f6a-9c3e-7e8f9a0b1c2d",
+        "min_spend": 10000,
+        "pricing": [],
+        "transaction_mechanism": {
+          "available": [],
+          "included": []
+        }
+      },
+      "full": {
+        "addressable_scale": 3200000,
+        "channel": "display",
+        "committed_metrics": [
+          {
+            "basis": "examplepub.example:mrc",
+            "metric": "viewable_rate",
+            "value": 0.7
+          }
+        ],
+        "content_detail": {
+          "shows": [
+            "Market Open"
+          ],
+          "series": [
+            "Earnings Season Live"
+          ],
+          "sections": [
+            "Markets",
+            "Small Business"
+          ],
+          "network_verticals": [
+            "Business and Finance"
+          ]
+        },
+        "environments": {
+          "available": [
+            "web_desktop"
+          ]
+        },
+        "formats": {
+          "included": [
+            "display/300x250"
+          ]
+        },
+        "has_requires": true,
+        "line_item_id": "d2a7c5e8-4b1f-4f6a-9c3e-7e8f9a0b1c2d",
+        "min_spend": 10000,
+        "placement": {
+          "instl": true,
+          "plcmt": 1,
+          "reward": true,
+          "skip": true
+        },
+        "pricing": [
+          {
+            "cost_method": "CPM",
+            "currency": "USD",
+            "gross_rate": 24
+          }
+        ],
+        "properties": {
+          "available": [
+            {
+              "name": "Example Publisher Business News"
+            }
+          ]
+        },
+        "transaction_mechanism": {
+          "available": [
+            "PROGRAMMATIC_GUARANTEED",
+            "PREFERRED_DEAL"
+          ],
+          "included": [
+            "PROGRAMMATIC_GUARANTEED"
+          ],
+          "pricing": {
+            "PREFERRED_DEAL": {
+              "delta_cpm": 18
+            }
+          },
+          "max_select": 2
+        }
+      },
+      "illustrative": [
+        {
+          "path": "/content_detail",
+          "note": "The structure is our proposal in D-016's feedback, not the specification's: `{ shows[], series[], sections[], network_verticals[] }`. The schema keeps `content_detail` an open object."
+        }
+      ]
+    },
+    "LineItemSummaryEnvironmentsSelection": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryEnvironmentsSelection",
+      "minimal": {
+        "available": []
+      },
+      "full": {
+        "available": [
+          "web_desktop"
+        ]
+      }
+    },
+    "LineItemSummaryFormatsSelection": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryFormatsSelection",
+      "minimal": {
+        "included": []
+      },
+      "full": {
+        "included": [
+          "display/300x250"
+        ]
+      }
+    },
+    "LineItemSummaryPlacement": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPlacement",
+      "minimal": {},
+      "full": {
+        "instl": true,
+        "plcmt": 1,
+        "reward": true,
+        "skip": true
+      }
+    },
+    "LineItemSummaryPricingEntry": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPricingEntry",
+      "minimal": {
+        "cost_method": "CPM",
+        "currency": "USD",
+        "gross_rate": 24
+      },
+      "full": {
+        "cost_method": "CPM",
+        "currency": "USD",
+        "gross_rate": 24
+      }
+    },
+    "LineItemSummaryPropertiesOption": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesOption",
+      "minimal": {},
+      "full": {
+        "name": "Example Publisher Business News"
+      }
+    },
+    "LineItemSummaryPropertiesOptionOrCatalogRef": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesOptionOrCatalogRef",
+      "minimal": {},
+      "full": {
+        "name": "Example Publisher Business News"
+      }
+    },
+    "LineItemSummaryPropertiesSelection": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesSelection",
+      "minimal": {
+        "available": []
+      },
+      "full": {
+        "available": [
+          {
+            "name": "Example Publisher Business News"
+          }
+        ]
+      }
+    },
+    "LinkedExecution": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/proposal/1/proposal.json#/$defs/LinkedExecution",
+      "minimal": "none",
+      "full": "none"
+    },
+    "ListRef": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/ListRef",
+      "minimal": {},
+      "full": {
+        "sha256": "8bc1e566c463606f2971c6f29669a988ff5fa2e1cba04721e63b871133a4958b",
+        "url": "https://lists.agency-a.example/blocklists/q4-2026-domains.txt"
+      }
+    },
+    "Manifest": {
+      "kind": "document",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/manifest.json",
+      "minimal": {},
+      "full": {
+        "generated_at": "2026-10-01T06:00:00Z",
+        "proposals": [
+          {
+            "description": "Cross-channel Example Publisher US package spanning display, in-stream video and CTV. Business and financial audience skew, weekday-heavy delivery.",
+            "full_url": "https://examplepub.example/openproposal/examplepub-us-q4-2026-omni",
+            "linked_execution": "none",
+            "proposal_id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+            "seller_name": "Example Publisher US",
+            "valid_from": "2026-10-01T00:00:00Z",
+            "valid_until": "2026-12-31T23:59:59Z",
+            "version": 1
+          }
+        ],
+        "seller_id": "reg:examplepub-digital",
+        "spec_version": "3.0"
+      }
+    },
+    "MaterialsDue": {
+      "kind": "union",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/MaterialsDue",
+      "minimal": "2026-11-02T09:00:00Z",
+      "full": "2026-11-02T09:00:00Z"
+    },
+    "MaxRange": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/MaxRange",
+      "minimal": {
+        "max": 5
+      },
+      "full": {
+        "min": 1,
+        "max": 5
+      }
+    },
+    "MeasurementBasis": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/guarantees/1/guarantees.json#/$defs/MeasurementBasis",
+      "minimal": "examplepub.example:custom_term",
+      "full": "examplepub.example:custom_term"
+    },
+    "MeasurementSourceOption": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/guarantees/1/guarantees.json#/$defs/MeasurementSourceOption",
+      "minimal": {
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+      },
+      "full": {
+        "attribution_window": "P30D",
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+        "qualifier": "MRC-accredited viewability for desktop and mobile web",
+        "vendor": "IAS"
+      }
+    },
+    "MeasurementSourceSelection": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/guarantees/1/guarantees.json#/$defs/MeasurementSourceSelection",
+      "minimal": {
+        "available": [],
+        "included": []
+      },
+      "full": {
+        "available": [
+          {
+            "attribution_window": "P30D",
+            "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+            "qualifier": "MRC-accredited viewability for desktop and mobile web",
+            "vendor": "IAS"
+          },
+          {
+            "attribution_window": "P30D",
+            "id": "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93",
+            "qualifier": "Fraud-filtered impressions, with GIVT and SIVT removed",
+            "vendor": "DoubleVerify"
+          }
+        ],
+        "included": [
+          "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+        ],
+        "pricing": {
+          "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93": {
+            "delta_cpm": 18
+          }
+        },
+        "max_select": 2
+      }
+    },
+    "Metric": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/guarantees/1/guarantees.json#/$defs/Metric",
+      "minimal": "viewable_rate",
+      "full": "viewable_rate"
+    },
+    "MinCommitmentEntry": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/MinCommitmentEntry",
+      "minimal": {},
+      "full": {
+        "amount": 50000,
+        "basis": "spend",
+        "currency": "USD",
+        "line_item_id": "6b0e2f4a-8c1d-4e3b-9a7f-2d5c8e1b4a90"
+      }
+    },
+    "NamespacedTerm": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/NamespacedTerm",
+      "minimal": "examplepub.example:custom_term",
+      "full": "examplepub.example:custom_term"
+    },
+    "NegotiationAction": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/proposal/1/proposal.json#/$defs/NegotiationAction",
+      "minimal": "proposed",
+      "full": "proposed"
+    },
+    "NegotiationHistoryEntry": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/proposal/1/proposal.json#/$defs/NegotiationHistoryEntry",
+      "minimal": {},
+      "full": {
+        "action": "proposed",
+        "actor": "seller",
+        "at": "2026-09-30T16:00:00Z",
+        "fields_changed": [
+          "pricing[].gross_rate",
+          "pricing[].floor"
+        ],
+        "version": 1
+      }
+    },
+    "Party": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/Party",
+      "minimal": "seller",
+      "full": "seller"
+    },
+    "PercentChange": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/PercentChange",
+      "minimal": 10,
+      "full": 10
+    },
+    "Placement": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/Placement",
+      "minimal": {},
+      "full": {
+        "api": [
+          6,
+          7
+        ],
+        "instl": true,
+        "playmethod": [
+          3
+        ],
+        "plcmt": 1,
+        "refresh": {
+          "min_interval_s": "PT30S"
+        },
+        "reward": true,
+        "skip": true,
+        "skipafter": "PT5S"
+      }
+    },
+    "PlaybackMethod": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/PlaybackMethod",
+      "minimal": 3,
+      "full": 3
+    },
+    "PlcmtSubtype": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/PlcmtSubtype",
+      "minimal": 1,
+      "full": 1
+    },
+    "PriceAdjustment": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/PriceAdjustment",
+      "minimal": 2.5,
+      "full": 2.5
+    },
+    "PriceDelta": {
+      "kind": "part",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/PriceDelta",
+      "minimal": {
+        "delta_cpm": 18
+      },
+      "full": {
+        "delta_cpm": 18
+      },
+      "notes": [
+        {
+          "path": "/delta_flat",
+          "holds": "omitted",
+          "reason": "the schema: /: must NOT have more than 1 properties"
+        },
+        {
+          "path": "/delta_pct",
+          "holds": "omitted",
+          "reason": "the schema: /: must NOT have more than 1 properties"
+        }
+      ]
+    },
+    "PricingEntry": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/PricingEntry",
+      "minimal": {},
+      "full": {
+        "agreed_rate": 24,
+        "cost_method": "CPM",
+        "currency": "USD",
+        "floor": 21,
+        "gross_rate": 24,
+        "price_valid_until": "2026-11-15T23:59:59Z",
+        "seller_rate": 20.4
+      }
+    },
+    "ProductionOption": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/ProductionOption",
+      "minimal": {
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+      },
+      "full": {
+        "build_owner": "seller",
+        "cost": 7500,
+        "custom_unit": "Homepage takeover with a branded masthead",
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+        "lead_time": "P10D"
+      }
+    },
+    "ProductionSelection": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/ProductionSelection",
+      "minimal": {
+        "available": [],
+        "included": []
+      },
+      "full": {
+        "available": [
+          {
+            "build_owner": "seller",
+            "cost": 7500,
+            "custom_unit": "Homepage takeover with a branded masthead",
+            "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+            "lead_time": "P10D"
+          },
+          {
+            "build_owner": "buyer",
+            "cost": 12000,
+            "custom_unit": "Interactive earnings-calendar unit",
+            "id": "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93",
+            "lead_time": "P21D"
+          }
+        ],
+        "included": [
+          "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+        ],
+        "pricing": {
+          "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93": {
+            "delta_flat": 12000
+          }
+        },
+        "max_select": 2
+      }
+    },
+    "PropertiesOption": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/PropertiesOption",
+      "minimal": {
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+      },
+      "full": {
+        "apps": [
+          {
+            "bundle": "591283",
+            "domain": "examplepub.example",
+            "platform": "roku",
+            "storeurl": "https://channelstore.roku.com/details/591283"
+          }
+        ],
+        "domains": [
+          "examplepub.example"
+        ],
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+        "name": "Example Publisher Business News",
+        "supported_formats": [
+          "display/300x250"
+        ]
+      }
+    },
+    "PropertiesOptionOrCatalogRef": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/PropertiesOptionOrCatalogRef",
+      "minimal": {
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+      },
+      "full": {
+        "apps": [
+          {
+            "bundle": "591283",
+            "domain": "examplepub.example",
+            "platform": "roku",
+            "storeurl": "https://channelstore.roku.com/details/591283"
+          }
+        ],
+        "domains": [
+          "examplepub.example"
+        ],
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+        "name": "Example Publisher Business News",
+        "supported_formats": [
+          "display/300x250"
+        ]
+      }
+    },
+    "PropertiesSelection": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/PropertiesSelection",
+      "minimal": {
+        "available": [],
+        "included": []
+      },
+      "full": {
+        "available": [
+          {
+            "apps": [
+              {
+                "bundle": "591283",
+                "domain": "examplepub.example",
+                "platform": "roku",
+                "storeurl": "https://channelstore.roku.com/details/591283"
+              }
+            ],
+            "domains": [
+              "examplepub.example"
+            ],
+            "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+            "name": "Example Publisher Business News",
+            "supported_formats": [
+              "display/300x250"
+            ]
+          },
+          {
+            "apps": [
+              {
+                "bundle": "1459921234",
+                "domain": "markets-weekly.example",
+                "platform": "ios",
+                "storeurl": "https://apps.apple.com/us/app/id1459921234"
+              }
+            ],
+            "domains": [
+              "markets-weekly.example"
+            ],
+            "id": "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93",
+            "name": "Markets Weekly",
+            "supported_formats": [
+              "display/728x90"
+            ]
+          }
+        ],
+        "included": [
+          "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+        ],
+        "pricing": {
+          "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93": {
+            "delta_cpm": 2
+          }
+        },
+        "max_select": 2
+      }
+    },
+    "Proposal": {
+      "kind": "document",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal.json",
+      "minimal": {
+        "description": "Cross-channel Example Publisher US package spanning display, in-stream video and CTV. Business and financial audience skew, weekday-heavy delivery.\n"
+      },
+      "full": {
+        "assent": {
+          "seller": {
+            "version": 1,
+            "at": "2026-09-30T16:00:00Z",
+            "signature": "sig1=:K2qGT5srn2OGbOIDzQ6kYT+ruaycnDAAUpKv+ePFfD0=:"
+          }
+        },
+        "best_for": [
+          "B2B",
+          "financial services"
+        ],
+        "brief_ref": "agency-a-brief-2026-q4-0193",
+        "description": "Cross-channel Example Publisher US package spanning display, in-stream video and CTV. Business and financial audience skew, weekday-heavy delivery.\n",
+        "linked_execution": "none",
+        "negotiation_history": [
+          {
+            "action": "proposed",
+            "actor": "seller",
+            "at": "2026-09-30T16:00:00Z",
+            "fields_changed": [
+              "pricing[].gross_rate",
+              "pricing[].floor"
+            ],
+            "version": 1
+          }
+        ],
+        "not_suitable_for": [
+          "youth",
+          "endemic gaming"
+        ],
+        "proposal_id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+        "proposal_template_id": "examplepub-q4-omni-template",
+        "seasonality_notes": "Earnings weeks carry materially higher engagement.",
+        "seller_id": "reg:examplepub-digital",
+        "seller_name": "Example Publisher US",
+        "specifications": "Display and video across two business-news sites; CTV via weather and sports app inventory. First-party B2B and investor audiences available with clean-room activation.\n",
+        "status": "published",
+        "type": "standard",
+        "valid_from": "2026-10-01T00:00:00Z",
+        "valid_until": "2026-12-31T23:59:59Z",
+        "version": 1
+      },
+      "illustrative": [
+        {
+          "path": "/assent",
+          "note": "The structure is our proposal in D-016's feedback, not the specification's: `{ buyer, seller }`, each party's record `{ version, at, signature }`. The schema keeps `assent` an open object."
+        }
+      ]
+    },
+    "ProposalStatus": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/proposal/1/proposal.json#/$defs/ProposalStatus",
+      "minimal": "published",
+      "full": "published"
+    },
+    "ProposalSummary": {
+      "kind": "profile",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal-summary.json",
+      "minimal": {
+        "description": "Cross-channel Example Publisher US package spanning display, in-stream video and CTV. Business and financial audience skew, weekday-heavy delivery.\n",
+        "linked_execution": "none",
+        "proposal_id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+        "seller_name": "Example Publisher US",
+        "valid_from": "2026-10-01T00:00:00Z",
+        "valid_until": "2026-12-31T23:59:59Z"
+      },
+      "full": {
+        "description": "Cross-channel Example Publisher US package spanning display, in-stream video and CTV. Business and financial audience skew, weekday-heavy delivery.\n",
+        "linked_execution": "none",
+        "proposal_id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+        "seller_name": "Example Publisher US",
+        "valid_from": "2026-10-01T00:00:00Z",
+        "valid_until": "2026-12-31T23:59:59Z"
+      }
+    },
+    "ProposalType": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/proposal/1/proposal.json#/$defs/ProposalType",
+      "minimal": "standard",
+      "full": "standard"
+    },
+    "ProposalsEntry": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/publication/1/publication.json#/$defs/ProposalsEntry",
+      "minimal": {
+        "description": "Cross-channel Example Publisher US package spanning display, in-stream video and CTV. Business and financial audience skew, weekday-heavy delivery.",
+        "linked_execution": "none",
+        "proposal_id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+        "seller_name": "Example Publisher US",
+        "valid_from": "2026-10-01T00:00:00Z",
+        "valid_until": "2026-12-31T23:59:59Z"
+      },
+      "full": {
+        "description": "Cross-channel Example Publisher US package spanning display, in-stream video and CTV. Business and financial audience skew, weekday-heavy delivery.",
+        "full_url": "https://examplepub.example/openproposal/examplepub-us-q4-2026-omni",
+        "linked_execution": "none",
+        "proposal_id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+        "seller_name": "Example Publisher US",
+        "valid_from": "2026-10-01T00:00:00Z",
+        "valid_until": "2026-12-31T23:59:59Z",
+        "version": 1
+      }
+    },
+    "Provenance": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json#/$defs/Provenance",
+      "minimal": "examplepub.example:custom_term",
+      "full": "examplepub.example:custom_term"
+    },
+    "Refresh": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/Refresh",
+      "minimal": {
+        "min_interval_s": "PT30S"
+      },
+      "full": {
+        "min_interval_s": "PT30S"
+      }
+    },
+    "ReportingDeliveryMechanism": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/guarantees/1/guarantees.json#/$defs/ReportingDeliveryMechanism",
+      "minimal": "examplepub.example:custom_term",
+      "full": "examplepub.example:custom_term"
+    },
+    "ReportingFeedType": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/guarantees/1/guarantees.json#/$defs/ReportingFeedType",
+      "minimal": "aggregate",
+      "full": "aggregate"
+    },
+    "ReportingOption": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/guarantees/1/guarantees.json#/$defs/ReportingOption",
+      "minimal": {
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+      },
+      "full": {
+        "cadence": "P1D",
+        "delivery_mechanism": "examplepub.example:api",
+        "feed_type": "aggregate",
+        "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+        "latency": "PT24H",
+        "metrics_provided": [
+          "viewable_rate"
+        ]
+      }
+    },
+    "ReportingSelection": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/guarantees/1/guarantees.json#/$defs/ReportingSelection",
+      "minimal": {
+        "available": [],
+        "included": []
+      },
+      "full": {
+        "available": [
+          {
+            "cadence": "P1D",
+            "delivery_mechanism": "examplepub.example:api",
+            "feed_type": "aggregate",
+            "id": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+            "latency": "PT24H",
+            "metrics_provided": [
+              "viewable_rate"
+            ]
+          },
+          {
+            "cadence": "P1D",
+            "delivery_mechanism": "examplepub.example:s3",
+            "feed_type": "log_level",
+            "id": "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93",
+            "latency": "PT6H",
+            "metrics_provided": [
+              "completion_rate"
+            ]
+          }
+        ],
+        "included": [
+          "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+        ],
+        "pricing": {
+          "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93": {
+            "delta_flat": 2500
+          }
+        },
+        "max_select": 2
+      }
+    },
+    "RequiredCredentialsEntry": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/eligibility/1/eligibility.json#/$defs/RequiredCredentialsEntry",
+      "minimal": {},
+      "full": {
+        "id_required": true,
+        "issuer": "dsp-a",
+        "scheme": "jwt_keypair",
+        "type": "dsp_seat"
+      }
+    },
+    "Requires": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/Requires",
+      "minimal": {},
+      "full": {
+        "all_of": [
+          "6b0e2f4a-8c1d-4e3b-9a7f-2d5c8e1b4a90"
+        ],
+        "any_of": [
+          "c47d9e21-5f3a-4b8c-8e6d-0a1b2c3d4e5f",
+          "9e8d7c6b-5a49-4382-9716-a5b4c3d2e1f0"
+        ],
+        "min_commitment": [
+          {
+            "amount": 50000,
+            "basis": "spend",
+            "currency": "USD",
+            "line_item_id": "6b0e2f4a-8c1d-4e3b-9a7f-2d5c8e1b4a90"
+          }
+        ]
+      }
+    },
+    "ServingMode": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/execution/1/execution.json#/$defs/ServingMode",
+      "minimal": "client_side",
+      "full": "client_side"
+    },
+    "ShortfallRemedy": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy",
+      "minimal": "makegood",
+      "full": "makegood"
+    },
+    "ShortfallRemedySelection": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedySelection",
+      "minimal": {
+        "available": [],
+        "included": []
+      },
+      "full": {
+        "available": [
+          "makegood",
+          "credit"
+        ],
+        "included": [
+          "makegood"
+        ],
+        "pricing": {
+          "credit": {
+            "delta_cpm": 18
+          }
+        },
+        "max_select": 2
+      }
+    },
+    "Specifications": {
+      "kind": "union",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/proposal/1/proposal.json#/$defs/Specifications",
+      "minimal": "Weekday reach among business news readers in the US.",
+      "full": "Weekday reach among business news readers in the US."
+    },
+    "SpecificationsDetail": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/proposal/1/proposal.json#/$defs/SpecificationsDetail",
+      "minimal": {},
+      "full": {}
+    },
+    "Specs": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/Specs",
+      "minimal": {},
+      "full": {}
+    },
+    "StorePlatform": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/StorePlatform",
+      "minimal": "roku",
+      "full": "roku"
+    },
+    "SuppressionList": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json#/$defs/SuppressionList",
+      "minimal": {},
+      "full": {}
+    },
+    "TermsRef": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/eligibility/1/eligibility.json#/$defs/TermsRef",
+      "minimal": {},
+      "full": {
+        "sha256": "8bc1e566c463606f2971c6f29669a988ff5fa2e1cba04721e63b871133a4958b",
+        "url": "https://examplepub.example/legal/io-terms-2026.pdf",
+        "version": "2026.1"
+      }
+    },
+    "Text": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/Text",
+      "minimal": "Weekday reach among business news readers in the US.",
+      "full": "Weekday reach among business news readers in the US."
+    },
+    "ThirdPartyTags": {
+      "kind": "object",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/ThirdPartyTags",
+      "minimal": {},
+      "full": {}
+    },
+    "TimeOfDay": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/TimeOfDay",
+      "minimal": "09:00",
+      "full": "09:00"
+    },
+    "TimeZone": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/TimeZone",
+      "minimal": "America/New_York",
+      "full": "America/New_York"
+    },
+    "Timestamp": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/Timestamp",
+      "minimal": "2026-11-02T09:00:00Z",
+      "full": "2026-11-02T09:00:00Z"
+    },
+    "TransactionMechanism": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/execution/1/execution.json#/$defs/TransactionMechanism",
+      "minimal": "PROGRAMMATIC_GUARANTEED",
+      "full": "PROGRAMMATIC_GUARANTEED"
+    },
+    "TransactionMechanismSelection": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/execution/1/execution.json#/$defs/TransactionMechanismSelection",
+      "minimal": {
+        "available": [],
+        "included": []
+      },
+      "full": {
+        "available": [
+          "PROGRAMMATIC_GUARANTEED",
+          "PREFERRED_DEAL"
+        ],
+        "included": [
+          "PROGRAMMATIC_GUARANTEED"
+        ],
+        "pricing": {
+          "PREFERRED_DEAL": {
+            "delta_cpm": 18
+          }
+        },
+        "max_select": 2
+      }
+    },
+    "Url": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/Url",
+      "minimal": "https://examplepub.example/terms/io-2026.pdf",
+      "full": "https://examplepub.example/terms/io-2026.pdf"
+    },
+    "Uuid": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/Uuid",
+      "minimal": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b",
+      "full": "3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"
+    },
+    "VendorCode": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/VendorCode",
+      "minimal": 500,
+      "full": 500
+    },
+    "Visibility": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/eligibility/1/eligibility.json#/$defs/Visibility",
+      "minimal": "registry_gated",
+      "full": "registry_gated"
+    }
+  }
+}

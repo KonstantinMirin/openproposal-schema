@@ -1,0 +1,22 @@
+# Rule vectors for § 5.6 to § 5.6.3. Regenerate a digest with
+# `npm run cite -- <rule ID>`.
+format: 1
+module: commercial
+rules:
+  # The hold transitions: none → requested → held → (expired | released | converted).
+  - rule: block:5.6.2:1/values:1
+    digest: c4f05bca19873a07f8a165ff6a69d25967eec96b3611c0dba1accd7c5c24b3fb
+    decision: D-034
+    # "`converted` is terminal", on the next line, decides invalid vector 4.
+    sources: [sentence:5.6.2:774f52b4]
+    valid:
+      - { party: buyer, before: { state: none }, after: { state: requested } }
+      - { party: seller, before: { state: requested }, after: { state: held, hold_expires_at: "2026-11-01T00:00:00Z" } }
+      - { party: seller, before: { state: held }, after: { state: released } }
+      - { party: seller, before: { state: held }, after: { state: expired } }
+      - { party: seller, before: { state: held }, after: { state: converted } }
+    invalid:
+      - { party: seller, before: { state: none }, after: { state: held } }
+      - { party: seller, before: { state: requested }, after: { state: converted } }
+      - { party: seller, before: { state: expired }, after: { state: held } }
+      - { party: buyer, before: { state: converted }, after: { state: requested } }

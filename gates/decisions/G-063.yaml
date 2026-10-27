@@ -1,0 +1,111 @@
+format: 1
+id: G-063
+date: 2026-10-27
+question: How does the pipeline build the schemas as the specification writes them, with every change we propose switched off, and what holds that build to the text and to the proposed one?
+decision: >-
+  `variants/as-written.yaml`, validated by `variants/variant.schema.json`,
+  which takes a primitive from `kernel/kernel.schema.json`, has one switch per
+  decision record of kind `departure`, naming the record's option the variant
+  takes and what it does to the pipeline's inputs before the model resolves:
+  `replace`, `retype`, `withhold`, `convert`, and `rewrite`, with the
+  examples' failures the switch causes under `findings`. `src/variant.ts`
+  applies a variant, and `src/builds.ts` resolves each lock's proposed and
+  variant builds for the generating CLIs, which take `--variant`.
+  `resolveModel` takes `withhold`, the option objects the selectable
+  template gives no member their text doesn't list; the schemas we propose
+  pass none, so their model is unchanged byte for byte. A model's `input`
+  may name its `variant`, which the SDK headers name. The kernel format
+  accepts the `date` format, which JSON Schema 2020-12 defines and the SDKs
+  already check. Four new gates: variant-load, on a file whose switch names
+  no option; variant-check (`checkVariant` and `checkKernel` on the
+  variant's primitives), with fixtures for a switch that takes the chosen
+  option, a departure with no switch, a retype of an element the departure
+  doesn't cover, a replaced type it doesn't introduce, and a primitive's
+  valid vector its constraints reject; variant-diff (`checkVariantDiff`),
+  per lock, with fixtures for a retyped property, a dropped type, and a
+  dropped member no switch withholds; and variant-examples
+  (`checkVariantExamples`), per lock, with fixtures for a switch's finding
+  removed, a switch's finding that no longer fails, and a gap's recorded
+  finding removed. `scripts/ci.ts` runs, on each lock's variant build, the
+  kernel engines and sources gates on the variant's primitives, the
+  schemas, rules, fidelity, type-examples, SDK, corpus-generates, and
+  examples-oracle gates, the fidelity gate with no departure in force, and
+  adds the variant's files to the tracked-file gates' expected files and
+  its report, `comparison/as-written.json` and `.md`, to the comparison's.
+  `variants/` joins the tracked directories. Eleven tests are added; the
+  suite holds 380 tests, and `MIN_TESTS` is 380.
+rationale: >-
+  No gate is relaxed: every gate the proposed build passes runs unchanged
+  on it, and the variant's build passes the same gates as a second input,
+  plus the new ones, which fail on each of their fixtures. The fidelity
+  gate passes on the variant with the departures left out of its records,
+  so nothing excuses a disagreement there: as written, the schemas state
+  what the text states in every form the oracle reads. Most fingerprints
+  change only because `resolveModel`, which their code reaches, gained the
+  `withhold` input, which defaults to nothing; kernel-load because the
+  kernel format accepts `date`; the SDK gates because the headers can name
+  a variant; the comparison gates because the comparison also writes the
+  variant's report; the guard because the CI script runs the new gates;
+  the untracked-file gate because its directory list gains `variants/`;
+  and npm-test because of the new tests. The specification's examples fail
+  10 times at 10 places on main as written, against 58 at 55 as proposed,
+  and 16 at 16 with the open PRs, against 92 at 88: the gaps' 5 and 10
+  failures, and the 5 and 6 that D-047's switch lists, since as written
+  the production, measurement source, and reporting options have no `id`
+  that `included[]` and `pricing` could name them by.
+accepts:
+  - { gate: comparison, fingerprint: 222a69054c886a49aaf4d28b4c16f33c3ecdabe902d8aefdcdeaf2b4708fa938 }
+  - { gate: constructors-applied, fingerprint: a01364d24c4eaf2b69be53707b7a608aff4e5f1935c13c8a7cdd5fb644a1d0e6 }
+  - { gate: constructors-check, fingerprint: 20b0966c68a434b0321c2e1b94e54c9b83cb9d8033da81dc53218c3de5fc94c5 }
+  - { gate: convention-beside-reference, fingerprint: f4d1abf83d3d532befdc05a399b565674a90ce6d7c700ff5b86c269c6229c304 }
+  - { gate: convention-inline, fingerprint: 220592afc193e9df1938d9029e31b62db400dbb26d7eb5b5c721ed66e400d8ee }
+  - { gate: convention-keywords, fingerprint: b314e7799b19304ac2c2f4b59ce45e8435be46f836777e53f776e9f2f55483dc }
+  - { gate: convention-layers, fingerprint: bdb84b1a3be1b3be62853af201d1100b3a9742189a066d921a2574527424c19a }
+  - { gate: convention-lists, fingerprint: af3f15ffbfa12ff4eb7f46644b531b889ab216f721753193df5788e8fe13145c }
+  - { gate: convention-modules, fingerprint: cd2834ce7b086d42f9dc6d2794493dc9c58271a3c35a3d3fcafc89de65add6c2 }
+  - { gate: convention-unions, fingerprint: 9f0a3d8060f62515e82153edae21e7a00eea6f9fa7657deb1d1dfaffd0ce4b34 }
+  - { gate: corpus-generates, fingerprint: 93414f7c8523d2777de1615b996abc45a43c874979a165f87751a8b69df54ac7 }
+  - { gate: corpus-isolation, fingerprint: 6c2828022e72b967ccde1444475c7b017d552b903f078460489cb6acc331807c }
+  - { gate: domains-homonyms, fingerprint: 06321b19ebbbaba97d4a8753c5992f64f33401afb9e8cd3288170cc99179bea4 }
+  - { gate: domains-properties, fingerprint: 44a9c1995d83674fb4acf86b539ddd00c687cbdb2560a5ffcc25154eb18a59ea }
+  - { gate: domains-used, fingerprint: a92f6d6a30c9e97fedd530783ea5606b4d31d68ae39697ff462267ade23582ac }
+  - { gate: duplication-kernel, fingerprint: 02508755ce612ad019abfde021a28d53906c2c14154f49dafbd6fd74d7cce054 }
+  - { gate: duplication-model, fingerprint: 7c1ffebb51f186dac1143c51b600116831fcd8500c0b236e3a159d760879ef12 }
+  - { gate: examples-listing, fingerprint: 01d9f0df2570954f803fad33e96817e490a0f49baf1f4a39a4fbae8a6d976c19 }
+  - { gate: examples-validate, fingerprint: dae8fbf420208aa3edb38fd38f7b5d08a41df0f67a24314c33af55d21d0a787f }
+  - { gate: feedback, fingerprint: fafbd5647695bf3a7f2fd014232e60260df53ff4767e8ed5d9545d1cadca98b2 }
+  - { gate: fidelity, fingerprint: f88976a31475c7d73062763a8a825d9cc079d7f121b6ec95996f8945ea115d31 }
+  - { gate: field-examples, fingerprint: 7fc77b2ff17b085552f4be4ace0b6c078b12c0f466259ec8c4f9c530c14af7cc }
+  - { gate: frozen-releases, fingerprint: efcfcb506f3139a88c0c429aa69e05d149c1e5a39d685bf737bc653f21b441e9 }
+  - { gate: frozen-reviewed, fingerprint: e470217899e5221ed09889eb8e4c591cc0c66aba96dee9e3e8c140c7b42014b5 }
+  - { gate: guard, fingerprint: fa397b0f7e08fa926bee2fe3c055f577a88eed4f8ea2921c2edadb2b9cbbaeea }
+  - { gate: kernel-check, fingerprint: 883eac660ea9a3b86235b782ffa3edebe64a14c9ca66d9dcdae3f5a0ecb37258 }
+  - { gate: kernel-engines, fingerprint: 48d197bc8d9b660d36e33ea1d05ac30030a549bba91e5aa68954c0fb3d47308e }
+  - { gate: kernel-load, fingerprint: f7b36a95f21eeee68b8622ddca00830fcbfd9853779b2750489e22d4a2ac424e }
+  - { gate: kernel-sources, fingerprint: b5824b43ee747667fad7c53f2f1671b706fb284bd6f09626b23f0c52cfc1f4bc }
+  - { gate: map-drift, fingerprint: 44840d2c1f8b9e062dbbb477019d31853155f19c25ea3b3713da559fde15f3a0 }
+  - { gate: mapping-bijection, fingerprint: 5c78eb1306f5ebf4441be02b5d222a9205ff0c792a29f5d6d130e61bc2011e4c }
+  - { gate: mapping-constructors, fingerprint: a53d1155a348ec1fafccbf830c274377b478330267e60be374b5828b3607898c }
+  - { gate: mapping-location, fingerprint: 1777b4bef365ecc1be9d1f63d2b70665597f7ed6d5604c90ed3c9a8ba3b250a8 }
+  - { gate: mapping-rules, fingerprint: 03f920e0881bb6c7305bd523a8ce0bc54d8f1a571a3551817a7c3f5484466b44 }
+  - { gate: model-resolves, fingerprint: 73e72af3b7537129f80745b46d8cb95c9044e55fbc2507cae466c379d3dcc102 }
+  - { gate: modules-depends, fingerprint: ba6140f446e64c962f704dfdab1e7f41d7761831086e681654650b3aaf7720fe }
+  - { gate: nesting, fingerprint: 796dc9e351be1a81de7bb2f1a9019bfd839cc541adcc001c5e37a5fb1ba2b509 }
+  - { gate: npm-test, fingerprint: 9383fa0c0d12b9305d8f1ff7e0d59aa66599e50ba386300a4f7cc5e7da55689a }
+  - { gate: release-breaking, fingerprint: 9ecca6e719bbcdbfe7d9c69475126f22ac27905775c68b2b9c0ac1b4ed39a7d8 }
+  - { gate: release-builds, fingerprint: 72485596598dbd79cd197b860b0b19cd698e389ef84a4ed0d691b578484818d0 }
+  - { gate: release-digests, fingerprint: 876ebb42b928b8e6b37363db80a7bea8fd25e7a5967a9f6e8973292431eda8c7 }
+  - { gate: round-trip, fingerprint: 5d8cb28f273284289f54533f6051f3d0f6a31da4e615ea2f2620748ed58c17a5 }
+  - { gate: rule-checks, fingerprint: 3123cf40b5dfa107d13305a6c44c443b5e044006cefdc387a14642589368cfa7 }
+  - { gate: rule-vectors, fingerprint: 23e618df86a0143066d2259446b73adf25fced7826446a61d1d02a8e17f72597 }
+  - { gate: rules-emit, fingerprint: 4267a9b1d3a69397adbe616fd36c1f45b7ce4b892b86d6c8fccc4517e9fa5ac3 }
+  - { gate: schemas-conventions, fingerprint: cae50af1715379f1add29e5d1fa17874691f373d203390961e579638c0b914bd }
+  - { gate: schemas-emit, fingerprint: 29afe5e626a36bb512b2bad80217195beaf95ea701a91bd39a066ba83f8716c2 }
+  - { gate: sdk-generate, fingerprint: 9ff8d0905597c74361488164a087c89c688524f7a7120aa9fbf22206e9e1c3e7 }
+  - { gate: type-examples-generate, fingerprint: 5b1bcd7fc30f3a541cc2fd19f896149aa316dceaf41866fc38b53b350ae76b98 }
+  - { gate: type-examples-valid, fingerprint: 99b5282bb8a8a3138212a7b0acd4ad8f0d13f2f0e38a304b64ab9d2910edf077 }
+  - { gate: untracked, fingerprint: cea954bdc2514aab03dfb218bf6450361afda74e0f0961b3dcafae093f9fa370 }
+  - { gate: variant-check, fingerprint: 4ee439a0b81da66410057ebf34e16f99ee24b2590bcf059b780c3175264cd567 }
+  - { gate: variant-diff, fingerprint: 86430b4f30a60f406fe9dfb708cc9275161be6d0d8f81b885d71c4361070b1db }
+  - { gate: variant-examples, fingerprint: b32640ea66d2f232b0a13b60e52e6654ab153141529b91e6076139aaec164c17 }
+  - { gate: variant-load, fingerprint: 3a9f15ca1050da73cb0acb4d0a4b0b063ec77bcd74b423b3e96e31d94b469ff9 }

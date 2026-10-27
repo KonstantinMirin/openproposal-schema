@@ -1,0 +1,80 @@
+field:4.1:proposal_id	String	immutable	line 219
+field:4.1:version	Integer	derived	line 220
+field:4.1:seller_id	String	immutable	line 221
+field:4.1:seller_name	String	immutable	line 222
+field:4.1:type	Enum	immutable	line 223	values=1
+field:4.1:proposal_template_id	String	immutable	line 224	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
+field:4.1:status	Enum	derived	line 225	values=1
+field:4.1:assent	Object	derived	line 226
+field:4.1:valid_from,valid_until	Timestamp	seller-set	line 227
+field:4.1:brief_ref	String	supplied	line 228	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":"when","condition":"`type` is `custom`"}]}
+field:4.1:negotiation_history[]	Array[Object]	derived	line 229	objects=1
+field:4.1:linked_execution	Enum	seller-set	line 230	values=1
+field:4.2:description	String	seller-set	line 243	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":null,"condition":null}]}
+field:4.2:specifications	String/Object	seller-set	line 244
+field:4.2:best_for[]	Array[String]	seller-set	line 245
+field:4.2:not_suitable_for[]	Array[String]	seller-set	line 246
+field:4.2:seasonality_notes	String	seller-set	line 247
+field:5.1:line_item_id	String	immutable	line 260
+field:5.1:status	Enum	derived	line 261	values=1
+field:5.1:channel	Enum	immutable	line 262	values=1
+field:5.2:properties	Object	selectable	line 303	objects=1
+field:5.2:content_detail	Object	seller-set	line 304
+field:5.2:environments	Object	selectable	line 305	values=1
+field:5.2:placement	Object	seller-set	line 306
+field:5.3:audiences	Object	selectable	line 392	objects=1
+field:5.3:addressable_scale	Integer	derived	line 393
+field:5.3:activation_route	Object	selectable	line 394	values=1
+field:5.3:buyer_supplied	Object	supplied	line 395	objects=1
+field:5.4:formats	Object	selectable	line 401
+field:5.4:specs	Object	seller-set	line 402
+field:5.4:third_party_tags	Object	seller-set	line 403
+field:5.4:creative_delivery	Object	seller-set	line 404	objects=1
+field:5.4:assets[]	Array[Object]	supplied	line 405	objects=1
+field:5.4:materials_due	Timestamp/Offset	requestable	line 406
+field:5.4:approval	Object	seller-set	line 407
+field:5.4:production	Object	selectable	line 408	objects=1
+field:5.5:geo	Object	selectable	line 460
+field:5.5:device	Object	settable	line 461
+field:5.5:daypart	Object	settable	line 462	values=1	objects=1
+field:5.5:time_zone	String	seller-set	line 463	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":"with","condition":"either","members":["daypart","frequency_cap.period"]}]}
+field:5.5:frequency_cap	Object	settable	line 464	objects=1
+field:5.5:exclusions_accepted	Object	seller-set	line 465	objects=1
+field:5.5:exclusions	Object	supplied	line 466	objects=1
+field:5.6:pricing[]	Array[Object]	mixed	line 542
+field:5.6:pricing[].cost_method	Enum	seller-set	line 543
+field:5.6:pricing[].gross_rate	Number	seller-set	line 544
+field:5.6:pricing[].agreed_rate	Number	derived	line 545
+field:5.6:pricing[].seller_rate	Number	seller-set	line 546
+field:5.6:pricing[].price_valid_until	Timestamp	seller-set	line 547
+field:5.6:pricing[].currency	String	seller-set	line 548
+field:5.6:pricing[].floor	Number	seller-set	line 549	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
+field:5.6:availability	Object	derived	line 550	objects=1
+field:5.6:commitment_bounds	Object	seller-set	line 551	objects=1
+field:5.6:commitment	Object	settable	line 552
+field:5.6:hold_status	Object	requestable	line 553
+field:5.6:min_spend	Number	seller-set	line 554
+field:5.6:cancellation_policy	Object	selectable	line 555
+field:5.6:exclusivity	Object	selectable	line 556
+field:5.6:creative_policy	Object	seller-set	line 557
+field:5.6:requires	Object	seller-set	line 558	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
+field:5.7:committed_metrics[]	Array[Object]	requestable	line 645	objects=1
+field:5.7:measurement_source	Object	selectable	line 646	objects=1
+field:5.7:shortfall_remedy	Object	selectable	line 647	values=1
+field:5.7:reporting	Object	selectable	line 648	objects=1
+field:5.8:visibility	Enum	seller-set	line 654	values=1
+field:5.8:required_credentials[]	Array[Object]	seller-set	line 655	objects=1
+field:5.8:eligible_bidders[]	Array[String]	seller-set	line 656
+field:5.8:terms_acceptance_required	Boolean	seller-set	line 657
+field:5.8:terms_ref	Object	seller-set	line 658	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null},{"level":"REQUIRED","qualifier":"when","condition":"`terms_acceptance_required` is `true`"}]}	objects=1
+field:5.9:buying_route	Enum	seller-set	line 669	values=1
+field:5.9:transaction_mechanism	Object	selectable	line 670	values=1
+field:5.9:serving_mode	Enum	seller-set	line 671	values=1
+field:5.9:deal_id_issuance	String	derived	line 672
+field:5.9:buyer_requirements	Object	mixed	line 673	objects=2
+field:5.9:serving_platform	String	seller-set	line 674
+field:5.10:external_references[]	Array[Object]	derived	line 680	objects=1
+field:5.10:agreement_ref	Object	seller-set	line 681	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}	objects=1
+field:5.10:correlation_id	String	derived	line 682
+field:5.10:billing	Object	seller-set	line 683	objects=1
+field:5.10:supported_order_systems[]	Array[String]	seller-set	line 684

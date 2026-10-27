@@ -1,0 +1,56 @@
+# Optional extractor input: upstream `main` plus the open PRs, merged in this order.
+# Built by the integration run of 2026-10-25, and rebuilt 2026-10-26 as integration-r4 with
+# #117 at e51ee17 and #118 at 395ca83. INTEGRATION.md records every conflict hunk of
+# merges 1 to 11, INTEGRATION-r2.md those of merges 12 and 13, INTEGRATION-r3.md those
+# of merge 14, and INTEGRATION-r4.md what the rebuild changed.
+# The integration branch exists only in a local clone, so the lock carries a snapshot
+# of the specification and examples/ at `commit`, which `npm run fetch -- --lock
+# spec-input/with-open-prs.lock.yaml --snapshot` writes from the clone; CI runs
+# every gate from it. With no source reachable (`required: false`), CI would check
+# the committed IR instead.
+name: with-open-prs
+upstream: https://github.com/IABTechLab/OpenProposal
+base: 44dfaaf618736219426c311ec997b6d37e94b950
+commit: 292bb51e654c2eef563d721eb6af8317371c906a
+path: spec/openproposal-3.0.md
+blob: fdb303f07c669c21c0c1196e1c8e441790a62d3c
+ir_dir: ir/with-open-prs
+required: false
+# The example files at `commit`, by path, with their git blob SHAs.
+examples:
+  examples/line-item-audio.yaml: da55e14e987b7f37779bc236705bae2d7033f6ac
+  examples/line-item-ctv-bonus.yaml: 600dc0c9308e8d81f08b399a0d0ee716f0ed5bc5
+  examples/line-item-ctv.yaml: 27e2bee56c31fdb0636e8f617ca9574c45fd754a
+  examples/line-item-display.yaml: 55f21b419d8ae1e7d85ff4e8341805ade05317d8
+  examples/line-item-rewarded-video.yaml: 37bd7fbbc773bc01288e1cf13a82f98e71571fcd
+  examples/manifest.json: 7652e1fbe006d2e449a3223dc5a011f4e9488e04
+  examples/proposal.yaml: a40bd3b923dc4517eb20eb584d551170c8765d36
+# The day on which each head below was its PR's live head, checked with
+# `gh pr view N -R IABTechLab/OpenProposal --json headRefOid`.
+heads_on: "2026-10-26"
+merge_order:
+  - { pr: 17, head: dc0e37c8890b1ad6f197fd4a9418b7b231fab454 }
+  - { pr: 18, head: ff53dc5a7d436ac42995f9842394369901e9eb70 }
+  - { pr: 70, head: ecec3d74f484dbb4ea4404fb7fe847cbbd94aafe }
+  - { pr: 73, head: 74a25448baf9e38048a5bd417b4372d46faaa77f }
+  - { pr: 117, head: e51ee17d2c74d166dd75c3da29698de4e8a998fa }
+  - { pr: 71, head: 63712c0683b1f67e032450f7400979be60b5cde4 }
+  - { pr: 72, head: 208f0c2c2aa1fe7551b2adbcc2489ed649ca70b7 }
+  - { pr: 74, head: 7a8938579c6339b3c397ab6e40d2b47e1860e195 }
+  - { pr: 75, head: b88e9a0719180303917efdf59d20ba1769172d27 }
+  - { pr: 76, head: 8e1f614a5c0546e88d993ed239ffcdc71b395a78 }
+  - { pr: 118, head: 395ca8357533843450083d1676b6cc6cab2c87c0 }
+  - { pr: 119, head: 0125d5549c4cc1790bd3ab847e8d5826b66de82d }
+  - { pr: 120, head: 81de4d827440cc42d8e027d5f88843e8da109bdd }
+  - { pr: 123, head: 9783ec87d102ccb60c106f4b6782650aa1f0a249 }
+# What the integration changed outside the PRs, beside resolving their
+# conflicts, as clauses the feedback's inputs paragraph quotes.
+edits:
+  - "moved #17's App identity block back above the § 5.2.1 that #119 adds"
+  - "set the header of #120's rewarded-video example to § 6.7"
+  - "added `time_zone: viewer_local` to the examples of #70 and #120, as #123's description asks"
+# The git tree SHA of examples/ at `commit`, which pins the directory's listing.
+examples_tree: 37144b6616e5dc83a7aad9ecd03a205caf0ce5dc
+sources:
+  - git: vendor/OpenProposal-integration
+  - snapshot: spec-input/snapshots/with-open-prs

@@ -1,0 +1,397 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/kernel/constructors.schema.json",
+  "title": "OpenProposal constructors",
+  "description": "Stage 4 input: kernel/constructors.yaml. Each constructor (type rules § 7) is a template that exists only in the model. Its shell is the schema of one concrete copy, written with JSON Schema 2020-12 keywords, where every type position is a slot that holds a model type. The emitter publishes one named copy per use by filling the slots; List and Map are filled in place. Spec sources are quoted and digested, so a constructor goes stale when a row it rests on changes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "constructors", "parts"],
+  "properties": {
+    "format": {
+      "description": "Version of this format.",
+      "const": 1
+    },
+    "constructors": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/constructor" }
+    },
+    "parts": {
+      "description": "The named types that a shell references and that don't depend on a parameter, apart from primitives (type rules § 7). They are in the constructor layer, so they reference only primitives, and every copy shares them.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/part" }
+    }
+  },
+  "$defs": {
+    "constructor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "description", "parameters", "naming", "shell", "sources", "vectors"],
+      "properties": {
+        "name": { "$ref": "#/$defs/name" },
+        "description": {
+          "description": "The published description of every copy: what a value means, for someone who receives a payload.",
+          "type": "string",
+          "minLength": 12
+        },
+        "parameters": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/parameter" }
+        },
+        "naming": { "$ref": "#/$defs/naming" },
+        "shell": { "$ref": "#/$defs/shell" },
+        "fallback": {
+          "description": "The bare value that may stand in for the full form (type rules § 8). When a use supplies the parameter, the copy is `anyOf` the bare value and the full form, under the fallback's name; without it, the copy is the full form only.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["parameter", "suffix", "statement", "decision"],
+          "properties": {
+            "parameter": { "description": "An optional parameter that the shell doesn't use.", "$ref": "#/$defs/name" },
+            "suffix": { "description": "Appended to the full form's name to name the union.", "$ref": "#/$defs/name" },
+            "statement": { "description": "The IR statement that allows the bare value. It is one of the constructor's spec sources.", "$ref": "#/$defs/irId" },
+            "decision": { "description": "The decision record behind the bare value's type, which the specification doesn't state.", "$ref": "#/$defs/decisionId" }
+          }
+        },
+        "rules": {
+          "description": "Rules on a copy that JSON Schema can't express (type rules § 9). The schema accepts every vector of a rule; the rule rejects the invalid ones.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/rule" }
+        },
+        "vectors": {
+          "description": "Values that a copy, made with the given arguments, must accept and must reject. Each block makes one copy.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/vectors" }
+        },
+        "sources": { "$ref": "#/$defs/sources" },
+        "kept": {
+          "description": "Why the constructor stays though no mapping entry, and no template an entry applies, applies it on any lock. Without it, every constructor is applied on some lock.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["decision", "reason"],
+          "properties": {
+            "decision": { "description": "The decision record that says why the constructor stays.", "$ref": "#/$defs/decisionId" },
+            "reason": { "description": "Why it stays, in one sentence.", "type": "string", "minLength": 12 }
+          }
+        }
+      }
+    },
+    "part": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "description", "concept", "shell", "sources", "vectors"],
+      "properties": {
+        "name": { "$ref": "#/$defs/name" },
+        "description": {
+          "description": "The published description.",
+          "type": "string",
+          "minLength": 12
+        },
+        "concept": {
+          "description": "The concept of `kernel/domains.yaml` the part represents: the concept's type, or one of its components.",
+          "$ref": "kernel.schema.json#/$defs/conceptName"
+        },
+        "shell": { "$ref": "#/$defs/objectShell" },
+        "decisions": {
+          "description": "The decision records behind the members and constraints the sources don't state, one for each, each on the locks it lists, where the sources state it on the others; without `locks`, on every lock.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["decision"],
+            "properties": {
+              "decision": { "$ref": "#/$defs/decisionId" },
+              "locks": { "$ref": "kernel.schema.json#/$defs/decisionLocks" }
+            }
+          }
+        },
+        "rules": {
+          "description": "Rules on a value of the part that JSON Schema can't express (type rules § 9). The schema accepts every vector of a rule; the rule rejects the invalid ones.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/partRule" }
+        },
+        "sources": { "$ref": "#/$defs/sources" },
+        "vectors": {
+          "description": "Values the part must accept and must reject.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["valid", "invalid"],
+          "properties": {
+            "valid": { "type": "array", "minItems": 1 },
+            "invalid": { "type": "array", "minItems": 1 }
+          }
+        }
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "accepts", "description"],
+      "dependentRequired": { "carries": ["names"] },
+      "properties": {
+        "name": { "$ref": "#/$defs/name" },
+        "accepts": {
+          "description": "What an argument may be. `any`: any property type. `named`: a named type, or a copy of a constructor that has a name, so a list or a map never holds an inline form (type rules § 4). `string`: a named type whose values are strings, as a JSON object key is. `ordered`: a primitive whose values are ordered, a number or a date-time. `unordered`: a named type or copy that isn't an ordered primitive. `closed`: a named type or copy whose values aren't objects, or are objects that reject the members they don't name.",
+          "enum": ["any", "named", "string", "ordered", "unordered", "closed"]
+        },
+        "optional": { "type": "boolean" },
+        "names": {
+          "description": "The parameter whose options this one names, as `included[]` and the `pricing` keys name the options of `available[]`: its argument is that parameter's argument where the option is a string, named by its value, and `Uuid`, the option's `id`, where the option is an object (D-007).",
+          "$ref": "#/$defs/name"
+        },
+        "carries": {
+          "description": "The member an object option carries, typed by this parameter's argument and required, where the parameter names the options of `names` and the option is an object: an object option carries its `id`, which `included[]` and the `pricing` keys name it by (D-046). The model gives the member to each object type that is an option, so the mapping keeps the members the specification writes.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["member", "decision", "description"],
+          "properties": {
+            "member": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+            "decision": { "description": "The decision that gives every object option the member.", "type": "string", "pattern": "^D-[0-9]{3,}$" },
+            "departure": { "description": "The decision that gives the member to an option whose members the specification lists without it, a closed object, which departs from what the text settles; an open option, whose members the text doesn't state, rests on `decision` alone.", "type": "string", "pattern": "^D-[0-9]{3,}$" },
+            "description": { "type": "string", "minLength": 12 }
+          }
+        },
+        "description": { "type": "string", "minLength": 12 }
+      }
+    },
+    "naming": {
+      "description": "How a copy is named (type rules § 7). `field`: the field that uses it, in PascalCase, plus the suffix. `argument`: the named argument for `parameter`, plus the suffix. `inline`: the copy is emitted in place and has no name.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["from", "suffix"],
+          "properties": { "from": { "const": "field" }, "suffix": { "$ref": "#/$defs/name" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["from", "parameter", "suffix"],
+          "properties": { "from": { "const": "argument" }, "parameter": { "$ref": "#/$defs/name" }, "suffix": { "$ref": "#/$defs/name" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["from"],
+          "properties": { "from": { "const": "inline" } }
+        }
+      ]
+    },
+    "shell": {
+      "description": "The schema of a copy: an object, an array, or an untagged union. Only these keywords occur, so a copy can't carry a constraint beside a reference, an inline object, `allOf`, `oneOf`, or a keyword outside 2020-12.",
+      "oneOf": [
+        { "$ref": "#/$defs/objectShell" },
+        { "$ref": "#/$defs/arrayShell" },
+        { "$ref": "#/$defs/unionShell" }
+      ]
+    },
+    "objectShell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "additionalProperties"],
+      "properties": {
+        "type": { "const": "object" },
+        "properties": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "$ref": "#/$defs/member" },
+          "additionalProperties": { "anyOf": [{ "$ref": "#/$defs/slot" }, { "$ref": "#/$defs/listSlot" }] }
+        },
+        "required": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/member" } },
+        "additionalProperties": {
+          "description": "`false` for an object with fixed members, or a slot for the values of a map.",
+          "anyOf": [{ "const": false }, { "$ref": "#/$defs/slot" }]
+        },
+        "propertyNames": { "$ref": "#/$defs/slot" },
+        "minProperties": { "type": "integer", "minimum": 1 },
+        "maxProperties": { "type": "integer", "minimum": 1 },
+        "dependentSchemas": {
+          "description": "A condition that holds when a member is present, such as \"`allowed` stands alone\".",
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "$ref": "#/$defs/member" },
+          "additionalProperties": { "$ref": "#/$defs/assertion" }
+        },
+        "if": {
+          "description": "A value of one member that the part rejects, with `then: false`, such as a daypart window's `start` of `24:00`: a constraint that belongs to one member of the part stays in the part (type rules § 4).",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "properties", "required"],
+          "properties": {
+            "type": { "description": "`object`, so a value of another JSON type doesn't meet the condition, and only `type` rejects it.", "const": "object" },
+            "properties": {
+              "type": "object",
+              "minProperties": 1,
+              "maxProperties": 1,
+              "propertyNames": { "$ref": "#/$defs/member" },
+              "additionalProperties": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["const"],
+                "properties": { "const": { "anyOf": [{ "type": "string" }, { "type": "number" }, { "type": "boolean" }] } }
+              }
+            },
+            "required": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "$ref": "#/$defs/member" } }
+          }
+        },
+        "then": { "const": false }
+      },
+      "dependentRequired": { "if": ["then"], "then": ["if"] }
+    },
+    "arrayShell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "items"],
+      "properties": {
+        "type": { "const": "array" },
+        "items": { "$ref": "#/$defs/slot" }
+      }
+    },
+    "unionShell": {
+      "description": "An untagged union, which type rules § 8 allows only for the forms draft 1 requires.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["anyOf"],
+      "properties": {
+        "anyOf": { "type": "array", "minItems": 2, "items": { "$ref": "#/$defs/slot" } }
+      }
+    },
+    "assertion": {
+      "description": "A condition on how many members are present.",
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "minProperties": { "type": "integer", "minimum": 1 },
+        "maxProperties": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "listSlot": {
+      "description": "A slot that holds a list, with bounds on its items: a constraint that belongs to one member of a part stays in the part (type rules § 4), as a daypart window's `days` holds at least one day, each once. The list is filled in place, so the bounds sit on the list itself, where JSON Schema and every generator read them.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["$model"],
+      "minProperties": 2,
+      "properties": {
+        "$model": {
+          "$ref": "../mapping/mapping.schema.json#/$defs/typeRef",
+          "description": "An application of `List`.",
+          "type": "object",
+          "required": ["kind", "constructor"],
+          "properties": { "kind": { "const": "apply" }, "constructor": { "const": "List" } }
+        },
+        "description": { "type": "string", "minLength": 12 },
+        "minItems": { "type": "integer", "minimum": 1 },
+        "uniqueItems": { "const": true }
+      }
+    },
+    "slot": {
+      "description": "A type position. The emitter replaces it with a reference to a named type or a copy, or with an inline list or map. Only `description` may sit beside it (type rules § 5).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["$model"],
+      "properties": {
+        "$model": { "$ref": "../mapping/mapping.schema.json#/$defs/typeRef" },
+        "description": { "type": "string", "minLength": 12 }
+      }
+    },
+    "vectors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["arguments", "valid", "invalid"],
+      "properties": {
+        "arguments": {
+          "description": "The copy the vectors are checked against: one type per parameter.",
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "$ref": "#/$defs/name" },
+          "additionalProperties": { "$ref": "../mapping/mapping.schema.json#/$defs/typeRef" }
+        },
+        "valid": { "type": "array", "minItems": 1 },
+        "invalid": { "type": "array", "minItems": 1 }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "source", "arguments", "valid", "invalid"],
+      "properties": {
+        "id": {
+          "description": "`constructor:<constructor>:<token>`. The constructor is the rule's owner, so every copy carries the rule.",
+          "type": "string",
+          "pattern": "^constructor:[A-Z][A-Za-z0-9]*:[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+        },
+        "statement": { "type": "string", "minLength": 12 },
+        "source": {
+          "description": "Where the rule comes from (type rules § 9): specification elements, quoted and digested, or the decision record behind it.",
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "spec": { "type": "array", "minItems": 1, "items": { "$ref": "kernel.schema.json#/$defs/cover" } },
+            "decision": { "$ref": "#/$defs/decisionId" },
+            "decision_locks": { "$ref": "kernel.schema.json#/$defs/decisionLocks" }
+          },
+          "dependentRequired": { "decision_locks": ["decision"] }
+        },
+        "arguments": { "$ref": "#/$defs/vectors/properties/arguments" },
+        "valid": { "type": "array", "minItems": 1 },
+        "invalid": { "type": "array", "minItems": 1 }
+      }
+    },
+    "partRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "source", "valid", "invalid"],
+      "properties": {
+        "id": {
+          "description": "`kernel:<part>:<token>`. The part is the rule's owner.",
+          "type": "string",
+          "pattern": "^kernel:[A-Z][A-Za-z0-9]*:[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+        },
+        "statement": { "type": "string", "minLength": 12 },
+        "source": { "$ref": "#/$defs/rule/properties/source" },
+        "valid": { "type": "array", "minItems": 1 },
+        "invalid": { "type": "array", "minItems": 1 }
+      }
+    },
+    "sources": {
+      "description": "Where the constructor comes from. `spec` is required: every constructor cites the rows that define it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["spec"],
+      "properties": {
+        "spec": {
+          "description": "Specification elements, quoted and digested as `npm run cite` prints them.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "kernel.schema.json#/$defs/cover" }
+        },
+        "standards": { "$ref": "kernel.schema.json#/$defs/sources/properties/standards" },
+        "design": { "$ref": "kernel.schema.json#/$defs/sources/properties/design" }
+      }
+    },
+    "member": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(_[a-z0-9]+)*$"
+    },
+    "name": {
+      "description": "A model type or parameter name.",
+      "type": "string",
+      "pattern": "^[A-Z][A-Za-z0-9]*$"
+    },
+    "irId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z-]*:\\S+$"
+    },
+    "decisionId": {
+      "type": "string",
+      "pattern": "^D-[0-9]{3,}$"
+    }
+  }
+}

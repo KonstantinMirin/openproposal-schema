@@ -1,0 +1,113 @@
+format: 1
+id: D-029
+status: proposed
+kind: gap
+author: agent
+question: How is each § 2 and § 3 statement checked, as a schema, a rule on payloads, or an obligation on a party's behavior?
+covers:
+  - ir: rule:2:7d544674
+    digest: f9d6b0a316c889a452a8fb36043a826ada0c36bcca5a518a930d7c3124db1cff
+    quote: Each line item MUST be fully self-contained.
+  - ir: rule:2:4ae8f775
+    digest: 7b7a4e9aec10b20c71883badcb8f72e9f7fc0febc0c9bf6588ad4b590843342f
+    quote: A field on a line item MUST NOT inherit its value from the proposal or from a sibling line item.
+  - ir: rule:2:ace530d6
+    digest: f8be632e757302355bcaf1cdd85da9758a40dff5c0707a58d4343b3187b9d3b8
+    quote: A buyer MAY select and commit a subset of a proposal's line items, unless the proposal sets `linked_execution` to `all` (§ 4.1).
+    locks: [with-open-prs]
+  - ir: rule:2.1:948e2b02
+    digest: d73007c4f00ee65f89f1ffebba4a24a699310dd4992410d26e3576b54575f9e0
+    quote: A catalog response MAY return it.
+  - ir: rule:2.1:8d97860b
+    digest: 632004985ab089736510115823dea396e4e684cbde12b5634dca30006721708d
+    quote: "`catalog_ref` values MUST remain unresolved in a summary."
+    locks: [main]
+  - ir: rule:2.1:8d97860b
+    digest: 4c7d43fb094edc1ab170b38a76d00b2d2908a705c5a31ffd9b073bf97bdfdf56
+    quote: "`catalog_ref` values MUST remain unresolved in a summary."
+    locks: [with-open-prs]
+  - ir: rule:2.1:2f9d603c
+    digest: db005f7abf6e0f64795c6486f2bf4f4b97cc14aa54b848cf17a9fbdf3f14ddae
+    quote: A full fetch MUST return it.
+    locks: [main]
+  - ir: rule:2.1:2f9d603c
+    digest: bba0337e051de46b3c9dc214a297bdb5908767e804407b5be5ba8840511bc40d
+    quote: A full fetch MUST return it.
+    locks: [with-open-prs]
+  - ir: rule:2.1:5d7284d5
+    digest: 39bd1ad54c175c544257384cd7ef04fe8af1570a098675981d3083cfe575ba2b
+    quote: A line item that carries `placement` (§ 5.2) MUST also give, in its summary, whichever of `placement.reward` · `placement.instl` · `placement.plcmt` · `placement.skip` it declares.
+    locks: [with-open-prs]
+  - ir: rule:2.2:fd522468
+    digest: be340321c44102c82f5f20b58407e1e9ed924e72d7f55f3319260254a3ce77e7
+    quote: A catalog entry MUST be immutable once referenced; a change creates a new version.
+  - ir: rule:2.2:bee40541
+    digest: 627150415ce7304bf760287e305b8acb2e3f5bea80e39915a21e894c93cf8356
+    quote: References MUST resolve during discovery.
+  - ir: rule:2.2:06ccee9f
+    digest: 88f6179c8487ecb60b3f98de8b1ecbbec92e618a36e441133f4f4447957c23b7
+    quote: When a proposal reaches status `agreed`, every `catalog_ref` MUST be replaced by its resolved value in the stored record, so the committed artifact is self-contained and immutable.
+  - ir: rule:2.3:99777739
+    digest: 406feb42eaa323b7ecfc76a14cc5018b0571b0ed8a54b9059f49d101885f4e65
+    quote: A seller MAY publish `https://<seller domain>/.well-known/openproposal.json`.
+    locks: [with-open-prs]
+  - ir: rule:2.3:68f68e24
+    digest: f6f5be9f5e5c5b37ff60e9b49a75ffc101122151479082691523863138729ee4
+    quote: "`ETag` / `Last-Modified` are REQUIRED, so buyers can poll cheaply."
+    locks: [with-open-prs]
+  - ir: rule:2.3:59a4ca91
+    digest: bcf386544a30e5ac27e19129df4cfefe990e46b1c9f0352f3965fe26503b7c41
+    quote: Manifest entries MUST match the current version of each proposal.
+    locks: [with-open-prs]
+  - ir: rule:3:e768cdf1
+    digest: 3c544b90b62de71cdd52f67dddf236c12013bbd57b12c1df08fa2c6d157d2a11
+    quote: The seller sets it and MAY revise it while status is `draft` or `published`.
+  - ir: rule:3:82c2f1b0
+    digest: c93849d9b729272b79ae20197ca3fb6b85ee5d953534963626ab24f32b6bd245
+    quote: The buyer MAY ask for a value outside the declared space.
+  - ir: rule:3:07a16404
+    digest: b1a02508bff5df25c2d1cb2f135aafe1a1ad791e70b4fa4d1e4f55af5adbdde0
+    quote: "`selectable`, `settable` and `supplied` fields MUST resolve without a round trip — everything needed to validate and price them is declared in the proposal."
+  - ir: rule:3:b51cedb6
+    digest: fde9bc5c8e7d5ea0efdf20ad2cda4220d910e865daeb0d98f67288ec2f1493f9
+    quote: An unset `selectable` or `settable` field takes its declared `included[]` or default, and that default MUST be explicit in the proposal.
+  - ir: rule:3.3:1acc7d0d
+    digest: fb78ec803f2f53a2f4bd26ec2792b70c55172066eb018368fbd64844f2bee13c
+    quote: Because audiences, properties, formats and, where it is selectable, `geo` are `selectable`, and buyer `exclusions` (§ 5.5) narrow delivery, `addressable_scale` and `availability` MUST be recomputed against the buyer's actual selection and exclusions.
+    locks: [with-open-prs]
+  - ir: rule:2:2ea1196f
+    digest: 7aaad189bdae2d572c4d875332a6be38e927bf2a1dc19959b4644cff6762c7fc
+    quote: A buyer MAY select and commit a subset of a proposal's line items, unless the proposal explicitly mandates linked execution through its binding terms.
+    locks: [main]
+  - ir: rule:3.3:f58949fc
+    digest: 6c93d77b27d0fbb964292425a405002f7b9149e94231de70ce970bb09038a5ae
+    quote: Because audiences, properties and formats are `selectable`, `addressable_scale` and `availability` MUST be recomputed against the buyer's actual selection.
+    locks: [main]
+options:
+  - id: by-subject
+    summary: >-
+      A statement about one payload, or about two versions and the acting party,
+      is a rule. A statement about what a party does, which no payload shows, is
+      an obligation. A statement the schema already says maps to the schema.
+  - id: all-obligations
+    summary: Every statement outside the tables is an obligation.
+chosen: by-subject
+rationale: >-
+  "Each line item MUST be fully self-contained" is what the line-item schema
+  states: it is a document of its own and references no proposal. Replacing
+  every `catalog_ref` at `agreed` is a rule on an agreed line item, which
+  carries no `catalog_ref`. A seller's right to revise a seller-set field
+  while the status is `draft` or `published`, and a buyer's right to ask for a
+  value outside the declared space, compare two versions and the acting party,
+  so they are rules of the `Marker` vocabulary. The rest are obligations, each
+  on the party it names: a consumer doesn't inherit a value from the proposal;
+  a buyer may commit a subset of the line items; and a seller keeps catalog
+  entries immutable, resolves references during discovery, returns a summary
+  and a full representation as § 2.1 says, gives in a summary the placement
+  keys that the line item declares, which a summary alone doesn't show, publishes a current manifest with
+  `ETag` and `Last-Modified`, declares everything a field needs to resolve,
+  makes a field's default explicit, and recomputes `addressable_scale` and
+  `availability`.
+feedback: >-
+  Mark the behavioral requirements of § 2 and § 3 as obligations on a named
+  party. Keep them apart from what a schema or a rule can check.

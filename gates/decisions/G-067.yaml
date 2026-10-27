@@ -1,0 +1,73 @@
+format: 1
+id: G-067
+date: 2026-10-27
+question: What changes when the repository's text cites only documents it holds, its locks name clones under vendor/, the workflow runs on the push that creates the branch, and the repository carries its licenses?
+decision: >-
+  Comments and documents name gates by their number in the README's CI
+  table, and design sources cite only documents under docs/design/. The
+  feedback gate's internal-citation pattern drops the alternative for
+  sections of a document the repository doesn't hold; its path alternative
+  still catches every docs/ path. Each lock's clone source is a path under
+  vendor/, which git ignores, so no lock or note names a path outside the
+  repository; a missing clone is skipped, as before, and the snapshot
+  serves. The workflow's GATE_BASE falls back to the pushed commit when the
+  push creates the branch, so the first push of a new repository fetches a
+  commit that exists. The site check no longer bans one other protocol's
+  name, and its local-path fixtures use a file URL; the release scan, which
+  fails on that name in any file of the published tree, the site's sources
+  included, holds it instead. package.json and its lock declare the code's
+  license, Apache-2.0, beside the new LICENSE, LICENSE-CODE, and NOTICE.
+  The site counts the examples' failures as distinct places, as the
+  feedback does, and links each decision page to its record in the public
+  repository. This record accepts each gate at its new fingerprint.
+rationale: >-
+  A citation of a document a reader can't open explains nothing, a path
+  outside the repository resolves on one machine only, and a first push
+  names no previous commit, so its fetch would fail before any gate ran.
+  The one check removed moves to the release scan, which reads every file
+  the site is built from; every other check stands, and each fixture still
+  fails its gate. Most fingerprints change because the code comments, the
+  kernel's design sources, package.json, and the site's sources they
+  reach changed, not because a check did.
+accepts:
+  - { gate: comparison, fingerprint: 76e70e4f25f337d25d5924104f5677e5c2d66bf886c5e266fbe7d02500d25176 }
+  - { gate: convention-beside-reference, fingerprint: d7366737a9b4cb88425499b3098644e962417e6b6e64a279e4c8ca385ddd1154 }
+  - { gate: convention-inline, fingerprint: 1979f7e8bae68d3498402757c67772d78221f823d2c0971593d288135227940f }
+  - { gate: convention-keywords, fingerprint: 496083e69e70824233c63418b67dd2a647e865576a53eb1d0e5e3be9a433fe1c }
+  - { gate: convention-layers, fingerprint: 8818d0b941c16631a2769e80219435b81fea3c3c27a7225d9c6e02f7c35fd1a3 }
+  - { gate: convention-lists, fingerprint: 6ca644b724697b414febda658c9e02b2ab7820c5203a8e4546a75ea92e9759ab }
+  - { gate: convention-modules, fingerprint: 0f4feaac6a9fa8e6c1c0899c1dffba59491c203f41ee17c27e4e00dbca18288e }
+  - { gate: convention-unions, fingerprint: d15eff91e27aa38259d900a312b5e90c5af053e2e09ada50b8daa96365885a79 }
+  - { gate: corpus-generates, fingerprint: 872a6ff75629130f9f856eefe1d594bc9c49788fe4a7c220c86cefe6da6c8ef0 }
+  - { gate: corpus-isolation, fingerprint: d3d3922507e9e136ba74e871d76a2252cd8e30515f5fa974337fd3cd6aceb45b }
+  - { gate: domains-homonyms, fingerprint: ee8a2172fad6ac118c78485f547df333ca920bf762b4ff07916e834b9b0d7b3b }
+  - { gate: domains-properties, fingerprint: 7c76b4e2122e558d127f41b757f09068e65f1be95f26c985c61846e6ce107fe4 }
+  - { gate: domains-used, fingerprint: b2f419f27ade21ea9fa13b7b1ff910967ce321921573144a019405144d9b546c }
+  - { gate: duplication-model, fingerprint: f112b33667308b0c9986593ef7dfa567f2a13ca262277b9d51afe0def7e1238b }
+  - { gate: examples-listing, fingerprint: 4d2d312c513bb775a64a95b1ad6878f283f98c6743ce61b2a5fa1599bbb9071c }
+  - { gate: examples-validate, fingerprint: 4661961d7ae7370056546c3cf7621e4f436d21f6af3024c9edc1317b2abb4bc3 }
+  - { gate: feedback, fingerprint: 5befdf01960f9904b2d7fd0acd57bc1a57f31fb7a004da16043824781cc7be77 }
+  - { gate: fidelity, fingerprint: b5962e2c07b0fdbcda8c0718fba465696fd6431e98d9eed94b098b9a0f06676c }
+  - { gate: field-examples, fingerprint: 691996eeb66581743e1315402056d16dabf6d121ce152d640ff3f7659290e2da }
+  - { gate: frozen-releases, fingerprint: b33fa4b8e9bf04d6e38d8ab084223ef8b8abff50cd8f7873f80e28964a7fd321 }
+  - { gate: frozen-reviewed, fingerprint: 37fd1e7a88d8c54117c80b22c6b9832bad8752725f48d2546852f12260cec6ac }
+  - { gate: guard, fingerprint: 88ab11d93a25803c9ba0699d57bb3b4c427a04f50b7fafd993d6f807bbae5095 }
+  - { gate: model-resolves, fingerprint: fc5fa70cc258bfce662d97ce2baf82f4e1f3fdbd5323603c251a6da5c85195e4 }
+  - { gate: modules-depends, fingerprint: 1550885560932e03709511964a9b613d90c936502c6d940762f7d37786eab2f7 }
+  - { gate: npm-test, fingerprint: 4f0a5c9877c5b1e5835960c2f415d1f95f1af9c055fbf9156df68d056a09abb6 }
+  - { gate: release-breaking, fingerprint: d1a43e82e188b0cc5319df92d7c0f073b15ae158955cf7849d7424d63da17e0a }
+  - { gate: release-builds, fingerprint: e94138ec7022a7dc3c445a89bce08219d2308af60badcd4831925db954c8c5bc }
+  - { gate: release-digests, fingerprint: f1ef193f7cf47fdc51bf5f43b35674c9a21c702c730186717daed31bd4e1c254 }
+  - { gate: round-trip, fingerprint: 4eba776170a2e7649922abaae33ff32538c3ce24d2034cd18ac023dbfc496bd7 }
+  - { gate: rule-checks, fingerprint: 2641505af9f3c662fb5b3cd9bff832cc7ce4be5df77d0a7b4284ca51efb6b665 }
+  - { gate: rule-vectors, fingerprint: eb51d78b614411eea4743c518217b2ef90dea0e00d5795e8022204a0aed5c73b }
+  - { gate: rules-emit, fingerprint: 7d2f1c3df4d01360879df561daa29a3a26c381fa70e294211c8243c9cfc6cd6a }
+  - { gate: schemas-conventions, fingerprint: 017f2207b0a64503dc9df4b282c8c7721f40ea1c7bac79b9da7e56727f5b77cc }
+  - { gate: schemas-emit, fingerprint: 0ca8a193980856a736a0467da872f74fcc9e0a912de1d86c02f41b39299dedae }
+  - { gate: sdk-generate, fingerprint: 1a478f6ec91d0d61ab76bd24a409382fd82cb64239a47283f3bcf27f40645f8c }
+  - { gate: site-builds, fingerprint: 8f8b2abd4c38c48c9dc3ecb816686170e125fdcb412d3abb31cf71c7594063f2 }
+  - { gate: type-examples-generate, fingerprint: fe7c79dbcc9421d8eb2b03b97f804832240e0f5ee56555a67c1eeec6b2ae2271 }
+  - { gate: type-examples-valid, fingerprint: 398aa61a11374103f2af23ce76dc0711278a960973c892ec25ccf7c0efb925a8 }
+  - { gate: variant-diff, fingerprint: e1690171cde851a16ee31a30fe1fbad42f7ec82b16b98f711f500194d0a089ef }
+  - { gate: variant-examples, fingerprint: f76cab34a39e7298e42ae790f226011e4ec37677883f2800c95a655e631d2062 }
+  - { gate: workflow, fingerprint: fdf31c1dd8b2985d525b4ef26532d466599f0ad5d7f6ad34165351a876856bdc }

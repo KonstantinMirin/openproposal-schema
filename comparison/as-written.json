@@ -1,0 +1,870 @@
+{
+  "description": "The schemas as the specification and its examples write the points our proposals change: opaque string IDs, the integers 0 and 1 for AdCOM's flags, spans as the text or its examples write them, bare terms where the text lists none, calendar dates for a flight, and options with only the members the text lists. Every point the text leaves open is filled as in the schemas we propose.",
+  "format": 1,
+  "locks": [
+    {
+      "commit": "44dfaaf618736219426c311ec997b6d37e94b950",
+      "differences": [
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "asset_id",
+          "to": "Identifier",
+          "type": "AssetsEntry"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "id",
+          "to": "Identifier",
+          "type": "AudiencesOption"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "id",
+          "to": "Identifier",
+          "type": "CancellationPolicyOption"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "idempotency_key",
+          "to": "Identifier",
+          "type": "Commitment"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "id",
+          "to": "Identifier",
+          "type": "ExclusivityOption"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "line_item_id",
+          "to": "Identifier",
+          "type": "LineItemSummary"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Selectable<CatalogRefOr<AudiencesOption>, Uuid>",
+          "member": "audiences",
+          "to": "Selectable<CatalogRefOr<AudiencesOption>, Identifier>",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Selectable<CancellationPolicyOption, Uuid>",
+          "member": "cancellation_policy",
+          "to": "Selectable<CancellationPolicyOption, Identifier>",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "correlation_id",
+          "to": "Identifier",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Selectable<ExclusivityOption, Uuid>",
+          "member": "exclusivity",
+          "to": "Selectable<ExclusivityOption, Identifier>",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "line_item_id",
+          "to": "Identifier",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Selectable<MeasurementSourceOption, Uuid>",
+          "member": "measurement_source",
+          "to": "Selectable<MeasurementSourceOption, Identifier>",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Selectable<ProductionOption, Uuid>",
+          "member": "production",
+          "to": "Selectable<ProductionOption, Identifier>",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Selectable<CatalogRefOr<PropertiesOption>, Uuid>",
+          "member": "properties",
+          "to": "Selectable<CatalogRefOr<PropertiesOption>, Identifier>",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Selectable<ReportingOption, Uuid>",
+          "member": "reporting",
+          "to": "Selectable<ReportingOption, Identifier>",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "id",
+          "to": "Identifier",
+          "type": "PropertiesOption"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "proposal_id",
+          "to": "Identifier",
+          "type": "ProposalSummary"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "proposal_id",
+          "to": "Identifier",
+          "type": "Proposal"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "to": "Identifier",
+          "type": "Uuid"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-040",
+          "from": "Duration",
+          "member": "granularity",
+          "to": "BareTerm",
+          "type": "Availability"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-040",
+          "from": "Duration",
+          "member": "attribution_window",
+          "to": "BareTerm",
+          "type": "MeasurementSourceOption"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-040",
+          "from": "Duration",
+          "member": "lead_time",
+          "to": "Text",
+          "type": "ProductionOption"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-040",
+          "from": "Duration",
+          "member": "cadence",
+          "to": "BareTerm",
+          "type": "ReportingOption"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "AssetApprovalStatus",
+          "to": "BareTerm",
+          "type": "AssetApprovalStatus"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "AssetApprovalStatus",
+          "member": "approval_status",
+          "to": "BareTerm",
+          "type": "AssetsEntry"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "Provenance",
+          "member": "provenance",
+          "to": "BareTerm",
+          "type": "AudiencesOption"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "AvailabilityBasis",
+          "to": "BareTerm",
+          "type": "AvailabilityBasis"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "AvailabilityUnit",
+          "to": "BareTerm",
+          "type": "AvailabilityUnit"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "AvailabilityBasis",
+          "member": "basis",
+          "to": "BareTerm",
+          "type": "Availability"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "AvailabilityUnit",
+          "member": "unit",
+          "to": "BareTerm",
+          "type": "Availability"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "MeasurementBasis",
+          "member": "basis",
+          "to": "BareTerm",
+          "type": "CommittedMetricsEntry"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "CreativeDeliveryProtocol",
+          "to": "BareTerm",
+          "type": "CreativeDeliveryProtocol"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "CreativeDeliveryProtocol",
+          "member": "protocol",
+          "to": "BareTerm",
+          "type": "CreativeDelivery"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "ExternalReferenceRole",
+          "to": "BareTerm",
+          "type": "ExternalReferenceRole"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "ExternalReferenceRole",
+          "member": "role",
+          "to": "BareTerm",
+          "type": "ExternalReferencesEntry"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "MeasurementBasis",
+          "to": "BareTerm",
+          "type": "MeasurementBasis"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "Provenance",
+          "to": "BareTerm",
+          "type": "Provenance"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "ReportingDeliveryMechanism",
+          "to": "BareTerm",
+          "type": "ReportingDeliveryMechanism"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "ReportingDeliveryMechanism",
+          "member": "delivery_mechanism",
+          "to": "BareTerm",
+          "type": "ReportingOption"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-042",
+          "from": "Timestamp",
+          "member": "flight_end",
+          "to": "CalendarDate",
+          "type": "Commitment"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-042",
+          "from": "Timestamp",
+          "member": "flight_start",
+          "to": "CalendarDate",
+          "type": "Commitment"
+        },
+        {
+          "change": "withheld",
+          "decision": "D-047",
+          "from": "Uuid",
+          "member": "id",
+          "to": "",
+          "type": "MeasurementSourceOption"
+        },
+        {
+          "change": "withheld",
+          "decision": "D-047",
+          "from": "Uuid",
+          "member": "id",
+          "to": "",
+          "type": "ProductionOption"
+        },
+        {
+          "change": "withheld",
+          "decision": "D-047",
+          "from": "Uuid",
+          "member": "id",
+          "to": "",
+          "type": "ReportingOption"
+        }
+      ],
+      "examples": {
+        "proposed": {
+          "departure": 53,
+          "failures": 58,
+          "gap": 5,
+          "places": 55
+        },
+        "variant": {
+          "departure": 5,
+          "failures": 10,
+          "gap": 5,
+          "places": 10
+        }
+      },
+      "name": "main"
+    },
+    {
+      "commit": "292bb51e654c2eef563d721eb6af8317371c906a",
+      "differences": [
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "asset_id",
+          "to": "Identifier",
+          "type": "AssetsEntry"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "id",
+          "to": "Identifier",
+          "type": "AudiencesOption"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "id",
+          "to": "Identifier",
+          "type": "CancellationPolicyOption"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "idempotency_key",
+          "to": "Identifier",
+          "type": "Commitment"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "proposal_id",
+          "to": "Identifier",
+          "type": "Commitment"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "id",
+          "to": "Identifier",
+          "type": "ExclusivityOption"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "line_item_id",
+          "to": "Identifier",
+          "type": "LineItemSummary"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Selectable<CatalogRefOr<AudiencesOption>, Uuid>",
+          "member": "audiences",
+          "to": "Selectable<CatalogRefOr<AudiencesOption>, Identifier>",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Selectable<CancellationPolicyOption, Uuid>",
+          "member": "cancellation_policy",
+          "to": "Selectable<CancellationPolicyOption, Identifier>",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "correlation_id",
+          "to": "Identifier",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Selectable<ExclusivityOption, Uuid>",
+          "member": "exclusivity",
+          "to": "Selectable<ExclusivityOption, Identifier>",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "line_item_id",
+          "to": "Identifier",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Selectable<MeasurementSourceOption, Uuid>",
+          "member": "measurement_source",
+          "to": "Selectable<MeasurementSourceOption, Identifier>",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Selectable<ProductionOption, Uuid>",
+          "member": "production",
+          "to": "Selectable<ProductionOption, Identifier>",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Selectable<CatalogRefOr<PropertiesOption>, Uuid>",
+          "member": "properties",
+          "to": "Selectable<CatalogRefOr<PropertiesOption>, Identifier>",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Selectable<ReportingOption, Uuid>",
+          "member": "reporting",
+          "to": "Selectable<ReportingOption, Identifier>",
+          "type": "LineItem"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "line_item_id",
+          "to": "Identifier",
+          "type": "MinCommitmentEntry"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "id",
+          "to": "Identifier",
+          "type": "PropertiesOption"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "proposal_id",
+          "to": "Identifier",
+          "type": "ProposalSummary"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "member": "proposal_id",
+          "to": "Identifier",
+          "type": "Proposal"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "List<Uuid>",
+          "member": "all_of",
+          "to": "List<Identifier>",
+          "type": "Requires"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "List<Uuid>",
+          "member": "any_of",
+          "to": "List<Identifier>",
+          "type": "Requires"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-037",
+          "from": "Uuid",
+          "to": "Identifier",
+          "type": "Uuid"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-039",
+          "from": "boolean",
+          "member": "instl",
+          "to": "IntegerFlag",
+          "type": "LineItemSummaryPlacement"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-039",
+          "from": "boolean",
+          "member": "reward",
+          "to": "IntegerFlag",
+          "type": "LineItemSummaryPlacement"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-039",
+          "from": "boolean",
+          "member": "skip",
+          "to": "IntegerFlag",
+          "type": "LineItemSummaryPlacement"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-039",
+          "from": "boolean",
+          "member": "instl",
+          "to": "IntegerFlag",
+          "type": "Placement"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-039",
+          "from": "boolean",
+          "member": "reward",
+          "to": "IntegerFlag",
+          "type": "Placement"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-039",
+          "from": "boolean",
+          "member": "skip",
+          "to": "IntegerFlag",
+          "type": "Placement"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-040",
+          "from": "Duration",
+          "member": "granularity",
+          "to": "BareTerm",
+          "type": "Availability"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-040",
+          "from": "Duration",
+          "member": "attribution_window",
+          "to": "BareTerm",
+          "type": "MeasurementSourceOption"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-040",
+          "from": "Duration",
+          "member": "skipafter",
+          "to": "Count",
+          "type": "Placement"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-040",
+          "from": "Duration",
+          "member": "lead_time",
+          "to": "Text",
+          "type": "ProductionOption"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-040",
+          "from": "Duration",
+          "member": "min_interval_s",
+          "to": "Count",
+          "type": "Refresh"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-040",
+          "from": "Duration",
+          "member": "cadence",
+          "to": "BareTerm",
+          "type": "ReportingOption"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "AssetApprovalStatus",
+          "to": "BareTerm",
+          "type": "AssetApprovalStatus"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "AssetApprovalStatus",
+          "member": "approval_status",
+          "to": "BareTerm",
+          "type": "AssetsEntry"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "Provenance",
+          "member": "provenance",
+          "to": "BareTerm",
+          "type": "AudiencesOption"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "AvailabilityBasis",
+          "to": "BareTerm",
+          "type": "AvailabilityBasis"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "AvailabilityUnit",
+          "to": "BareTerm",
+          "type": "AvailabilityUnit"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "AvailabilityBasis",
+          "member": "basis",
+          "to": "BareTerm",
+          "type": "Availability"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "AvailabilityUnit",
+          "member": "unit",
+          "to": "BareTerm",
+          "type": "Availability"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "MeasurementBasis",
+          "member": "basis",
+          "to": "BareTerm",
+          "type": "CommittedMetricsEntry"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "CreativeDeliveryProtocol",
+          "to": "BareTerm",
+          "type": "CreativeDeliveryProtocol"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "CreativeDeliveryProtocol",
+          "member": "protocol",
+          "to": "BareTerm",
+          "type": "CreativeDelivery"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "MeasurementBasis",
+          "to": "BareTerm",
+          "type": "MeasurementBasis"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "Provenance",
+          "to": "BareTerm",
+          "type": "Provenance"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "ReportingDeliveryMechanism",
+          "to": "BareTerm",
+          "type": "ReportingDeliveryMechanism"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-041",
+          "from": "ReportingDeliveryMechanism",
+          "member": "delivery_mechanism",
+          "to": "BareTerm",
+          "type": "ReportingOption"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-042",
+          "from": "Timestamp",
+          "member": "flight_end",
+          "to": "CalendarDate",
+          "type": "Commitment"
+        },
+        {
+          "change": "retyped",
+          "decision": "D-042",
+          "from": "Timestamp",
+          "member": "flight_start",
+          "to": "CalendarDate",
+          "type": "Commitment"
+        },
+        {
+          "change": "withheld",
+          "decision": "D-047",
+          "from": "Uuid",
+          "member": "id",
+          "to": "",
+          "type": "MeasurementSourceOption"
+        },
+        {
+          "change": "withheld",
+          "decision": "D-047",
+          "from": "Uuid",
+          "member": "id",
+          "to": "",
+          "type": "ProductionOption"
+        },
+        {
+          "change": "withheld",
+          "decision": "D-047",
+          "from": "Uuid",
+          "member": "id",
+          "to": "",
+          "type": "ReportingOption"
+        }
+      ],
+      "examples": {
+        "proposed": {
+          "departure": 82,
+          "failures": 92,
+          "gap": 10,
+          "places": 88
+        },
+        "variant": {
+          "departure": 6,
+          "failures": 16,
+          "gap": 10,
+          "places": 16
+        }
+      },
+      "name": "with-open-prs"
+    }
+  ],
+  "switches": [
+    {
+      "chosen": "uuid",
+      "decision": "D-037",
+      "option": "opaque-string",
+      "proposed": "A UUID in the RFC 9562 string form, which JSON Schema's `uuid` format checks.",
+      "question": "How is the ID of a record a party mints written, so that every party compares it the same way?",
+      "reads": "Every ID a party mints, and every reference to one, is any string, as the text types `proposal_id` and `line_item_id`: `proposal_id`, `line_item_id`, `asset_id`, `correlation_id`, `idempotency_key`, a commitment's `proposal_id`, `requires`' line items, and the `id` of every object option, which `included[]` and the `pricing` keys name it by.",
+      "written": "Any string the minting party chooses."
+    },
+    {
+      "chosen": "boolean",
+      "decision": "D-039",
+      "option": "integer",
+      "proposed": "A JSON boolean, as every other flag of the specification is.",
+      "question": "How is a two-valued flag written where § 5.2.2 copies an AdCOM `0` | `1` integer?",
+      "reads": "`placement.reward`, `instl`, and `skip` are the integers `0` (no) and `1` (yes), as § 5.2.2 and AdCOM 1.0 write them.",
+      "written": "The integers `0` and `1`, as § 5.2.2, AdCOM 1.0, and OpenRTB 2.6 write them."
+    },
+    {
+      "chosen": "duration",
+      "decision": "D-040",
+      "option": "as-written",
+      "proposed": "An ISO 8601 duration in the grammar of RFC 3339 Appendix A, as `hold_duration` is.",
+      "question": "How is a length of time written where the specification or its examples write it as prose, a word, or a count of seconds?",
+      "reads": "A production option's `lead_time` is prose, such as \"10 business days\"; a report's `cadence`, an availability's `granularity`, and a measurement source's `attribution_window` are bare words, such as `daily` and `30d`; and `placement.skipafter` and `refresh.min_interval_s` are whole seconds, as § 5.2.2 and AdCOM 1.0 write them. `hold_duration`, which the text writes as an ISO 8601 duration, stays one.",
+      "written": "Each as the specification or its examples write it, prose for `lead_time`, a word for `cadence` and `granularity`, `30d` for `attribution_window`, and integer seconds for `skipafter` and `min_interval_s`."
+    },
+    {
+      "chosen": "named-open-vocabulary",
+      "decision": "D-041",
+      "option": "bare-term",
+      "proposed": "Each field gets a named open vocabulary with the core terms the specification lists, none yet, so each accepts namespaced terms `<domain>:<term>` only.",
+      "question": "What does a field hold whose values are terms that the specification doesn't list?",
+      "reads": "Each field whose values are terms the text doesn't list takes a bare term, such as `modeled`, `vast_4_2`, `mrc`, or `s3`: an audience's `provenance`, `creative_delivery.protocol`, an asset's `approval_status`, `availability`'s `unit` and `basis`, `committed_metrics[]`'s `basis`, `reporting`'s `delivery_mechanism`, and, on `main`, an external reference's `role`.",
+      "written": "Each field takes any bare term, letters and digits joined by underscores, as the examples write them."
+    },
+    {
+      "chosen": "timestamp",
+      "decision": "D-042",
+      "option": "date",
+      "proposed": "A point in time, a `Timestamp`, as the offer window's `valid_from` and `valid_until` are.",
+      "question": "Is a commitment's flight start and end a calendar date, as the examples write them, or a point in time?",
+      "reads": "A commitment's `flight_start` and `flight_end` are calendar dates, such as `2026-10-06`, as the examples write them. The text names no time zone that reads them.",
+      "written": "A calendar date, `YYYY-MM-DD`, as the examples write it."
+    },
+    {
+      "chosen": "add-id",
+      "decision": "D-047",
+      "option": "as-written",
+      "proposed": "Yes. Each of these options carries `id`, required, beside the members the text lists, and `included[]` and the `pricing` keys name the option by it.",
+      "question": "Do the production, measurement source, and reporting options carry an `id` that `included[]` and the `pricing` keys name them by?",
+      "reads": "The production, measurement source, and reporting options have only the members the text lists, and no `id`, so `included[]` and the `pricing` keys can't name them.",
+      "written": "No. The options keep the members the text lists, and `included[]` and the `pricing` keys can't name them."
+    }
+  ],
+  "variant": "as-written"
+}

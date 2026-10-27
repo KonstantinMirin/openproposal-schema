@@ -1,0 +1,42 @@
+{
+  "$id": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal-summary.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The OpenProposal `ProposalSummary` profile: the fields of the `Proposal` document that the specification lists for it.",
+  "properties": {
+    "description": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Text",
+      "description": "REQUIRED. Prose, not a name. Where the \"why buy\" case is made, including which channels a multi-channel proposal spans"
+    },
+    "linked_execution": {
+      "$ref": "../../modules/proposal/1/proposal.json#/$defs/LinkedExecution",
+      "description": "`none` (default, subsettable) | `all` (every published line item must be committed together)"
+    },
+    "proposal_id": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Uuid",
+      "description": "Unique identity for the proposal object"
+    },
+    "seller_name": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Text",
+      "description": "Canonical legal seller entity name, from the registry"
+    },
+    "valid_from": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Timestamp",
+      "description": "ISO-8601 window the offer holds. This is the offer window, not the campaign flight"
+    },
+    "valid_until": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Timestamp",
+      "description": "ISO-8601 window the offer holds. This is the offer window, not the campaign flight"
+    }
+  },
+  "required": [
+    "description",
+    "linked_execution",
+    "proposal_id",
+    "seller_name",
+    "valid_from",
+    "valid_until"
+  ],
+  "title": "ProposalSummary",
+  "type": "object"
+}

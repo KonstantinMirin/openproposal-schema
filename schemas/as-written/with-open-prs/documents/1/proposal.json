@@ -1,0 +1,109 @@
+{
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/proposal.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The OpenProposal `Proposal` document.",
+  "if": {
+    "properties": {
+      "type": {
+        "const": "custom"
+      }
+    },
+    "required": [
+      "type"
+    ]
+  },
+  "properties": {
+    "assent": {
+      "$ref": "../../modules/proposal/1/proposal.json#/$defs/Assent",
+      "description": "Buyer and seller assent records and timestamps for the binding version. Signature scheme is WS1"
+    },
+    "best_for": {
+      "description": "Advisory planning hints. Non-normative, and never the basis for a match",
+      "items": {
+        "$ref": "../../kernel/1/kernel.json#/$defs/Text"
+      },
+      "type": "array"
+    },
+    "brief_ref": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/ExternalId",
+      "description": "Reference to the buyer's brief. REQUIRED when `type` is `custom`"
+    },
+    "description": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Text",
+      "description": "REQUIRED. Prose, not a name. Where the \"why buy\" case is made, including which channels a multi-channel proposal spans"
+    },
+    "linked_execution": {
+      "$ref": "../../modules/proposal/1/proposal.json#/$defs/LinkedExecution",
+      "description": "`none` (default, subsettable) | `all` (every published line item must be committed together)"
+    },
+    "negotiation_history": {
+      "description": "Ordered, append-only. `{ version, actor: buyer | seller, action: proposed | countered | accepted | declined | withdrawn, fields_changed[], at }`. Entries MUST NOT be edited or removed",
+      "items": {
+        "$ref": "../../modules/proposal/1/proposal.json#/$defs/NegotiationHistoryEntry"
+      },
+      "type": "array"
+    },
+    "not_suitable_for": {
+      "description": "Advisory exclusion guidance. Non-normative",
+      "items": {
+        "$ref": "../../kernel/1/kernel.json#/$defs/Text"
+      },
+      "type": "array"
+    },
+    "proposal_id": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Identifier",
+      "description": "Unique identity for the proposal object"
+    },
+    "proposal_template_id": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/ExternalId",
+      "description": "OPTIONAL. Links an issued proposal to the seller's template. Opaque to buyers; used for the seller's reporting"
+    },
+    "seasonality_notes": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Text",
+      "description": "When the proposal performs differently"
+    },
+    "seller_id": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/ExternalId",
+      "description": "IAB Tech Lab registry reference"
+    },
+    "seller_name": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Text",
+      "description": "Canonical legal seller entity name, from the registry"
+    },
+    "specifications": {
+      "$ref": "../../modules/proposal/1/proposal.json#/$defs/Specifications",
+      "description": "Structured detail at media-kit depth"
+    },
+    "status": {
+      "$ref": "../../modules/proposal/1/proposal.json#/$defs/ProposalStatus",
+      "description": "`draft` | `published` | `under_review` | `agreed` | `withdrawn` | `expired`"
+    },
+    "type": {
+      "$ref": "../../modules/proposal/1/proposal.json#/$defs/ProposalType",
+      "description": "`standard` | `custom`"
+    },
+    "valid_from": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Timestamp",
+      "description": "ISO-8601 window the offer holds. This is the offer window, not the campaign flight"
+    },
+    "valid_until": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Timestamp",
+      "description": "ISO-8601 window the offer holds. This is the offer window, not the campaign flight"
+    },
+    "version": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Count",
+      "description": "Monotonically increasing revision number. Each revision while status is `published` increments it"
+    }
+  },
+  "required": [
+    "description"
+  ],
+  "then": {
+    "required": [
+      "brief_ref"
+    ]
+  },
+  "title": "Proposal",
+  "type": "object"
+}

@@ -1,0 +1,66 @@
+# Rule vectors for § 4 and § 4.1. Regenerate a digest with
+# `npm run cite -- <rule ID>`.
+format: 1
+module: proposal
+rules:
+  # `negotiation_history[]` is ordered and append-only.
+  - rule: rule:4.1:8e9aacb8
+    digest: 089fde20d5aa0c8c4d3ea3675f3ba09cf81f4d4a9615d0a627bee1cb3f823dba
+    decision: D-034
+    valid:
+      - party: seller
+        before:
+          description: Business-daily reach across display and CTV.
+          status: published
+          version: 1
+          negotiation_history:
+            - { version: 1, actor: seller, action: proposed, fields_changed: [], at: "2026-10-01T09:00:00Z" }
+        after:
+          description: Business-daily reach across display, CTV, and audio.
+          status: published
+          version: 2
+          negotiation_history:
+            - { version: 1, actor: seller, action: proposed, fields_changed: [], at: "2026-10-01T09:00:00Z" }
+            - { version: 2, actor: seller, action: proposed, fields_changed: [description], at: "2026-10-02T09:00:00Z" }
+    invalid:
+      - party: seller
+        before:
+          description: Business-daily reach across display and CTV.
+          status: published
+          version: 1
+          negotiation_history:
+            - { version: 1, actor: seller, action: proposed, fields_changed: [], at: "2026-10-01T09:00:00Z" }
+        after:
+          description: Business-daily reach across display, CTV, and audio.
+          status: published
+          version: 2
+          negotiation_history:
+            - { version: 2, actor: seller, action: proposed, fields_changed: [description], at: "2026-10-02T09:00:00Z" }
+      - party: seller
+        before:
+          description: Business-daily reach across display and CTV.
+          status: published
+          version: 1
+          negotiation_history:
+            - { version: 1, actor: seller, action: proposed, fields_changed: [], at: "2026-10-01T09:00:00Z" }
+        after:
+          description: Business-daily reach across display, CTV, and audio.
+          status: published
+          version: 2
+          negotiation_history:
+            - { version: 1, actor: seller, action: countered, fields_changed: [], at: "2026-10-01T09:00:00Z" }
+            - { version: 2, actor: seller, action: proposed, fields_changed: [description], at: "2026-10-02T09:00:00Z" }
+      - party: seller
+        before:
+          description: Business-daily reach across display and CTV.
+          status: published
+          version: 1
+          negotiation_history:
+            - { version: 1, actor: seller, action: proposed, fields_changed: [], at: "2026-10-01T09:00:00Z" }
+        after:
+          description: Business-daily reach across display, CTV, and audio.
+          status: published
+          version: 2
+          negotiation_history:
+            - { version: 2, actor: seller, action: proposed, fields_changed: [description], at: "2026-10-02T09:00:00Z" }
+            - { version: 1, actor: seller, action: proposed, fields_changed: [], at: "2026-10-01T09:00:00Z" }

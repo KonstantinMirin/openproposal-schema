@@ -1,0 +1,15 @@
+__pycache__/
+.venv/
+node_modules/
+build/
+vendor/
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key
+.beads/proxieddb/
+
+# Beads data lives in Dolt, synced to the sync.remote; nothing of it is tracked here
+.beads/
+/site/

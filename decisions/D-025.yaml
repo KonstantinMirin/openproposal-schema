@@ -1,0 +1,100 @@
+format: 1
+id: D-025
+status: proposed
+kind: gap
+author: agent
+question: What type does each member of the § 5.4 and § 5.5 objects take?
+covers:
+  - ir: field:5.4:creative_delivery#description/object:1
+    digest: 8d11a33a75a187ebd9affb849bab8593668de8189bf49460961af437a5c78c15
+    quote: "{ method: buyer_hosted | seller_hosted | api | platform_managed, protocol, secure_required, endpoint }"
+  - ir: field:5.4:assets[]#description/object:1
+    digest: e2ecbfe1e06380fb7c9966174c58ecc73d617563de6860287b1cd414bebcfff6
+    quote: "{ asset_id, format_ref, url_or_tag, submitted_at, approval_status }"
+  - ir: field:5.4:production#description/object:1
+    digest: 00eb00879b4a550444376e9812df5389c4a7066a43b48982f04bc6f35974f62d
+    quote: "{ custom_unit, build_owner, lead_time, cost }"
+  - ir: field:5.5:frequency_cap#description/object:1
+    digest: adbcfc3ac2b7bc7c0bda1069751986267cf304dbafb4ee388d9c2f62b43ba305
+    quote: "{ max: { min, max }, period, basis: device | household | listener }"
+  - ir: field:5.5:exclusions_accepted#description/object:1
+    digest: 9bc47a689b27eb49156befe81b0e37cb0c7d382ca9fc6096a3ae2018b393846c
+    quote: "{ types[], max_entries, enforcement, verification[] }"
+    locks: [with-open-prs]
+  - ir: field:5.5:exclusions#description/object:1
+    digest: be60d4987876fabfd554266c33bdead8233c6414f174aa9418b090c0f21e211b
+    quote: "{ domain[], app_bundle[], iab_content_category[], keyword[], list_ref }"
+    locks: [with-open-prs]
+  - ir: block:5.5:3/object:1
+    digest: 3763a96a10f4ed5b56216a542e4780e6f143bbf7e2c18236f7f2f1efdc25d669
+    quote: "{ platform, bundle }"
+    locks: [with-open-prs]
+  - ir: sentence:5.5:262ff404
+    digest: a4eb0ecc36209987c2625f25e21269a97d5e8d3dec496b9475e11f386b66ba37
+    quote: "`enforcement` is `pre_serve` or `best_effort` per type."
+    locks: [with-open-prs]
+  - ir: code:5.5:1
+    digest: 3d4d2212c0ab979644dedee89d969ec3476d83148a041374420a72352bd82819
+    quote: |-
+      exclusions_accepted:
+        types:        [domain, app_bundle, iab_content_category, keyword]
+        max_entries:  { domain: 5000, keyword: 500 }
+        enforcement:  { domain: pre_serve, app_bundle: pre_serve,
+                        iab_content_category: pre_serve, keyword: best_effort }
+        verification: ["IAS", "DoubleVerify"]
+
+      exclusions:
+        domain:           ["example-gambling.example"]
+        app_bundle:       [{ platform: roku, bundle: "123456" }]
+        iab_content_category: ["IAB-CT3.0:<id>"]   # IAB Content Taxonomy ids
+        keyword:          ["crypto"]
+        list_ref:         { url: "<url>", sha256: "<hash>" }
+    locks: [with-open-prs]
+  - ir: key:5.2:apps[].platform
+    digest: 59beae2d5527f57e7a37a80004b386db37ffae3fd116cb50c5bd84e9c30aa281
+    quote: "`platform` | REQUIRED | `ios` | `android` | `roku` | `fire_tv` | `samsung_tv` and other store platforms. No OpenRTB equivalent"
+    locks: [with-open-prs]
+  - ir: key:5.2:apps[].bundle
+    digest: 59f9924d3d8ee09a637650c5ab939c28dcf07905af01337dac1bfa74a038d6d0
+    quote: "`bundle` | REQUIRED | Store ID. As OpenRTB 2.6 `app.bundle`"
+    locks: [with-open-prs]
+options:
+  - id: as-listed
+    summary: >-
+      Each member takes the schema type or value list its meaning names. Each
+      exclusion type is a key of `exclusions`.
+  - id: open-objects
+    summary: Each object accepts any members.
+chosen: as-listed
+rationale: >-
+  In `creative_delivery`, `protocol` is a term of the open vocabulary
+  `CreativeDeliveryProtocol` (D-041), such as `vast_4_2`, `secure_required` a
+  boolean, and `endpoint` a `Url`. In `assets[]`, `asset_id` names an asset
+  the buyer mints, a `Uuid` (D-037), `format_ref` is a format ID, a `FormatId` (D-019),
+  `url_or_tag` is `Text` because it may hold tag markup, `submitted_at` is a
+  `Timestamp`, and `approval_status` a term of the open vocabulary
+  `AssetApprovalStatus` (D-041). A production option's `build_owner` is a
+  `Party`, `lead_time` a `Duration` (D-040), and `cost` an `Amount` (D-036).
+  In `frequency_cap`, `max` is the range `{ min, max }` of `Count` (D-011),
+  `period` a calendar period of `FrequencyCapPeriod` (D-044), and `basis` its vocabulary. With the open
+  PRs, an exclusion type is a key of `exclusions`: § 5.5 says a buyer must not
+  supply a type absent from `exclusions_accepted.types`, and the example lists
+  `domain`, `app_bundle`, `iab_content_category`, and `keyword`, the keys of
+  `exclusions` other than `list_ref`. So `ExclusionType` is that closed list,
+  and `max_entries` and `enforcement` are maps from it. Enforcement is
+  "`pre_serve` or `best_effort`", the closed list `Enforcement`. The
+  verification vendors are `ExternalId`, the content categories
+  `ExternalId`, as § 5.5 says they are IAB Content Taxonomy ids, the
+  blocked domains `Domain`, and the keywords `Text`. An `app_bundle[]` entry
+  has the two keys of an app, both required, as the App identity table makes
+  `platform` and `bundle`; a bundle is the app store's ID, an `ExternalId`. A
+  `list_ref` is `{ url, sha256 }`, as the example writes it. Neither member is
+  required: no statement requires either one, and "`list_ref` MUST be
+  hash-pinned" is a rule of its own (D-030).
+evidence:
+  - examples/line-item-display.yaml (creative_delivery, frequency_cap)
+  - examples/line-item-audio.yaml (production)
+feedback: >-
+  Type the members of each inline object. Define `list_ref` and the exclusion
+  types as lists the schema can check, and say which members of
+  `frequency_cap`, `creative_delivery`, and `list_ref` are required.

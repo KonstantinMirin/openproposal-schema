@@ -1,0 +1,178 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: creative
+sections: [ "5.4", 5.4/creative-inspection-and-previews ]
+types:
+  - name: Specs
+    kind: object
+    ir: field:5.4:specs
+    source: { decision: D-016 }
+    open: true
+    description: "A format's specs, as the referenced format registry entry defines them; the specification hardcodes no shape per channel, so the object accepts any member."
+  - name: ThirdPartyTags
+    kind: object
+    ir: field:5.4:third_party_tags
+    source: { decision: D-016 }
+    open: true
+    description: "The third-party tag wrapper types and VAST versions the seller accepts. The specification states no members, so the object accepts any."
+  - name: CreativeDeliveryProtocol
+    kind: vocabulary
+    ir: field:5.4:creative_delivery#description/object:1
+    source: { decision: D-041 }
+    open: true
+  - name: AssetApprovalStatus
+    kind: vocabulary
+    ir: "field:5.4:assets[]#description/object:1"
+    source: { decision: D-041 }
+    open: true
+  - name: MaterialsDue
+    kind: union
+    ir: field:5.4:materials_due
+    source: { decision: D-017 }
+    any_of: [ { kind: named, name: Timestamp }, { kind: named, name: Duration } ]
+  - name: Approval
+    kind: object
+    ir: field:5.4:approval
+    source: { decision: D-016 }
+    open: true
+    description: "The seller's creative review SLA and revision policy. The specification states no members, so the object accepts any."
+entries:
+  - ir: field:5.4:formats
+    digest: 2a8a55ef5666b057f31306cadf667fc01dff13e5cc5e009f00d3f649de375016
+    source: { decisions: [ D-018, D-019 ] }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: FormatId }, K: { kind: named, name: FormatId } }
+      presence: optional
+  - ir: field:5.4:specs
+    digest: f3fa67ecc797ea15ee4ad04313861161f3e8fcec742af3d24e4ab1f99f20273a
+    source: { decision: D-016 }
+    as: { role: property, object: LineItem, type: { kind: named, name: Specs }, presence: optional }
+  - ir: field:5.4:third_party_tags
+    digest: 7c3e68646af2fcaf101cdd07a8abe4fd7ec5a36eabd7ed4e06a71e0d8b626d80
+    source: { decision: D-016 }
+    as: { role: property, object: LineItem, type: { kind: named, name: ThirdPartyTags }, presence: optional }
+  - ir: field:5.4:creative_delivery
+    digest: 1e4d650fa9016a43489601a2d8953f727c770d01481f20d46c2d086949509a56
+    source: { rule: inline-object-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: CreativeDelivery }, presence: optional }
+  - ir: field:5.4:creative_delivery#description/object:1
+    digest: 8d11a33a75a187ebd9affb849bab8593668de8189bf49460961af437a5c78c15
+    source: { decision: D-025 }
+    as:
+      role: type
+      name: CreativeDelivery
+      layer: object
+      open: false
+      members:
+        method: { type: { kind: named, name: CreativeDeliveryMethod }, presence: optional }
+        protocol: { type: { kind: named, name: CreativeDeliveryProtocol }, presence: optional }
+        secure_required: { type: { kind: boolean }, presence: optional }
+        endpoint: { type: { kind: named, name: Url }, presence: optional }
+  - ir: field:5.4:creative_delivery#description/object:1/method
+    digest: b7d0d2c4cac4d24771ed543d709be22d3e5211eecb074dca066161bd05a78187
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: CreativeDeliveryMethod, layer: vocabulary, open: true }
+  - ir: "field:5.4:assets[]"
+    digest: 255610ac92f7e4ac1d15edbfed7d3201c5d317b1271c033372175e9eed0b40b2
+    source: { rule: inline-object-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: AssetsEntry } } }
+      presence: optional
+  - ir: "field:5.4:assets[]#description/object:1"
+    digest: e2ecbfe1e06380fb7c9966174c58ecc73d617563de6860287b1cd414bebcfff6
+    source: { decision: D-025 }
+    as:
+      role: type
+      name: AssetsEntry
+      layer: object
+      open: false
+      members:
+        asset_id: { type: { kind: named, name: Uuid }, presence: optional }
+        format_ref: { type: { kind: named, name: FormatId }, presence: optional }
+        url_or_tag: { type: { kind: named, name: Text }, presence: optional }
+        submitted_at: { type: { kind: named, name: Timestamp }, presence: optional }
+        approval_status: { type: { kind: named, name: AssetApprovalStatus }, presence: optional }
+  - ir: field:5.4:materials_due
+    digest: cfa54510f53148d77ef0133fffea985d275148ab926796713470f40d9827f5b2
+    source: { decision: D-017 }
+    as: { role: property, object: LineItem, type: { kind: named, name: MaterialsDue }, presence: optional }
+  - ir: rule:5.4:2eaa294f
+    digest: 61f09f4e064e43f2fa580ac4cbf4d7d5c34bd64f2539c58b40351900d38338fd
+    source: { decision: D-030 }
+    as: { role: rule, object: LineItem }
+  - ir: field:5.4:approval
+    digest: 099f711760829277a50ff8ea557e2d9131e53c929b364a23770815cbe7a074c8
+    source: { decision: D-016 }
+    as: { role: property, object: LineItem, type: { kind: named, name: Approval }, presence: optional }
+  - ir: field:5.4:production
+    digest: 0168284e2ec3d43c2249add202b7c657a7a4b37fe78ccfbf2cee694a3e76d199
+    source: { decisions: [ D-018, D-019 ] }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: ProductionOption }, K: { kind: named, name: Uuid } }
+      presence: optional
+  - ir: field:5.4:production#description/object:1
+    digest: 00eb00879b4a550444376e9812df5389c4a7066a43b48982f04bc6f35974f62d
+    source: { decisions: [ D-019, D-025, D-040 ] }
+    as:
+      role: type
+      name: ProductionOption
+      layer: object
+      open: false
+      members:
+        custom_unit: { type: { kind: named, name: Text }, presence: optional }
+        build_owner: { type: { kind: named, name: Party }, presence: optional }
+        lead_time: { type: { kind: named, name: Duration }, presence: optional }
+        cost: { type: { kind: named, name: Amount }, presence: optional }
+  - ir: rule:5.4/creative-inspection-and-previews:7adf48a7
+    digest: 8452a8faf2195c447f82260dc615f1a16b6d4cb0848cfd98996886b0aac2cd7f
+    locks: [ with-open-prs ]
+    source: { decision: D-032 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.4/creative-inspection-and-previews:ef1a453e
+    digest: 0c69795a3e5a4d79030d87ba3aca2eec2a463d5ec700becc2eaf4426aad7eb64
+    locks: [ with-open-prs ]
+    source: { decision: D-032 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:5.4/creative-inspection-and-previews:239a73ec
+    digest: 50484b7b9404281d0d364baf1bcf6b33a32f3288a7f488bf30b5a4f46cbb6eeb
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.4/creative-inspection-and-previews:52bc805d
+    digest: 7e44b6e44232a7723b21c5a2abe16ce69d4683eaa4864927f93537ee6166ac54
+    locks: [ with-open-prs ]
+    source: { decision: D-032 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.4/creative-inspection-and-previews:f25ad098
+    digest: bc2a987c702de5bdff7700bd5bf69b649d35ed368bc859edf241f064049ab723
+    locks: [ with-open-prs ]
+    source: { decision: D-032 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.4/creative-inspection-and-previews:11d3ac1e
+    digest: 524ecbbb6fe7bd31d2c4a2dd460aaff47b7ebb72d3279be34404e4555fef54b7
+    locks: [ with-open-prs ]
+    source: { decision: D-032 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.4/creative-inspection-and-previews:fbc60b60
+    digest: d6952569ed589e6ba57b1286e7f37af7070cb21d616ffd328dafc314094a5f1c
+    locks: [ with-open-prs ]
+    source: { decision: D-032 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.4/creative-inspection-and-previews:3a29e732
+    digest: f1f8201e1f0df8d05998a359fdec8d8d2f195b13a0f4473ea06c87f6c81bbb23
+    locks: [ with-open-prs ]
+    source: { decision: D-032 }
+    as: { role: obligation, party: implementation }

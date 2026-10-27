@@ -1,0 +1,69 @@
+format: 1
+id: G-016
+date: 2026-10-26
+question: Which gates change when the identity types collapse to Uuid and ExternalId, and the codes of lists other systems define become ExternalIds?
+decision: >-
+  `OptionKey`, `FormatId`, `GeoCode`, `DeviceCategory`, `ContentCategory`,
+  and `DocumentVersion` are no primitives, and their concepts leave the
+  domain file, with the `code` and `geography` domains they emptied. Each use
+  is an `ExternalId`, and a mapping member may carry a description that names
+  where its value comes from, as a terms document's version or a property's
+  supported formats do; the selection template's `included` and `pricing`
+  slots say how an option is named. The one shared structure left is
+  `ExternalId`, `FieldPath`, and `Text`. The nesting fixture builds its list
+  of lists from `ExternalId`. The `Map` constructor drops the invalid vector
+  that only `FormatId`'s pattern rejected, and PG-8 names its case
+  `Map<ExternalId, Count>`. The engine tests count 38 trailing-newline
+  mutants, not 41, since `FormatId`'s three pattern vectors are gone, and the
+  release tests narrow a field to `CatalogRef`, which keeps a pattern. A
+  test checks that the geo and device bounds are copies of one application.
+  The test suite holds 317 tests, so its floor rises to 317.
+rationale: >-
+  A primitive exists only when it validates differently or a receiver
+  processes its value differently, and none of these did: each was compared
+  by exact equality as written, and `FormatId`'s pattern came from the
+  examples, not from the registry that defines format IDs. Every gate still
+  checks every type the model holds; the vector, the mutant count, and the
+  exemption change only with the type that is gone, and the test floor
+  rises, so no gate is weaker.
+retires:
+  - concept: option-key
+    reason: An option is named by its own identity, its value or its `id`, which is compared by exact equality as an ExternalId; the selection template's description says so (D-007).
+  - concept: format-id
+    reason: A format ID is a code of the format registry, carried as written and compared by exact equality, an ExternalId whose field description names the registry (D-019).
+  - concept: geo-code
+    reason: A geo code is a code of a list the specification has yet to name, carried as written, an ExternalId whose field description says so (D-019).
+  - concept: device-category
+    reason: A device category is a code of a list the specification has yet to name, carried as written, an ExternalId whose field description says so (D-019).
+  - concept: content-category
+    reason: A content category is an ID of the IAB Tech Lab Content Taxonomy, carried as written, an ExternalId whose member description names the taxonomy (D-025).
+  - concept: document-version
+    reason: A terms document's version is written by its publisher and compared by exact equality, like an ExternalId, whose member description says it is the document's version (D-027).
+accepts:
+  - { gate: comparison, fingerprint: 1edb3713f4b871d03f85d524b6da0f77a2569d0b00b8867574010ac77aa1dad2 }
+  - { gate: convention-beside-reference, fingerprint: 209217e9daac3e581cafc6105cd8c87b8fab1283e630522ab8abdba0b647f852 }
+  - { gate: convention-inline, fingerprint: e59f43b83bc015d9427e9257d4367cce2cbbf3773b1f166a95a153bf44dc5ef6 }
+  - { gate: convention-keywords, fingerprint: 9a926688e92e597647361ab2ac0fe39588d0dc14771de6090938f820759ebf5f }
+  - { gate: convention-layers, fingerprint: 1c31d15a1fb382128b1f30c655029d226009237824b3970357c977fff29c229f }
+  - { gate: convention-lists, fingerprint: e9be9a9302dd6401b74b6e43a2804e117c7d4b6ea1666e60ec0a57551ab0cb69 }
+  - { gate: convention-modules, fingerprint: 31931109f2cfcc03c710a0e70f8d9135791ba64a6ef34c9493ee67492fdc80f1 }
+  - { gate: convention-unions, fingerprint: ee9ca4dced9c2b642276a296cc1db01d64841503d5b1d3ed78c277f3e912cccc }
+  - { gate: duplication-kernel, fingerprint: e025734372a19b53f8b4a9636fc5863f2b6c16d64e5c333d71104248a63e1608 }
+  - { gate: duplication-model, fingerprint: 12fae3ab18c477474d5ac0be0c21b9a4a075eb5a9cbea3cb903c652793b4dd92 }
+  - { gate: feedback, fingerprint: 6f2b05e319262396df0463b31ad9544417d6244eb2fb84d2d9d2493d8d5e493f }
+  - { gate: map-drift, fingerprint: 955d31adf6f46ad23dbb3e6b5a0eed81d45d59b19f6c76eab317c859f07e6ba1 }
+  - { gate: mapping-bijection, fingerprint: d38d1a9401ecba8139057f7af24a5ec041bb03291c20e6c29a17a19808770445 }
+  - { gate: mapping-constructors, fingerprint: 371fd27ff1e6e2a9b14a4585a5b071e71736665532887d913f73c6e04eac821d }
+  - { gate: mapping-current, fingerprint: b3c68d0e3468bf4ea8cf7a32435096595fd41e57ebf17436a0902b8f8537ec34 }
+  - { gate: mapping-load, fingerprint: 5ec756ed638b9631e7b7a7f62a878880d323313076260d95b08c816050f662f6 }
+  - { gate: mapping-location, fingerprint: b3950cf1745a4914a9d1b95e4d961559fa8cf1f1f2f63bcc292f2aca7a26a5f3 }
+  - { gate: mapping-names, fingerprint: e32191082159ba77bf76641a3d180b7e5b05abe8dedfb938fc29c3c9740d6144 }
+  - { gate: mapping-rules, fingerprint: 480da20a603c80260db7ac19e6231aeb73ad16a8cbd438e7eb2faa92bb29fc44 }
+  - { gate: mapping-sources, fingerprint: 47e1f9f839bb12b60c1f1671b47b41a760950dba2b043bb872fbc5738bb1fc35 }
+  - { gate: model-resolves, fingerprint: ccef3d66e4d81d44042fad92af081eb420ead9551c21454eea04b1c76a357d15 }
+  - { gate: modules-depends, fingerprint: bc15caa1ff4869079e0343da7a9daec16d855665605bcc553cebd9c191131325 }
+  - { gate: nesting, fingerprint: c354f31fda08d836eef546d395cea366e7d51718a9abb535a2889a9c0c88125e }
+  - { gate: npm-test, fingerprint: c0daacfc50517673af75e6af4b5379687ce43d7b7c727a7db7624b315207976c }
+  - { gate: plain-exemptions-file, fingerprint: c734b1546e236e611d6bd8bedd29f222e72c9b43a9389a1c12063633b5e3abd9 }
+  - { gate: plain-parity, fingerprint: 0a78b3ae1a47df1cdfd1fc6609ae681f4ee7c0fa4964c9eac4d65ece4b047e74 }
+  - { gate: round-trip, fingerprint: ec36ea0e02a23549459b86b6e8fefe0ab1768f0e2f5cd4732d222a837047c7d8 }

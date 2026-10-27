@@ -1,0 +1,105 @@
+{
+  "ir": {
+    "sections": 36,
+    "tables": 19,
+    "tables_by_layout": {
+      "appendix-a": 1,
+      "appendix-b": 1,
+      "concept-standard": 1,
+      "field": 12,
+      "key-meaning": 1,
+      "key-required-meaning": 2,
+      "marker-meaning": 1
+    },
+    "table_rows": 177,
+    "table_rows_by_layout": {
+      "appendix-a": 71,
+      "appendix-b": 8,
+      "concept-standard": 4,
+      "field": 71,
+      "key-meaning": 5,
+      "key-required-meaning": 11,
+      "marker-meaning": 7
+    },
+    "fields": 71,
+    "field_names": 72,
+    "fields_by_marker": {
+      "derived": 11,
+      "immutable": 6,
+      "mixed": 2,
+      "requestable": 3,
+      "selectable": 12,
+      "seller-set": 29,
+      "settable": 5,
+      "supplied": 3
+    },
+    "fields_by_owner": {
+      "line_item": 56,
+      "proposal": 15
+    },
+    "keys": 16,
+    "keys_by_layout": {
+      "key-meaning": 5,
+      "key-required-meaning": 11
+    },
+    "definitions": 0,
+    "markers": 7,
+    "concepts": 4,
+    "value_lists": 23,
+    "value_lists_by_origin": {
+      "inline_object": 8,
+      "prose": 1,
+      "table_cell": 14
+    },
+    "inline_objects": 19,
+    "inline_objects_by_origin": {
+      "table_cell": 19
+    },
+    "statements": 33,
+    "statements_body": 32,
+    "statements_by_level": {
+      "MAY": 10,
+      "MUST": 16,
+      "MUST NOT": 3,
+      "OPTIONAL": 1,
+      "REQUIRED": 2
+    },
+    "statements_with_keyword": {
+      "MAY": 10,
+      "MUST": 17,
+      "MUST NOT": 3,
+      "OPTIONAL": 1,
+      "REQUIRED": 2
+    },
+    "sentences": 28,
+    "code_spans": 132,
+    "identifier_lists": 2,
+    "code_blocks": 2,
+    "appendix_a_rows": 71,
+    "appendix_b_rows": 8
+  },
+  "findings": {
+    "total": 50,
+    "open": 46,
+    "by_kind": {
+      "duplicate_field_disagrees": 1,
+      "name_reused_with_different_values": 2,
+      "value_set_subset": 2,
+      "unresolved_identifier": 9,
+      "array_suffix_mismatch": 4,
+      "object_without_structure": 7,
+      "option_shape_missing": 6,
+      "enum_without_values": 1,
+      "must_without_field": 13,
+      "marker_undefined": 1,
+      "key_presence_unstated": 1,
+      "key_required_is_marker": 1,
+      "presence_unstated": 2
+    },
+    "by_verdict": {
+      "open": 46,
+      "false_positive": 1,
+      "accepted": 3
+    }
+  }
+}

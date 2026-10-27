@@ -1,0 +1,25 @@
+# Default extractor input: upstream OpenProposal `main`, pinned to one commit.
+# `blob` is the git blob SHA of `path` at `commit`; the fetch step verifies it.
+# Sources are tried in order. The clone and snapshot paths are relative to this
+# repository's root. The snapshot holds the specification and examples/ at `commit`,
+# so CI runs every gate without the clone; `npm run fetch -- --snapshot` writes it.
+name: main
+upstream: https://github.com/IABTechLab/OpenProposal
+commit: 44dfaaf618736219426c311ec997b6d37e94b950
+path: spec/openproposal-3.0.md
+blob: 694095837432671ac8103e3c7be9b1c03d8a9482
+ir_dir: ir
+required: true
+# The example files at `commit`, by path, with their git blob SHAs. The fetch step
+# verifies each; the examples gate validates the ones the specification names.
+examples:
+  examples/line-item-audio.yaml: 4ca2f21e7c79da0155a48156d6ee0e39b52d0702
+  examples/line-item-ctv.yaml: fda3994669dc02973d33cf95d08a60e0f304eff2
+  examples/line-item-display.yaml: 808af247602de6b9a65a2e5a2f9a11661916e10d
+  examples/proposal.yaml: 9b514840d3a49262e42397c8703215f764d87f59
+# The git tree SHA of examples/ at `commit`, which pins the directory's listing.
+examples_tree: 321445d7151d0e764e3c9984267f0a8c85c1848f
+sources:
+  - git: vendor/OpenProposal
+  - snapshot: spec-input/snapshots/main
+  - url: https://raw.githubusercontent.com/IABTechLab/OpenProposal/44dfaaf618736219426c311ec997b6d37e94b950/spec/openproposal-3.0.md

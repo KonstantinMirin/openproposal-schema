@@ -1,0 +1,329 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: targeting
+sections: [ "5.5" ]
+depends: [ inventory ]
+types:
+  - name: Geo
+    kind: union
+    ir: field:5.5:geo
+    locks: [ with-open-prs ]
+    source: { decisions: [ D-019, D-022 ] }
+    any_of:
+      - { kind: apply, constructor: Selectable, arguments: { T: { kind: named, name: ExternalId }, K: { kind: named, name: ExternalId } } }
+      - { kind: apply, constructor: Settable, arguments: { T: { kind: named, name: ExternalId } } }
+  - name: FrequencyCapPeriod
+    kind: vocabulary
+    ir: field:5.5:frequency_cap#description/object:1
+    source: { decision: D-044 }
+    open: false
+    terms: [ hour, day, week, month, flight ]
+    description: "The period a frequency cap counts over. Each term is OpenDirect 2.1's code spelled as the specification spells its terms. `hour`, `day`, `week`, and `month` are calendar periods on the line item's clock, so a `day` runs from midnight to midnight and a count starts again at midnight, not 24 hours after an impression, and a week starts on Monday. `flight`, OpenDirect's `LineDuration`, is no calendar period: it runs from the flight's start to its end, between two Timestamps."
+    list:
+      name: Line.frequencyinterval
+      codes: { hour: Hour, day: Day, week: Week, month: Month, flight: LineDuration }
+  - name: Enforcement
+    kind: vocabulary
+    ir: field:5.5:exclusions_accepted#description/object:1
+    locks: [ with-open-prs ]
+    source: { decisions: [ D-013, D-014, D-025 ] }
+    open: false
+    terms: [ pre_serve, best_effort ]
+  - name: ExclusionType
+    kind: vocabulary
+    ir: field:5.5:exclusions#description/object:1
+    locks: [ with-open-prs ]
+    source: { decisions: [ D-013, D-014, D-025 ] }
+    open: false
+    terms: [ domain, app_bundle, iab_content_category, keyword ]
+  - name: ListRef
+    kind: object
+    ir: field:5.5:exclusions#description/object:1
+    locks: [ with-open-prs ]
+    source: { decision: D-025 }
+    open: false
+    members:
+      url: { type: { kind: named, name: Url }, presence: optional }
+      sha256: { type: { kind: named, name: Digest }, presence: optional }
+entries:
+  - ir: sentence:5.5:47d3cab4
+    digest: 704725734cbe5975e8fbf9d0aeef6aa3575f0aea35d2af951be07515c169ab6d
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.5:4869abaa
+    digest: 2838adf8bbe9bbedf7b8c1edaf8b8320deeb0f549a12ba191511d54fad65be7f
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.5:00b99440
+    digest: 59cce4bcf6b316c84868eddb7482f8b339706784a672832e116d61c8d1a65cdf
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.5:ac74a0a6
+    digest: a0b915a0233da3dc5b56c9034c8408fbe6ee395de748014c263bb7fd758d0b3f
+    locks: [ with-open-prs ]
+    source: { decision: D-022 }
+    as: { role: schema, in: Geo }
+  - ir: field:5.5:geo
+    digest: 43710e564ef799d8f814bad00224216293ba574c123c139c7195b5d5c23058e6
+    locks: [ main ]
+    source: { decisions: [ D-018, D-019 ] }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: Settable, arguments: { T: { kind: named, name: ExternalId } } }
+      presence: optional
+  - ir: field:5.5:geo
+    digest: 889b802bbd3f71ad3e60d307f0c54fa98c95a997bca3a79ffb67203b3c685535
+    locks: [ with-open-prs ]
+    source: { decisions: [ D-018, D-019, D-022 ] }
+    as: { role: property, object: LineItem, type: { kind: named, name: Geo }, presence: optional }
+  - ir: field:5.5:device
+    digest: 265e83a84f1efb967c4a62daab8adb8b69139f794b7cc080b03c5c28cf4828d4
+    source: { decisions: [ D-018, D-019 ] }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: Settable, arguments: { T: { kind: named, name: ExternalId } } }
+      presence: optional
+  - ir: field:5.5:daypart
+    digest: 25c80cd35ce4831dfbd372627f2d794511fffe5f029243e586ee1e607be4fdc2
+    locks: [ main ]
+    source: { decisions: [ D-004, D-018, D-019 ] }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: Settable, arguments: { T: { kind: named, name: DaypartWindow } } }
+      presence: optional
+  - ir: field:5.5:daypart
+    digest: b34d1818bf80b3e5947f9902057ac882707ef3a893fc370c97efc81487d64080
+    locks: [ with-open-prs ]
+    source: { decision: D-018 }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: Settable, arguments: { T: { kind: named, name: DaypartWindow } } }
+      presence: optional
+  - ir: field:5.5:daypart#description/object:1
+    digest: afe3fafd141b7a4be8a2d1cc227b482dca006baab3954b51b870079ff0d92cc1
+    locks: [ with-open-prs ]
+    source: { rule: restated-part }
+    as: { role: same, name: DaypartWindow }
+  - ir: field:5.5:daypart#description/values:1
+    digest: 26dca879051cd385043cb04303e2b8e1b9e7ce71f8cc62f0362409547b1e142d
+    locks: [ with-open-prs ]
+    source: { rule: restated-value-list }
+    as: { role: schema, in: DayName }
+  - ir: field:5.5:time_zone
+    digest: c3a3201d895ffca4363f6b17d138858db2a32c7ba2bb5352647cec4a596de13d
+    locks: [ with-open-prs ]
+    source: { rule: domain-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: TimeZone }, presence: conditional }
+  - ir: rule:5.5:9ecd641d
+    digest: c37f21cc8bb5c80d8f9e838792d2b22fe5db9df4451f26d0dc225961e2a23a8a
+    locks: [ with-open-prs ]
+    source: { rule: presence-statement }
+    as: { role: schema, in: LineItem }
+  - ir: field:5.5:frequency_cap
+    digest: f369947b6f5c84e82213fe929568d135b73b2daef366a6309fdf4f933fc2938b
+    source: { decision: D-021 }
+    as: { role: property, object: LineItem, type: { kind: named, name: FrequencyCap }, presence: optional }
+  - ir: field:5.5:frequency_cap#description/object:1
+    digest: adbcfc3ac2b7bc7c0bda1069751986267cf304dbafb4ee388d9c2f62b43ba305
+    source: { decisions: [ D-011, D-021, D-025, D-044 ] }
+    as:
+      role: type
+      name: FrequencyCap
+      layer: object
+      open: false
+      members:
+        max:
+          type: { kind: apply, constructor: Range, arguments: { T: { kind: named, name: Count } } }
+          presence: optional
+        period: { type: { kind: named, name: FrequencyCapPeriod }, presence: optional }
+        basis: { type: { kind: named, name: FrequencyCapBasis }, presence: optional }
+  - ir: field:5.5:frequency_cap#description/object:1/basis
+    digest: 33ca167f73327fbba13ac2c8e5ae1ffd5482b6b8e192653a9e54e8d1f2103f5e
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: FrequencyCapBasis, layer: vocabulary, open: true }
+  - ir: field:5.5:exclusions_accepted
+    digest: b6281fbaac8b237ff59970a0c9087dfc7378156c8d9f6e4d888f657db46423fd
+    locks: [ with-open-prs ]
+    source: { rule: inline-object-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: ExclusionsAccepted }, presence: optional }
+  - ir: field:5.5:exclusions_accepted#description/object:1
+    digest: 9bc47a689b27eb49156befe81b0e37cb0c7d382ca9fc6096a3ae2018b393846c
+    locks: [ with-open-prs ]
+    source: { decision: D-025 }
+    as:
+      role: type
+      name: ExclusionsAccepted
+      layer: object
+      open: false
+      members:
+        types:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ExclusionType } } }
+          presence: optional
+        max_entries:
+          type:
+            kind: apply
+            constructor: Map
+            arguments: { K: { kind: named, name: ExclusionType }, V: { kind: named, name: Count } }
+          presence: optional
+        enforcement:
+          type:
+            kind: apply
+            constructor: Map
+            arguments: { K: { kind: named, name: ExclusionType }, V: { kind: named, name: Enforcement } }
+          presence: optional
+        verification:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ExternalId } } }
+          presence: optional
+  - ir: field:5.5:exclusions
+    digest: a7455f1ef1dc5c32723363363db27e0fd8b8f1e7fcc2c444ea980b228f0202ee
+    locks: [ with-open-prs ]
+    source: { rule: inline-object-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Exclusions }, presence: optional }
+  - ir: field:5.5:exclusions#description/object:1
+    digest: be60d4987876fabfd554266c33bdead8233c6414f174aa9418b090c0f21e211b
+    locks: [ with-open-prs ]
+    source: { decision: D-025 }
+    as:
+      role: type
+      name: Exclusions
+      layer: object
+      open: false
+      members:
+        domain:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Domain } } }
+          presence: optional
+        app_bundle:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: AppBundleEntry } } }
+          presence: optional
+        iab_content_category:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ExternalId } } }
+          presence: optional
+          description: "IDs of categories of the IAB Tech Lab Content Taxonomy, each carried as written. The specification's example writes one as `IAB-CT3.0:<id>`, the taxonomy's version and the category's ID."
+        keyword:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Text } } }
+          presence: optional
+        list_ref: { type: { kind: named, name: ListRef }, presence: optional }
+  - ir: code:5.5:1
+    digest: 3d4d2212c0ab979644dedee89d969ec3476d83148a041374420a72352bd82819
+    locks: [ with-open-prs ]
+    source: { decision: D-033 }
+    as: { role: example, object: LineItem }
+  - ir: block:5.5:3/object:1
+    digest: 3763a96a10f4ed5b56216a542e4780e6f143bbf7e2c18236f7f2f1efdc25d669
+    locks: [ with-open-prs ]
+    source: { decision: D-025 }
+    as:
+      role: type
+      name: AppBundleEntry
+      layer: object
+      open: false
+      members:
+        platform: { type: { kind: named, name: StorePlatform }, presence: required }
+        bundle: { type: { kind: named, name: ExternalId }, presence: required }
+  - ir: sentence:5.5:79d7d557
+    digest: 35c3838ed8828278f516415154fa0dfd4dba58df4441c91269310c1ca102aef0
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.5:ad1441a7
+    digest: 29d97841914825e6f2d425f195d51640803dc90b6622e97f45d16af694129d10
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: block:5.5:3/values:1
+    digest: 2708491aae9a21857847ead3abd3d82552c0cb2152c9f7fd97c350fbe10ebce5
+    locks: [ with-open-prs ]
+    source: { rule: restated-value-list }
+    as: { role: same, name: StorePlatform }
+  - ir: rule:5.5:c6cd99b1
+    digest: ecf474b29c56f51b0728b8f63f2878d572447353dbaac30d8e7713fe0dd84d97
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:5.5:8d595b9a
+    digest: 0dae3f9597019a6d868e3a14e0548e9b34e8e22a6080e5ceec67b758f279d029
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.5:262ff404
+    digest: a4eb0ecc36209987c2625f25e21269a97d5e8d3dec496b9475e11f386b66ba37
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.5:2eab2842
+    digest: b3baf45c379d1aa9883f9fdc122e7646f9b4cfee17bc532c3291f486c198c168
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: rule, object: LineItem }
+  - ir: rule:5.5:3e6033ee
+    digest: 4fb084125e6bdcaee6a6d26f4c6f12cf3b4dedbddfd35297296ed1fa311706af
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: obligation, party: seller }
+  - ir: rule:5.5:7fdb152c
+    digest: 98ca6fcdb366d5599e227fea69d0712396e21066d370b59bff40912299a3a794
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: obligation, party: seller }
+  - ir: rule:5.5:16494a1a
+    digest: 855cc7c52aa4330ff909d07b79740de5114d8f109cc015572cad24a87f313e2c
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: rule, object: LineItem }
+  - ir: rule:5.5:02097f4e
+    digest: 49bf6d4b9beae22b2597f8a40a5c4788404de441a37cae8d94838565a6b041f4
+    locks: [ with-open-prs ]
+    source: { decision: D-022 }
+    as: { role: schema, in: Geo }
+  - ir: code:5.5:2
+    digest: 5acce570d4fbb58bf8c8dce3dd60d00f7a2097fc295c6c42284aa390b53dfb68
+    locks: [ with-open-prs ]
+    source: { decision: D-033 }
+    as: { role: example, object: LineItem }
+  - ir: rule:5.5:e6f552da
+    digest: 90286fdc3a5696d9bbf62f18413d525db9e02c39dd617465d7c02e6f400f4eca
+    locks: [ with-open-prs ]
+    source: { decision: D-022 }
+    as: { role: schema, in: Geo }
+  - ir: rule:5.5:51ca125e
+    digest: d96c72a7f90f14538921d34eea24b252b6998bced505a5cb7bd1f6f458a12f6c
+    locks: [ with-open-prs ]
+    source: { decision: D-022 }
+    as: { role: schema, in: Geo }
+  - ir: sentence:5.5:ff5099f2
+    digest: f40a7fa95856ab809ccd76ef2d6fdd8ec1a0e7fcbb7dda03ddf4a6589b94b72f
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: block:5.5:12/object:1
+    digest: 45d42cd68e02fd0c633b8e562a4d2807c77ec7d4ee2a1c57ac75bb4e63640fc0
+    locks: [ with-open-prs ]
+    source: { rule: restated-part }
+    as: { role: same, name: DaypartWindow }
+  - ir: sentence:5.5:348ea676
+    digest: b653534aab2fd12f0dad1b1f4422634068e90af810a75414b00aa4d346e379fc
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: code:5.5:3
+    digest: 22c938fda2241c77855a8f9e0093eaa23902313c1f8ebf1db716bad0b566adf9
+    locks: [ with-open-prs ]
+    source: { decision: D-033 }
+    as: { role: example, object: LineItem }
+  - ir: sentence:5.5:3ec41b49
+    digest: d28f7a045f76828d2402a2595875e5dc09466aac3c71c79f5f20c833b51e312f
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.5:bcaa431b
+    digest: dd32a6368f87c6f3cc3b6ecb6ff87b8aa69d0332a9b99e1a2b7467f2c3ea5f00
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }

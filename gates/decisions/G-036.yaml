@@ -1,0 +1,27 @@
+format: 1
+id: G-036
+date: 2026-10-26
+question: Does the fidelity gate check the summary's placement and properties projections, which § 2.1's "whichever of" list and D-028's reading of "property names" give?
+decision: >-
+  The fidelity oracle reads a MUST statement that a representation gives
+  "whichever of" the paths its own block lists the full record declares,
+  as § 2.1's placement keys, as a projection whose paths are optional at
+  each step: each step present and absent is valid, and each object a path
+  steps into holds only the members the list names. A path a decision reads
+  from an item a list writes in prose, a profile entry's `paths`, joins that
+  list's projection with no presence, so the summary's `properties` holds
+  only `available[]` and each option only its `name`; a step of such a path
+  the schema doesn't hold fails. Fixtures widen the summary's placement and
+  properties back to the whole field, make a placement key required, and
+  point a reading at a member the schema doesn't hold; each fails the gate.
+  The test suite holds 342 tests, so its floor rises to 342.
+rationale: >-
+  Two of the summary's projections were unchecked: a summary that carried
+  the line item's whole placement or properties passed. The oracle's one
+  input from the mapping can only add a check, since a reading states no
+  presence and only narrows what a projection may hold, so no gate is
+  weaker, and the test floor rises.
+accepts:
+  - { gate: fidelity, fingerprint: 32a7615e06a8e053ee74c00a22844d51655e6300d18028f6d90605e75ef3f2a4 }
+  - { gate: guard, fingerprint: 1c5615b0ae05efb9c68a7da9121ed872f74c51ca69eb026bab0f41347db4d6be }
+  - { gate: npm-test, fingerprint: ef80ccad81c55340f94c954cb4fb98a5563a6158e1451d742ad3d4226fe6ca13 }

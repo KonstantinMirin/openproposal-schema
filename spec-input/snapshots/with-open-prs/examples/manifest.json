@@ -1,0 +1,67 @@
+{
+  "seller_id": "reg:examplepub-digital",
+  "generated_at": "2026-10-01T06:00:00Z",
+  "spec_version": "3.0",
+  "proposals": [
+    {
+      "proposal_id": "examplepub-us-q4-2026-omni",
+      "version": 1,
+      "seller_name": "Example Publisher US",
+      "description": "Cross-channel Example Publisher US package spanning display, in-stream video and CTV. Business and financial audience skew, weekday-heavy delivery.",
+      "valid_from": "2026-10-01T00:00:00Z",
+      "valid_until": "2026-12-31T23:59:59Z",
+      "full_url": "https://examplepub.example/openproposal/examplepub-us-q4-2026-omni",
+      "line_items": [
+        {
+          "line_item_id": "weather-app-ctv",
+          "channel": "ctv",
+          "properties": [
+            "weather-app"
+          ],
+          "formats": {
+            "included": [
+              "ctv/instream-15s"
+            ]
+          },
+          "pricing": {
+            "cost_method": "CPM",
+            "gross_rate": 45.0
+          },
+          "committed_metrics": [
+            {
+              "metric": "completion_rate",
+              "value": 0.95,
+              "basis": "seller_reported"
+            }
+          ],
+          "transaction_mechanism": [
+            "PRIVATE_AUCTION"
+          ]
+        },
+        {
+          "line_item_id": "streaming-audio",
+          "channel": "audio",
+          "formats": {
+            "included": [
+              "audio/produced-30s"
+            ]
+          },
+          "pricing": {
+            "cost_method": "CPM",
+            "gross_rate": 18.0
+          },
+          "committed_metrics": [
+            {
+              "metric": "completion_rate",
+              "value": 0.92,
+              "basis": "seller_reported"
+            }
+          ],
+          "transaction_mechanism": [
+            "PREFERRED_DEAL"
+          ]
+        }
+      ]
+    }
+  ]
+}

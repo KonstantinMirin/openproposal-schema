@@ -1,0 +1,29 @@
+block:2.3:2/object:1	line 126	{ seller_id, generated_at, spec_version, proposals[] }
+key:3.1:pricing#meaning/object:1	line 180	{ option_id: { delta_cpm | delta_flat | delta_pct } }
+field:4.1:negotiation_history[]#description/object:1	line 229	{ version, actor: buyer | seller, action: proposed | countered | accepted | declined | withdrawn, fields_changed[], at }
+field:5.2:properties#description/object:1	line 303	{ id, name, domains, apps, supported_formats }	anchor=available[]
+key:5.2.2:placement.refresh#meaning/object:1	line 366	{ min_interval_s }
+field:5.3:audiences#description/object:1	line 392	{ id, name, taxonomy_ref, provenance, addressable_scale }	anchor=available[]
+field:5.3:buyer_supplied#description/object:1	line 395	{ segments_allowed, suppression_allowed, match_rate_expected, segments[], suppression_list }
+field:5.4:creative_delivery#description/object:1	line 404	{ method: buyer_hosted | seller_hosted | api | platform_managed, protocol, secure_required, endpoint }
+field:5.4:assets[]#description/object:1	line 405	{ asset_id, format_ref, url_or_tag, submitted_at, approval_status }
+field:5.4:production#description/object:1	line 408	{ custom_unit, build_owner, lead_time, cost }
+field:5.5:daypart#description/object:1	line 462	{ days[], start, end }	anchor=allowed[]
+field:5.5:frequency_cap#description/object:1	line 464	{ max: { min, max }, period, basis: device | household | listener }
+field:5.5:exclusions_accepted#description/object:1	line 465	{ types[], max_entries, enforcement, verification[] }
+field:5.5:exclusions#description/object:1	line 466	{ domain[], app_bundle[], iab_content_category[], keyword[], list_ref }
+block:5.5:3/object:1	line 487	{ platform, bundle }
+block:5.5:12/object:1	line 516	{ days[], start, end }
+field:5.6:availability#description/object:1	line 550	{ unit, basis, as_of, granularity, type: forecast | reservable, quantity }
+field:5.6:commitment_bounds#description/object:1	line 551	{ min_impressions, max_impressions, min_budget, max_budget }
+key:5.6.3:requires.min_commitment[]#meaning/object:1	line 614	{ line_item_id, basis, amount, currency }
+field:5.7:committed_metrics[]#description/object:1	line 645	{ metric, value, basis }
+field:5.7:measurement_source#description/object:1	line 646	{ vendor, attribution_window, qualifier }	anchor=available[]
+field:5.7:reporting#description/object:1	line 648	{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency }	anchor=available[]
+field:5.8:required_credentials[]#description/object:1	line 655	{ type: iab_registry | dsp_seat | custom, scheme: api_key | oauth2_client_credentials | jwt_keypair | oidc_federated | none, issuer, id_required }
+field:5.8:terms_ref#description/object:1	line 658	{ url, sha256, version }
+field:5.9:buyer_requirements#description/object:1	line 673	{ seat_required, dsp_allowed[] }
+field:5.9:buyer_requirements#description/object:2	line 673	{ dsp_seat_id, dsp_id, seat_owner_entity }
+field:5.10:external_references[]#description/object:1	line 680	{ system, namespace, id, role }
+field:5.10:agreement_ref#description/object:1	line 681	{ agreement_id, parties[], type: upfront | annual | master_services | other, valid_from, valid_until }
+field:5.10:billing#description/object:1	line 683	{ supplier_id, billing_supplier_id, payment_terms, invoicing_party }

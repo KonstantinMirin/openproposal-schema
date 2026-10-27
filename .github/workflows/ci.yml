@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    env:
+      # The commit the gate decisions are compared with: the pull request's base, the push's previous commit, or the pushed commit when the push creates the branch.
+      GATE_BASE: ${{ (github.event.created && github.sha) || github.event.pull_request.base.sha || github.event.before }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: tools/regexcheck/go.mod
+          cache: false
+      - run: npm ci --ignore-scripts
+      - run: npm run setup:oracle
+      - run: npm run setup:sdk
+      - run: npm run setup:plaingen
+      - run: git fetch --no-tags --depth=1 origin "$GATE_BASE"
+      - run: npm run ci

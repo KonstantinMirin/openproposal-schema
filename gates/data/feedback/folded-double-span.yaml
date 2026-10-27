@@ -1,0 +1,12 @@
+# A findings file whose reason folds a double-backtick code span across a line break, which counting single backticks missed, as a review found.
+format: 1
+findings:
+  - example: examples/line-item-display.yaml
+    path: /audiences/included/0
+    kind: invalid
+    value: "ep:smb-decision-makers"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text: `included[]` names the catalog option
+      ``examplepub/audiences/smb-decision-
+      makers@3`` by its entry. We propose a UUID.

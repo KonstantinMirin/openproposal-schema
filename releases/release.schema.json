@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/releases/release.schema.json",
+  "title": "OpenProposal schema release manifest",
+  "description": "One lock's release manifest, `release.json` at the root of its schema tree: each file's path with its version and its JCS SHA-256 digest, the digests of the tree and of the model, and the changes since the last frozen release. `npm run release` writes it from the model; `releases/<lock>/<version>/` keeps a frozen copy with its model, its rules, its conformance corpus, and its schema tree.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "lock", "release", "previous", "input", "model", "rules", "digest", "files", "changes"],
+  "properties": {
+    "format": {
+      "description": "Version of this format.",
+      "const": 1
+    },
+    "lock": {
+      "description": "The name of the spec lock the tree is built from, such as `main`.",
+      "type": "string",
+      "minLength": 1
+    },
+    "release": {
+      "description": "The release version, MAJOR.MINOR.PATCH, as Semantic Versioning 2.0.0 writes it, with no pre-release or build part. The major is the one in every path and `$id`.",
+      "$ref": "#/$defs/version"
+    },
+    "previous": {
+      "description": "The last frozen release this one is compared with, or null for the first release.",
+      "anyOf": [{ "$ref": "#/$defs/version" }, { "type": "null" }]
+    },
+    "input": {
+      "description": "The pinned specification the model is resolved from.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit", "blob", "ir_sha256"],
+      "properties": {
+        "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "blob": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "ir_sha256": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "model": {
+      "description": "The JCS SHA-256 digest of the model the files are emitted from.",
+      "$ref": "#/$defs/digest"
+    },
+    "rules": {
+      "description": "The JCS SHA-256 digest of the lock's rules, `rules.json`.",
+      "$ref": "#/$defs/digest"
+    },
+    "digest": {
+      "description": "The JCS SHA-256 digest of `{ <path>: <schema> }` over every file of the tree.",
+      "$ref": "#/$defs/digest"
+    },
+    "files": {
+      "description": "Every file of the tree, by its path relative to this manifest.",
+      "type": "object",
+      "propertyNames": { "pattern": "^(kernel|modules|documents)/[a-z0-9/.-]+\\.json$" },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["version", "digest"],
+        "properties": {
+          "version": {
+            "description": "The release in which the file last changed.",
+            "$ref": "#/$defs/version"
+          },
+          "digest": {
+            "description": "The SHA-256 of the RFC 8785 (JCS) bytes of the file's schema.",
+            "$ref": "#/$defs/digest"
+          }
+        }
+      }
+    },
+    "changes": {
+      "description": "The differences between the previous release and this one, in the model, the rules, and the schema files, sorted by type, member, change, and detail.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/change" }
+    }
+  },
+  "$defs": {
+    "version": {
+      "description": "MAJOR.MINOR.PATCH, the core of a Semantic Versioning 2.0.0 version.",
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "digest": {
+      "description": "64 lowercase hex characters, as the kernel's `Digest` writes a SHA-256.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["class", "type", "change", "detail"],
+      "properties": {
+        "class": {
+          "description": "`breaking` where a payload or a change valid under the previous release may be invalid under this one; `additive` where what a payload must satisfy changes otherwise: this one accepts or defines more, or a rule changes in a way its vectors don't show to reject more; `annotation` where only prose or citations changed.",
+          "enum": ["breaking", "additive", "annotation"]
+        },
+        "type": {
+          "description": "The named type, the rule's owner, or the schema file's path.",
+          "type": "string",
+          "minLength": 1
+        },
+        "member": {
+          "description": "The property, term, union branch, profile field or path, rule, or `$defs` entry the change is about.",
+          "type": "string",
+          "minLength": 1
+        },
+        "change": {
+          "description": "What changed, such as `removed-property` or `narrowed-type`.",
+          "type": "string",
+          "pattern": "^[a-z]+(-[a-z]+)*$"
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

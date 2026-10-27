@@ -1,0 +1,88 @@
+format: 1
+id: D-031
+status: proposed
+kind: gap
+author: agent
+question: How are the § 5.6.1 commitment-attempt and § 5.6.3 dependency statements checked?
+covers:
+  - ir: rule:5.6.1:6f403dba
+    digest: eca307cbc007002ce5a8e75fe6accdd9b6395e089237e159924ef1cad9833fbb
+    quote: The seller MUST NOT interpret it.
+    locks: [with-open-prs]
+  - ir: rule:5.6.1:499ec00e
+    digest: 19c7bcb1d4fa89cfd05bd682985280743aa936b6968ac4c34ca7364c443dd9b0
+    quote: The seller MUST reject a new commitment attempt whose `version` is not the current version of the proposal named by `proposal_id`, whose proposal is past `valid_until`, or whose `pricing[].price_valid_until` has passed.
+    locks: [with-open-prs]
+  - ir: rule:5.6.1:1a7143ff
+    digest: 44f5ae878944ae366a00baa3a5e7e9d88c5088cfaf0f60103e8f7c209a48b143
+    quote: The rejection MUST return the current version number, so the buyer can fetch it again.
+    locks: [with-open-prs]
+  - ir: rule:5.6.1:852ec5db
+    digest: 153969413c0e7f5e86d216817764b9a32a509f5eb3c8c0dfb9b6913f48fbd35b
+    quote: These checks MUST be deterministic, as for `idempotency_key`.
+    locks: [with-open-prs]
+  - ir: rule:5.6.1:d672decc
+    digest: 15f7feadd159044cc4d9abd57a7a2928a7007b405aa8ba9a976f16108d99f77b
+    quote: For a replay from the same buyer of a commitment attempt the seller has already processed, with the same `idempotency_key` and the same commitment terms, the seller MUST return the original result and MUST NOT create a second commitment.
+    locks: [with-open-prs]
+  - ir: rule:5.6.1:7de026a6
+    digest: 6009fbef413dd136cee2e9b6dd456f09f0c19e86061ccc8280deb54a6303d258
+    quote: Reusing an `idempotency_key` with different commitment terms MUST produce an explicit conflict and MUST NOT create or modify a commitment.
+    locks: [with-open-prs]
+  - ir: rule:5.6.3:17fe6f2c
+    digest: e0bb97075ca5ed6eddefbfca311587c03d2fe5a6fe6f9eb249a8469dd9c83939
+    quote: Line items that MUST all be in the same commitment
+    locks: [with-open-prs]
+  - ir: rule:5.6.3:497d445c
+    digest: 0d87ef80c197d3f1f3fdd856f0277309379fec1cca87058ffba793d28a62f268
+    quote: Line items of which at least one MUST be in the same commitment
+    locks: [with-open-prs]
+  - ir: rule:5.6.3:db94cd1e
+    digest: 686a2ae481c05e78ee836c53ffb7f07d44cbf39c4254bad84d73b73212d97c66
+    quote: References in `requires` MUST point to line items in the same proposal and version.
+    locks: [with-open-prs]
+  - ir: rule:5.6.3:39e4afbb
+    digest: f2332950d941b37f8081dc9d34a1db6dcbe0dc8183014e301803773d777a3dea
+    quote: A seller MUST reject a commitment that includes a line item whose `requires` is unmet.
+    locks: [with-open-prs]
+  - ir: rule:5.6.3:7d683b70
+    digest: 0be768c3247f8bcca28872cead0f66b81c093a72b5559a24562ef75ca0e2c1ad
+    quote: This check MUST be deterministic.
+    locks: [with-open-prs]
+  - ir: rule:5.6.3:b4da8d14
+    digest: 6484411f47dd56769aada66dabfa0b3f2bd52ed635f4e8ef38fce9fc19599b57
+    quote: A seller MUST reject a proposal at publication if `requires` references form a cycle.
+    locks: [with-open-prs]
+  - ir: rule:5.6.1:e250f467
+    digest: 71c45471a5ffb8ffa96912ac35f02dd12e54a5ee02ce59235cb229e691327dbe
+    quote: A request carrying an `idempotency_key` already seen MUST return the original result and MUST NOT create a second commitment.
+    locks: [main]
+options:
+  - id: obligations
+    summary: "Each is an obligation of the seller: it rejects, replays, or conflicts a commitment attempt, which no single line item shows."
+  - id: rules
+    summary: Each is a rule on the commitment object.
+chosen: obligations
+rationale: >-
+  Each statement says what the seller does with a commitment attempt or a
+  publication: it rejects a stale version, an expired proposal or price, an
+  unmet `requires`, or a cycle; returns the current version or the original
+  result; and never interprets an `idempotency_key`. Deciding any of them
+  needs the seller's state or the other line items of the proposal, not one
+  payload, so none is a rule on the commitment. That holds for the two
+  `requires` checks too, though they read only line items. The specification
+  makes a proposal and a line item two documents (§ 2), and names no key of
+  the proposal that holds its line items (D-028, D-033), so no payload holds
+  both a line item's `requires` and the `line_item_id` of every line item in
+  its proposal version. Whether each reference names a line item of the same
+  proposal and version, and whether the references form a cycle, can't be
+  decided from one payload. The meanings of `all_of[]` and `any_of[]` are the
+  same kind of check, on the set of line items in one commitment.
+feedback: >-
+  Define the commitment attempt as a message, with its response and its error,
+  so these requirements can be tested. As written, they are behavior with no
+  payload to check. Name the key of a proposal that holds its line items. Then
+  the two `requires` checks become rules on that document, with test vectors.
+  One check is that each reference in `all_of[]`, `any_of[]`, and
+  `min_commitment[].line_item_id` names a line item of the same proposal
+  version. The other is that the references form no cycle.

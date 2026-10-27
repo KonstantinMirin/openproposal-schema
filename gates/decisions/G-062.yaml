@@ -1,0 +1,50 @@
+format: 1
+id: G-062
+date: 2026-10-27
+question: Where do the type examples take a member's value that the specification's examples don't give, and what keeps that value plausible, current, and valid?
+decision: >-
+  `field-examples/field-examples.yaml`, validated by
+  `field-examples/field-examples.schema.json`, lists per-field example
+  values for readers' examples only. Each entry names a member by the IR
+  element its property rests on and the member's name, may name its locks,
+  holds one value or two, the second for a selection's second option, and
+  may carry a note. `generateTypeExamples` takes the entries in scope on
+  the lock as `fields` and shows a member's per-field value where the
+  specification's examples give the member none, before its primitive's
+  showcase value or its vocabulary's term; a type example lists under
+  `illustrative` each value whose entry carries a note, such as the open
+  objects whose structure is D-016's feedback's proposal. A new gate,
+  field-examples-load, fails on a file its schema rejects, with a fixture
+  whose entry holds three values. A new per-lock gate, field-examples
+  (`checkFieldExamples`), fails on an entry whose element or member no
+  longer exists on the lock, whose value fails the member's emitted schema
+  or a rule, alone or in place in its type's full example, whose value is a
+  specification example value at the member or the member it projects,
+  whose member the specification's examples now give a value, or whose
+  value isn't a core term of a vocabulary that now has core terms; it has
+  one fixture for each. `scripts/ci.ts` and `npm run type-examples` load the
+  file before the type-examples gates, and a file that doesn't load skips
+  them as failed. `field-examples/` joins the tracked directories. Three
+  type-examples tests are added and one is rewritten to read the showcase
+  values without the per-field values; the suite holds 369 tests, and
+  `MIN_TESTS` is 369.
+rationale: >-
+  Every type example is still checked against its schema with Ajv 2020 and
+  against every rule one payload decides, in the generator and in the
+  committed file, and the per-field values pass the same checks again on
+  their own, so nothing is relaxed. The generate gate changes because its
+  input gains the entries and its values their source, and its fixtures
+  still fail as they did; type-examples-valid changes only because the
+  input type it leaves out the entries from changed; the guard because the
+  CI script runs the new gates; the untracked-file gate because its
+  directory list gains `field-examples/`. The committed examples are
+  regenerated: on main, 59 of the full examples' own values are per-field
+  values, and every bound pair in them is ordered.
+accepts:
+  - { gate: field-examples, fingerprint: 724019e5d560cbfb07a7f73b21a092a1d00d453a3fac06eb58b987fcd5c15005 }
+  - { gate: field-examples-load, fingerprint: fd614910c71f9519b5c5cd72effd01c6bd4139fd49e70a4b90c5651c409102b0 }
+  - { gate: guard, fingerprint: 6fd9dd647d0482fa30341beb4a4aeeeea154fac8d4d7a36edfcebc441cff8d25 }
+  - { gate: npm-test, fingerprint: cfc82361d49af96da819cc560595b8442bdef65fcf252399aa974104132cadd1 }
+  - { gate: type-examples-generate, fingerprint: d32219b8aff6cfb5a5809cf2965010af9408c8543d751778be5dde7f4cdf1ba6 }
+  - { gate: type-examples-valid, fingerprint: 1c5bd09a475f9249a36e7e330293951db1bf1881c25a37bf29021275a7a8a942 }
+  - { gate: untracked, fingerprint: 973f6b64f749568aa5acdbb9057eae7e70c36fd7bb5e700eef615aa1887223f6 }

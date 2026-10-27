@@ -1,0 +1,1389 @@
+{
+  "format": 1,
+  "input": {
+    "blob": "694095837432671ac8103e3c7be9b1c03d8a9482",
+    "commit": "44dfaaf618736219426c311ec997b6d37e94b950",
+    "lock": "main"
+  },
+  "rules": [
+    {
+      "applies_to": [
+        "HoldStatus"
+      ],
+      "decisions": [
+        "D-030",
+        "D-034"
+      ],
+      "id": "block:5.6.2:1/values:1",
+      "owner": "HoldStatus",
+      "severity": "error",
+      "sources": [
+        "block:5.6.2:1/values:1",
+        "sentence:5.6.2:516faad1",
+        "sentence:5.6.2:774f52b4"
+      ],
+      "statement": "Transitions: `none` → `requested` → `held` → (`expired` | `released` | `converted`).",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "state": "held"
+            },
+            "before": {
+              "state": "none"
+            },
+            "party": "seller"
+          },
+          {
+            "after": {
+              "state": "converted"
+            },
+            "before": {
+              "state": "requested"
+            },
+            "party": "seller"
+          },
+          {
+            "after": {
+              "state": "held"
+            },
+            "before": {
+              "state": "expired"
+            },
+            "party": "seller"
+          },
+          {
+            "after": {
+              "state": "requested"
+            },
+            "before": {
+              "state": "converted"
+            },
+            "party": "buyer"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/modules/commercial/1/commercial.json#/$defs/HoldStatus",
+        "type": "HoldStatus",
+        "valid": [
+          {
+            "after": {
+              "state": "requested"
+            },
+            "before": {
+              "state": "none"
+            },
+            "party": "buyer"
+          },
+          {
+            "after": {
+              "hold_expires_at": "2026-11-01T00:00:00Z",
+              "state": "held"
+            },
+            "before": {
+              "state": "requested"
+            },
+            "party": "seller"
+          },
+          {
+            "after": {
+              "state": "released"
+            },
+            "before": {
+              "state": "held"
+            },
+            "party": "seller"
+          },
+          {
+            "after": {
+              "state": "expired"
+            },
+            "before": {
+              "state": "held"
+            },
+            "party": "seller"
+          },
+          {
+            "after": {
+              "state": "converted"
+            },
+            "before": {
+              "state": "held"
+            },
+            "party": "seller"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "MaxRange"
+      ],
+      "decisions": [
+        "D-011"
+      ],
+      "id": "constructor:Range:ordered",
+      "owner": "Range",
+      "severity": "error",
+      "sources": [
+        "field:5.5:frequency_cap#description/object:1"
+      ],
+      "statement": "`min` is at most `max`: numbers compare as numbers, and timestamps as instants.",
+      "vectors": {
+        "arguments": {
+          "T": {
+            "kind": "named",
+            "name": "Count"
+          }
+        },
+        "invalid": [
+          {
+            "value": {
+              "max": 1,
+              "min": 6
+            }
+          }
+        ],
+        "valid": [
+          {
+            "value": {
+              "max": 6,
+              "min": 1
+            }
+          },
+          {
+            "value": {
+              "max": 4,
+              "min": 4
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "ActivationRouteSelection",
+        "AudiencesSelection",
+        "CancellationPolicySelection",
+        "EnvironmentsSelection",
+        "ExclusivitySelection",
+        "FormatsSelection",
+        "MeasurementSourceSelection",
+        "ProductionSelection",
+        "PropertiesSelection",
+        "ReportingSelection",
+        "ShortfallRemedySelection",
+        "TransactionMechanismSelection"
+      ],
+      "decisions": [
+        "D-007"
+      ],
+      "id": "constructor:Selectable:options-named",
+      "owner": "Selectable",
+      "severity": "error",
+      "sources": [],
+      "statement": "Each `included[]` entry and each `pricing` key names an option in `available[]`. A string option is named by its value, and an object option by its `id`.",
+      "vectors": {
+        "arguments": {
+          "K": {
+            "kind": "named",
+            "name": "FormatId"
+          },
+          "T": {
+            "kind": "named",
+            "name": "FormatId"
+          }
+        },
+        "invalid": [
+          {
+            "value": {
+              "available": [
+                "display/300x250"
+              ],
+              "included": [
+                "display/728x90"
+              ]
+            }
+          },
+          {
+            "value": {
+              "available": [
+                "display/300x250"
+              ],
+              "included": [],
+              "pricing": {
+                "display/728x90": {
+                  "delta_cpm": 1
+                }
+              }
+            }
+          }
+        ],
+        "valid": [
+          {
+            "value": {
+              "available": [
+                "display/300x250",
+                "display/970x250"
+              ],
+              "included": [
+                "display/300x250"
+              ],
+              "pricing": {
+                "display/970x250": {
+                  "delta_cpm": 3
+                }
+              }
+            }
+          },
+          {
+            "value": {
+              "available": [
+                "display/300x250"
+              ],
+              "included": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "ActivationRouteSelection",
+        "AudiencesSelection",
+        "CancellationPolicySelection",
+        "EnvironmentsSelection",
+        "ExclusivitySelection",
+        "FormatsSelection",
+        "MeasurementSourceSelection",
+        "ProductionSelection",
+        "PropertiesSelection",
+        "ReportingSelection",
+        "ShortfallRemedySelection",
+        "TransactionMechanismSelection"
+      ],
+      "decisions": [],
+      "id": "constructor:Selectable:priced-beyond-included",
+      "owner": "Selectable",
+      "severity": "error",
+      "sources": [
+        "key:3.1:included[]",
+        "key:3.1:pricing"
+      ],
+      "statement": "No `pricing` key names an option in `included[]`. The base rate covers the included options, and `pricing` gives the change in price for each option beyond them.",
+      "vectors": {
+        "arguments": {
+          "K": {
+            "kind": "named",
+            "name": "FormatId"
+          },
+          "T": {
+            "kind": "named",
+            "name": "FormatId"
+          }
+        },
+        "invalid": [
+          {
+            "value": {
+              "available": [
+                "display/300x250",
+                "display/970x250"
+              ],
+              "included": [
+                "display/300x250"
+              ],
+              "pricing": {
+                "display/300x250": {
+                  "delta_cpm": 1
+                }
+              }
+            }
+          }
+        ],
+        "valid": [
+          {
+            "value": {
+              "available": [
+                "display/300x250",
+                "display/970x250"
+              ],
+              "included": [
+                "display/300x250"
+              ],
+              "pricing": {
+                "display/970x250": {
+                  "delta_cpm": 3
+                }
+              }
+            }
+          },
+          {
+            "value": {
+              "available": [
+                "display/300x250",
+                "display/970x250"
+              ],
+              "included": [],
+              "pricing": {
+                "display/300x250": {
+                  "delta_cpm": 1
+                },
+                "display/970x250": {
+                  "delta_cpm": 3
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "CurrencyCode"
+      ],
+      "decisions": [],
+      "id": "kernel:CurrencyCode:assigned",
+      "owner": "CurrencyCode",
+      "severity": "error",
+      "sources": [],
+      "standard": {
+        "name": "ISO 4217, Codes for the representation of currencies",
+        "url": "https://www.iso.org/iso-4217-currency-codes.html"
+      },
+      "statement": "A CurrencyCode MUST be an alphabetic code that ISO 4217 currently assigns.",
+      "vectors": {
+        "invalid": [
+          {
+            "value": "ABC"
+          },
+          {
+            "value": "QQQ"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/kernel/1/kernel.json#/$defs/CurrencyCode",
+        "type": "CurrencyCode",
+        "valid": [
+          {
+            "value": "USD"
+          },
+          {
+            "value": "JPY"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "DaypartWindow"
+      ],
+      "decisions": [
+        "D-004"
+      ],
+      "id": "kernel:DaypartWindow:ordered",
+      "owner": "DaypartWindow",
+      "severity": "error",
+      "sources": [],
+      "statement": "`end` is later than `start`. The window holds each minute from `start` up to `end`, so a window that crosses midnight is two windows.",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "days": [
+                "monday"
+              ],
+              "end": "02:00",
+              "start": "22:00"
+            }
+          },
+          {
+            "value": {
+              "days": [
+                "monday"
+              ],
+              "end": "09:00",
+              "start": "09:00"
+            }
+          },
+          {
+            "value": {
+              "days": [
+                "monday"
+              ],
+              "end": "00:00",
+              "start": "00:00"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/kernel/1/kernel.json#/$defs/DaypartWindow",
+        "type": "DaypartWindow",
+        "valid": [
+          {
+            "value": {
+              "days": [
+                "monday",
+                "friday"
+              ],
+              "end": "10:00",
+              "start": "06:00"
+            }
+          },
+          {
+            "value": {
+              "days": [
+                "saturday",
+                "sunday"
+              ],
+              "end": "24:00",
+              "start": "00:00"
+            }
+          },
+          {
+            "value": {
+              "days": [
+                "monday"
+              ],
+              "end": "24:00",
+              "start": "23:00"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Commitment.derived_units",
+        "LineItem.addressable_scale",
+        "LineItem.availability",
+        "LineItem.correlation_id",
+        "LineItem.deal_id_issuance",
+        "LineItem.external_references",
+        "LineItem.status",
+        "LineItemSummary.addressable_scale",
+        "PricingEntry.agreed_rate",
+        "Proposal.assent",
+        "Proposal.negotiation_history",
+        "Proposal.status",
+        "Proposal.version"
+      ],
+      "decisions": [
+        "D-012",
+        "D-034"
+      ],
+      "id": "marker:3:derived",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:derived"
+      ],
+      "statement": "Computed from other fields. Neither party sets it directly.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "addressable_scale": 5000000
+            },
+            "before": {
+              "addressable_scale": 2000000
+            },
+            "party": "buyer"
+          },
+          {
+            "after": {
+              "addressable_scale": 5000000,
+              "status": "draft"
+            },
+            "before": {
+              "addressable_scale": 2000000,
+              "status": "draft"
+            },
+            "party": "seller"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "addressable_scale": 2000000,
+              "min_spend": 20000,
+              "status": "draft"
+            },
+            "before": {
+              "addressable_scale": 2000000,
+              "min_spend": 10000,
+              "status": "draft"
+            },
+            "party": "seller"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.channel",
+        "LineItem.line_item_id",
+        "LineItemSummary.channel",
+        "LineItemSummary.line_item_id",
+        "Proposal.proposal_id",
+        "Proposal.seller_id",
+        "Proposal.seller_name",
+        "Proposal.type",
+        "ProposalSummary.proposal_id",
+        "ProposalSummary.seller_name"
+      ],
+      "decisions": [
+        "D-012",
+        "D-034"
+      ],
+      "id": "marker:3:immutable",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:immutable"
+      ],
+      "statement": "Set once at creation. Neither party may change it.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "line_item_id": "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c02",
+              "status": "draft"
+            },
+            "before": {
+              "line_item_id": "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01",
+              "status": "draft"
+            },
+            "party": "seller"
+          },
+          {
+            "after": {
+              "channel": "video",
+              "line_item_id": "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01"
+            },
+            "before": {
+              "channel": "display",
+              "line_item_id": "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01"
+            },
+            "party": "buyer"
+          },
+          {
+            "after": {
+              "line_item_id": "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01",
+              "status": "draft"
+            },
+            "before": {
+              "status": "draft"
+            },
+            "party": "seller"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "channel": "display",
+              "line_item_id": "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01",
+              "min_spend": 20000,
+              "status": "draft"
+            },
+            "before": {
+              "channel": "display",
+              "line_item_id": "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01",
+              "min_spend": 10000,
+              "status": "draft"
+            },
+            "party": "seller"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.committed_metrics",
+        "LineItem.hold_status",
+        "LineItem.materials_due",
+        "LineItemSummary.committed_metrics"
+      ],
+      "decisions": [
+        "D-012",
+        "D-029",
+        "D-034"
+      ],
+      "id": "marker:3:requestable",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:requestable",
+        "rule:3:82c2f1b0"
+      ],
+      "statement": "The buyer MAY ask for a value outside the declared space. Requires explicit seller assent.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "hold_status": {
+                "hold_expires_at": "2026-11-01T00:00:00Z",
+                "state": "held"
+              }
+            },
+            "before": {
+              "hold_status": {
+                "state": "requested"
+              }
+            },
+            "party": "buyer"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "hold_status": {
+                "state": "requested"
+              }
+            },
+            "before": {
+              "hold_status": {
+                "state": "none"
+              }
+            },
+            "party": "buyer"
+          },
+          {
+            "after": {
+              "hold_status": {
+                "hold_expires_at": "2026-11-01T00:00:00Z",
+                "state": "held"
+              }
+            },
+            "before": {
+              "hold_status": {
+                "state": "requested"
+              }
+            },
+            "party": "seller"
+          },
+          {
+            "after": {
+              "materials_due": "2026-11-08T17:00:00Z"
+            },
+            "before": {
+              "materials_due": "2026-11-01T17:00:00Z"
+            },
+            "party": "buyer"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.activation_route",
+        "LineItem.audiences",
+        "LineItem.cancellation_policy",
+        "LineItem.environments",
+        "LineItem.exclusivity",
+        "LineItem.formats",
+        "LineItem.measurement_source",
+        "LineItem.production",
+        "LineItem.properties",
+        "LineItem.reporting",
+        "LineItem.shortfall_remedy",
+        "LineItem.transaction_mechanism",
+        "LineItemSummary.formats",
+        "LineItemSummary.properties",
+        "LineItemSummary.transaction_mechanism"
+      ],
+      "decisions": [
+        "D-012",
+        "D-034"
+      ],
+      "id": "marker:3:selectable",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:selectable"
+      ],
+      "statement": "The buyer chooses from a seller-declared set. Each option MAY carry a price delta. Resolves without seller assent.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "formats": {
+                "available": [
+                  "display/300x250",
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/300x250"
+                ]
+              }
+            },
+            "before": {
+              "formats": {
+                "available": [
+                  "display/300x250"
+                ],
+                "included": [
+                  "display/300x250"
+                ]
+              }
+            },
+            "party": "buyer"
+          },
+          {
+            "after": {
+              "formats": {
+                "available": [
+                  "display/300x250",
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/300x250"
+                ],
+                "max_select": 2
+              }
+            },
+            "before": {
+              "formats": {
+                "available": [
+                  "display/300x250",
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/300x250"
+                ],
+                "max_select": 1
+              }
+            },
+            "party": "buyer"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "formats": {
+                "available": [
+                  "display/300x250",
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              }
+            },
+            "before": {
+              "formats": {
+                "available": [
+                  "display/300x250",
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/300x250"
+                ]
+              }
+            },
+            "party": "buyer"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.approval",
+        "LineItem.billing",
+        "LineItem.buying_route",
+        "LineItem.commitment_bounds",
+        "LineItem.content_detail",
+        "LineItem.creative_delivery",
+        "LineItem.creative_policy",
+        "LineItem.eligible_bidders",
+        "LineItem.min_spend",
+        "LineItem.required_credentials",
+        "LineItem.serving_mode",
+        "LineItem.serving_platform",
+        "LineItem.specs",
+        "LineItem.supported_order_systems",
+        "LineItem.terms_acceptance_required",
+        "LineItem.third_party_tags",
+        "LineItem.visibility",
+        "LineItemSummary.content_detail",
+        "LineItemSummary.min_spend",
+        "LineItemSummaryPricingEntry.cost_method",
+        "LineItemSummaryPricingEntry.currency",
+        "LineItemSummaryPricingEntry.gross_rate",
+        "PricingEntry.cost_method",
+        "PricingEntry.currency",
+        "PricingEntry.floor",
+        "PricingEntry.gross_rate",
+        "PricingEntry.price_valid_until",
+        "PricingEntry.seller_rate",
+        "Proposal.best_for",
+        "Proposal.description",
+        "Proposal.not_suitable_for",
+        "Proposal.seasonality_notes",
+        "Proposal.specifications",
+        "Proposal.valid_from",
+        "Proposal.valid_until",
+        "ProposalSummary.description",
+        "ProposalSummary.valid_from",
+        "ProposalSummary.valid_until"
+      ],
+      "decisions": [
+        "D-012",
+        "D-029",
+        "D-034"
+      ],
+      "id": "marker:3:seller-set",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:seller-set",
+        "rule:3:e768cdf1"
+      ],
+      "statement": "The seller sets it and MAY revise it while status is `draft` or `published`. The buyer cannot change it directly.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "min_spend": 5000,
+              "status": "draft"
+            },
+            "before": {
+              "min_spend": 10000,
+              "status": "draft"
+            },
+            "party": "buyer"
+          },
+          {
+            "after": {
+              "min_spend": 20000,
+              "status": "agreed"
+            },
+            "before": {
+              "min_spend": 10000,
+              "status": "agreed"
+            },
+            "party": "seller"
+          },
+          {
+            "after": {
+              "status": "under_review",
+              "visibility": "named"
+            },
+            "before": {
+              "status": "under_review",
+              "visibility": "public"
+            },
+            "party": "seller"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "min_spend": 20000,
+              "status": "draft"
+            },
+            "before": {
+              "min_spend": 10000,
+              "status": "draft"
+            },
+            "party": "seller"
+          },
+          {
+            "after": {
+              "status": "published",
+              "visibility": "named"
+            },
+            "before": {
+              "status": "published",
+              "visibility": "public"
+            },
+            "party": "seller"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.commitment",
+        "LineItem.daypart",
+        "LineItem.device",
+        "LineItem.frequency_cap",
+        "LineItem.geo"
+      ],
+      "decisions": [
+        "D-012",
+        "D-034"
+      ],
+      "id": "marker:3:settable",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:settable"
+      ],
+      "statement": "The buyer supplies a value within seller-declared bounds. Resolves without seller assent.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "device": {
+                "allowed": [
+                  "phone",
+                  "connected_tv"
+                ]
+              }
+            },
+            "before": {
+              "device": {
+                "allowed": [
+                  "phone"
+                ]
+              }
+            },
+            "party": "buyer"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "device": {
+                "allowed": [
+                  "phone"
+                ]
+              }
+            },
+            "before": {
+              "device": {
+                "allowed": [
+                  "phone",
+                  "tablet",
+                  "connected_tv"
+                ]
+              }
+            },
+            "party": "buyer"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.assets",
+        "LineItem.buyer_supplied",
+        "Proposal.brief_ref"
+      ],
+      "decisions": [
+        "D-012",
+        "D-034"
+      ],
+      "id": "marker:3:supplied",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:supplied"
+      ],
+      "statement": "The buyer provides data or an artifact. The seller does not pre-populate it.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "buyer_supplied": {
+                "segments": [
+                  "seg-1"
+                ]
+              },
+              "line_item_id": "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01"
+            },
+            "before": {
+              "line_item_id": "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01"
+            },
+            "party": "seller"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "buyer_supplied": {
+                "segments": [
+                  "seg-1"
+                ]
+              },
+              "line_item_id": "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01"
+            },
+            "before": {
+              "line_item_id": "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01"
+            },
+            "party": "buyer"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem"
+      ],
+      "decisions": [
+        "D-029",
+        "D-035"
+      ],
+      "id": "rule:2.2:06ccee9f",
+      "level": "MUST",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "rule:2.2:06ccee9f"
+      ],
+      "statement": "When a proposal reaches status `agreed`, every `catalog_ref` MUST be replaced by its resolved value in the stored record, so the committed artifact is self-contained and immutable.",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "audiences": {
+                "available": [
+                  {
+                    "catalog_ref": "examplepub/audiences/smb-decision-makers@3"
+                  }
+                ],
+                "included": []
+              },
+              "status": "agreed"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "value": {
+              "audiences": {
+                "available": [
+                  {
+                    "id": "9d2e4b61-0c3a-4f5e-8b7d-1a2c3e4f5a6b",
+                    "name": "SMB decision makers"
+                  }
+                ],
+                "included": [
+                  "9d2e4b61-0c3a-4f5e-8b7d-1a2c3e4f5a6b"
+                ]
+              },
+              "status": "agreed"
+            }
+          },
+          {
+            "value": {
+              "audiences": {
+                "available": [
+                  {
+                    "catalog_ref": "examplepub/audiences/smb-decision-makers@3"
+                  }
+                ],
+                "included": []
+              },
+              "status": "published"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Proposal.negotiation_history"
+      ],
+      "decisions": [
+        "D-030",
+        "D-034"
+      ],
+      "id": "rule:4.1:8e9aacb8",
+      "level": "MUST NOT",
+      "owner": "Proposal",
+      "severity": "error",
+      "sources": [
+        "field:4.1:negotiation_history[]",
+        "rule:4.1:8e9aacb8"
+      ],
+      "statement": "Entries MUST NOT be edited or removed",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "description": "Business-daily reach across display, CTV, and audio.",
+              "negotiation_history": [
+                {
+                  "action": "proposed",
+                  "actor": "seller",
+                  "at": "2026-10-02T09:00:00Z",
+                  "fields_changed": [
+                    "description"
+                  ],
+                  "version": 2
+                }
+              ],
+              "status": "published",
+              "version": 2
+            },
+            "before": {
+              "description": "Business-daily reach across display and CTV.",
+              "negotiation_history": [
+                {
+                  "action": "proposed",
+                  "actor": "seller",
+                  "at": "2026-10-01T09:00:00Z",
+                  "fields_changed": [],
+                  "version": 1
+                }
+              ],
+              "status": "published",
+              "version": 1
+            },
+            "party": "seller"
+          },
+          {
+            "after": {
+              "description": "Business-daily reach across display, CTV, and audio.",
+              "negotiation_history": [
+                {
+                  "action": "countered",
+                  "actor": "seller",
+                  "at": "2026-10-01T09:00:00Z",
+                  "fields_changed": [],
+                  "version": 1
+                },
+                {
+                  "action": "proposed",
+                  "actor": "seller",
+                  "at": "2026-10-02T09:00:00Z",
+                  "fields_changed": [
+                    "description"
+                  ],
+                  "version": 2
+                }
+              ],
+              "status": "published",
+              "version": 2
+            },
+            "before": {
+              "description": "Business-daily reach across display and CTV.",
+              "negotiation_history": [
+                {
+                  "action": "proposed",
+                  "actor": "seller",
+                  "at": "2026-10-01T09:00:00Z",
+                  "fields_changed": [],
+                  "version": 1
+                }
+              ],
+              "status": "published",
+              "version": 1
+            },
+            "party": "seller"
+          },
+          {
+            "after": {
+              "description": "Business-daily reach across display, CTV, and audio.",
+              "negotiation_history": [
+                {
+                  "action": "proposed",
+                  "actor": "seller",
+                  "at": "2026-10-02T09:00:00Z",
+                  "fields_changed": [
+                    "description"
+                  ],
+                  "version": 2
+                },
+                {
+                  "action": "proposed",
+                  "actor": "seller",
+                  "at": "2026-10-01T09:00:00Z",
+                  "fields_changed": [],
+                  "version": 1
+                }
+              ],
+              "status": "published",
+              "version": 2
+            },
+            "before": {
+              "description": "Business-daily reach across display and CTV.",
+              "negotiation_history": [
+                {
+                  "action": "proposed",
+                  "actor": "seller",
+                  "at": "2026-10-01T09:00:00Z",
+                  "fields_changed": [],
+                  "version": 1
+                }
+              ],
+              "status": "published",
+              "version": 1
+            },
+            "party": "seller"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/documents/1/proposal.json",
+        "type": "Proposal",
+        "valid": [
+          {
+            "after": {
+              "description": "Business-daily reach across display, CTV, and audio.",
+              "negotiation_history": [
+                {
+                  "action": "proposed",
+                  "actor": "seller",
+                  "at": "2026-10-01T09:00:00Z",
+                  "fields_changed": [],
+                  "version": 1
+                },
+                {
+                  "action": "proposed",
+                  "actor": "seller",
+                  "at": "2026-10-02T09:00:00Z",
+                  "fields_changed": [
+                    "description"
+                  ],
+                  "version": 2
+                }
+              ],
+              "status": "published",
+              "version": 2
+            },
+            "before": {
+              "description": "Business-daily reach across display and CTV.",
+              "negotiation_history": [
+                {
+                  "action": "proposed",
+                  "actor": "seller",
+                  "at": "2026-10-01T09:00:00Z",
+                  "fields_changed": [],
+                  "version": 1
+                }
+              ],
+              "status": "published",
+              "version": 1
+            },
+            "party": "seller"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.materials_due"
+      ],
+      "decisions": [
+        "D-030",
+        "D-034"
+      ],
+      "id": "rule:5.4:2eaa294f",
+      "level": "MAY",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "field:5.4:materials_due",
+        "rule:5.4:2eaa294f"
+      ],
+      "statement": "A buyer MAY request a later date",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "materials_due": "2026-11-01T17:00:00Z"
+            },
+            "before": {
+              "materials_due": "2026-11-08T17:00:00Z"
+            },
+            "party": "buyer"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "materials_due": "2026-11-08T17:00:00Z"
+            },
+            "before": {
+              "materials_due": "2026-11-01T17:00:00Z"
+            },
+            "party": "buyer"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.committed_metrics"
+      ],
+      "decisions": [
+        "D-030",
+        "D-034"
+      ],
+      "id": "rule:5.7:4994173c",
+      "level": "MAY",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "field:5.7:committed_metrics[]",
+        "rule:5.7:4994173c"
+      ],
+      "statement": "Seller declares a ceiling; a buyer MAY request above it",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "committed_metrics": [
+                {
+                  "basis": "measure.example:impressions",
+                  "metric": "viewable_rate",
+                  "value": 0.6
+                }
+              ]
+            },
+            "before": {
+              "committed_metrics": [
+                {
+                  "basis": "measure.example:impressions",
+                  "metric": "viewable_rate",
+                  "value": 0.7
+                }
+              ]
+            },
+            "party": "buyer"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "committed_metrics": [
+                {
+                  "basis": "measure.example:impressions",
+                  "metric": "viewable_rate",
+                  "value": 0.8
+                }
+              ]
+            },
+            "before": {
+              "committed_metrics": [
+                {
+                  "basis": "measure.example:impressions",
+                  "metric": "viewable_rate",
+                  "value": 0.7
+                }
+              ]
+            },
+            "party": "buyer"
+          }
+        ]
+      }
+    }
+  ]
+}

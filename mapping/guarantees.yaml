@@ -1,0 +1,116 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: guarantees
+sections: [ "5.7" ]
+types:
+  - name: Metric
+    kind: vocabulary
+    ir: "field:5.7:committed_metrics[]"
+    source: { decisions: [ D-013, D-014, D-027 ] }
+    open: true
+    terms: [ viewable_rate, completion_rate ]
+  - name: MeasurementBasis
+    kind: vocabulary
+    ir: "field:5.7:committed_metrics[]#description/object:1"
+    source: { decision: D-041 }
+    open: true
+  - name: ReportingDeliveryMechanism
+    kind: vocabulary
+    ir: field:5.7:reporting#description/object:1
+    source: { decision: D-041 }
+    open: true
+entries:
+  - ir: "field:5.7:committed_metrics[]"
+    digest: 2c123e829ef892456b09671dfd52243f1bef0db8b067aa9c5d184dc07411caf5
+    source: { rule: inline-object-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: CommittedMetricsEntry } } }
+      presence: optional
+  - ir: "field:5.7:committed_metrics[]#description/object:1"
+    digest: 349c5917c07f1ded607f6a670f1be40b172938f6bf694e543bf0a189b6dfe255
+    source: { decision: D-027 }
+    as:
+      role: type
+      name: CommittedMetricsEntry
+      layer: object
+      open: false
+      members:
+        metric: { type: { kind: named, name: Metric }, presence: optional }
+        value: { type: { kind: named, name: Fraction }, presence: optional }
+        basis: { type: { kind: named, name: MeasurementBasis }, presence: optional }
+  - ir: rule:5.7:4994173c
+    digest: 49df828c767ca4a88396c5d0d566a026506a90ae23eec522d12849b159e6aff6
+    source: { decision: D-030 }
+    as: { role: rule, object: LineItem }
+  - ir: field:5.7:measurement_source
+    digest: b2908c3f817bef4cc596a8e15af373e8098053d36c37d34231eadae3e4351be5
+    source: { decision: D-018 }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: MeasurementSourceOption }, K: { kind: named, name: Uuid } }
+      presence: optional
+  - ir: field:5.7:measurement_source#description/object:1
+    digest: 7213fd41321c72d119261e7a84890af68599b6801c2fc5cef92127295fb4ed22
+    source: { decisions: [ D-027, D-040 ] }
+    as:
+      role: type
+      name: MeasurementSourceOption
+      layer: object
+      open: false
+      members:
+        vendor: { type: { kind: named, name: ExternalId }, presence: optional }
+        attribution_window: { type: { kind: named, name: Duration }, presence: optional }
+        qualifier: { type: { kind: named, name: Text }, presence: optional }
+  - ir: field:5.7:shortfall_remedy
+    digest: 9fdb8ca07f421677f7d411f9e9d3bc189128d125a8229b9622fed9779af55824
+    source: { decisions: [ D-018, D-019 ] }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: ShortfallRemedy }, K: { kind: named, name: ShortfallRemedy } }
+      presence: optional
+  - ir: field:5.7:shortfall_remedy#description/values:1
+    digest: b53ff161073f8164e711051770d85f4df8e3711d22d803d03c1f9218aaf25746
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: ShortfallRemedy, layer: vocabulary, open: true }
+  - ir: field:5.7:reporting
+    digest: a3b05974750ac1c85b48f1edc5b0d8413d6ee3782abf19663dcc88605c30830e
+    source: { decision: D-018 }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: ReportingOption }, K: { kind: named, name: Uuid } }
+      presence: optional
+  - ir: field:5.7:reporting#description/object:1
+    digest: 15b343617f534633524b7226be5e3f1d36fa7042fd26aa52c5fde05bc1e50adb
+    source: { decisions: [ D-027, D-040 ] }
+    as:
+      role: type
+      name: ReportingOption
+      layer: object
+      open: false
+      members:
+        feed_type: { type: { kind: named, name: ReportingFeedType }, presence: optional }
+        cadence: { type: { kind: named, name: Duration }, presence: optional }
+        delivery_mechanism: { type: { kind: named, name: ReportingDeliveryMechanism }, presence: optional }
+        metrics_provided:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Metric } } }
+          presence: optional
+        latency: { type: { kind: named, name: Duration }, presence: optional }
+  - ir: field:5.7:reporting#description/object:1/feed_type
+    digest: 506920ab669bab54d6afbf774562700897334300d3800721e68549f279870e54
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: ReportingFeedType, layer: vocabulary, open: true }

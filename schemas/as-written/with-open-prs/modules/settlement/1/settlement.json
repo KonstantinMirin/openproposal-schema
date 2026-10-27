@@ -1,0 +1,91 @@
+{
+  "$defs": {
+    "AgreementRef": {
+      "additionalProperties": false,
+      "properties": {
+        "agreement_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+        },
+        "parties": {
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          },
+          "type": "array"
+        },
+        "type": {
+          "$ref": "#/$defs/AgreementType"
+        },
+        "valid_from": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Timestamp"
+        },
+        "valid_until": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Timestamp"
+        }
+      },
+      "type": "object"
+    },
+    "AgreementType": {
+      "enum": [
+        "upfront",
+        "annual",
+        "master_services",
+        "other"
+      ],
+      "type": "string"
+    },
+    "Billing": {
+      "additionalProperties": false,
+      "properties": {
+        "billing_supplier_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+        },
+        "invoicing_party": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+        },
+        "payment_terms": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+        },
+        "supplier_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+        }
+      },
+      "type": "object"
+    },
+    "ExternalReferenceRole": {
+      "anyOf": [
+        {
+          "enum": [
+            "io",
+            "agreement"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "ExternalReferencesEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+        },
+        "namespace": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+        },
+        "role": {
+          "$ref": "#/$defs/ExternalReferenceRole"
+        },
+        "system": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/settlement/1/settlement.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `settlement` module: the vocabularies, objects, unions, and constructor copies of § 5.10.",
+  "title": "settlement"
+}

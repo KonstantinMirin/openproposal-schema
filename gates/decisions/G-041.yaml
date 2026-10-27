@@ -1,0 +1,22 @@
+format: 1
+id: G-041
+date: 2026-10-26
+question: Does the feedback gate catch a code span that YAML folds across a line break, so the working group reads a space inside it that no one wrote?
+decision: >-
+  The feedback gate reads the sources of the text the report shows, the
+  decision records, the recorded findings, and the round-trip differences,
+  and fails on a code span in a question, a feedback, an option's summary,
+  or a reason that runs onto the next line of a folded scalar, since YAML
+  folds the break into a space inside the span, as in
+  "`smb-decision- makers@3`". A fixture points the findings at a file with
+  such a span. The display example's pricing finding and D-016's feedback
+  write each span on one line now. The test suite holds 347 tests, so its
+  floor rises to 347.
+rationale: >-
+  Two broken code spans reached the generated text. The gate adds a check
+  and a fixture and drops none, and the test floor rises, so no gate is
+  weaker.
+accepts:
+  - { gate: examples-validate, fingerprint: 776160aab0425eac4c6b838646a9e1748b7b8a99f7d75ff1b8de8639e49f98e1 }
+  - { gate: feedback, fingerprint: b38d8774834b8246ddb95c14a5a0d0701f8448169d470b60efa3a7037a27c89e }
+  - { gate: npm-test, fingerprint: 9e6a9145be815c3eda9a36079e974b21acf7eac3b774c1970d0048111ec1c283 }

@@ -1,0 +1,452 @@
+{
+  "$defs": {
+    "Availability": {
+      "additionalProperties": false,
+      "properties": {
+        "as_of": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Timestamp"
+        },
+        "basis": {
+          "$ref": "#/$defs/AvailabilityBasis"
+        },
+        "granularity": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Duration"
+        },
+        "quantity": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        },
+        "type": {
+          "$ref": "#/$defs/AvailabilityType"
+        },
+        "unit": {
+          "$ref": "#/$defs/AvailabilityUnit"
+        }
+      },
+      "type": "object"
+    },
+    "AvailabilityBasis": {
+      "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm",
+      "description": "No core terms are listed yet, so every term is namespaced."
+    },
+    "AvailabilityType": {
+      "enum": [
+        "forecast",
+        "reservable"
+      ],
+      "type": "string"
+    },
+    "AvailabilityUnit": {
+      "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm",
+      "description": "No core terms are listed yet, so every term is namespaced."
+    },
+    "CancellationPolicyOption": {
+      "description": "A cancellation right the seller offers, priced in `pricing` beside the others. The specification states no members, so the option accepts any beside the `id` that names it.",
+      "properties": {
+        "id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Uuid",
+          "description": "The identity the seller mints for the option, which `included[]` and the `pricing` keys name it by."
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "CancellationPolicySelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, and `pricing` gives the change in price for each other option.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "#/$defs/CancellationPolicyOption"
+          },
+          "type": "array"
+        },
+        "included": {
+          "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the UUID the seller mints for it.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Uuid"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        },
+        "pricing": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
+          },
+          "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the UUID the seller mints for it.",
+          "propertyNames": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Uuid"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "available",
+        "included"
+      ],
+      "type": "object"
+    },
+    "Commitment": {
+      "additionalProperties": false,
+      "else": {
+        "if": {
+          "properties": {
+            "basis": {
+              "const": "units"
+            }
+          },
+          "required": [
+            "basis"
+          ]
+        },
+        "then": {
+          "properties": {
+            "amount": {
+              "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+            }
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "basis": {
+            "const": "spend"
+          }
+        },
+        "required": [
+          "basis"
+        ]
+      },
+      "properties": {
+        "amount": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount",
+          "description": "The figure committed"
+        },
+        "basis": {
+          "$ref": "#/$defs/CommitmentBasis",
+          "description": "`spend` | `units`"
+        },
+        "currency": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/CurrencyCode",
+          "description": "ISO-4217"
+        },
+        "derived_units": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count",
+          "description": "Computed from `amount`, `agreed_rate` and `cost_method`. Informative, not binding"
+        },
+        "flight_end": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Timestamp",
+          "description": "The buyer's campaign end. Distinct from `valid_until`"
+        },
+        "flight_start": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Timestamp",
+          "description": "The buyer's campaign start. Distinct from `valid_from`"
+        },
+        "idempotency_key": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Uuid",
+          "description": "Buyer-generated, unique per commitment attempt"
+        },
+        "proposal_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Uuid",
+          "description": "The proposal the commitment is made against"
+        },
+        "version": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count",
+          "description": "The proposal `version` the commitment was priced against"
+        }
+      },
+      "required": [
+        "amount",
+        "basis",
+        "flight_end",
+        "flight_start",
+        "idempotency_key",
+        "proposal_id",
+        "version"
+      ],
+      "then": {
+        "required": [
+          "currency"
+        ]
+      },
+      "type": "object"
+    },
+    "CommitmentBasis": {
+      "enum": [
+        "spend",
+        "units"
+      ],
+      "type": "string"
+    },
+    "CommitmentBounds": {
+      "additionalProperties": false,
+      "properties": {
+        "max_budget": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount"
+        },
+        "max_impressions": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        },
+        "min_budget": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount"
+        },
+        "min_impressions": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        }
+      },
+      "type": "object"
+    },
+    "CostMethod": {
+      "anyOf": [
+        {
+          "enum": [
+            "CPM",
+            "CPC",
+            "flat"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "CreativePolicy": {
+      "description": "The content and category restrictions on creative. The specification states no members, so the object accepts any.",
+      "type": "object"
+    },
+    "ExclusivityOption": {
+      "description": "An exclusivity term the seller offers, priced in `pricing` beside the others. The specification states no members, so the option accepts any beside the `id` that names it.",
+      "properties": {
+        "id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Uuid",
+          "description": "The identity the seller mints for the option, which `included[]` and the `pricing` keys name it by."
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "ExclusivitySelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, and `pricing` gives the change in price for each other option.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "#/$defs/ExclusivityOption"
+          },
+          "type": "array"
+        },
+        "included": {
+          "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the UUID the seller mints for it.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Uuid"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        },
+        "pricing": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
+          },
+          "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the UUID the seller mints for it.",
+          "propertyNames": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Uuid"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "available",
+        "included"
+      ],
+      "type": "object"
+    },
+    "HoldScope": {
+      "enum": [
+        "line_item",
+        "proposal"
+      ],
+      "type": "string"
+    },
+    "HoldState": {
+      "enum": [
+        "none",
+        "requested",
+        "held",
+        "expired",
+        "released",
+        "converted"
+      ],
+      "type": "string"
+    },
+    "HoldStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "hold_available": {
+          "description": "Whether this line item may be held",
+          "type": "boolean"
+        },
+        "hold_duration": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Duration",
+          "description": "ISO-8601 duration the hold runs for"
+        },
+        "hold_expires_at": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Timestamp",
+          "description": "Absolute timestamp, set when the hold is granted"
+        },
+        "hold_scope": {
+          "$ref": "#/$defs/HoldScope",
+          "description": "`line_item` | `proposal`"
+        },
+        "state": {
+          "$ref": "#/$defs/HoldState",
+          "description": "`none` | `requested` | `held` | `expired` | `released` | `converted`"
+        }
+      },
+      "type": "object"
+    },
+    "MinCommitmentEntry": {
+      "additionalProperties": false,
+      "dependentRequired": {
+        "amount": [
+          "basis"
+        ]
+      },
+      "else": {
+        "if": {
+          "properties": {
+            "basis": {
+              "const": "units"
+            }
+          },
+          "required": [
+            "basis"
+          ]
+        },
+        "then": {
+          "properties": {
+            "amount": {
+              "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+            }
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "basis": {
+            "const": "spend"
+          }
+        },
+        "required": [
+          "basis"
+        ]
+      },
+      "properties": {
+        "amount": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount"
+        },
+        "basis": {
+          "$ref": "#/$defs/CommitmentBasis"
+        },
+        "currency": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/CurrencyCode"
+        },
+        "line_item_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Uuid"
+        }
+      },
+      "then": {
+        "required": [
+          "currency"
+        ]
+      },
+      "type": "object"
+    },
+    "PricingEntry": {
+      "additionalProperties": false,
+      "dependentRequired": {
+        "agreed_rate": [
+          "currency"
+        ],
+        "floor": [
+          "currency"
+        ],
+        "gross_rate": [
+          "currency"
+        ],
+        "seller_rate": [
+          "currency"
+        ]
+      },
+      "properties": {
+        "agreed_rate": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount",
+          "description": "The transacted rate after selections and any agreed request"
+        },
+        "cost_method": {
+          "$ref": "#/$defs/CostMethod",
+          "description": "CPM, CPC, flat, etc."
+        },
+        "currency": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/CurrencyCode",
+          "description": "ISO-4217"
+        },
+        "floor": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount",
+          "description": "OPTIONAL. The seller's offer floor: the lowest rate it will consider at proposal time, so a `requestable` counter can be evaluated without a round trip. Not the downstream auction floor, and not a guarantee that bids at or above it will clear"
+        },
+        "gross_rate": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount",
+          "description": "The list rate the buyer pays"
+        },
+        "price_valid_until": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Timestamp",
+          "description": "How long the posted rate holds. Distinct from the proposal's `valid_until`"
+        },
+        "seller_rate": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount",
+          "description": "What the publisher receives"
+        }
+      },
+      "type": "object"
+    },
+    "Requires": {
+      "additionalProperties": false,
+      "properties": {
+        "all_of": {
+          "description": "Line items that MUST all be in the same commitment",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Uuid"
+          },
+          "type": "array"
+        },
+        "any_of": {
+          "description": "Line items of which at least one MUST be in the same commitment",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Uuid"
+          },
+          "type": "array"
+        },
+        "min_commitment": {
+          "description": "Purchase-level thresholds: `{ line_item_id, basis, amount, currency }`",
+          "items": {
+            "$ref": "#/$defs/MinCommitmentEntry"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `commercial` module: the vocabularies, objects, unions, and constructor copies of § 5.6, § 5.6.1, § 5.6.2, and § 5.6.3.",
+  "title": "commercial"
+}

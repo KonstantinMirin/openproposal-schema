@@ -1,0 +1,143 @@
+{
+  "$defs": {
+    "ContentDetail": {
+      "description": "The shows, series, sections, and network verticals the line item's inventory holds. The specification states no members, so the object accepts any.",
+      "type": "object"
+    },
+    "Environment": {
+      "anyOf": [
+        {
+          "enum": [
+            "web_desktop",
+            "web_mobile",
+            "app_mobile",
+            "ctv",
+            "dooh",
+            "audio_streaming"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "EnvironmentsSelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, and `pricing` gives the change in price for each other option.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "#/$defs/Environment"
+          },
+          "type": "array"
+        },
+        "included": {
+          "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the UUID the seller mints for it.",
+          "items": {
+            "$ref": "#/$defs/Environment"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        },
+        "pricing": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
+          },
+          "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the UUID the seller mints for it.",
+          "propertyNames": {
+            "$ref": "#/$defs/Environment"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "available",
+        "included"
+      ],
+      "type": "object"
+    },
+    "PropertiesOption": {
+      "additionalProperties": false,
+      "properties": {
+        "domains": {
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Domain"
+          },
+          "type": "array"
+        },
+        "id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Uuid",
+          "description": "The identity the seller mints for the option, which `included[]` and the `pricing` keys name it by."
+        },
+        "name": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+        },
+        "supported_formats": {
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/FormatId"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "PropertiesOptionOrCatalogRef": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PropertiesOption"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/CatalogReference"
+        }
+      ],
+      "description": "A value given inline, or a reference to the seller's catalog entry that holds it, never both."
+    },
+    "PropertiesSelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, and `pricing` gives the change in price for each other option.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "#/$defs/PropertiesOptionOrCatalogRef"
+          },
+          "type": "array"
+        },
+        "included": {
+          "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the UUID the seller mints for it.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Uuid"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        },
+        "pricing": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
+          },
+          "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the UUID the seller mints for it.",
+          "propertyNames": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Uuid"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "available",
+        "included"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/modules/inventory/1/inventory.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `inventory` module: the vocabularies, objects, unions, and constructor copies of § 5.2, § 5.2.1, and § 5.2.2.",
+  "title": "inventory"
+}

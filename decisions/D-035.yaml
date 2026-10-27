@@ -1,0 +1,164 @@
+format: 1
+id: D-035
+status: proposed
+kind: gap
+author: agent
+question: Which payloads does each rule on one line item accept, and what does a receiver do, where the specification states the rule only in prose?
+covers:
+  - ir: rule:2.2:06ccee9f
+    digest: 88f6179c8487ecb60b3f98de8b1ecbbec92e618a36e441133f4f4447957c23b7
+    quote: When a proposal reaches status `agreed`, every `catalog_ref` MUST be replaced by its resolved value in the stored record, so the committed artifact is self-contained and immutable.
+  - ir: rule:5.5:16494a1a
+    digest: 855cc7c52aa4330ff909d07b79740de5114d8f109cc015572cad24a87f313e2c
+    quote: "`list_ref` MUST be hash-pinned, and resolved into the stored record at `agreed`, as for `catalog_ref` (§ 2.2)."
+    locks:
+      - with-open-prs
+  - ir: rule:5.1.1:ce115ccf
+    digest: e08bbdb0049bcf108e99bf58469a37f95118b3e482634842ff9852bf1151393c
+    quote: A consumer MUST skip a line item whose `channel` it does not recognise, and MUST NOT reject the proposal because of it.
+    locks:
+      - with-open-prs
+  - ir: rule:5.2.1:cc42a1f8
+    digest: e997800cb64e5db5c061617420685bd24d85ac97cc51c170f34d36526154e37d
+    quote: Each `environments.available[]` value MUST match at least one impression to which 5.1.1 gives the line item's `channel`.
+    locks:
+      - with-open-prs
+  - ir: def:5.1.1:channel.dooh
+    digest: d1bba9102900730605a740d32cec363c8c2d382499eae2fc2768dccaeee80800
+    quote: "`dooh` | Distribution channel `Dooh`"
+    locks:
+      - with-open-prs
+  - ir: def:5.1.1:channel.audio
+    digest: 88a6c85592a38c9d19edb0df59c3e68ee0db38380e3dbdf7aeaced3a035ee092
+    quote: "`audio` | Audio ad (`AudioPlacement`)"
+    locks:
+      - with-open-prs
+  - ir: def:5.1.1:channel.ctv
+    digest: 15f10806bc36998bac0012166cdf3b72ba89ad1d69c0511a60bb1183e5422d28
+    quote: "`ctv` | Device type Connected TV (3), Connected Device (6) or Set Top Box (7)"
+    locks:
+      - with-open-prs
+  - ir: def:5.1.1:channel.native
+    digest: 1a2087aca42d3a776529870b8419b5b090f3026c122acb360db00e5a1cdedbbd
+    quote: "`native` | Native ad (`DisplayPlacement.nativefmt`), including native ads with video assets"
+    locks:
+      - with-open-prs
+  - ir: def:5.1.1:channel.video
+    digest: 68b21fd8ad5a7fea4a79c5ebac040b0e0d64223a912612abcd6292e8f9541b6e
+    quote: "`video` | Video ad (`VideoPlacement`)"
+    locks:
+      - with-open-prs
+  - ir: def:5.1.1:channel.display
+    digest: c73de2743306b91a2f2f84087298bbf496c2fadf6a8ad2c5a394b4c4586b1854
+    quote: "`display` | Any other display ad (`DisplayPlacement`)"
+    locks:
+      - with-open-prs
+  - ir: def:5.2.1:environments.web_desktop
+    digest: fc9e8f19430aa98b5221e55f14e552f2d45140fda9a72ddf9f223c8e8a880c1c
+    quote: "`web_desktop` | `Site` | Personal Computer (2)"
+    locks:
+      - with-open-prs
+  - ir: def:5.2.1:environments.web_mobile
+    digest: 597226422bc5b1d02c0154dc633c7713bc0d38a31db78c679eed3afec27f2ebf
+    quote: "`web_mobile` | `Site` | Mobile/Tablet - General (1), Phone (4), Tablet (5)"
+    locks:
+      - with-open-prs
+  - ir: def:5.2.1:environments.app_mobile
+    digest: f92942a442d7a518f5aa113e7be4b11b2d53f399124316be59ab39d4091c720b
+    quote: "`app_mobile` | `App` | Mobile/Tablet - General (1), Phone (4), Tablet (5)"
+    locks:
+      - with-open-prs
+  - ir: def:5.2.1:environments.ctv
+    digest: 09f296c7839bd87454e1725b3e95e5928443061a81b45e9d42060c264538522f
+    quote: "`ctv` | `Site` or `App` | Connected TV (3), Connected Device (6), Set Top Box (7)"
+    locks:
+      - with-open-prs
+  - ir: def:5.2.1:environments.dooh
+    digest: e79ca7086e2c65e04ae00013edc8dfc85ef0947722649e27aaa25e5d84e715f5
+    quote: "`dooh` | `Dooh` | Any"
+    locks:
+      - with-open-prs
+  - ir: rule:5.2.2:f9a1a6d5
+    digest: 55a75b3759267d3ce395ff7c66237f3fff0e0aea8350f090f790277b4c3d2cbc
+    quote: Unless `api[]` includes OMID 1.0 (7), a line item whose `committed_metrics[]` includes `viewable_rate` and whose `environments.available[]` includes `app_mobile` or `ctv` SHOULD NOT offer a `measurement_source` vendor other than the seller.
+    locks:
+      - with-open-prs
+  - ir: rule:5.2:f3d3f9e8
+    digest: 8b18fd138cba2473076f1cedd5ce8284a836808d0c5ac65354248f8dbcc0cae3
+    quote: "`plcmt` is REQUIRED for video ads."
+    locks:
+      - with-open-prs
+  - ir: key:5.2.2:placement.plcmt
+    digest: bfb50cd7c0a3028f0a69f338b91e05496e8d19d3c8e48422480bead6fe17b125
+    quote: "`plcmt` | REQUIRED for video ads (`channel` `video`, or video on `channel` `ctv`); otherwise OPTIONAL | One value from List: Plcmt Subtypes - Video: Instream (1), Accompanying Content (2), Interstitial (3), No Content/Standalone (4), Pause (5), Screensaver (6), Overlay (7), Squeezeback (8), In-scene (9) | `VideoPlacement.ptype`, `video.plcmt`"
+    locks:
+      - with-open-prs
+  - ir: rule:5.5:2eab2842
+    digest: b3baf45c379d1aa9883f9fdc122e7646f9b4cfee17bc532c3291f486c198c168
+    quote: A buyer MUST NOT supply an exclusion type absent from `exclusions_accepted.types`.
+    locks:
+      - with-open-prs
+options:
+  - id: narrow-reading
+    summary: >-
+      Read each rule as narrowly as its words allow, and give it the vectors
+      that reading decides:
+
+      - the line item's own status
+
+      - a pin as a `sha256`
+
+      - the channel rows and the environment rows, matched by device and
+      distribution
+
+      - the seller named by the proposal's `seller_id`
+  - id: no-vectors
+    summary: Leave these rules without vectors until the specification states them precisely.
+chosen: narrow-reading
+rationale: >-
+  Type rules § 9 gives every rule a valid and an invalid vector, so leaving
+  these rules without vectors fails the gate. The vectors read each rule as
+  follows. "Reaches status `agreed`" is the line item's own `status`, since
+  the line item is self-contained, so an agreed line item carries no
+  `catalog_ref` and no `list_ref`. A `list_ref` is hash-pinned when it
+  carries `sha256`. An `environments.available[]` value matches an
+  impression of the line item's `channel` when one of the value's
+  (distribution channel, device type) pairs can hold an impression that
+  § 5.1.1 gives that channel, its first matching row: `dooh` admits only
+  `dooh`, and `ctv` only `ctv`, while `display` admits `web_desktop`,
+  `web_mobile`, and `app_mobile`. The `plcmt` rule reads its key row as it
+  is written: "`plcmt` | REQUIRED for video ads (`channel` `video`, or video
+  on `channel` `ctv`); otherwise OPTIONAL". A line item whose `channel` is
+  `video` holds video ads, so it gives `plcmt`. A line item whose `channel`
+  is `ctv` says in no field whether its ads are video: a format ID is
+  namespaced by channel, not by medium, as `ctv/instream-15s` is, the format
+  registry has no `ctv/*` entries, and the delivery protocol is a term the
+  text doesn't list (D-041). So a `ctv` line item without `plcmt` is
+  undecided, neither accepted nor rejected, its vectors leave it out, and
+  the examples gate records each one, as the bonus example is. "The seller" as a
+  `measurement_source` vendor is the vendor whose ID is the proposal's
+  `seller_id`, which the line item doesn't carry, so the vectors give it as
+  context. An exclusion type is a key of `exclusions` that
+  `exclusions_accepted.types` can list, so `list_ref`, whose entries have no
+  stated type, is none. A consumer that doesn't recognise a `channel`, such as
+  a namespaced one, skips the line item and keeps the proposal. A code block
+  shows part of a line item, so a rule whose verdict turns on a member the
+  block leaves out while it shows another the rule reads is undecided: the
+  `status` beside a `list_ref` or a `catalog_ref`, the `channel` beside
+  `environments` or `placement`, and any of the members the measurement rule
+  reads. So is a `measurement_source` option given as a `catalog_ref`, whose
+  vendor the line item holds only once the reference is resolved. The
+  measurement rule is a SHOULD NOT, so an example that breaks it is a
+  warning, not an error.
+feedback: >-
+  Say:
+
+  - whether "reaches status `agreed`" means the proposal's status or the line
+  item's
+
+  - how a line item names the seller as its `measurement_source` vendor
+
+  - how a `ctv` line item says it carries video, so that the `plcmt` condition
+  can be checked
+
+  - which exclusion type a `list_ref` holds

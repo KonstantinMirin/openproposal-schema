@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/examples/findings.schema.json",
+  "title": "OpenProposal example findings",
+  "description": "The places where an example the specification gives fails against the emitted schemas, uses a key the model doesn't define, or breaks a rule that one payload decides, each with the decision records the failing location rests on, and the rules' checks that the examples leave undecided. The examples gate fails on a failure or an undecided check this file doesn't record, and on a recorded one that no longer occurs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "findings"],
+  "properties": {
+    "format": {
+      "description": "Version of this format.",
+      "const": 1
+    },
+    "findings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/finding" }
+    },
+    "undecided": {
+      "description": "The rules' checks that an example's values can't decide, because the verdict turns on what the example leaves out: the proposal's seller for a line item alone, a member a code block leaves out, or a fact the text gives no field for. Each is reviewed as a finding is.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/undecided" }
+    }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["example", "path", "kind", "value", "decisions", "reason"],
+      "properties": {
+        "example": {
+          "description": "The example: a file of the specification repository, such as `examples/line-item-display.yaml`, or the IR element of a code block that a decision maps to an example, such as `code:5.5:1`.",
+          "type": "string",
+          "pattern": "^(examples/[A-Za-z0-9][A-Za-z0-9._-]*|code:[^\\s]+)$"
+        },
+        "path": {
+          "description": "The JSON pointer of the failing location in the example, `\"\"` for the whole of it.",
+          "type": "string",
+          "pattern": "^(/[^/]*)*$"
+        },
+        "kind": {
+          "description": "`load`: the example doesn't load under YAML 1.2 core as JSON. `invalid`: the schema rejects the value. `undefined_key`: the model defines no such key, whether the object is closed and the schema rejects it, or open and the schema accepts it. `rule`: the check of a rule that one payload decides rejects the value (src/rule-checks.ts), and `rule` names the rule.",
+          "enum": ["load", "invalid", "undefined_key", "rule"]
+        },
+        "rule": {
+          "description": "The rule a `rule` finding breaks, as rules.json names it. One location can fail its schema and a rule, so the example, the path, and the rule name a finding.",
+          "type": "string",
+          "pattern": "^[a-z][a-z-]*:\\S+$"
+        },
+        "severity": {
+          "description": "`warning` for a `rule` finding of a SHOULD, SHOULD NOT, RECOMMENDED, or NOT RECOMMENDED rule, which an implementation may depart from with a reason; a finding without it is an error. The gate compares it with the rule's level, and the feedback counts warnings apart from errors.",
+          "const": "warning"
+        },
+        "value": {
+          "description": "The example's value at the location, as `npm run examples` prints it; null for `load`. The gate compares it with the example, so a changed example needs a fresh review."
+        },
+        "decisions": {
+          "description": "The decision records the failing location rests on, one per cause: a failure with two causes, such as a readable ID and an unlisted term in one option, cites both. Each covers an element of the deepest model type or property at the location.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^D-[0-9]{3}$" }
+        },
+        "reason": {
+          "description": "Why the example fails there, in one to three sentences. Where a cause is a change we propose (a `departure` record), the example follows the text, so the reason starts \"The example follows the text\", says what the example writes, and says what we propose, with \"We propose\"; it never says the example or the specification should change. Where every cause is a `gap` record, the reason says where the example disagrees with the text, and which side should change.",
+          "type": "string",
+          "minLength": 12
+        },
+        "locks": {
+          "description": "Lock names the finding occurs on. Without it, it occurs on every lock.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" }
+        }
+      },
+      "if": { "properties": { "kind": { "const": "rule" } }, "required": ["kind"] },
+      "then": { "properties": { "rule": { "type": "string" } }, "required": ["rule"] },
+      "dependentSchemas": { "rule": { "properties": { "kind": { "const": "rule" } } }, "severity": { "properties": { "kind": { "const": "rule" } } } }
+    },
+    "undecided": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["example", "path", "rule", "decisions", "reason"],
+      "properties": {
+        "example": {
+          "description": "The example, as a finding names it.",
+          "type": "string",
+          "pattern": "^(examples/[A-Za-z0-9][A-Za-z0-9._-]*|code:[^\\s]+)$"
+        },
+        "path": {
+          "description": "The JSON pointer of the value the rule reads, `\"\"` for the whole example.",
+          "type": "string",
+          "pattern": "^(/[^/]*)*$"
+        },
+        "rule": {
+          "description": "The rule whose check can't decide, as rules.json names it.",
+          "type": "string",
+          "pattern": "^[a-z][a-z-]*:\\S+$"
+        },
+        "decisions": {
+          "description": "The decision records that say why the check can't decide: each covers an element the rule rests on.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^D-[0-9]{3}$" }
+        },
+        "reason": {
+          "description": "What the verdict turns on that the example leaves out, in one or two sentences.",
+          "type": "string",
+          "minLength": 12
+        },
+        "locks": {
+          "description": "Lock names the check is undecided on. Without it, on every lock.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,80 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: publication
+sections: [ "2.3" ]
+depends: [ proposal ]
+types:
+  - name: ProposalsEntry
+    kind: object
+    ir: block:2.3:2/object:1
+    locks: [ with-open-prs ]
+    source: { decision: D-028 }
+    open: true
+    includes: ProposalSummary
+    members:
+      version:
+        type: { kind: named, name: Count }
+        presence: optional
+        description: "The proposal's revision number, its current `version`, which the entry MUST match."
+      full_url: { type: { kind: named, name: Url }, presence: optional }
+    description: "One proposal the manifest publishes: its Summary Representation, its `version`, and the `full_url` of its full record. The specification doesn't name the key that holds its line items' summaries, so the entry accepts members it doesn't name."
+entries:
+  - ir: rule:2.3:99777739
+    digest: 406feb42eaa323b7ecfc76a14cc5018b0571b0ed8a54b9059f49d101885f4e65
+    locks: [ with-open-prs ]
+    source: { decision: D-029 }
+    as: { role: obligation, party: seller }
+  - ir: block:2.3:2/object:1
+    digest: eaf0062fe8aa310c046bf2ca847e8004545e32743d21f94e5ac9cd5394275954
+    locks: [ with-open-prs ]
+    source: { decision: D-028 }
+    as:
+      role: type
+      name: Manifest
+      layer: document
+      members:
+        seller_id: { type: { kind: named, name: ExternalId }, presence: optional }
+        generated_at: { type: { kind: named, name: Timestamp }, presence: optional }
+        spec_version:
+          type: { kind: named, name: ExternalId }
+          presence: optional
+          description: "The release of the specification the manifest follows, as the specification names its release, such as `3.0`."
+        proposals:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ProposalsEntry } } }
+          presence: optional
+  - ir: sentence:2.3:b43aefff
+    digest: 9bb1f46e61f5cead612c3b31414a82256649f79ee1bf7e646f8865272c74a609
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:2.3:68f68e24
+    digest: f6f5be9f5e5c5b37ff60e9b49a75ffc101122151479082691523863138729ee4
+    locks: [ with-open-prs ]
+    source: { decision: D-029 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:2.3:c1b9a69d
+    digest: 35f2dae11b547e36dea47a02481b05d3a1670514c734708f0fc0bf98dc6df88b
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.3:329c49c5
+    digest: 3acbc648fb7348acf5250c15ca1563e923c12cf1195bbe459cff31decb2cea50
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:2.3:59a4ca91
+    digest: bcf386544a30e5ac27e19129df4cfefe990e46b1c9f0352f3965fe26503b7c41
+    locks: [ with-open-prs ]
+    source: { decision: D-029 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:2.3:4456a7fb
+    digest: a12997a5b2692334538c88aba8b9d59398d7b8b92b182c7577e1e8050f89cf05
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.3:7c617825
+    digest: 518a089c3a3bb7af426eb2060f60e85a1f1e23e7ba26783a2b3dd19ba0099b74
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }

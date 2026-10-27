@@ -1,0 +1,46 @@
+# OpenProposal 3.0 — Example: Audio line item (spec § 6.4)
+line_item_id:   "streaming-audio"
+status:         published
+channel:        audio
+environments:   { available: ["web_mobile", "app_mobile"],
+                  included:  ["web_mobile", "app_mobile"] }
+formats:        { available: ["audio/host-read-30s", "audio/produced-30s"],
+                  included: ["audio/produced-30s"],
+                  pricing: { "audio/host-read-30s": { delta_cpm: 9.00 } } }
+
+production:
+  available:    [{ id: "seller_built", build_owner: seller, lead_time: "10 business days" },
+                 { id: "buyer_supplied", build_owner: buyer, lead_time: "0" }]
+  included:     ["buyer_supplied"]
+  pricing:      { seller_built: { delta_flat: 12000.00 } }
+
+geo:                                   # priced by market (§ 5.5)
+  available:    ["USA", "CAN", "GBR"]
+  included:     ["USA"]
+  pricing:      { "CAN": { delta_cpm: 1.50 }, "GBR": { delta_cpm: 3.00 } }
+  max_select:   3
+
+frequency_cap:  { max: { min: 1, max: 6 }, period: "day", basis: listener }
+time_zone:      viewer_local
+
+pricing:
+  - { cost_method: CPM, gross_rate: 18.00, floor: 15.84,
+      price_valid_until: "2026-12-15T23:59:59Z", currency: USD }
+
+commitment_bounds: { min_budget: 5000.00 }
+commitment:
+  proposal_id: "examplepub-us-q4-2026-omni"
+  version: 1
+  basis: spend
+  amount: 60000.00
+  currency: USD
+  flight_start: "2026-10-06"
+  flight_end:   "2026-12-21"
+  idempotency_key: "agency-a-camp1-streaming-audio-a7c33e10"
+
+committed_metrics: [{ metric: completion_rate, value: 0.92, basis: seller_reported }]
+visibility:        public
+buying_route:      SSP_PLATFORM
+transaction_mechanism: { available: ["PREFERRED_DEAL"], included: ["PREFERRED_DEAL"] }
+serving_mode:      dai
+correlation_id:    "ep-q4-2026-commitment/streaming-audio"

@@ -1,0 +1,53 @@
+{
+  "$defs": {
+    "ProposalsEntry": {
+      "description": "One proposal the manifest publishes: its Summary Representation, its `version`, and the `full_url` of its full record. The specification doesn't name the key that holds its line items' summaries, so the entry accepts members it doesn't name.",
+      "properties": {
+        "description": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Text",
+          "description": "REQUIRED. Prose, not a name. Where the \"why buy\" case is made, including which channels a multi-channel proposal spans"
+        },
+        "full_url": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Url"
+        },
+        "linked_execution": {
+          "$ref": "../../proposal/1/proposal.json#/$defs/LinkedExecution",
+          "description": "`none` (default, subsettable) | `all` (every published line item must be committed together)"
+        },
+        "proposal_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier",
+          "description": "Unique identity for the proposal object"
+        },
+        "seller_name": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Text",
+          "description": "Canonical legal seller entity name, from the registry"
+        },
+        "valid_from": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Timestamp",
+          "description": "ISO-8601 window the offer holds. This is the offer window, not the campaign flight"
+        },
+        "valid_until": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Timestamp",
+          "description": "ISO-8601 window the offer holds. This is the offer window, not the campaign flight"
+        },
+        "version": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count",
+          "description": "The proposal's revision number, its current `version`, which the entry MUST match."
+        }
+      },
+      "required": [
+        "description",
+        "linked_execution",
+        "proposal_id",
+        "seller_name",
+        "valid_from",
+        "valid_until"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/publication/1/publication.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `publication` module: the vocabularies, objects, unions, and constructor copies of § 2.3.",
+  "title": "publication"
+}

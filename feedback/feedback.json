@@ -1,0 +1,5640 @@
+{
+  "conditions": [
+    {
+      "locks": [
+        "with-open-prs"
+      ],
+      "text": "`placement.plcmt`: \"REQUIRED for video ads (`channel` `video`, or video on `channel` `ctv`)\" names no sibling and value"
+    }
+  ],
+  "departures": [
+    {
+      "feedback": "Write every ID a party mints as a UUID (RFC 9562), and every reference to one. That covers `proposal_id`, `line_item_id`, `asset_id`, `correlation_id`, `idempotency_key`, and the `id` of a property or an audience option. A UUID keeps `idempotency_key` opaque: a seller checks how it is written and compares it, and still reads nothing from it. The examples write readable names such as `business-daily-display`, which two sellers can mint alike.",
+      "id": "D-037",
+      "kind": "departure",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "number": 40,
+      "question": "How is the ID of a record a party mints written, so that every party compares it the same way?",
+      "reading": "A UUID in the RFC 9562 string form, which JSON Schema's `uuid` format checks.",
+      "rests_on": [
+        "field:4.1:proposal_id",
+        "field:5.1:line_item_id",
+        "field:5.2:properties#description/object:1",
+        "field:5.3:audiences#description/object:1",
+        "field:5.4:assets[]#description/object:1",
+        "key:5.6.1:commitment.idempotency_key",
+        "key:5.6.1:commitment.proposal_id",
+        "rule:5.6.1:6f403dba",
+        "sentence:5.6.1:b7271e6a",
+        "code:5.6.3:1",
+        "key:5.6.3:requires.all_of[]",
+        "key:5.6.3:requires.any_of[]",
+        "key:5.6.3:requires.min_commitment[]#meaning/object:1",
+        "field:5.10:correlation_id"
+      ],
+      "status": "proposed"
+    },
+    {
+      "feedback": "Write `placement.reward`, `instl`, and `skip` as JSON booleans, as every other flag of the specification is. Say they mean what the AdCOM fields of the same name mean. AdCOM 1.0 and OpenRTB 2.6 write these flags as the integers `0` and `1`. A seller that builds a bid request writes `true` as `1` and `false` as `0`, and reads them back the same way.",
+      "id": "D-039",
+      "kind": "departure",
+      "locks": [
+        "with-open-prs"
+      ],
+      "number": 41,
+      "question": "How is a two-valued flag written where § 5.2.2 copies an AdCOM `0` | `1` integer?",
+      "reading": "A JSON boolean, as every other flag of the specification is.",
+      "rests_on": [
+        "key:5.2.2:placement.instl",
+        "key:5.2.2:placement.instl#meaning/values:1",
+        "key:5.2.2:placement.reward",
+        "key:5.2.2:placement.reward#meaning/values:1",
+        "key:5.2.2:placement.skip",
+        "key:5.2.2:placement.skip#meaning/values:1",
+        "rule:5.2.2:463dfafd",
+        "sentence:5.2.2:4076adca"
+      ],
+      "status": "proposed"
+    },
+    {
+      "feedback": "Write every length of time as an ISO 8601 duration, as `hold_duration` is. That covers a production option's `lead_time`, a reporting option's `cadence`, `availability`'s `granularity`, and a measurement source's `attribution_window`. It also covers `placement.skipafter` and `refresh.min_interval_s`. The examples write \"10 business days\" and `0` for a lead time. They write `daily` for a cadence and `30d` for an attribution window, which are `P1D` and `P30D` as durations. § 5.2.2 writes `skipafter` and `min_interval_s` as integer seconds, because AdCOM 1.0 and OpenRTB 2.6 write `skipafter` and `minint` that way. A seller that builds a bid request converts each duration to whole seconds, such as `PT5S` to `5`. The `_s` in `min_interval_s` names the unit, which a duration carries, so rename the key `min_interval`. Business days need a calendar the specification doesn't define, so a lead time in business days needs one too.",
+      "id": "D-040",
+      "kind": "departure",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "number": 42,
+      "question": "How is a length of time written where the specification or its examples write it as prose, a word, or a count of seconds?",
+      "reading": "An ISO 8601 duration in the grammar of RFC 3339 Appendix A, as `hold_duration` is.",
+      "rests_on": [
+        "key:5.2.2:placement.refresh",
+        "key:5.2.2:placement.refresh#meaning/object:1",
+        "key:5.2.2:placement.skipafter",
+        "rule:5.2.2:463dfafd",
+        "sentence:5.2.2:4076adca",
+        "field:5.4:production#description/object:1",
+        "field:5.6:availability#description/object:1",
+        "field:5.7:measurement_source#description/object:1",
+        "field:5.7:reporting#description/object:1"
+      ],
+      "status": "proposed"
+    },
+    {
+      "feedback": "List the core terms of each field whose values are terms. These are an audience's `provenance`, `creative_delivery.protocol`, an asset's `approval_status`, `availability`'s `unit` and `basis`, `committed_metrics[]`'s `basis`, and `reporting`'s `delivery_mechanism`. The examples use `modeled`, `first_party`, `javascript_tag`, `vast_4_2`, `mrc`, `seller_reported`, `api`, and `s3`, which aren't listed. Until they are, each field accepts only namespaced extension terms.",
+      "id": "D-041",
+      "kind": "departure",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "number": 43,
+      "question": "What does a field hold whose values are terms that the specification doesn't list?",
+      "reading": "Each field gets a named open vocabulary with the core terms the specification lists, none yet, so each accepts namespaced terms `<domain>:<term>` only.",
+      "rests_on": [
+        "field:5.3:audiences#description/object:1",
+        "field:5.4:assets[]#description/object:1",
+        "field:5.4:creative_delivery#description/object:1",
+        "field:5.6:availability#description/object:1",
+        "field:5.7:committed_metrics[]#description/object:1",
+        "field:5.7:reporting#description/object:1",
+        "field:5.10:external_references[]"
+      ],
+      "status": "proposed"
+    },
+    {
+      "feedback": "Write a commitment's `flight_start` and `flight_end` as RFC 3339 date-times, as `valid_from` and `valid_until` are, such as `2026-10-06T00:00:00-04:00`. The examples write calendar dates, which name no instant until a time zone reads them.",
+      "id": "D-042",
+      "kind": "departure",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "number": 44,
+      "question": "Is a commitment's flight start and end a calendar date, as the examples write them, or a point in time?",
+      "reading": "A point in time, a `Timestamp`, as the offer window's `valid_from` and `valid_until` are.",
+      "rests_on": [
+        "key:5.6.1:commitment.flight_end",
+        "key:5.6.1:commitment.flight_start"
+      ],
+      "status": "proposed"
+    },
+    {
+      "feedback": "Write `id`, REQUIRED, into the production, measurement source, and reporting options, so that `included[]` and the `pricing` keys name each option by it. The text lists these options' members without an `id`. The display example names a measurement source by its `vendor`, `IAS`, and a report by its `feed_type`, `aggregate`, as the text allows. A second source from one vendor, or a second report of one feed type, would need a name of its own.",
+      "id": "D-047",
+      "kind": "departure",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "number": 45,
+      "question": "Do the production, measurement source, and reporting options carry an `id` that `included[]` and the `pricing` keys name them by?",
+      "reading": "Yes. Each of these options carries `id`, required, beside the members the text lists, and `included[]` and the `pricing` keys name the option by it.",
+      "rests_on": [
+        "key:3.1:included[]",
+        "key:3.1:pricing",
+        "field:5.4:production",
+        "field:5.4:production#description/object:1",
+        "field:5.7:measurement_source",
+        "field:5.7:measurement_source#description/object:1",
+        "field:5.7:reporting",
+        "field:5.7:reporting#description/object:1"
+      ],
+      "status": "proposed"
+    }
+  ],
+  "examples": [
+    {
+      "causes": [
+        "gap"
+      ],
+      "decisions": [
+        "D-003"
+      ],
+      "example": "code:5.5:1",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/exclusions/list_ref/sha256"
+      ],
+      "reason": "A SHA-256 hash is 64 lowercase hex digits. The § 5.5 block writes the placeholder `<hash>`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "gap"
+      ],
+      "decisions": [
+        "D-006"
+      ],
+      "example": "code:5.5:1",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/exclusions/list_ref/url"
+      ],
+      "reason": "A URL is an absolute `https` URL. The § 5.5 block writes the placeholder `<url>`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "code:5.6.3:1",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/requires/all_of/0"
+      ],
+      "reason": "The example follows the text, which states no form for `all_of[]`: it writes the readable name `business-daily-display`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "code:5.6.3:1",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/requires/all_of/1"
+      ],
+      "reason": "The example follows the text, which states no form for `all_of[]`: it writes the readable name `weather-app-ctv`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "code:5.6.3:1",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/requires/min_commitment/0/line_item_id"
+      ],
+      "reason": "The example follows the text, which states no form for `line_item_id`: it writes the readable name `business-daily-display`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-042"
+      ],
+      "example": "examples/line-item-audio.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/commitment/flight_end"
+      ],
+      "reason": "The example follows the text, which gives `flight_end` no form: it writes the calendar date `2026-12-21`. We propose an RFC 3339 date-time for every point in time, such as `2026-12-21T00:00:00-05:00`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-042"
+      ],
+      "example": "examples/line-item-audio.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/commitment/flight_start"
+      ],
+      "reason": "The example follows the text, which gives `flight_start` no form: it writes the calendar date `2026-10-06`. We propose an RFC 3339 date-time for every point in time, such as `2026-10-06T00:00:00-04:00`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-audio.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/commitment/idempotency_key"
+      ],
+      "reason": "The example follows the text, which states no form for `idempotency_key`: it writes the readable name `agency-a-camp1-streaming-audio-a7c33e10`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-audio.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/commitment/proposal_id"
+      ],
+      "reason": "The example follows the text, which states no form for `proposal_id`: it writes the readable name `examplepub-us-q4-2026-omni`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-041"
+      ],
+      "example": "examples/line-item-audio.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/committed_metrics/0/basis"
+      ],
+      "reason": "The example follows the text, which lists no terms for `basis`: it writes `seller_reported`. We propose namespaced terms in a field until the specification lists its core terms, `seller_reported` among them.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-audio.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/correlation_id"
+      ],
+      "reason": "The example follows the text, which types `correlation_id` as a String: it writes the readable name `ep-q4-2026-commitment/streaming-audio`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-audio.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/line_item_id"
+      ],
+      "reason": "The example follows the text, which types `line_item_id` as a String: it writes the readable name `streaming-audio`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-audio.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/production/available/0/id"
+      ],
+      "reason": "The example follows the text, which gives a production option no `id`: the example writes one, the readable name `seller_built`, as every object option carries. We propose a UUID for every ID a party mints, an object option's `id` included, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-040"
+      ],
+      "example": "examples/line-item-audio.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/production/available/0/lead_time"
+      ],
+      "reason": "The example follows the text, which gives `lead_time` no form: it writes `10 business days`. We propose an ISO 8601 duration for every length of time; a lead time in business days needs a calendar the specification doesn't define yet.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-audio.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/production/available/1/id"
+      ],
+      "reason": "The example follows the text, which gives a production option no `id`: the example writes one, the readable name `buyer_supplied`, as every object option carries. We propose a UUID for every ID a party mints, an object option's `id` included, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-040"
+      ],
+      "example": "examples/line-item-audio.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/production/available/1/lead_time"
+      ],
+      "reason": "The example follows the text, which gives `lead_time` no form: it writes `0`. We propose an ISO 8601 duration for every length of time, `P0D` here.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-audio.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/production/included/0"
+      ],
+      "reason": "The example follows the text, which gives a production option no `id`: the example writes one, the readable name `buyer_supplied`, and `included[]` names the option by it. We propose a UUID `id` for every object option, as for every ID a party mints, so `included[]` names the option by that UUID.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-audio.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/production/pricing"
+      ],
+      "reason": "The example follows the text, which gives a production option no `id`: the example writes one, the readable name `seller_built`, and the `pricing` keys name the option by it. We propose a UUID `id` for every object option, as for every ID a party mints, so the `pricing` keys name the option by that UUID.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-041"
+      ],
+      "example": "examples/line-item-ctv-bonus.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/creative_delivery/protocol"
+      ],
+      "reason": "The example follows the text, which lists no terms for `protocol`: it writes `vast_4_2`. We propose namespaced terms in a field until the specification lists its core terms, `vast_4_2` among them.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-ctv-bonus.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/line_item_id"
+      ],
+      "reason": "The example follows the text, which types `line_item_id` as a String: it writes the readable name `weather-app-ctv-bonus`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-ctv-bonus.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/properties/available/0"
+      ],
+      "reason": "The example follows the text, which states no form for an option's `id`: it writes the readable name `weather-app`. We propose a UUID for every ID a party mints, a catalog entry's `id` included.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-ctv-bonus.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/properties/included/0"
+      ],
+      "reason": "The example follows the text, which states no form for an option's `id`: `included[]` names the property by the readable ID `weather-app` its `available[]` gives it. We propose a UUID for every ID a party mints, an option's `id` included, so `included[]` names the property by that UUID.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-ctv-bonus.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/requires/all_of/0"
+      ],
+      "reason": "The example follows the text, which states no form for `all_of[]`: it writes the readable name `business-daily-display`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-ctv-bonus.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/requires/all_of/1"
+      ],
+      "reason": "The example follows the text, which states no form for `all_of[]`: it writes the readable name `weather-app-ctv`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-ctv-bonus.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/requires/min_commitment/0/line_item_id"
+      ],
+      "reason": "The example follows the text, which states no form for `line_item_id`: it writes the readable name `business-daily-display`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-042"
+      ],
+      "example": "examples/line-item-ctv.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/commitment/flight_end"
+      ],
+      "reason": "The example follows the text, which gives `flight_end` no form: it writes the calendar date `2026-12-21`. We propose an RFC 3339 date-time for every point in time, such as `2026-12-21T00:00:00-05:00`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-042"
+      ],
+      "example": "examples/line-item-ctv.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/commitment/flight_start"
+      ],
+      "reason": "The example follows the text, which gives `flight_start` no form: it writes the calendar date `2026-10-06`. We propose an RFC 3339 date-time for every point in time, such as `2026-10-06T00:00:00-04:00`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-ctv.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/commitment/idempotency_key"
+      ],
+      "reason": "The example follows the text, which states no form for `idempotency_key`: it writes the readable name `agency-a-camp1-weather-app-ctv-3b7e0d52`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-ctv.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/commitment/proposal_id"
+      ],
+      "reason": "The example follows the text, which states no form for `proposal_id`: it writes the readable name `examplepub-us-q4-2026-omni`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-041"
+      ],
+      "example": "examples/line-item-ctv.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/committed_metrics/0/basis"
+      ],
+      "reason": "The example follows the text, which lists no terms for `basis`: it writes `seller_reported`. We propose namespaced terms in a field until the specification lists its core terms, `seller_reported` among them.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-ctv.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/correlation_id"
+      ],
+      "reason": "The example follows the text, which types `correlation_id` as a String: it writes the readable name `ep-q4-2026-commitment/weather-app-ctv`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-041"
+      ],
+      "example": "examples/line-item-ctv.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/creative_delivery/protocol"
+      ],
+      "reason": "The example follows the text, which lists no terms for `protocol`: it writes `vast_4_2`. We propose namespaced terms in a field until the specification lists its core terms, `vast_4_2` among them.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-ctv.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/line_item_id"
+      ],
+      "reason": "The example follows the text, which types `line_item_id` as a String: it writes the readable name `weather-app-ctv`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-ctv.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/properties/available/0"
+      ],
+      "reason": "The example follows the text, which states no form for an option's `id`: it writes the readable name `weather-app`. We propose a UUID for every ID a party mints, a catalog entry's `id` included.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-ctv.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/properties/included/0"
+      ],
+      "reason": "The example follows the text, which states no form for an option's `id`: `included[]` names the property by the readable ID `weather-app` its `available[]` gives it. We propose a UUID for every ID a party mints, an option's `id` included, so `included[]` names the property by that UUID.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037",
+        "D-041"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/audiences/available/1"
+      ],
+      "reason": "The example follows the text, which states no form for an option's `id` and lists no terms for `provenance`: it writes the readable name `ep:hnw-investors` and the term `modeled`. We propose a UUID for every ID a party mints, a catalog entry's `id` included. We also propose namespaced terms in a field until the specification lists its core terms.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037",
+        "D-041"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/audiences/available/2"
+      ],
+      "reason": "The example follows the text, which states no form for an option's `id` and lists no terms for `provenance`: it writes the readable name `ep:cfo-finance-leaders` and the term `first_party`. We propose a UUID for every ID a party mints, a catalog entry's `id` included. We also propose namespaced terms in a field until the specification lists its core terms.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/audiences/included/0"
+      ],
+      "reason": "The example follows the text, which states no form for an option's `id`: `included[]` writes the readable ID `ep:smb-decision-makers`. We propose a UUID for every ID a party mints. The entry names the option given as the catalog reference `examplepub/audiences/smb-decision-makers@3`, though, and that option carries no `id`, so a UUID alone doesn't name it either. What names an option given as a catalog reference is a point the text leaves open, listed with the examples that disagree with the text.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "gap"
+      ],
+      "decisions": [
+        "D-007"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "rule",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/audiences/included/0"
+      ],
+      "reason": "The text doesn't say what names an option given as a `catalog_ref`; `included[]` names the option `examplepub/audiences/smb-decision-makers@3` by `ep:smb-decision-makers`, which no option of `available[]` is or carries as its `id`. The text should say what names such an option, and the example should name it that way.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/audiences/pricing"
+      ],
+      "reason": "The example follows the text, which states no form for an option's `id`: the `pricing` keys name the audiences by the readable IDs `ep:cfo-finance-leaders` and `ep:hnw-investors` their `available[]` gives them. We propose a UUID for every ID a party mints, an option's `id` included, so the `pricing` keys name each audience by that UUID.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "gap"
+      ],
+      "decisions": [
+        "D-016"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "undefined_key",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/buyer_supplied/suppression_list/match_method",
+        "/buyer_supplied/suppression_list/size",
+        "/buyer_supplied/suppression_list/source"
+      ],
+      "reason": "The specification gives `suppression_list` no structure, so the generated schemas leave it an open object and define none of its keys. The example uses `source`, `size`, and `match_method`, which the specification should define.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-042"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/commitment/flight_end"
+      ],
+      "reason": "The example follows the text, which gives `flight_end` no form: it writes the calendar date `2026-12-21`. We propose an RFC 3339 date-time for every point in time, such as `2026-12-21T00:00:00-05:00`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-042"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/commitment/flight_start"
+      ],
+      "reason": "The example follows the text, which gives `flight_start` no form: it writes the calendar date `2026-10-06`. We propose an RFC 3339 date-time for every point in time, such as `2026-10-06T00:00:00-04:00`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/commitment/idempotency_key"
+      ],
+      "reason": "The example follows the text, which states no form for `idempotency_key`: it writes the readable name `agency-a-camp1-business-daily-display-8f42c1a9`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/commitment/proposal_id"
+      ],
+      "reason": "The example follows the text, which states no form for `proposal_id`: it writes the readable name `examplepub-us-q4-2026-omni`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-041"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/committed_metrics/0/basis"
+      ],
+      "reason": "The example follows the text, which lists no terms for `basis`: it writes `mrc`. We propose namespaced terms in a field until the specification lists its core terms, `mrc` among them.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/correlation_id"
+      ],
+      "reason": "The example follows the text, which types `correlation_id` as a String: it writes the readable name `ep-q4-2026-commitment/business-daily-display`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-041"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/creative_delivery/protocol"
+      ],
+      "reason": "The example follows the text, which lists no terms for `protocol`: it writes `javascript_tag`. We propose namespaced terms in a field until the specification lists its core terms, `javascript_tag` among them.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/line_item_id"
+      ],
+      "reason": "The example follows the text, which types `line_item_id` as a String: it writes the readable name `business-daily-display`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "gap"
+      ],
+      "decisions": [
+        "D-017"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/materials_due"
+      ],
+      "reason": "`materials_due` is Timestamp/Offset: an RFC 3339 date-time or an ISO 8601 duration. The example writes the calendar date `2026-09-24`, which is neither. The example should write a date-time, or the Type should add a date.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-047"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/measurement_source/available/0"
+      ],
+      "reason": "The example follows the text, which lists a measurement source option's members as `vendor`, `attribution_window`, and `qualifier`: this option, from `IAS`, has no `id`. We propose an `id`, REQUIRED, on every object option, so that `included[]` and the `pricing` keys name the option by it.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-040"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/measurement_source/available/0/attribution_window",
+        "/measurement_source/available/1/attribution_window"
+      ],
+      "reason": "The example follows the text, which gives `attribution_window` no form: it writes `30d`. We propose an ISO 8601 duration for every length of time, `P30D` here.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-047"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/measurement_source/available/1"
+      ],
+      "reason": "The example follows the text, which lists a measurement source option's members as `vendor`, `attribution_window`, and `qualifier`: this option, from `DoubleVerify`, has no `id`. We propose an `id`, REQUIRED, on every object option, so that `included[]` and the `pricing` keys name the option by it.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037",
+        "D-047"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/measurement_source/included/0"
+      ],
+      "reason": "The example follows the text, which gives a measurement source option no `id`: `included[]` names the option by its `vendor`, `IAS`, which no option of `available[]` carries as its `id`. We propose an `id` on every object option, a UUID as for every ID a party mints, so that `included[]` names the option by that UUID.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-047"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "rule",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/measurement_source/included/0"
+      ],
+      "reason": "The example follows the text, which gives a measurement source option no `id`: `included[]` names the option by its `vendor`, `IAS`, which no option of `available[]` carries as its `id`. We propose an `id` on every object option, a UUID as for every ID a party mints, so that `included[]` names the option by that UUID.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/properties/available/0"
+      ],
+      "reason": "The example follows the text, which states no form for an option's `id`: it writes the readable name `business-daily`. We propose a UUID for every ID a party mints, a catalog entry's `id` included.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/properties/available/1"
+      ],
+      "reason": "The example follows the text, which states no form for an option's `id`: it writes the readable name `markets-weekly`. We propose a UUID for every ID a party mints, a catalog entry's `id` included.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/properties/included/0"
+      ],
+      "reason": "The example follows the text, which states no form for an option's `id`: `included[]` names the property by the readable ID `business-daily` its `available[]` gives it. We propose a UUID for every ID a party mints, an option's `id` included, so `included[]` names the property by that UUID.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/properties/pricing"
+      ],
+      "reason": "The example follows the text, which states no form for an option's `id`: the `pricing` keys name the property by the readable ID `markets-weekly` its `available[]` gives it. We propose a UUID for every ID a party mints, an option's `id` included, so the `pricing` keys name the property by that UUID.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-047"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/reporting/available/0"
+      ],
+      "reason": "The example follows the text, which lists a reporting option's members without an `id`: this `aggregate` report has none. We propose an `id`, REQUIRED, on every object option, so that `included[]` and the `pricing` keys name the option by it.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-040"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/reporting/available/0/cadence",
+        "/reporting/available/1/cadence"
+      ],
+      "reason": "The example follows the text, which gives `cadence` no form: it writes `daily`. We propose an ISO 8601 duration for every length of time, `P1D` here.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-041"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/reporting/available/0/delivery_mechanism"
+      ],
+      "reason": "The example follows the text, which lists no terms for `delivery_mechanism`: it writes `api`. We propose namespaced terms in a field until the specification lists its core terms, `api` among them.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-047"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/reporting/available/1"
+      ],
+      "reason": "The example follows the text, which lists a reporting option's members without an `id`: this `log_level` report has none. We propose an `id`, REQUIRED, on every object option, so that `included[]` and the `pricing` keys name the option by it.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-041"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/reporting/available/1/delivery_mechanism"
+      ],
+      "reason": "The example follows the text, which lists no terms for `delivery_mechanism`: it writes `s3`. We propose namespaced terms in a field until the specification lists its core terms, `s3` among them.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037",
+        "D-047"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/reporting/included/0"
+      ],
+      "reason": "The example follows the text, which gives a reporting option no `id`: `included[]` names the option by its `feed_type`, `aggregate`, which no option of `available[]` carries as its `id`. We propose an `id` on every object option, a UUID as for every ID a party mints, so that `included[]` names the option by that UUID.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-047"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "rule",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/reporting/included/0"
+      ],
+      "reason": "The example follows the text, which gives a reporting option no `id`: `included[]` names the option by its `feed_type`, `aggregate`, which no option of `available[]` carries as its `id`. We propose an `id` on every object option, a UUID as for every ID a party mints, so that `included[]` names the option by that UUID.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037",
+        "D-047"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/reporting/pricing"
+      ],
+      "reason": "The example follows the text, which gives a reporting option no `id`: the `pricing` keys name the option by its `feed_type`, `log_level`. We propose an `id` on every object option, a UUID as for every ID a party mints, so that the `pricing` keys name the option by that UUID.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-047"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "rule",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/reporting/pricing/log_level"
+      ],
+      "reason": "The example follows the text, which gives a reporting option no `id`: the `pricing` key names the option by its `feed_type`, `log_level`, which no option of `available[]` carries as its `id`. We propose an `id` on every object option, so that the `pricing` keys name the option by it.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "gap"
+      ],
+      "decisions": [
+        "D-003"
+      ],
+      "example": "examples/line-item-display.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/terms_ref/sha256"
+      ],
+      "reason": "A SHA-256 hash is 64 lowercase hex digits. The example writes the placeholder `<sha256 of the terms document>`, so it doesn't show a hash-pinned `terms_ref`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-041"
+      ],
+      "example": "examples/line-item-rewarded-video.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/committed_metrics/0/basis",
+        "/committed_metrics/1/basis"
+      ],
+      "reason": "The example follows the text, which lists no terms for `basis`: it writes `mrc`. We propose namespaced terms in a field until the specification lists its core terms, `mrc` among them.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-041"
+      ],
+      "example": "examples/line-item-rewarded-video.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/creative_delivery/protocol"
+      ],
+      "reason": "The example follows the text, which lists no terms for `protocol`: it writes `vast_4_2`. We propose namespaced terms in a field until the specification lists its core terms, `vast_4_2` among them.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-rewarded-video.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/line_item_id"
+      ],
+      "reason": "The example follows the text, which types `line_item_id` as a String: it writes the readable name `puzzle-games-rewarded`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-047"
+      ],
+      "example": "examples/line-item-rewarded-video.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/measurement_source/available/0"
+      ],
+      "reason": "The example follows the text, which lists a measurement source option's members as `vendor`, `attribution_window`, and `qualifier`: this option, from `IAS`, has no `id`. We propose an `id`, REQUIRED, on every object option, so that `included[]` and the `pricing` keys name the option by it.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-040"
+      ],
+      "example": "examples/line-item-rewarded-video.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/measurement_source/available/0/attribution_window",
+        "/measurement_source/available/1/attribution_window"
+      ],
+      "reason": "The example follows the text, which gives `attribution_window` no form: it writes `30d`. We propose an ISO 8601 duration for every length of time, `P30D` here.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-047"
+      ],
+      "example": "examples/line-item-rewarded-video.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/measurement_source/available/1"
+      ],
+      "reason": "The example follows the text, which lists a measurement source option's members as `vendor`, `attribution_window`, and `qualifier`: this option, from `DoubleVerify`, has no `id`. We propose an `id`, REQUIRED, on every object option, so that `included[]` and the `pricing` keys name the option by it.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037",
+        "D-047"
+      ],
+      "example": "examples/line-item-rewarded-video.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/measurement_source/included/0"
+      ],
+      "reason": "The example follows the text, which gives a measurement source option no `id`: `included[]` names the option by its `vendor`, `IAS`, which no option of `available[]` carries as its `id`. We propose an `id` on every object option, a UUID as for every ID a party mints, so that `included[]` names the option by that UUID.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-047"
+      ],
+      "example": "examples/line-item-rewarded-video.yaml",
+      "kind": "rule",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/measurement_source/included/0"
+      ],
+      "reason": "The example follows the text, which gives a measurement source option no `id`: `included[]` names the option by its `vendor`, `IAS`, which no option of `available[]` carries as its `id`. We propose an `id` on every object option, a UUID as for every ID a party mints, so that `included[]` names the option by that UUID.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-039"
+      ],
+      "example": "examples/line-item-rewarded-video.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/placement/instl"
+      ],
+      "reason": "The example follows the text, which writes `instl` as AdCOM's `0` or `1`: it writes `1`. We propose a JSON boolean for every flag, `true` here.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-039"
+      ],
+      "example": "examples/line-item-rewarded-video.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/placement/reward"
+      ],
+      "reason": "The example follows the text, which writes `reward` as AdCOM's `0` or `1`: it writes `1`. We propose a JSON boolean for every flag, `true` here.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-039"
+      ],
+      "example": "examples/line-item-rewarded-video.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/placement/skip"
+      ],
+      "reason": "The example follows the text, which writes `skip` as AdCOM's `0` or `1`: it writes `0`. We propose a JSON boolean for every flag, `false` here.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-rewarded-video.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/properties/available/0"
+      ],
+      "reason": "The example follows the text, which states no form for an option's `id`: it writes the readable name `puzzle-pack`. We propose a UUID for every ID a party mints, a catalog entry's `id` included.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/line-item-rewarded-video.yaml",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/properties/included/0"
+      ],
+      "reason": "The example follows the text, which states no form for an option's `id`: `included[]` names the property by the readable ID `puzzle-pack` its `available[]` gives it. We propose a UUID for every ID a party mints, an option's `id` included, so `included[]` names the property by that UUID.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "gap"
+      ],
+      "decisions": [
+        "D-028"
+      ],
+      "example": "examples/manifest.json",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/proposals/0"
+      ],
+      "reason": "§ 2.1 says a summary MUST contain, from the parent proposal, `linked_execution`, and § 2.3 says each `proposals[]` entry carries the proposal's summary; this entry gives no `linked_execution`. The example should give it.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "gap"
+      ],
+      "decisions": [
+        "D-028"
+      ],
+      "example": "examples/manifest.json",
+      "kind": "undefined_key",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/proposals/0/line_items"
+      ],
+      "reason": "§ 2.3 says each `proposals[]` entry carries the summaries of its line items, but names no key for them, so the generated schemas leave the entry open and define none. The example calls the key `line_items`, which the specification should name.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/manifest.json",
+      "kind": "invalid",
+      "locks": [
+        "with-open-prs"
+      ],
+      "paths": [
+        "/proposals/0/proposal_id"
+      ],
+      "reason": "The example follows the text, which types `proposal_id` as a String: it writes the readable name `examplepub-us-q4-2026-omni`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    },
+    {
+      "causes": [
+        "departure"
+      ],
+      "decisions": [
+        "D-037"
+      ],
+      "example": "examples/proposal.yaml",
+      "kind": "invalid",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "paths": [
+        "/proposal_id"
+      ],
+      "reason": "The example follows the text, which types `proposal_id` as a String: it writes the readable name `examplepub-us-q4-2026-omni`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.",
+      "severity": "error"
+    }
+  ],
+  "findings": [
+    {
+      "findings": [
+        {
+          "id": "key_presence_unstated:table:5.6.2:1",
+          "kind": "key_presence_unstated",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 304,
+                  "section": "5.6.2"
+                }
+              ],
+              "lock": "main",
+              "message": "The key table in § 5.6.2 has no Required column, so none of its 5 keys says whether it must be present.",
+              "sections": [
+                "5.6.2"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 596,
+                  "section": "5.6.2"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "The key table in § 5.6.2 has no Required column, so none of its 5 keys says whether it must be present.",
+              "sections": [
+                "5.6.2"
+              ]
+            }
+          ],
+          "sections": [
+            "5.6.2"
+          ]
+        },
+        {
+          "id": "key_presence_unstated:table:5.6.3:1",
+          "kind": "key_presence_unstated",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 610,
+                  "section": "5.6.3"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "The key table in § 5.6.3 has no Required column, so none of its 3 keys says whether it must be present.",
+              "sections": [
+                "5.6.3"
+              ]
+            }
+          ],
+          "sections": [
+            "5.6.3"
+          ]
+        },
+        {
+          "id": "key_required_is_marker:key:5.6.1:commitment.derived_units",
+          "kind": "key_required_is_marker",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 296,
+                  "section": "5.6.1"
+                }
+              ],
+              "lock": "main",
+              "message": "`derived_units` has the mutability marker \"derived\" in its Required column, so its presence is unstated.",
+              "sections": [
+                "5.6.1"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 574,
+                  "section": "5.6.1"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`derived_units` has the mutability marker \"derived\" in its Required column, so its presence is unstated.",
+              "sections": [
+                "5.6.1"
+              ]
+            }
+          ],
+          "sections": [
+            "5.6.1"
+          ]
+        },
+        {
+          "id": "presence_unstated:line_item",
+          "kind": "presence_unstated",
+          "messages": [
+            {
+              "lines": [],
+              "lock": "main",
+              "message": "55 of 56 line item fields don't say whether they're REQUIRED or OPTIONAL.",
+              "sections": [
+                "5"
+              ]
+            },
+            {
+              "lines": [],
+              "lock": "with-open-prs",
+              "message": "58 of 63 line item fields don't say whether they're REQUIRED or OPTIONAL.",
+              "sections": [
+                "5"
+              ]
+            }
+          ],
+          "sections": [
+            "5"
+          ]
+        },
+        {
+          "id": "presence_unstated:proposal",
+          "kind": "presence_unstated",
+          "messages": [
+            {
+              "lines": [],
+              "lock": "main",
+              "message": "13 of 15 proposal fields don't say whether they're REQUIRED or OPTIONAL.",
+              "sections": [
+                "4"
+              ]
+            },
+            {
+              "lines": [],
+              "lock": "with-open-prs",
+              "message": "14 of 17 proposal fields don't say whether they're REQUIRED or OPTIONAL.",
+              "sections": [
+                "4"
+              ]
+            }
+          ],
+          "sections": [
+            "4"
+          ]
+        }
+      ],
+      "rule": "1",
+      "title": "Every field and key table has a Required column"
+    },
+    {
+      "findings": [
+        {
+          "id": "object_without_structure:field:4.1:assent",
+          "kind": "object_without_structure",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 189,
+                  "section": "4.1"
+                }
+              ],
+              "lock": "main",
+              "message": "`assent` is typed Object, and nothing in the specification gives its structure.",
+              "sections": [
+                "4.1"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 226,
+                  "section": "4.1"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`assent` is typed Object, and nothing in the specification gives its structure.",
+              "sections": [
+                "4.1"
+              ]
+            }
+          ],
+          "sections": [
+            "4.1"
+          ]
+        },
+        {
+          "id": "object_without_structure:field:4.2:specifications",
+          "kind": "object_without_structure",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 201,
+                  "section": "4.2"
+                }
+              ],
+              "lock": "main",
+              "message": "`specifications` is typed String/Object, and nothing in the specification gives its structure.",
+              "sections": [
+                "4.2"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 244,
+                  "section": "4.2"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`specifications` is typed String/Object, and nothing in the specification gives its structure.",
+              "sections": [
+                "4.2"
+              ]
+            }
+          ],
+          "sections": [
+            "4.2"
+          ]
+        },
+        {
+          "id": "object_without_structure:field:5.2:content_detail",
+          "kind": "object_without_structure",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 226,
+                  "section": "5.2"
+                }
+              ],
+              "lock": "main",
+              "message": "`content_detail` is typed Object, and nothing in the specification gives its structure.",
+              "sections": [
+                "5.2"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 304,
+                  "section": "5.2"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`content_detail` is typed Object, and nothing in the specification gives its structure.",
+              "sections": [
+                "5.2"
+              ]
+            }
+          ],
+          "sections": [
+            "5.2"
+          ]
+        },
+        {
+          "id": "object_without_structure:field:5.4:approval",
+          "kind": "object_without_structure",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 248,
+                  "section": "5.4"
+                }
+              ],
+              "lock": "main",
+              "message": "`approval` is typed Object, and nothing in the specification gives its structure.",
+              "sections": [
+                "5.4"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 407,
+                  "section": "5.4"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`approval` is typed Object, and nothing in the specification gives its structure.",
+              "sections": [
+                "5.4"
+              ]
+            }
+          ],
+          "sections": [
+            "5.4"
+          ]
+        },
+        {
+          "id": "object_without_structure:field:5.4:specs",
+          "kind": "object_without_structure",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 243,
+                  "section": "5.4"
+                }
+              ],
+              "lock": "main",
+              "message": "`specs` is typed Object, and nothing in the specification gives its structure.",
+              "sections": [
+                "5.4"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 402,
+                  "section": "5.4"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`specs` is typed Object, and nothing in the specification gives its structure.",
+              "sections": [
+                "5.4"
+              ]
+            }
+          ],
+          "sections": [
+            "5.4"
+          ]
+        },
+        {
+          "id": "object_without_structure:field:5.4:third_party_tags",
+          "kind": "object_without_structure",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 244,
+                  "section": "5.4"
+                }
+              ],
+              "lock": "main",
+              "message": "`third_party_tags` is typed Object, and nothing in the specification gives its structure.",
+              "sections": [
+                "5.4"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 403,
+                  "section": "5.4"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`third_party_tags` is typed Object, and nothing in the specification gives its structure.",
+              "sections": [
+                "5.4"
+              ]
+            }
+          ],
+          "sections": [
+            "5.4"
+          ]
+        },
+        {
+          "id": "object_without_structure:field:5.6:creative_policy",
+          "kind": "object_without_structure",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 282,
+                  "section": "5.6"
+                }
+              ],
+              "lock": "main",
+              "message": "`creative_policy` is typed Object, and nothing in the specification gives its structure.",
+              "sections": [
+                "5.6"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 557,
+                  "section": "5.6"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`creative_policy` is typed Object, and nothing in the specification gives its structure.",
+              "sections": [
+                "5.6"
+              ]
+            }
+          ],
+          "sections": [
+            "5.6"
+          ]
+        }
+      ],
+      "rule": "2",
+      "title": "Every Object field has a key table, or links one"
+    },
+    {
+      "findings": [
+        {
+          "id": "option_shape_missing:field:5.4:formats",
+          "kind": "option_shape_missing",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 242,
+                  "section": "5.4"
+                }
+              ],
+              "lock": "main",
+              "message": "`formats` is `selectable`, but its options have no shape or value list; only prose describes them.",
+              "sections": [
+                "5.4"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 401,
+                  "section": "5.4"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`formats` is `selectable`, but its options have no shape or value list; only prose describes them.",
+              "sections": [
+                "5.4"
+              ]
+            }
+          ],
+          "sections": [
+            "5.4"
+          ]
+        },
+        {
+          "id": "option_shape_missing:field:5.5:daypart",
+          "kind": "option_shape_missing",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 260,
+                  "section": "5.5"
+                }
+              ],
+              "lock": "main",
+              "message": "`daypart` is `settable`, but its options have no shape or value list; only prose describes them.",
+              "sections": [
+                "5.5"
+              ]
+            }
+          ],
+          "sections": [
+            "5.5"
+          ]
+        },
+        {
+          "id": "option_shape_missing:field:5.5:device",
+          "kind": "option_shape_missing",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 259,
+                  "section": "5.5"
+                }
+              ],
+              "lock": "main",
+              "message": "`device` is `settable`, but its options have no shape or value list; only prose describes them.",
+              "sections": [
+                "5.5"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 461,
+                  "section": "5.5"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`device` is `settable`, but its options have no shape or value list; only prose describes them.",
+              "sections": [
+                "5.5"
+              ]
+            }
+          ],
+          "sections": [
+            "5.5"
+          ]
+        },
+        {
+          "id": "option_shape_missing:field:5.5:geo",
+          "kind": "option_shape_missing",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 258,
+                  "section": "5.5"
+                }
+              ],
+              "lock": "main",
+              "message": "`geo` is `settable`, but its options have no shape or value list; only prose describes them.",
+              "sections": [
+                "5.5"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 460,
+                  "section": "5.5"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`geo` is `selectable`, but its options have no shape or value list; only prose describes them.",
+              "sections": [
+                "5.5"
+              ]
+            }
+          ],
+          "sections": [
+            "5.5"
+          ]
+        },
+        {
+          "id": "option_shape_missing:field:5.6:cancellation_policy",
+          "kind": "option_shape_missing",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 280,
+                  "section": "5.6"
+                }
+              ],
+              "lock": "main",
+              "message": "`cancellation_policy` is `selectable`, but its options have no shape or value list; only prose describes them.",
+              "sections": [
+                "5.6"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 555,
+                  "section": "5.6"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`cancellation_policy` is `selectable`, but its options have no shape or value list; only prose describes them.",
+              "sections": [
+                "5.6"
+              ]
+            }
+          ],
+          "sections": [
+            "5.6"
+          ]
+        },
+        {
+          "id": "option_shape_missing:field:5.6:exclusivity",
+          "kind": "option_shape_missing",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 281,
+                  "section": "5.6"
+                }
+              ],
+              "lock": "main",
+              "message": "`exclusivity` is `selectable`, but its options have no shape or value list; only prose describes them.",
+              "sections": [
+                "5.6"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 556,
+                  "section": "5.6"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`exclusivity` is `selectable`, but its options have no shape or value list; only prose describes them.",
+              "sections": [
+                "5.6"
+              ]
+            }
+          ],
+          "sections": [
+            "5.6"
+          ]
+        }
+      ],
+      "rule": "3",
+      "title": "A selectable or settable row names its option type"
+    },
+    {
+      "findings": [
+        {
+          "id": "duplicate_field_disagrees:status",
+          "kind": "duplicate_field_disagrees",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 188,
+                  "section": "4.1"
+                },
+                {
+                  "line": 218,
+                  "section": "5.1"
+                }
+              ],
+              "lock": "main",
+              "message": "`status` is defined 2 times, and the definitions differ in values.",
+              "sections": [
+                "4.1",
+                "5.1"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 225,
+                  "section": "4.1"
+                },
+                {
+                  "line": 261,
+                  "section": "5.1"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`status` is defined 2 times, and the definitions differ in values.",
+              "sections": [
+                "4.1",
+                "5.1"
+              ]
+            }
+          ],
+          "sections": [
+            "4.1",
+            "5.1"
+          ]
+        },
+        {
+          "id": "enum_without_values:field:5.6:pricing[].cost_method",
+          "kind": "enum_without_values",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 268,
+                  "section": "5.6"
+                }
+              ],
+              "lock": "main",
+              "message": "`pricing[].cost_method` is typed Enum, but its row declares no backticked value list.",
+              "sections": [
+                "5.6"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 543,
+                  "section": "5.6"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`pricing[].cost_method` is typed Enum, but its row declares no backticked value list.",
+              "sections": [
+                "5.6"
+              ]
+            }
+          ],
+          "sections": [
+            "5.6"
+          ]
+        },
+        {
+          "id": "expression_value_unknown:cost_method: flat",
+          "kind": "expression_value_unknown",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 625,
+                  "section": "5.6.3"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`cost_method: flat` uses a value, but the field declares no value list to check it against.",
+              "sections": [
+                "5.6.3"
+              ]
+            }
+          ],
+          "sections": [
+            "5.6.3"
+          ]
+        },
+        {
+          "id": "expression_value_unknown:role: agreement",
+          "kind": "expression_value_unknown",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 681,
+                  "section": "5.10"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`role: agreement` uses a value, but the field declares no value list to check it against.",
+              "sections": [
+                "5.10"
+              ]
+            }
+          ],
+          "sections": [
+            "5.10"
+          ]
+        },
+        {
+          "id": "name_reused_with_different_values:basis",
+          "kind": "name_reused_with_different_values",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 291,
+                  "section": "5.6.1"
+                },
+                {
+                  "line": 261,
+                  "section": "5.5"
+                }
+              ],
+              "lock": "main",
+              "message": "`basis` names 2 different value sets.",
+              "sections": [
+                "5.6.1",
+                "5.5"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 569,
+                  "section": "5.6.1"
+                },
+                {
+                  "line": 464,
+                  "section": "5.5"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`basis` names 2 different value sets.",
+              "sections": [
+                "5.6.1",
+                "5.5"
+              ]
+            }
+          ],
+          "sections": [
+            "5.5",
+            "5.6.1"
+          ]
+        },
+        {
+          "id": "name_reused_with_different_values:type",
+          "kind": "name_reused_with_different_values",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 187,
+                  "section": "4.1"
+                },
+                {
+                  "line": 275,
+                  "section": "5.6"
+                },
+                {
+                  "line": 330,
+                  "section": "5.8"
+                }
+              ],
+              "lock": "main",
+              "message": "`type` names 3 different value sets.",
+              "sections": [
+                "4.1",
+                "5.6",
+                "5.8"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 223,
+                  "section": "4.1"
+                },
+                {
+                  "line": 550,
+                  "section": "5.6"
+                },
+                {
+                  "line": 655,
+                  "section": "5.8"
+                },
+                {
+                  "line": 681,
+                  "section": "5.10"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`type` names 4 different value sets.",
+              "sections": [
+                "4.1",
+                "5.6",
+                "5.8",
+                "5.10"
+              ]
+            }
+          ],
+          "sections": [
+            "4.1",
+            "5.6",
+            "5.8",
+            "5.10"
+          ]
+        },
+        {
+          "id": "value_set_duplicate:0 | 1",
+          "kind": "value_set_duplicate",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 359,
+                  "section": "5.2.2"
+                },
+                {
+                  "line": 360,
+                  "section": "5.2.2"
+                },
+                {
+                  "line": 362,
+                  "section": "5.2.2"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "The value set `0` (no) | `1` (yes) is declared 3 times.",
+              "sections": [
+                "5.2.2"
+              ]
+            }
+          ],
+          "sections": [
+            "5.2.2"
+          ]
+        },
+        {
+          "id": "value_set_duplicate:android | fire_tv | ios | roku | samsung_tv",
+          "kind": "value_set_duplicate",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 314,
+                  "section": "5.2"
+                },
+                {
+                  "line": 488,
+                  "section": "5.5"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "The value set android | fire_tv | ios | roku | samsung_tv is declared 2 times.",
+              "sections": [
+                "5.2",
+                "5.5"
+              ]
+            }
+          ],
+          "sections": [
+            "5.2",
+            "5.5"
+          ]
+        },
+        {
+          "id": "value_set_subset:agreed | draft | expired | published | under_review | withdrawn",
+          "kind": "value_set_subset",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 188,
+                  "section": "4.1"
+                }
+              ],
+              "lock": "main",
+              "message": "The value set agreed | draft | expired | published | under_review | withdrawn is a strict subset of agreed | draft | expired | published | sold_out | under_review | withdrawn.",
+              "sections": [
+                "4.1"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 225,
+                  "section": "4.1"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "The value set agreed | draft | expired | published | under_review | withdrawn is a strict subset of agreed | draft | expired | published | sold_out | under_review | withdrawn.",
+              "sections": [
+                "4.1"
+              ]
+            }
+          ],
+          "sections": [
+            "4.1"
+          ]
+        }
+      ],
+      "rule": "4",
+      "title": "A value list is written once, and an open list says that it is open"
+    },
+    {
+      "findings": [
+        {
+          "id": "marker_undefined:mixed",
+          "kind": "marker_undefined",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 267,
+                  "section": "5.6"
+                },
+                {
+                  "line": 342,
+                  "section": "5.9"
+                }
+              ],
+              "lock": "main",
+              "message": "2 fields carry the marker \"mixed\", which the § 3 marker table doesn't define.",
+              "sections": [
+                "5.6",
+                "5.9"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 542,
+                  "section": "5.6"
+                },
+                {
+                  "line": 673,
+                  "section": "5.9"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "2 fields carry the marker \"mixed\", which the § 3 marker table doesn't define.",
+              "sections": [
+                "5.6",
+                "5.9"
+              ]
+            }
+          ],
+          "sections": [
+            "5.6",
+            "5.9"
+          ]
+        }
+      ],
+      "rule": "5",
+      "title": "Tables use only the markers § 3 defines"
+    },
+    {
+      "findings": [
+        {
+          "id": "array_suffix_mismatch:apps[]",
+          "kind": "array_suffix_mismatch",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 308,
+                  "section": "5.2"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`apps[]` is written without the `[]` its definition carries, or with one it lacks: `apps`.",
+              "sections": [
+                "5.2"
+              ]
+            }
+          ],
+          "sections": [
+            "5.2"
+          ]
+        },
+        {
+          "id": "array_suffix_mismatch:best_for",
+          "kind": "array_suffix_mismatch",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 385,
+                  "section": "7"
+                }
+              ],
+              "lock": "main",
+              "message": "`best_for` is written without the `[]` its definition carries, or with one it lacks: `best_for[]`.",
+              "sections": [
+                "7"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 743,
+                  "section": "7"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`best_for` is written without the `[]` its definition carries, or with one it lacks: `best_for[]`.",
+              "sections": [
+                "7"
+              ]
+            }
+          ],
+          "sections": [
+            "7"
+          ]
+        },
+        {
+          "id": "array_suffix_mismatch:environments[]",
+          "kind": "array_suffix_mismatch",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 423,
+                  "section": "8"
+                }
+              ],
+              "lock": "main",
+              "message": "`environments[]` is written without the `[]` its definition carries, or with one it lacks: `environments`.",
+              "sections": [
+                "8"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 801,
+                  "section": "8"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`environments[]` is written without the `[]` its definition carries, or with one it lacks: `environments`.",
+              "sections": [
+                "8"
+              ]
+            }
+          ],
+          "sections": [
+            "8"
+          ]
+        },
+        {
+          "id": "array_suffix_mismatch:exclusions_accepted.types",
+          "kind": "array_suffix_mismatch",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 495,
+                  "section": "5.5"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`exclusions_accepted.types` is written without the `[]` its definition carries, or with one it lacks: `exclusions_accepted.types[]`.",
+              "sections": [
+                "5.5"
+              ]
+            }
+          ],
+          "sections": [
+            "5.5"
+          ]
+        },
+        {
+          "id": "array_suffix_mismatch:pricing.cost_method",
+          "kind": "array_suffix_mismatch",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 80,
+                  "section": "2.1"
+                }
+              ],
+              "lock": "main",
+              "message": "`pricing.cost_method` is written without the `[]` its definition carries, or with one it lacks: `pricing[].cost_method`.",
+              "sections": [
+                "2.1"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 82,
+                  "section": "2.1"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`pricing.cost_method` is written without the `[]` its definition carries, or with one it lacks: `pricing[].cost_method`.",
+              "sections": [
+                "2.1"
+              ]
+            }
+          ],
+          "sections": [
+            "2.1"
+          ]
+        },
+        {
+          "id": "array_suffix_mismatch:pricing.gross_rate",
+          "kind": "array_suffix_mismatch",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 80,
+                  "section": "2.1"
+                }
+              ],
+              "lock": "main",
+              "message": "`pricing.gross_rate` is written without the `[]` its definition carries, or with one it lacks: `pricing[].gross_rate`.",
+              "sections": [
+                "2.1"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 82,
+                  "section": "2.1"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`pricing.gross_rate` is written without the `[]` its definition carries, or with one it lacks: `pricing[].gross_rate`.",
+              "sections": [
+                "2.1"
+              ]
+            }
+          ],
+          "sections": [
+            "2.1"
+          ]
+        }
+      ],
+      "rule": "6",
+      "title": "Paths in prose match the table rows"
+    },
+    {
+      "findings": [
+        {
+          "id": "unresolved_identifier:agreement",
+          "kind": "unresolved_identifier",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 680,
+                  "section": "5.10"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`agreement` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "5.10"
+              ]
+            }
+          ],
+          "sections": [
+            "5.10"
+          ]
+        },
+        {
+          "id": "unresolved_identifier:allowed[]",
+          "kind": "unresolved_identifier",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 158,
+                  "section": "3.2"
+                },
+                {
+                  "line": 258,
+                  "section": "5.5"
+                },
+                {
+                  "line": 259,
+                  "section": "5.5"
+                },
+                {
+                  "line": 260,
+                  "section": "5.5"
+                }
+              ],
+              "lock": "main",
+              "message": "`allowed[]` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "3.2",
+                "5.5"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 192,
+                  "section": "3.2"
+                },
+                {
+                  "line": 460,
+                  "section": "5.5"
+                },
+                {
+                  "line": 461,
+                  "section": "5.5"
+                },
+                {
+                  "line": 462,
+                  "section": "5.5"
+                },
+                {
+                  "line": 512,
+                  "section": "5.5"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`allowed[]` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "3.2",
+                "5.5"
+              ]
+            }
+          ],
+          "sections": [
+            "3.2",
+            "5.5"
+          ]
+        },
+        {
+          "id": "unresolved_identifier:best_effort",
+          "kind": "unresolved_identifier",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 493,
+                  "section": "5.5"
+                },
+                {
+                  "line": 497,
+                  "section": "5.5"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`best_effort` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "5.5"
+              ]
+            }
+          ],
+          "sections": [
+            "5.5"
+          ]
+        },
+        {
+          "id": "unresolved_identifier:catalog_ref",
+          "kind": "unresolved_identifier",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 87,
+                  "section": "2.1"
+                },
+                {
+                  "line": 89,
+                  "section": "2.1"
+                },
+                {
+                  "line": 102,
+                  "section": "2.2"
+                },
+                {
+                  "line": 103,
+                  "section": "2.2"
+                },
+                {
+                  "line": 109,
+                  "section": "2.2"
+                },
+                {
+                  "line": 409,
+                  "section": "8"
+                }
+              ],
+              "lock": "main",
+              "message": "`catalog_ref` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "2.1",
+                "2.2",
+                "8"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 92,
+                  "section": "2.1"
+                },
+                {
+                  "line": 98,
+                  "section": "2.1"
+                },
+                {
+                  "line": 111,
+                  "section": "2.2"
+                },
+                {
+                  "line": 112,
+                  "section": "2.2"
+                },
+                {
+                  "line": 118,
+                  "section": "2.2"
+                },
+                {
+                  "line": 137,
+                  "section": "2.3"
+                },
+                {
+                  "line": 499,
+                  "section": "5.5"
+                },
+                {
+                  "line": 787,
+                  "section": "8"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`catalog_ref` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "2.1",
+                "2.2",
+                "2.3",
+                "5.5",
+                "8"
+              ]
+            }
+          ],
+          "sections": [
+            "2.1",
+            "2.2",
+            "2.3",
+            "5.5",
+            "8"
+          ]
+        },
+        {
+          "id": "unresolved_identifier:completion_rate",
+          "kind": "unresolved_identifier",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 320,
+                  "section": "5.7"
+                },
+                {
+                  "line": 412,
+                  "section": "8"
+                }
+              ],
+              "lock": "main",
+              "message": "`completion_rate` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "5.7",
+                "8"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 645,
+                  "section": "5.7"
+                },
+                {
+                  "line": 790,
+                  "section": "8"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`completion_rate` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "5.7",
+                "8"
+              ]
+            }
+          ],
+          "sections": [
+            "5.7",
+            "8"
+          ]
+        },
+        {
+          "id": "unresolved_identifier:deal_id",
+          "kind": "unresolved_identifier",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 49,
+                  "section": "1.1"
+                }
+              ],
+              "lock": "main",
+              "message": "`deal_id` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "1.1"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 49,
+                  "section": "1.1"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`deal_id` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "1.1"
+              ]
+            }
+          ],
+          "sections": [
+            "1.1"
+          ]
+        },
+        {
+          "id": "unresolved_identifier:full_url",
+          "kind": "unresolved_identifier",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 128,
+                  "section": "2.3"
+                },
+                {
+                  "line": 145,
+                  "section": "2.3"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`full_url` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "2.3"
+              ]
+            }
+          ],
+          "sections": [
+            "2.3"
+          ]
+        },
+        {
+          "id": "unresolved_identifier:has_requires",
+          "kind": "unresolved_identifier",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 84,
+                  "section": "2.1"
+                },
+                {
+                  "line": 89,
+                  "section": "2.1"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`has_requires` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "2.1"
+              ]
+            }
+          ],
+          "sections": [
+            "2.1"
+          ]
+        },
+        {
+          "id": "unresolved_identifier:io",
+          "kind": "unresolved_identifier",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 680,
+                  "section": "5.10"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`io` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "5.10"
+              ]
+            }
+          ],
+          "sections": [
+            "5.10"
+          ]
+        },
+        {
+          "id": "unresolved_identifier:pre_serve",
+          "kind": "unresolved_identifier",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 493,
+                  "section": "5.5"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`pre_serve` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "5.5"
+              ]
+            }
+          ],
+          "sections": [
+            "5.5"
+          ]
+        },
+        {
+          "id": "unresolved_identifier:proposals[]",
+          "kind": "unresolved_identifier",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 127,
+                  "section": "2.3"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`proposals[]` resolves to no table row, key, or table-declared value; only prose declares it.",
+              "sections": [
+                "2.3"
+              ]
+            }
+          ],
+          "sections": [
+            "2.3"
+          ]
+        },
+        {
+          "id": "unresolved_identifier:remedy_terms",
+          "kind": "unresolved_identifier",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 322,
+                  "section": "5.7"
+                }
+              ],
+              "lock": "main",
+              "message": "`remedy_terms` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "5.7"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 647,
+                  "section": "5.7"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`remedy_terms` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "5.7"
+              ]
+            }
+          ],
+          "sections": [
+            "5.7"
+          ]
+        },
+        {
+          "id": "unresolved_identifier:viewable_rate",
+          "kind": "unresolved_identifier",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 320,
+                  "section": "5.7"
+                },
+                {
+                  "line": 412,
+                  "section": "8"
+                }
+              ],
+              "lock": "main",
+              "message": "`viewable_rate` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "5.7",
+                "8"
+              ]
+            },
+            {
+              "lines": [
+                {
+                  "line": 384,
+                  "section": "5.2.2"
+                },
+                {
+                  "line": 645,
+                  "section": "5.7"
+                },
+                {
+                  "line": 790,
+                  "section": "8"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "`viewable_rate` resolves to no table row, key, or table-declared value.",
+              "sections": [
+                "5.2.2",
+                "5.7",
+                "8"
+              ]
+            }
+          ],
+          "sections": [
+            "5.2.2",
+            "5.7",
+            "8"
+          ]
+        }
+      ],
+      "rule": "7",
+      "title": "Every backticked name resolves to a row or a key, or is listed as an external reference"
+    },
+    {
+      "findings": [
+        {
+          "id": "must_without_field:rule:2.1:2e481f6f",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "schema",
+              "lines": [
+                {
+                  "line": 76,
+                  "section": "2.1"
+                }
+              ],
+              "lock": "main",
+              "message": "A MUST statement in § 2.1 names no field or key: \"It MUST contain, per line item:\"",
+              "sections": [
+                "2.1"
+              ]
+            },
+            {
+              "checked": "schema",
+              "lines": [
+                {
+                  "line": 77,
+                  "section": "2.1"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 2.1 names no field or key: \"It MUST contain, per line item:\"",
+              "sections": [
+                "2.1"
+              ]
+            }
+          ],
+          "sections": [
+            "2.1"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:2.1:2f9d603c",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 90,
+                  "section": "2.1"
+                }
+              ],
+              "lock": "main",
+              "message": "A MUST statement in § 2.1 names no field or key: \"A full fetch MUST return it.\"",
+              "sections": [
+                "2.1"
+              ]
+            },
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 99,
+                  "section": "2.1"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 2.1 names no field or key: \"A full fetch MUST return it.\"",
+              "sections": [
+                "2.1"
+              ]
+            }
+          ],
+          "sections": [
+            "2.1"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:2.1:8d97860b",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 87,
+                  "section": "2.1"
+                }
+              ],
+              "lock": "main",
+              "message": "A MUST statement in § 2.1 names no field or key: \"`catalog_ref` values MUST remain unresolved in a summary.\"",
+              "sections": [
+                "2.1"
+              ]
+            },
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 92,
+                  "section": "2.1"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 2.1 names no field or key: \"`catalog_ref` values MUST remain unresolved in a summary.\"",
+              "sections": [
+                "2.1"
+              ]
+            }
+          ],
+          "sections": [
+            "2.1"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:2.2:06ccee9f",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "rule",
+              "lines": [
+                {
+                  "line": 109,
+                  "section": "2.2"
+                }
+              ],
+              "lock": "main",
+              "message": "A MUST statement in § 2.2 names no field or key: \"When a proposal reaches status `agreed`, every `catalog_ref` MUST be replaced by its resolved value in the stored record, so the committed artifact is self-contained and immutable.\"",
+              "sections": [
+                "2.2"
+              ]
+            },
+            {
+              "checked": "rule",
+              "lines": [
+                {
+                  "line": 118,
+                  "section": "2.2"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 2.2 names no field or key: \"When a proposal reaches status `agreed`, every `catalog_ref` MUST be replaced by its resolved value in the stored record, so the committed artifact is self-contained and immutable.\"",
+              "sections": [
+                "2.2"
+              ]
+            }
+          ],
+          "sections": [
+            "2.2"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:2.2:3916a8f2",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "schema",
+              "lines": [
+                {
+                  "line": 106,
+                  "section": "2.2"
+                }
+              ],
+              "lock": "main",
+              "message": "A MUST statement in § 2.2 names no field or key: \"References MUST be version-pinned.\"",
+              "sections": [
+                "2.2"
+              ]
+            },
+            {
+              "checked": "schema",
+              "lines": [
+                {
+                  "line": 115,
+                  "section": "2.2"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 2.2 names no field or key: \"References MUST be version-pinned.\"",
+              "sections": [
+                "2.2"
+              ]
+            }
+          ],
+          "sections": [
+            "2.2"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:2.2:696ee27b",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "schema",
+              "lines": [
+                {
+                  "line": 102,
+                  "section": "2.2"
+                }
+              ],
+              "lock": "main",
+              "message": "A MUST statement in § 2.2 names no field or key: \"A field MUST carry either an inline value or a `catalog_ref`, never both.\"",
+              "sections": [
+                "2.2"
+              ]
+            },
+            {
+              "checked": "schema",
+              "lines": [
+                {
+                  "line": 111,
+                  "section": "2.2"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 2.2 names no field or key: \"A field MUST carry either an inline value or a `catalog_ref`, never both.\"",
+              "sections": [
+                "2.2"
+              ]
+            }
+          ],
+          "sections": [
+            "2.2"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:2.2:bee40541",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 108,
+                  "section": "2.2"
+                }
+              ],
+              "lock": "main",
+              "message": "A MUST statement in § 2.2 names no field or key: \"References MUST resolve during discovery.\"",
+              "sections": [
+                "2.2"
+              ]
+            },
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 117,
+                  "section": "2.2"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 2.2 names no field or key: \"References MUST resolve during discovery.\"",
+              "sections": [
+                "2.2"
+              ]
+            }
+          ],
+          "sections": [
+            "2.2"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:2.2:fd522468",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 106,
+                  "section": "2.2"
+                }
+              ],
+              "lock": "main",
+              "message": "A MUST statement in § 2.2 names no field or key: \"A catalog entry MUST be immutable once referenced; a change creates a new version.\"",
+              "sections": [
+                "2.2"
+              ]
+            },
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 115,
+                  "section": "2.2"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 2.2 names no field or key: \"A catalog entry MUST be immutable once referenced; a change creates a new version.\"",
+              "sections": [
+                "2.2"
+              ]
+            }
+          ],
+          "sections": [
+            "2.2"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:2.3:59a4ca91",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 135,
+                  "section": "2.3"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 2.3 names no field or key: \"Manifest entries MUST match the current version of each proposal.\"",
+              "sections": [
+                "2.3"
+              ]
+            }
+          ],
+          "sections": [
+            "2.3"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:2:4ae8f775",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "consumer",
+              "lines": [
+                {
+                  "line": 62,
+                  "section": "2"
+                }
+              ],
+              "lock": "main",
+              "message": "A MUST NOT statement in § 2 names no field or key: \"A field on a line item MUST NOT inherit its value from the proposal or from a sibling line item.\"",
+              "sections": [
+                "2"
+              ]
+            },
+            {
+              "checked": "consumer",
+              "lines": [
+                {
+                  "line": 62,
+                  "section": "2"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST NOT statement in § 2 names no field or key: \"A field on a line item MUST NOT inherit its value from the proposal or from a sibling line item.\"",
+              "sections": [
+                "2"
+              ]
+            }
+          ],
+          "sections": [
+            "2"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:2:7d544674",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "schema",
+              "lines": [
+                {
+                  "line": 62,
+                  "section": "2"
+                }
+              ],
+              "lock": "main",
+              "message": "A MUST statement in § 2 names no field or key: \"Each line item MUST be fully self-contained.\"",
+              "sections": [
+                "2"
+              ]
+            },
+            {
+              "checked": "schema",
+              "lines": [
+                {
+                  "line": 62,
+                  "section": "2"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 2 names no field or key: \"Each line item MUST be fully self-contained.\"",
+              "sections": [
+                "2"
+              ]
+            }
+          ],
+          "sections": [
+            "2"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:3.1:f3c3cab7",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "schema",
+              "lines": [
+                {
+                  "line": 140,
+                  "section": "3.1"
+                }
+              ],
+              "lock": "main",
+              "message": "A MUST statement in § 3.1 names no field or key: \"Every field marked `selectable` MUST declare:\"",
+              "sections": [
+                "3.1"
+              ]
+            },
+            {
+              "checked": "schema",
+              "lines": [
+                {
+                  "line": 174,
+                  "section": "3.1"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 3.1 names no field or key: \"Every field marked `selectable` MUST declare:\"",
+              "sections": [
+                "3.1"
+              ]
+            }
+          ],
+          "sections": [
+            "3.1"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:3.2:4f3b0a9c",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "schema",
+              "lines": [
+                {
+                  "line": 161,
+                  "section": "3.2"
+                }
+              ],
+              "lock": "main",
+              "message": "A MUST statement in § 3.2 names no field or key: \"A field marked `settable` that carries a bare value and no bounds MUST be treated as `seller-set`.\"",
+              "sections": [
+                "3.2"
+              ]
+            },
+            {
+              "checked": "schema",
+              "lines": [
+                {
+                  "line": 195,
+                  "section": "3.2"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 3.2 names no field or key: \"A field marked `settable` that carries a bare value and no bounds MUST be treated as `seller-set`.\"",
+              "sections": [
+                "3.2"
+              ]
+            }
+          ],
+          "sections": [
+            "3.2"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:3:07a16404",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 129,
+                  "section": "3"
+                }
+              ],
+              "lock": "main",
+              "message": "A MUST statement in § 3 names no field or key: \"`selectable`, `settable` and `supplied` fields MUST resolve without a round trip — everything needed to validate and price them is declared in the proposal.\"",
+              "sections": [
+                "3"
+              ]
+            },
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 163,
+                  "section": "3"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 3 names no field or key: \"`selectable`, `settable` and `supplied` fields MUST resolve without a round trip — everything needed to validate and price them is declared in the proposal.\"",
+              "sections": [
+                "3"
+              ]
+            }
+          ],
+          "sections": [
+            "3"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:5.2.2:6f05ff6d",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 377,
+                  "section": "5.2.2"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST NOT statement in § 5.2.2 names no field or key: \"The seller MUST NOT deliver the line item to an impression that does not match a key that is present.\"",
+              "sections": [
+                "5.2.2"
+              ]
+            }
+          ],
+          "sections": [
+            "5.2.2"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:5.4/creative-inspection-and-previews:3a29e732",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "implementation",
+              "lines": [
+                {
+                  "line": 442,
+                  "section": "5.4/creative-inspection-and-previews"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST NOT statement in § 5.4, under \"Creative inspection and previews\", names no field or key: \"An implementation MUST NOT report a check that was skipped or could not finish as passed.\"",
+              "sections": [
+                "5.4/creative-inspection-and-previews"
+              ]
+            }
+          ],
+          "sections": [
+            "5.4/creative-inspection-and-previews"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:5.4/creative-inspection-and-previews:52bc805d",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "implementation",
+              "lines": [
+                {
+                  "line": 429,
+                  "section": "5.4/creative-inspection-and-previews"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST NOT statement in § 5.4, under \"Creative inspection and previews\", names no field or key: \"The inspector MUST NOT request a destination or redirect that sends a production notification; it MAY use a separate inspection URL or the receiving service's documented test mode under the conditions below.\"",
+              "sections": [
+                "5.4/creative-inspection-and-previews"
+              ]
+            }
+          ],
+          "sections": [
+            "5.4/creative-inspection-and-previews"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:5.4/creative-inspection-and-previews:7adf48a7",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "implementation",
+              "lines": [
+                {
+                  "line": 417,
+                  "section": "5.4/creative-inspection-and-previews"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST NOT statement in § 5.4, under \"Creative inspection and previews\", names no field or key: \"An implementation performing inspection MUST NOT send any production notification.\"",
+              "sections": [
+                "5.4/creative-inspection-and-previews"
+              ]
+            }
+          ],
+          "sections": [
+            "5.4/creative-inspection-and-previews"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:5.4/creative-inspection-and-previews:f25ad098",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "implementation",
+              "lines": [
+                {
+                  "line": 434,
+                  "section": "5.4/creative-inspection-and-previews"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 5.4, under \"Creative inspection and previews\", names no field or key: \"A preview that executes creative or verification code MUST prevent that code from sending production notifications.\"",
+              "sections": [
+                "5.4/creative-inspection-and-previews"
+              ]
+            }
+          ],
+          "sections": [
+            "5.4/creative-inspection-and-previews"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:5.4/creative-inspection-and-previews:fbc60b60",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "implementation",
+              "lines": [
+                {
+                  "line": 441,
+                  "section": "5.4/creative-inspection-and-previews"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 5.4, under \"Creative inspection and previews\", names no field or key: \"Inspection failures MUST be reported through diagnostics, without firing a production VAST `<Error>` or `verificationNotExecuted` URL.\"",
+              "sections": [
+                "5.4/creative-inspection-and-previews"
+              ]
+            }
+          ],
+          "sections": [
+            "5.4/creative-inspection-and-previews"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:5.5:3e6033ee",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 495,
+                  "section": "5.5"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 5.5 names no field or key: \"A seller MUST reject it deterministically rather than ignore it.\"",
+              "sections": [
+                "5.5"
+              ]
+            }
+          ],
+          "sections": [
+            "5.5"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:5.5:7fdb152c",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 497,
+                  "section": "5.5"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST NOT statement in § 5.5 names no field or key: \"A seller MUST NOT present `best_effort` enforcement as a guarantee.\"",
+              "sections": [
+                "5.5"
+              ]
+            }
+          ],
+          "sections": [
+            "5.5"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:5.5:c6cd99b1",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 489,
+                  "section": "5.5"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 5.5 names no field or key: \"A seller MUST reject an entry whose platform it cannot determine, rather than apply it across stores.\"",
+              "sections": [
+                "5.5"
+              ]
+            }
+          ],
+          "sections": [
+            "5.5"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:5.6.1:1a7143ff",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 582,
+                  "section": "5.6.1"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 5.6.1 names no field or key: \"The rejection MUST return the current version number, so the buyer can fetch it again.\"",
+              "sections": [
+                "5.6.1"
+              ]
+            }
+          ],
+          "sections": [
+            "5.6.1"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:5.6.1:6f403dba",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 577,
+                  "section": "5.6.1"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST NOT statement in § 5.6.1 names no field or key: \"The seller MUST NOT interpret it.\"",
+              "sections": [
+                "5.6.1"
+              ]
+            }
+          ],
+          "sections": [
+            "5.6.1"
+          ]
+        },
+        {
+          "id": "must_without_field:rule:5.6.3:7d683b70",
+          "kind": "must_without_field",
+          "messages": [
+            {
+              "checked": "seller",
+              "lines": [
+                {
+                  "line": 633,
+                  "section": "5.6.3"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "A MUST statement in § 5.6.3 names no field or key: \"This check MUST be deterministic.\"",
+              "sections": [
+                "5.6.3"
+              ]
+            }
+          ],
+          "sections": [
+            "5.6.3"
+          ]
+        }
+      ],
+      "rule": "statements",
+      "title": "MUST statements that need conformance test vectors or bind a party"
+    },
+    {
+      "findings": [
+        {
+          "id": "unnumbered_heading:5.4/creative-inspection-and-previews",
+          "kind": "unnumbered_heading",
+          "messages": [
+            {
+              "lines": [
+                {
+                  "line": 410,
+                  "section": "5.4/creative-inspection-and-previews"
+                }
+              ],
+              "lock": "with-open-prs",
+              "message": "\"Creative inspection and previews\" has no section number, so its content is cited as § 5.4.",
+              "sections": [
+                "5.4/creative-inspection-and-previews"
+              ]
+            }
+          ],
+          "sections": [
+            "5.4/creative-inspection-and-previews"
+          ]
+        }
+      ],
+      "rule": "other",
+      "title": "Other findings"
+    }
+  ],
+  "format": 1,
+  "groups": [
+    {
+      "asks": "How a value such as a timestamp, a domain, a hash, a URL, or a rate is written",
+      "decisions": [
+        {
+          "feedback": "Name RFC 3339 instead of ISO 8601. Every point in time is an RFC 3339 `date-time` with a UTC offset. Durations follow the ISO 8601 duration grammar in RFC 3339 Appendix A.",
+          "id": "D-001",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 1,
+          "question": "Which written form does an ISO 8601 point in time or duration take?",
+          "reading": "The RFC 3339 forms that JSON Schema names as formats. Every point in time is a `date-time` with a required UTC offset. A length of time is a `duration` in the ISO 8601 grammar of RFC 3339 Appendix A.",
+          "rests_on": [
+            "rule:3.2:ee009430",
+            "field:4.1:valid_from,valid_until",
+            "key:5.6.2:hold_status.hold_duration",
+            "key:5.6.2:hold_status.hold_expires_at"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "State that a domain is written in lowercase, as ASCII A-labels (RFC 5890), with no trailing dot and not as an IP address. Then `domains`, `app.domain`, and namespaced terms compare as plain strings.",
+          "id": "D-002",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 2,
+          "question": "How is a domain spelled, so that two parties compare domains and namespaced terms by string equality?",
+          "reading": "One spelling: lowercase ASCII A-labels (Punycode for internationalized names), at least two labels, a top-level label that starts with a letter, and no trailing dot.",
+          "rests_on": [
+            "field:5.2:properties",
+            "key:5.2:apps[].domain"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "State the encoding of `sha256` values: 64 lowercase hexadecimal characters of the SHA-256 of the exact bytes the URL returns.",
+          "id": "D-003",
+          "kind": "gap",
+          "locks": [
+            "with-open-prs"
+          ],
+          "number": 3,
+          "question": "How is a SHA-256 hash written, and does the value name its algorithm?",
+          "reading": "64 lowercase hexadecimal characters. The field name, `sha256`, names the algorithm.",
+          "rests_on": [
+            "field:5.8:terms_ref"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Define a daypart time window as `{ days[], start, end }`. Days are lowercase English names from `monday` to `sunday`. `start` and `end` are `HH:MM` civil times, where `end` is exclusive, later than `start`, and MAY be `24:00`. A window that crosses midnight is two windows.",
+          "id": "D-004",
+          "kind": "gap",
+          "locks": [
+            "main"
+          ],
+          "number": 4,
+          "question": "How is a daypart time window written, with its days and its start and end times?",
+          "reading": "`{ days[], start, end }`, where `days[]` holds lowercase English day names. `start` and `end` are `HH:MM` civil times from `00:00` to `24:00`. `end` is exclusive and later than `start`, so only `end` can be `24:00`.",
+          "rests_on": [
+            "field:5.5:daypart"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "State that rate metrics and `match_rate_expected` are fractions from 0 to 1, for example 0.7 for 70 %.",
+          "id": "D-005",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 5,
+          "question": "Is a rate metric such as `viewable_rate`, `completion_rate`, or `match_rate_expected` a fraction from 0 to 1 or a percentage?",
+          "reading": "A number from 0 to 1, so 70 % is 0.7.",
+          "rests_on": [
+            "field:5.3:buyer_supplied",
+            "field:5.7:committed_metrics[]"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "State that every URL field carries an absolute `https` URL.",
+          "id": "D-006",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 6,
+          "question": "Which URL schemes may a URL field carry?",
+          "reading": "An absolute `https` URL.",
+          "rests_on": [
+            "rule:2.3:99777739",
+            "key:5.2:apps[].storeurl",
+            "field:5.8:terms_ref"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Give the `catalog_ref` grammar: the characters each part may hold, and the form of `<version>`. Say whether `<seller_namespace>` is the seller's identity domain, as a namespaced term's domain is.",
+          "id": "D-009",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 7,
+          "question": "Which characters may each part of a `catalog_ref` hold?",
+          "reading": "Any characters except the delimiters `/` and `@`, a space, and control characters; each part non-empty.",
+          "rests_on": [
+            "code:2.2:1",
+            "rule:2.2:3916a8f2"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "State that `delta_pct` is a percentage, such as 10 for 10 %, and at least −100. Say which rate it applies to: the gross rate, presumably.",
+          "id": "D-010",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 8,
+          "question": "Is the § 3.1 `delta_pct` a percentage or a fraction, and how far below zero may it go?",
+          "reading": "A percentage, so 10 is a 10 % surcharge, and at least −100.",
+          "rests_on": [
+            "key:3.1:pricing"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Give each selectable and settable field its option type:\n- The `formats` row namespaces a format ID by channel, as `display/300x250`. State that grammar as `<channel>/<format>`, and say what a channel and a format may hold. Then `300x250` alone is rejected everywhere a format ID appears: `formats`, a property's `supported_formats`, and an asset's `format_ref`.\n- Name the code lists for `geo` and `device`, and define a cancellation right and an exclusivity term.\n- Say where `remedy_terms` goes and what it holds.",
+          "id": "D-019",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 9,
+          "question": "What is the option type of each selectable or settable field whose options the specification describes only in prose?",
+          "reading": "- A format ID is written `<channel>/<format>`, as the row namespaces it by channel, with neither part empty.\n- Geo codes and device categories are codes that other lists define, carried as written. Each field's description names its list.\n- A daypart option is a time window `{ days[], start, end }`, as Google Ad Manager writes a day part.\n- Cancellation rights and exclusivity terms are open objects.\n- `production`'s inline object is its option.\n- `shortfall_remedy` takes its listed remedies.",
+          "rests_on": [
+            "field:5.4:formats",
+            "field:5.4:production",
+            "field:5.4:production#description/object:1",
+            "field:5.5:daypart",
+            "field:5.5:device",
+            "field:5.5:geo",
+            "field:5.6:cancellation_policy",
+            "field:5.6:exclusivity",
+            "field:5.7:shortfall_remedy"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Give every object that carries money a `currency` (ISO 4217) beside it. Make it required with the money, as the commitment does for `basis = spend`.\n- These have no currency in their object: `min_spend`, the budget bounds of `commitment_bounds`, a production option's `cost`, and an option's `delta_cpm` and `delta_flat`.\n- `pricing[]` is a list whose entries may name different currencies, so it can't supply one for a line-item amount.\n- State for a `min_commitment[]` threshold, as for the commitment, that `currency` is REQUIRED when `basis = spend`. Also state that a threshold with an `amount` gives its `basis`.\n- State for both that `amount` is a whole number of units when `basis` is `units`.",
+          "id": "D-036",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 10,
+          "question": "Where is the currency of a money value, and must it be present with the value?",
+          "reading": "Every money value is a bare number of at least 0. Every object that carries one carries a `currency` (ISO 4217) beside it, required with the value. A currency is never inherited from an enclosing object. The commitment and a `min_commitment[]` threshold have a `basis` that says whether `amount` is money. When `basis` is `spend`, the amount is money and its currency is required. When `basis` is `units`, it is a whole count of units with no currency. Where the specification gives an object money and no currency, the schema carries the money alone until it adds one.",
+          "rests_on": [
+            "key:3.1:pricing",
+            "key:3.1:pricing#meaning/object:1",
+            "field:5.4:production#description/object:1",
+            "field:5.6:commitment_bounds#description/object:1",
+            "field:5.6:min_spend",
+            "field:5.6:pricing[]",
+            "field:5.6:pricing[].currency",
+            "field:5.6:pricing[].gross_rate",
+            "key:5.6.1:commitment.amount",
+            "key:5.6.1:commitment.basis",
+            "key:5.6.1:commitment.currency",
+            "key:5.6.3:requires.min_commitment[]#meaning/object:1"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Adopt the line item `time_zone` that #123 adds, an IANA zone name or `viewer_local`, as the clock for `daypart` and `frequency_cap.period`. One clock is still open. The examples write `flight_start` and `flight_end` as calendar dates. Say which zone reads their days, or write them as RFC 3339 date-times with an offset, which need no zone.",
+          "id": "D-038",
+          "kind": "gap",
+          "locks": [
+            "main"
+          ],
+          "number": 11,
+          "question": "In which time zone are a line item's calendar values read, its daypart windows, its frequency cap's period, and the days of its flight?",
+          "reading": "One clock per line item reads its daypart windows and its frequency cap's period, as the `time_zone` of #123 does. The schemas add no such field until the text has it. A Timestamp, a flight's start and end included, stays an RFC 3339 instant with an offset, which needs no clock.",
+          "rests_on": [
+            "field:5.5:daypart",
+            "field:5.5:frequency_cap",
+            "key:5.6.1:commitment.flight_end",
+            "key:5.6.1:commitment.flight_start"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Say that a daypart window's `days[]` names at least one day, and each day at most once.",
+          "id": "D-045",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 12,
+          "question": "May a daypart window's `days[]` be empty, or name one day twice?",
+          "reading": "`days[]` names at least one day, and each day at most once.",
+          "rests_on": [
+            "field:5.5:daypart",
+            "sentence:5.5:348ea676"
+          ],
+          "status": "proposed"
+        }
+      ],
+      "id": "formats",
+      "title": "Value formats"
+    },
+    {
+      "asks": "What names an option, what a bare value is, and what a range allows",
+      "decisions": [
+        {
+          "feedback": "State that each `included[]` entry and each `pricing` key names an option in `available[]`. A string option is named by its value, and an object option by its `id`. Also say what names an option given as a `catalog_ref`. The display example includes `ep:smb-decision-makers` for the option `examplepub/audiences/smb-decision-makers@3`, a key that can't be read off the reference.",
+          "id": "D-007",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 13,
+          "question": "Must each `included[]` entry and each `pricing` key of a selectable field name an option in `available[]`, and what names an option?",
+          "reading": "Yes. Each entry and each key names an option of `available[]`. A string option is named by its value, so the name is a value of the option's own type. An object option is named by its `id`, the UUID the seller mints for it.",
+          "rests_on": [
+            "key:3.1:available[]",
+            "key:3.1:included[]",
+            "key:3.1:pricing"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "State the type of the bare value for each selectable and settable field, or drop the fallback. Without it, a seller-set value is the full form, with one option in `available[]` and the same option in `included[]`. Then no schema needs an [untagged union](#untagged-unions) of the two forms. Also name the keys for the buyer's choice of a selectable or settable field, and for an unset settable field's explicit default. § 3 requires both, but § 3.1 and § 3.2 don't declare them.",
+          "id": "D-008",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 14,
+          "question": "What is the bare value that a selectable or settable field may carry in place of its full form?",
+          "reading": "A selectable or settable field that takes a bare value accepts it in place of its full form, typed as that field's value. A field that takes none accepts only the full form.",
+          "rests_on": [
+            "rule:3:b51cedb6",
+            "rule:3.1:f8b0c287",
+            "rule:3.2:4f3b0a9c"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "State that a `min` / `max` range gives one bound or both, and that `min` is at most `max`. Also say how an inline object, such as `frequency_cap`'s `{ min, max }`, marks a member as required or optional. No inline object in the specification does.",
+          "id": "D-011",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 15,
+          "question": "What makes a `min` / `max` pair a range? May it give one bound only, or none, and must `min` be at most `max`?",
+          "reading": "A range gives one bound or both, never neither, and `min` is at most `max`.",
+          "rests_on": [
+            "rule:3.2:ee009430",
+            "field:5.5:frequency_cap#description/object:1"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Say that `included[]` and the `pricing` keys name an object option by its `id`. Mark the `id` of a property and an audience option REQUIRED. Give the cancellation and exclusivity options an `id` once their members are defined.",
+          "id": "D-046",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 16,
+          "question": "What names an object option in `included[]` and the `pricing` keys, and must a property's or an audience option's `id` be present?",
+          "reading": "An object option is named by its `id`. Every object option carries one, required: the identity the seller mints for it.",
+          "rests_on": [
+            "key:3.1:included[]",
+            "key:3.1:pricing",
+            "field:5.2:properties#description/object:1",
+            "field:5.3:audiences#description/object:1",
+            "field:5.6:cancellation_policy",
+            "field:5.6:exclusivity"
+          ],
+          "status": "proposed"
+        }
+      ],
+      "id": "options",
+      "title": "Selectable and settable fields"
+    },
+    {
+      "asks": "The names, members, and types of the objects and value lists that only prose describes",
+      "decisions": [
+        {
+          "feedback": "Either define `mixed` in § 3 as \"the field's members carry their own markers\", or give `pricing[]` and `buyer_requirements` rows for their members. Each row carries one marker, as `pricing[]` already has. State that the seven markers are the complete list.",
+          "id": "D-012",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 17,
+          "question": "Is `mixed` an eighth marker, and may an implementation add markers of its own?",
+          "reading": "The markers are the seven of § 3, a closed list. A `mixed` field has no marker of its own: each of its sub-fields or member objects carries one.",
+          "rests_on": [
+            "marker:3:derived",
+            "marker:3:immutable",
+            "marker:3:requestable",
+            "marker:3:selectable",
+            "marker:3:seller-set",
+            "marker:3:settable",
+            "marker:3:supplied",
+            "field:5.6:pricing[]",
+            "field:5.9:buyer_requirements",
+            "field:5.9:buyer_requirements#description/object:1",
+            "field:5.9:buyer_requirements#description/object:2"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Name each value list once, as a type, so that schemas and SDKs share one name for it. The `status`, `type`, and `basis` fields each carry two or more different lists under one name.",
+          "id": "D-013",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 18,
+          "question": "What is each vocabulary called, where the specification names a value list only by the field that holds it?",
+          "reading": "Each list is named for what its values are. Where the field names one concept, the list takes the field's name, capitalized and singular, as for `channel` and `visibility`. Where the field's name is generic or shared, the name adds the object's, as for a proposal's `status` and a hold's `state`. The fields that name a party, `buyer` or `seller`, share one list of the two parties.",
+          "rests_on": [
+            "field:4.1:linked_execution#description/values:1",
+            "field:4.1:negotiation_history[]#description/object:1/action",
+            "field:4.1:negotiation_history[]#description/object:1/actor",
+            "field:4.1:status#description/values:1",
+            "field:4.1:type#description/values:1",
+            "field:5.1:channel#description/values:1",
+            "field:5.1:status#description/values:1",
+            "field:5.2:environments#description/values:1",
+            "key:5.2:apps[].platform#meaning/values:1",
+            "key:5.2.2:placement.plcmt",
+            "key:5.2.2:placement.reward#meaning/values:1",
+            "field:5.3:activation_route#description/values:1",
+            "field:5.4:creative_delivery#description/object:1/method",
+            "field:5.5:exclusions#description/object:1",
+            "field:5.5:exclusions_accepted#description/object:1",
+            "field:5.5:frequency_cap#description/object:1/basis",
+            "field:5.6:availability#description/object:1/type",
+            "field:5.6:pricing[].cost_method",
+            "key:5.6.1:commitment.basis#meaning/values:1",
+            "key:5.6.2:hold_status.hold_scope#meaning/values:1",
+            "key:5.6.2:hold_status.state#meaning/values:1",
+            "field:5.7:committed_metrics[]",
+            "field:5.7:reporting#description/object:1/feed_type",
+            "field:5.7:shortfall_remedy#description/values:1",
+            "field:5.8:required_credentials[]#description/object:1/scheme",
+            "field:5.8:required_credentials[]#description/object:1/type",
+            "field:5.8:visibility#description/values:1",
+            "field:5.9:buying_route#description/values:1",
+            "field:5.9:serving_mode#description/values:1",
+            "field:5.9:transaction_mechanism#description/values:1",
+            "field:5.10:agreement_ref#description/object:1/type",
+            "field:5.10:external_references[]"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Say for each value list whether it is closed or extensible, and how an extension term is spelled. The skip rule for an unknown `channel`, \"and other store platforms\", and \"etc.\" in `cost_method` imply extensible lists. None says how to extend them.",
+          "id": "D-014",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 19,
+          "question": "Which vocabularies are open, a core list that implementations extend with namespaced terms, and which are closed?",
+          "reading": "Closed: the states, actions, parties, and switches that the protocol itself acts on. Open: lists of market options that sellers and vendors extend, such as channels, environments, routes, and cost methods.",
+          "rests_on": [
+            "field:4.1:linked_execution#description/values:1",
+            "field:4.1:negotiation_history[]#description/object:1/action",
+            "field:4.1:negotiation_history[]#description/object:1/actor",
+            "field:4.1:status#description/values:1",
+            "field:4.1:type#description/values:1",
+            "field:5.1:channel#description/values:1",
+            "field:5.1:status#description/values:1",
+            "field:5.2:environments#description/values:1",
+            "key:5.2:apps[].platform#meaning/values:1",
+            "key:5.2.2:placement.plcmt",
+            "key:5.2.2:placement.reward#meaning/values:1",
+            "field:5.3:activation_route#description/values:1",
+            "field:5.4:creative_delivery#description/object:1/method",
+            "field:5.5:exclusions#description/object:1",
+            "field:5.5:exclusions_accepted#description/object:1",
+            "field:5.5:frequency_cap#description/object:1/basis",
+            "field:5.6:availability#description/object:1/type",
+            "field:5.6:pricing[].cost_method",
+            "key:5.6.1:commitment.basis#meaning/values:1",
+            "key:5.6.2:hold_status.hold_scope#meaning/values:1",
+            "key:5.6.2:hold_status.state#meaning/values:1",
+            "field:5.7:committed_metrics[]",
+            "field:5.7:reporting#description/object:1/feed_type",
+            "field:5.7:shortfall_remedy#description/values:1",
+            "field:5.8:required_credentials[]#description/object:1/scheme",
+            "field:5.8:required_credentials[]#description/object:1/type",
+            "field:5.8:visibility#description/values:1",
+            "field:5.9:buying_route#description/values:1",
+            "field:5.9:serving_mode#description/values:1",
+            "field:5.9:transaction_mechanism#description/values:1",
+            "field:5.10:agreement_ref#description/object:1/type",
+            "field:5.10:external_references[]"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Define each of these objects, or say where it is defined, as `specs` does for the format registry. Until then an implementation can't validate or compare them, and two implementations will fill them differently. Name the members of a cancellation right and an exclusivity term, beside the `id` that names each option. Say whether `specifications` is free form. For the rest, each row's prose suggests a structure, which we propose as the starting point:\n- `assent` as `{ buyer, seller }`. Each party's record is `{ version, at, signature }`: the version it assents to, when, and a signature in the scheme the row calls WS1.\n- `third_party_tags` as `{ wrapper_types[], vast_versions[] }`.\n- `approval` as `{ review_sla, revision_policy }`, the SLA a length of time.\n- `content_detail` as `{ shows[], series[], sections[], network_verticals[] }`.\n- `creative_policy` as `{ content_restrictions[], category_restrictions[] }`, the content and the category restrictions its row names. Say whether a category restriction names a category of the IAB Tech Lab Content Taxonomy, of its Ad Product Taxonomy, or of another list.\n- `suppression_list` as `{ source, size, match_method }`, the members the display example writes.",
+          "id": "D-016",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 20,
+          "question": "What does an object field hold when the specification gives it no structure?",
+          "reading": "A named object that accepts any members, so the field validates as an object and the members stay the field's owner's to define.",
+          "rests_on": [
+            "field:4.1:assent",
+            "field:4.2:specifications",
+            "field:5.2:content_detail",
+            "field:5.3:buyer_supplied#description/object:1",
+            "field:5.4:approval",
+            "field:5.4:specs",
+            "field:5.4:third_party_tags",
+            "field:5.6:cancellation_policy",
+            "field:5.6:creative_policy",
+            "field:5.6:exclusivity"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Tag the two forms of `materials_due` and say what an Offset counts from, such as the flight start. The display example writes a date, `2026-09-24`, which is neither form.",
+          "id": "D-017",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 21,
+          "question": "What does a field typed with two types joined by a slash, such as Timestamp/Offset, hold?",
+          "reading": "Either type: an untagged union (`anyOf`) of the two named types, with Offset read as an ISO 8601 duration.",
+          "rests_on": [
+            "field:4.2:specifications",
+            "field:5.4:materials_due"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "State the type of the bare value for each selectable and settable field, or drop the fallback in § 3.1, § 3.2, and § 5.5.",
+          "id": "D-018",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 22,
+          "question": "Which selectable and settable fields take a bare value in place of their full form?",
+          "reading": "None. Each field takes its full form only. A seller-set value is the full form: one option in `available[]` and the same option in `included[]`, or one value in `allowed[]`.",
+          "rests_on": [
+            "rule:3.1:f8b0c287",
+            "rule:3.2:4f3b0a9c",
+            "field:5.2:environments",
+            "field:5.2:properties",
+            "field:5.3:activation_route",
+            "field:5.3:audiences",
+            "field:5.4:formats",
+            "field:5.4:production",
+            "field:5.5:daypart",
+            "field:5.5:device",
+            "field:5.5:frequency_cap",
+            "field:5.5:geo",
+            "field:5.6:cancellation_policy",
+            "field:5.6:commitment",
+            "field:5.6:exclusivity",
+            "field:5.7:measurement_source",
+            "field:5.7:reporting",
+            "field:5.7:shortfall_remedy",
+            "field:5.9:transaction_mechanism"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "List the fields, or the options, that may carry a `catalog_ref`. Say whether a reference replaces one option or a whole field, as § 2.3's \"large lists use `catalog_ref`\" suggests.",
+          "id": "D-020",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 23,
+          "question": "Which fields may carry a `catalog_ref` in place of an inline value?",
+          "reading": "Each option in `audiences.available[]` and `properties.available[]` is an inline value or a catalog reference.",
+          "rests_on": [
+            "code:2.2:1",
+            "rule:2.2:c610e803",
+            "field:5.2:properties",
+            "field:5.3:audiences"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Say how `commitment` and `frequency_cap` meet § 3.2: name `commitment_bounds` as `commitment`'s bounds, and say that a `frequency_cap`'s bounds are the range in `max`.",
+          "id": "D-021",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 24,
+          "question": "What type does a settable field take when its bounds aren't in the field itself?",
+          "reading": "The field's own object. `commitment` is the object of § 5.6.1, whose bounds are `commitment_bounds`. `frequency_cap` is its inline object, whose bounds are the range in `max`.",
+          "rests_on": [
+            "rule:3.2:ee009430",
+            "field:5.5:frequency_cap",
+            "field:5.5:frequency_cap#description/object:1",
+            "field:5.6:commitment",
+            "field:5.6:commitment_bounds"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Give `geo` one marker, or a tag that says which structure it declares. It is the only field whose marker depends on its content.",
+          "id": "D-022",
+          "kind": "gap",
+          "locks": [
+            "with-open-prs"
+          ],
+          "number": 25,
+          "question": "What type does `geo` take when § 5.5 lets it declare either the selectable structure or `allowed[]`?",
+          "reading": "An untagged union of its selectable form and its settable form. A validator tells them apart, because each is closed and requires a different key.",
+          "rests_on": [
+            "field:5.5:geo",
+            "rule:5.5:02097f4e",
+            "rule:5.5:51ca125e",
+            "rule:5.5:ac74a0a6",
+            "rule:5.5:e6f552da"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Type the members of each inline object, and write each list member with `[]`, as `domains[]` and `apps[]`. Name the values of `provenance`.",
+          "id": "D-024",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 26,
+          "question": "What type does each member of the § 5.2 and § 5.3 objects take, and each key of the § 5.2 tables that no rule types?",
+          "reading": "Each member takes the schema type its meaning names, such as a timestamp or a URL. A code from an AdCOM list is the code. A plural member without `[]` is a list.",
+          "rests_on": [
+            "field:5.2:properties#description/object:1",
+            "key:5.2.2:placement.api[]",
+            "key:5.2.2:placement.playmethod[]",
+            "key:5.2.2:placement.plcmt",
+            "key:5.2.2:placement.refresh#meaning/object:1",
+            "key:5.2.2:placement.skipafter",
+            "rule:5.2.2:463dfafd",
+            "sentence:5.2.2:af7851e2",
+            "field:5.3:audiences#description/object:1",
+            "field:5.3:buyer_supplied#description/object:1"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Type the members of each inline object. Define `list_ref` and the exclusion types as lists the schema can check, and say which members of `frequency_cap`, `creative_delivery`, and `list_ref` are required.",
+          "id": "D-025",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 27,
+          "question": "What type does each member of the § 5.4 and § 5.5 objects take?",
+          "reading": "Each member takes the schema type or value list its meaning names. Each exclusion type is a key of `exclusions`.",
+          "rests_on": [
+            "key:5.2:apps[].bundle",
+            "key:5.2:apps[].platform",
+            "field:5.4:assets[]#description/object:1",
+            "field:5.4:creative_delivery#description/object:1",
+            "field:5.4:production#description/object:1",
+            "block:5.5:3/object:1",
+            "code:5.5:1",
+            "field:5.5:exclusions#description/object:1",
+            "field:5.5:exclusions_accepted#description/object:1",
+            "field:5.5:frequency_cap#description/object:1",
+            "sentence:5.5:262ff404"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Give `cost_method` its value list, and list the values of `availability`'s `unit` and `basis`.",
+          "id": "D-026",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 28,
+          "question": "What type does each § 5.6 field, key, and member take where the specification gives no format?",
+          "reading": "Each takes the schema type or value list its meaning names. `cost_method` and the availability's terms take open vocabularies. A budget is an amount of money, and a count is a whole number, neither negative.",
+          "rests_on": [
+            "field:5.6:availability#description/object:1",
+            "field:5.6:commitment_bounds#description/object:1",
+            "field:5.6:pricing[].cost_method",
+            "key:5.6.3:requires.min_commitment[]#meaning/object:1"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Type the members of each inline object and say which are required.",
+          "id": "D-027",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 29,
+          "question": "What type does each member of the § 4.1 and § 5.7 to § 5.10 objects take?",
+          "reading": "Each member takes the schema type or value list its meaning names.",
+          "rests_on": [
+            "field:4.1:negotiation_history[]#description/object:1",
+            "field:5.7:committed_metrics[]",
+            "field:5.7:committed_metrics[]#description/object:1",
+            "field:5.7:measurement_source#description/object:1",
+            "field:5.7:reporting#description/object:1",
+            "field:5.8:required_credentials[]#description/object:1",
+            "field:5.8:terms_ref#description/object:1",
+            "field:5.9:buyer_requirements",
+            "field:5.9:buyer_requirements#description/object:1",
+            "field:5.9:buyer_requirements#description/object:2",
+            "field:5.10:agreement_ref#description/object:1",
+            "field:5.10:billing#description/object:1",
+            "field:5.10:external_references[]",
+            "field:5.10:external_references[]#description/object:1"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "- Name the key of each manifest entry that holds the line-item summaries, and say which members of an entry are required.\n- Write the summary's paths as they are in the tables: `pricing[].cost_method`, `pricing[].gross_rate`, and `properties.available[].name`. Then the property names are required like every other listed path.\n- List `pricing[].currency`, without which a summary's rate can't be read.\n- Give `has_requires` a row.",
+          "id": "D-028",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 30,
+          "question": "What do the § 2.1 Summary Representation and the § 2.3 manifest hold?",
+          "reading": "The summary is a projection of each document onto the listed fields. The manifest is a third document. Its entries include the proposal's summary and add the keys § 2.3 names.",
+          "rests_on": [
+            "block:2.1:3/identifiers:1",
+            "block:2.1:4/identifiers:1",
+            "block:2.1:7/identifiers:1",
+            "rule:2.1:2e481f6f",
+            "rule:2.1:5d7284d5",
+            "sentence:2.1:ba90b505",
+            "block:2.3:2/object:1",
+            "rule:2.3:99777739",
+            "sentence:2.3:b43aefff",
+            "field:5.2:properties"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "List the values of `frequency_cap.period`: the OpenDirect 2.1 `Line.frequencyinterval` intervals, `hour` | `day` | `week` | `month` | `flight`. Here `flight` is OpenDirect's `LineDuration`, the commitment's flight. Say that `hour`, `day`, `week`, and `month` are calendar periods on the line item's clock, as #123 does. A `day` then runs from midnight to midnight, not for 24 hours, and a week starts on Monday. Say that `flight` runs from the flight's start to its end, which are points in time.",
+          "id": "D-044",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 31,
+          "question": "What values does a frequency cap's `period` take, and is a period a calendar period or a length of time?",
+          "reading": "One of the OpenDirect 2.1 `Line.frequencyinterval` intervals, in the specification's spelling: `hour`, `day`, `week`, `month`, or `flight`, OpenDirect's `LineDuration`. The first four are calendar periods on the line item's clock, so a `day` runs from midnight to midnight. `flight` runs from the flight's start to its end, between its two points in time.",
+          "rests_on": [
+            "field:5.5:frequency_cap#description/object:1",
+            "sentence:5.5:bcaa431b"
+          ],
+          "status": "proposed"
+        }
+      ],
+      "id": "types",
+      "title": "Types the tables leave open"
+    },
+    {
+      "asks": "Whether a statement constrains a payload or binds a party",
+      "decisions": [
+        {
+          "id": "D-023",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 32,
+          "question": "Which schema type expresses each § 2.2 and § 3 element that more than one schema type rests on, or that none does?",
+          "reading": "The schema that states what the element says:\n- the selectable structure of § 3.1, for the `available[]` key and the price-delta sentence\n- the price delta of each `pricing` entry, for the delta object\n- the reference grammar of `catalog_ref`, for the grammar\n- the choice of an inline value or a `catalog_ref`, for \"never both\"\n- the settable bounds with a `min` / `max` range, for the bounds sentence\n- the settable bounds, for their bare-value fallback",
+          "rests_on": [
+            "code:2.2:1",
+            "rule:2.2:696ee27b",
+            "rule:3:d5ed9b66",
+            "key:3.1:available[]",
+            "key:3.1:pricing#meaning/object:1",
+            "rule:3.2:4f3b0a9c",
+            "rule:3.2:ee009430"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Mark the behavioral requirements of § 2 and § 3 as obligations on a named party. Keep them apart from what a schema or a rule can check.",
+          "id": "D-029",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 33,
+          "question": "How is each § 2 and § 3 statement checked, as a schema, a rule on payloads, or an obligation on a party's behavior?",
+          "reading": "A statement about one payload, or about two versions and the acting party, is a rule. A statement about what a party does, which no payload shows, is an obligation. A statement the schema already says maps to the schema.",
+          "rests_on": [
+            "rule:2:2ea1196f",
+            "rule:2:4ae8f775",
+            "rule:2:7d544674",
+            "rule:2:ace530d6",
+            "rule:2.1:2f9d603c",
+            "rule:2.1:5d7284d5",
+            "rule:2.1:8d97860b",
+            "rule:2.1:948e2b02",
+            "rule:2.2:06ccee9f",
+            "rule:2.2:bee40541",
+            "rule:2.2:fd522468",
+            "rule:2.3:59a4ca91",
+            "rule:2.3:68f68e24",
+            "rule:2.3:99777739",
+            "rule:3:07a16404",
+            "rule:3:82c2f1b0",
+            "rule:3:b51cedb6",
+            "rule:3:e768cdf1",
+            "rule:3.3:1acc7d0d",
+            "rule:3.3:f58949fc"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Put each cross-field requirement in the section of the object that holds all its fields, and mark seller behavior apart from requirements on the document.",
+          "id": "D-030",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 34,
+          "question": "How is each § 4 and § 5 field statement checked, as a schema, a rule on payloads, or an obligation on a party's behavior?",
+          "reading": "A statement about one line item's or proposal's fields, or about two versions, is a rule owned by the smallest object it mentions. A statement about delivery, disclosure, or how a seller treats a request is an obligation. A statement the schema already says maps to the schema.",
+          "rests_on": [
+            "rule:4.1:8e9aacb8",
+            "rule:4.1:fae6ebab",
+            "rule:5.1.1:4c696214",
+            "rule:5.1.1:ce115ccf",
+            "rule:5.2:3d2307e8",
+            "rule:5.2:f3d3f9e8",
+            "rule:5.2.1:cc42a1f8",
+            "rule:5.2.2:6f05ff6d",
+            "rule:5.2.2:f9a1a6d5",
+            "sentence:5.2.2:8f7b65da",
+            "rule:5.4:2eaa294f",
+            "rule:5.5:16494a1a",
+            "rule:5.5:2eab2842",
+            "rule:5.5:3e6033ee",
+            "rule:5.5:7fdb152c",
+            "rule:5.5:c6cd99b1",
+            "block:5.6.2:1/values:1",
+            "rule:5.7:4994173c",
+            "rule:5.8:59a01393",
+            "rule:5.8:d02f49a2",
+            "rule:5.9:d510ffe5"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Define the commitment attempt as a message, with its response and its error, so these requirements can be tested. As written, they are behavior with no payload to check. Name the key of a proposal that holds its line items. Then the two `requires` checks become rules on that document, with test vectors. One check is that each reference in `all_of[]`, `any_of[]`, and `min_commitment[].line_item_id` names a line item of the same proposal version. The other is that the references form no cycle.",
+          "id": "D-031",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 35,
+          "question": "How are the § 5.6.1 commitment-attempt and § 5.6.3 dependency statements checked?",
+          "reading": "Each is an obligation of the seller: it rejects, replays, or conflicts a commitment attempt, which no single line item shows.",
+          "rests_on": [
+            "rule:5.6.1:1a7143ff",
+            "rule:5.6.1:499ec00e",
+            "rule:5.6.1:6f403dba",
+            "rule:5.6.1:7de026a6",
+            "rule:5.6.1:852ec5db",
+            "rule:5.6.1:d672decc",
+            "rule:5.6.1:e250f467",
+            "rule:5.6.3:17fe6f2c",
+            "rule:5.6.3:39e4afbb",
+            "rule:5.6.3:497d445c",
+            "rule:5.6.3:7d683b70",
+            "rule:5.6.3:b4da8d14",
+            "rule:5.6.3:db94cd1e"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Say whether creative inspection belongs to the object model or to a separate inspection specification that the AAMP messages reference.",
+          "id": "D-032",
+          "kind": "gap",
+          "locks": [
+            "with-open-prs"
+          ],
+          "number": 36,
+          "question": "How are the creative inspection statements of § 5.4 checked?",
+          "reading": "Each is an obligation of any implementation that inspects creative: what it may fetch and what it must not fire.",
+          "rests_on": [
+            "rule:5.4/creative-inspection-and-previews:11d3ac1e",
+            "rule:5.4/creative-inspection-and-previews:3a29e732",
+            "rule:5.4/creative-inspection-and-previews:52bc805d",
+            "rule:5.4/creative-inspection-and-previews:7adf48a7",
+            "rule:5.4/creative-inspection-and-previews:ef1a453e",
+            "rule:5.4/creative-inspection-and-previews:f25ad098",
+            "rule:5.4/creative-inspection-and-previews:fbc60b60"
+          ],
+          "status": "proposed"
+        },
+        {
+          "id": "D-033",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 37,
+          "question": "What do the specification's code blocks other than the § 2.2 grammar map to?",
+          "reading": "The § 2 diagram is informative, and each YAML block of line-item fields is an example of a line item.",
+          "rests_on": [
+            "code:2:1",
+            "code:5.5:1",
+            "code:5.5:2",
+            "code:5.5:3",
+            "code:5.6.3:1"
+          ],
+          "status": "proposed"
+        }
+      ],
+      "id": "statements",
+      "title": "Where each statement is checked"
+    },
+    {
+      "asks": "Which payloads and changes a rule stated only in prose allows",
+      "decisions": [
+        {
+          "feedback": "State each mutability rule as a check on two versions and the acting party. Also say:\n- whose status the `seller-set` rule reads\n- where a settable field holds the buyer's value\n- how a version shows seller assent to a request\n- whether a buyer may ask for an earlier `materials_due` or a lower committed metric\n- which party may move the hold `state`\n- whether `expired` and `released` are terminal, as `converted` is",
+          "id": "D-034",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 38,
+          "question": "What change does each mutability rule allow, between two versions and the party that made it, where the specification states the rule only in prose?",
+          "reading": "Read each rule as narrowly as its words allow, and give it the vectors that reading decides:\n- A field's status is the status of the document that holds it.\n- A settable value is bounds the buyer narrows.\n- Seller assent is the seller's version.\n- A MAY grants only the change it names.\n- A derived field changes only with the fields it is computed from.",
+          "rests_on": [
+            "marker:3:derived",
+            "marker:3:immutable",
+            "marker:3:requestable",
+            "marker:3:selectable",
+            "marker:3:seller-set",
+            "marker:3:settable",
+            "marker:3:supplied",
+            "rule:4.1:8e9aacb8",
+            "rule:5.4:2eaa294f",
+            "block:5.6.2:1/values:1",
+            "sentence:5.6.2:516faad1",
+            "sentence:5.6.2:774f52b4",
+            "rule:5.7:4994173c",
+            "rule:5.8:59a01393"
+          ],
+          "status": "proposed"
+        },
+        {
+          "feedback": "Say:\n- whether \"reaches status `agreed`\" means the proposal's status or the line item's\n- how a line item names the seller as its `measurement_source` vendor\n- how a `ctv` line item says it carries video, so that the `plcmt` condition can be checked\n- which exclusion type a `list_ref` holds",
+          "id": "D-035",
+          "kind": "gap",
+          "locks": [
+            "main",
+            "with-open-prs"
+          ],
+          "number": 39,
+          "question": "Which payloads does each rule on one line item accept, and what does a receiver do, where the specification states the rule only in prose?",
+          "reading": "Read each rule as narrowly as its words allow, and give it the vectors that reading decides:\n- the line item's own status\n- a pin as a `sha256`\n- the channel rows and the environment rows, matched by device and distribution\n- the seller named by the proposal's `seller_id`",
+          "rests_on": [
+            "rule:2.2:06ccee9f",
+            "def:5.1.1:channel.audio",
+            "def:5.1.1:channel.ctv",
+            "def:5.1.1:channel.display",
+            "def:5.1.1:channel.dooh",
+            "def:5.1.1:channel.native",
+            "def:5.1.1:channel.video",
+            "rule:5.1.1:ce115ccf",
+            "rule:5.2:f3d3f9e8",
+            "def:5.2.1:environments.app_mobile",
+            "def:5.2.1:environments.ctv",
+            "def:5.2.1:environments.dooh",
+            "def:5.2.1:environments.web_desktop",
+            "def:5.2.1:environments.web_mobile",
+            "rule:5.2.1:cc42a1f8",
+            "key:5.2.2:placement.plcmt",
+            "rule:5.2.2:f9a1a6d5",
+            "rule:5.5:16494a1a",
+            "rule:5.5:2eab2842"
+          ],
+          "status": "proposed"
+        }
+      ],
+      "id": "readings",
+      "title": "What each rule accepts"
+    }
+  ],
+  "issue": "https://github.com/IABTechLab/OpenProposal/issues/121",
+  "locks": [
+    {
+      "blob": "694095837432671ac8103e3c7be9b1c03d8a9482",
+      "branches": 0,
+      "commit": "44dfaaf618736219426c311ec997b6d37e94b950",
+      "edits": [],
+      "heads": [],
+      "label": "`main`",
+      "name": "main",
+      "ours": [],
+      "path": "spec/openproposal-3.0.md",
+      "phrase": "on `main`",
+      "prs": [],
+      "upstream": "https://github.com/IABTechLab/OpenProposal"
+    },
+    {
+      "blob": "fdb303f07c669c21c0c1196e1c8e441790a62d3c",
+      "branches": 0,
+      "commit": "292bb51e654c2eef563d721eb6af8317371c906a",
+      "edits": [
+        "moved #17's App identity block back above the § 5.2.1 that #119 adds",
+        "set the header of #120's rewarded-video example to § 6.7",
+        "added `time_zone: viewer_local` to the examples of #70 and #120, as #123's description asks"
+      ],
+      "heads": [
+        {
+          "head": "dc0e37c8890b1ad6f197fd4a9418b7b231fab454",
+          "pr": 17
+        },
+        {
+          "head": "ff53dc5a7d436ac42995f9842394369901e9eb70",
+          "pr": 18
+        },
+        {
+          "head": "ecec3d74f484dbb4ea4404fb7fe847cbbd94aafe",
+          "pr": 70
+        },
+        {
+          "head": "74a25448baf9e38048a5bd417b4372d46faaa77f",
+          "pr": 73
+        },
+        {
+          "head": "e51ee17d2c74d166dd75c3da29698de4e8a998fa",
+          "pr": 117
+        },
+        {
+          "head": "63712c0683b1f67e032450f7400979be60b5cde4",
+          "pr": 71
+        },
+        {
+          "head": "208f0c2c2aa1fe7551b2adbcc2489ed649ca70b7",
+          "pr": 72
+        },
+        {
+          "head": "7a8938579c6339b3c397ab6e40d2b47e1860e195",
+          "pr": 74
+        },
+        {
+          "head": "b88e9a0719180303917efdf59d20ba1769172d27",
+          "pr": 75
+        },
+        {
+          "head": "8e1f614a5c0546e88d993ed239ffcdc71b395a78",
+          "pr": 76
+        },
+        {
+          "head": "395ca8357533843450083d1676b6cc6cab2c87c0",
+          "pr": 118
+        },
+        {
+          "head": "0125d5549c4cc1790bd3ab847e8d5826b66de82d",
+          "pr": 119
+        },
+        {
+          "head": "81de4d827440cc42d8e027d5f88843e8da109bdd",
+          "pr": 120
+        },
+        {
+          "head": "9783ec87d102ccb60c106f4b6782650aa1f0a249",
+          "pr": 123
+        }
+      ],
+      "heads_on": "2026-10-26",
+      "label": "With the open PRs",
+      "name": "with-open-prs",
+      "ours": [
+        119,
+        120,
+        123
+      ],
+      "path": "spec/openproposal-3.0.md",
+      "phrase": "with the open PRs",
+      "prs": [
+        17,
+        18,
+        70,
+        73,
+        117,
+        71,
+        72,
+        74,
+        75,
+        76,
+        118,
+        119,
+        120,
+        123
+      ],
+      "upstream": "https://github.com/IABTechLab/OpenProposal"
+    }
+  ],
+  "round_trip": [
+    {
+      "column": "Description",
+      "decision": "D-024",
+      "locks": [
+        "main"
+      ],
+      "model": "`available[]` of `{ id, name, domains[], supported_formats[] }`, `included[]`, `pricing`, `max_select`",
+      "reason": "The option's plural members are lists, which the generated table writes with `[]`; the inline object writes them without it.",
+      "row": "field:5.2:properties",
+      "spec": "`available[]` of `{ id, name, domains, supported_formats }`, `included[]`, `pricing`, `max_select`",
+      "table": "table:5.2:1"
+    },
+    {
+      "column": "Description",
+      "decision": "D-024",
+      "locks": [
+        "with-open-prs"
+      ],
+      "model": "`available[]` of `{ id, name, domains[], apps[], supported_formats[] }`, `included[]`, `pricing`, `max_select`. Each property MUST carry `domains`, `apps` or both",
+      "reason": "The option's plural members are lists, which the generated table writes with `[]`; the inline object writes them without it, though the App identity table is headed `apps[]`.",
+      "row": "field:5.2:properties",
+      "spec": "`available[]` of `{ id, name, domains, apps, supported_formats }`, `included[]`, `pricing`, `max_select`. Each property MUST carry `domains`, `apps` or both",
+      "table": "table:5.2:1"
+    },
+    {
+      "column": "Meaning",
+      "decision": "D-039",
+      "locks": [
+        "with-open-prs"
+      ],
+      "model": "`false` | `true`. The ad is interstitial or full screen",
+      "reason": "A yes-or-no value is a JSON boolean, as every other flag of the specification is; the row copies AdCOM's `0` and `1`.",
+      "row": "key:5.2.2:placement.instl",
+      "spec": "`0` (no) | `1` (yes). The ad is interstitial or full screen",
+      "table": "table:5.2.2:1"
+    },
+    {
+      "column": "Meaning",
+      "decision": "D-039",
+      "locks": [
+        "with-open-prs"
+      ],
+      "model": "`false` | `true`. The user receives a reward for viewing the ad",
+      "reason": "A yes-or-no value is a JSON boolean, as every other flag of the specification is; the row copies AdCOM's `0` and `1`.",
+      "row": "key:5.2.2:placement.reward",
+      "spec": "`0` (no) | `1` (yes). The user receives a reward for viewing the ad",
+      "table": "table:5.2.2:1"
+    },
+    {
+      "column": "Meaning",
+      "decision": "D-039",
+      "locks": [
+        "with-open-prs"
+      ],
+      "model": "Video or audio. `false` | `true`. The placement lets the user skip the ad",
+      "reason": "A yes-or-no value is a JSON boolean, as every other flag of the specification is; the row copies AdCOM's `0` and `1`.",
+      "row": "key:5.2.2:placement.skip",
+      "spec": "Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad",
+      "table": "table:5.2.2:1"
+    },
+    {
+      "column": "Description",
+      "decision": "D-047",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "model": "Custom units. `available[]` of build options with `pricing` and `lead_time`; `{ custom_unit, build_owner, lead_time, cost, id }`",
+      "reason": "We propose an `id`, REQUIRED, beside the members the inline object lists, so that `included[]` and the `pricing` keys name the option by it.",
+      "row": "field:5.4:production",
+      "spec": "Custom units. `available[]` of build options with `pricing` and `lead_time`; `{ custom_unit, build_owner, lead_time, cost }`",
+      "table": "table:5.4:1"
+    },
+    {
+      "column": "Description",
+      "decision": "D-047",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "model": "`available[]` of `{ vendor, attribution_window, qualifier, id }` with `pricing`. Lets a buyer transact in its own currency",
+      "reason": "We propose an `id`, REQUIRED, beside the members the inline object lists, so that `included[]` and the `pricing` keys name the option by it.",
+      "row": "field:5.7:measurement_source",
+      "spec": "`available[]` of `{ vendor, attribution_window, qualifier }` with `pricing`. Lets a buyer transact in its own currency",
+      "table": "table:5.7:1"
+    },
+    {
+      "column": "Description",
+      "decision": "D-047",
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "model": "`available[]` of `{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency, id }` with `pricing`",
+      "reason": "We propose an `id`, REQUIRED, beside the members the inline object lists, so that `included[]` and the `pricing` keys name the option by it.",
+      "row": "field:5.7:reporting",
+      "spec": "`available[]` of `{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency }` with `pricing`",
+      "table": "table:5.7:1"
+    }
+  ],
+  "set_aside": {
+    "main": 4,
+    "with-open-prs": 27
+  },
+  "undecided": [
+    {
+      "decisions": [
+        "D-035"
+      ],
+      "example": "code:5.5:1",
+      "locks": [
+        "with-open-prs"
+      ],
+      "path": "",
+      "reason": "The § 5.5 block shows a `list_ref` with its `sha256` and leaves out the line item's `status`, so whether the reference is resolved at `agreed` turns on a status the block doesn't show.",
+      "rule": "`list_ref` MUST be hash-pinned, and resolved into the stored record at `agreed`, as for `catalog_ref` (§ 2.2)."
+    },
+    {
+      "decisions": [
+        "D-035"
+      ],
+      "example": "examples/line-item-ctv-bonus.yaml",
+      "locks": [
+        "with-open-prs"
+      ],
+      "path": "",
+      "reason": "`plcmt` is REQUIRED for video on `channel` `ctv`, and this `ctv` line item gives none. No field says whether its ads are video: its format ID `ctv/instream-15s` is namespaced by channel, the format registry has no `ctv/*` entries, and the text lists no delivery protocols.",
+      "rule": "`plcmt` is REQUIRED for video ads."
+    }
+  ],
+  "unions": [
+    {
+      "branches": [
+        "AudiencesOption",
+        "CatalogReference"
+      ],
+      "decisions": [],
+      "forms": [
+        {
+          "forms": [
+            "`{ id, name, taxonomy_ref, provenance, addressable_scale }`",
+            "a reference that stands in for an inline value"
+          ],
+          "locks": [
+            "main",
+            "with-open-prs"
+          ]
+        }
+      ],
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "name": "AudiencesOptionOrCatalogRef",
+      "sources": [
+        "code:2.2:1",
+        "rule:2.2:696ee27b",
+        "rule:2.2:c610e803",
+        "field:5.3:audiences#description/object:1"
+      ]
+    },
+    {
+      "branches": [
+        "GeoBounds",
+        "GeoSelection"
+      ],
+      "decisions": [
+        "D-019",
+        "D-022"
+      ],
+      "forms": [
+        {
+          "forms": [
+            "the `settable` structure of § 3.2",
+            "the `selectable` structure of § 3.1"
+          ],
+          "locks": [
+            "with-open-prs"
+          ]
+        }
+      ],
+      "locks": [
+        "with-open-prs"
+      ],
+      "name": "Geo",
+      "sources": [
+        "field:5.5:geo"
+      ]
+    },
+    {
+      "branches": [
+        "CatalogReference",
+        "LineItemSummaryPropertiesOption"
+      ],
+      "decisions": [],
+      "forms": [
+        {
+          "forms": [
+            "a reference that stands in for an inline value",
+            "an object of `{ name }`"
+          ],
+          "locks": [
+            "main",
+            "with-open-prs"
+          ]
+        }
+      ],
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "name": "LineItemSummaryPropertiesOptionOrCatalogRef",
+      "sources": [
+        "block:2.1:3/identifiers:1",
+        "block:2.1:7/identifiers:1",
+        "rule:2.1:2e481f6f",
+        "code:2.2:1",
+        "rule:2.2:696ee27b",
+        "rule:2.2:c610e803",
+        "field:5.2:properties#description/object:1"
+      ]
+    },
+    {
+      "branches": [
+        "Duration",
+        "Timestamp"
+      ],
+      "decisions": [
+        "D-017"
+      ],
+      "forms": [
+        {
+          "forms": [
+            "a length of time",
+            "a point in time"
+          ],
+          "locks": [
+            "main",
+            "with-open-prs"
+          ]
+        }
+      ],
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "name": "MaterialsDue",
+      "sources": [
+        "field:5.4:materials_due"
+      ]
+    },
+    {
+      "branches": [
+        "CatalogReference",
+        "PropertiesOption"
+      ],
+      "decisions": [],
+      "forms": [
+        {
+          "forms": [
+            "a reference that stands in for an inline value",
+            "`{ id, name, domains, supported_formats }`"
+          ],
+          "locks": [
+            "main"
+          ]
+        },
+        {
+          "forms": [
+            "a reference that stands in for an inline value",
+            "`{ id, name, domains, apps, supported_formats }`"
+          ],
+          "locks": [
+            "with-open-prs"
+          ]
+        }
+      ],
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "name": "PropertiesOptionOrCatalogRef",
+      "sources": [
+        "code:2.2:1",
+        "rule:2.2:696ee27b",
+        "rule:2.2:c610e803",
+        "field:5.2:properties#description/object:1"
+      ]
+    },
+    {
+      "branches": [
+        "SpecificationsDetail",
+        "Text"
+      ],
+      "decisions": [
+        "D-016",
+        "D-017"
+      ],
+      "forms": [
+        {
+          "forms": [
+            "an object whose members the text doesn't name",
+            "prose for people and agents to read"
+          ],
+          "locks": [
+            "main",
+            "with-open-prs"
+          ]
+        }
+      ],
+      "locks": [
+        "main",
+        "with-open-prs"
+      ],
+      "name": "Specifications",
+      "sources": [
+        "field:4.2:specifications"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: audience
+sections: [ "5.3" ]
+types:
+  - name: Provenance
+    kind: vocabulary
+    ir: field:5.3:audiences#description/object:1
+    source: { decision: D-041 }
+    open: true
+  - name: SuppressionList
+    kind: object
+    ir: field:5.3:buyer_supplied#description/object:1
+    source: { decision: D-016 }
+    open: true
+    description: "The buyer's suppression list. The specification states no members, so the object accepts any."
+entries:
+  - ir: field:5.3:audiences
+    digest: 273649330d46a8fb5e90121fdad4864fa49d29ce6c34dce7c90fc37282e40b96
+    source: { decisions: [ D-018, D-020 ] }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments:
+          T: { kind: apply, constructor: CatalogRefOr, arguments: { T: { kind: named, name: AudiencesOption } } }
+          K: { kind: named, name: Uuid }
+      presence: optional
+  - ir: field:5.3:audiences#description/object:1
+    digest: 0a7d355ab5dcb787717d01988764dcca8895bdc0b1252de9e8269ad516e7ac6b
+    source: { decision: D-024 }
+    as:
+      role: type
+      name: AudiencesOption
+      layer: object
+      open: false
+      members:
+        id: { type: { kind: named, name: Uuid }, presence: optional }
+        name: { type: { kind: named, name: Text }, presence: optional }
+        taxonomy_ref: { type: { kind: named, name: ExternalId }, presence: optional }
+        provenance: { type: { kind: named, name: Provenance }, presence: optional }
+        addressable_scale: { type: { kind: named, name: Count }, presence: optional }
+  - ir: field:5.3:addressable_scale
+    digest: 1289f106e9861b03225c1fc7056b164eac34f82d73fc327c7009b0c8b9111e24
+    source: { rule: domain-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Count }, presence: optional }
+  - ir: field:5.3:activation_route
+    digest: 186f13498c109878a31ce2cc5a9d3337f48d7c0ddc6c4190d24e20a4bf1255a9
+    source: { decision: D-018 }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: ActivationRoute }, K: { kind: named, name: ActivationRoute } }
+      presence: optional
+  - ir: field:5.3:activation_route#description/values:1
+    digest: b19f23d4d3563709d77fea2dd16730af81a0db7329013cf764a663b2ef37d3e6
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: ActivationRoute, layer: vocabulary, open: true }
+  - ir: field:5.3:buyer_supplied
+    digest: 18d87a0de58116db76d7152a7f96bc722dc700b91f053406b32e4299e7910504
+    source: { rule: inline-object-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: BuyerSupplied }, presence: optional }
+  - ir: field:5.3:buyer_supplied#description/object:1
+    digest: d5cdd605af129db6ef8a658446a915a300cb4b1abe0f7ff6a2ae97f9fbb99f8f
+    source: { decision: D-024 }
+    as:
+      role: type
+      name: BuyerSupplied
+      layer: object
+      open: false
+      members:
+        segments_allowed: { type: { kind: boolean }, presence: optional }
+        suppression_allowed: { type: { kind: boolean }, presence: optional }
+        match_rate_expected: { type: { kind: named, name: Fraction }, presence: optional }
+        segments:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ExternalId } } }
+          presence: optional
+        suppression_list: { type: { kind: named, name: SuppressionList }, presence: optional }

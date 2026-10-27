@@ -1,0 +1,19 @@
+format: 1
+id: G-008
+date: 2026-10-26
+question: How does the fidelity oracle test a presence required with two members, so that each trigger is tested alone?
+decision: >-
+  The vectors of a presence required with members hold, for each member
+  that triggers it, no other trigger's last member: the vectors of
+  `time_zone` with `frequency_cap.period` hold no `daypart`, and those with
+  `daypart` hold no `frequency_cap.period`. Two fixtures change the
+  frequency cap's `then` to require `daypart` instead of `time_zone`, and
+  `daypart` beside it, and the gate fails on each.
+rationale: >-
+  The baseline of one trigger's vectors carried the other trigger, so a
+  schema that required the other trigger's member, or required it too,
+  passed. Each vector now shows one trigger alone, so the gate rejects both
+  mutations, and every vector it checked before still holds: no check
+  accepts a schema it rejected.
+accepts:
+  - { gate: fidelity, fingerprint: e90b5567f5be3fac01adcbbf39fdee6fafb5fecfb6a759e51ff4c56a4a552fa2 }

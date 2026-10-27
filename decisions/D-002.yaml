@@ -1,0 +1,51 @@
+format: 1
+id: D-002
+status: proposed
+kind: gap
+author: agent
+question: How is a domain spelled, so that two parties compare domains and namespaced terms by string equality?
+covers:
+  - ir: field:5.2:properties
+    digest: 8167901b1024772db9ede8143ce1d5009d6effcfd66b290f82e427a00940b50c
+    quote: "`properties` | Object | selectable | `available[]` of `{ id, name, domains, supported_formats }`, `included[]`, `pricing`, `max_select`"
+    locks: [main]
+  - ir: field:5.2:properties
+    digest: 4115b24e46ceb6cf1b12d1730a313c02123ae5b3ed6739bb9fefdaadc10ea478
+    quote: "`properties` | Object | selectable | `available[]` of `{ id, name, domains, apps, supported_formats }`, `included[]`, `pricing`, `max_select`. Each property MUST carry `domains`, `apps` or both"
+    locks: [with-open-prs]
+  - ir: key:5.2:apps[].domain
+    digest: 225b562dcf1a6bb5794204f48f457410c578cee81a69e2906f3c994b3a747eb4
+    quote: "`domain` | RECOMMENDED | Developer domain, against which `app-ads.txt` is checked. As `app.domain`"
+    locks: [with-open-prs]
+options:
+  - id: lowercase-a-label
+    summary: >-
+      One spelling: lowercase ASCII A-labels (Punycode for internationalized
+      names), at least two labels, a top-level label that starts with a letter,
+      and no trailing dot.
+  - id: any-case
+    summary: Any host name spelling, compared case-insensitively by the receiver as DNS does.
+chosen: lowercase-a-label
+rationale: >-
+  DNS compares names case-insensitively (RFC 4343), so `Example.com` and
+  `example.com` are one domain. JSON Schema can't compare strings
+  case-insensitively, and `NamespacedTerm` (type rules § 6) uses the domain as
+  a namespace that receivers compare as strings. One spelling makes string
+  equality correct for `Domain` and for the namespace of a `NamespacedTerm`,
+  with no receiver rule. A namespace names the definer's identity domain, so
+  a single label such as `localhost` is rejected. A top-level label is never
+  all-numeric (RFC 3696 § 2), and every top-level domain in the IANA root zone
+  starts with a letter, including the `xn--` ones. Requiring that first letter
+  rejects IP address literals such as `192.168.0.1` and keeps the pattern free
+  of lookahead. This decision covers these two primitives only: a
+  `Timestamp` has several spellings of one instant and is compared as an
+  instant, and a `Url` or a `Uri` is compared as it is written.
+evidence:
+  - https://www.rfc-editor.org/rfc/rfc4343
+  - https://www.rfc-editor.org/rfc/rfc5890
+  - https://www.rfc-editor.org/rfc/rfc3696#section-2
+  - https://data.iana.org/TLD/tlds-alpha-by-domain.txt
+feedback: >-
+  State that a domain is written in lowercase, as ASCII A-labels (RFC 5890),
+  with no trailing dot and not as an IP address. Then `domains`, `app.domain`,
+  and namespaced terms compare as plain strings.

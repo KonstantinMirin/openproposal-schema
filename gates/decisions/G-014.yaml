@@ -1,0 +1,58 @@
+format: 1
+id: G-014
+date: 2026-10-26
+question: How does a part bound its own list member, as a daypart window's `days` holds at least one day, each once, and how does a part scope each decision to its locks?
+decision: >-
+  A part's `dependentSchemas` may bound its own list member while it is
+  present, `{ <m>: { properties: { <m>: { type: array, minItems, uniqueItems } } } }`,
+  and the constructors check fails a bound that names another member or a
+  member that is no list. A part lists each decision with the locks it
+  applies on, in place of one `decision_locks` for all. The corpus reads the
+  bound's `type` as implied by the member's own, relaxes both together, and
+  builds the member within the bound; its mutants are the empty list and a
+  day twice. The SDK builder reads the bound as a shape's `bounds`, which the
+  TypeScript, Python, and Go runtimes check. The plain generator drops the
+  bound, so PG-12 lists its two mutants. A test checks the emitted bound on
+  both locks; the copy-keyword test allows `minItems` and `uniqueItems`,
+  which are 2020-12 keywords; the clock test reads the window's decisions on
+  each lock; the constructors test checks a bound's member. The test suite
+  holds 314 tests, so its floor rises to 314.
+rationale: >-
+  A window with no day never applies and a day named twice names one window
+  twice (D-045), and the constraint belongs to one member of one part, so it
+  stays in the part (type rules § 4) as standard keywords the schema states,
+  checked by the oracle, the corpus, and all three SDKs. No check accepts a
+  value it rejected: the corpus gains two isolated cases, the new exemption
+  names two cases the reference rejects and the plain generator can't, and
+  the test floor rises, so no gate is weaker.
+accepts:
+  - { gate: comparison, fingerprint: 46a655108d2fb7abdf33643271cef31f8fee03623fee00067b260987cf8c8520 }
+  - { gate: constructor-sources, fingerprint: 41c24a0811286ce85222348bd3583e2c28210e98306e9d51729961b76dfcf554 }
+  - { gate: constructors-check, fingerprint: cf0e627bf1e65d319e01a02249dd3fd3e61b60031acae31d8c2940937a0f05e3 }
+  - { gate: constructors-load, fingerprint: 4f2aa2432f8e097b548ce92da190752fc648d66d365521e28781ff8caa5aaf94 }
+  - { gate: convention-beside-reference, fingerprint: e4bdf87ba6e7236039a8ba87fb3fc59c05240902b3f7113b2233ad275dbf02f2 }
+  - { gate: convention-inline, fingerprint: 9751bedff85a4c98f833ea2f945d6a2c7c67da929a6947462d53b4a62b9455b5 }
+  - { gate: convention-keywords, fingerprint: 27b3257249036e9048010f6ddd48148e3cc07b44ca581c9b15b4d055f0b541d9 }
+  - { gate: convention-layers, fingerprint: 672bd4cb465d46af79acb9fa7833f869c6bdacceb39757027ea61f9c7e402b3a }
+  - { gate: convention-lists, fingerprint: f441c08563bbb1b2c3d5c0f9485faf04e52cc60e315adf28e37467851dc36de4 }
+  - { gate: convention-modules, fingerprint: fb46c8bceeb1aa1bad49f4756c042477fe0813c37a14bfc1d53e2f8370176ee7 }
+  - { gate: convention-unions, fingerprint: 3f9e32575d7d6fd292e67173f371087711b184d18b0f49ea13610d779ceee2bd }
+  - { gate: corpus-generates, fingerprint: 713ddad835276eeca99a4170f4cb97bf2efaa6faf3958e239d7574f4813c8c72 }
+  - { gate: corpus-isolation, fingerprint: c108bdbb8ff9c333a4401dd570508cace301904901ff8cacb9233bffa4c0edd8 }
+  - { gate: duplication-kernel, fingerprint: 54ee55be5f2efabf9dd5ab920935403069325ed968c0ddf9979e9cbb56b7af7e }
+  - { gate: duplication-model, fingerprint: a2e8c7aa6714bf8f7032af3ecab11c2bc56a8e2ba5de78f6af1b6696812a611b }
+  - { gate: feedback, fingerprint: 03dcf328a5e67ec1b92cfc3352e0d39eb34565782ffa61f0addb7103f10d4f51 }
+  - { gate: fidelity, fingerprint: e5073d62f2e3c9c3c443808fcb1171085e845ca830af82fd2287969a5c4244ca }
+  - { gate: map-drift, fingerprint: 90a91fce5d2efa19f340ba4410d4bf013de0e72ae4f4ca7352e3c64d587bc6c3 }
+  - { gate: mapping-bijection, fingerprint: d4fef6ea00920d26f27381877dd62c467e3ce2aa421cfcb1c1936e4414cb3483 }
+  - { gate: mapping-constructors, fingerprint: 152a264d131b581e9b2681511d4fe32b1042d16c0d0e8d8bbd9e42dafc7b823a }
+  - { gate: mapping-location, fingerprint: e6d26205bb2d08f248a1b99c338bbdc9ce120f58118f451767e131cda8831be5 }
+  - { gate: mapping-rules, fingerprint: b9b2800cb2040ea17be13de63184eec6405682445a7ccb783cf49b67f5a31e9e }
+  - { gate: model-resolves, fingerprint: 51312e399f5c7a198d328c5be37c85f0cd92ae6f91148cdee1d343f511e838a7 }
+  - { gate: nesting, fingerprint: a16054a24830d7b8a999d49faa35f983fefc9d0e3a2f58fbe75ff7a57bb261cf }
+  - { gate: npm-test, fingerprint: a0ad94ec911a246565a8557131c8f0f74249871bda5f33e321e989db7c8ced4d }
+  - { gate: plain-exemptions-file, fingerprint: 99fa8fca512ece73c22a533056995cf99bd31361178dfb15cd7ca6f2cbeb42dc }
+  - { gate: plain-parity, fingerprint: 2dcab2973d8b25d95d0b07c6ef4cf5410bab4d43fd0ef06602248eb5f196b447 }
+  - { gate: release-breaking-corpus, fingerprint: a420b549237e42cae9624e216686b830a90a08c7be051d744fa93b1b3e8a9fb9 }
+  - { gate: schemas-emit, fingerprint: 8eab6017de518528023b2caeaa47d052d57cd42272fd7df976c63491f8cb8404 }
+  - { gate: sdk-generate, fingerprint: 717e0c66d12e856236b633223d27971516b70e90182e7bc700b3a8ee2a0ee14c }

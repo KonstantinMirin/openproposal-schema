@@ -1,0 +1,30 @@
+# Rule vectors for § 5.5. Regenerate a digest with `npm run cite -- <rule ID>`.
+format: 1
+module: targeting
+rules:
+  # `list_ref` is hash-pinned, and resolved into the stored record at `agreed`.
+  - rule: rule:5.5:16494a1a
+    digest: 855cc7c52aa4330ff909d07b79740de5114d8f109cc015572cad24a87f313e2c
+    locks: [with-open-prs]
+    decision: D-035
+    valid:
+      - value:
+          status: published
+          exclusions: { list_ref: { url: "https://buyer.example/lists/brand-safety.txt", sha256: 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08 } }
+      - value: { status: agreed, exclusions: { domain: [casino.example] } }
+    invalid:
+      - value: { status: published, exclusions: { list_ref: { url: "https://buyer.example/lists/brand-safety.txt" } } }
+      - value:
+          status: agreed
+          exclusions: { list_ref: { url: "https://buyer.example/lists/brand-safety.txt", sha256: 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08 } }
+
+  # A buyer supplies only the exclusion types `exclusions_accepted.types` lists.
+  - rule: rule:5.5:2eab2842
+    digest: b3baf45c379d1aa9883f9fdc122e7646f9b4cfee17bc532c3291f486c198c168
+    locks: [with-open-prs]
+    decision: D-035
+    valid:
+      - value: { exclusions_accepted: { types: [domain, keyword] }, exclusions: { domain: [casino.example], keyword: [gambling] } }
+    invalid:
+      - value: { exclusions_accepted: { types: [domain] }, exclusions: { keyword: [gambling] } }
+      - value: { exclusions: { domain: [casino.example] } }

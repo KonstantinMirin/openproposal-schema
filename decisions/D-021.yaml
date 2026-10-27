@@ -1,0 +1,44 @@
+format: 1
+id: D-021
+status: proposed
+kind: gap
+author: agent
+question: What type does a settable field take when its bounds aren't in the field itself?
+covers:
+  - ir: field:5.5:frequency_cap
+    digest: f369947b6f5c84e82213fe929568d135b73b2daef366a6309fdf4f933fc2938b
+    quote: "`frequency_cap` | Object | settable | `{ max: { min, max }, period, basis: device | household | listener }`. Basis matters: CTV typically caps at household, audio at listener"
+  - ir: field:5.6:commitment_bounds
+    digest: 3d6b55ccbb5761eb4f56168a6bebd5435000158fa03caecde0c15b1294351680
+    quote: "`commitment_bounds` | Object | seller-set | The envelope inside which a buyer may commit: `{ min_impressions, max_impressions, min_budget, max_budget }`"
+  - ir: field:5.6:commitment
+    digest: a6b61b5855529925630d06290e44a856dea4dd6895a2e7a1db62361cc2587d3f
+    quote: "`commitment` | Object | settable | The buyer's actual commitment. See 5.6.1"
+  - ir: field:5.5:frequency_cap#description/object:1
+    digest: adbcfc3ac2b7bc7c0bda1069751986267cf304dbafb4ee388d9c2f62b43ba305
+    quote: "{ max: { min, max }, period, basis: device | household | listener }"
+  - ir: rule:3.2:ee009430
+    digest: b70f59e2c68b16af32a8ad7ee513de31c1f1bd7a3c1540f17ba556688780a7cf
+    quote: "Every field marked `settable` MUST declare its bounds: either `allowed[]` (an enumerated set) or `min` / `max` (a numeric or date range)."
+options:
+  - id: the-object
+    summary: >-
+      The field's own object. `commitment` is the object of § 5.6.1, whose
+      bounds are `commitment_bounds`. `frequency_cap` is its inline object,
+      whose bounds are the range in `max`.
+  - id: settable-copy
+    summary: A `Settable` copy of the object, with `allowed[]` of whole commitments or caps.
+chosen: the-object
+rationale: >-
+  § 3.2 says a settable field declares `allowed[]` or `min` / `max`.
+  `commitment` doesn't: it is "the buyer's actual commitment", with the keys
+  of § 5.6.1, and `commitment_bounds` holds the envelope it must fit.
+  `frequency_cap` carries its bounds inside its `max` member, a `{ min, max }`
+  range (D-011). Wrapping either object in `Settable` would make a buyer
+  choose among whole objects, which neither field means, and would nest a
+  range inside a settable structure. So each takes its own object, and the
+  bounds are where the specification puts them.
+feedback: >-
+  Say how `commitment` and `frequency_cap` meet § 3.2: name
+  `commitment_bounds` as `commitment`'s bounds, and say that a
+  `frequency_cap`'s bounds are the range in `max`.

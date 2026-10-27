@@ -1,0 +1,50 @@
+format: 1
+id: D-032
+status: proposed
+kind: gap
+author: agent
+question: How are the creative inspection statements of § 5.4 checked?
+covers:
+  - ir: rule:5.4/creative-inspection-and-previews:7adf48a7
+    digest: 8452a8faf2195c447f82260dc615f1a16b6d4cb0848cfd98996886b0aac2cd7f
+    quote: An implementation performing inspection MUST NOT send any production notification.
+    locks: [with-open-prs]
+  - ir: rule:5.4/creative-inspection-and-previews:ef1a453e
+    digest: 0c69795a3e5a4d79030d87ba3aca2eec2a463d5ec700becc2eaf4426aad7eb64
+    quote: An implementation MAY retrieve creative documents, follow VAST wrappers and inspect referenced media as needed for its checks.
+    locks: [with-open-prs]
+  - ir: rule:5.4/creative-inspection-and-previews:52bc805d
+    digest: 7e44b6e44232a7723b21c5a2abe16ce69d4683eaa4864927f93537ee6166ac54
+    quote: The inspector MUST NOT request a destination or redirect that sends a production notification; it MAY use a separate inspection URL or the receiving service's documented test mode under the conditions below.
+    locks: [with-open-prs]
+  - ir: rule:5.4/creative-inspection-and-previews:f25ad098
+    digest: bc2a987c702de5bdff7700bd5bf69b649d35ed368bc859edf241f064049ab723
+    quote: A preview that executes creative or verification code MUST prevent that code from sending production notifications.
+    locks: [with-open-prs]
+  - ir: rule:5.4/creative-inspection-and-previews:11d3ac1e
+    digest: 524ecbbb6fe7bd31d2c4a2dd460aaff47b7ebb72d3279be34404e4555fef54b7
+    quote: Synthetic events MAY be sent to test endpoints, or through a test mode that the receiving service documents as excluding those events from production measurement and delivery diagnostics.
+    locks: [with-open-prs]
+  - ir: rule:5.4/creative-inspection-and-previews:fbc60b60
+    digest: d6952569ed589e6ba57b1286e7f37af7070cb21d616ffd328dafc314094a5f1c
+    quote: Inspection failures MUST be reported through diagnostics, without firing a production VAST `<Error>` or `verificationNotExecuted` URL.
+    locks: [with-open-prs]
+  - ir: rule:5.4/creative-inspection-and-previews:3a29e732
+    digest: f1f8201e1f0df8d05998a359fdec8d8d2f195b13a0f4473ea06c87f6c81bbb23
+    quote: An implementation MUST NOT report a check that was skipped or could not finish as passed.
+    locks: [with-open-prs]
+options:
+  - id: obligations
+    summary: "Each is an obligation of any implementation that inspects creative: what it may fetch and what it must not fire."
+  - id: informative
+    summary: The statements are guidance
+chosen: obligations
+rationale: >-
+  The statements say what an inspecting implementation sends, fetches,
+  requests, and reports, which no proposal or line item shows, and they use
+  MUST and MAY, so they are conformance content. They bind any implementation
+  that inspects, not one party. § 6.3 only points the CTV example to § 5.4,
+  with no statement of its own.
+feedback: >-
+  Say whether creative inspection belongs to the object model or to a separate
+  inspection specification that the AAMP messages reference.

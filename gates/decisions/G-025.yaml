@@ -1,0 +1,30 @@
+format: 1
+id: G-025
+date: 2026-10-26
+question: Is a field path a type of its own, by the rule that a primitive exists only where a value validates or is processed differently?
+decision: >-
+  No. The text gives `negotiation_history[]`'s `fields_changed[]` no grammar,
+  and names no form for its entries, so a field path validates like any ID a
+  list defines, here the specification's own field tables, and a receiver
+  compares it by exact equality, as it compares an external ID. `FieldPath`
+  is no primitive, its concept leaves the domain file, and `fields_changed[]`
+  is a list of `ExternalId` whose description says each entry names a field
+  by its path, as the tables write it, such as `pricing[].gross_rate`. The
+  shared structure is `ExternalId` and `Text`, and the twin tests count one
+  undeclared pair. A test checks the type and the description. The test
+  suite holds 324 tests, so its floor rises to 324.
+rationale: >-
+  A path grammar would make a field path validate differently, but only the
+  text can state one, and it doesn't, so a pattern drawn from the tables'
+  spelling would be a constraint no source states. With no grammar, the
+  type was a second name for one structure, kept apart only by a claim about
+  processing that no row makes. Every value the old type accepted is still
+  accepted, the duplication gates still fail an undeclared twin, and the test
+  floor rises, so no gate is weaker.
+retires:
+  - concept: field-path
+    reason: The text states no grammar for a field path, so it validates like any ID a list defines and is compared by exact equality; `fields_changed[]` is a list of ExternalId whose description says it names fields by their paths (D-027).
+accepts:
+  - { gate: duplication-kernel, fingerprint: db8d98897c28356ba55649ac2b10c28fce021ce9553545e679e685b8576513ed }
+  - { gate: duplication-model, fingerprint: 16dbf8172c15a6128ea6a136a6d0034457156cf4b3a5d399847cd571bc476dc0 }
+  - { gate: npm-test, fingerprint: 385b0b3fe5bde3f9abc79658710943e13621e0d0a7183797eb776d491c72644a }

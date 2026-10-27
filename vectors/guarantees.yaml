@@ -1,0 +1,16 @@
+# Rule vectors for § 5.7. Regenerate a digest with `npm run cite -- <rule ID>`.
+format: 1
+module: guarantees
+rules:
+  # `committed_metrics[]`: the seller declares a ceiling; a buyer MAY request above it.
+  - rule: rule:5.7:4994173c
+    digest: 49df828c767ca4a88396c5d0d566a026506a90ae23eec522d12849b159e6aff6
+    decision: D-034
+    valid:
+      - party: buyer
+        before: { committed_metrics: [{ metric: viewable_rate, value: 0.7, basis: "measure.example:impressions" }] }
+        after: { committed_metrics: [{ metric: viewable_rate, value: 0.8, basis: "measure.example:impressions" }] }
+    invalid:
+      - party: buyer
+        before: { committed_metrics: [{ metric: viewable_rate, value: 0.7, basis: "measure.example:impressions" }] }
+        after: { committed_metrics: [{ metric: viewable_rate, value: 0.6, basis: "measure.example:impressions" }] }

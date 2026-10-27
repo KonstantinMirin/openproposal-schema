@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/roundtrip/differences.schema.json",
+  "title": "OpenProposal round-trip differences",
+  "description": "The cells where the tables rendered from the model differ from the specification's, each with the decision record that makes the model differ there. The round-trip gate fails on a difference this file doesn't record, and on a recorded difference that no longer occurs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "differences"],
+  "properties": {
+    "format": {
+      "description": "Version of this format.",
+      "const": 1
+    },
+    "differences": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/difference" }
+    }
+  },
+  "$defs": {
+    "difference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["table", "row", "column", "spec", "model", "decision", "reason"],
+      "properties": {
+        "table": {
+          "description": "The IR table ID, such as `table:5.2:1`, or the distribution's section for one of its figures.",
+          "type": "string",
+          "minLength": 1
+        },
+        "row": {
+          "description": "The IR element of the row, or the model's name for a row the specification lacks, such as `Commitment.note`.",
+          "type": "string",
+          "minLength": 1
+        },
+        "column": {
+          "description": "The column's header, normalized; `*` for a row only one side has.",
+          "type": "string",
+          "minLength": 1
+        },
+        "spec": {
+          "description": "The specification's cell, as `npm run render` prints it. The gate compares it, normalized, with the cell.",
+          "type": "string"
+        },
+        "model": {
+          "description": "The cell rendered from the model, as `npm run render` prints it.",
+          "type": "string"
+        },
+        "decision": {
+          "description": "The decision record that makes the model differ. It covers an element the row rests on.",
+          "type": "string",
+          "pattern": "^D-[0-9]{3}$"
+        },
+        "reason": {
+          "description": "Why the model differs here, in one or two sentences.",
+          "type": "string",
+          "minLength": 12
+        },
+        "locks": {
+          "description": "Lock names the difference occurs on. Without it, it occurs on every lock.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" }
+        }
+      }
+    }
+  }
+}

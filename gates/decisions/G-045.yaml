@@ -1,0 +1,51 @@
+format: 1
+id: G-045
+date: 2026-10-26
+question: How does the ISO 4217 pin stay verifiable when SIX serves List One at a URL that names no version?
+decision: >-
+  A code list its keeper publishes outside git may name `copy`, the
+  repository's copy of the file its URL served at `version`, under
+  `kernel/sources/`. The kernel-check gate fails on such a list whose URL
+  names no version and that has no copy, on a copy whose SHA-256 isn't the
+  list's, and, for ISO 4217's List One, on a copy published on another date
+  or holding a code or a label the list doesn't, or missing one it does.
+  `kernel/sources/iso-4217-list-one-2026-09-17.xml` is the file SIX served
+  at 2026-09-17, whose SHA-256 is the pinned one; the IANA URL names its
+  release, so it needs no copy. Three fixtures drop the copy, drop a code,
+  and change the SHA-256. The other gates read the kernel's and the lists'
+  code, so their fingerprints change with no change to what they check.
+rationale: >-
+  The pin's SHA-256 named a file the URL would stop serving at the next
+  amendment. The gate adds checks and three fixtures and drops none, so no
+  gate is weaker.
+accepts:
+  - { gate: comparison, fingerprint: 0877acb5a437aecb5712fd4b71d83f2ea972151a4594fafbf0d9fb65ae61747d }
+  - { gate: constructors-check, fingerprint: 5d43c7569cc211f6d6593fecdba294bf60cf298af2fb9b68ae91f16d10c57c20 }
+  - { gate: convention-beside-reference, fingerprint: 56ef2103c7169923c89b6ee7d00855702dd9ec4b64d25bcda3d885abeb464fac }
+  - { gate: convention-inline, fingerprint: 4acde3195365ca2a6527cc5050f83a3b0da24ce5327938f2607bec2fdb2d3af0 }
+  - { gate: convention-keywords, fingerprint: 409bd31fc20ceca2d5b67544d71656fdd53a66e7fec5dcaccef7637b36d406e7 }
+  - { gate: convention-layers, fingerprint: ef1f84ee822aafdffe96ba79325431aef04521f156e9b3ade5276c5b0e583eca }
+  - { gate: convention-lists, fingerprint: d1713de9084d279bae45ea130b32402673c664b1c1fdd371f18c7665a59dbcff }
+  - { gate: convention-modules, fingerprint: 8584c4f51392ec4a5a9d3359c4e7bc3ce603261fab3f340ff1c21e9b2ca0d981 }
+  - { gate: convention-unions, fingerprint: 67083ba71dcdf67f6d74116e98f2b2f62c9d66619866e9b4a2b225b83bf5d406 }
+  - { gate: corpus-generates, fingerprint: 9b3dab0fcefe4c86158f4a8ae100feb29002ba61778d2e0f953691b054b5f2b5 }
+  - { gate: duplication-kernel, fingerprint: f470d7dfe02764bc018710161e8da8bd8e1ddaa5dd3a567bbe5f49e230441c0f }
+  - { gate: duplication-model, fingerprint: 7fe3a288bfbe26abd5fd665bcd52508201f8d7ec991c072c188362e6ea4ad10e }
+  - { gate: feedback, fingerprint: c593ca7e2e7e98f05940411f714a404b9395ecd02a72aea2e74d77bf6836170d }
+  - { gate: fidelity, fingerprint: e0058f4af9061bb2c8ebec9de7b8fcd878b63bdd836ef29937c29c515e2e7a7e }
+  - { gate: kernel-check, fingerprint: 06be59460631fe801147c16c234fc3d9644b90b12e8ef9dcf236ceacb13ff9e0 }
+  - { gate: kernel-engines, fingerprint: 19b897289755557ef65870cdc14ec28f1fcd293f3f7645e7d02cc512ef359726 }
+  - { gate: kernel-load, fingerprint: 45d40911f711c5ec9b4d34d16d82224afc1379913bb6a0a6d7ace5bb27c5b7cf }
+  - { gate: kernel-sources, fingerprint: 53a091a92bed6a3c48eb856d4d3d7e7a166340e430886d9bbf35d1199c324d70 }
+  - { gate: map-drift, fingerprint: 0eced2f2cb5334a0fd6287b99827cd23478f1236bd9b2f2e0ac46d03c42d2f06 }
+  - { gate: mapping-bijection, fingerprint: 622fb2ce98d7f2fd4b3e88de08337364e70a508788d4613fdbd0477ae01ffd96 }
+  - { gate: mapping-constructors, fingerprint: b1229a3a08042de39241a4ca2798c1cd995b5a5f7cc183d2d01c703d3b878ea2 }
+  - { gate: mapping-current, fingerprint: ea03baa08313d108fe08910eeb0c49b5245e0a793fb3d9b9f7478f3b17f78a5e }
+  - { gate: mapping-location, fingerprint: 7529d0527049b3fa144681f7c49b46dfbe6be710804d08b8251eec7b61ec26df }
+  - { gate: mapping-names, fingerprint: c79e44093c61dc74f37be48895701f38310998d1be81a9a3b1c12690e20d061c }
+  - { gate: mapping-rules, fingerprint: b6ced3b2b20aca25f20b502b54faaf70927770af22dbe0f569087aadd07105af }
+  - { gate: mapping-sources, fingerprint: f42f475cc385e7119d6b7dd8b986b4a725f3d0516dbbb52634ccba92e945624a }
+  - { gate: model-resolves, fingerprint: 51afee896300c776a7b6c4e92eb911ff457616b2eefab4d4735e4b795941a08e }
+  - { gate: nesting, fingerprint: cef71c2228bc2174b2d455d275ddb4df40d844ad7bfe6bcdc0b4dfa8529d18bd }
+  - { gate: schemas-emit, fingerprint: 27702f383dda2f4b0895234c4f394aad7ce9309bd969743197fad839a276f3a0 }
+  - { gate: sdk-generate, fingerprint: 91e841a90d73c0f289883a3931a2f432dacb28c6b2bc92ebe692a481a0a14a57 }

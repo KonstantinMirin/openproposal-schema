@@ -1,0 +1,17 @@
+format: 1
+id: G-047
+date: 2026-10-26
+question: What does the feedback test expect once the open-PRs lock merges #118 at 395ca83, which rewrites the § 5.4 and § 6.3 inspection statements?
+decision: >-
+  The feedback test expects 26 MUST statements that name no field with the
+  open PRs, down from 28: #118's update merges two § 5.4 statements into one,
+  adds the landing-page MUST NOT, and leaves § 6.3 with a pointer to § 5.4
+  and no statement. The test also checks that no § 6.3 row is an obligation,
+  that the landing-page statement binds an implementation, and that the
+  inspection decision rests on § 5.4 alone.
+rationale: >-
+  The specification the lock pins changed, so the count the test expects
+  follows it. The test keeps every assertion it had and adds three, so no
+  gate is weaker.
+accepts:
+  - { gate: npm-test, fingerprint: f1db293623c281020372360982b9ebe427538a65af9acd76310a6fb5697c3b9b }

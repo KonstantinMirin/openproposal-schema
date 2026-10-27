@@ -1,0 +1,2471 @@
+{
+  "counts": {
+    "by_kind": {
+      "array_suffix_mismatch": 6,
+      "duplicate_field_disagrees": 1,
+      "enum_without_values": 1,
+      "expression_value_unknown": 2,
+      "key_presence_unstated": 2,
+      "key_required_is_marker": 1,
+      "marker_undefined": 1,
+      "must_without_field": 26,
+      "name_reused_with_different_values": 2,
+      "object_without_structure": 7,
+      "option_shape_missing": 5,
+      "presence_unstated": 2,
+      "unnumbered_heading": 1,
+      "unresolved_identifier": 39,
+      "value_set_duplicate": 2,
+      "value_set_subset": 2
+    },
+    "by_verdict": {
+      "accepted": 26,
+      "false_positive": 1,
+      "open": 73
+    },
+    "open": 73,
+    "total": 100
+  },
+  "findings": [
+    {
+      "details": {
+        "definitions": {
+          "field:4.1:status": {
+            "marker": "derived",
+            "type": "Enum",
+            "values": [
+              "agreed | draft | expired | published | under_review | withdrawn"
+            ]
+          },
+          "field:5.1:status": {
+            "marker": "derived",
+            "type": "Enum",
+            "values": [
+              "agreed | draft | expired | published | sold_out | under_review | withdrawn"
+            ]
+          }
+        },
+        "differs": [
+          "values"
+        ]
+      },
+      "disposition": null,
+      "id": "duplicate_field_disagrees:status",
+      "kind": "duplicate_field_disagrees",
+      "locs": [
+        {
+          "line": 225,
+          "row": 7,
+          "section": "4.1",
+          "table": "table:4.1:1"
+        },
+        {
+          "line": 261,
+          "row": 2,
+          "section": "5.1",
+          "table": "table:5.1:1"
+        }
+      ],
+      "message": "`status` is defined 2 times, and the definitions differ in values.",
+      "subjects": [
+        "field:4.1:status",
+        "field:5.1:status"
+      ]
+    },
+    {
+      "details": {
+        "uses": {
+          "field:5.5:frequency_cap#description/object:1/basis": "device | household | listener",
+          "key:5.6.1:commitment.basis": "spend | units"
+        }
+      },
+      "disposition": null,
+      "id": "name_reused_with_different_values:basis",
+      "kind": "name_reused_with_different_values",
+      "locs": [
+        {
+          "line": 569,
+          "row": 3,
+          "section": "5.6.1",
+          "table": "table:5.6.1:1"
+        },
+        {
+          "line": 464,
+          "row": 5,
+          "section": "5.5",
+          "table": "table:5.5:1"
+        }
+      ],
+      "message": "`basis` names 2 different value sets.",
+      "subjects": [
+        "key:5.6.1:commitment.basis",
+        "field:5.5:frequency_cap#description/object:1/basis"
+      ]
+    },
+    {
+      "details": {
+        "uses": {
+          "field:4.1:type": "custom | standard",
+          "field:5.10:agreement_ref#description/object:1/type": "annual | master_services | other | upfront",
+          "field:5.6:availability#description/object:1/type": "forecast | reservable",
+          "field:5.8:required_credentials[]#description/object:1/type": "custom | dsp_seat | iab_registry"
+        }
+      },
+      "disposition": null,
+      "id": "name_reused_with_different_values:type",
+      "kind": "name_reused_with_different_values",
+      "locs": [
+        {
+          "line": 223,
+          "row": 5,
+          "section": "4.1",
+          "table": "table:4.1:1"
+        },
+        {
+          "line": 550,
+          "row": 9,
+          "section": "5.6",
+          "table": "table:5.6:1"
+        },
+        {
+          "line": 655,
+          "row": 2,
+          "section": "5.8",
+          "table": "table:5.8:1"
+        },
+        {
+          "line": 681,
+          "row": 2,
+          "section": "5.10",
+          "table": "table:5.10:1"
+        }
+      ],
+      "message": "`type` names 4 different value sets.",
+      "subjects": [
+        "field:4.1:type",
+        "field:5.6:availability#description/object:1/type",
+        "field:5.8:required_credentials[]#description/object:1/type",
+        "field:5.10:agreement_ref#description/object:1/type"
+      ]
+    },
+    {
+      "details": {
+        "values": [
+          "0",
+          "1"
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_duplicate:0 | 1",
+      "kind": "value_set_duplicate",
+      "locs": [
+        {
+          "line": 359,
+          "row": 1,
+          "section": "5.2.2",
+          "table": "table:5.2.2:1"
+        },
+        {
+          "line": 360,
+          "row": 2,
+          "section": "5.2.2",
+          "table": "table:5.2.2:1"
+        },
+        {
+          "line": 362,
+          "row": 4,
+          "section": "5.2.2",
+          "table": "table:5.2.2:1"
+        }
+      ],
+      "message": "The value set 0 | 1 is declared 3 times.",
+      "subjects": [
+        "key:5.2.2:placement.reward#meaning/values:1",
+        "key:5.2.2:placement.instl#meaning/values:1",
+        "key:5.2.2:placement.skip#meaning/values:1"
+      ]
+    },
+    {
+      "details": {
+        "values": [
+          "android",
+          "fire_tv",
+          "ios",
+          "roku",
+          "samsung_tv"
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_duplicate:android | fire_tv | ios | roku | samsung_tv",
+      "kind": "value_set_duplicate",
+      "locs": [
+        {
+          "line": 314,
+          "row": 1,
+          "section": "5.2",
+          "table": "table:5.2:2"
+        },
+        {
+          "line": 488,
+          "section": "5.5"
+        }
+      ],
+      "message": "The value set android | fire_tv | ios | roku | samsung_tv is declared 2 times.",
+      "subjects": [
+        "key:5.2:apps[].platform#meaning/values:1",
+        "block:5.5:3/values:1"
+      ]
+    },
+    {
+      "details": {
+        "subset": [
+          "agreed",
+          "draft",
+          "expired",
+          "published",
+          "under_review",
+          "withdrawn"
+        ],
+        "supersets": [
+          {
+            "lists": [
+              "field:5.1:status#description/values:1"
+            ],
+            "values": [
+              "agreed",
+              "draft",
+              "expired",
+              "published",
+              "sold_out",
+              "under_review",
+              "withdrawn"
+            ]
+          }
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_subset:agreed | draft | expired | published | under_review | withdrawn",
+      "kind": "value_set_subset",
+      "locs": [
+        {
+          "line": 225,
+          "row": 7,
+          "section": "4.1",
+          "table": "table:4.1:1"
+        }
+      ],
+      "message": "The value set agreed | draft | expired | published | under_review | withdrawn is a strict subset of agreed | draft | expired | published | sold_out | under_review | withdrawn.",
+      "subjects": [
+        "field:4.1:status#description/values:1",
+        "field:5.1:status#description/values:1"
+      ]
+    },
+    {
+      "details": {
+        "subset": [
+          "converted",
+          "expired",
+          "released"
+        ],
+        "supersets": [
+          {
+            "lists": [
+              "key:5.6.2:hold_status.state#meaning/values:1"
+            ],
+            "values": [
+              "converted",
+              "expired",
+              "held",
+              "none",
+              "released",
+              "requested"
+            ]
+          }
+        ]
+      },
+      "disposition": {
+        "reason": "The § 5.6.2 transitions sentence lists the end states of `state`; it doesn't declare a second value set.",
+        "verdict": "false_positive"
+      },
+      "id": "value_set_subset:converted | expired | released",
+      "kind": "value_set_subset",
+      "locs": [
+        {
+          "line": 604,
+          "section": "5.6.2"
+        }
+      ],
+      "message": "The value set converted | expired | released is a strict subset of converted | expired | held | none | released | requested.",
+      "subjects": [
+        "block:5.6.2:1/values:1",
+        "key:5.6.2:hold_status.state#meaning/values:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": {
+        "reason": "AdCOM 1.0 distribution channel name, cited in the § 5.2.1 environments table.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:App",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 333,
+          "row": 3,
+          "section": "5.2.1",
+          "table": "table:5.2.1:1"
+        },
+        {
+          "line": 334,
+          "row": 4,
+          "section": "5.2.1",
+          "table": "table:5.2.1:1"
+        }
+      ],
+      "message": "`App` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.2.1:environments.app_mobile#distribution-channel",
+        "def:5.2.1:environments.ctv#distribution-channel"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "OpenRTB 2.6 object name, cited in the § 5.2.2 mapping note.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:Audio",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 369,
+          "section": "5.2.2"
+        }
+      ],
+      "message": "`Audio` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.2.2:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 3
+      },
+      "disposition": {
+        "reason": "AdCOM 1.0 object name, cited in § 5.1.1 and § 5.2.2.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:AudioPlacement",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 281,
+          "row": 2,
+          "section": "5.1.1",
+          "table": "table:5.1.1:1"
+        },
+        {
+          "line": 345,
+          "section": "5.2.2"
+        },
+        {
+          "line": 370,
+          "section": "5.2.2"
+        }
+      ],
+      "message": "`AudioPlacement` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.1.1:channel.audio#condition",
+        "block:5.2.2:1",
+        "block:5.2.2:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": {
+        "reason": "AdCOM 1.0 object name, cited in § 5.1.1 and § 5.2.2.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:DisplayPlacement",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 285,
+          "row": 6,
+          "section": "5.1.1",
+          "table": "table:5.1.1:1"
+        },
+        {
+          "line": 343,
+          "section": "5.2.2"
+        }
+      ],
+      "message": "`DisplayPlacement` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.1.1:channel.display#condition",
+        "block:5.2.2:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "AdCOM 1.0 attribute, cited as the native-ad condition in § 5.1.1.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:DisplayPlacement.nativefmt",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 283,
+          "row": 4,
+          "section": "5.1.1",
+          "table": "table:5.1.1:1"
+        }
+      ],
+      "message": "`DisplayPlacement.nativefmt` resolves to no table row, key, or table-declared value; no table defines `DisplayPlacement`.",
+      "subjects": [
+        "def:5.1.1:channel.native#condition"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": {
+        "reason": "AdCOM 1.0 distribution channel name, cited in § 5.1.1 and § 5.2.1.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:Dooh",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 280,
+          "row": 1,
+          "section": "5.1.1",
+          "table": "table:5.1.1:1"
+        },
+        {
+          "line": 335,
+          "row": 5,
+          "section": "5.2.1",
+          "table": "table:5.2.1:1"
+        }
+      ],
+      "message": "`Dooh` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.1.1:channel.dooh#condition",
+        "def:5.2.1:environments.dooh#distribution-channel"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "HTTP response header (RFC 9110), required on the § 2.3 manifest.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:ETag",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 131,
+          "section": "2.3"
+        }
+      ],
+      "message": "`ETag` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.3:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "OpenRTB 2.6 object name, cited as the source of the § 5.2.2 keys.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:Imp",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 346,
+          "section": "5.2.2"
+        }
+      ],
+      "message": "`Imp` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.2.2:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "HTTP response header (RFC 9110), required on the § 2.3 manifest.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:Last-Modified",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 131,
+          "section": "2.3"
+        }
+      ],
+      "message": "`Last-Modified` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.3:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "OpenDirect 2.1 attribute, cited in § 5.5 for the calendar period of `frequency_cap.period`.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:Line.frequencyinterval",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 534,
+          "section": "5.5"
+        }
+      ],
+      "message": "`Line.frequencyinterval` resolves to no table row, key, or table-declared value; no table defines `Line`.",
+      "subjects": [
+        "block:5.5:13"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": {
+        "reason": "AdCOM 1.0 object name, cited as the source of the § 5.2.2 keys.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:Placement",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 272,
+          "section": "5.1.1"
+        },
+        {
+          "line": 342,
+          "section": "5.2.2"
+        }
+      ],
+      "message": "`Placement` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.1.1:1",
+        "block:5.2.2:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 3
+      },
+      "disposition": {
+        "reason": "AdCOM 1.0 distribution channel name, cited in the § 5.2.1 environments table.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:Site",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 331,
+          "row": 1,
+          "section": "5.2.1",
+          "table": "table:5.2.1:1"
+        },
+        {
+          "line": 332,
+          "row": 2,
+          "section": "5.2.1",
+          "table": "table:5.2.1:1"
+        },
+        {
+          "line": 334,
+          "row": 4,
+          "section": "5.2.1",
+          "table": "table:5.2.1:1"
+        }
+      ],
+      "message": "`Site` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.2.1:environments.web_desktop#distribution-channel",
+        "def:5.2.1:environments.web_mobile#distribution-channel",
+        "def:5.2.1:environments.ctv#distribution-channel"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": {
+        "reason": "AdCOM 1.0 object name, cited in § 5.1.1 and § 5.2.2.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:VideoPlacement",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 284,
+          "row": 5,
+          "section": "5.1.1",
+          "table": "table:5.1.1:1"
+        },
+        {
+          "line": 344,
+          "section": "5.2.2"
+        }
+      ],
+      "message": "`VideoPlacement` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.1.1:channel.video#condition",
+        "block:5.2.2:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "AdCOM 1.0 attribute, cited to map `plcmt` in § 5.2.2.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:VideoPlacement.ptype",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 369,
+          "section": "5.2.2"
+        }
+      ],
+      "message": "`VideoPlacement.ptype` resolves to no table row, key, or table-declared value; no table defines `VideoPlacement`.",
+      "subjects": [
+        "block:5.2.2:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:agreement",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 680,
+          "row": 1,
+          "section": "5.10",
+          "table": "table:5.10:1"
+        }
+      ],
+      "message": "`agreement` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "field:5.10:external_references[]#description"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 5
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:allowed[]",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 192,
+          "section": "3.2"
+        },
+        {
+          "line": 460,
+          "row": 1,
+          "section": "5.5",
+          "table": "table:5.5:1"
+        },
+        {
+          "line": 461,
+          "row": 2,
+          "section": "5.5",
+          "table": "table:5.5:1"
+        },
+        {
+          "line": 462,
+          "row": 3,
+          "section": "5.5",
+          "table": "table:5.5:1"
+        },
+        {
+          "line": 512,
+          "section": "5.5"
+        }
+      ],
+      "message": "`allowed[]` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:3.2:1",
+        "field:5.5:geo#description",
+        "field:5.5:device#description",
+        "field:5.5:daypart#description",
+        "block:5.5:10"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "OpenRTB 2.6 `app` object, cited as the source of the App identity keys.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:app",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 309,
+          "section": "5.2"
+        }
+      ],
+      "message": "`app` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.2:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": {
+        "reason": "IAB Tech Lab app-ads.txt file name, not an OpenProposal field.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:app-ads.txt",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 317,
+          "row": 4,
+          "section": "5.2",
+          "table": "table:5.2:2"
+        },
+        {
+          "line": 319,
+          "section": "5.2"
+        }
+      ],
+      "message": "`app-ads.txt` resolves to no table row, key, or table-declared value; no table defines `app-ads`.",
+      "subjects": [
+        "key:5.2:apps[].domain#meaning",
+        "block:5.2:2"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": {
+        "reason": "OpenRTB 2.6 attribute, cited for `bundle` in § 5.2 and § 5.5.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:app.bundle",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 315,
+          "row": 2,
+          "section": "5.2",
+          "table": "table:5.2:2"
+        },
+        {
+          "line": 488,
+          "section": "5.5"
+        }
+      ],
+      "message": "`app.bundle` resolves to no table row, key, or table-declared value; no table defines `app`.",
+      "subjects": [
+        "key:5.2:apps[].bundle#meaning",
+        "block:5.5:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "OpenRTB 2.6 attribute, cited for `domain` in § 5.2.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:app.domain",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 317,
+          "row": 4,
+          "section": "5.2",
+          "table": "table:5.2:2"
+        }
+      ],
+      "message": "`app.domain` resolves to no table row, key, or table-declared value; no table defines `app`.",
+      "subjects": [
+        "key:5.2:apps[].domain#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "OpenRTB 2.6 attribute, cited for `storeurl` in § 5.2.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:app.storeurl",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 316,
+          "row": 3,
+          "section": "5.2",
+          "table": "table:5.2:2"
+        }
+      ],
+      "message": "`app.storeurl` resolves to no table row, key, or table-declared value; no table defines `app`.",
+      "subjects": [
+        "key:5.2:apps[].storeurl#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "§ 3.1 names an earlier draft's field to say that `pricing` replaces it.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:audience_pricing",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 186,
+          "section": "3.1"
+        }
+      ],
+      "message": "`audience_pricing` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:3.1:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:best_effort",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 493,
+          "section": "5.5"
+        },
+        {
+          "line": 497,
+          "section": "5.5"
+        }
+      ],
+      "message": "`best_effort` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.5:5",
+        "block:5.5:7"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 8
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:catalog_ref",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 92,
+          "section": "2.1"
+        },
+        {
+          "line": 98,
+          "section": "2.1"
+        },
+        {
+          "line": 111,
+          "section": "2.2"
+        },
+        {
+          "line": 112,
+          "section": "2.2"
+        },
+        {
+          "line": 118,
+          "section": "2.2"
+        },
+        {
+          "line": 137,
+          "section": "2.3"
+        },
+        {
+          "line": 499,
+          "section": "5.5"
+        },
+        {
+          "line": 787,
+          "section": "8"
+        }
+      ],
+      "message": "`catalog_ref` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.1:6",
+        "block:2.1:8",
+        "block:2.2:2",
+        "block:2.2:3",
+        "block:2.2:6",
+        "block:2.3:6",
+        "block:5.5:8",
+        "block:8:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:completion_rate",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 645,
+          "row": 1,
+          "section": "5.7",
+          "table": "table:5.7:1"
+        },
+        {
+          "line": 790,
+          "section": "8"
+        }
+      ],
+      "message": "`completion_rate` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "field:5.7:committed_metrics[]#description",
+        "block:8:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:deal_id",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 49,
+          "row": 2,
+          "section": "1.1",
+          "table": "table:1.1:1"
+        }
+      ],
+      "message": "`deal_id` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:1.1:2#downstream-standard"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:full_url",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 128,
+          "section": "2.3"
+        },
+        {
+          "line": 145,
+          "section": "2.3"
+        }
+      ],
+      "message": "`full_url` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.3:2",
+        "block:2.3:9"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:has_requires",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 84,
+          "section": "2.1"
+        },
+        {
+          "line": 89,
+          "section": "2.1"
+        }
+      ],
+      "message": "`has_requires` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.1:3",
+        "block:2.1:5"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "OpenRTB 2.6 attribute, cited in § 5.1.1 as a placement attribute that doesn't change the channel.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:imp.instl",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 293,
+          "section": "5.1.1"
+        }
+      ],
+      "message": "`imp.instl` resolves to no table row, key, or table-declared value; no table defines `imp`.",
+      "subjects": [
+        "block:5.1.1:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "OpenRTB 2.6 attribute, cited in § 5.1.1 as a placement attribute that doesn't change the channel.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:imp.rwdd",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 293,
+          "section": "5.1.1"
+        }
+      ],
+      "message": "`imp.rwdd` resolves to no table row, key, or table-declared value; no table defines `imp`.",
+      "subjects": [
+        "block:5.1.1:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:io",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 680,
+          "row": 1,
+          "section": "5.10",
+          "table": "table:5.10:1"
+        }
+      ],
+      "message": "`io` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "field:5.10:external_references[]#description"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "§ 5.10 cites a Prisma key as an example of a buyer-owned external reference.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:io_id",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 680,
+          "row": 1,
+          "section": "5.10",
+          "table": "table:5.10:1"
+        }
+      ],
+      "message": "`io_id` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "field:5.10:external_references[]#description"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "§ 8 open question 5 asks whether to add this field; it doesn't exist yet.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:min_line_items",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 796,
+          "section": "8"
+        }
+      ],
+      "message": "`min_line_items` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:8:6"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "OpenRTB 2.6 attribute name, cited in the § 5.2.2 mapping note.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:playbackmethod",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 370,
+          "section": "5.2.2"
+        }
+      ],
+      "message": "`playbackmethod` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.2.2:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:pre_serve",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 493,
+          "section": "5.5"
+        }
+      ],
+      "message": "`pre_serve` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.5:5"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:2.3:2/object:1"
+        ],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:proposals[]",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 127,
+          "section": "2.3"
+        }
+      ],
+      "message": "`proposals[]` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "block:2.3:2"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:remedy_terms",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 647,
+          "row": 3,
+          "section": "5.7",
+          "table": "table:5.7:1"
+        }
+      ],
+      "message": "`remedy_terms` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "field:5.7:shortfall_remedy#description"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "VAST event name, cited by the creative inspection rules in § 5.4.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:verificationNotExecuted",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 442,
+          "section": "5.4/creative-inspection-and-previews"
+        }
+      ],
+      "message": "`verificationNotExecuted` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.4/creative-inspection-and-previews:6"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 3
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:viewable_rate",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 384,
+          "section": "5.2.2"
+        },
+        {
+          "line": 645,
+          "row": 1,
+          "section": "5.7",
+          "table": "table:5.7:1"
+        },
+        {
+          "line": 790,
+          "section": "8"
+        }
+      ],
+      "message": "`viewable_rate` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.2.2:6",
+        "field:5.7:committed_metrics[]#description",
+        "block:8:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_as": [
+          "apps"
+        ]
+      },
+      "disposition": null,
+      "id": "array_suffix_mismatch:apps[]",
+      "kind": "array_suffix_mismatch",
+      "locs": [
+        {
+          "line": 308,
+          "section": "5.2"
+        }
+      ],
+      "message": "`apps[]` is written without the `[]` its definition carries, or with one it lacks: `apps`.",
+      "subjects": [
+        "block:5.2:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_as": [
+          "best_for[]"
+        ]
+      },
+      "disposition": null,
+      "id": "array_suffix_mismatch:best_for",
+      "kind": "array_suffix_mismatch",
+      "locs": [
+        {
+          "line": 743,
+          "section": "7"
+        }
+      ],
+      "message": "`best_for` is written without the `[]` its definition carries, or with one it lacks: `best_for[]`.",
+      "subjects": [
+        "block:7:2"
+      ]
+    },
+    {
+      "details": {
+        "defined_as": [
+          "environments"
+        ]
+      },
+      "disposition": null,
+      "id": "array_suffix_mismatch:environments[]",
+      "kind": "array_suffix_mismatch",
+      "locs": [
+        {
+          "line": 801,
+          "section": "8"
+        }
+      ],
+      "message": "`environments[]` is written without the `[]` its definition carries, or with one it lacks: `environments`.",
+      "subjects": [
+        "block:8:8"
+      ]
+    },
+    {
+      "details": {
+        "defined_as": [
+          "exclusions_accepted.types[]"
+        ]
+      },
+      "disposition": null,
+      "id": "array_suffix_mismatch:exclusions_accepted.types",
+      "kind": "array_suffix_mismatch",
+      "locs": [
+        {
+          "line": 495,
+          "section": "5.5"
+        }
+      ],
+      "message": "`exclusions_accepted.types` is written without the `[]` its definition carries, or with one it lacks: `exclusions_accepted.types[]`.",
+      "subjects": [
+        "block:5.5:6"
+      ]
+    },
+    {
+      "details": {
+        "defined_as": [
+          "pricing[].cost_method"
+        ]
+      },
+      "disposition": null,
+      "id": "array_suffix_mismatch:pricing.cost_method",
+      "kind": "array_suffix_mismatch",
+      "locs": [
+        {
+          "line": 82,
+          "section": "2.1"
+        }
+      ],
+      "message": "`pricing.cost_method` is written without the `[]` its definition carries, or with one it lacks: `pricing[].cost_method`.",
+      "subjects": [
+        "block:2.1:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_as": [
+          "pricing[].gross_rate"
+        ]
+      },
+      "disposition": null,
+      "id": "array_suffix_mismatch:pricing.gross_rate",
+      "kind": "array_suffix_mismatch",
+      "locs": [
+        {
+          "line": 82,
+          "section": "2.1"
+        }
+      ],
+      "message": "`pricing.gross_rate` is written without the `[]` its definition carries, or with one it lacks: `pricing[].gross_rate`.",
+      "subjects": [
+        "block:2.1:3"
+      ]
+    },
+    {
+      "details": {
+        "declared": []
+      },
+      "disposition": null,
+      "id": "expression_value_unknown:cost_method: flat",
+      "kind": "expression_value_unknown",
+      "locs": [
+        {
+          "line": 625,
+          "section": "5.6.3"
+        }
+      ],
+      "message": "`cost_method: flat` uses a value, but the field declares no value list to check it against.",
+      "subjects": [
+        "block:5.6.3:1"
+      ]
+    },
+    {
+      "details": {
+        "declared": []
+      },
+      "disposition": null,
+      "id": "expression_value_unknown:role: agreement",
+      "kind": "expression_value_unknown",
+      "locs": [
+        {
+          "line": 681,
+          "row": 2,
+          "section": "5.10",
+          "table": "table:5.10:1"
+        }
+      ],
+      "message": "`role: agreement` uses a value, but the field declares no value list to check it against.",
+      "subjects": [
+        "field:5.10:agreement_ref#description"
+      ]
+    },
+    {
+      "details": {
+        "description": "Buyer and seller assent records and timestamps for the binding version. Signature scheme is WS1",
+        "marker": "derived",
+        "type": "Object"
+      },
+      "disposition": null,
+      "id": "object_without_structure:field:4.1:assent",
+      "kind": "object_without_structure",
+      "locs": [
+        {
+          "line": 226,
+          "row": 8,
+          "section": "4.1",
+          "table": "table:4.1:1"
+        }
+      ],
+      "message": "`assent` is typed Object, and nothing in the specification gives its structure.",
+      "subjects": [
+        "field:4.1:assent"
+      ]
+    },
+    {
+      "details": {
+        "description": "Structured detail at media-kit depth",
+        "marker": "seller-set",
+        "type": "String/Object"
+      },
+      "disposition": null,
+      "id": "object_without_structure:field:4.2:specifications",
+      "kind": "object_without_structure",
+      "locs": [
+        {
+          "line": 244,
+          "row": 2,
+          "section": "4.2",
+          "table": "table:4.2:1"
+        }
+      ],
+      "message": "`specifications` is typed String/Object, and nothing in the specification gives its structure.",
+      "subjects": [
+        "field:4.2:specifications"
+      ]
+    },
+    {
+      "details": {
+        "description": "Shows, series, sections, network verticals",
+        "marker": "seller-set",
+        "type": "Object"
+      },
+      "disposition": null,
+      "id": "object_without_structure:field:5.2:content_detail",
+      "kind": "object_without_structure",
+      "locs": [
+        {
+          "line": 304,
+          "row": 2,
+          "section": "5.2",
+          "table": "table:5.2:1"
+        }
+      ],
+      "message": "`content_detail` is typed Object, and nothing in the specification gives its structure.",
+      "subjects": [
+        "field:5.2:content_detail"
+      ]
+    },
+    {
+      "details": {
+        "description": "Review SLA and revision policy",
+        "marker": "seller-set",
+        "type": "Object"
+      },
+      "disposition": null,
+      "id": "object_without_structure:field:5.4:approval",
+      "kind": "object_without_structure",
+      "locs": [
+        {
+          "line": 407,
+          "row": 7,
+          "section": "5.4",
+          "table": "table:5.4:1"
+        }
+      ],
+      "message": "`approval` is typed Object, and nothing in the specification gives its structure.",
+      "subjects": [
+        "field:5.4:approval"
+      ]
+    },
+    {
+      "details": {
+        "description": "As defined by the referenced format registry entry. OpenProposal does not hardcode a shape per channel",
+        "marker": "seller-set",
+        "type": "Object"
+      },
+      "disposition": null,
+      "id": "object_without_structure:field:5.4:specs",
+      "kind": "object_without_structure",
+      "locs": [
+        {
+          "line": 402,
+          "row": 2,
+          "section": "5.4",
+          "table": "table:5.4:1"
+        }
+      ],
+      "message": "`specs` is typed Object, and nothing in the specification gives its structure.",
+      "subjects": [
+        "field:5.4:specs"
+      ]
+    },
+    {
+      "details": {
+        "description": "Accepted wrapper types and VAST versions",
+        "marker": "seller-set",
+        "type": "Object"
+      },
+      "disposition": null,
+      "id": "object_without_structure:field:5.4:third_party_tags",
+      "kind": "object_without_structure",
+      "locs": [
+        {
+          "line": 403,
+          "row": 3,
+          "section": "5.4",
+          "table": "table:5.4:1"
+        }
+      ],
+      "message": "`third_party_tags` is typed Object, and nothing in the specification gives its structure.",
+      "subjects": [
+        "field:5.4:third_party_tags"
+      ]
+    },
+    {
+      "details": {
+        "description": "Content and category restrictions on creative",
+        "marker": "seller-set",
+        "type": "Object"
+      },
+      "disposition": null,
+      "id": "object_without_structure:field:5.6:creative_policy",
+      "kind": "object_without_structure",
+      "locs": [
+        {
+          "line": 557,
+          "row": 16,
+          "section": "5.6",
+          "table": "table:5.6:1"
+        }
+      ],
+      "message": "`creative_policy` is typed Object, and nothing in the specification gives its structure.",
+      "subjects": [
+        "field:5.6:creative_policy"
+      ]
+    },
+    {
+      "details": {
+        "description": "`available[]` of registry format ids namespaced by channel (`display/300x250`, `audio/host-read-30s`), `included[]`, `pricing`, `max_select`",
+        "marker": "selectable"
+      },
+      "disposition": null,
+      "id": "option_shape_missing:field:5.4:formats",
+      "kind": "option_shape_missing",
+      "locs": [
+        {
+          "line": 401,
+          "row": 1,
+          "section": "5.4",
+          "table": "table:5.4:1"
+        }
+      ],
+      "message": "`formats` is `selectable`, but its options have no shape or value list; only prose describes them.",
+      "subjects": [
+        "field:5.4:formats"
+      ]
+    },
+    {
+      "details": {
+        "description": "`allowed[]` of device categories",
+        "marker": "settable"
+      },
+      "disposition": null,
+      "id": "option_shape_missing:field:5.5:device",
+      "kind": "option_shape_missing",
+      "locs": [
+        {
+          "line": 461,
+          "row": 2,
+          "section": "5.5",
+          "table": "table:5.5:1"
+        }
+      ],
+      "message": "`device` is `settable`, but its options have no shape or value list; only prose describes them.",
+      "subjects": [
+        "field:5.5:device"
+      ]
+    },
+    {
+      "details": {
+        "description": "`available[]` of geo codes with `included[]`, `pricing` deltas and `max_select` (§ 3.1), for a line item priced by market. A `geo` that declares only `allowed[]` is `settable`. See below",
+        "marker": "selectable"
+      },
+      "disposition": null,
+      "id": "option_shape_missing:field:5.5:geo",
+      "kind": "option_shape_missing",
+      "locs": [
+        {
+          "line": 460,
+          "row": 1,
+          "section": "5.5",
+          "table": "table:5.5:1"
+        }
+      ],
+      "message": "`geo` is `selectable`, but its options have no shape or value list; only prose describes them.",
+      "subjects": [
+        "field:5.5:geo"
+      ]
+    },
+    {
+      "details": {
+        "description": "`available[]` of cancellation rights with `pricing` per option",
+        "marker": "selectable"
+      },
+      "disposition": null,
+      "id": "option_shape_missing:field:5.6:cancellation_policy",
+      "kind": "option_shape_missing",
+      "locs": [
+        {
+          "line": 555,
+          "row": 14,
+          "section": "5.6",
+          "table": "table:5.6:1"
+        }
+      ],
+      "message": "`cancellation_policy` is `selectable`, but its options have no shape or value list; only prose describes them.",
+      "subjects": [
+        "field:5.6:cancellation_policy"
+      ]
+    },
+    {
+      "details": {
+        "description": "`available[]` of exclusivity terms with `pricing`",
+        "marker": "selectable"
+      },
+      "disposition": null,
+      "id": "option_shape_missing:field:5.6:exclusivity",
+      "kind": "option_shape_missing",
+      "locs": [
+        {
+          "line": 556,
+          "row": 15,
+          "section": "5.6",
+          "table": "table:5.6:1"
+        }
+      ],
+      "message": "`exclusivity` is `selectable`, but its options have no shape or value list; only prose describes them.",
+      "subjects": [
+        "field:5.6:exclusivity"
+      ]
+    },
+    {
+      "details": {
+        "description": "CPM, CPC, flat, etc."
+      },
+      "disposition": null,
+      "id": "enum_without_values:field:5.6:pricing[].cost_method",
+      "kind": "enum_without_values",
+      "locs": [
+        {
+          "line": 543,
+          "row": 2,
+          "section": "5.6",
+          "table": "table:5.6:1"
+        }
+      ],
+      "message": "`pricing[].cost_method` is typed Enum, but its row declares no backticked value list.",
+      "subjects": [
+        "field:5.6:pricing[].cost_method"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2.1:2e481f6f",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 77,
+          "section": "2.1"
+        }
+      ],
+      "message": "A MUST statement in § 2.1 names no field or key: \"It MUST contain, per line item:\"",
+      "subjects": [
+        "rule:2.1:2e481f6f"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2.1:2f9d603c",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 99,
+          "section": "2.1"
+        }
+      ],
+      "message": "A MUST statement in § 2.1 names no field or key: \"A full fetch MUST return it.\"",
+      "subjects": [
+        "rule:2.1:2f9d603c"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "catalog_ref"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2.1:8d97860b",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 92,
+          "section": "2.1"
+        }
+      ],
+      "message": "A MUST statement in § 2.1 names no field or key: \"`catalog_ref` values MUST remain unresolved in a summary.\"",
+      "subjects": [
+        "rule:2.1:8d97860b"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "agreed",
+          "catalog_ref"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2.2:06ccee9f",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 118,
+          "section": "2.2"
+        }
+      ],
+      "message": "A MUST statement in § 2.2 names no field or key: \"When a proposal reaches status `agreed`, every `catalog_ref` MUST be replaced by its resolved value in the stored record, so the committed artifact is self-contained and immutable.\"",
+      "subjects": [
+        "rule:2.2:06ccee9f"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2.2:3916a8f2",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 115,
+          "section": "2.2"
+        }
+      ],
+      "message": "A MUST statement in § 2.2 names no field or key: \"References MUST be version-pinned.\"",
+      "subjects": [
+        "rule:2.2:3916a8f2"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "catalog_ref"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2.2:696ee27b",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 111,
+          "section": "2.2"
+        }
+      ],
+      "message": "A MUST statement in § 2.2 names no field or key: \"A field MUST carry either an inline value or a `catalog_ref`, never both.\"",
+      "subjects": [
+        "rule:2.2:696ee27b"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2.2:bee40541",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 117,
+          "section": "2.2"
+        }
+      ],
+      "message": "A MUST statement in § 2.2 names no field or key: \"References MUST resolve during discovery.\"",
+      "subjects": [
+        "rule:2.2:bee40541"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2.2:fd522468",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 115,
+          "section": "2.2"
+        }
+      ],
+      "message": "A MUST statement in § 2.2 names no field or key: \"A catalog entry MUST be immutable once referenced; a change creates a new version.\"",
+      "subjects": [
+        "rule:2.2:fd522468"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2.3:59a4ca91",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 135,
+          "section": "2.3"
+        }
+      ],
+      "message": "A MUST statement in § 2.3 names no field or key: \"Manifest entries MUST match the current version of each proposal.\"",
+      "subjects": [
+        "rule:2.3:59a4ca91"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2:4ae8f775",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 62,
+          "section": "2"
+        }
+      ],
+      "message": "A MUST NOT statement in § 2 names no field or key: \"A field on a line item MUST NOT inherit its value from the proposal or from a sibling line item.\"",
+      "subjects": [
+        "rule:2:4ae8f775"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2:7d544674",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 62,
+          "section": "2"
+        }
+      ],
+      "message": "A MUST statement in § 2 names no field or key: \"Each line item MUST be fully self-contained.\"",
+      "subjects": [
+        "rule:2:7d544674"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "selectable"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:3.1:f3c3cab7",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 174,
+          "section": "3.1"
+        }
+      ],
+      "message": "A MUST statement in § 3.1 names no field or key: \"Every field marked `selectable` MUST declare:\"",
+      "subjects": [
+        "rule:3.1:f3c3cab7"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "settable",
+          "seller-set"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:3.2:4f3b0a9c",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 195,
+          "section": "3.2"
+        }
+      ],
+      "message": "A MUST statement in § 3.2 names no field or key: \"A field marked `settable` that carries a bare value and no bounds MUST be treated as `seller-set`.\"",
+      "subjects": [
+        "rule:3.2:4f3b0a9c"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "selectable",
+          "settable",
+          "supplied"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:3:07a16404",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 163,
+          "section": "3"
+        }
+      ],
+      "message": "A MUST statement in § 3 names no field or key: \"`selectable`, `settable` and `supplied` fields MUST resolve without a round trip — everything needed to validate and price them is declared in the proposal.\"",
+      "subjects": [
+        "rule:3:07a16404"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.2.2:6f05ff6d",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 377,
+          "section": "5.2.2"
+        }
+      ],
+      "message": "A MUST NOT statement in § 5.2.2 names no field or key: \"The seller MUST NOT deliver the line item to an impression that does not match a key that is present.\"",
+      "subjects": [
+        "rule:5.2.2:6f05ff6d"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.4/creative-inspection-and-previews:3a29e732",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 442,
+          "section": "5.4/creative-inspection-and-previews"
+        }
+      ],
+      "message": "A MUST NOT statement in § 5.4/creative-inspection-and-previews names no field or key: \"An implementation MUST NOT report a check that was skipped or could not finish as passed.\"",
+      "subjects": [
+        "rule:5.4/creative-inspection-and-previews:3a29e732"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.4/creative-inspection-and-previews:52bc805d",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 429,
+          "section": "5.4/creative-inspection-and-previews"
+        }
+      ],
+      "message": "A MUST NOT statement in § 5.4/creative-inspection-and-previews names no field or key: \"The inspector MUST NOT request a destination or redirect that sends a production notification; it MAY use a separate inspection URL or the receiving service's documented test mode under the conditions below.\"",
+      "subjects": [
+        "rule:5.4/creative-inspection-and-previews:52bc805d"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.4/creative-inspection-and-previews:7adf48a7",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 417,
+          "section": "5.4/creative-inspection-and-previews"
+        }
+      ],
+      "message": "A MUST NOT statement in § 5.4/creative-inspection-and-previews names no field or key: \"An implementation performing inspection MUST NOT send any production notification.\"",
+      "subjects": [
+        "rule:5.4/creative-inspection-and-previews:7adf48a7"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.4/creative-inspection-and-previews:f25ad098",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 434,
+          "section": "5.4/creative-inspection-and-previews"
+        }
+      ],
+      "message": "A MUST statement in § 5.4/creative-inspection-and-previews names no field or key: \"A preview that executes creative or verification code MUST prevent that code from sending production notifications.\"",
+      "subjects": [
+        "rule:5.4/creative-inspection-and-previews:f25ad098"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "verificationNotExecuted"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.4/creative-inspection-and-previews:fbc60b60",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 441,
+          "section": "5.4/creative-inspection-and-previews"
+        }
+      ],
+      "message": "A MUST statement in § 5.4/creative-inspection-and-previews names no field or key: \"Inspection failures MUST be reported through diagnostics, without firing a production VAST `<Error>` or `verificationNotExecuted` URL.\"",
+      "subjects": [
+        "rule:5.4/creative-inspection-and-previews:fbc60b60"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.5:3e6033ee",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 495,
+          "section": "5.5"
+        }
+      ],
+      "message": "A MUST statement in § 5.5 names no field or key: \"A seller MUST reject it deterministically rather than ignore it.\"",
+      "subjects": [
+        "rule:5.5:3e6033ee"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "best_effort"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.5:7fdb152c",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 497,
+          "section": "5.5"
+        }
+      ],
+      "message": "A MUST NOT statement in § 5.5 names no field or key: \"A seller MUST NOT present `best_effort` enforcement as a guarantee.\"",
+      "subjects": [
+        "rule:5.5:7fdb152c"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.5:c6cd99b1",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 489,
+          "section": "5.5"
+        }
+      ],
+      "message": "A MUST statement in § 5.5 names no field or key: \"A seller MUST reject an entry whose platform it cannot determine, rather than apply it across stores.\"",
+      "subjects": [
+        "rule:5.5:c6cd99b1"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.6.1:1a7143ff",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 582,
+          "section": "5.6.1"
+        }
+      ],
+      "message": "A MUST statement in § 5.6.1 names no field or key: \"The rejection MUST return the current version number, so the buyer can fetch it again.\"",
+      "subjects": [
+        "rule:5.6.1:1a7143ff"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.6.1:6f403dba",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 577,
+          "section": "5.6.1"
+        }
+      ],
+      "message": "A MUST NOT statement in § 5.6.1 names no field or key: \"The seller MUST NOT interpret it.\"",
+      "subjects": [
+        "rule:5.6.1:6f403dba"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.6.3:7d683b70",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 633,
+          "section": "5.6.3"
+        }
+      ],
+      "message": "A MUST statement in § 5.6.3 names no field or key: \"This check MUST be deterministic.\"",
+      "subjects": [
+        "rule:5.6.3:7d683b70"
+      ]
+    },
+    {
+      "details": {
+        "defined": [
+          "immutable",
+          "seller-set",
+          "selectable",
+          "settable",
+          "supplied",
+          "requestable",
+          "derived"
+        ]
+      },
+      "disposition": null,
+      "id": "marker_undefined:mixed",
+      "kind": "marker_undefined",
+      "locs": [
+        {
+          "line": 542,
+          "row": 1,
+          "section": "5.6",
+          "table": "table:5.6:1"
+        },
+        {
+          "line": 673,
+          "row": 5,
+          "section": "5.9",
+          "table": "table:5.9:1"
+        }
+      ],
+      "message": "2 fields carry the marker \"mixed\", which the § 3 marker table doesn't define.",
+      "subjects": [
+        "field:5.6:pricing[]",
+        "field:5.9:buyer_requirements"
+      ]
+    },
+    {
+      "details": {
+        "parent": "hold_status"
+      },
+      "disposition": null,
+      "id": "key_presence_unstated:table:5.6.2:1",
+      "kind": "key_presence_unstated",
+      "locs": [
+        {
+          "line": 596,
+          "section": "5.6.2",
+          "table": "table:5.6.2:1"
+        }
+      ],
+      "message": "The key table in § 5.6.2 has no Required column, so none of its 5 keys says whether it must be present.",
+      "subjects": [
+        "key:5.6.2:hold_status.hold_available",
+        "key:5.6.2:hold_status.hold_duration",
+        "key:5.6.2:hold_status.hold_scope",
+        "key:5.6.2:hold_status.state",
+        "key:5.6.2:hold_status.hold_expires_at"
+      ]
+    },
+    {
+      "details": {
+        "parent": "requires"
+      },
+      "disposition": null,
+      "id": "key_presence_unstated:table:5.6.3:1",
+      "kind": "key_presence_unstated",
+      "locs": [
+        {
+          "line": 610,
+          "section": "5.6.3",
+          "table": "table:5.6.3:1"
+        }
+      ],
+      "message": "The key table in § 5.6.3 has no Required column, so none of its 3 keys says whether it must be present.",
+      "subjects": [
+        "key:5.6.3:requires.all_of[]",
+        "key:5.6.3:requires.any_of[]",
+        "key:5.6.3:requires.min_commitment[]"
+      ]
+    },
+    {
+      "details": {
+        "required": "derived"
+      },
+      "disposition": null,
+      "id": "key_required_is_marker:key:5.6.1:commitment.derived_units",
+      "kind": "key_required_is_marker",
+      "locs": [
+        {
+          "line": 574,
+          "row": 8,
+          "section": "5.6.1",
+          "table": "table:5.6.1:1"
+        }
+      ],
+      "message": "`derived_units` has the mutability marker \"derived\" in its Required column, so its presence is unstated.",
+      "subjects": [
+        "key:5.6.1:commitment.derived_units"
+      ]
+    },
+    {
+      "details": {
+        "stated": [
+          "field:5.5:time_zone",
+          "field:5.6:pricing[].floor",
+          "field:5.6:requires",
+          "field:5.8:terms_ref",
+          "field:5.10:agreement_ref"
+        ]
+      },
+      "disposition": null,
+      "id": "presence_unstated:line_item",
+      "kind": "presence_unstated",
+      "locs": [],
+      "message": "58 of 63 line item fields don't say whether they're REQUIRED or OPTIONAL.",
+      "subjects": [
+        "field:5.1:line_item_id",
+        "field:5.1:status",
+        "field:5.1:channel",
+        "field:5.2:properties",
+        "field:5.2:content_detail",
+        "field:5.2:environments",
+        "field:5.2:placement",
+        "field:5.3:audiences",
+        "field:5.3:addressable_scale",
+        "field:5.3:activation_route",
+        "field:5.3:buyer_supplied",
+        "field:5.4:formats",
+        "field:5.4:specs",
+        "field:5.4:third_party_tags",
+        "field:5.4:creative_delivery",
+        "field:5.4:assets[]",
+        "field:5.4:materials_due",
+        "field:5.4:approval",
+        "field:5.4:production",
+        "field:5.5:geo",
+        "field:5.5:device",
+        "field:5.5:daypart",
+        "field:5.5:frequency_cap",
+        "field:5.5:exclusions_accepted",
+        "field:5.5:exclusions",
+        "field:5.6:pricing[]",
+        "field:5.6:pricing[].cost_method",
+        "field:5.6:pricing[].gross_rate",
+        "field:5.6:pricing[].agreed_rate",
+        "field:5.6:pricing[].seller_rate",
+        "field:5.6:pricing[].price_valid_until",
+        "field:5.6:pricing[].currency",
+        "field:5.6:availability",
+        "field:5.6:commitment_bounds",
+        "field:5.6:commitment",
+        "field:5.6:hold_status",
+        "field:5.6:min_spend",
+        "field:5.6:cancellation_policy",
+        "field:5.6:exclusivity",
+        "field:5.6:creative_policy",
+        "field:5.7:committed_metrics[]",
+        "field:5.7:measurement_source",
+        "field:5.7:shortfall_remedy",
+        "field:5.7:reporting",
+        "field:5.8:visibility",
+        "field:5.8:required_credentials[]",
+        "field:5.8:eligible_bidders[]",
+        "field:5.8:terms_acceptance_required",
+        "field:5.9:buying_route",
+        "field:5.9:transaction_mechanism",
+        "field:5.9:serving_mode",
+        "field:5.9:deal_id_issuance",
+        "field:5.9:buyer_requirements",
+        "field:5.9:serving_platform",
+        "field:5.10:external_references[]",
+        "field:5.10:correlation_id",
+        "field:5.10:billing",
+        "field:5.10:supported_order_systems[]"
+      ]
+    },
+    {
+      "details": {
+        "stated": [
+          "field:4.1:proposal_template_id",
+          "field:4.1:brief_ref",
+          "field:4.2:description"
+        ]
+      },
+      "disposition": null,
+      "id": "presence_unstated:proposal",
+      "kind": "presence_unstated",
+      "locs": [],
+      "message": "14 of 17 proposal fields don't say whether they're REQUIRED or OPTIONAL.",
+      "subjects": [
+        "field:4.1:proposal_id",
+        "field:4.1:version",
+        "field:4.1:seller_id",
+        "field:4.1:seller_name",
+        "field:4.1:type",
+        "field:4.1:status",
+        "field:4.1:assent",
+        "field:4.1:valid_from,valid_until",
+        "field:4.1:negotiation_history[]",
+        "field:4.1:linked_execution",
+        "field:4.2:specifications",
+        "field:4.2:best_for[]",
+        "field:4.2:not_suitable_for[]",
+        "field:4.2:seasonality_notes"
+      ]
+    },
+    {
+      "details": {
+        "statements": 7,
+        "tables": 0
+      },
+      "disposition": null,
+      "id": "unnumbered_heading:5.4/creative-inspection-and-previews",
+      "kind": "unnumbered_heading",
+      "locs": [
+        {
+          "line": 410,
+          "section": "5.4/creative-inspection-and-previews"
+        }
+      ],
+      "message": "\"Creative inspection and previews\" has no section number, so its content is cited as § 5.4.",
+      "subjects": [
+        "5.4/creative-inspection-and-previews"
+      ]
+    }
+  ],
+  "input": {
+    "blob": "fdb303f07c669c21c0c1196e1c8e441790a62d3c",
+    "commit": "292bb51e654c2eef563d721eb6af8317371c906a",
+    "name": "with-open-prs"
+  },
+  "ir_version": 1
+}

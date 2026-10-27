@@ -1,0 +1,50 @@
+format: 1
+id: D-004
+status: proposed
+kind: gap
+author: agent
+question: How is a daypart time window written, with its days and its start and end times?
+covers:
+  - ir: field:5.5:daypart
+    digest: 25c80cd35ce4831dfbd372627f2d794511fffe5f029243e586ee1e607be4fdc2
+    quote: "`daypart` | Object | settable | `allowed[]` of time windows"
+    locks: [main]
+options:
+  - id: ad-manager-day-part
+    summary: "As Google Ad Manager writes a day part: `{ days[], start, end }`, where `days[]` holds lowercase English day names and `start` and `end` are `{ hour, minute }` times of day, with `end` exclusive, later than `start`, and at most `{ hour: 24, minute: 0 }`."
+  - id: named-days-civil-time
+    summary: >-
+      `{ days[], start, end }`, where `days[]` holds lowercase English day
+      names. `start` and `end` are `HH:MM` civil times from `00:00` to `24:00`.
+      `end` is exclusive and later than `start`, so only `end` can be `24:00`.
+  - id: numbered
+    summary: Day indexes 0–6 and hour indexes 0–23, with a UTC offset, as OpenDirect 1.5.1 and Meta do.
+  - id: hour-of-week
+    summary: Hour-of-week indexes 0–167 with `Local` or `UTC`, as OpenDirect 2.1 OOH does.
+chosen: named-days-civil-time
+rationale: >-
+  The specification says only "time windows". No IAB Tech Lab standard
+  defines a window, so the window takes its shape from the
+  ad server convention, Google Ad Manager's day part: the days of the week, and
+  a start and an end time of day, where the end is exclusive and may be the
+  end of the day. A time of day is one value, `HH:MM`, as the daypart request
+  in the comment period writes it, and as the open PR that adds the window
+  shape states it; an `{ hour, minute }` object names two types where one
+  concept has one. A pattern states the whole range, `00:00` to `24:00`, and
+  the schema states that only `end` can be `24:00`, so a validator needs no
+  rule for either. Two `HH:MM` values compare in time order as strings, so
+  "`end` is later than `start`" is one comparison. Numbered days disagree on
+  where the week starts (Meta counts from Sunday, and OpenDirect 2.1 doesn't
+  say), while names can't be misread. Day names are lowercase, like the
+  specification's other terms, and the week runs from Monday to Sunday, as ISO
+  8601 orders it. A window holds no time zone: the line item's clock reads
+  every window (D-038).
+evidence:
+  - https://github.com/InteractiveAdvertisingBureau/OpenDirect/blob/82bc294314aba017fc639ba634aecc53adfd675f/OpenDirect.v2.1.final.md
+  - https://developers.google.com/ad-manager/api/reference/latest/LineItemService.DayPart
+  - https://github.com/IABTechLab/OpenProposal/issues/111
+feedback: >-
+  Define a daypart time window as `{ days[], start, end }`. Days are lowercase
+  English names from `monday` to `sunday`. `start` and `end` are `HH:MM` civil
+  times, where `end` is exclusive, later than `start`, and MAY be `24:00`. A
+  window that crosses midnight is two windows.

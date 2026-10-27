@@ -1,0 +1,3973 @@
+{
+  "base": {
+    "blob": "694095837432671ac8103e3c7be9b1c03d8a9482",
+    "commit": "44dfaaf618736219426c311ec997b6d37e94b950",
+    "counts": {
+      "decisions": 40,
+      "elements.appendix_a": 71,
+      "elements.appendix_b": 8,
+      "elements.code_block": 2,
+      "elements.concept": 4,
+      "elements.field": 71,
+      "elements.identifier_list": 2,
+      "elements.inline_object": 19,
+      "elements.key": 16,
+      "elements.marker": 7,
+      "elements.sentence": 28,
+      "elements.statement": 33,
+      "elements.value_list": 23,
+      "findings.conditions": 0,
+      "findings.examples": 58,
+      "findings.round_trip": 4,
+      "findings.spec": 50,
+      "findings.spec_open": 46,
+      "properties": 183,
+      "rules": 17,
+      "schema_files": 17,
+      "statements.example": 4,
+      "statements.obligation": 11,
+      "statements.rule": 7,
+      "statements.schema": 20,
+      "types.constructor": 6,
+      "types.copy": 19,
+      "types.document": 2,
+      "types.object": 34,
+      "types.part": 3,
+      "types.primitive": 18,
+      "types.profile": 2,
+      "types.union": 2,
+      "types.vocabulary": 34
+    },
+    "ir_sha256": "c3e2788849797dd84675bb2a9c260307ecbe0b455d217a7af162386612c979fc",
+    "lock": "main"
+  },
+  "changes": [
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the object AgreementRef is added",
+      "type": "AgreementRef",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the vocabulary AgreementType is added",
+      "type": "AgreementType",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the vocabulary ApiFramework is added",
+      "type": "ApiFramework",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the object AppBundleEntry is added",
+      "type": "AppBundleEntry",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the object AppsEntry is added",
+      "type": "AppsEntry",
+      "view": "model"
+    },
+    {
+      "change": "required-property",
+      "class": "breaking",
+      "detail": "Commitment.proposal_id is added, required",
+      "member": "proposal_id",
+      "type": "Commitment",
+      "view": "model"
+    },
+    {
+      "change": "required-property",
+      "class": "breaking",
+      "detail": "Commitment.version is added, required",
+      "member": "version",
+      "type": "Commitment",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the primitive Digest is added",
+      "type": "Digest",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the vocabulary Enforcement is added",
+      "type": "Enforcement",
+      "view": "model"
+    },
+    {
+      "change": "removed-term",
+      "class": "breaking",
+      "detail": "Environment drops \"audio_streaming\"",
+      "member": "audio_streaming",
+      "type": "Environment",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the vocabulary ExclusionType is added",
+      "type": "ExclusionType",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the object Exclusions is added",
+      "type": "Exclusions",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the object ExclusionsAccepted is added",
+      "type": "ExclusionsAccepted",
+      "view": "model"
+    },
+    {
+      "change": "added-term",
+      "class": "additive",
+      "detail": "ExternalReferenceRole adds \"agreement\"",
+      "member": "agreement",
+      "type": "ExternalReferenceRole",
+      "view": "model"
+    },
+    {
+      "change": "added-term",
+      "class": "additive",
+      "detail": "ExternalReferenceRole adds \"io\"",
+      "member": "io",
+      "type": "ExternalReferenceRole",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the union Geo is added",
+      "type": "Geo",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the copy GeoSelection is added",
+      "type": "GeoSelection",
+      "view": "model"
+    },
+    {
+      "change": "added-property",
+      "class": "additive",
+      "detail": "LineItem.agreement_ref is added, optional",
+      "member": "agreement_ref",
+      "type": "LineItem",
+      "view": "model"
+    },
+    {
+      "change": "description",
+      "class": "annotation",
+      "detail": "LineItem.channel's description changes",
+      "member": "channel",
+      "type": "LineItem",
+      "view": "model"
+    },
+    {
+      "change": "description",
+      "class": "annotation",
+      "detail": "LineItem.daypart's description changes",
+      "member": "daypart",
+      "type": "LineItem",
+      "view": "model"
+    },
+    {
+      "change": "description",
+      "class": "annotation",
+      "detail": "LineItem.environments's description changes",
+      "member": "environments",
+      "type": "LineItem",
+      "view": "model"
+    },
+    {
+      "change": "added-property",
+      "class": "additive",
+      "detail": "LineItem.exclusions is added, optional",
+      "member": "exclusions",
+      "type": "LineItem",
+      "view": "model"
+    },
+    {
+      "change": "added-property",
+      "class": "additive",
+      "detail": "LineItem.exclusions_accepted is added, optional",
+      "member": "exclusions_accepted",
+      "type": "LineItem",
+      "view": "model"
+    },
+    {
+      "change": "description",
+      "class": "annotation",
+      "detail": "LineItem.external_references's description changes",
+      "member": "external_references",
+      "type": "LineItem",
+      "view": "model"
+    },
+    {
+      "change": "changed-marker",
+      "class": "breaking",
+      "detail": "LineItem.geo: the marker settable becomes selectable",
+      "member": "geo",
+      "type": "LineItem",
+      "view": "model"
+    },
+    {
+      "change": "description",
+      "class": "annotation",
+      "detail": "LineItem.geo's description changes",
+      "member": "geo",
+      "type": "LineItem",
+      "view": "model"
+    },
+    {
+      "change": "widened-type",
+      "class": "additive",
+      "detail": "LineItem.geo: Geo accepts every value of Settable<T=ExternalId>",
+      "member": "geo",
+      "type": "LineItem",
+      "view": "model"
+    },
+    {
+      "change": "added-property",
+      "class": "additive",
+      "detail": "LineItem.placement is added, optional",
+      "member": "placement",
+      "type": "LineItem",
+      "view": "model"
+    },
+    {
+      "change": "description",
+      "class": "annotation",
+      "detail": "LineItem.properties's description changes",
+      "member": "properties",
+      "type": "LineItem",
+      "view": "model"
+    },
+    {
+      "change": "added-property",
+      "class": "additive",
+      "detail": "LineItem.requires is added, optional",
+      "member": "requires",
+      "type": "LineItem",
+      "view": "model"
+    },
+    {
+      "change": "required-property",
+      "class": "breaking",
+      "detail": "LineItem.terms_ref is added, conditional (REQUIRED when `terms_acceptance_required` is `true`)",
+      "member": "terms_ref",
+      "type": "LineItem",
+      "view": "model"
+    },
+    {
+      "change": "required-property",
+      "class": "breaking",
+      "detail": "LineItem.time_zone is added, conditional (REQUIRED with `daypart` or `frequency_cap.period`)",
+      "member": "time_zone",
+      "type": "LineItem",
+      "view": "model"
+    },
+    {
+      "change": "description",
+      "class": "annotation",
+      "detail": "LineItemSummary.channel's description changes",
+      "member": "channel",
+      "type": "LineItemSummary",
+      "view": "model"
+    },
+    {
+      "change": "added-field",
+      "class": "additive",
+      "detail": "LineItemSummary also lists the field environments",
+      "member": "environments",
+      "type": "LineItemSummary",
+      "view": "model"
+    },
+    {
+      "change": "required-property",
+      "class": "breaking",
+      "detail": "LineItemSummary.environments is added, required",
+      "member": "environments",
+      "type": "LineItemSummary",
+      "view": "model"
+    },
+    {
+      "change": "added-path",
+      "class": "additive",
+      "detail": "LineItemSummary also lists the path environments.available[]",
+      "member": "environments.available[]",
+      "type": "LineItemSummary",
+      "view": "model"
+    },
+    {
+      "change": "added-field",
+      "class": "additive",
+      "detail": "LineItemSummary also lists the field has_requires",
+      "member": "has_requires",
+      "type": "LineItemSummary",
+      "view": "model"
+    },
+    {
+      "change": "added-path",
+      "class": "additive",
+      "detail": "LineItemSummary also lists the path has_requires",
+      "member": "has_requires",
+      "type": "LineItemSummary",
+      "view": "model"
+    },
+    {
+      "change": "required-property",
+      "class": "breaking",
+      "detail": "LineItemSummary.has_requires is added, required",
+      "member": "has_requires",
+      "type": "LineItemSummary",
+      "view": "model"
+    },
+    {
+      "change": "added-field",
+      "class": "additive",
+      "detail": "LineItemSummary also lists the field placement",
+      "member": "placement",
+      "type": "LineItemSummary",
+      "view": "model"
+    },
+    {
+      "change": "added-property",
+      "class": "additive",
+      "detail": "LineItemSummary.placement is added, optional",
+      "member": "placement",
+      "type": "LineItemSummary",
+      "view": "model"
+    },
+    {
+      "change": "added-path",
+      "class": "additive",
+      "detail": "LineItemSummary also lists the path placement.instl",
+      "member": "placement.instl",
+      "type": "LineItemSummary",
+      "view": "model"
+    },
+    {
+      "change": "added-path",
+      "class": "additive",
+      "detail": "LineItemSummary also lists the path placement.plcmt",
+      "member": "placement.plcmt",
+      "type": "LineItemSummary",
+      "view": "model"
+    },
+    {
+      "change": "added-path",
+      "class": "additive",
+      "detail": "LineItemSummary also lists the path placement.reward",
+      "member": "placement.reward",
+      "type": "LineItemSummary",
+      "view": "model"
+    },
+    {
+      "change": "added-path",
+      "class": "additive",
+      "detail": "LineItemSummary also lists the path placement.skip",
+      "member": "placement.skip",
+      "type": "LineItemSummary",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the object LineItemSummaryEnvironmentsSelection is added",
+      "type": "LineItemSummaryEnvironmentsSelection",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the object LineItemSummaryPlacement is added",
+      "type": "LineItemSummaryPlacement",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the vocabulary LinkedExecution is added",
+      "type": "LinkedExecution",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the object ListRef is added",
+      "type": "ListRef",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the document Manifest is added",
+      "type": "Manifest",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the object MinCommitmentEntry is added",
+      "type": "MinCommitmentEntry",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the object Placement is added",
+      "type": "Placement",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the vocabulary PlaybackMethod is added",
+      "type": "PlaybackMethod",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the vocabulary PlcmtSubtype is added",
+      "type": "PlcmtSubtype",
+      "view": "model"
+    },
+    {
+      "change": "description",
+      "class": "annotation",
+      "detail": "PricingEntry.floor's description changes",
+      "member": "floor",
+      "type": "PricingEntry",
+      "view": "model"
+    },
+    {
+      "change": "added-property",
+      "class": "additive",
+      "detail": "PropertiesOption.apps is added, optional",
+      "member": "apps",
+      "type": "PropertiesOption",
+      "view": "model"
+    },
+    {
+      "change": "added-property",
+      "class": "additive",
+      "detail": "Proposal.linked_execution is added, optional",
+      "member": "linked_execution",
+      "type": "Proposal",
+      "view": "model"
+    },
+    {
+      "change": "added-property",
+      "class": "additive",
+      "detail": "Proposal.proposal_template_id is added, optional",
+      "member": "proposal_template_id",
+      "type": "Proposal",
+      "view": "model"
+    },
+    {
+      "change": "description",
+      "class": "annotation",
+      "detail": "Proposal.version's description changes",
+      "member": "version",
+      "type": "Proposal",
+      "view": "model"
+    },
+    {
+      "change": "added-field",
+      "class": "additive",
+      "detail": "ProposalSummary also lists the field linked_execution",
+      "member": "linked_execution",
+      "type": "ProposalSummary",
+      "view": "model"
+    },
+    {
+      "change": "added-path",
+      "class": "additive",
+      "detail": "ProposalSummary also lists the path linked_execution",
+      "member": "linked_execution",
+      "type": "ProposalSummary",
+      "view": "model"
+    },
+    {
+      "change": "required-property",
+      "class": "breaking",
+      "detail": "ProposalSummary.linked_execution is added, required",
+      "member": "linked_execution",
+      "type": "ProposalSummary",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the object ProposalsEntry is added",
+      "type": "ProposalsEntry",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the object Refresh is added",
+      "type": "Refresh",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the object Requires is added",
+      "type": "Requires",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the vocabulary StorePlatform is added",
+      "type": "StorePlatform",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the object TermsRef is added",
+      "type": "TermsRef",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the primitive TimeZone is added",
+      "type": "TimeZone",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the primitive VendorCode is added",
+      "type": "VendorCode",
+      "view": "model"
+    },
+    {
+      "change": "changed-rule",
+      "class": "additive",
+      "detail": "the rule kernel:CurrencyCode:assigned changes its vectors",
+      "member": "kernel:CurrencyCode:assigned",
+      "type": "CurrencyCode",
+      "view": "rules"
+    },
+    {
+      "change": "changed-rule",
+      "class": "additive",
+      "detail": "the rule kernel:DaypartWindow:ordered changes its sources, vectors",
+      "member": "kernel:DaypartWindow:ordered",
+      "type": "DaypartWindow",
+      "view": "rules"
+    },
+    {
+      "change": "changed-rule",
+      "class": "additive",
+      "detail": "the rule block:5.6.2:1/values:1 changes its vectors",
+      "member": "block:5.6.2:1/values:1",
+      "type": "HoldStatus",
+      "view": "rules"
+    },
+    {
+      "change": "changed-rule",
+      "class": "additive",
+      "detail": "the rule rule:2.2:06ccee9f changes its vectors",
+      "member": "rule:2.2:06ccee9f",
+      "type": "LineItem",
+      "view": "rules"
+    },
+    {
+      "change": "added-rule",
+      "class": "breaking",
+      "detail": "the rule rule:5.1.1:ce115ccf is added at error severity on LineItem, which the last release had",
+      "member": "rule:5.1.1:ce115ccf",
+      "type": "LineItem",
+      "view": "rules"
+    },
+    {
+      "change": "added-rule",
+      "class": "breaking",
+      "detail": "the rule rule:5.2.1:cc42a1f8 is added at error severity on LineItem, which the last release had",
+      "member": "rule:5.2.1:cc42a1f8",
+      "type": "LineItem",
+      "view": "rules"
+    },
+    {
+      "change": "added-rule",
+      "class": "additive",
+      "detail": "the rule rule:5.2.2:f9a1a6d5 is added at warning severity",
+      "member": "rule:5.2.2:f9a1a6d5",
+      "type": "LineItem",
+      "view": "rules"
+    },
+    {
+      "change": "added-rule",
+      "class": "additive",
+      "detail": "the rule rule:5.2:f3d3f9e8 is added, on new types only",
+      "member": "rule:5.2:f3d3f9e8",
+      "type": "LineItem",
+      "view": "rules"
+    },
+    {
+      "change": "changed-rule",
+      "class": "additive",
+      "detail": "the rule rule:5.4:2eaa294f changes its vectors",
+      "member": "rule:5.4:2eaa294f",
+      "type": "LineItem",
+      "view": "rules"
+    },
+    {
+      "change": "added-rule",
+      "class": "breaking",
+      "detail": "the rule rule:5.5:16494a1a is added at error severity on LineItem, which the last release had",
+      "member": "rule:5.5:16494a1a",
+      "type": "LineItem",
+      "view": "rules"
+    },
+    {
+      "change": "added-rule",
+      "class": "breaking",
+      "detail": "the rule rule:5.5:2eab2842 is added at error severity on LineItem, which the last release had",
+      "member": "rule:5.5:2eab2842",
+      "type": "LineItem",
+      "view": "rules"
+    },
+    {
+      "change": "changed-rule",
+      "class": "additive",
+      "detail": "the rule rule:5.7:4994173c changes its vectors",
+      "member": "rule:5.7:4994173c",
+      "type": "LineItem",
+      "view": "rules"
+    },
+    {
+      "change": "added-rule",
+      "class": "breaking",
+      "detail": "the rule rule:5.8:59a01393 is added at error severity on LineItem, which the last release had",
+      "member": "rule:5.8:59a01393",
+      "type": "LineItem",
+      "view": "rules"
+    },
+    {
+      "change": "changed-rule",
+      "class": "additive",
+      "detail": "the rule marker:3:derived changes its vectors",
+      "member": "marker:3:derived",
+      "type": "Marker",
+      "view": "rules"
+    },
+    {
+      "change": "changed-rule",
+      "class": "additive",
+      "detail": "the rule marker:3:immutable changes its applies_to, vectors",
+      "member": "marker:3:immutable",
+      "type": "Marker",
+      "view": "rules"
+    },
+    {
+      "change": "changed-rule",
+      "class": "additive",
+      "detail": "the rule marker:3:requestable changes its vectors",
+      "member": "marker:3:requestable",
+      "type": "Marker",
+      "view": "rules"
+    },
+    {
+      "change": "narrowed-rule",
+      "class": "breaking",
+      "detail": "marker:3:selectable: now applies to LineItem.geo, which the last release had",
+      "member": "marker:3:selectable",
+      "type": "Marker",
+      "view": "rules"
+    },
+    {
+      "change": "changed-rule",
+      "class": "additive",
+      "detail": "the rule marker:3:seller-set changes its applies_to, vectors",
+      "member": "marker:3:seller-set",
+      "type": "Marker",
+      "view": "rules"
+    },
+    {
+      "change": "changed-rule",
+      "class": "additive",
+      "detail": "the rule marker:3:settable changes its applies_to, vectors",
+      "member": "marker:3:settable",
+      "type": "Marker",
+      "view": "rules"
+    },
+    {
+      "change": "changed-rule",
+      "class": "additive",
+      "detail": "the rule marker:3:supplied changes its applies_to, vectors",
+      "member": "marker:3:supplied",
+      "type": "Marker",
+      "view": "rules"
+    },
+    {
+      "change": "changed-rule",
+      "class": "additive",
+      "detail": "the rule rule:4.1:8e9aacb8 changes its vectors",
+      "member": "rule:4.1:8e9aacb8",
+      "type": "Proposal",
+      "view": "rules"
+    },
+    {
+      "change": "changed-rule",
+      "class": "additive",
+      "detail": "the rule constructor:Selectable:options-named changes its applies_to",
+      "member": "constructor:Selectable:options-named",
+      "type": "Selectable",
+      "view": "rules"
+    },
+    {
+      "change": "changed-rule",
+      "class": "additive",
+      "detail": "the rule constructor:Selectable:priced-beyond-included changes its applies_to",
+      "member": "constructor:Selectable:priced-beyond-included",
+      "type": "Selectable",
+      "view": "rules"
+    },
+    {
+      "change": "added-rule",
+      "class": "additive",
+      "detail": "the rule kernel:TimeZone:listed is added, on new types only",
+      "member": "kernel:TimeZone:listed",
+      "type": "TimeZone",
+      "view": "rules"
+    },
+    {
+      "change": "narrowed-schema",
+      "class": "breaking",
+      "detail": "documents/1/line-item-summary.json: newly requires \"environments\", \"has_requires\"",
+      "type": "documents/1/line-item-summary.json",
+      "view": "files"
+    },
+    {
+      "change": "narrowed-schema",
+      "class": "breaking",
+      "detail": "documents/1/line-item.json/properties/geo: no branch of the new union accepts every value of the old schema; documents/1/line-item.json: dependentRequired added; documents/1/line-item.json: dependentSchemas added; documents/1/line-item.json: if added; documents/1/line-item.json: then added",
+      "type": "documents/1/line-item.json",
+      "view": "files"
+    },
+    {
+      "change": "added-file",
+      "class": "additive",
+      "detail": "documents/1/manifest.json is added",
+      "type": "documents/1/manifest.json",
+      "view": "files"
+    },
+    {
+      "change": "narrowed-schema",
+      "class": "breaking",
+      "detail": "documents/1/proposal-summary.json: newly requires \"linked_execution\"",
+      "type": "documents/1/proposal-summary.json",
+      "view": "files"
+    },
+    {
+      "change": "widened-schema",
+      "class": "additive",
+      "detail": "documents/1/proposal.json accepts every value it accepted",
+      "type": "documents/1/proposal.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "kernel/1/kernel.json#/$defs/Digest is added",
+      "member": "Digest",
+      "type": "kernel/1/kernel.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "kernel/1/kernel.json#/$defs/TimeZone is added",
+      "member": "TimeZone",
+      "type": "kernel/1/kernel.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "kernel/1/kernel.json#/$defs/VendorCode is added",
+      "member": "VendorCode",
+      "type": "kernel/1/kernel.json",
+      "view": "files"
+    },
+    {
+      "change": "narrowed-schema",
+      "class": "breaking",
+      "detail": "modules/commercial/1/commercial.json#/$defs/Commitment: newly requires \"proposal_id\", \"version\"",
+      "member": "Commitment",
+      "type": "modules/commercial/1/commercial.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/commercial/1/commercial.json#/$defs/MinCommitmentEntry is added",
+      "member": "MinCommitmentEntry",
+      "type": "modules/commercial/1/commercial.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/commercial/1/commercial.json#/$defs/Requires is added",
+      "member": "Requires",
+      "type": "modules/commercial/1/commercial.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/eligibility/1/eligibility.json#/$defs/TermsRef is added",
+      "member": "TermsRef",
+      "type": "modules/eligibility/1/eligibility.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/inventory/1/inventory.json#/$defs/ApiFramework is added",
+      "member": "ApiFramework",
+      "type": "modules/inventory/1/inventory.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/inventory/1/inventory.json#/$defs/AppsEntry is added",
+      "member": "AppsEntry",
+      "type": "modules/inventory/1/inventory.json",
+      "view": "files"
+    },
+    {
+      "change": "narrowed-schema",
+      "class": "breaking",
+      "detail": "modules/inventory/1/inventory.json#/$defs/Environment/anyOf/0: no branch of the new union accepts every value of the old schema",
+      "member": "Environment",
+      "type": "modules/inventory/1/inventory.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/inventory/1/inventory.json#/$defs/Placement is added",
+      "member": "Placement",
+      "type": "modules/inventory/1/inventory.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/inventory/1/inventory.json#/$defs/PlaybackMethod is added",
+      "member": "PlaybackMethod",
+      "type": "modules/inventory/1/inventory.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/inventory/1/inventory.json#/$defs/PlcmtSubtype is added",
+      "member": "PlcmtSubtype",
+      "type": "modules/inventory/1/inventory.json",
+      "view": "files"
+    },
+    {
+      "change": "widened-schema",
+      "class": "additive",
+      "detail": "modules/inventory/1/inventory.json#/$defs/PropertiesOption accepts every value it accepted",
+      "member": "PropertiesOption",
+      "type": "modules/inventory/1/inventory.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/inventory/1/inventory.json#/$defs/Refresh is added",
+      "member": "Refresh",
+      "type": "modules/inventory/1/inventory.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/inventory/1/inventory.json#/$defs/StorePlatform is added",
+      "member": "StorePlatform",
+      "type": "modules/inventory/1/inventory.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/proposal/1/proposal.json#/$defs/LinkedExecution is added",
+      "member": "LinkedExecution",
+      "type": "modules/proposal/1/proposal.json",
+      "view": "files"
+    },
+    {
+      "change": "added-file",
+      "class": "additive",
+      "detail": "modules/publication/1/publication.json is added",
+      "type": "modules/publication/1/publication.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryEnvironmentsSelection is added",
+      "member": "LineItemSummaryEnvironmentsSelection",
+      "type": "modules/representation/1/representation.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryPlacement is added",
+      "member": "LineItemSummaryPlacement",
+      "type": "modules/representation/1/representation.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/settlement/1/settlement.json#/$defs/AgreementRef is added",
+      "member": "AgreementRef",
+      "type": "modules/settlement/1/settlement.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/settlement/1/settlement.json#/$defs/AgreementType is added",
+      "member": "AgreementType",
+      "type": "modules/settlement/1/settlement.json",
+      "view": "files"
+    },
+    {
+      "change": "widened-schema",
+      "class": "additive",
+      "detail": "modules/settlement/1/settlement.json#/$defs/ExternalReferenceRole accepts every value it accepted",
+      "member": "ExternalReferenceRole",
+      "type": "modules/settlement/1/settlement.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/targeting/1/targeting.json#/$defs/AppBundleEntry is added",
+      "member": "AppBundleEntry",
+      "type": "modules/targeting/1/targeting.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/targeting/1/targeting.json#/$defs/Enforcement is added",
+      "member": "Enforcement",
+      "type": "modules/targeting/1/targeting.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/targeting/1/targeting.json#/$defs/ExclusionType is added",
+      "member": "ExclusionType",
+      "type": "modules/targeting/1/targeting.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/targeting/1/targeting.json#/$defs/Exclusions is added",
+      "member": "Exclusions",
+      "type": "modules/targeting/1/targeting.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/targeting/1/targeting.json#/$defs/ExclusionsAccepted is added",
+      "member": "ExclusionsAccepted",
+      "type": "modules/targeting/1/targeting.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/targeting/1/targeting.json#/$defs/Geo is added",
+      "member": "Geo",
+      "type": "modules/targeting/1/targeting.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/targeting/1/targeting.json#/$defs/GeoSelection is added",
+      "member": "GeoSelection",
+      "type": "modules/targeting/1/targeting.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/targeting/1/targeting.json#/$defs/ListRef is added",
+      "member": "ListRef",
+      "type": "modules/targeting/1/targeting.json",
+      "view": "files"
+    }
+  ],
+  "decisions": {
+    "added": [
+      {
+        "id": "D-003",
+        "question": "How is a SHA-256 hash written, and does the value name its algorithm?",
+        "status": "proposed"
+      },
+      {
+        "id": "D-022",
+        "question": "What type does `geo` take when § 5.5 lets it declare either the selectable structure or `allowed[]`?",
+        "status": "proposed"
+      },
+      {
+        "id": "D-032",
+        "question": "How are the creative inspection statements of § 5.4 checked?",
+        "status": "proposed"
+      },
+      {
+        "id": "D-039",
+        "question": "How is a two-valued flag written where § 5.2.2 copies an AdCOM `0` | `1` integer?",
+        "status": "proposed"
+      }
+    ],
+    "removed": [
+      {
+        "id": "D-004",
+        "question": "How is a daypart time window written, with its days and its start and end times?",
+        "status": "proposed"
+      },
+      {
+        "id": "D-038",
+        "question": "In which time zone are a line item's calendar values read, its daypart windows, its frequency cap's period, and the days of its flight?",
+        "status": "proposed"
+      }
+    ],
+    "reread": [
+      {
+        "elements": [
+          "field:5.2:properties",
+          "key:5.2:apps[].domain"
+        ],
+        "id": "D-002",
+        "question": "How is a domain spelled, so that two parties compare domains and namespaced terms by string equality?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "field:5.8:terms_ref",
+          "key:5.2:apps[].storeurl",
+          "rule:2.3:99777739"
+        ],
+        "id": "D-006",
+        "question": "Which URL schemes may a URL field carry?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "field:4.1:linked_execution#description/values:1",
+          "field:5.10:agreement_ref#description/object:1/type",
+          "field:5.10:external_references[]",
+          "field:5.2:environments#description/values:1",
+          "field:5.5:exclusions#description/object:1",
+          "field:5.5:exclusions_accepted#description/object:1",
+          "key:5.2.2:placement.plcmt",
+          "key:5.2.2:placement.reward#meaning/values:1",
+          "key:5.2:apps[].platform#meaning/values:1"
+        ],
+        "id": "D-013",
+        "question": "What is each vocabulary called, where the specification names a value list only by the field that holds it?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "field:4.1:linked_execution#description/values:1",
+          "field:5.10:agreement_ref#description/object:1/type",
+          "field:5.10:external_references[]",
+          "field:5.2:environments#description/values:1",
+          "field:5.5:exclusions#description/object:1",
+          "field:5.5:exclusions_accepted#description/object:1",
+          "key:5.2.2:placement.plcmt",
+          "key:5.2.2:placement.reward#meaning/values:1",
+          "key:5.2:apps[].platform#meaning/values:1"
+        ],
+        "id": "D-014",
+        "question": "Which vocabularies are open, a core list that implementations extend with namespaced terms, and which are closed?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "field:5.2:environments",
+          "field:5.2:properties",
+          "field:5.5:daypart",
+          "field:5.5:geo"
+        ],
+        "id": "D-018",
+        "question": "Which selectable and settable fields take a bare value in place of their full form?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "field:5.5:daypart",
+          "field:5.5:geo"
+        ],
+        "id": "D-019",
+        "question": "What is the option type of each selectable or settable field whose options the specification describes only in prose?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "field:5.2:properties"
+        ],
+        "id": "D-020",
+        "question": "Which fields may carry a `catalog_ref` in place of an inline value?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "field:5.2:properties#description/object:1",
+          "key:5.2.2:placement.api[]",
+          "key:5.2.2:placement.playmethod[]",
+          "key:5.2.2:placement.plcmt",
+          "key:5.2.2:placement.refresh#meaning/object:1",
+          "key:5.2.2:placement.skipafter",
+          "rule:5.2.2:463dfafd",
+          "sentence:5.2.2:af7851e2"
+        ],
+        "id": "D-024",
+        "question": "What type does each member of the § 5.2 and § 5.3 objects take, and each key of the § 5.2 tables that no rule types?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "block:5.5:3/object:1",
+          "code:5.5:1",
+          "field:5.5:exclusions#description/object:1",
+          "field:5.5:exclusions_accepted#description/object:1",
+          "key:5.2:apps[].bundle",
+          "key:5.2:apps[].platform",
+          "sentence:5.5:262ff404"
+        ],
+        "id": "D-025",
+        "question": "What type does each member of the § 5.4 and § 5.5 objects take?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "key:5.6.3:requires.min_commitment[]#meaning/object:1"
+        ],
+        "id": "D-026",
+        "question": "What type does each § 5.6 field, key, and member take where the specification gives no format?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "field:5.10:agreement_ref#description/object:1",
+          "field:5.10:external_references[]",
+          "field:5.8:terms_ref#description/object:1"
+        ],
+        "id": "D-027",
+        "question": "What type does each member of the § 4.1 and § 5.7 to § 5.10 objects take?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "block:2.1:3/identifiers:1",
+          "block:2.1:4/identifiers:1",
+          "block:2.1:7/identifiers:1",
+          "block:2.3:2/object:1",
+          "field:5.2:properties",
+          "rule:2.1:5d7284d5",
+          "rule:2.3:99777739",
+          "sentence:2.1:ba90b505",
+          "sentence:2.3:b43aefff"
+        ],
+        "id": "D-028",
+        "question": "What do the § 2.1 Summary Representation and the § 2.3 manifest hold?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "rule:2.1:2f9d603c",
+          "rule:2.1:5d7284d5",
+          "rule:2.1:8d97860b",
+          "rule:2.3:59a4ca91",
+          "rule:2.3:68f68e24",
+          "rule:2.3:99777739",
+          "rule:2:2ea1196f",
+          "rule:2:ace530d6",
+          "rule:3.3:1acc7d0d",
+          "rule:3.3:f58949fc"
+        ],
+        "id": "D-029",
+        "question": "How is each § 2 and § 3 statement checked, as a schema, a rule on payloads, or an obligation on a party's behavior?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "rule:4.1:fae6ebab",
+          "rule:5.1.1:4c696214",
+          "rule:5.1.1:ce115ccf",
+          "rule:5.2.1:cc42a1f8",
+          "rule:5.2.2:6f05ff6d",
+          "rule:5.2.2:f9a1a6d5",
+          "rule:5.2:3d2307e8",
+          "rule:5.2:f3d3f9e8",
+          "rule:5.5:16494a1a",
+          "rule:5.5:2eab2842",
+          "rule:5.5:3e6033ee",
+          "rule:5.5:7fdb152c",
+          "rule:5.5:c6cd99b1",
+          "rule:5.8:59a01393",
+          "rule:5.8:d02f49a2",
+          "sentence:5.2.2:8f7b65da"
+        ],
+        "id": "D-030",
+        "question": "How is each § 4 and § 5 field statement checked, as a schema, a rule on payloads, or an obligation on a party's behavior?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "rule:5.6.1:1a7143ff",
+          "rule:5.6.1:499ec00e",
+          "rule:5.6.1:6f403dba",
+          "rule:5.6.1:7de026a6",
+          "rule:5.6.1:852ec5db",
+          "rule:5.6.1:d672decc",
+          "rule:5.6.1:e250f467",
+          "rule:5.6.3:17fe6f2c",
+          "rule:5.6.3:39e4afbb",
+          "rule:5.6.3:497d445c",
+          "rule:5.6.3:7d683b70",
+          "rule:5.6.3:b4da8d14",
+          "rule:5.6.3:db94cd1e"
+        ],
+        "id": "D-031",
+        "question": "How are the § 5.6.1 commitment-attempt and § 5.6.3 dependency statements checked?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "code:5.5:1",
+          "code:5.5:2",
+          "code:5.5:3",
+          "code:5.6.3:1"
+        ],
+        "id": "D-033",
+        "question": "What do the specification's code blocks other than the § 2.2 grammar map to?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "rule:5.8:59a01393"
+        ],
+        "id": "D-034",
+        "question": "What change does each mutability rule allow, between two versions and the party that made it, where the specification states the rule only in prose?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "def:5.1.1:channel.audio",
+          "def:5.1.1:channel.ctv",
+          "def:5.1.1:channel.display",
+          "def:5.1.1:channel.dooh",
+          "def:5.1.1:channel.native",
+          "def:5.1.1:channel.video",
+          "def:5.2.1:environments.app_mobile",
+          "def:5.2.1:environments.ctv",
+          "def:5.2.1:environments.dooh",
+          "def:5.2.1:environments.web_desktop",
+          "def:5.2.1:environments.web_mobile",
+          "key:5.2.2:placement.plcmt",
+          "rule:5.1.1:ce115ccf",
+          "rule:5.2.1:cc42a1f8",
+          "rule:5.2.2:f9a1a6d5",
+          "rule:5.2:f3d3f9e8",
+          "rule:5.5:16494a1a",
+          "rule:5.5:2eab2842"
+        ],
+        "id": "D-035",
+        "question": "Which payloads does each rule on one line item accept, and what does a receiver do, where the specification states the rule only in prose?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "key:5.6.3:requires.min_commitment[]#meaning/object:1"
+        ],
+        "id": "D-036",
+        "question": "Where is the currency of a money value, and must it be present with the value?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "code:5.6.3:1",
+          "field:5.2:properties#description/object:1",
+          "key:5.6.1:commitment.proposal_id",
+          "key:5.6.3:requires.all_of[]",
+          "key:5.6.3:requires.any_of[]",
+          "key:5.6.3:requires.min_commitment[]#meaning/object:1",
+          "rule:5.6.1:6f403dba",
+          "sentence:5.6.1:b7271e6a"
+        ],
+        "id": "D-037",
+        "question": "How is the ID of a record a party mints written, so that every party compares it the same way?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "key:5.2.2:placement.refresh",
+          "key:5.2.2:placement.refresh#meaning/object:1",
+          "key:5.2.2:placement.skipafter",
+          "rule:5.2.2:463dfafd",
+          "sentence:5.2.2:4076adca"
+        ],
+        "id": "D-040",
+        "question": "How is a length of time written where the specification or its examples write it as prose, a word, or a count of seconds?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "field:5.10:external_references[]"
+        ],
+        "id": "D-041",
+        "question": "What does a field hold whose values are terms that the specification doesn't list?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "sentence:5.5:bcaa431b"
+        ],
+        "id": "D-044",
+        "question": "What values does a frequency cap's `period` take, and is a period a calendar period or a length of time?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "field:5.5:daypart",
+          "sentence:5.5:348ea676"
+        ],
+        "id": "D-045",
+        "question": "May a daypart window's `days[]` be empty, or name one day twice?",
+        "status": "proposed"
+      },
+      {
+        "elements": [
+          "field:5.2:properties#description/object:1"
+        ],
+        "id": "D-046",
+        "question": "What names an object option in `included[]` and the `pricing` keys, and must a property's or an audience option's `id` be present?",
+        "status": "proposed"
+      }
+    ]
+  },
+  "elements": {
+    "added": [
+      {
+        "id": "appendix-a:72",
+        "kind": "appendix_a",
+        "text": "`serving_mode` | 5.9 Execution | Enum | seller-set"
+      },
+      {
+        "id": "appendix-a:73",
+        "kind": "appendix_a",
+        "text": "`deal_id_issuance` | 5.9 Execution | String | derived"
+      },
+      {
+        "id": "appendix-a:74",
+        "kind": "appendix_a",
+        "text": "`buyer_requirements` | 5.9 Execution | Object | mixed"
+      },
+      {
+        "id": "appendix-a:75",
+        "kind": "appendix_a",
+        "text": "`serving_platform` | 5.9 Execution | String | seller-set"
+      },
+      {
+        "id": "appendix-a:76",
+        "kind": "appendix_a",
+        "text": "`external_references[]` | 5.10 External references and settlement | Array[Object] | derived"
+      },
+      {
+        "id": "appendix-a:77",
+        "kind": "appendix_a",
+        "text": "`agreement_ref` | 5.10 External references and settlement | Object | seller-set"
+      },
+      {
+        "id": "appendix-a:78",
+        "kind": "appendix_a",
+        "text": "`correlation_id` | 5.10 External references and settlement | String | derived"
+      },
+      {
+        "id": "appendix-a:79",
+        "kind": "appendix_a",
+        "text": "`billing` | 5.10 External references and settlement | Object | seller-set"
+      },
+      {
+        "id": "appendix-a:80",
+        "kind": "appendix_a",
+        "text": "`supported_order_systems[]` | 5.10 External references and settlement | Array[String] | seller-set"
+      },
+      {
+        "id": "block:2.1:7/identifiers:1",
+        "kind": "identifier_list",
+        "text": "`placement.reward` · `placement.instl` · `placement.plcmt` · `placement.skip`"
+      },
+      {
+        "id": "block:2.3:2/object:1",
+        "kind": "inline_object",
+        "text": "{ seller_id, generated_at, spec_version, proposals[] }"
+      },
+      {
+        "id": "block:5.5:12/object:1",
+        "kind": "inline_object",
+        "text": "{ days[], start, end }"
+      },
+      {
+        "id": "block:5.5:3/object:1",
+        "kind": "inline_object",
+        "text": "{ platform, bundle }"
+      },
+      {
+        "id": "block:5.5:3/values:1",
+        "kind": "value_list",
+        "text": "`ios` | `android` | `roku` | `fire_tv` | `samsung_tv`"
+      },
+      {
+        "id": "code:5.5:1",
+        "kind": "code_block",
+        "text": "exclusions_accepted:\n  types:        [domain, app_bundle, iab_content_category, keyword]\n  max_entries:  { domain: 5000, keyword: 500 }\n  enforcement:  { domain: pre_serve, app_bundle: pre_serve,\n                  iab_content_category: pre_serve, keyword: best_effort }\n  verification: [\"IAS\", \"DoubleVerify\"]\n\nexclusions:\n  domain:           [\"example-gambling.example\"]\n  app_bundle:       [{ platform: roku, bundle: \"123456\" }]\n  iab_content_category: [\"IAB-CT3.0:<id>\"]   # IAB Content Taxonomy ids\n  keyword:          [\"crypto\"]\n  list_ref:         { url: \"<url>\", sha256: \"<hash>\" }"
+      },
+      {
+        "id": "code:5.5:2",
+        "kind": "code_block",
+        "text": "geo:\n  available:  [\"SGP\", \"THA\", \"IDN\", \"MYS\"]\n  included:   [\"SGP\", \"THA\"]\n  pricing:    { \"IDN\": { delta_cpm: 18.00 }, \"MYS\": { delta_cpm: 21.00 } }\n  max_select: 4"
+      },
+      {
+        "id": "code:5.5:3",
+        "kind": "code_block",
+        "text": "# Late fringe, 23:00 to 01:00, Monday night into Tuesday\ndaypart:\n  allowed:\n    - { days: [monday],  start: \"23:00\", end: \"24:00\" }\n    - { days: [tuesday], start: \"00:00\", end: \"01:00\" }\ntime_zone: \"America/New_York\""
+      },
+      {
+        "id": "code:5.6.3:1",
+        "kind": "code_block",
+        "text": "requires:\n  all_of:  [\"business-daily-display\", \"weather-app-ctv\"]\n  any_of:  []\n  min_commitment:\n    - { line_item_id: \"business-daily-display\", basis: spend, amount: 50000.00, currency: USD }"
+      },
+      {
+        "id": "def:5.1.1:channel.audio",
+        "kind": "definition",
+        "text": "`audio` | Audio ad (`AudioPlacement`)"
+      },
+      {
+        "id": "def:5.1.1:channel.ctv",
+        "kind": "definition",
+        "text": "`ctv` | Device type Connected TV (3), Connected Device (6) or Set Top Box (7)"
+      },
+      {
+        "id": "def:5.1.1:channel.display",
+        "kind": "definition",
+        "text": "`display` | Any other display ad (`DisplayPlacement`)"
+      },
+      {
+        "id": "def:5.1.1:channel.dooh",
+        "kind": "definition",
+        "text": "`dooh` | Distribution channel `Dooh`"
+      },
+      {
+        "id": "def:5.1.1:channel.native",
+        "kind": "definition",
+        "text": "`native` | Native ad (`DisplayPlacement.nativefmt`), including native ads with video assets"
+      },
+      {
+        "id": "def:5.1.1:channel.video",
+        "kind": "definition",
+        "text": "`video` | Video ad (`VideoPlacement`)"
+      },
+      {
+        "id": "def:5.2.1:environments.app_mobile",
+        "kind": "definition",
+        "text": "`app_mobile` | `App` | Mobile/Tablet - General (1), Phone (4), Tablet (5)"
+      },
+      {
+        "id": "def:5.2.1:environments.ctv",
+        "kind": "definition",
+        "text": "`ctv` | `Site` or `App` | Connected TV (3), Connected Device (6), Set Top Box (7)"
+      },
+      {
+        "id": "def:5.2.1:environments.dooh",
+        "kind": "definition",
+        "text": "`dooh` | `Dooh` | Any"
+      },
+      {
+        "id": "def:5.2.1:environments.web_desktop",
+        "kind": "definition",
+        "text": "`web_desktop` | `Site` | Personal Computer (2)"
+      },
+      {
+        "id": "def:5.2.1:environments.web_mobile",
+        "kind": "definition",
+        "text": "`web_mobile` | `Site` | Mobile/Tablet - General (1), Phone (4), Tablet (5)"
+      },
+      {
+        "id": "field:4.1:linked_execution",
+        "kind": "field",
+        "text": "`linked_execution` | Enum | seller-set | `none` (default, subsettable) | `all` (every published line item must be committed together)"
+      },
+      {
+        "id": "field:4.1:linked_execution#description/values:1",
+        "kind": "value_list",
+        "text": "`none` (default, subsettable) | `all` (every published line item must be committed together)"
+      },
+      {
+        "id": "field:4.1:proposal_template_id",
+        "kind": "field",
+        "text": "`proposal_template_id` | String | immutable | OPTIONAL. Links an issued proposal to the seller's template. Opaque to buyers; used for the seller's reporting"
+      },
+      {
+        "id": "field:5.10:agreement_ref",
+        "kind": "field",
+        "text": "`agreement_ref` | Object | seller-set | OPTIONAL. Reference to a master or annual agreement the line item is priced under: `{ agreement_id, parties[], type: upfront | annual | master_services | other, valid_from, valid_until }`, where `parties[]` names the seller by its `seller_id` and the buyer by the id it holds in `eligible_bidders[]` (§ 5.8). An informative pointer; the agreement itself is outside this specification. A buyer-held agreement id travels as an `external_references[]` entry with `role: agreement`"
+      },
+      {
+        "id": "field:5.10:agreement_ref#description/object:1",
+        "kind": "inline_object",
+        "text": "{ agreement_id, parties[], type: upfront | annual | master_services | other, valid_from, valid_until }"
+      },
+      {
+        "id": "field:5.10:agreement_ref#description/object:1/type",
+        "kind": "value_list",
+        "text": "`upfront` | `annual` | `master_services` | `other`"
+      },
+      {
+        "id": "field:5.2:placement",
+        "kind": "field",
+        "text": "`placement` | Object | seller-set | What every impression of this line item is: rewarded, interstitial, video placement subtype, skippability, playback, API frameworks and refresh. `plcmt` is REQUIRED for video ads. See 5.2.2"
+      },
+      {
+        "id": "field:5.5:daypart#description/object:1",
+        "kind": "inline_object",
+        "text": "{ days[], start, end }"
+      },
+      {
+        "id": "field:5.5:daypart#description/values:1",
+        "kind": "value_list",
+        "text": "`monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`"
+      },
+      {
+        "id": "field:5.5:exclusions",
+        "kind": "field",
+        "text": "`exclusions` | Object | supplied | The buyer's block lists: `{ domain[], app_bundle[], iab_content_category[], keyword[], list_ref }`. See below"
+      },
+      {
+        "id": "field:5.5:exclusions#description/object:1",
+        "kind": "inline_object",
+        "text": "{ domain[], app_bundle[], iab_content_category[], keyword[], list_ref }"
+      },
+      {
+        "id": "field:5.5:exclusions_accepted",
+        "kind": "field",
+        "text": "`exclusions_accepted` | Object | seller-set | What the seller can enforce: `{ types[], max_entries, enforcement, verification[] }`. See below"
+      },
+      {
+        "id": "field:5.5:exclusions_accepted#description/object:1",
+        "kind": "inline_object",
+        "text": "{ types[], max_entries, enforcement, verification[] }"
+      },
+      {
+        "id": "field:5.5:time_zone",
+        "kind": "field",
+        "text": "`time_zone` | String | seller-set | IANA time zone name, or `viewer_local` (where the ad renders). The clock for `daypart` and `frequency_cap.period`. REQUIRED with either"
+      },
+      {
+        "id": "field:5.6:requires",
+        "kind": "field",
+        "text": "`requires` | Object | seller-set | OPTIONAL. Conditions that must hold in the same commitment for this line item to be committable. See 5.6.3"
+      },
+      {
+        "id": "field:5.8:terms_ref",
+        "kind": "field",
+        "text": "`terms_ref` | Object | seller-set | OPTIONAL; REQUIRED when `terms_acceptance_required` is `true`. `{ url, sha256, version }`: the legal terms or IO template the buyer accepts at assent. Hash-pinned, so assent (§ 4.1) binds to an exact document"
+      },
+      {
+        "id": "field:5.8:terms_ref#description/object:1",
+        "kind": "inline_object",
+        "text": "{ url, sha256, version }"
+      },
+      {
+        "id": "key:5.2.2:placement.api[]",
+        "kind": "key",
+        "text": "`api[]` | OPTIONAL | Values from List: API Frameworks that every impression supports, such as MRAID 3.0 (6), OMID 1.0 (7) and SIMID 1.1 (9) | `DisplayPlacement.api`, `VideoPlacement.api`, `AudioPlacement.api`, `banner.api`, `video.api`, `audio.api`"
+      },
+      {
+        "id": "key:5.2.2:placement.instl",
+        "kind": "key",
+        "text": "`instl` | OPTIONAL | `0` (no) | `1` (yes). The ad is interstitial or full screen | `DisplayPlacement.instl`, `imp.instl`"
+      },
+      {
+        "id": "key:5.2.2:placement.instl#meaning/values:1",
+        "kind": "value_list",
+        "text": "`0` (no) | `1` (yes)"
+      },
+      {
+        "id": "key:5.2.2:placement.playmethod[]",
+        "kind": "key",
+        "text": "`playmethod[]` | OPTIONAL | Video or audio. Values from List: Playback Methods in use, such as Initiates without any specific user interaction with Sound On (1), Initiates without any specific user interaction Sound Off by Default (2), Initiates on Click with Sound On (3) and Continuous Playback (7) | `VideoPlacement.playmethod`, `AudioPlacement.playmethod`, `video.playbackmethod`"
+      },
+      {
+        "id": "key:5.2.2:placement.plcmt",
+        "kind": "key",
+        "text": "`plcmt` | REQUIRED for video ads (`channel` `video`, or video on `channel` `ctv`); otherwise OPTIONAL | One value from List: Plcmt Subtypes - Video: Instream (1), Accompanying Content (2), Interstitial (3), No Content/Standalone (4), Pause (5), Screensaver (6), Overlay (7), Squeezeback (8), In-scene (9) | `VideoPlacement.ptype`, `video.plcmt`"
+      },
+      {
+        "id": "key:5.2.2:placement.refresh",
+        "kind": "key",
+        "text": "`refresh` | OPTIONAL | `{ min_interval_s }`: minimum seconds a creative renders before the slot refreshes | OpenRTB 2.6 only: `imp.refresh.refsettings[].minint`"
+      },
+      {
+        "id": "key:5.2.2:placement.refresh#meaning/object:1",
+        "kind": "inline_object",
+        "text": "{ min_interval_s }"
+      },
+      {
+        "id": "key:5.2.2:placement.reward",
+        "kind": "key",
+        "text": "`reward` | OPTIONAL | `0` (no) | `1` (yes). The user receives a reward for viewing the ad | `Placement.reward`, `imp.rwdd`"
+      },
+      {
+        "id": "key:5.2.2:placement.reward#meaning/values:1",
+        "kind": "value_list",
+        "text": "`0` (no) | `1` (yes)"
+      },
+      {
+        "id": "key:5.2.2:placement.skip",
+        "kind": "key",
+        "text": "`skip` | OPTIONAL | Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad | `VideoPlacement.skip`, `AudioPlacement.skip`, `video.skip`"
+      },
+      {
+        "id": "key:5.2.2:placement.skip#meaning/values:1",
+        "kind": "value_list",
+        "text": "`0` (no) | `1` (yes)"
+      },
+      {
+        "id": "key:5.2.2:placement.skipafter",
+        "kind": "key",
+        "text": "`skipafter` | OPTIONAL | When `skip` is `1`: seconds the ad plays before the placement enables skipping | `VideoPlacement.skipafter`, `AudioPlacement.skipafter`, `video.skipafter`"
+      },
+      {
+        "id": "key:5.2:apps[].bundle",
+        "kind": "key",
+        "text": "`bundle` | REQUIRED | Store ID. As OpenRTB 2.6 `app.bundle`"
+      },
+      {
+        "id": "key:5.2:apps[].domain",
+        "kind": "key",
+        "text": "`domain` | RECOMMENDED | Developer domain, against which `app-ads.txt` is checked. As `app.domain`"
+      },
+      {
+        "id": "key:5.2:apps[].platform",
+        "kind": "key",
+        "text": "`platform` | REQUIRED | `ios` | `android` | `roku` | `fire_tv` | `samsung_tv` and other store platforms. No OpenRTB equivalent"
+      },
+      {
+        "id": "key:5.2:apps[].platform#meaning/values:1",
+        "kind": "value_list",
+        "text": "`ios` | `android` | `roku` | `fire_tv` | `samsung_tv`"
+      },
+      {
+        "id": "key:5.2:apps[].storeurl",
+        "kind": "key",
+        "text": "`storeurl` | OPTIONAL | Store listing URL. As `app.storeurl`"
+      },
+      {
+        "id": "key:5.6.1:commitment.proposal_id",
+        "kind": "key",
+        "text": "`proposal_id` | REQUIRED | The proposal the commitment is made against"
+      },
+      {
+        "id": "key:5.6.1:commitment.version",
+        "kind": "key",
+        "text": "`version` | REQUIRED | The proposal `version` the commitment was priced against"
+      },
+      {
+        "id": "key:5.6.3:requires.all_of[]",
+        "kind": "key",
+        "text": "`all_of[]` | Line items that MUST all be in the same commitment"
+      },
+      {
+        "id": "key:5.6.3:requires.any_of[]",
+        "kind": "key",
+        "text": "`any_of[]` | Line items of which at least one MUST be in the same commitment"
+      },
+      {
+        "id": "key:5.6.3:requires.min_commitment[]",
+        "kind": "key",
+        "text": "`min_commitment[]` | Purchase-level thresholds: `{ line_item_id, basis, amount, currency }`"
+      },
+      {
+        "id": "key:5.6.3:requires.min_commitment[]#meaning/object:1",
+        "kind": "inline_object",
+        "text": "{ line_item_id, basis, amount, currency }"
+      },
+      {
+        "id": "rule:2.1:5d7284d5",
+        "kind": "statement",
+        "text": "A line item that carries `placement` (§ 5.2) MUST also give, in its summary, whichever of `placement.reward` · `placement.instl` · `placement.plcmt` · `placement.skip` it declares."
+      },
+      {
+        "id": "rule:2.3:59a4ca91",
+        "kind": "statement",
+        "text": "Manifest entries MUST match the current version of each proposal."
+      },
+      {
+        "id": "rule:2.3:68f68e24",
+        "kind": "statement",
+        "text": "`ETag` / `Last-Modified` are REQUIRED, so buyers can poll cheaply."
+      },
+      {
+        "id": "rule:2.3:99777739",
+        "kind": "statement",
+        "text": "A seller MAY publish `https://<seller domain>/.well-known/openproposal.json`."
+      },
+      {
+        "id": "rule:2:ace530d6",
+        "kind": "statement",
+        "text": "A buyer MAY select and commit a subset of a proposal's line items, unless the proposal sets `linked_execution` to `all` (§ 4.1)."
+      },
+      {
+        "id": "rule:3.3:1acc7d0d",
+        "kind": "statement",
+        "text": "Because audiences, properties, formats and, where it is selectable, `geo` are `selectable`, and buyer `exclusions` (§ 5.5) narrow delivery, `addressable_scale` and `availability` MUST be recomputed against the buyer's actual selection and exclusions."
+      },
+      {
+        "id": "rule:4.1:d539a004",
+        "kind": "statement",
+        "text": "OPTIONAL."
+      },
+      {
+        "id": "rule:4.1:fae6ebab",
+        "kind": "statement",
+        "text": "`proposal_template_id` MUST NOT be required for a buyer to transact."
+      },
+      {
+        "id": "rule:5.1.1:4c696214",
+        "kind": "statement",
+        "text": "The seller MUST serve a line item only on impressions of its `channel`."
+      },
+      {
+        "id": "rule:5.1.1:ce115ccf",
+        "kind": "statement",
+        "text": "A consumer MUST skip a line item whose `channel` it does not recognise, and MUST NOT reject the proposal because of it."
+      },
+      {
+        "id": "rule:5.10:d539a004",
+        "kind": "statement",
+        "text": "OPTIONAL."
+      },
+      {
+        "id": "rule:5.2.1:cc42a1f8",
+        "kind": "statement",
+        "text": "Each `environments.available[]` value MUST match at least one impression to which 5.1.1 gives the line item's `channel`."
+      },
+      {
+        "id": "rule:5.2.2:463dfafd",
+        "kind": "statement",
+        "text": "Each key takes an integer, except `playmethod[]` and `api[]`, which take arrays of integers, and `refresh`, an object whose `min_interval_s` is a REQUIRED integer."
+      },
+      {
+        "id": "rule:5.2.2:6f05ff6d",
+        "kind": "statement",
+        "text": "The seller MUST NOT deliver the line item to an impression that does not match a key that is present."
+      },
+      {
+        "id": "rule:5.2.2:f9a1a6d5",
+        "kind": "statement",
+        "text": "Unless `api[]` includes OMID 1.0 (7), a line item whose `committed_metrics[]` includes `viewable_rate` and whose `environments.available[]` includes `app_mobile` or `ctv` SHOULD NOT offer a `measurement_source` vendor other than the seller."
+      },
+      {
+        "id": "rule:5.2:3d2307e8",
+        "kind": "statement",
+        "text": "Each property MUST carry `domains`, `apps` or both"
+      },
+      {
+        "id": "rule:5.2:f3d3f9e8",
+        "kind": "statement",
+        "text": "`plcmt` is REQUIRED for video ads."
+      },
+      {
+        "id": "rule:5.4/creative-inspection-and-previews:11d3ac1e",
+        "kind": "statement",
+        "text": "Synthetic events MAY be sent to test endpoints, or through a test mode that the receiving service documents as excluding those events from production measurement and delivery diagnostics."
+      },
+      {
+        "id": "rule:5.4/creative-inspection-and-previews:3a29e732",
+        "kind": "statement",
+        "text": "An implementation MUST NOT report a check that was skipped or could not finish as passed."
+      },
+      {
+        "id": "rule:5.4/creative-inspection-and-previews:52bc805d",
+        "kind": "statement",
+        "text": "The inspector MUST NOT request a destination or redirect that sends a production notification; it MAY use a separate inspection URL or the receiving service's documented test mode under the conditions below."
+      },
+      {
+        "id": "rule:5.4/creative-inspection-and-previews:7adf48a7",
+        "kind": "statement",
+        "text": "An implementation performing inspection MUST NOT send any production notification."
+      },
+      {
+        "id": "rule:5.4/creative-inspection-and-previews:ef1a453e",
+        "kind": "statement",
+        "text": "An implementation MAY retrieve creative documents, follow VAST wrappers and inspect referenced media as needed for its checks."
+      },
+      {
+        "id": "rule:5.4/creative-inspection-and-previews:f25ad098",
+        "kind": "statement",
+        "text": "A preview that executes creative or verification code MUST prevent that code from sending production notifications."
+      },
+      {
+        "id": "rule:5.4/creative-inspection-and-previews:fbc60b60",
+        "kind": "statement",
+        "text": "Inspection failures MUST be reported through diagnostics, without firing a production VAST `<Error>` or `verificationNotExecuted` URL."
+      },
+      {
+        "id": "rule:5.5:02097f4e",
+        "kind": "statement",
+        "text": "A seller whose rate differs by market MAY declare `geo` with the selectable structure of § 3.1:"
+      },
+      {
+        "id": "rule:5.5:16494a1a",
+        "kind": "statement",
+        "text": "`list_ref` MUST be hash-pinned, and resolved into the stored record at `agreed`, as for `catalog_ref` (§ 2.2)."
+      },
+      {
+        "id": "rule:5.5:2eab2842",
+        "kind": "statement",
+        "text": "A buyer MUST NOT supply an exclusion type absent from `exclusions_accepted.types`."
+      },
+      {
+        "id": "rule:5.5:3e6033ee",
+        "kind": "statement",
+        "text": "A seller MUST reject it deterministically rather than ignore it."
+      },
+      {
+        "id": "rule:5.5:51ca125e",
+        "kind": "statement",
+        "text": "A `geo` MUST NOT declare both."
+      },
+      {
+        "id": "rule:5.5:7fdb152c",
+        "kind": "statement",
+        "text": "A seller MUST NOT present `best_effort` enforcement as a guarantee."
+      },
+      {
+        "id": "rule:5.5:9ecd641d",
+        "kind": "statement",
+        "text": "REQUIRED with either"
+      },
+      {
+        "id": "rule:5.5:ac74a0a6",
+        "kind": "statement",
+        "text": "`geo` MAY instead declare the selectable structure of § 3.1, so a line item can be priced by market."
+      },
+      {
+        "id": "rule:5.5:c6cd99b1",
+        "kind": "statement",
+        "text": "A seller MUST reject an entry whose platform it cannot determine, rather than apply it across stores."
+      },
+      {
+        "id": "rule:5.5:e6f552da",
+        "kind": "statement",
+        "text": "A `geo` that declares `allowed[]` and no `available[]` MUST be treated as `settable` (§ 3.2)."
+      },
+      {
+        "id": "rule:5.6.1:1a7143ff",
+        "kind": "statement",
+        "text": "The rejection MUST return the current version number, so the buyer can fetch it again."
+      },
+      {
+        "id": "rule:5.6.1:499ec00e",
+        "kind": "statement",
+        "text": "The seller MUST reject a new commitment attempt whose `version` is not the current version of the proposal named by `proposal_id`, whose proposal is past `valid_until`, or whose `pricing[].price_valid_until` has passed."
+      },
+      {
+        "id": "rule:5.6.1:6f403dba",
+        "kind": "statement",
+        "text": "The seller MUST NOT interpret it."
+      },
+      {
+        "id": "rule:5.6.1:7de026a6",
+        "kind": "statement",
+        "text": "Reusing an `idempotency_key` with different commitment terms MUST produce an explicit conflict and MUST NOT create or modify a commitment."
+      },
+      {
+        "id": "rule:5.6.1:852ec5db",
+        "kind": "statement",
+        "text": "These checks MUST be deterministic, as for `idempotency_key`."
+      },
+      {
+        "id": "rule:5.6.1:d672decc",
+        "kind": "statement",
+        "text": "For a replay from the same buyer of a commitment attempt the seller has already processed, with the same `idempotency_key` and the same commitment terms, the seller MUST return the original result and MUST NOT create a second commitment."
+      },
+      {
+        "id": "rule:5.6.3:17fe6f2c",
+        "kind": "statement",
+        "text": "Line items that MUST all be in the same commitment"
+      },
+      {
+        "id": "rule:5.6.3:39e4afbb",
+        "kind": "statement",
+        "text": "A seller MUST reject a commitment that includes a line item whose `requires` is unmet."
+      },
+      {
+        "id": "rule:5.6.3:497d445c",
+        "kind": "statement",
+        "text": "Line items of which at least one MUST be in the same commitment"
+      },
+      {
+        "id": "rule:5.6.3:7d683b70",
+        "kind": "statement",
+        "text": "This check MUST be deterministic."
+      },
+      {
+        "id": "rule:5.6.3:b4da8d14",
+        "kind": "statement",
+        "text": "A seller MUST reject a proposal at publication if `requires` references form a cycle."
+      },
+      {
+        "id": "rule:5.6.3:db94cd1e",
+        "kind": "statement",
+        "text": "References in `requires` MUST point to line items in the same proposal and version."
+      },
+      {
+        "id": "rule:5.6:d539a004-2",
+        "kind": "statement",
+        "text": "OPTIONAL."
+      },
+      {
+        "id": "rule:5.8:59a01393",
+        "kind": "statement",
+        "text": "`terms_ref` MUST be hash-pinned and frozen at `agreed`."
+      },
+      {
+        "id": "rule:5.8:6ee577a5",
+        "kind": "statement",
+        "text": "OPTIONAL; REQUIRED when `terms_acceptance_required` is `true`."
+      },
+      {
+        "id": "rule:5.8:d02f49a2",
+        "kind": "statement",
+        "text": "A seller MUST NOT disclose a buyer's `exclusions` to any party other than that buyer."
+      },
+      {
+        "id": "sentence:2.1:80ac0822",
+        "kind": "sentence",
+        "text": "plus, from the parent proposal: `proposal_id` · `seller_name` · `description` · `valid_from` · `valid_until` · `linked_execution`."
+      },
+      {
+        "id": "sentence:2.1:ba90b505",
+        "kind": "sentence",
+        "text": "`has_requires` is `true` when the line item declares `requires` (§ 5.6.3), so a screening agent does not recommend a line item that cannot be bought on its own."
+      },
+      {
+        "id": "sentence:2.1:f23277b4",
+        "kind": "sentence",
+        "text": "`line_item_id` · `channel` · `environments.available[]` · `content_detail` · property names · `formats.included[]` · `pricing.cost_method` · `pricing.gross_rate` · `min_spend` · `addressable_scale` · `committed_metrics[]` · `transaction_mechanism` · `has_requires`"
+      },
+      {
+        "id": "sentence:2.3:329c49c5",
+        "kind": "sentence",
+        "text": "`registry_gated` and `named` line items do not."
+      },
+      {
+        "id": "sentence:2.3:4456a7fb",
+        "kind": "sentence",
+        "text": "Property lists stay as names in the summary; large lists use `catalog_ref` (§ 2.2)."
+      },
+      {
+        "id": "sentence:2.3:7c617825",
+        "kind": "sentence",
+        "text": "Propose: fetch the Full Representation of shortlisted line items from `full_url`, then compose and commit as usual."
+      },
+      {
+        "id": "sentence:2.3:b43aefff",
+        "kind": "sentence",
+        "text": "Contents: `{ seller_id, generated_at, spec_version, proposals[] }`, where each entry in `proposals[]` carries `proposal_id`, `version`, the Summary Representation (§ 2.1) of each line item, and a `full_url` for the second phase."
+      },
+      {
+        "id": "sentence:2.3:c1b9a69d",
+        "kind": "sentence",
+        "text": "Only standard proposals appear, and within them only line items whose `visibility` (§ 5.8) is `public`."
+      },
+      {
+        "id": "sentence:2:f059053f",
+        "kind": "sentence",
+        "text": "A line item that declares `requires` (§ 5.6.3) may be committed only when its conditions are met."
+      },
+      {
+        "id": "sentence:4.1:9e990c7e",
+        "kind": "sentence",
+        "text": "Each issued proposal has an independent `status`, `version` and `negotiation_history[]`."
+      },
+      {
+        "id": "sentence:5.1.1:1156bb62",
+        "kind": "sentence",
+        "text": "Impressions in linear TV, including addressable linear, are outside this table: they have no `channel` value in 3.0."
+      },
+      {
+        "id": "sentence:5.1.1:5c446bbd",
+        "kind": "sentence",
+        "text": "Conditions are stated in AdCOM 1.0 terms: the distribution channel, the ad's media (`Placement` subtypes) and the device type."
+      },
+      {
+        "id": "sentence:5.1.1:f84d6159",
+        "kind": "sentence",
+        "text": "Placement type, such as interstitial or rewarded (OpenRTB 2.6 `video.plcmt`, `imp.instl` and `imp.rwdd`), does not change the channel."
+      },
+      {
+        "id": "sentence:5.10:e8da0f9e",
+        "kind": "sentence",
+        "text": "OpenProposal supplies the agreed record, `terms_ref` and `correlation_id` a connector needs."
+      },
+      {
+        "id": "sentence:5.2.2:37fcff5a",
+        "kind": "sentence",
+        "text": "`plcmt` takes its OpenRTB 2.6 name."
+      },
+      {
+        "id": "sentence:5.2.2:3e19d307",
+        "kind": "sentence",
+        "text": "OpenRTB 2.6 `Audio` has no `skip`, `skipafter` or `playbackmethod`, so for audio those keys map to AdCOM 1.0 `AudioPlacement` only."
+      },
+      {
+        "id": "sentence:5.2.2:4076adca",
+        "kind": "sentence",
+        "text": "Keys follow AdCOM 1.0 `Placement` and its `DisplayPlacement`, `VideoPlacement` and `AudioPlacement` subtypes, and the matching OpenRTB 2.6 `Imp` attributes."
+      },
+      {
+        "id": "sentence:5.2.2:724e97b8",
+        "kind": "sentence",
+        "text": "AdCOM 1.0 reads an absent `reward` or `instl` as `0`; here it means either value."
+      },
+      {
+        "id": "sentence:5.2.2:8f7b65da",
+        "kind": "sentence",
+        "text": "An impression matches `api[]` when it supports every listed framework, `playmethod[]` when its playback method is one of the listed values, and `refresh` when the slot renders each creative for at least `min_interval_s` seconds before it refreshes, or does not refresh."
+      },
+      {
+        "id": "sentence:5.2.2:af7851e2",
+        "kind": "sentence",
+        "text": "`plcmt`, `playmethod[]` and `api[]` take any code in List: Plcmt Subtypes - Video, List: Playback Methods and List: API Frameworks respectively."
+      },
+      {
+        "id": "sentence:5.2.2:b9b60857",
+        "kind": "sentence",
+        "text": "An absent key does not constrain it: a line item that omits `instl` can deliver to interstitial and non-interstitial impressions alike."
+      },
+      {
+        "id": "sentence:5.2.2:d640a947",
+        "kind": "sentence",
+        "text": "AdCOM 1.0 carries the same list as `VideoPlacement.ptype`."
+      },
+      {
+        "id": "sentence:5.2:055318c5",
+        "kind": "sentence",
+        "text": "`apps[]` identifies the apps behind a property sold in `app_mobile` or `ctv`."
+      },
+      {
+        "id": "sentence:5.2:a976a022",
+        "kind": "sentence",
+        "text": "Seller authorisation for an app is checked through `app-ads.txt` on its developer domain, not through the property's `domains`."
+      },
+      {
+        "id": "sentence:5.2:b4f0ce3f",
+        "kind": "sentence",
+        "text": "Keys follow the OpenRTB 2.6 `app` object where one exists."
+      },
+      {
+        "id": "sentence:5.4/creative-inspection-and-previews:239a73ec",
+        "kind": "sentence",
+        "text": "The presence of a URL in VAST `<ClickThrough>` does not establish that requesting it is safe for inspection."
+      },
+      {
+        "id": "sentence:5.5:00b99440",
+        "kind": "sentence",
+        "text": "For `exclusions_accepted` and `exclusions`, the seller declares what it can enforce, and the buyer supplies its lists."
+      },
+      {
+        "id": "sentence:5.5:262ff404",
+        "kind": "sentence",
+        "text": "`enforcement` is `pre_serve` or `best_effort` per type."
+      },
+      {
+        "id": "sentence:5.5:348ea676",
+        "kind": "sentence",
+        "text": "A `daypart` window is `{ days[], start, end }`, with `days[]` from Monday to Sunday, `start` and `end` as HH:MM, and `end` exclusive, later than `start`, and allowed to be `24:00`."
+      },
+      {
+        "id": "sentence:5.5:3ec41b49",
+        "kind": "sentence",
+        "text": "`time_zone` names a zone in the IANA time zone database, such as America/New_York or UTC."
+      },
+      {
+        "id": "sentence:5.5:47d3cab4",
+        "kind": "sentence",
+        "text": "Each targeting field except `time_zone`, `exclusions_accepted`, and `exclusions` declares bounds, not a value."
+      },
+      {
+        "id": "sentence:5.5:79d7d557",
+        "kind": "sentence",
+        "text": "Each `app_bundle[]` entry is `{ platform, bundle }`."
+      },
+      {
+        "id": "sentence:5.5:8d595b9a",
+        "kind": "sentence",
+        "text": "`iab_content_category[]` entries are IAB Content Taxonomy ids."
+      },
+      {
+        "id": "sentence:5.5:ad1441a7",
+        "kind": "sentence",
+        "text": "`bundle` is the OpenRTB 2.6 `app.bundle` value; `platform` names the store (`ios` | `android` | `roku` | `fire_tv` | `samsung_tv` and other store platforms)."
+      },
+      {
+        "id": "sentence:5.5:bcaa431b",
+        "kind": "sentence",
+        "text": "Like the calendar Day of OpenDirect 2.1 `Line.frequencyinterval`, `frequency_cap.period` is a calendar period in `time_zone`; weeks start on Monday."
+      },
+      {
+        "id": "sentence:5.5:ff5099f2",
+        "kind": "sentence",
+        "text": "`pricing` deltas add to `agreed_rate` as for any selectable field (§ 3.1)."
+      },
+      {
+        "id": "sentence:5.6.1:b7271e6a",
+        "kind": "sentence",
+        "text": "An `idempotency_key` is opaque and scoped to one buyer and seller pair."
+      },
+      {
+        "id": "sentence:5.6.3:3061bf96",
+        "kind": "sentence",
+        "text": "If a line item referenced in `requires` becomes `sold_out` or `withdrawn` before commitment, the dependent line item becomes non-committable."
+      },
+      {
+        "id": "sentence:5.6.3:6bbcd82c",
+        "kind": "sentence",
+        "text": "A bonus line item is a line item with `requires` and its own pricing, such as a discounted `gross_rate` or `cost_method: flat` at 0."
+      },
+      {
+        "id": "sentence:5.6.3:84e2eae9",
+        "kind": "sentence",
+        "text": "A conditional discount is modelled as a separate line item that `requires` unlocks, not as a price that changes according to the other line items selected."
+      },
+      {
+        "id": "sentence:5.6.3:946d6fc1",
+        "kind": "sentence",
+        "text": "After `agreed`, cancellation of a referenced line item is governed by the dependent line item's `cancellation_policy`."
+      },
+      {
+        "id": "sentence:5.8:986d7d0f",
+        "kind": "sentence",
+        "text": "`exclusions` (§ 5.5) reveal the buyer's strategy."
+      },
+      {
+        "id": "sentence:6.3:db7467a3",
+        "kind": "sentence",
+        "text": "Shows a buyer commitment naming the `proposal_id` and `version` it was priced against (§ 5.6.1)."
+      },
+      {
+        "id": "sentence:6.5:15fe6026",
+        "kind": "sentence",
+        "text": "See `examples/line-item-ctv-bonus.yaml`."
+      },
+      {
+        "id": "sentence:6.6:70160ee0",
+        "kind": "sentence",
+        "text": "See `examples/manifest.json`."
+      },
+      {
+        "id": "sentence:6.6:832ad0f8",
+        "kind": "sentence",
+        "text": "The display line item is `registry_gated`, so it is not listed."
+      },
+      {
+        "id": "sentence:6.7:844bf24a",
+        "kind": "sentence",
+        "text": "Shows `placement` on in-app rewarded video, with OMID support that lets a buyer select a third-party `measurement_source`."
+      },
+      {
+        "id": "sentence:6.7:d6388541",
+        "kind": "sentence",
+        "text": "See `examples/line-item-rewarded-video.yaml`."
+      },
+      {
+        "id": "sentence:7:4e066ba3",
+        "kind": "sentence",
+        "text": "`agreement_ref` and `terms_ref` (§ 5.10, § 5.8) point at the agreement and terms a line item is executed under; IO generation happens through connectors."
+      },
+      {
+        "id": "sentence:7:4f1fa2e5",
+        "kind": "sentence",
+        "text": "Buyer-specific terms, such as annual rates and named visibility, live on the issued proposal's line items: `visibility: named`, `eligible_bidders[]` and their own `pricing[]`."
+      },
+      {
+        "id": "sentence:7:9cfe55f2",
+        "kind": "sentence",
+        "text": "Buyer–seller relationships are expressed as issued proposals (`visibility: named`, `eligible_bidders[]` set to that buyer, with the negotiated `pricing[]`) plus the buyer agent's business rules."
+      },
+      {
+        "id": "sentence:7:acf0d49d",
+        "kind": "sentence",
+        "text": "Each has its own `proposal_id` per counterparty or destination, and may carry `proposal_template_id` (§ 4.1) to trace it back to its template."
+      }
+    ],
+    "changed": [
+      {
+        "id": "appendix-a:10",
+        "kind": "appendix_a",
+        "text": "`brief_ref` | 4.1 Identity and lifecycle | String | supplied",
+        "was": "`negotiation_history[]` | 4.1 Identity and lifecycle | Array[Object] | derived"
+      },
+      {
+        "id": "appendix-a:11",
+        "kind": "appendix_a",
+        "text": "`negotiation_history[]` | 4.1 Identity and lifecycle | Array[Object] | derived",
+        "was": "`description` | 4.2 Agent comprehension | String | seller-set"
+      },
+      {
+        "id": "appendix-a:12",
+        "kind": "appendix_a",
+        "text": "`linked_execution` | 4.1 Identity and lifecycle | Enum | seller-set",
+        "was": "`specifications` | 4.2 Agent comprehension | String/Object | seller-set"
+      },
+      {
+        "id": "appendix-a:13",
+        "kind": "appendix_a",
+        "text": "`description` | 4.2 Agent comprehension | String | seller-set",
+        "was": "`best_for[]` | 4.2 Agent comprehension | Array[String] | seller-set"
+      },
+      {
+        "id": "appendix-a:14",
+        "kind": "appendix_a",
+        "text": "`specifications` | 4.2 Agent comprehension | String/Object | seller-set",
+        "was": "`not_suitable_for[]` | 4.2 Agent comprehension | Array[String] | seller-set"
+      },
+      {
+        "id": "appendix-a:15",
+        "kind": "appendix_a",
+        "text": "`best_for[]` | 4.2 Agent comprehension | Array[String] | seller-set",
+        "was": "`seasonality_notes` | 4.2 Agent comprehension | String | seller-set"
+      },
+      {
+        "id": "appendix-a:16",
+        "kind": "appendix_a",
+        "text": "`not_suitable_for[]` | 4.2 Agent comprehension | Array[String] | seller-set",
+        "was": "`line_item_id` | 5.1 Identity | String | immutable"
+      },
+      {
+        "id": "appendix-a:17",
+        "kind": "appendix_a",
+        "text": "`seasonality_notes` | 4.2 Agent comprehension | String | seller-set",
+        "was": "`status` | 5.1 Identity | Enum | derived"
+      },
+      {
+        "id": "appendix-a:18",
+        "kind": "appendix_a",
+        "text": "`line_item_id` | 5.1 Identity | String | immutable",
+        "was": "`channel` | 5.1 Identity | Enum | immutable"
+      },
+      {
+        "id": "appendix-a:19",
+        "kind": "appendix_a",
+        "text": "`status` | 5.1 Identity | Enum | derived",
+        "was": "`properties` | 5.2 Inventory composition | Object | selectable"
+      },
+      {
+        "id": "appendix-a:20",
+        "kind": "appendix_a",
+        "text": "`channel` | 5.1 Identity | Enum | immutable",
+        "was": "`content_detail` | 5.2 Inventory composition | Object | seller-set"
+      },
+      {
+        "id": "appendix-a:21",
+        "kind": "appendix_a",
+        "text": "`properties` | 5.2 Inventory composition | Object | selectable",
+        "was": "`environments` | 5.2 Inventory composition | Object | selectable"
+      },
+      {
+        "id": "appendix-a:22",
+        "kind": "appendix_a",
+        "text": "`content_detail` | 5.2 Inventory composition | Object | seller-set",
+        "was": "`audiences` | 5.3 Audience reach | Object | selectable"
+      },
+      {
+        "id": "appendix-a:23",
+        "kind": "appendix_a",
+        "text": "`environments` | 5.2 Inventory composition | Object | selectable",
+        "was": "`addressable_scale` | 5.3 Audience reach | Integer | derived"
+      },
+      {
+        "id": "appendix-a:24",
+        "kind": "appendix_a",
+        "text": "`placement` | 5.2 Inventory composition | Object | seller-set",
+        "was": "`activation_route` | 5.3 Audience reach | Object | selectable"
+      },
+      {
+        "id": "appendix-a:25",
+        "kind": "appendix_a",
+        "text": "`audiences` | 5.3 Audience reach | Object | selectable",
+        "was": "`buyer_supplied` | 5.3 Audience reach | Object | supplied"
+      },
+      {
+        "id": "appendix-a:26",
+        "kind": "appendix_a",
+        "text": "`addressable_scale` | 5.3 Audience reach | Integer | derived",
+        "was": "`formats` | 5.4 Creative requirements | Object | selectable"
+      },
+      {
+        "id": "appendix-a:27",
+        "kind": "appendix_a",
+        "text": "`activation_route` | 5.3 Audience reach | Object | selectable",
+        "was": "`specs` | 5.4 Creative requirements | Object | seller-set"
+      },
+      {
+        "id": "appendix-a:28",
+        "kind": "appendix_a",
+        "text": "`buyer_supplied` | 5.3 Audience reach | Object | supplied",
+        "was": "`third_party_tags` | 5.4 Creative requirements | Object | seller-set"
+      },
+      {
+        "id": "appendix-a:29",
+        "kind": "appendix_a",
+        "text": "`formats` | 5.4 Creative requirements | Object | selectable",
+        "was": "`creative_delivery` | 5.4 Creative requirements | Object | seller-set"
+      },
+      {
+        "id": "appendix-a:30",
+        "kind": "appendix_a",
+        "text": "`specs` | 5.4 Creative requirements | Object | seller-set",
+        "was": "`assets[]` | 5.4 Creative requirements | Array[Object] | supplied"
+      },
+      {
+        "id": "appendix-a:31",
+        "kind": "appendix_a",
+        "text": "`third_party_tags` | 5.4 Creative requirements | Object | seller-set",
+        "was": "`materials_due` | 5.4 Creative requirements | Timestamp/Offset | requestable"
+      },
+      {
+        "id": "appendix-a:32",
+        "kind": "appendix_a",
+        "text": "`creative_delivery` | 5.4 Creative requirements | Object | seller-set",
+        "was": "`approval` | 5.4 Creative requirements | Object | seller-set"
+      },
+      {
+        "id": "appendix-a:33",
+        "kind": "appendix_a",
+        "text": "`assets[]` | 5.4 Creative requirements | Array[Object] | supplied",
+        "was": "`production` | 5.4 Creative requirements | Object | selectable"
+      },
+      {
+        "id": "appendix-a:34",
+        "kind": "appendix_a",
+        "text": "`materials_due` | 5.4 Creative requirements | Timestamp/Offset | requestable",
+        "was": "`geo` | 5.5 Targeting envelope | Object | settable"
+      },
+      {
+        "id": "appendix-a:35",
+        "kind": "appendix_a",
+        "text": "`approval` | 5.4 Creative requirements | Object | seller-set",
+        "was": "`device` | 5.5 Targeting envelope | Object | settable"
+      },
+      {
+        "id": "appendix-a:36",
+        "kind": "appendix_a",
+        "text": "`production` | 5.4 Creative requirements | Object | selectable",
+        "was": "`daypart` | 5.5 Targeting envelope | Object | settable"
+      },
+      {
+        "id": "appendix-a:37",
+        "kind": "appendix_a",
+        "text": "`geo` | 5.5 Targeting envelope | Object | selectable",
+        "was": "`frequency_cap` | 5.5 Targeting envelope | Object | settable"
+      },
+      {
+        "id": "appendix-a:38",
+        "kind": "appendix_a",
+        "text": "`device` | 5.5 Targeting envelope | Object | settable",
+        "was": "`pricing[]` | 5.6 Commercial terms | Array[Object] | mixed"
+      },
+      {
+        "id": "appendix-a:39",
+        "kind": "appendix_a",
+        "text": "`daypart` | 5.5 Targeting envelope | Object | settable",
+        "was": "`pricing[].cost_method` | 5.6 Commercial terms | Enum | seller-set"
+      },
+      {
+        "id": "appendix-a:40",
+        "kind": "appendix_a",
+        "text": "`time_zone` | 5.5 Targeting envelope | String | seller-set",
+        "was": "`pricing[].gross_rate` | 5.6 Commercial terms | Number | seller-set"
+      },
+      {
+        "id": "appendix-a:41",
+        "kind": "appendix_a",
+        "text": "`frequency_cap` | 5.5 Targeting envelope | Object | settable",
+        "was": "`pricing[].agreed_rate` | 5.6 Commercial terms | Number | derived"
+      },
+      {
+        "id": "appendix-a:42",
+        "kind": "appendix_a",
+        "text": "`exclusions_accepted` | 5.5 Targeting envelope | Object | seller-set",
+        "was": "`pricing[].seller_rate` | 5.6 Commercial terms | Number | seller-set"
+      },
+      {
+        "id": "appendix-a:43",
+        "kind": "appendix_a",
+        "text": "`exclusions` | 5.5 Targeting envelope | Object | supplied",
+        "was": "`pricing[].price_valid_until` | 5.6 Commercial terms | Timestamp | seller-set"
+      },
+      {
+        "id": "appendix-a:44",
+        "kind": "appendix_a",
+        "text": "`pricing[]` | 5.6 Commercial terms | Array[Object] | mixed",
+        "was": "`pricing[].currency` | 5.6 Commercial terms | String | seller-set"
+      },
+      {
+        "id": "appendix-a:45",
+        "kind": "appendix_a",
+        "text": "`pricing[].cost_method` | 5.6 Commercial terms | Enum | seller-set",
+        "was": "`pricing[].floor` | 5.6 Commercial terms | Number | seller-set"
+      },
+      {
+        "id": "appendix-a:46",
+        "kind": "appendix_a",
+        "text": "`pricing[].gross_rate` | 5.6 Commercial terms | Number | seller-set",
+        "was": "`availability` | 5.6 Commercial terms | Object | derived"
+      },
+      {
+        "id": "appendix-a:47",
+        "kind": "appendix_a",
+        "text": "`pricing[].agreed_rate` | 5.6 Commercial terms | Number | derived",
+        "was": "`commitment_bounds` | 5.6 Commercial terms | Object | seller-set"
+      },
+      {
+        "id": "appendix-a:48",
+        "kind": "appendix_a",
+        "text": "`pricing[].seller_rate` | 5.6 Commercial terms | Number | seller-set",
+        "was": "`commitment` | 5.6 Commercial terms | Object | settable"
+      },
+      {
+        "id": "appendix-a:49",
+        "kind": "appendix_a",
+        "text": "`pricing[].price_valid_until` | 5.6 Commercial terms | Timestamp | seller-set",
+        "was": "`hold_status` | 5.6 Commercial terms | Object | requestable"
+      },
+      {
+        "id": "appendix-a:50",
+        "kind": "appendix_a",
+        "text": "`pricing[].currency` | 5.6 Commercial terms | String | seller-set",
+        "was": "`min_spend` | 5.6 Commercial terms | Number | seller-set"
+      },
+      {
+        "id": "appendix-a:51",
+        "kind": "appendix_a",
+        "text": "`pricing[].floor` | 5.6 Commercial terms | Number | seller-set",
+        "was": "`cancellation_policy` | 5.6 Commercial terms | Object | selectable"
+      },
+      {
+        "id": "appendix-a:52",
+        "kind": "appendix_a",
+        "text": "`availability` | 5.6 Commercial terms | Object | derived",
+        "was": "`exclusivity` | 5.6 Commercial terms | Object | selectable"
+      },
+      {
+        "id": "appendix-a:53",
+        "kind": "appendix_a",
+        "text": "`commitment_bounds` | 5.6 Commercial terms | Object | seller-set",
+        "was": "`creative_policy` | 5.6 Commercial terms | Object | seller-set"
+      },
+      {
+        "id": "appendix-a:54",
+        "kind": "appendix_a",
+        "text": "`commitment` | 5.6 Commercial terms | Object | settable",
+        "was": "`committed_metrics[]` | 5.7 Guarantees | Array[Object] | requestable"
+      },
+      {
+        "id": "appendix-a:55",
+        "kind": "appendix_a",
+        "text": "`hold_status` | 5.6 Commercial terms | Object | requestable",
+        "was": "`measurement_source` | 5.7 Guarantees | Object | selectable"
+      },
+      {
+        "id": "appendix-a:56",
+        "kind": "appendix_a",
+        "text": "`min_spend` | 5.6 Commercial terms | Number | seller-set",
+        "was": "`shortfall_remedy` | 5.7 Guarantees | Object | selectable"
+      },
+      {
+        "id": "appendix-a:57",
+        "kind": "appendix_a",
+        "text": "`cancellation_policy` | 5.6 Commercial terms | Object | selectable",
+        "was": "`reporting` | 5.7 Guarantees | Object | selectable"
+      },
+      {
+        "id": "appendix-a:58",
+        "kind": "appendix_a",
+        "text": "`exclusivity` | 5.6 Commercial terms | Object | selectable",
+        "was": "`visibility` | 5.8 Transaction eligibility | Enum | seller-set"
+      },
+      {
+        "id": "appendix-a:59",
+        "kind": "appendix_a",
+        "text": "`creative_policy` | 5.6 Commercial terms | Object | seller-set",
+        "was": "`required_credentials[]` | 5.8 Transaction eligibility | Array[Object] | seller-set"
+      },
+      {
+        "id": "appendix-a:6",
+        "kind": "appendix_a",
+        "text": "`proposal_template_id` | 4.1 Identity and lifecycle | String | immutable",
+        "was": "`status` | 4.1 Identity and lifecycle | Enum | derived"
+      },
+      {
+        "id": "appendix-a:60",
+        "kind": "appendix_a",
+        "text": "`requires` | 5.6 Commercial terms | Object | seller-set",
+        "was": "`eligible_bidders[]` | 5.8 Transaction eligibility | Array[String] | seller-set"
+      },
+      {
+        "id": "appendix-a:61",
+        "kind": "appendix_a",
+        "text": "`committed_metrics[]` | 5.7 Guarantees | Array[Object] | requestable",
+        "was": "`terms_acceptance_required` | 5.8 Transaction eligibility | Boolean | seller-set"
+      },
+      {
+        "id": "appendix-a:62",
+        "kind": "appendix_a",
+        "text": "`measurement_source` | 5.7 Guarantees | Object | selectable",
+        "was": "`buying_route` | 5.9 Execution | Enum | seller-set"
+      },
+      {
+        "id": "appendix-a:63",
+        "kind": "appendix_a",
+        "text": "`shortfall_remedy` | 5.7 Guarantees | Object | selectable",
+        "was": "`transaction_mechanism` | 5.9 Execution | Object | selectable"
+      },
+      {
+        "id": "appendix-a:64",
+        "kind": "appendix_a",
+        "text": "`reporting` | 5.7 Guarantees | Object | selectable",
+        "was": "`serving_mode` | 5.9 Execution | Enum | seller-set"
+      },
+      {
+        "id": "appendix-a:65",
+        "kind": "appendix_a",
+        "text": "`visibility` | 5.8 Transaction eligibility | Enum | seller-set",
+        "was": "`deal_id_issuance` | 5.9 Execution | String | derived"
+      },
+      {
+        "id": "appendix-a:66",
+        "kind": "appendix_a",
+        "text": "`required_credentials[]` | 5.8 Transaction eligibility | Array[Object] | seller-set",
+        "was": "`buyer_requirements` | 5.9 Execution | Object | mixed"
+      },
+      {
+        "id": "appendix-a:67",
+        "kind": "appendix_a",
+        "text": "`eligible_bidders[]` | 5.8 Transaction eligibility | Array[String] | seller-set",
+        "was": "`serving_platform` | 5.9 Execution | String | seller-set"
+      },
+      {
+        "id": "appendix-a:68",
+        "kind": "appendix_a",
+        "text": "`terms_acceptance_required` | 5.8 Transaction eligibility | Boolean | seller-set",
+        "was": "`external_references[]` | 5.10 External references and settlement | Array[Object] | derived"
+      },
+      {
+        "id": "appendix-a:69",
+        "kind": "appendix_a",
+        "text": "`terms_ref` | 5.8 Transaction eligibility | Object | seller-set",
+        "was": "`correlation_id` | 5.10 External references and settlement | String | derived"
+      },
+      {
+        "id": "appendix-a:7",
+        "kind": "appendix_a",
+        "text": "`status` | 4.1 Identity and lifecycle | Enum | derived",
+        "was": "`assent` | 4.1 Identity and lifecycle | Object | derived"
+      },
+      {
+        "id": "appendix-a:70",
+        "kind": "appendix_a",
+        "text": "`buying_route` | 5.9 Execution | Enum | seller-set",
+        "was": "`billing` | 5.10 External references and settlement | Object | seller-set"
+      },
+      {
+        "id": "appendix-a:71",
+        "kind": "appendix_a",
+        "text": "`transaction_mechanism` | 5.9 Execution | Object | selectable",
+        "was": "`supported_order_systems[]` | 5.10 External references and settlement | Array[String] | seller-set"
+      },
+      {
+        "id": "appendix-a:8",
+        "kind": "appendix_a",
+        "text": "`assent` | 4.1 Identity and lifecycle | Object | derived",
+        "was": "`valid_from` · `valid_until` | 4.1 Identity and lifecycle | Timestamp | seller-set"
+      },
+      {
+        "id": "appendix-a:9",
+        "kind": "appendix_a",
+        "text": "`valid_from` · `valid_until` | 4.1 Identity and lifecycle | Timestamp | seller-set",
+        "was": "`brief_ref` | 4.1 Identity and lifecycle | String | supplied"
+      },
+      {
+        "id": "appendix-b:immutable",
+        "kind": "appendix_b",
+        "text": "`immutable` | 7 | Set once at creation. Neither party may change it.",
+        "was": "`immutable` | 6 | Set once at creation. Neither party may change it."
+      },
+      {
+        "id": "appendix-b:selectable",
+        "kind": "appendix_b",
+        "text": "`selectable` | 13 | Buyer chooses from a declared set. Resolves without assent.",
+        "was": "`selectable` | 12 | Buyer chooses from a declared set. Resolves without assent."
+      },
+      {
+        "id": "appendix-b:seller-set",
+        "kind": "appendix_b",
+        "text": "`seller-set` | 36 | Seller sets and may revise while `draft` or `published`.",
+        "was": "`seller-set` | 29 | Seller sets and may revise while `draft` or `published`."
+      },
+      {
+        "id": "appendix-b:settable",
+        "kind": "appendix_b",
+        "text": "`settable` | 4 | Buyer sets a value within declared bounds. Resolves without assent.",
+        "was": "`settable` | 5 | Buyer sets a value within declared bounds. Resolves without assent."
+      },
+      {
+        "id": "appendix-b:supplied",
+        "kind": "appendix_b",
+        "text": "`supplied` | 4 | Buyer provides data or an artifact.",
+        "was": "`supplied` | 3 | Buyer provides data or an artifact."
+      },
+      {
+        "id": "block:2.1:3/identifiers:1",
+        "kind": "identifier_list",
+        "text": "`line_item_id` · `channel` · `environments.available[]` · `content_detail` · property names · `formats.included[]` · `pricing.cost_method` · `pricing.gross_rate` · `min_spend` · `addressable_scale` · `committed_metrics[]` · `transaction_mechanism` · `has_requires`",
+        "was": "`line_item_id` · `channel` · `content_detail` · property names · `formats.included[]` · `pricing.cost_method` · `pricing.gross_rate` · `min_spend` · `addressable_scale` · `committed_metrics[]` · `transaction_mechanism`"
+      },
+      {
+        "id": "block:2.1:4/identifiers:1",
+        "kind": "identifier_list",
+        "text": "`proposal_id` · `seller_name` · `description` · `valid_from` · `valid_until` · `linked_execution`",
+        "was": "`proposal_id` · `seller_name` · `description` · `valid_from` · `valid_until`"
+      },
+      {
+        "id": "field:4.1:version",
+        "kind": "field",
+        "text": "`version` | Integer | derived | Monotonically increasing revision number. Each revision while status is `published` increments it",
+        "was": "`version` | Integer | derived | Monotonically increasing revision number"
+      },
+      {
+        "id": "field:5.10:external_references[]",
+        "kind": "field",
+        "text": "`external_references[]` | Array[Object] | derived | `{ system, namespace, id, role }`. Replaces platform-specific key names. A buyer-owned reference such as a Prisma `io_id` is supplied. Documented `role` values: `io`, an IO id generated by an order management system and carried back on the line item; `agreement`, a buyer-held agreement id",
+        "was": "`external_references[]` | Array[Object] | derived | `{ system, namespace, id, role }`. Replaces platform-specific key names. A buyer-owned reference such as a Prisma `io_id` is supplied"
+      },
+      {
+        "id": "field:5.1:channel",
+        "kind": "field",
+        "text": "`channel` | Enum | immutable | `display` | `video` | `audio` | `ctv` | `dooh` | `native`, each defined in 5.1.1. The discriminator for how the rest of the line item is read",
+        "was": "`channel` | Enum | immutable | `display` | `video` | `audio` | `ctv` | `dooh` | `native`. The discriminator for how the rest of the line item is read"
+      },
+      {
+        "id": "field:5.2:environments",
+        "kind": "field",
+        "text": "`environments` | Object | selectable | `available[]` from `web_desktop` | `web_mobile` | `app_mobile` | `ctv` | `dooh`, each defined in 5.2.1",
+        "was": "`environments` | Object | selectable | `available[]` from `web_desktop` | `web_mobile` | `app_mobile` | `ctv` | `dooh` | `audio_streaming`"
+      },
+      {
+        "id": "field:5.2:environments#description/values:1",
+        "kind": "value_list",
+        "text": "`web_desktop` | `web_mobile` | `app_mobile` | `ctv` | `dooh`",
+        "was": "`web_desktop` | `web_mobile` | `app_mobile` | `ctv` | `dooh` | `audio_streaming`"
+      },
+      {
+        "id": "field:5.2:properties",
+        "kind": "field",
+        "text": "`properties` | Object | selectable | `available[]` of `{ id, name, domains, apps, supported_formats }`, `included[]`, `pricing`, `max_select`. Each property MUST carry `domains`, `apps` or both",
+        "was": "`properties` | Object | selectable | `available[]` of `{ id, name, domains, supported_formats }`, `included[]`, `pricing`, `max_select`"
+      },
+      {
+        "id": "field:5.2:properties#description/object:1",
+        "kind": "inline_object",
+        "text": "{ id, name, domains, apps, supported_formats }",
+        "was": "{ id, name, domains, supported_formats }"
+      },
+      {
+        "id": "field:5.5:daypart",
+        "kind": "field",
+        "text": "`daypart` | Object | settable | `allowed[]` of `{ days[], start, end }`: `days[]` from `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`, HH:MM civil time, `end` exclusive, up to `24:00`",
+        "was": "`daypart` | Object | settable | `allowed[]` of time windows"
+      },
+      {
+        "id": "field:5.5:geo",
+        "kind": "field",
+        "text": "`geo` | Object | selectable | `available[]` of geo codes with `included[]`, `pricing` deltas and `max_select` (§ 3.1), for a line item priced by market. A `geo` that declares only `allowed[]` is `settable`. See below",
+        "was": "`geo` | Object | settable | `allowed[]` of geo codes the buyer may select within"
+      },
+      {
+        "id": "field:5.6:pricing[].floor",
+        "kind": "field",
+        "text": "`pricing[].floor` | Number | seller-set | OPTIONAL. The seller's offer floor: the lowest rate it will consider at proposal time, so a `requestable` counter can be evaluated without a round trip. Not the downstream auction floor, and not a guarantee that bids at or above it will clear",
+        "was": "`pricing[].floor` | Number | seller-set | OPTIONAL. The lowest rate the seller will consider. Enables a `requestable` counter to be evaluated without a round trip"
+      },
+      {
+        "id": "rule:2.1:2f9d603c",
+        "kind": "statement",
+        "text": "A full fetch MUST return it.",
+        "was": "A full fetch MUST return it."
+      },
+      {
+        "id": "rule:2.1:8d97860b",
+        "kind": "statement",
+        "text": "`catalog_ref` values MUST remain unresolved in a summary.",
+        "was": "`catalog_ref` values MUST remain unresolved in a summary."
+      },
+      {
+        "id": "sentence:2.1:0fb18f29",
+        "kind": "sentence",
+        "text": "Full Representation — every field, with all `catalog_ref` values resolved.",
+        "was": "Full Representation — every field, with all `catalog_ref` values resolved."
+      }
+    ],
+    "removed": [
+      {
+        "id": "rule:2:2ea1196f",
+        "kind": "statement",
+        "text": "A buyer MAY select and commit a subset of a proposal's line items, unless the proposal explicitly mandates linked execution through its binding terms."
+      },
+      {
+        "id": "rule:3.3:f58949fc",
+        "kind": "statement",
+        "text": "Because audiences, properties and formats are `selectable`, `addressable_scale` and `availability` MUST be recomputed against the buyer's actual selection."
+      },
+      {
+        "id": "rule:5.6.1:e250f467",
+        "kind": "statement",
+        "text": "A request carrying an `idempotency_key` already seen MUST return the original result and MUST NOT create a second commitment."
+      },
+      {
+        "id": "sentence:2.1:1f55a1be",
+        "kind": "sentence",
+        "text": "plus, from the parent proposal: `proposal_id` · `seller_name` · `description` · `valid_from` · `valid_until`."
+      },
+      {
+        "id": "sentence:2.1:5e6cb5f0",
+        "kind": "sentence",
+        "text": "`line_item_id` · `channel` · `content_detail` · property names · `formats.included[]` · `pricing.cost_method` · `pricing.gross_rate` · `min_spend` · `addressable_scale` · `committed_metrics[]` · `transaction_mechanism`"
+      }
+    ]
+  },
+  "findings": {
+    "conditions": {
+      "added": [
+        "Placement.plcmt: \"REQUIRED for video ads (`channel` `video`, or video on `channel` `ctv`)\" names no sibling and value"
+      ],
+      "removed": []
+    },
+    "examples": {
+      "added": [
+        {
+          "decisions": [
+            "D-003"
+          ],
+          "example": "code:5.5:1",
+          "kind": "invalid",
+          "message": "must match pattern \"^[0-9a-f]{64}$\"",
+          "path": "/exclusions/list_ref/sha256",
+          "reason": "A SHA-256 hash is 64 lowercase hex digits. The § 5.5 block writes the placeholder `<hash>`."
+        },
+        {
+          "decisions": [
+            "D-006"
+          ],
+          "example": "code:5.5:1",
+          "kind": "invalid",
+          "message": "must match pattern \"^https://.+$\"; must match format \"uri\"",
+          "path": "/exclusions/list_ref/url",
+          "reason": "A URL is an absolute `https` URL. The § 5.5 block writes the placeholder `<url>`."
+        },
+        {
+          "decisions": [
+            "D-037"
+          ],
+          "example": "code:5.6.3:1",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"",
+          "path": "/requires/all_of/0",
+          "reason": "The example follows the text, which states no form for `all_of[]`: it writes the readable name `business-daily-display`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`."
+        },
+        {
+          "decisions": [
+            "D-037"
+          ],
+          "example": "code:5.6.3:1",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"",
+          "path": "/requires/all_of/1",
+          "reason": "The example follows the text, which states no form for `all_of[]`: it writes the readable name `weather-app-ctv`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`."
+        },
+        {
+          "decisions": [
+            "D-037"
+          ],
+          "example": "code:5.6.3:1",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"",
+          "path": "/requires/min_commitment/0/line_item_id",
+          "reason": "The example follows the text, which states no form for `line_item_id`: it writes the readable name `business-daily-display`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`."
+        },
+        {
+          "decisions": [
+            "D-037"
+          ],
+          "example": "examples/line-item-audio.yaml",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"",
+          "path": "/commitment/proposal_id",
+          "reason": "The example follows the text, which states no form for `proposal_id`: it writes the readable name `examplepub-us-q4-2026-omni`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`."
+        },
+        {
+          "decisions": [
+            "D-041"
+          ],
+          "example": "examples/line-item-ctv-bonus.yaml",
+          "kind": "invalid",
+          "message": "must match pattern \"^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]([a-z0-9-]{0,61}[a-z0-9])?:[A-Za-z0-9]+(_[A-Za-z0-9]+)*$\"",
+          "path": "/creative_delivery/protocol",
+          "reason": "The example follows the text, which lists no terms for `protocol`: it writes `vast_4_2`. We propose namespaced terms in a field until the specification lists its core terms, `vast_4_2` among them."
+        },
+        {
+          "decisions": [
+            "D-037"
+          ],
+          "example": "examples/line-item-ctv-bonus.yaml",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"",
+          "path": "/line_item_id",
+          "reason": "The example follows the text, which types `line_item_id` as a String: it writes the readable name `weather-app-ctv-bonus`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`."
+        },
+        {
+          "decisions": [
+            "D-037"
+          ],
+          "example": "examples/line-item-ctv-bonus.yaml",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"; must have required property 'catalog_ref'; must NOT have additional properties \"id\"; matches no branch of its anyOf",
+          "path": "/properties/available/0",
+          "reason": "The example follows the text, which states no form for an option's `id`: it writes the readable name `weather-app`. We propose a UUID for every ID a party mints, a catalog entry's `id` included."
+        },
+        {
+          "decisions": [
+            "D-037"
+          ],
+          "example": "examples/line-item-ctv-bonus.yaml",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"",
+          "path": "/properties/included/0",
+          "reason": "The example follows the text, which states no form for an option's `id`: `included[]` names the property by the readable ID `weather-app` its `available[]` gives it. We propose a UUID for every ID a party mints, an option's `id` included, so `included[]` names the property by that UUID."
+        },
+        {
+          "decisions": [
+            "D-037"
+          ],
+          "example": "examples/line-item-ctv-bonus.yaml",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"",
+          "path": "/requires/all_of/0",
+          "reason": "The example follows the text, which states no form for `all_of[]`: it writes the readable name `business-daily-display`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`."
+        },
+        {
+          "decisions": [
+            "D-037"
+          ],
+          "example": "examples/line-item-ctv-bonus.yaml",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"",
+          "path": "/requires/all_of/1",
+          "reason": "The example follows the text, which states no form for `all_of[]`: it writes the readable name `weather-app-ctv`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`."
+        },
+        {
+          "decisions": [
+            "D-037"
+          ],
+          "example": "examples/line-item-ctv-bonus.yaml",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"",
+          "path": "/requires/min_commitment/0/line_item_id",
+          "reason": "The example follows the text, which states no form for `line_item_id`: it writes the readable name `business-daily-display`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`."
+        },
+        {
+          "decisions": [
+            "D-037"
+          ],
+          "example": "examples/line-item-ctv.yaml",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"",
+          "path": "/commitment/proposal_id",
+          "reason": "The example follows the text, which states no form for `proposal_id`: it writes the readable name `examplepub-us-q4-2026-omni`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`."
+        },
+        {
+          "decisions": [
+            "D-037"
+          ],
+          "example": "examples/line-item-display.yaml",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"",
+          "path": "/commitment/proposal_id",
+          "reason": "The example follows the text, which states no form for `proposal_id`: it writes the readable name `examplepub-us-q4-2026-omni`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`."
+        },
+        {
+          "decisions": [
+            "D-003"
+          ],
+          "example": "examples/line-item-display.yaml",
+          "kind": "invalid",
+          "message": "must match pattern \"^[0-9a-f]{64}$\"",
+          "path": "/terms_ref/sha256",
+          "reason": "A SHA-256 hash is 64 lowercase hex digits. The example writes the placeholder `<sha256 of the terms document>`, so it doesn't show a hash-pinned `terms_ref`."
+        },
+        {
+          "decisions": [
+            "D-041"
+          ],
+          "example": "examples/line-item-rewarded-video.yaml",
+          "kind": "invalid",
+          "message": "must match pattern \"^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]([a-z0-9-]{0,61}[a-z0-9])?:[A-Za-z0-9]+(_[A-Za-z0-9]+)*$\"",
+          "path": "/committed_metrics/0/basis",
+          "reason": "The example follows the text, which lists no terms for `basis`: it writes `mrc`. We propose namespaced terms in a field until the specification lists its core terms, `mrc` among them."
+        },
+        {
+          "decisions": [
+            "D-041"
+          ],
+          "example": "examples/line-item-rewarded-video.yaml",
+          "kind": "invalid",
+          "message": "must match pattern \"^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]([a-z0-9-]{0,61}[a-z0-9])?:[A-Za-z0-9]+(_[A-Za-z0-9]+)*$\"",
+          "path": "/committed_metrics/1/basis",
+          "reason": "The example follows the text, which lists no terms for `basis`: it writes `mrc`. We propose namespaced terms in a field until the specification lists its core terms, `mrc` among them."
+        },
+        {
+          "decisions": [
+            "D-041"
+          ],
+          "example": "examples/line-item-rewarded-video.yaml",
+          "kind": "invalid",
+          "message": "must match pattern \"^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]([a-z0-9-]{0,61}[a-z0-9])?:[A-Za-z0-9]+(_[A-Za-z0-9]+)*$\"",
+          "path": "/creative_delivery/protocol",
+          "reason": "The example follows the text, which lists no terms for `protocol`: it writes `vast_4_2`. We propose namespaced terms in a field until the specification lists its core terms, `vast_4_2` among them."
+        },
+        {
+          "decisions": [
+            "D-037"
+          ],
+          "example": "examples/line-item-rewarded-video.yaml",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"",
+          "path": "/line_item_id",
+          "reason": "The example follows the text, which types `line_item_id` as a String: it writes the readable name `puzzle-games-rewarded`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`."
+        },
+        {
+          "decisions": [
+            "D-047"
+          ],
+          "example": "examples/line-item-rewarded-video.yaml",
+          "kind": "invalid",
+          "message": "must have required property 'id'",
+          "path": "/measurement_source/available/0",
+          "reason": "The example follows the text, which lists a measurement source option's members as `vendor`, `attribution_window`, and `qualifier`: this option, from `IAS`, has no `id`. We propose an `id`, REQUIRED, on every object option, so that `included[]` and the `pricing` keys name the option by it."
+        },
+        {
+          "decisions": [
+            "D-040"
+          ],
+          "example": "examples/line-item-rewarded-video.yaml",
+          "kind": "invalid",
+          "message": "must match format \"duration\"",
+          "path": "/measurement_source/available/0/attribution_window",
+          "reason": "The example follows the text, which gives `attribution_window` no form: it writes `30d`. We propose an ISO 8601 duration for every length of time, `P30D` here."
+        },
+        {
+          "decisions": [
+            "D-047"
+          ],
+          "example": "examples/line-item-rewarded-video.yaml",
+          "kind": "invalid",
+          "message": "must have required property 'id'",
+          "path": "/measurement_source/available/1",
+          "reason": "The example follows the text, which lists a measurement source option's members as `vendor`, `attribution_window`, and `qualifier`: this option, from `DoubleVerify`, has no `id`. We propose an `id`, REQUIRED, on every object option, so that `included[]` and the `pricing` keys name the option by it."
+        },
+        {
+          "decisions": [
+            "D-040"
+          ],
+          "example": "examples/line-item-rewarded-video.yaml",
+          "kind": "invalid",
+          "message": "must match format \"duration\"",
+          "path": "/measurement_source/available/1/attribution_window",
+          "reason": "The example follows the text, which gives `attribution_window` no form: it writes `30d`. We propose an ISO 8601 duration for every length of time, `P30D` here."
+        },
+        {
+          "decisions": [
+            "D-037",
+            "D-047"
+          ],
+          "example": "examples/line-item-rewarded-video.yaml",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"",
+          "path": "/measurement_source/included/0",
+          "reason": "The example follows the text, which gives a measurement source option no `id`: `included[]` names the option by its `vendor`, `IAS`, which no option of `available[]` carries as its `id`. We propose an `id` on every object option, a UUID as for every ID a party mints, so that `included[]` names the option by that UUID."
+        },
+        {
+          "decisions": [
+            "D-047"
+          ],
+          "example": "examples/line-item-rewarded-video.yaml",
+          "kind": "rule",
+          "message": "names no option of `available[]`: \"IAS\"",
+          "path": "/measurement_source/included/0",
+          "reason": "The example follows the text, which gives a measurement source option no `id`: `included[]` names the option by its `vendor`, `IAS`, which no option of `available[]` carries as its `id`. We propose an `id` on every object option, a UUID as for every ID a party mints, so that `included[]` names the option by that UUID."
+        },
+        {
+          "decisions": [
+            "D-039"
+          ],
+          "example": "examples/line-item-rewarded-video.yaml",
+          "kind": "invalid",
+          "message": "must be boolean",
+          "path": "/placement/instl",
+          "reason": "The example follows the text, which writes `instl` as AdCOM's `0` or `1`: it writes `1`. We propose a JSON boolean for every flag, `true` here."
+        },
+        {
+          "decisions": [
+            "D-039"
+          ],
+          "example": "examples/line-item-rewarded-video.yaml",
+          "kind": "invalid",
+          "message": "must be boolean",
+          "path": "/placement/reward",
+          "reason": "The example follows the text, which writes `reward` as AdCOM's `0` or `1`: it writes `1`. We propose a JSON boolean for every flag, `true` here."
+        },
+        {
+          "decisions": [
+            "D-039"
+          ],
+          "example": "examples/line-item-rewarded-video.yaml",
+          "kind": "invalid",
+          "message": "must be boolean",
+          "path": "/placement/skip",
+          "reason": "The example follows the text, which writes `skip` as AdCOM's `0` or `1`: it writes `0`. We propose a JSON boolean for every flag, `false` here."
+        },
+        {
+          "decisions": [
+            "D-037"
+          ],
+          "example": "examples/line-item-rewarded-video.yaml",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"; must have required property 'catalog_ref'; must NOT have additional properties \"id\"; must NOT have additional properties \"name\"; matches no branch of its anyOf",
+          "path": "/properties/available/0",
+          "reason": "The example follows the text, which states no form for an option's `id`: it writes the readable name `puzzle-pack`. We propose a UUID for every ID a party mints, a catalog entry's `id` included."
+        },
+        {
+          "decisions": [
+            "D-037"
+          ],
+          "example": "examples/line-item-rewarded-video.yaml",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"",
+          "path": "/properties/included/0",
+          "reason": "The example follows the text, which states no form for an option's `id`: `included[]` names the property by the readable ID `puzzle-pack` its `available[]` gives it. We propose a UUID for every ID a party mints, an option's `id` included, so `included[]` names the property by that UUID."
+        },
+        {
+          "decisions": [
+            "D-028"
+          ],
+          "example": "examples/manifest.json",
+          "kind": "invalid",
+          "message": "must have required property 'linked_execution'",
+          "path": "/proposals/0",
+          "reason": "§ 2.1 says a summary MUST contain, from the parent proposal, `linked_execution`, and § 2.3 says each `proposals[]` entry carries the proposal's summary; this entry gives no `linked_execution`. The example should give it."
+        },
+        {
+          "decisions": [
+            "D-028"
+          ],
+          "example": "examples/manifest.json",
+          "kind": "undefined_key",
+          "message": "an open object the model doesn't define the key of",
+          "path": "/proposals/0/line_items",
+          "reason": "§ 2.3 says each `proposals[]` entry carries the summaries of its line items, but names no key for them, so the generated schemas leave the entry open and define none. The example calls the key `line_items`, which the specification should name."
+        },
+        {
+          "decisions": [
+            "D-037"
+          ],
+          "example": "examples/manifest.json",
+          "kind": "invalid",
+          "message": "must match format \"uuid\"",
+          "path": "/proposals/0/proposal_id",
+          "reason": "The example follows the text, which types `proposal_id` as a String: it writes the readable name `examplepub-us-q4-2026-omni`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`."
+        }
+      ],
+      "removed": []
+    },
+    "round_trip": {
+      "added": [
+        {
+          "column": "Meaning",
+          "decision": "D-039",
+          "model": "`false` | `true`. The ad is interstitial or full screen",
+          "reason": "A yes-or-no value is a JSON boolean, as every other flag of the specification is; the row copies AdCOM's `0` and `1`.",
+          "row": "key:5.2.2:placement.instl",
+          "spec": "`0` (no) | `1` (yes). The ad is interstitial or full screen",
+          "table": "table:5.2.2:1"
+        },
+        {
+          "column": "Meaning",
+          "decision": "D-039",
+          "model": "`false` | `true`. The user receives a reward for viewing the ad",
+          "reason": "A yes-or-no value is a JSON boolean, as every other flag of the specification is; the row copies AdCOM's `0` and `1`.",
+          "row": "key:5.2.2:placement.reward",
+          "spec": "`0` (no) | `1` (yes). The user receives a reward for viewing the ad",
+          "table": "table:5.2.2:1"
+        },
+        {
+          "column": "Meaning",
+          "decision": "D-039",
+          "model": "Video or audio. `false` | `true`. The placement lets the user skip the ad",
+          "reason": "A yes-or-no value is a JSON boolean, as every other flag of the specification is; the row copies AdCOM's `0` and `1`.",
+          "row": "key:5.2.2:placement.skip",
+          "spec": "Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad",
+          "table": "table:5.2.2:1"
+        }
+      ],
+      "changed": [
+        {
+          "column": "Description",
+          "decision": "D-024",
+          "model": "`available[]` of `{ id, name, domains[], apps[], supported_formats[] }`, `included[]`, `pricing`, `max_select`. Each property MUST carry `domains`, `apps` or both",
+          "reason": "The option's plural members are lists, which the generated table writes with `[]`; the inline object writes them without it, though the App identity table is headed `apps[]`.",
+          "row": "field:5.2:properties",
+          "spec": "`available[]` of `{ id, name, domains, apps, supported_formats }`, `included[]`, `pricing`, `max_select`. Each property MUST carry `domains`, `apps` or both",
+          "table": "table:5.2:1",
+          "was": {
+            "model": "`available[]` of `{ id, name, domains[], supported_formats[] }`, `included[]`, `pricing`, `max_select`",
+            "spec": "`available[]` of `{ id, name, domains, supported_formats }`, `included[]`, `pricing`, `max_select`"
+          }
+        }
+      ],
+      "removed": []
+    },
+    "spec": {
+      "added": [
+        {
+          "id": "array_suffix_mismatch:apps[]",
+          "kind": "array_suffix_mismatch",
+          "message": "`apps[]` is written without the `[]` its definition carries, or with one it lacks: `apps`.",
+          "verdict": "open"
+        },
+        {
+          "id": "array_suffix_mismatch:exclusions_accepted.types",
+          "kind": "array_suffix_mismatch",
+          "message": "`exclusions_accepted.types` is written without the `[]` its definition carries, or with one it lacks: `exclusions_accepted.types[]`.",
+          "verdict": "open"
+        },
+        {
+          "id": "expression_value_unknown:cost_method: flat",
+          "kind": "expression_value_unknown",
+          "message": "`cost_method: flat` uses a value, but the field declares no value list to check it against.",
+          "verdict": "open"
+        },
+        {
+          "id": "expression_value_unknown:role: agreement",
+          "kind": "expression_value_unknown",
+          "message": "`role: agreement` uses a value, but the field declares no value list to check it against.",
+          "verdict": "open"
+        },
+        {
+          "id": "key_presence_unstated:table:5.6.3:1",
+          "kind": "key_presence_unstated",
+          "message": "The key table in § 5.6.3 has no Required column, so none of its 3 keys says whether it must be present.",
+          "verdict": "open"
+        },
+        {
+          "id": "must_without_field:rule:2.3:59a4ca91",
+          "kind": "must_without_field",
+          "message": "A MUST statement in § 2.3 names no field or key: \"Manifest entries MUST match the current version of each proposal.\"",
+          "verdict": "open"
+        },
+        {
+          "id": "must_without_field:rule:5.2.2:6f05ff6d",
+          "kind": "must_without_field",
+          "message": "A MUST NOT statement in § 5.2.2 names no field or key: \"The seller MUST NOT deliver the line item to an impression that does not match a key that is present.\"",
+          "verdict": "open"
+        },
+        {
+          "id": "must_without_field:rule:5.4/creative-inspection-and-previews:3a29e732",
+          "kind": "must_without_field",
+          "message": "A MUST NOT statement in § 5.4/creative-inspection-and-previews names no field or key: \"An implementation MUST NOT report a check that was skipped or could not finish as passed.\"",
+          "verdict": "open"
+        },
+        {
+          "id": "must_without_field:rule:5.4/creative-inspection-and-previews:52bc805d",
+          "kind": "must_without_field",
+          "message": "A MUST NOT statement in § 5.4/creative-inspection-and-previews names no field or key: \"The inspector MUST NOT request a destination or redirect that sends a production notification; it MAY use a separate inspection URL or the receiving service's documented test mode under the conditions below.\"",
+          "verdict": "open"
+        },
+        {
+          "id": "must_without_field:rule:5.4/creative-inspection-and-previews:7adf48a7",
+          "kind": "must_without_field",
+          "message": "A MUST NOT statement in § 5.4/creative-inspection-and-previews names no field or key: \"An implementation performing inspection MUST NOT send any production notification.\"",
+          "verdict": "open"
+        },
+        {
+          "id": "must_without_field:rule:5.4/creative-inspection-and-previews:f25ad098",
+          "kind": "must_without_field",
+          "message": "A MUST statement in § 5.4/creative-inspection-and-previews names no field or key: \"A preview that executes creative or verification code MUST prevent that code from sending production notifications.\"",
+          "verdict": "open"
+        },
+        {
+          "id": "must_without_field:rule:5.4/creative-inspection-and-previews:fbc60b60",
+          "kind": "must_without_field",
+          "message": "A MUST statement in § 5.4/creative-inspection-and-previews names no field or key: \"Inspection failures MUST be reported through diagnostics, without firing a production VAST `<Error>` or `verificationNotExecuted` URL.\"",
+          "verdict": "open"
+        },
+        {
+          "id": "must_without_field:rule:5.5:3e6033ee",
+          "kind": "must_without_field",
+          "message": "A MUST statement in § 5.5 names no field or key: \"A seller MUST reject it deterministically rather than ignore it.\"",
+          "verdict": "open"
+        },
+        {
+          "id": "must_without_field:rule:5.5:7fdb152c",
+          "kind": "must_without_field",
+          "message": "A MUST NOT statement in § 5.5 names no field or key: \"A seller MUST NOT present `best_effort` enforcement as a guarantee.\"",
+          "verdict": "open"
+        },
+        {
+          "id": "must_without_field:rule:5.5:c6cd99b1",
+          "kind": "must_without_field",
+          "message": "A MUST statement in § 5.5 names no field or key: \"A seller MUST reject an entry whose platform it cannot determine, rather than apply it across stores.\"",
+          "verdict": "open"
+        },
+        {
+          "id": "must_without_field:rule:5.6.1:1a7143ff",
+          "kind": "must_without_field",
+          "message": "A MUST statement in § 5.6.1 names no field or key: \"The rejection MUST return the current version number, so the buyer can fetch it again.\"",
+          "verdict": "open"
+        },
+        {
+          "id": "must_without_field:rule:5.6.1:6f403dba",
+          "kind": "must_without_field",
+          "message": "A MUST NOT statement in § 5.6.1 names no field or key: \"The seller MUST NOT interpret it.\"",
+          "verdict": "open"
+        },
+        {
+          "id": "must_without_field:rule:5.6.3:7d683b70",
+          "kind": "must_without_field",
+          "message": "A MUST statement in § 5.6.3 names no field or key: \"This check MUST be deterministic.\"",
+          "verdict": "open"
+        },
+        {
+          "id": "unnumbered_heading:5.4/creative-inspection-and-previews",
+          "kind": "unnumbered_heading",
+          "message": "\"Creative inspection and previews\" has no section number, so its content is cited as § 5.4.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:App",
+          "kind": "unresolved_identifier",
+          "message": "`App` resolves to no table row, key, or table-declared value.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:Audio",
+          "kind": "unresolved_identifier",
+          "message": "`Audio` resolves to no table row, key, or table-declared value.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:AudioPlacement",
+          "kind": "unresolved_identifier",
+          "message": "`AudioPlacement` resolves to no table row, key, or table-declared value.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:DisplayPlacement",
+          "kind": "unresolved_identifier",
+          "message": "`DisplayPlacement` resolves to no table row, key, or table-declared value.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:DisplayPlacement.nativefmt",
+          "kind": "unresolved_identifier",
+          "message": "`DisplayPlacement.nativefmt` resolves to no table row, key, or table-declared value; no table defines `DisplayPlacement`.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:Dooh",
+          "kind": "unresolved_identifier",
+          "message": "`Dooh` resolves to no table row, key, or table-declared value.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:ETag",
+          "kind": "unresolved_identifier",
+          "message": "`ETag` resolves to no table row, key, or table-declared value.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:Imp",
+          "kind": "unresolved_identifier",
+          "message": "`Imp` resolves to no table row, key, or table-declared value.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:Last-Modified",
+          "kind": "unresolved_identifier",
+          "message": "`Last-Modified` resolves to no table row, key, or table-declared value.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:Line.frequencyinterval",
+          "kind": "unresolved_identifier",
+          "message": "`Line.frequencyinterval` resolves to no table row, key, or table-declared value; no table defines `Line`.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:Placement",
+          "kind": "unresolved_identifier",
+          "message": "`Placement` resolves to no table row, key, or table-declared value.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:Site",
+          "kind": "unresolved_identifier",
+          "message": "`Site` resolves to no table row, key, or table-declared value.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:VideoPlacement",
+          "kind": "unresolved_identifier",
+          "message": "`VideoPlacement` resolves to no table row, key, or table-declared value.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:VideoPlacement.ptype",
+          "kind": "unresolved_identifier",
+          "message": "`VideoPlacement.ptype` resolves to no table row, key, or table-declared value; no table defines `VideoPlacement`.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:agreement",
+          "kind": "unresolved_identifier",
+          "message": "`agreement` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:app",
+          "kind": "unresolved_identifier",
+          "message": "`app` resolves to no table row, key, or table-declared value.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:app-ads.txt",
+          "kind": "unresolved_identifier",
+          "message": "`app-ads.txt` resolves to no table row, key, or table-declared value; no table defines `app-ads`.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:app.bundle",
+          "kind": "unresolved_identifier",
+          "message": "`app.bundle` resolves to no table row, key, or table-declared value; no table defines `app`.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:app.domain",
+          "kind": "unresolved_identifier",
+          "message": "`app.domain` resolves to no table row, key, or table-declared value; no table defines `app`.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:app.storeurl",
+          "kind": "unresolved_identifier",
+          "message": "`app.storeurl` resolves to no table row, key, or table-declared value; no table defines `app`.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:best_effort",
+          "kind": "unresolved_identifier",
+          "message": "`best_effort` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:full_url",
+          "kind": "unresolved_identifier",
+          "message": "`full_url` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:has_requires",
+          "kind": "unresolved_identifier",
+          "message": "`has_requires` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:imp.instl",
+          "kind": "unresolved_identifier",
+          "message": "`imp.instl` resolves to no table row, key, or table-declared value; no table defines `imp`.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:imp.rwdd",
+          "kind": "unresolved_identifier",
+          "message": "`imp.rwdd` resolves to no table row, key, or table-declared value; no table defines `imp`.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:io",
+          "kind": "unresolved_identifier",
+          "message": "`io` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:playbackmethod",
+          "kind": "unresolved_identifier",
+          "message": "`playbackmethod` resolves to no table row, key, or table-declared value.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "unresolved_identifier:pre_serve",
+          "kind": "unresolved_identifier",
+          "message": "`pre_serve` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:proposals[]",
+          "kind": "unresolved_identifier",
+          "message": "`proposals[]` resolves to no table row, key, or table-declared value; only prose declares it.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:verificationNotExecuted",
+          "kind": "unresolved_identifier",
+          "message": "`verificationNotExecuted` resolves to no table row, key, or table-declared value.",
+          "verdict": "accepted"
+        },
+        {
+          "id": "value_set_duplicate:0 | 1",
+          "kind": "value_set_duplicate",
+          "message": "The value set 0 | 1 is declared 3 times.",
+          "verdict": "open"
+        },
+        {
+          "id": "value_set_duplicate:android | fire_tv | ios | roku | samsung_tv",
+          "kind": "value_set_duplicate",
+          "message": "The value set android | fire_tv | ios | roku | samsung_tv is declared 2 times.",
+          "verdict": "open"
+        }
+      ],
+      "changed": [
+        {
+          "id": "name_reused_with_different_values:type",
+          "kind": "name_reused_with_different_values",
+          "message": "`type` names 4 different value sets.",
+          "verdict": "open",
+          "was": "`type` names 3 different value sets."
+        },
+        {
+          "id": "option_shape_missing:field:5.5:geo",
+          "kind": "option_shape_missing",
+          "message": "`geo` is `selectable`, but its options have no shape or value list; only prose describes them.",
+          "verdict": "open",
+          "was": "`geo` is `settable`, but its options have no shape or value list; only prose describes them."
+        },
+        {
+          "id": "presence_unstated:line_item",
+          "kind": "presence_unstated",
+          "message": "58 of 63 line item fields don't say whether they're REQUIRED or OPTIONAL.",
+          "verdict": "open",
+          "was": "55 of 56 line item fields don't say whether they're REQUIRED or OPTIONAL."
+        },
+        {
+          "id": "presence_unstated:proposal",
+          "kind": "presence_unstated",
+          "message": "14 of 17 proposal fields don't say whether they're REQUIRED or OPTIONAL.",
+          "verdict": "open",
+          "was": "13 of 15 proposal fields don't say whether they're REQUIRED or OPTIONAL."
+        }
+      ],
+      "removed": [
+        {
+          "id": "option_shape_missing:field:5.5:daypart",
+          "kind": "option_shape_missing",
+          "message": "`daypart` is `settable`, but its options have no shape or value list; only prose describes them.",
+          "verdict": "open"
+        }
+      ]
+    }
+  },
+  "format": 1,
+  "lock": {
+    "blob": "fdb303f07c669c21c0c1196e1c8e441790a62d3c",
+    "commit": "292bb51e654c2eef563d721eb6af8317371c906a",
+    "counts": {
+      "decisions": 42,
+      "elements.appendix_a": 80,
+      "elements.appendix_b": 8,
+      "elements.code_block": 6,
+      "elements.concept": 4,
+      "elements.definition": 11,
+      "elements.field": 80,
+      "elements.identifier_list": 3,
+      "elements.inline_object": 29,
+      "elements.key": 33,
+      "elements.marker": 7,
+      "elements.sentence": 78,
+      "elements.statement": 80,
+      "elements.value_list": 31,
+      "findings.conditions": 1,
+      "findings.examples": 92,
+      "findings.round_trip": 7,
+      "findings.spec": 100,
+      "findings.spec_open": 73,
+      "properties": 251,
+      "rules": 25,
+      "schema_files": 19,
+      "statements.example": 11,
+      "statements.obligation": 40,
+      "statements.rule": 14,
+      "statements.schema": 35,
+      "types.constructor": 6,
+      "types.copy": 20,
+      "types.document": 3,
+      "types.object": 48,
+      "types.part": 3,
+      "types.primitive": 21,
+      "types.profile": 2,
+      "types.union": 3,
+      "types.vocabulary": 42
+    },
+    "ir_sha256": "20e83a42ec5a1a8659982b2667af520ee11c6071852e1e18c7e459447b594883",
+    "lock": "with-open-prs"
+  },
+  "statements": {
+    "added": [
+      {
+        "ir": "code:5.5:1",
+        "placed": "example LineItem",
+        "text": "exclusions_accepted:\n  types:        [domain, app_bundle, iab_content_category, keyword]\n  max_entries:  { domain: 5000, keyword: 500 }\n  enforcement:  { domain: pre_serve, app_bundle: pre_serve,\n                  iab_content_category: pre_serve, keyword: best_effort }\n  verification: [\"IAS\", \"DoubleVerify\"]\n\nexclusions:\n  domain:           [\"example-gambling.example\"]\n  app_bundle:       [{ platform: roku, bundle: \"123456\" }]\n  iab_content_category: [\"IAB-CT3.0:<id>\"]   # IAB Content Taxonomy ids\n  keyword:          [\"crypto\"]\n  list_ref:         { url: \"<url>\", sha256: \"<hash>\" }"
+      },
+      {
+        "ir": "code:5.5:2",
+        "placed": "example LineItem",
+        "text": "geo:\n  available:  [\"SGP\", \"THA\", \"IDN\", \"MYS\"]\n  included:   [\"SGP\", \"THA\"]\n  pricing:    { \"IDN\": { delta_cpm: 18.00 }, \"MYS\": { delta_cpm: 21.00 } }\n  max_select: 4"
+      },
+      {
+        "ir": "code:5.5:3",
+        "placed": "example LineItem",
+        "text": "# Late fringe, 23:00 to 01:00, Monday night into Tuesday\ndaypart:\n  allowed:\n    - { days: [monday],  start: \"23:00\", end: \"24:00\" }\n    - { days: [tuesday], start: \"00:00\", end: \"01:00\" }\ntime_zone: \"America/New_York\""
+      },
+      {
+        "ir": "code:5.6.3:1",
+        "placed": "example LineItem",
+        "text": "requires:\n  all_of:  [\"business-daily-display\", \"weather-app-ctv\"]\n  any_of:  []\n  min_commitment:\n    - { line_item_id: \"business-daily-display\", basis: spend, amount: 50000.00, currency: USD }"
+      },
+      {
+        "ir": "field:5.5:daypart#description/values:1",
+        "placed": "schema DayName",
+        "text": "`monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`"
+      },
+      {
+        "ir": "key:5.2.2:placement.instl#meaning/values:1",
+        "placed": "schema Placement",
+        "text": "`0` (no) | `1` (yes)"
+      },
+      {
+        "ir": "key:5.2.2:placement.reward#meaning/values:1",
+        "placed": "schema Placement",
+        "text": "`0` (no) | `1` (yes)"
+      },
+      {
+        "ir": "key:5.2.2:placement.skip#meaning/values:1",
+        "placed": "schema Placement",
+        "text": "`0` (no) | `1` (yes)"
+      },
+      {
+        "ir": "rule:2.1:5d7284d5",
+        "level": "MUST",
+        "placed": "obligation seller",
+        "text": "A line item that carries `placement` (§ 5.2) MUST also give, in its summary, whichever of `placement.reward` · `placement.instl` · `placement.plcmt` · `placement.skip` it declares."
+      },
+      {
+        "ir": "rule:2.3:59a4ca91",
+        "level": "MUST",
+        "placed": "obligation seller",
+        "text": "Manifest entries MUST match the current version of each proposal."
+      },
+      {
+        "ir": "rule:2.3:68f68e24",
+        "level": "REQUIRED",
+        "placed": "obligation seller",
+        "text": "`ETag` / `Last-Modified` are REQUIRED, so buyers can poll cheaply."
+      },
+      {
+        "ir": "rule:2.3:99777739",
+        "level": "MAY",
+        "placed": "obligation seller",
+        "text": "A seller MAY publish `https://<seller domain>/.well-known/openproposal.json`."
+      },
+      {
+        "ir": "rule:2:ace530d6",
+        "level": "MAY",
+        "placed": "obligation buyer",
+        "text": "A buyer MAY select and commit a subset of a proposal's line items, unless the proposal sets `linked_execution` to `all` (§ 4.1)."
+      },
+      {
+        "ir": "rule:3.3:1acc7d0d",
+        "level": "MUST",
+        "placed": "obligation seller",
+        "text": "Because audiences, properties, formats and, where it is selectable, `geo` are `selectable`, and buyer `exclusions` (§ 5.5) narrow delivery, `addressable_scale` and `availability` MUST be recomputed against the buyer's actual selection and exclusions."
+      },
+      {
+        "ir": "rule:4.1:d539a004",
+        "level": "OPTIONAL",
+        "placed": "schema Proposal",
+        "text": "OPTIONAL."
+      },
+      {
+        "ir": "rule:4.1:fae6ebab",
+        "level": "MUST NOT",
+        "placed": "obligation seller",
+        "text": "`proposal_template_id` MUST NOT be required for a buyer to transact."
+      },
+      {
+        "ir": "rule:5.1.1:4c696214",
+        "level": "MUST",
+        "placed": "obligation seller",
+        "text": "The seller MUST serve a line item only on impressions of its `channel`."
+      },
+      {
+        "ir": "rule:5.1.1:ce115ccf",
+        "level": "MUST NOT",
+        "placed": "rule LineItem",
+        "text": "A consumer MUST skip a line item whose `channel` it does not recognise, and MUST NOT reject the proposal because of it."
+      },
+      {
+        "ir": "rule:5.10:d539a004",
+        "level": "OPTIONAL",
+        "placed": "schema LineItem",
+        "text": "OPTIONAL."
+      },
+      {
+        "ir": "rule:5.2.1:cc42a1f8",
+        "level": "MUST",
+        "placed": "rule LineItem",
+        "text": "Each `environments.available[]` value MUST match at least one impression to which 5.1.1 gives the line item's `channel`."
+      },
+      {
+        "ir": "rule:5.2.2:463dfafd",
+        "level": "REQUIRED",
+        "placed": "schema Placement",
+        "text": "Each key takes an integer, except `playmethod[]` and `api[]`, which take arrays of integers, and `refresh`, an object whose `min_interval_s` is a REQUIRED integer."
+      },
+      {
+        "ir": "rule:5.2.2:6f05ff6d",
+        "level": "MUST NOT",
+        "placed": "obligation seller",
+        "text": "The seller MUST NOT deliver the line item to an impression that does not match a key that is present."
+      },
+      {
+        "ir": "rule:5.2.2:f9a1a6d5",
+        "level": "SHOULD NOT",
+        "placed": "rule LineItem",
+        "text": "Unless `api[]` includes OMID 1.0 (7), a line item whose `committed_metrics[]` includes `viewable_rate` and whose `environments.available[]` includes `app_mobile` or `ctv` SHOULD NOT offer a `measurement_source` vendor other than the seller."
+      },
+      {
+        "ir": "rule:5.2:3d2307e8",
+        "level": "MUST",
+        "placed": "schema PropertiesOption",
+        "text": "Each property MUST carry `domains`, `apps` or both"
+      },
+      {
+        "ir": "rule:5.2:f3d3f9e8",
+        "level": "REQUIRED",
+        "placed": "rule LineItem",
+        "text": "`plcmt` is REQUIRED for video ads."
+      },
+      {
+        "ir": "rule:5.4/creative-inspection-and-previews:11d3ac1e",
+        "level": "MAY",
+        "placed": "obligation implementation",
+        "text": "Synthetic events MAY be sent to test endpoints, or through a test mode that the receiving service documents as excluding those events from production measurement and delivery diagnostics."
+      },
+      {
+        "ir": "rule:5.4/creative-inspection-and-previews:3a29e732",
+        "level": "MUST NOT",
+        "placed": "obligation implementation",
+        "text": "An implementation MUST NOT report a check that was skipped or could not finish as passed."
+      },
+      {
+        "ir": "rule:5.4/creative-inspection-and-previews:52bc805d",
+        "level": "MUST NOT",
+        "placed": "obligation implementation",
+        "text": "The inspector MUST NOT request a destination or redirect that sends a production notification; it MAY use a separate inspection URL or the receiving service's documented test mode under the conditions below."
+      },
+      {
+        "ir": "rule:5.4/creative-inspection-and-previews:7adf48a7",
+        "level": "MUST NOT",
+        "placed": "obligation implementation",
+        "text": "An implementation performing inspection MUST NOT send any production notification."
+      },
+      {
+        "ir": "rule:5.4/creative-inspection-and-previews:ef1a453e",
+        "level": "MAY",
+        "placed": "obligation implementation",
+        "text": "An implementation MAY retrieve creative documents, follow VAST wrappers and inspect referenced media as needed for its checks."
+      },
+      {
+        "ir": "rule:5.4/creative-inspection-and-previews:f25ad098",
+        "level": "MUST",
+        "placed": "obligation implementation",
+        "text": "A preview that executes creative or verification code MUST prevent that code from sending production notifications."
+      },
+      {
+        "ir": "rule:5.4/creative-inspection-and-previews:fbc60b60",
+        "level": "MUST",
+        "placed": "obligation implementation",
+        "text": "Inspection failures MUST be reported through diagnostics, without firing a production VAST `<Error>` or `verificationNotExecuted` URL."
+      },
+      {
+        "ir": "rule:5.5:02097f4e",
+        "level": "MAY",
+        "placed": "schema Geo",
+        "text": "A seller whose rate differs by market MAY declare `geo` with the selectable structure of § 3.1:"
+      },
+      {
+        "ir": "rule:5.5:16494a1a",
+        "level": "MUST",
+        "placed": "rule LineItem",
+        "text": "`list_ref` MUST be hash-pinned, and resolved into the stored record at `agreed`, as for `catalog_ref` (§ 2.2)."
+      },
+      {
+        "ir": "rule:5.5:2eab2842",
+        "level": "MUST NOT",
+        "placed": "rule LineItem",
+        "text": "A buyer MUST NOT supply an exclusion type absent from `exclusions_accepted.types`."
+      },
+      {
+        "ir": "rule:5.5:3e6033ee",
+        "level": "MUST",
+        "placed": "obligation seller",
+        "text": "A seller MUST reject it deterministically rather than ignore it."
+      },
+      {
+        "ir": "rule:5.5:51ca125e",
+        "level": "MUST NOT",
+        "placed": "schema Geo",
+        "text": "A `geo` MUST NOT declare both."
+      },
+      {
+        "ir": "rule:5.5:7fdb152c",
+        "level": "MUST NOT",
+        "placed": "obligation seller",
+        "text": "A seller MUST NOT present `best_effort` enforcement as a guarantee."
+      },
+      {
+        "ir": "rule:5.5:9ecd641d",
+        "level": "REQUIRED",
+        "placed": "schema LineItem",
+        "text": "REQUIRED with either"
+      },
+      {
+        "ir": "rule:5.5:ac74a0a6",
+        "level": "MAY",
+        "placed": "schema Geo",
+        "text": "`geo` MAY instead declare the selectable structure of § 3.1, so a line item can be priced by market."
+      },
+      {
+        "ir": "rule:5.5:c6cd99b1",
+        "level": "MUST",
+        "placed": "obligation seller",
+        "text": "A seller MUST reject an entry whose platform it cannot determine, rather than apply it across stores."
+      },
+      {
+        "ir": "rule:5.5:e6f552da",
+        "level": "MUST",
+        "placed": "schema Geo",
+        "text": "A `geo` that declares `allowed[]` and no `available[]` MUST be treated as `settable` (§ 3.2)."
+      },
+      {
+        "ir": "rule:5.6.1:1a7143ff",
+        "level": "MUST",
+        "placed": "obligation seller",
+        "text": "The rejection MUST return the current version number, so the buyer can fetch it again."
+      },
+      {
+        "ir": "rule:5.6.1:499ec00e",
+        "level": "MUST",
+        "placed": "obligation seller",
+        "text": "The seller MUST reject a new commitment attempt whose `version` is not the current version of the proposal named by `proposal_id`, whose proposal is past `valid_until`, or whose `pricing[].price_valid_until` has passed."
+      },
+      {
+        "ir": "rule:5.6.1:6f403dba",
+        "level": "MUST NOT",
+        "placed": "obligation seller",
+        "text": "The seller MUST NOT interpret it."
+      },
+      {
+        "ir": "rule:5.6.1:7de026a6",
+        "level": "MUST NOT",
+        "placed": "obligation seller",
+        "text": "Reusing an `idempotency_key` with different commitment terms MUST produce an explicit conflict and MUST NOT create or modify a commitment."
+      },
+      {
+        "ir": "rule:5.6.1:852ec5db",
+        "level": "MUST",
+        "placed": "obligation seller",
+        "text": "These checks MUST be deterministic, as for `idempotency_key`."
+      },
+      {
+        "ir": "rule:5.6.1:d672decc",
+        "level": "MUST NOT",
+        "placed": "obligation seller",
+        "text": "For a replay from the same buyer of a commitment attempt the seller has already processed, with the same `idempotency_key` and the same commitment terms, the seller MUST return the original result and MUST NOT create a second commitment."
+      },
+      {
+        "ir": "rule:5.6.3:17fe6f2c",
+        "level": "MUST",
+        "placed": "obligation seller",
+        "text": "Line items that MUST all be in the same commitment"
+      },
+      {
+        "ir": "rule:5.6.3:39e4afbb",
+        "level": "MUST",
+        "placed": "obligation seller",
+        "text": "A seller MUST reject a commitment that includes a line item whose `requires` is unmet."
+      },
+      {
+        "ir": "rule:5.6.3:497d445c",
+        "level": "MUST",
+        "placed": "obligation seller",
+        "text": "Line items of which at least one MUST be in the same commitment"
+      },
+      {
+        "ir": "rule:5.6.3:7d683b70",
+        "level": "MUST",
+        "placed": "obligation seller",
+        "text": "This check MUST be deterministic."
+      },
+      {
+        "ir": "rule:5.6.3:b4da8d14",
+        "level": "MUST",
+        "placed": "obligation seller",
+        "text": "A seller MUST reject a proposal at publication if `requires` references form a cycle."
+      },
+      {
+        "ir": "rule:5.6.3:db94cd1e",
+        "level": "MUST",
+        "placed": "obligation seller",
+        "text": "References in `requires` MUST point to line items in the same proposal and version."
+      },
+      {
+        "ir": "rule:5.6:d539a004-2",
+        "level": "OPTIONAL",
+        "placed": "schema LineItem",
+        "text": "OPTIONAL."
+      },
+      {
+        "ir": "rule:5.8:59a01393",
+        "level": "MUST",
+        "placed": "rule LineItem",
+        "text": "`terms_ref` MUST be hash-pinned and frozen at `agreed`."
+      },
+      {
+        "ir": "rule:5.8:6ee577a5",
+        "level": "REQUIRED",
+        "placed": "schema LineItem",
+        "text": "OPTIONAL; REQUIRED when `terms_acceptance_required` is `true`."
+      },
+      {
+        "ir": "rule:5.8:d02f49a2",
+        "level": "MUST NOT",
+        "placed": "obligation seller",
+        "text": "A seller MUST NOT disclose a buyer's `exclusions` to any party other than that buyer."
+      },
+      {
+        "ir": "sentence:6.5:15fe6026",
+        "placed": "example LineItem",
+        "text": "See `examples/line-item-ctv-bonus.yaml`."
+      },
+      {
+        "ir": "sentence:6.6:70160ee0",
+        "placed": "example Manifest",
+        "text": "See `examples/manifest.json`."
+      },
+      {
+        "ir": "sentence:6.7:d6388541",
+        "placed": "example LineItem",
+        "text": "See `examples/line-item-rewarded-video.yaml`."
+      }
+    ],
+    "moved": [],
+    "removed": [
+      {
+        "ir": "rule:2:2ea1196f",
+        "level": "MAY",
+        "placed": "obligation buyer",
+        "text": "A buyer MAY select and commit a subset of a proposal's line items, unless the proposal explicitly mandates linked execution through its binding terms."
+      },
+      {
+        "ir": "rule:3.3:f58949fc",
+        "level": "MUST",
+        "placed": "obligation seller",
+        "text": "Because audiences, properties and formats are `selectable`, `addressable_scale` and `availability` MUST be recomputed against the buyer's actual selection."
+      },
+      {
+        "ir": "rule:5.6.1:e250f467",
+        "level": "MUST NOT",
+        "placed": "obligation seller",
+        "text": "A request carrying an `idempotency_key` already seen MUST return the original result and MUST NOT create a second commitment."
+      }
+    ]
+  }
+}

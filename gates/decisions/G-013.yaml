@@ -1,0 +1,83 @@
+format: 1
+id: G-013
+date: 2026-10-26
+question: How does a vocabulary take its terms from a code list another standard keeps, such as the frequency cap's period from OpenDirect 2.1?
+decision: >-
+  `kernel/lists.yaml`, validated by `kernel/lists.schema.json`, holds the code
+  lists other standards keep, each with its codes and labels as the standard
+  writes them at the commit its URL pins, and the kernel loads it beside the
+  domains. A declared vocabulary may cite a list with `list`, and `codes`
+  maps a term to the code it stands for where the specification spells it
+  differently. The sources gate checks such a vocabulary against its list
+  in place of the elements that write its terms: each term stands for one
+  code, each code has a term, and the list is named by an element the
+  vocabulary rests on or a decision it cites gives the list's URL as
+  evidence. The model labels each term with its code's label, or with the
+  code where the two differ, and the vocabulary's schema names the list. The
+  mapping-sources input carries the lists. The plain generator's PG-6 drops
+  the line item's dependency baseline, whose period is now a term, not a
+  `P1D` the generator re-encodes. A test checks each failure of a list
+  vocabulary, and the emit test checks that a period is a term, not a
+  duration. The test suite holds 312 tests, so its floor rises to 312.
+rationale: >-
+  The text with the open PRs says the period is a calendar period like
+  OpenDirect 2.1's calendar Day, and names the list, whose intervals no
+  element writes, so the sources gate could only accept the terms by
+  dropping its check. The list check is as strict as the element check: a
+  term must stand for a pinned code, the vocabulary can't drop or add one,
+  and the list must be cited, so no gate is weaker. The exemption that goes
+  names a case that no longer diverges, and the test floor rises. The other
+  gates' fingerprints change because they reach the kernel's loader or the
+  model's resolver.
+accepts:
+  - { gate: comparison, fingerprint: ea2a3147c3adc81a8373c4e8fa59e67578305a49c2020f1b8c3bf1eef64c95f1 }
+  - { gate: constructors-check, fingerprint: 6bd2b0b0e08dcf6396bf017aa21256aef20601cc0326e5f668d9b444d1347b4f }
+  - { gate: convention-beside-reference, fingerprint: 2b1e8ee6ca81ae0d7478322da07b37eb720a2d76f98ac51447567fd717bdc6f5 }
+  - { gate: convention-inline, fingerprint: 3940deec33cb8a0769b09773b57ecb2c448e0b5d9931da8577e592ac0d95fdcb }
+  - { gate: convention-keywords, fingerprint: 5d3097d99285aa212f9300c695aa8c2576559a86015a75bc15dcec199dbc4041 }
+  - { gate: convention-layers, fingerprint: 78a6d8de94134eea80ce6627bb6102c26019ead51cf0e47b0f9c093662dd8f83 }
+  - { gate: convention-lists, fingerprint: cc4135d50e89aaeae2d47909c34f1ced0910fb99dc2306aa27bf7dcb843e7407 }
+  - { gate: convention-modules, fingerprint: 997223de77f8ba1b745278416f88f6980ccd18b382318ca67190cf6f493dee75 }
+  - { gate: convention-unions, fingerprint: e0bea1427a325ee1d0a731916cdde6550c0fde222cca662da9d0e200ca0e657a }
+  - { gate: corpus-generates, fingerprint: 6fb0d00077d4d8d4634f1ea44fbacad8556a6d589be30be376000ef64dc76bf8 }
+  - { gate: corpus-isolation, fingerprint: f6e3892c83a2dcc20d26a5f59f4253704abfa7d61d7f2637715638c66447790c }
+  - { gate: domains-homonyms, fingerprint: ac7a11873d43c2e4514c56636635b1817ac806f83fcf93804925bd1917871757 }
+  - { gate: domains-properties, fingerprint: f6f1a76d16b0f84cc5df0a9b5ffb41c1a4231882c419b372afd610c378478fd6 }
+  - { gate: domains-used, fingerprint: a9b2cc7df21d99fd31300b44b5281d66518b85b2c46f05980899962aea5e6806 }
+  - { gate: duplication-kernel, fingerprint: 14a2a045d1d1ad2361ce62e6b30dce1d309ebeb9f2eb7d08fd3583713d9b4a78 }
+  - { gate: duplication-model, fingerprint: 60e4c903bea55fd1e681c9b4c7b84b2b54af170dc327e8b1065eaa72acb9c7ef }
+  - { gate: examples-listing, fingerprint: 7f8ed64423a60063b7900ae0afb8e4bc541688248d8381e16bb5e7bfd3e1c191 }
+  - { gate: examples-validate, fingerprint: 7aa453a57a64dd20c83a201dbf98a6fa6bd0626a4d93b98bd878175b9bfa1280 }
+  - { gate: feedback, fingerprint: c8f876b2bad063a366daa063be97ce70e139023bec1cef96cad0ebdbba41d0d1 }
+  - { gate: fidelity, fingerprint: 8738fddc76767071c39da21a056595886947bb1fa7ff3669801127affd8406ec }
+  - { gate: frozen-releases, fingerprint: c3d4b003d35f9aa64a1b3ef42b01b0c3bcef539e0b835b7cf61576d98a74de43 }
+  - { gate: frozen-reviewed, fingerprint: 024cb80164bd27c737159039248c4a88bdd9758937e9058743ba6c7a95440ca4 }
+  - { gate: guard, fingerprint: fd2c25f384b934c77b34a792f29beda5eee26b4a1ef8847979fea03b3477ff5a }
+  - { gate: kernel-check, fingerprint: ab1160ecfb974fcf206deaf311bae38a93e5ff9e32f558e7fbc9af2cc3ebbc6a }
+  - { gate: kernel-engines, fingerprint: a9d29f5ded0afe8d8293a1ba3d67cadcfe55648eba2b2e91687bef2646b848fe }
+  - { gate: kernel-load, fingerprint: bd9cb2936bb51deb69390b4fe2160e78c0113ad0cb789f64402fab2e5c5abbd6 }
+  - { gate: kernel-sources, fingerprint: 2c3282245260e3e2b034422c91ab2dfadb5f6a6af864e70408f04f006b3609bb }
+  - { gate: map-drift, fingerprint: 8596c096260d5d45cf534f84f6344ca454088b3bcf984b8419377862ad65043d }
+  - { gate: mapping-bijection, fingerprint: 769b3d559baff8bcd98738571388e8e68c9c32b633d21f0b78400d0f4d9f7503 }
+  - { gate: mapping-constructors, fingerprint: 378b975f6c3def7c257a863a10acc335d69201902875bd6c31e20de72d00419c }
+  - { gate: mapping-current, fingerprint: 874cc168fba1f7782518426a965003858d26fd6bd8bf4caa0df79b75cc18a9b7 }
+  - { gate: mapping-load, fingerprint: 4f623cfbbc7d324e4e2a1d3ce769e0421255fa266bbf2e5f27db28edef137969 }
+  - { gate: mapping-location, fingerprint: 6ad8db6f547b16701e5c9fdd992d8b054c3d1f2ee3d8ead8caecf021d8ddb1b2 }
+  - { gate: mapping-names, fingerprint: 32c8833e94f539bcb4db4614ee9a7c879d6ab03e73e5844ea651a675729cfd03 }
+  - { gate: mapping-rules, fingerprint: 16a51e637d3b07da7852f763404058cbadc1ae252d2b2e1f84bab313d6a741b8 }
+  - { gate: mapping-sources, fingerprint: 4a3c0ea83d00d5cb452eade041fe13dc15966aa51beaad6ba4431e4925f2c285 }
+  - { gate: model-resolves, fingerprint: d0ab9d3cb6ba5ffd58c5d14f16db7380c1fde38758b44643c1b07264b5b07ebf }
+  - { gate: modules-depends, fingerprint: 875864a2ca73d59381f45d22912edd2dcef2fc948e5b4fc8153ab2ab9ddb45af }
+  - { gate: nesting, fingerprint: 923a584336e7f3a8b8085043dbf5c90029d000dc06078416bf497569f366f60d }
+  - { gate: npm-test, fingerprint: 2aa8bfc0e625fc24d98dc3ff6ac6edd4dcb242d740308257daedd2919e915a01 }
+  - { gate: plain-exemptions-file, fingerprint: aa83d662c162e15973fa6c88b125214449b6175be188df41a24f94cf4dba07c8 }
+  - { gate: plain-parity, fingerprint: b5ad4780ed538c6c6524c3054b222bf31b22cff885563093d837f773e2d02536 }
+  - { gate: release-breaking, fingerprint: 3d4ad4f14da645862ff63ee2979229dda1dac3b11e45a1baf3a8cc9db7f45fca }
+  - { gate: release-builds, fingerprint: 10b6d63dc940565a085f65936c98fb534440e1135eaa9f0272e4cac2616a3a4c }
+  - { gate: release-digests, fingerprint: 785abb07745030b66d58da8c2d488bebf94098e002e226b58540088d91dd5cf5 }
+  - { gate: round-trip, fingerprint: aa39aa625b6e9d5136711bbbc53122e2269edf1d6a4093d53da2f37047f45ca3 }
+  - { gate: rule-vectors, fingerprint: 336d9dd7ffcd9c13d8e7ff4688e1674fd18c8de19b931b42284180d86668f4e6 }
+  - { gate: rules-emit, fingerprint: e10139b102d7eb96feb8237e2c40d65912813d0a1c01185b9041f06ecb257482 }
+  - { gate: schemas-conventions, fingerprint: 25f254ff3cdb1ab5290c2d02afdc9d1d96464e7562b148797684f5895a0122d8 }
+  - { gate: schemas-emit, fingerprint: a9c38ed4c3a928a8f6dae244f6abbefca06c5502ec0dbbda2a61d2b569a15813 }
+  - { gate: sdk-generate, fingerprint: 3af325cadba427f0832c3127231cb2696e71ac45ddcb8284356bd016ab957b7c }

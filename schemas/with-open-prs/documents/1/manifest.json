@@ -1,0 +1,26 @@
+{
+  "$id": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/manifest.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The OpenProposal `Manifest` document.",
+  "properties": {
+    "generated_at": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Timestamp"
+    },
+    "proposals": {
+      "items": {
+        "$ref": "../../modules/publication/1/publication.json#/$defs/ProposalsEntry"
+      },
+      "type": "array"
+    },
+    "seller_id": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/ExternalId"
+    },
+    "spec_version": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/ExternalId",
+      "description": "The release of the specification the manifest follows, as the specification names its release, such as `3.0`."
+    }
+  },
+  "title": "Manifest",
+  "type": "object"
+}

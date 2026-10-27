@@ -1,0 +1,117 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: settlement
+sections: [ "5.10" ]
+types:
+  - name: ExternalReferenceRole
+    kind: vocabulary
+    ir: "field:5.10:external_references[]"
+    locks: [ main ]
+    source: { decision: D-041 }
+    open: true
+  - name: ExternalReferenceRole
+    kind: vocabulary
+    ir: "field:5.10:external_references[]"
+    locks: [ with-open-prs ]
+    source: { decisions: [ D-013, D-014, D-027 ] }
+    open: true
+    terms: [ io, agreement ]
+entries:
+  - ir: "field:5.10:external_references[]"
+    digest: 315c9cae8347b00baa3267037c8775e9c10e059dd224d92625ae98909a2eb3fc
+    locks: [ main ]
+    source: { rule: inline-object-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ExternalReferencesEntry } } }
+      presence: optional
+  - ir: "field:5.10:external_references[]"
+    digest: c485f45bc3cbc8ec5a3de73442f72bd677d690a622c813543befb0ffdcc1cbe6
+    locks: [ with-open-prs ]
+    source: { rule: inline-object-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ExternalReferencesEntry } } }
+      presence: optional
+  - ir: "field:5.10:external_references[]#description/object:1"
+    digest: b2b42bebd68eb2c875768df427a1cc02157d6b00c3b38861b6a3867b272132f3
+    source: { decision: D-027 }
+    as:
+      role: type
+      name: ExternalReferencesEntry
+      layer: object
+      open: false
+      members:
+        system: { type: { kind: named, name: ExternalId }, presence: optional }
+        namespace: { type: { kind: named, name: ExternalId }, presence: optional }
+        id: { type: { kind: named, name: ExternalId }, presence: optional }
+        role: { type: { kind: named, name: ExternalReferenceRole }, presence: optional }
+  - ir: field:5.10:agreement_ref
+    digest: ae5ce286fa84a7730978a877c06153fd6b63d58de64a21be6006207d61187576
+    locks: [ with-open-prs ]
+    source: { rule: inline-object-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: AgreementRef }, presence: optional }
+  - ir: field:5.10:agreement_ref#description/object:1
+    digest: 9398197aa43f595b95bc73e5042b9264499fc283b4c11ec5deb7572fe6f9a16d
+    locks: [ with-open-prs ]
+    source: { decision: D-027 }
+    as:
+      role: type
+      name: AgreementRef
+      layer: object
+      open: false
+      members:
+        agreement_id: { type: { kind: named, name: ExternalId }, presence: optional }
+        parties:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ExternalId } } }
+          presence: optional
+        type: { type: { kind: named, name: AgreementType }, presence: optional }
+        valid_from: { type: { kind: named, name: Timestamp }, presence: optional }
+        valid_until: { type: { kind: named, name: Timestamp }, presence: optional }
+  - ir: field:5.10:agreement_ref#description/object:1/type
+    digest: 7f900b4a21dd7d9a9c09b357aaddeff8aa6b66293b112a8a0c3254233efe05b0
+    locks: [ with-open-prs ]
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: AgreementType, layer: vocabulary, open: false }
+  - ir: rule:5.10:d539a004
+    digest: 142c4ec3bb326134fd128f9f3802a22799ee6035d9404fb3720e392ec793faef
+    locks: [ with-open-prs ]
+    source: { rule: presence-statement }
+    as: { role: schema, in: LineItem }
+  - ir: field:5.10:correlation_id
+    digest: e015a269b356797dbfe7737b7178f592b5fe280e8a95db0d446724b685cc80d9
+    source: { rule: domain-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Uuid }, presence: optional }
+  - ir: field:5.10:billing
+    digest: b9318d8b7c869d7a01907ca503fd4bc0b1fbf4d75569eb40d9a0c48701c96840
+    source: { rule: inline-object-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Billing }, presence: optional }
+  - ir: field:5.10:billing#description/object:1
+    digest: 14e76c6d0000d0f7ec089bc36155c29a8d0225e9e070cd19954462053ef17317
+    source: { decision: D-027 }
+    as:
+      role: type
+      name: Billing
+      layer: object
+      open: false
+      members:
+        supplier_id: { type: { kind: named, name: ExternalId }, presence: optional }
+        billing_supplier_id: { type: { kind: named, name: ExternalId }, presence: optional }
+        payment_terms: { type: { kind: named, name: Text }, presence: optional }
+        invoicing_party: { type: { kind: named, name: Text }, presence: optional }
+  - ir: "field:5.10:supported_order_systems[]"
+    digest: 7aaf91ef69703a0a34d2843995fd0a71869f5ee333feecb94a1a897741380d07
+    source: { rule: domain-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ExternalId } } }
+      presence: optional
+  - ir: sentence:5.10:e8da0f9e
+    digest: a186dd118adf0170b48077332fcef18ea992a541c481a3f2505327d876e762e8
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }

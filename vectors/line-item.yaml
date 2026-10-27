@@ -1,0 +1,15 @@
+# Rule vectors for § 3.3, § 5, and § 5.1. Regenerate a digest with
+# `npm run cite -- <rule ID>`.
+format: 1
+module: line-item
+rules:
+  # A consumer skips a line item whose `channel` it doesn't recognise, and keeps the proposal.
+  - rule: rule:5.1.1:ce115ccf
+    digest: e08bbdb0049bcf108e99bf58469a37f95118b3e482634842ff9852bf1151393c
+    locks: [with-open-prs]
+    decision: D-035
+    valid:
+      - { value: { line_item_id: "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01", channel: "examplepub.example:linear_tv" }, response: skip }
+    invalid:
+      - { value: { line_item_id: "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01", channel: "examplepub.example:linear_tv" }, response: reject }
+      - { value: { line_item_id: "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01", channel: "examplepub.example:linear_tv" }, response: process }

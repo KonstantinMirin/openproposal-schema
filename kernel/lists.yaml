@@ -1,0 +1,856 @@
+# The code lists other standards keep, which the specification cites (type
+# rules § 6). Each list holds its codes, with each code's label, as the
+# standard writes them at the pinned commit its URL names, or, for a list its
+# keeper publishes outside git, at the `version` the keeper gives it, with the
+# SHA-256 of the file the URL served at that version. A vocabulary that cites
+# a list takes its terms from these codes, the fidelity oracle reads a
+# sentence that names a list with them, and a rule's check reads the codes of
+# the list its rule rests on: ISO 4217's currency codes and the IANA zone
+# names. A list that reserves codes for vendors, as AdCOM 1.0 reserves 500 and
+# up in some lists, says so under `vendor`. A URL that serves only the
+# keeper's latest version, as SIX serves ISO 4217's List One, names under
+# `copy` the repository's copy of the file it served at `version`, so the
+# SHA-256 stays verifiable. Change a list only when the URL's commit or the
+# list's version changes.
+format: 1
+lists:
+  - name: Line.frequencyinterval
+    standard: OpenDirect 2.1
+    url: https://github.com/InteractiveAdvertisingBureau/OpenDirect/blob/82bc294314aba017fc639ba634aecc53adfd675f/OpenDirect.v2.1.final.md#object_line
+    codes:
+      - { code: Day }
+      - { code: Month }
+      - { code: Week }
+      - { code: Hour }
+      - { code: LineDuration }
+  - name: "List: Plcmt Subtypes - Video"
+    standard: AdCOM 1.0
+    url: https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#list_plcmtsubtypesvideo
+    codes:
+      - { code: 1, label: "Instream" }
+      - { code: 2, label: "Accompanying Content" }
+      - { code: 3, label: "Interstitial" }
+      - { code: 4, label: "No Content/Standalone" }
+      - { code: 5, label: "Pause" }
+      - { code: 6, label: "Screensaver" }
+      - { code: 7, label: "Overlay" }
+      - { code: 8, label: "Squeezeback" }
+      - { code: 9, label: "In-scene" }
+  - name: "List: Playback Methods"
+    standard: AdCOM 1.0
+    url: https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#list_playbackmethods
+    codes:
+      - { code: 1, label: "Initiates without any specific user interaction with Sound On" }
+      - { code: 2, label: "Initiates without any specific user interaction Sound Off by Default" }
+      - { code: 3, label: "Initiates on Click with Sound On" }
+      - { code: 4, label: "Initiates on Mouse-Over or cursor over with Sound On" }
+      - { code: 5, label: "Initiates on Entering Viewport or scrolling into view with Sound On" }
+      - { code: 6, label: "Initiates on Entering Viewport or scrolling into view with Sound Off by Default" }
+      - { code: 7, label: "Continuous Playback - Media playback is set to play additional media automatically without user interaction. The media player will keep playing additional media (playlist or generated) for the user until the user actively stops this from happening." }
+      - { code: 8, label: "Initiated by user pausing content, Sound on" }
+      - { code: 9, label: "Initiated by user pausing content, Sound off" }
+      - { code: 10, label: "Initiated by idling (e.g. screensaver), Sound on" }
+      - { code: 11, label: "Initiated by idling (e.g. screensaver), Sound off" }
+  - name: "List: API Frameworks"
+    standard: AdCOM 1.0
+    url: https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#list_apiframeworks
+    codes:
+      - { code: 1, label: "VPAID 1.0" }
+      - { code: 2, label: "VPAID 2.0" }
+      - { code: 3, label: "MRAID 1.0" }
+      - { code: 4, label: "ORMMA" }
+      - { code: 5, label: "MRAID 2.0" }
+      - { code: 6, label: "MRAID 3.0" }
+      - { code: 7, label: "OMID 1.0" }
+      - { code: 8, label: "SIMID 1.0" }
+      - { code: 9, label: "SIMID 1.1" }
+    vendor: { from: 500, label: "Vendor-specific codes" }
+  - name: ISO 4217
+    standard: "ISO 4217, Codes for the representation of currencies: List One, the current currency and funds codes, as SIX publishes it for the ISO 4217 Maintenance Agency"
+    version: "2026-09-17"
+    url: https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml
+    sha256: 33139b438657d1cee116ba737807ea71d19d6de4b90f799a09c56f0cc6a1b0ff
+    copy: kernel/sources/iso-4217-list-one-2026-09-17.xml
+    codes:
+      - { code: AED, label: "UAE Dirham" }
+      - { code: AFN, label: "Afghani" }
+      - { code: ALL, label: "Lek" }
+      - { code: AMD, label: "Armenian Dram" }
+      - { code: AOA, label: "Kwanza" }
+      - { code: ARS, label: "Argentine Peso" }
+      - { code: AUD, label: "Australian Dollar" }
+      - { code: AWG, label: "Aruban Florin" }
+      - { code: AZN, label: "Azerbaijan Manat" }
+      - { code: BAM, label: "Convertible Mark" }
+      - { code: BBD, label: "Barbados Dollar" }
+      - { code: BDT, label: "Taka" }
+      - { code: BHD, label: "Bahraini Dinar" }
+      - { code: BIF, label: "Burundi Franc" }
+      - { code: BMD, label: "Bermudian Dollar" }
+      - { code: BND, label: "Brunei Dollar" }
+      - { code: BOB, label: "Boliviano" }
+      - { code: BOV, label: "Mvdol" }
+      - { code: BRL, label: "Brazilian Real" }
+      - { code: BSD, label: "Bahamian Dollar" }
+      - { code: BTN, label: "Ngultrum" }
+      - { code: BWP, label: "Pula" }
+      - { code: BYN, label: "Belarusian Ruble" }
+      - { code: BZD, label: "Belize Dollar" }
+      - { code: CAD, label: "Canadian Dollar" }
+      - { code: CDF, label: "Congolese Franc" }
+      - { code: CHE, label: "WIR Euro" }
+      - { code: CHF, label: "Swiss Franc" }
+      - { code: CHW, label: "WIR Franc" }
+      - { code: CLF, label: "Unidad de Fomento" }
+      - { code: CLP, label: "Chilean Peso" }
+      - { code: CNY, label: "Yuan Renminbi" }
+      - { code: COP, label: "Colombian Peso" }
+      - { code: COU, label: "Unidad de Valor Real" }
+      - { code: CRC, label: "Costa Rican Colon" }
+      - { code: CUP, label: "Cuban Peso" }
+      - { code: CVE, label: "Cabo Verde Escudo" }
+      - { code: CZK, label: "Czech Koruna" }
+      - { code: DJF, label: "Djibouti Franc" }
+      - { code: DKK, label: "Danish Krone" }
+      - { code: DOP, label: "Dominican Peso" }
+      - { code: DZD, label: "Algerian Dinar" }
+      - { code: EGP, label: "Egyptian Pound" }
+      - { code: ERN, label: "Nakfa" }
+      - { code: ETB, label: "Ethiopian Birr" }
+      - { code: EUR, label: "Euro" }
+      - { code: FJD, label: "Fiji Dollar" }
+      - { code: FKP, label: "Falkland Islands Pound" }
+      - { code: GBP, label: "Pound Sterling" }
+      - { code: GEL, label: "Lari" }
+      - { code: GHS, label: "Ghana Cedi" }
+      - { code: GIP, label: "Gibraltar Pound" }
+      - { code: GMD, label: "Dalasi" }
+      - { code: GNF, label: "Guinean Franc" }
+      - { code: GTQ, label: "Quetzal" }
+      - { code: GYD, label: "Guyana Dollar" }
+      - { code: HKD, label: "Hong Kong Dollar" }
+      - { code: HNL, label: "Lempira" }
+      - { code: HTG, label: "Gourde" }
+      - { code: HUF, label: "Forint" }
+      - { code: IDR, label: "Rupiah" }
+      - { code: ILS, label: "New Israeli Sheqel" }
+      - { code: INR, label: "Indian Rupee" }
+      - { code: IQD, label: "Iraqi Dinar" }
+      - { code: IRR, label: "Iranian Rial" }
+      - { code: ISK, label: "Iceland Krona" }
+      - { code: JMD, label: "Jamaican Dollar" }
+      - { code: JOD, label: "Jordanian Dinar" }
+      - { code: JPY, label: "Yen" }
+      - { code: KES, label: "Kenyan Shilling" }
+      - { code: KGS, label: "Som" }
+      - { code: KHR, label: "Riel" }
+      - { code: KMF, label: "Comorian Franc" }
+      - { code: KPW, label: "North Korean Won" }
+      - { code: KRW, label: "Won" }
+      - { code: KWD, label: "Kuwaiti Dinar" }
+      - { code: KYD, label: "Cayman Islands Dollar" }
+      - { code: KZT, label: "Tenge" }
+      - { code: LAK, label: "Lao Kip" }
+      - { code: LBP, label: "Lebanese Pound" }
+      - { code: LKR, label: "Sri Lanka Rupee" }
+      - { code: LRD, label: "Liberian Dollar" }
+      - { code: LSL, label: "Loti" }
+      - { code: LYD, label: "Libyan Dinar" }
+      - { code: MAD, label: "Moroccan Dirham" }
+      - { code: MDL, label: "Moldovan Leu" }
+      - { code: MGA, label: "Malagasy Ariary" }
+      - { code: MKD, label: "Denar" }
+      - { code: MMK, label: "Kyat" }
+      - { code: MNT, label: "Tugrik" }
+      - { code: MOP, label: "Pataca" }
+      - { code: MRU, label: "Ouguiya" }
+      - { code: MUR, label: "Mauritius Rupee" }
+      - { code: MVR, label: "Rufiyaa" }
+      - { code: MWK, label: "Malawi Kwacha" }
+      - { code: MXN, label: "Mexican Peso" }
+      - { code: MXV, label: "Mexican Unidad de Inversion (UDI)" }
+      - { code: MYR, label: "Malaysian Ringgit" }
+      - { code: MZN, label: "Mozambique Metical" }
+      - { code: NAD, label: "Namibia Dollar" }
+      - { code: NGN, label: "Naira" }
+      - { code: NIO, label: "Cordoba Oro" }
+      - { code: NOK, label: "Norwegian Krone" }
+      - { code: NPR, label: "Nepalese Rupee" }
+      - { code: NZD, label: "New Zealand Dollar" }
+      - { code: OMR, label: "Rial Omani" }
+      - { code: PAB, label: "Balboa" }
+      - { code: PEN, label: "Sol" }
+      - { code: PGK, label: "Kina" }
+      - { code: PHP, label: "Philippine Peso" }
+      - { code: PKR, label: "Pakistan Rupee" }
+      - { code: PLN, label: "Zloty" }
+      - { code: PYG, label: "Guarani" }
+      - { code: QAR, label: "Qatari Rial" }
+      - { code: RON, label: "Romanian Leu" }
+      - { code: RSD, label: "Serbian Dinar" }
+      - { code: RUB, label: "Russian Ruble" }
+      - { code: RWF, label: "Rwanda Franc" }
+      - { code: SAR, label: "Saudi Riyal" }
+      - { code: SBD, label: "Solomon Islands Dollar" }
+      - { code: SCR, label: "Seychelles Rupee" }
+      - { code: SDG, label: "Sudanese Pound" }
+      - { code: SEK, label: "Swedish Krona" }
+      - { code: SGD, label: "Singapore Dollar" }
+      - { code: SHP, label: "Saint Helena Pound" }
+      - { code: SLE, label: "Leone" }
+      - { code: SOS, label: "Somali Shilling" }
+      - { code: SRD, label: "Surinam Dollar" }
+      - { code: SSP, label: "South Sudanese Pound" }
+      - { code: STN, label: "Dobra" }
+      - { code: SVC, label: "El Salvador Colon" }
+      - { code: SYP, label: "Syrian Pound" }
+      - { code: SZL, label: "Lilangeni" }
+      - { code: THB, label: "Baht" }
+      - { code: TJS, label: "Somoni" }
+      - { code: TMT, label: "Turkmenistan New Manat" }
+      - { code: TND, label: "Tunisian Dinar" }
+      - { code: TOP, label: "Pa’anga" }
+      - { code: TRY, label: "Turkish Lira" }
+      - { code: TTD, label: "Trinidad and Tobago Dollar" }
+      - { code: TWD, label: "New Taiwan Dollar" }
+      - { code: TZS, label: "Tanzanian Shilling" }
+      - { code: UAH, label: "Hryvnia" }
+      - { code: UGX, label: "Uganda Shilling" }
+      - { code: USD, label: "US Dollar" }
+      - { code: USN, label: "US Dollar (Next day)" }
+      - { code: UYI, label: "Uruguay Peso en Unidades Indexadas (UI)" }
+      - { code: UYU, label: "Peso Uruguayo" }
+      - { code: UYW, label: "Unidad Previsional" }
+      - { code: UZS, label: "Uzbekistan Sum" }
+      - { code: VED, label: "Bolívar Soberano" }
+      - { code: VES, label: "Bolívar Soberano" }
+      - { code: VND, label: "Dong" }
+      - { code: VUV, label: "Vatu" }
+      - { code: WST, label: "Tala" }
+      - { code: XAD, label: "Arab Accounting Dinar" }
+      - { code: XAF, label: "CFA Franc BEAC" }
+      - { code: XAG, label: "Silver" }
+      - { code: XAU, label: "Gold" }
+      - { code: XBA, label: "Bond Markets Unit European Composite Unit (EURCO)" }
+      - { code: XBB, label: "Bond Markets Unit European Monetary Unit (E.M.U.-6)" }
+      - { code: XBC, label: "Bond Markets Unit European Unit of Account 9 (E.U.A.-9)" }
+      - { code: XBD, label: "Bond Markets Unit European Unit of Account 17 (E.U.A.-17)" }
+      - { code: XCD, label: "East Caribbean Dollar" }
+      - { code: XCG, label: "Caribbean Guilder" }
+      - { code: XDR, label: "SDR (Special Drawing Right)" }
+      - { code: XOF, label: "CFA Franc BCEAO" }
+      - { code: XPD, label: "Palladium" }
+      - { code: XPF, label: "CFP Franc" }
+      - { code: XPT, label: "Platinum" }
+      - { code: XSU, label: "Sucre" }
+      - { code: XTS, label: "Codes specifically reserved for testing purposes" }
+      - { code: XUA, label: "ADB Unit of Account" }
+      - { code: XXX, label: "The codes assigned for transactions where no currency is involved" }
+      - { code: YER, label: "Yemeni Rial" }
+      - { code: ZAR, label: "Rand" }
+      - { code: ZMW, label: "Zambian Kwacha" }
+      - { code: ZWG, label: "Zimbabwe Gold" }
+  - name: IANA time zone database
+    standard: "IANA Time Zone Database: the names of its zones and links, as the default build installs them from africa, antarctica, asia, australasia, europe, northamerica, southamerica, etcetera, factory, and backward"
+    version: 2026e
+    url: https://data.iana.org/time-zones/releases/tzdata2026e.tar.gz
+    sha256: b26882805f26aac59d5b222978e6580484b834ccdc98be89df2f05a6dc53a652
+    codes:
+      - { code: "Africa/Abidjan" }
+      - { code: "Africa/Accra" }
+      - { code: "Africa/Addis_Ababa" }
+      - { code: "Africa/Algiers" }
+      - { code: "Africa/Asmara" }
+      - { code: "Africa/Asmera" }
+      - { code: "Africa/Bamako" }
+      - { code: "Africa/Bangui" }
+      - { code: "Africa/Banjul" }
+      - { code: "Africa/Bissau" }
+      - { code: "Africa/Blantyre" }
+      - { code: "Africa/Brazzaville" }
+      - { code: "Africa/Bujumbura" }
+      - { code: "Africa/Cairo" }
+      - { code: "Africa/Casablanca" }
+      - { code: "Africa/Ceuta" }
+      - { code: "Africa/Conakry" }
+      - { code: "Africa/Dakar" }
+      - { code: "Africa/Dar_es_Salaam" }
+      - { code: "Africa/Djibouti" }
+      - { code: "Africa/Douala" }
+      - { code: "Africa/El_Aaiun" }
+      - { code: "Africa/Freetown" }
+      - { code: "Africa/Gaborone" }
+      - { code: "Africa/Harare" }
+      - { code: "Africa/Johannesburg" }
+      - { code: "Africa/Juba" }
+      - { code: "Africa/Kampala" }
+      - { code: "Africa/Khartoum" }
+      - { code: "Africa/Kigali" }
+      - { code: "Africa/Kinshasa" }
+      - { code: "Africa/Lagos" }
+      - { code: "Africa/Libreville" }
+      - { code: "Africa/Lome" }
+      - { code: "Africa/Luanda" }
+      - { code: "Africa/Lubumbashi" }
+      - { code: "Africa/Lusaka" }
+      - { code: "Africa/Malabo" }
+      - { code: "Africa/Maputo" }
+      - { code: "Africa/Maseru" }
+      - { code: "Africa/Mbabane" }
+      - { code: "Africa/Mogadishu" }
+      - { code: "Africa/Monrovia" }
+      - { code: "Africa/Nairobi" }
+      - { code: "Africa/Ndjamena" }
+      - { code: "Africa/Niamey" }
+      - { code: "Africa/Nouakchott" }
+      - { code: "Africa/Ouagadougou" }
+      - { code: "Africa/Porto-Novo" }
+      - { code: "Africa/Sao_Tome" }
+      - { code: "Africa/Timbuktu" }
+      - { code: "Africa/Tripoli" }
+      - { code: "Africa/Tunis" }
+      - { code: "Africa/Windhoek" }
+      - { code: "America/Adak" }
+      - { code: "America/Anchorage" }
+      - { code: "America/Anguilla" }
+      - { code: "America/Antigua" }
+      - { code: "America/Araguaina" }
+      - { code: "America/Argentina/Buenos_Aires" }
+      - { code: "America/Argentina/Catamarca" }
+      - { code: "America/Argentina/ComodRivadavia" }
+      - { code: "America/Argentina/Cordoba" }
+      - { code: "America/Argentina/Jujuy" }
+      - { code: "America/Argentina/La_Rioja" }
+      - { code: "America/Argentina/Mendoza" }
+      - { code: "America/Argentina/Rio_Gallegos" }
+      - { code: "America/Argentina/Salta" }
+      - { code: "America/Argentina/San_Juan" }
+      - { code: "America/Argentina/San_Luis" }
+      - { code: "America/Argentina/Tucuman" }
+      - { code: "America/Argentina/Ushuaia" }
+      - { code: "America/Aruba" }
+      - { code: "America/Asuncion" }
+      - { code: "America/Atikokan" }
+      - { code: "America/Atka" }
+      - { code: "America/Bahia" }
+      - { code: "America/Bahia_Banderas" }
+      - { code: "America/Barbados" }
+      - { code: "America/Belem" }
+      - { code: "America/Belize" }
+      - { code: "America/Blanc-Sablon" }
+      - { code: "America/Boa_Vista" }
+      - { code: "America/Bogota" }
+      - { code: "America/Boise" }
+      - { code: "America/Buenos_Aires" }
+      - { code: "America/Cambridge_Bay" }
+      - { code: "America/Campo_Grande" }
+      - { code: "America/Cancun" }
+      - { code: "America/Caracas" }
+      - { code: "America/Catamarca" }
+      - { code: "America/Cayenne" }
+      - { code: "America/Cayman" }
+      - { code: "America/Chicago" }
+      - { code: "America/Chihuahua" }
+      - { code: "America/Ciudad_Juarez" }
+      - { code: "America/Coral_Harbour" }
+      - { code: "America/Cordoba" }
+      - { code: "America/Costa_Rica" }
+      - { code: "America/Coyhaique" }
+      - { code: "America/Creston" }
+      - { code: "America/Cuiaba" }
+      - { code: "America/Curacao" }
+      - { code: "America/Danmarkshavn" }
+      - { code: "America/Dawson" }
+      - { code: "America/Dawson_Creek" }
+      - { code: "America/Denver" }
+      - { code: "America/Detroit" }
+      - { code: "America/Dominica" }
+      - { code: "America/Edmonton" }
+      - { code: "America/Eirunepe" }
+      - { code: "America/El_Salvador" }
+      - { code: "America/Ensenada" }
+      - { code: "America/Fort_Nelson" }
+      - { code: "America/Fort_Wayne" }
+      - { code: "America/Fortaleza" }
+      - { code: "America/Glace_Bay" }
+      - { code: "America/Godthab" }
+      - { code: "America/Goose_Bay" }
+      - { code: "America/Grand_Turk" }
+      - { code: "America/Grenada" }
+      - { code: "America/Guadeloupe" }
+      - { code: "America/Guatemala" }
+      - { code: "America/Guayaquil" }
+      - { code: "America/Guyana" }
+      - { code: "America/Halifax" }
+      - { code: "America/Havana" }
+      - { code: "America/Hermosillo" }
+      - { code: "America/Indiana/Indianapolis" }
+      - { code: "America/Indiana/Knox" }
+      - { code: "America/Indiana/Marengo" }
+      - { code: "America/Indiana/Petersburg" }
+      - { code: "America/Indiana/Tell_City" }
+      - { code: "America/Indiana/Vevay" }
+      - { code: "America/Indiana/Vincennes" }
+      - { code: "America/Indiana/Winamac" }
+      - { code: "America/Indianapolis" }
+      - { code: "America/Inuvik" }
+      - { code: "America/Iqaluit" }
+      - { code: "America/Jamaica" }
+      - { code: "America/Jujuy" }
+      - { code: "America/Juneau" }
+      - { code: "America/Kentucky/Louisville" }
+      - { code: "America/Kentucky/Monticello" }
+      - { code: "America/Knox_IN" }
+      - { code: "America/Kralendijk" }
+      - { code: "America/La_Paz" }
+      - { code: "America/Lima" }
+      - { code: "America/Los_Angeles" }
+      - { code: "America/Louisville" }
+      - { code: "America/Lower_Princes" }
+      - { code: "America/Maceio" }
+      - { code: "America/Managua" }
+      - { code: "America/Manaus" }
+      - { code: "America/Marigot" }
+      - { code: "America/Martinique" }
+      - { code: "America/Matamoros" }
+      - { code: "America/Mazatlan" }
+      - { code: "America/Mendoza" }
+      - { code: "America/Menominee" }
+      - { code: "America/Merida" }
+      - { code: "America/Metlakatla" }
+      - { code: "America/Mexico_City" }
+      - { code: "America/Miquelon" }
+      - { code: "America/Moncton" }
+      - { code: "America/Monterrey" }
+      - { code: "America/Montevideo" }
+      - { code: "America/Montreal" }
+      - { code: "America/Montserrat" }
+      - { code: "America/Nassau" }
+      - { code: "America/New_York" }
+      - { code: "America/Nipigon" }
+      - { code: "America/Nome" }
+      - { code: "America/Noronha" }
+      - { code: "America/North_Dakota/Beulah" }
+      - { code: "America/North_Dakota/Center" }
+      - { code: "America/North_Dakota/New_Salem" }
+      - { code: "America/Nuuk" }
+      - { code: "America/Ojinaga" }
+      - { code: "America/Panama" }
+      - { code: "America/Pangnirtung" }
+      - { code: "America/Paramaribo" }
+      - { code: "America/Phoenix" }
+      - { code: "America/Port-au-Prince" }
+      - { code: "America/Port_of_Spain" }
+      - { code: "America/Porto_Acre" }
+      - { code: "America/Porto_Velho" }
+      - { code: "America/Puerto_Rico" }
+      - { code: "America/Punta_Arenas" }
+      - { code: "America/Rainy_River" }
+      - { code: "America/Rankin_Inlet" }
+      - { code: "America/Recife" }
+      - { code: "America/Regina" }
+      - { code: "America/Resolute" }
+      - { code: "America/Rio_Branco" }
+      - { code: "America/Rosario" }
+      - { code: "America/Santa_Isabel" }
+      - { code: "America/Santarem" }
+      - { code: "America/Santiago" }
+      - { code: "America/Santo_Domingo" }
+      - { code: "America/Sao_Paulo" }
+      - { code: "America/Scoresbysund" }
+      - { code: "America/Shiprock" }
+      - { code: "America/Sitka" }
+      - { code: "America/St_Barthelemy" }
+      - { code: "America/St_Johns" }
+      - { code: "America/St_Kitts" }
+      - { code: "America/St_Lucia" }
+      - { code: "America/St_Thomas" }
+      - { code: "America/St_Vincent" }
+      - { code: "America/Swift_Current" }
+      - { code: "America/Tegucigalpa" }
+      - { code: "America/Thule" }
+      - { code: "America/Thunder_Bay" }
+      - { code: "America/Tijuana" }
+      - { code: "America/Toronto" }
+      - { code: "America/Tortola" }
+      - { code: "America/Vancouver" }
+      - { code: "America/Virgin" }
+      - { code: "America/Whitehorse" }
+      - { code: "America/Winnipeg" }
+      - { code: "America/Yakutat" }
+      - { code: "America/Yellowknife" }
+      - { code: "Antarctica/Casey" }
+      - { code: "Antarctica/Davis" }
+      - { code: "Antarctica/DumontDUrville" }
+      - { code: "Antarctica/Macquarie" }
+      - { code: "Antarctica/Mawson" }
+      - { code: "Antarctica/McMurdo" }
+      - { code: "Antarctica/Palmer" }
+      - { code: "Antarctica/Rothera" }
+      - { code: "Antarctica/South_Pole" }
+      - { code: "Antarctica/Syowa" }
+      - { code: "Antarctica/Troll" }
+      - { code: "Antarctica/Vostok" }
+      - { code: "Arctic/Longyearbyen" }
+      - { code: "Asia/Aden" }
+      - { code: "Asia/Almaty" }
+      - { code: "Asia/Amman" }
+      - { code: "Asia/Anadyr" }
+      - { code: "Asia/Aqtau" }
+      - { code: "Asia/Aqtobe" }
+      - { code: "Asia/Ashgabat" }
+      - { code: "Asia/Ashkhabad" }
+      - { code: "Asia/Atyrau" }
+      - { code: "Asia/Baghdad" }
+      - { code: "Asia/Bahrain" }
+      - { code: "Asia/Baku" }
+      - { code: "Asia/Bangkok" }
+      - { code: "Asia/Barnaul" }
+      - { code: "Asia/Beirut" }
+      - { code: "Asia/Bishkek" }
+      - { code: "Asia/Brunei" }
+      - { code: "Asia/Calcutta" }
+      - { code: "Asia/Chita" }
+      - { code: "Asia/Choibalsan" }
+      - { code: "Asia/Chongqing" }
+      - { code: "Asia/Chungking" }
+      - { code: "Asia/Colombo" }
+      - { code: "Asia/Dacca" }
+      - { code: "Asia/Damascus" }
+      - { code: "Asia/Dhaka" }
+      - { code: "Asia/Dili" }
+      - { code: "Asia/Dubai" }
+      - { code: "Asia/Dushanbe" }
+      - { code: "Asia/Famagusta" }
+      - { code: "Asia/Gaza" }
+      - { code: "Asia/Harbin" }
+      - { code: "Asia/Hebron" }
+      - { code: "Asia/Ho_Chi_Minh" }
+      - { code: "Asia/Hong_Kong" }
+      - { code: "Asia/Hovd" }
+      - { code: "Asia/Irkutsk" }
+      - { code: "Asia/Istanbul" }
+      - { code: "Asia/Jakarta" }
+      - { code: "Asia/Jayapura" }
+      - { code: "Asia/Jerusalem" }
+      - { code: "Asia/Kabul" }
+      - { code: "Asia/Kamchatka" }
+      - { code: "Asia/Karachi" }
+      - { code: "Asia/Kashgar" }
+      - { code: "Asia/Kathmandu" }
+      - { code: "Asia/Katmandu" }
+      - { code: "Asia/Khandyga" }
+      - { code: "Asia/Kolkata" }
+      - { code: "Asia/Krasnoyarsk" }
+      - { code: "Asia/Kuala_Lumpur" }
+      - { code: "Asia/Kuching" }
+      - { code: "Asia/Kuwait" }
+      - { code: "Asia/Macao" }
+      - { code: "Asia/Macau" }
+      - { code: "Asia/Magadan" }
+      - { code: "Asia/Makassar" }
+      - { code: "Asia/Manila" }
+      - { code: "Asia/Muscat" }
+      - { code: "Asia/Nicosia" }
+      - { code: "Asia/Novokuznetsk" }
+      - { code: "Asia/Novosibirsk" }
+      - { code: "Asia/Omsk" }
+      - { code: "Asia/Oral" }
+      - { code: "Asia/Phnom_Penh" }
+      - { code: "Asia/Pontianak" }
+      - { code: "Asia/Pyongyang" }
+      - { code: "Asia/Qatar" }
+      - { code: "Asia/Qostanay" }
+      - { code: "Asia/Qyzylorda" }
+      - { code: "Asia/Rangoon" }
+      - { code: "Asia/Riyadh" }
+      - { code: "Asia/Saigon" }
+      - { code: "Asia/Sakhalin" }
+      - { code: "Asia/Samarkand" }
+      - { code: "Asia/Seoul" }
+      - { code: "Asia/Shanghai" }
+      - { code: "Asia/Singapore" }
+      - { code: "Asia/Srednekolymsk" }
+      - { code: "Asia/Taipei" }
+      - { code: "Asia/Tashkent" }
+      - { code: "Asia/Tbilisi" }
+      - { code: "Asia/Tehran" }
+      - { code: "Asia/Tel_Aviv" }
+      - { code: "Asia/Thimbu" }
+      - { code: "Asia/Thimphu" }
+      - { code: "Asia/Tokyo" }
+      - { code: "Asia/Tomsk" }
+      - { code: "Asia/Ujung_Pandang" }
+      - { code: "Asia/Ulaanbaatar" }
+      - { code: "Asia/Ulan_Bator" }
+      - { code: "Asia/Urumqi" }
+      - { code: "Asia/Ust-Nera" }
+      - { code: "Asia/Vientiane" }
+      - { code: "Asia/Vladivostok" }
+      - { code: "Asia/Yakutsk" }
+      - { code: "Asia/Yangon" }
+      - { code: "Asia/Yekaterinburg" }
+      - { code: "Asia/Yerevan" }
+      - { code: "Atlantic/Azores" }
+      - { code: "Atlantic/Bermuda" }
+      - { code: "Atlantic/Canary" }
+      - { code: "Atlantic/Cape_Verde" }
+      - { code: "Atlantic/Faeroe" }
+      - { code: "Atlantic/Faroe" }
+      - { code: "Atlantic/Jan_Mayen" }
+      - { code: "Atlantic/Madeira" }
+      - { code: "Atlantic/Reykjavik" }
+      - { code: "Atlantic/South_Georgia" }
+      - { code: "Atlantic/St_Helena" }
+      - { code: "Atlantic/Stanley" }
+      - { code: "Australia/ACT" }
+      - { code: "Australia/Adelaide" }
+      - { code: "Australia/Brisbane" }
+      - { code: "Australia/Broken_Hill" }
+      - { code: "Australia/Canberra" }
+      - { code: "Australia/Currie" }
+      - { code: "Australia/Darwin" }
+      - { code: "Australia/Eucla" }
+      - { code: "Australia/Hobart" }
+      - { code: "Australia/LHI" }
+      - { code: "Australia/Lindeman" }
+      - { code: "Australia/Lord_Howe" }
+      - { code: "Australia/Melbourne" }
+      - { code: "Australia/NSW" }
+      - { code: "Australia/North" }
+      - { code: "Australia/Perth" }
+      - { code: "Australia/Queensland" }
+      - { code: "Australia/South" }
+      - { code: "Australia/Sydney" }
+      - { code: "Australia/Tasmania" }
+      - { code: "Australia/Victoria" }
+      - { code: "Australia/West" }
+      - { code: "Australia/Yancowinna" }
+      - { code: "Brazil/Acre" }
+      - { code: "Brazil/DeNoronha" }
+      - { code: "Brazil/East" }
+      - { code: "Brazil/West" }
+      - { code: "CET" }
+      - { code: "CST6CDT" }
+      - { code: "Canada/Atlantic" }
+      - { code: "Canada/Central" }
+      - { code: "Canada/Eastern" }
+      - { code: "Canada/Mountain" }
+      - { code: "Canada/Newfoundland" }
+      - { code: "Canada/Pacific" }
+      - { code: "Canada/Saskatchewan" }
+      - { code: "Canada/Yukon" }
+      - { code: "Chile/Continental" }
+      - { code: "Chile/EasterIsland" }
+      - { code: "Cuba" }
+      - { code: "EET" }
+      - { code: "EST" }
+      - { code: "EST5EDT" }
+      - { code: "Egypt" }
+      - { code: "Eire" }
+      - { code: "Etc/GMT" }
+      - { code: "Etc/GMT+0" }
+      - { code: "Etc/GMT+1" }
+      - { code: "Etc/GMT+10" }
+      - { code: "Etc/GMT+11" }
+      - { code: "Etc/GMT+12" }
+      - { code: "Etc/GMT+2" }
+      - { code: "Etc/GMT+3" }
+      - { code: "Etc/GMT+4" }
+      - { code: "Etc/GMT+5" }
+      - { code: "Etc/GMT+6" }
+      - { code: "Etc/GMT+7" }
+      - { code: "Etc/GMT+8" }
+      - { code: "Etc/GMT+9" }
+      - { code: "Etc/GMT-0" }
+      - { code: "Etc/GMT-1" }
+      - { code: "Etc/GMT-10" }
+      - { code: "Etc/GMT-11" }
+      - { code: "Etc/GMT-12" }
+      - { code: "Etc/GMT-13" }
+      - { code: "Etc/GMT-14" }
+      - { code: "Etc/GMT-2" }
+      - { code: "Etc/GMT-3" }
+      - { code: "Etc/GMT-4" }
+      - { code: "Etc/GMT-5" }
+      - { code: "Etc/GMT-6" }
+      - { code: "Etc/GMT-7" }
+      - { code: "Etc/GMT-8" }
+      - { code: "Etc/GMT-9" }
+      - { code: "Etc/GMT0" }
+      - { code: "Etc/Greenwich" }
+      - { code: "Etc/UCT" }
+      - { code: "Etc/UTC" }
+      - { code: "Etc/Universal" }
+      - { code: "Etc/Zulu" }
+      - { code: "Europe/Amsterdam" }
+      - { code: "Europe/Andorra" }
+      - { code: "Europe/Astrakhan" }
+      - { code: "Europe/Athens" }
+      - { code: "Europe/Belfast" }
+      - { code: "Europe/Belgrade" }
+      - { code: "Europe/Berlin" }
+      - { code: "Europe/Bratislava" }
+      - { code: "Europe/Brussels" }
+      - { code: "Europe/Bucharest" }
+      - { code: "Europe/Budapest" }
+      - { code: "Europe/Busingen" }
+      - { code: "Europe/Chisinau" }
+      - { code: "Europe/Copenhagen" }
+      - { code: "Europe/Dublin" }
+      - { code: "Europe/Gibraltar" }
+      - { code: "Europe/Guernsey" }
+      - { code: "Europe/Helsinki" }
+      - { code: "Europe/Isle_of_Man" }
+      - { code: "Europe/Istanbul" }
+      - { code: "Europe/Jersey" }
+      - { code: "Europe/Kaliningrad" }
+      - { code: "Europe/Kiev" }
+      - { code: "Europe/Kirov" }
+      - { code: "Europe/Kyiv" }
+      - { code: "Europe/Lisbon" }
+      - { code: "Europe/Ljubljana" }
+      - { code: "Europe/London" }
+      - { code: "Europe/Luxembourg" }
+      - { code: "Europe/Madrid" }
+      - { code: "Europe/Malta" }
+      - { code: "Europe/Mariehamn" }
+      - { code: "Europe/Minsk" }
+      - { code: "Europe/Monaco" }
+      - { code: "Europe/Moscow" }
+      - { code: "Europe/Nicosia" }
+      - { code: "Europe/Oslo" }
+      - { code: "Europe/Paris" }
+      - { code: "Europe/Podgorica" }
+      - { code: "Europe/Prague" }
+      - { code: "Europe/Riga" }
+      - { code: "Europe/Rome" }
+      - { code: "Europe/Samara" }
+      - { code: "Europe/San_Marino" }
+      - { code: "Europe/Sarajevo" }
+      - { code: "Europe/Saratov" }
+      - { code: "Europe/Simferopol" }
+      - { code: "Europe/Skopje" }
+      - { code: "Europe/Sofia" }
+      - { code: "Europe/Stockholm" }
+      - { code: "Europe/Tallinn" }
+      - { code: "Europe/Tirane" }
+      - { code: "Europe/Tiraspol" }
+      - { code: "Europe/Ulyanovsk" }
+      - { code: "Europe/Uzhgorod" }
+      - { code: "Europe/Vaduz" }
+      - { code: "Europe/Vatican" }
+      - { code: "Europe/Vienna" }
+      - { code: "Europe/Vilnius" }
+      - { code: "Europe/Volgograd" }
+      - { code: "Europe/Warsaw" }
+      - { code: "Europe/Zagreb" }
+      - { code: "Europe/Zaporozhye" }
+      - { code: "Europe/Zurich" }
+      - { code: "Factory" }
+      - { code: "GB" }
+      - { code: "GB-Eire" }
+      - { code: "GMT" }
+      - { code: "GMT+0" }
+      - { code: "GMT-0" }
+      - { code: "GMT0" }
+      - { code: "Greenwich" }
+      - { code: "HST" }
+      - { code: "Hongkong" }
+      - { code: "Iceland" }
+      - { code: "Indian/Antananarivo" }
+      - { code: "Indian/Chagos" }
+      - { code: "Indian/Christmas" }
+      - { code: "Indian/Cocos" }
+      - { code: "Indian/Comoro" }
+      - { code: "Indian/Kerguelen" }
+      - { code: "Indian/Mahe" }
+      - { code: "Indian/Maldives" }
+      - { code: "Indian/Mauritius" }
+      - { code: "Indian/Mayotte" }
+      - { code: "Indian/Reunion" }
+      - { code: "Iran" }
+      - { code: "Israel" }
+      - { code: "Jamaica" }
+      - { code: "Japan" }
+      - { code: "Kwajalein" }
+      - { code: "Libya" }
+      - { code: "MET" }
+      - { code: "MST" }
+      - { code: "MST7MDT" }
+      - { code: "Mexico/BajaNorte" }
+      - { code: "Mexico/BajaSur" }
+      - { code: "Mexico/General" }
+      - { code: "NZ" }
+      - { code: "NZ-CHAT" }
+      - { code: "Navajo" }
+      - { code: "PRC" }
+      - { code: "PST8PDT" }
+      - { code: "Pacific/Apia" }
+      - { code: "Pacific/Auckland" }
+      - { code: "Pacific/Bougainville" }
+      - { code: "Pacific/Chatham" }
+      - { code: "Pacific/Chuuk" }
+      - { code: "Pacific/Easter" }
+      - { code: "Pacific/Efate" }
+      - { code: "Pacific/Enderbury" }
+      - { code: "Pacific/Fakaofo" }
+      - { code: "Pacific/Fiji" }
+      - { code: "Pacific/Funafuti" }
+      - { code: "Pacific/Galapagos" }
+      - { code: "Pacific/Gambier" }
+      - { code: "Pacific/Guadalcanal" }
+      - { code: "Pacific/Guam" }
+      - { code: "Pacific/Honolulu" }
+      - { code: "Pacific/Johnston" }
+      - { code: "Pacific/Kanton" }
+      - { code: "Pacific/Kiritimati" }
+      - { code: "Pacific/Kosrae" }
+      - { code: "Pacific/Kwajalein" }
+      - { code: "Pacific/Majuro" }
+      - { code: "Pacific/Marquesas" }
+      - { code: "Pacific/Midway" }
+      - { code: "Pacific/Nauru" }
+      - { code: "Pacific/Niue" }
+      - { code: "Pacific/Norfolk" }
+      - { code: "Pacific/Noumea" }
+      - { code: "Pacific/Pago_Pago" }
+      - { code: "Pacific/Palau" }
+      - { code: "Pacific/Pitcairn" }
+      - { code: "Pacific/Pohnpei" }
+      - { code: "Pacific/Ponape" }
+      - { code: "Pacific/Port_Moresby" }
+      - { code: "Pacific/Rarotonga" }
+      - { code: "Pacific/Saipan" }
+      - { code: "Pacific/Samoa" }
+      - { code: "Pacific/Tahiti" }
+      - { code: "Pacific/Tarawa" }
+      - { code: "Pacific/Tongatapu" }
+      - { code: "Pacific/Truk" }
+      - { code: "Pacific/Wake" }
+      - { code: "Pacific/Wallis" }
+      - { code: "Pacific/Yap" }
+      - { code: "Poland" }
+      - { code: "Portugal" }
+      - { code: "ROC" }
+      - { code: "ROK" }
+      - { code: "Singapore" }
+      - { code: "Turkey" }
+      - { code: "UCT" }
+      - { code: "US/Alaska" }
+      - { code: "US/Aleutian" }
+      - { code: "US/Arizona" }
+      - { code: "US/Central" }
+      - { code: "US/East-Indiana" }
+      - { code: "US/Eastern" }
+      - { code: "US/Hawaii" }
+      - { code: "US/Indiana-Starke" }
+      - { code: "US/Michigan" }
+      - { code: "US/Mountain" }
+      - { code: "US/Pacific" }
+      - { code: "US/Samoa" }
+      - { code: "UTC" }
+      - { code: "Universal" }
+      - { code: "W-SU" }
+      - { code: "WET" }
+      - { code: "Zulu" }

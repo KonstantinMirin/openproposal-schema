@@ -1,0 +1,467 @@
+# The value domains (type rules § 3a), written and reviewed before the
+# mapping. Each concept says what a value means, names the one model type that
+# represents it, and cites what it rests on. A field or key row a concept cites
+# is typed by the concept's type (mapping rule `domain-row`). Every primitive
+# and part declares its concept, and every scalar property of the model
+# resolves to one. Regenerate a quote and a digest with
+# `npm run cite -- --all-locks <IR element ID>`.
+format: 1
+domains:
+  - name: identity
+    description: What names a record, an option, or a party's thing, compared by exact equality and never shown as prose.
+    concepts:
+      - name: minted-id
+        meaning: The identity of a record a party of the proposal mints for the other parties to carry, such as a proposal, a line item, an asset, a commitment attempt, or a catalog entry. A reference to such a record carries the same identity.
+        type: Uuid
+        sources:
+          spec:
+            - ir: field:4.1:proposal_id
+              digest: fb8604e60eabfa2db105b17ca562af8ba2f20784907dcce349772ce83054088d
+              quote: "`proposal_id` | String | immutable | Unique identity for the proposal object"
+            - ir: field:5.1:line_item_id
+              digest: 60cd2aeea40121597f5e2b0725417665bc560c9b677000d3dfbc432d1c88c969
+              quote: "`line_item_id` | String | immutable | Identity within the proposal"
+            - ir: field:5.10:correlation_id
+              digest: e015a269b356797dbfe7737b7178f592b5fe280e8a95db0d446724b685cc80d9
+              quote: "`correlation_id` | String | derived | One identity for this line item's commitment, carried across every system it touches"
+            - ir: key:5.6.1:commitment.idempotency_key
+              digest: 47264d377373977897dc60c399d4e61a15e862743a2ff4e2fab92830ca3f3550
+              quote: "`idempotency_key` | REQUIRED | Buyer-generated, unique per commitment attempt"
+            - ir: key:5.6.1:commitment.proposal_id
+              digest: 5786eb882e01494be61d482b94b44011a8669f93a79419c1e74db23908e04453
+              quote: "`proposal_id` | REQUIRED | The proposal the commitment is made against"
+              locks:
+                - with-open-prs
+            - ir: key:5.6.3:requires.all_of[]
+              digest: ba606c815b2f294442e06b436f9b146cdad79fc400cfe5586a1906370ee74c7c
+              quote: "`all_of[]` | Line items that MUST all be in the same commitment"
+              locks:
+                - with-open-prs
+            - ir: key:5.6.3:requires.any_of[]
+              digest: a9c3ff73e8f7dbce358a1c75350766332e8f8db4cfca291bf7775f7f0ba38929
+              quote: "`any_of[]` | Line items of which at least one MUST be in the same commitment"
+              locks:
+                - with-open-prs
+          standards:
+            - name: RFC 9562, Universally Unique IDentifiers (UUIDs)
+              url: https://www.rfc-editor.org/rfc/rfc9562
+      - name: external-id
+        meaning: The identity of a record, a code, or a version that another system or list defines, such as a registry entry, a DSP seat, a vendor, an order system, a buyer's brief, a seller's own template, which the specification calls opaque, a geo code, a device category, a category of the IAB Tech Lab Content Taxonomy, a published document's version, or a field of the specification, which a negotiation step names by its path, as the tables write it, such as `pricing[].gross_rate`. The proposal carries it as that system writes it and never parses it, and the field's description names the system or list.
+        type: ExternalId
+        sources:
+          spec:
+            - ir: field:4.1:proposal_template_id
+              digest: 5f43a39db8284176822173553f81108c25fea3e72083caeffb881d5050e8a39c
+              quote: "`proposal_template_id` | String | immutable | OPTIONAL. Links an issued proposal to the seller's template. Opaque to buyers; used for the seller's reporting"
+              locks:
+                - with-open-prs
+            - ir: field:4.1:brief_ref
+              digest: 482c83600e1a104be57aaa70c91f4df5bec6b6bdc7621b8c8cdb9283d768eeaa
+              quote: "`brief_ref` | String | supplied | Reference to the buyer's brief. REQUIRED when `type` is `custom`"
+            - ir: field:4.1:seller_id
+              digest: 98c167e650ac7cbe7a3fe910d218292ae19d16156e9a575875776ba335e4e833
+              quote: "`seller_id` | String | immutable | IAB Tech Lab registry reference"
+            - ir: field:5.8:eligible_bidders[]
+              digest: 377ad11d09a2b66329d8d7f32f46f187f2d0ba5d06ac90980630554720456d9a
+              quote: "`eligible_bidders[]` | Array[String] | seller-set | Permitted seat or buyer ids"
+            - ir: field:5.10:supported_order_systems[]
+              digest: 7aaf91ef69703a0a34d2843995fd0a71869f5ee333feecb94a1a897741380d07
+              quote: "`supported_order_systems[]` | Array[String] | seller-set | Declared up front so the agent knows it will reconcile"
+            - ir: key:5.2:apps[].bundle
+              digest: 59f9924d3d8ee09a637650c5ab939c28dcf07905af01337dac1bfa74a038d6d0
+              quote: "`bundle` | REQUIRED | Store ID. As OpenRTB 2.6 `app.bundle`"
+              locks:
+                - with-open-prs
+            - ir: field:5.5:device
+              digest: 265e83a84f1efb967c4a62daab8adb8b69139f794b7cc080b03c5c28cf4828d4
+              quote: "`device` | Object | settable | `allowed[]` of device categories"
+            - ir: sentence:5.5:8d595b9a
+              digest: 0dae3f9597019a6d868e3a14e0548e9b34e8e22a6080e5ceec67b758f279d029
+              quote: "`iab_content_category[]` entries are IAB Content Taxonomy ids."
+              locks:
+                - with-open-prs
+      - name: format-id
+        meaning: The ID of a creative format in the format registry, namespaced by channel, as the specification writes `display/300x250`. It validates differently from an external ID, since it holds a channel and a format joined by one `/`, and a receiver compares it by exact equality.
+        type: FormatId
+        sources:
+          spec:
+            - ir: field:5.4:formats
+              digest: 2a8a55ef5666b057f31306cadf667fc01dff13e5cc5e009f00d3f649de375016
+              quote: "`formats` | Object | selectable | `available[]` of registry format ids namespaced by channel (`display/300x250`, `audio/host-read-30s`), `included[]`, `pricing`, `max_select`"
+  - name: reference
+    description: What points at something outside the value itself, such as a catalog entry, a field, or the exact bytes of a document.
+    concepts:
+      - name: catalog-ref
+        meaning: A version-pinned reference to an entry in a seller-maintained catalog, given in place of an inline value.
+        type: CatalogRef
+        components: [CatalogReference]
+        sources:
+          spec:
+            - ir: code:2.2:1
+              digest: 5b0b87b43dbc9c1a24ed8f3e2bd71d22c5d790a6f786b980bd554f64a71436a0
+              quote: |-
+                catalog_ref: "<seller_namespace>/<collection>/<entry_id>@<version>"
+                example:     "examplepub/audiences/smb-decision-makers@3"
+            - ir: rule:2.2:3916a8f2
+              digest: 511cade5dc52dec990f091f7293a343392bae81a91404e3a81983b040edf9315
+              quote: References MUST be version-pinned.
+      - name: digest
+        meaning: A SHA-256 hash that pins the exact bytes of a referenced document.
+        type: Digest
+        sources:
+          spec:
+            - ir: field:5.8:terms_ref
+              digest: c65b1714f353bd191478e58c22e966ba7aea717efd79a61aa495c477fc4249b1
+              quote: "`terms_ref` | Object | seller-set | OPTIONAL; REQUIRED when `terms_acceptance_required` is `true`. `{ url, sha256, version }`: the legal terms or IO template the buyer accepts at assent. Hash-pinned, so assent (§ 4.1) binds to an exact document"
+              locks:
+                - with-open-prs
+          standards:
+            - name: FIPS 180-4, Secure Hash Standard (SHA-256)
+              url: https://csrc.nist.gov/pubs/fips/180-4/upd1/final
+  - name: text
+    description: Prose for people and agents to read, never parsed or compared.
+    concepts:
+      - name: text
+        meaning: Prose, such as a description, a planning hint, or a party's name.
+        type: Text
+        sources:
+          spec:
+            - ir: field:4.2:description
+              digest: d8f9bd51c2ecf2a1311600c2fad1dda1b1b8f74269700a3f3ae6018a8beba30d
+              quote: '`description` | String | seller-set | REQUIRED. Prose, not a name. Where the "why buy" case is made, including which channels a multi-channel proposal spans'
+            - ir: field:4.2:seasonality_notes
+              digest: 33869d96c87875efa58c05a56f748e10c70beaf72e89bec328f29de4c6c3ece6
+              quote: "`seasonality_notes` | String | seller-set | When the proposal performs differently"
+            - ir: field:4.1:seller_name
+              digest: 270af1c40363b766b5013891995f439c36dbfe87392a61eec853cc14203bb712
+              quote: "`seller_name` | String | immutable | Canonical legal seller entity name, from the registry"
+            - ir: field:4.2:best_for[]
+              digest: 4a9b533b2efb864c58a34a23e06d7788501a0c07cba58bfa9ead7c89e9dcb4c2
+              quote: "`best_for[]` | Array[String] | seller-set | Advisory planning hints. Non-normative, and never the basis for a match"
+            - ir: field:4.2:not_suitable_for[]
+              digest: 90017ea8f4ac27e03fb7a3655c68ef299f3e0d2705575c428bff5865b1da9f2b
+              quote: "`not_suitable_for[]` | Array[String] | seller-set | Advisory exclusion guidance. Non-normative"
+            - ir: field:5.9:deal_id_issuance
+              digest: 064acb1a6dfcb9c0cd2788373080091ccd3a991f47a4b1d055046eb5f51272cb
+              quote: "`deal_id_issuance` | String | derived | When and how the deal id is minted. Issued at commitment time"
+            - ir: field:5.9:serving_platform
+              digest: 6755aeee541637916ff2959d75837395628b01f5deea9a200accf26eea573107
+              quote: "`serving_platform` | String | seller-set | Where the line item serves"
+  - name: network
+    description: Names and locations on the internet.
+    concepts:
+      - name: url
+        meaning: An absolute `https` URL that a receiver may fetch.
+        type: Url
+        sources:
+          spec:
+            - ir: key:5.2:apps[].storeurl
+              digest: ff0b57e686b74d4d7954d4f807d16f837493476801ec8813d4b42463df5760d3
+              quote: "`storeurl` | OPTIONAL | Store listing URL. As `app.storeurl`"
+              locks:
+                - with-open-prs
+          standards:
+            - name: RFC 3986, Uniform Resource Identifier (URI) Generic Syntax
+              url: https://www.rfc-editor.org/rfc/rfc3986
+      - name: domain-name
+        meaning: A domain name, compared by string equality, such as a property's site or an app developer's domain.
+        type: Domain
+        sources:
+          spec:
+            - ir: field:5.2:properties
+              digest: 8167901b1024772db9ede8143ce1d5009d6effcfd66b290f82e427a00940b50c
+              quote: "`properties` | Object | selectable | `available[]` of `{ id, name, domains, supported_formats }`, `included[]`, `pricing`, `max_select`"
+              locks:
+                - main
+            - ir: field:5.2:properties
+              digest: 4115b24e46ceb6cf1b12d1730a313c02123ae5b3ed6739bb9fefdaadc10ea478
+              quote: "`properties` | Object | selectable | `available[]` of `{ id, name, domains, apps, supported_formats }`, `included[]`, `pricing`, `max_select`. Each property MUST carry `domains`, `apps` or both"
+              locks:
+                - with-open-prs
+            - ir: key:5.2:apps[].domain
+              digest: 225b562dcf1a6bb5794204f48f457410c578cee81a69e2906f3c994b3a747eb4
+              quote: "`domain` | RECOMMENDED | Developer domain, against which `app-ads.txt` is checked. As `app.domain`"
+              locks:
+                - with-open-prs
+          standards:
+            - name: RFC 1123, Requirements for Internet Hosts (host name syntax)
+              url: https://www.rfc-editor.org/rfc/rfc1123
+  - name: money
+    description: Sums of money and prices, and the currency they are in. Every money value is a bare number with a sibling `currency` in the same object, as OpenRTB writes `bidfloor` and `bidfloorcur`; a currency is never inherited from an enclosing object.
+    concepts:
+      - name: amount
+        meaning: A sum of money or a price per unit of a cost method, never negative, in the currency of the `currency` beside it, such as a budget, a minimum spend, or a CPM. The cost method says what a rate is per.
+        type: Amount
+        requires:
+          member: currency
+          concept: currency
+          decision: D-036
+          lacking:
+            - ir: field:5.4:production#description/object:1
+            - ir: field:5.6:min_spend
+            - ir: field:5.6:commitment_bounds#description/object:1
+        sources:
+          spec:
+            - ir: field:5.6:min_spend
+              digest: 9950b94692a4b0250d54a54d47eca0f63c96a7b9d26607cded57896d46e5c8c4
+              quote: "`min_spend` | Number | seller-set | Minimum spend for this line item"
+            - ir: field:5.6:pricing[].gross_rate
+              digest: f432867a10e6b5662c58996ee4f1c3ea14cddc65968fb1f879bbc703940b9621
+              quote: "`pricing[].gross_rate` | Number | seller-set | The list rate the buyer pays"
+            - ir: field:5.6:pricing[].agreed_rate
+              digest: fddb11299e9061fe008737676d347a540cc4a21ffaadb153b5cf7765f312d3c6
+              quote: "`pricing[].agreed_rate` | Number | derived | The transacted rate after selections and any agreed request"
+            - ir: field:5.6:pricing[].seller_rate
+              digest: 314758d24a50efd1b2b8813f612feb3630d3635c709cd98d136a482f6ebbc049
+              quote: "`pricing[].seller_rate` | Number | seller-set | What the publisher receives"
+            - ir: field:5.6:pricing[].floor
+              digest: c635c8c9f7c2bc45268481c963866fc8a5bc289c2ed6c22c8ad5115b2529c1d7
+              quote: "`pricing[].floor` | Number | seller-set | OPTIONAL. The lowest rate the seller will consider. Enables a `requestable` counter to be evaluated without a round trip"
+              locks:
+                - main
+            - ir: field:5.6:pricing[].floor
+              digest: 2a2f1c3a1f72fae862344a6b30acedcb6510ab6cf43f9c7f13a837680ed1a3ca
+              quote: "`pricing[].floor` | Number | seller-set | OPTIONAL. The seller's offer floor: the lowest rate it will consider at proposal time, so a `requestable` counter can be evaluated without a round trip. Not the downstream auction floor, and not a guarantee that bids at or above it will clear"
+              locks:
+                - with-open-prs
+            - ir: key:5.6.1:commitment.amount
+              digest: 9e4c291747cc047e67c9ef7b1b6f9776d02bb2e82de16dfe9b8079e42921e804
+              quote: "`amount` | REQUIRED | The figure committed"
+          standards:
+            - name: OpenRTB 2.6, Object Imp (`bidfloor` and `bidfloorcur`)
+              url: https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/2.6.md#3.2.4
+      - name: price-adjustment
+        meaning: A signed change to a price or a sum of money, such as the change an option makes to the CPM or a flat surcharge or discount.
+        type: PriceAdjustment
+        requires:
+          member: currency
+          concept: currency
+          decision: D-036
+          lacking:
+            - ir: key:3.1:pricing#meaning/object:1
+        sources:
+          spec:
+            - ir: key:3.1:pricing#meaning/object:1
+              digest: 1d2ea6996d7c3bbf4808776d7399e4719b79687764674d92f08a885763ad61fe
+              quote: "{ option_id: { delta_cpm | delta_flat | delta_pct } }"
+      - name: option-price-delta
+        meaning: The change in price when the buyer selects an option beyond those included, given as exactly one of a change to the CPM, a flat change, or a change in percent.
+        type: PriceDelta
+        requires:
+          member: currency
+          concept: currency
+          decision: D-036
+          lacking:
+            - ir: key:3.1:pricing#meaning/object:1
+        sources:
+          spec:
+            - ir: key:3.1:pricing
+              digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
+              quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+      - name: currency
+        meaning: The ISO 4217 currency of the money values in the same object.
+        type: CurrencyCode
+        sources:
+          spec:
+            - ir: field:5.6:pricing[].currency
+              digest: c3fe3033ef8ca1012e67b36b728cc3383f4f4b4642ded0b50c4537216dcafde1
+              quote: "`pricing[].currency` | String | seller-set | ISO-4217"
+            - ir: key:5.6.1:commitment.currency
+              digest: 19e4d985eb2f3a597bafe8f3233448688dcfd827a2e41bc2b8fe1886c5e9ce33
+              quote: "`currency` | REQUIRED when `basis = spend` | ISO-4217"
+          standards:
+            - name: ISO 4217, Codes for the representation of currencies
+              url: https://www.iso.org/iso-4217-currency-codes.html
+  - name: ratio
+    description: Proportions and relative changes.
+    concepts:
+      - name: fraction
+        meaning: A proportion from 0 to 1, such as a viewable rate or an expected match rate.
+        type: Fraction
+        sources:
+          spec:
+            - ir: field:5.7:committed_metrics[]
+              digest: 2c123e829ef892456b09671dfd52243f1bef0db8b067aa9c5d184dc07411caf5
+              quote: "`committed_metrics[]` | Array[Object] | requestable | `{ metric, value, basis }` tuples — `viewable_rate` for display, `completion_rate` for video/audio/CTV, an audience-modelled metric for DOOH. Seller declares a ceiling; a buyer MAY request above it"
+            - ir: field:5.3:buyer_supplied
+              digest: 18d87a0de58116db76d7152a7f96bc722dc700b91f053406b32e4299e7910504
+              quote: "`buyer_supplied` | Object | supplied | `{ segments_allowed, suppression_allowed, match_rate_expected, segments[], suppression_list }`. `match_rate_expected` is the seller's stated expectation; `segments[]` and `suppression_list` are buyer-populated"
+      - name: percent-change
+        meaning: A relative change to a price in percent, from −100 up.
+        type: PercentChange
+        sources:
+          spec:
+            - ir: key:3.1:pricing#meaning/object:1
+              digest: 1d2ea6996d7c3bbf4808776d7399e4719b79687764674d92f08a885763ad61fe
+              quote: "{ option_id: { delta_cpm | delta_flat | delta_pct } }"
+  - name: quantity
+    description: Whole numbers of things, which add up.
+    concepts:
+      - name: count
+        meaning: A whole number of things, never negative, such as impressions, reachable units, options, or a proposal's revisions, which its `version` counts and every reference to the proposal repeats.
+        type: Count
+        sources:
+          spec:
+            - ir: field:5.3:addressable_scale
+              digest: 1289f106e9861b03225c1fc7056b164eac34f82d73fc327c7009b0c8b9111e24
+              quote: "`addressable_scale` | Integer | derived | Reachable units in the flight, recomputed against the buyer's selection. Not segment size"
+            - ir: key:5.6.1:commitment.derived_units
+              digest: a9f6d92f09ae371454efb08c6b7e3ae3a5d7340cedd195cb446ce3da2db6735f
+              quote: "`derived_units` | derived | Computed from `amount`, `agreed_rate` and `cost_method`. Informative, not binding"
+            - ir: key:3.1:max_select
+              digest: 199cab600b78dcd9dc40358fa8a94ec4d323f2bcf2fd7922a62b008af465d820
+              quote: "`max_select` | OPTIONAL | Cap on how many options the buyer may choose"
+            - ir: field:4.1:version
+              digest: 0d60d71f86bb7ba75bce82f30d59f3a971355af3191a622f5ee2e856069fb67f
+              quote: "`version` | Integer | derived | Monotonically increasing revision number"
+              locks:
+                - main
+            - ir: field:4.1:version
+              digest: a09ae7827a52ff907bbe2cb190b88a430dd2a075fe1f098c2f024ff7ba097988
+              quote: "`version` | Integer | derived | Monotonically increasing revision number. Each revision while status is `published` increments it"
+              locks:
+                - with-open-prs
+            - ir: key:5.6.1:commitment.version
+              digest: 394505396cda2bb39d2e3e57aec4d9f3135b74d215b31c1483869965339ac648
+              quote: "`version` | REQUIRED | The proposal `version` the commitment was priced against"
+              locks:
+                - with-open-prs
+  - name: time
+    description: Time has four concepts. A point in time and a span need no clock. A daypart window is calendar time, read on the line item's clock, which the time zone names. A frequency cap's period is a term of a vocabulary, `FrequencyCapPeriod`, not a span; it is a calendar period on that clock, such as a day from midnight to midnight, or the whole flight, which runs between two points in time (D-044).
+    concepts:
+      - name: instant
+        meaning: A point in time, such as the end of an offer window, the expiry of a hold, or the start of a flight.
+        type: Timestamp
+        sources:
+          spec:
+            - ir: field:4.1:valid_from,valid_until
+              digest: 9c5853eb24269fa128f158276e85a0e45be848cce58efe34fa1739a06514e9a0
+              quote: "`valid_from` · `valid_until` | Timestamp | seller-set | ISO-8601 window the offer holds. This is the offer window, not the campaign flight"
+            - ir: field:5.6:pricing[].price_valid_until
+              digest: d5f73077d16f2df27e85bbb8df330143da8f86fd4c531ecf4da35b9cac37f6f1
+              quote: "`pricing[].price_valid_until` | Timestamp | seller-set | How long the posted rate holds. Distinct from the proposal's `valid_until`"
+            - ir: key:5.6.2:hold_status.hold_expires_at
+              digest: d298da40613999b40a53bab56e17f7c8af9488207a3755391ce3c368a2556cb8
+              quote: "`hold_expires_at` | Absolute timestamp, set when the hold is granted"
+            - ir: key:5.6.1:commitment.flight_start
+              digest: f55507bcfbcdffa24a4949e12e1e59a92cef3e9b56f23e47b59e6b8c20f0d4fb
+              quote: "`flight_start` | REQUIRED | The buyer's campaign start. Distinct from `valid_from`"
+            - ir: key:5.6.1:commitment.flight_end
+              digest: d3bd830cbe989315172dc25dcb1f42bdb93752cfa4f6f0112d4fca784f286345
+              quote: "`flight_end` | REQUIRED | The buyer's campaign end. Distinct from `valid_until`"
+          standards:
+            - name: RFC 3339, Date and Time on the Internet (date-time)
+              url: https://www.rfc-editor.org/rfc/rfc3339
+      - name: duration
+        meaning: A length of time, such as how long a hold runs, an attribution window, or a production lead time.
+        type: Duration
+        sources:
+          spec:
+            - ir: key:5.6.2:hold_status.hold_duration
+              digest: 926e46e5c6325e98292a30a6655d0991d1979a9e07c1c637c9d256aa82659493
+              quote: "`hold_duration` | ISO-8601 duration the hold runs for"
+            - ir: key:5.2.2:placement.skipafter
+              digest: 7eb11e62931be7a67537c85a3e6e1609978155b48c0219644d3998f796a1c36d
+              quote: "`skipafter` | OPTIONAL | When `skip` is `1`: seconds the ad plays before the placement enables skipping | `VideoPlacement.skipafter`, `AudioPlacement.skipafter`, `video.skipafter`"
+              locks:
+                - with-open-prs
+          standards:
+            - name: RFC 3339, Appendix A, ISO 8601 collected ABNF (duration)
+              url: https://www.rfc-editor.org/rfc/rfc3339#appendix-A
+      - name: daypart-window
+        meaning: A window of the week in which a line item's ads may serve, given as days and a start and an end civil time of day, read on the line item's clock.
+        type: DaypartWindow
+        components: [TimeOfDay, DayName]
+        sources:
+          spec:
+            - ir: field:5.5:daypart
+              digest: 25c80cd35ce4831dfbd372627f2d794511fffe5f029243e586ee1e607be4fdc2
+              quote: "`daypart` | Object | settable | `allowed[]` of time windows"
+              locks: [main]
+            - ir: field:5.5:daypart
+              digest: b34d1818bf80b3e5947f9902057ac882707ef3a893fc370c97efc81487d64080
+              quote: "`daypart` | Object | settable | `allowed[]` of `{ days[], start, end }`: `days[]` from `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`, HH:MM civil time, `end` exclusive, up to `24:00`"
+              locks: [with-open-prs]
+          standards:
+            - name: Google Ad Manager API, DayPart
+              url: https://developers.google.com/ad-manager/api/reference/latest/LineItemService.DayPart
+      - name: time-zone
+        meaning: The clock a line item's calendar values are read on, its daypart and its frequency cap's period, a zone of the IANA time zone database or `viewer_local`, where the ad renders.
+        type: TimeZone
+        sources:
+          spec:
+            - ir: field:5.5:time_zone
+              digest: c3a3201d895ffca4363f6b17d138858db2a32c7ba2bb5352647cec4a596de13d
+              quote: "`time_zone` | String | seller-set | IANA time zone name, or `viewer_local` (where the ad renders). The clock for `daypart` and `frequency_cap.period`. REQUIRED with either"
+              locks: [with-open-prs]
+            - ir: sentence:5.5:bcaa431b
+              digest: dd32a6368f87c6f3cc3b6ecb6ff87b8aa69d0332a9b99e1a2b7467f2c3ea5f00
+              quote: Like the calendar Day of OpenDirect 2.1 `Line.frequencyinterval`, `frequency_cap.period` is a calendar period in `time_zone`; weeks start on Monday.
+              locks: [with-open-prs]
+          standards:
+            - name: IANA Time Zone Database
+              url: https://www.iana.org/time-zones
+  - name: term
+    description: Terms of a vocabulary. A core term is spelled as the specification lists it, and an extension term is namespaced by its definer's domain.
+    vocabularies: true
+    concepts:
+      - name: namespaced-term
+        meaning: A term outside a vocabulary's core list, written `<domain>:<term>`, where the domain is the definer's identity domain.
+        type: NamespacedTerm
+        sources:
+          standards:
+            - name: RFC 1123, Requirements for Internet Hosts (host name syntax)
+              url: https://www.rfc-editor.org/rfc/rfc1123
+      - name: vendor-code
+        meaning: A code outside a list's own codes that the list reserves for vendors, as AdCOM 1.0 reserves 500 and up in List API Frameworks, which extends a vocabulary of the list's codes.
+        type: VendorCode
+        sources:
+          standards:
+            - name: AdCOM 1.0, List API Frameworks (500+ Vendor-specific codes)
+              url: https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#list_apiframeworks
+  - name: flag
+    description: Values with two states.
+    concepts:
+      - name: flag
+        meaning: A yes or no, written as a JSON boolean.
+        type: boolean
+        sources:
+          spec:
+            - ir: field:5.8:terms_acceptance_required
+              digest: 0243a3b7686e677b229229ed525e3ceb6ac606d6e71bac139abf02de3260ceef
+              quote: "`terms_acceptance_required` | Boolean | seller-set | Whether legal terms must be accepted before assent"
+            - ir: key:5.6.2:hold_status.hold_available
+              digest: 201a73f56ae7a6f7c81671b5a989999e5e68f5a5e75b72046ea852d93480867c
+              quote: "`hold_available` | Whether this line item may be held"
+homonyms:
+  - member: basis
+    decision: D-013
+    reason: Four lists go by `basis`, so each is the vocabulary of what it bases, named after it. A commitment's and a `min_commitment[]` threshold's `basis` say what the amount is (`CommitmentBasis`); an availability's, a committed metric's, and a frequency cap's each name a list of their own.
+  - member: id
+    decision: D-037
+    reason: An object option's `id`, which the selectable template gives every object option (D-046, D-047), is the identity the seller mints for the option, a minted ID that `included[]` and the `pricing` keys name it by; an external reference's `id` is the ID another system keeps.
+  - member: status
+    decision: D-013
+    reason: A proposal and a line item each have a status, with different states, so each is the vocabulary of its own object.
+  - member: type
+    decision: D-013
+    reason: Four objects name a type, and each means a different list, so each is the vocabulary of its own object, named after it.
+  - member: version
+    decision: D-027
+    reason: A proposal's `version` and every reference to it count the proposal's revisions, which the seller increments, a count; a terms reference's `version` is the terms document's version as its publisher writes it, an external ID.
+shared_structures:
+  - concepts: [external-id, text]
+    decisions: [D-024, D-025, D-027]
+    reason: >-
+      Each is a string with no constraint, and a receiver processes each one
+      differently. It compares an external ID by exact equality with the ID
+      the system or list that defines it keeps, and never parses it or shows
+      it as prose; it shows text to people and never compares it. Where an ID
+      or a code comes from, a registry, a list, a publisher, or the
+      specification's own field tables, doesn't change how it is processed,
+      so it is the field's description, not a type of its own.
+bases:
+  - vocabulary: CommitmentBasis
+    member: amount
+    terms: { spend: amount, units: count }
+    decision: D-036

@@ -1,0 +1,71 @@
+format: 1
+id: D-039
+status: proposed
+kind: departure
+author: agent
+question: How is a two-valued flag written where § 5.2.2 copies an AdCOM `0` | `1` integer?
+covers:
+  - ir: key:5.2.2:placement.reward
+    digest: 81dad5cb11e58c90e15a2d623375ffdf8e31217948a200d10e6d5cbdac120042
+    quote: "`reward` | OPTIONAL | `0` (no) | `1` (yes). The user receives a reward for viewing the ad | `Placement.reward`, `imp.rwdd`"
+    locks:
+      - with-open-prs
+  - ir: key:5.2.2:placement.reward#meaning/values:1
+    digest: a1ee2de06115664b61cd55dd1806c6f7bf19446b7c9a49840198ae8c461aeddd
+    quote: "`0` (no) | `1` (yes)"
+    locks:
+      - with-open-prs
+    departs: [ values ]
+  - ir: key:5.2.2:placement.instl
+    digest: 2334f8c26628f80ae242e03e2b5556817cb4958765bb2036951355997119b8a7
+    quote: "`instl` | OPTIONAL | `0` (no) | `1` (yes). The ad is interstitial or full screen | `DisplayPlacement.instl`, `imp.instl`"
+    locks:
+      - with-open-prs
+  - ir: key:5.2.2:placement.instl#meaning/values:1
+    digest: 5fe7e04e0c8cca1273e43e89848fcf392ca02a6409f65ef91bd28a28dfd53d35
+    quote: "`0` (no) | `1` (yes)"
+    locks:
+      - with-open-prs
+    departs: [ values ]
+  - ir: key:5.2.2:placement.skip
+    digest: 17938cd996b69f208a2d9cb397eb1cc84b4b21a0568d9f251d76c70a470ba483
+    quote: "`skip` | OPTIONAL | Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad | `VideoPlacement.skip`, `AudioPlacement.skip`, `video.skip`"
+    locks:
+      - with-open-prs
+  - ir: key:5.2.2:placement.skip#meaning/values:1
+    digest: 1294ccc918818f88289d69bf7d0350045b6612ced1e557420ff93721dfe91c75
+    quote: "`0` (no) | `1` (yes)"
+    locks:
+      - with-open-prs
+    departs: [ values ]
+  - ir: sentence:5.2.2:4076adca
+    digest: d76efae93f99344c4c74e2fb1cffdc78993c5155838aa3038bcc720c01ac0b1b
+    quote: Keys follow AdCOM 1.0 `Placement` and its `DisplayPlacement`, `VideoPlacement` and `AudioPlacement` subtypes, and the matching OpenRTB 2.6 `Imp` attributes.
+    locks:
+      - with-open-prs
+  - ir: rule:5.2.2:463dfafd
+    digest: eee71b1ff54c633f884713ce121e5b82ef4ecc041de54921c9ab66336402c469
+    quote: Each key takes an integer, except `playmethod[]` and `api[]`, which take arrays of integers, and `refresh`, an object whose `min_interval_s` is a REQUIRED integer.
+    locks:
+      - with-open-prs
+options:
+  - id: boolean
+    summary: A JSON boolean, as every other flag of the specification is.
+  - id: integer
+    summary: The integers `0` and `1`, as § 5.2.2, AdCOM 1.0, and OpenRTB 2.6 write them.
+chosen: boolean
+rationale: >-
+  § 5.2.2 says its keys follow AdCOM 1.0 and that each takes an integer, and
+  it writes `reward`, `instl`, and `skip` as `0` (no) or `1` (yes), as AdCOM
+  1.0 and OpenRTB 2.6 write them. Every other yes-or-no value of the
+  specification is a JSON boolean, such as `hold_available` and
+  `terms_acceptance_required`. One encoding for one concept lets every
+  receiver read a flag the same way, and a boolean can't take a third value,
+  which an integer key can. The schema departs from the § 5.2.2 text: a
+  seller that builds a bid request writes `true` as `1` and `false` as `0`.
+feedback: >-
+  Write `placement.reward`, `instl`, and `skip` as JSON booleans, as every other
+  flag of the specification is. Say they mean what the AdCOM fields of the same
+  name mean. AdCOM 1.0 and OpenRTB 2.6 write these flags as the integers `0` and
+  `1`. A seller that builds a bid request writes `true` as `1` and `false` as
+  `0`, and reads them back the same way.

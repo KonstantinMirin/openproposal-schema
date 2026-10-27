@@ -1,0 +1,21 @@
+format: 1
+id: G-066
+date: 2026-10-27
+question: What stops a source file that git ignores from passing every local run while CI never sees it?
+decision: >-
+  `.gitignore` ignores the built site as `/site/`, at the root only, since
+  `site/` also matched `src/site/`, which left the site builder out of the
+  push that CI ran. A new test fails when git ignores any file under `src/`,
+  `gates/`, `scripts/`, `test/`, or `tools/`, outside the Python and Node
+  caches; the suite holds 387 tests, and `MIN_TESTS` is 387. The untracked
+  gate's directories gain `src/`, `scripts/`, `test/`, and `tools/`, so a
+  source file nobody added fails too.
+rationale: >-
+  Both changes add checks: the test catches an ignored source file, which
+  the untracked gate can't see, since git lists ignored files apart, and
+  the untracked gate now covers the source directories. npm-test's
+  fingerprint changes because of the new test and the test floor, and the
+  untracked gate's because its directory list grows.
+accepts:
+  - { gate: npm-test, fingerprint: 7e0ee938ad5d0a5378eb4502dd58a015f33dc520dfbf98b1c5cc35510f21ddde }
+  - { gate: untracked, fingerprint: 27d975de739cd1375c8791b4983bf23c545745e5aff25ccb99d69e591ad212be }

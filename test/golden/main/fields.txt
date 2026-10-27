@@ -1,0 +1,71 @@
+field:4.1:proposal_id	String	immutable	line 183
+field:4.1:version	Integer	derived	line 184
+field:4.1:seller_id	String	immutable	line 185
+field:4.1:seller_name	String	immutable	line 186
+field:4.1:type	Enum	immutable	line 187	values=1
+field:4.1:status	Enum	derived	line 188	values=1
+field:4.1:assent	Object	derived	line 189
+field:4.1:valid_from,valid_until	Timestamp	seller-set	line 190
+field:4.1:brief_ref	String	supplied	line 191	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":"when","condition":"`type` is `custom`"}]}
+field:4.1:negotiation_history[]	Array[Object]	derived	line 192	objects=1
+field:4.2:description	String	seller-set	line 200	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":null,"condition":null}]}
+field:4.2:specifications	String/Object	seller-set	line 201
+field:4.2:best_for[]	Array[String]	seller-set	line 202
+field:4.2:not_suitable_for[]	Array[String]	seller-set	line 203
+field:4.2:seasonality_notes	String	seller-set	line 204
+field:5.1:line_item_id	String	immutable	line 217
+field:5.1:status	Enum	derived	line 218	values=1
+field:5.1:channel	Enum	immutable	line 219	values=1
+field:5.2:properties	Object	selectable	line 225	objects=1
+field:5.2:content_detail	Object	seller-set	line 226
+field:5.2:environments	Object	selectable	line 227	values=1
+field:5.3:audiences	Object	selectable	line 233	objects=1
+field:5.3:addressable_scale	Integer	derived	line 234
+field:5.3:activation_route	Object	selectable	line 235	values=1
+field:5.3:buyer_supplied	Object	supplied	line 236	objects=1
+field:5.4:formats	Object	selectable	line 242
+field:5.4:specs	Object	seller-set	line 243
+field:5.4:third_party_tags	Object	seller-set	line 244
+field:5.4:creative_delivery	Object	seller-set	line 245	objects=1
+field:5.4:assets[]	Array[Object]	supplied	line 246	objects=1
+field:5.4:materials_due	Timestamp/Offset	requestable	line 247
+field:5.4:approval	Object	seller-set	line 248
+field:5.4:production	Object	selectable	line 249	objects=1
+field:5.5:geo	Object	settable	line 258
+field:5.5:device	Object	settable	line 259
+field:5.5:daypart	Object	settable	line 260
+field:5.5:frequency_cap	Object	settable	line 261	objects=1
+field:5.6:pricing[]	Array[Object]	mixed	line 267
+field:5.6:pricing[].cost_method	Enum	seller-set	line 268
+field:5.6:pricing[].gross_rate	Number	seller-set	line 269
+field:5.6:pricing[].agreed_rate	Number	derived	line 270
+field:5.6:pricing[].seller_rate	Number	seller-set	line 271
+field:5.6:pricing[].price_valid_until	Timestamp	seller-set	line 272
+field:5.6:pricing[].currency	String	seller-set	line 273
+field:5.6:pricing[].floor	Number	seller-set	line 274	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
+field:5.6:availability	Object	derived	line 275	objects=1
+field:5.6:commitment_bounds	Object	seller-set	line 276	objects=1
+field:5.6:commitment	Object	settable	line 277
+field:5.6:hold_status	Object	requestable	line 278
+field:5.6:min_spend	Number	seller-set	line 279
+field:5.6:cancellation_policy	Object	selectable	line 280
+field:5.6:exclusivity	Object	selectable	line 281
+field:5.6:creative_policy	Object	seller-set	line 282
+field:5.7:committed_metrics[]	Array[Object]	requestable	line 320	objects=1
+field:5.7:measurement_source	Object	selectable	line 321	objects=1
+field:5.7:shortfall_remedy	Object	selectable	line 322	values=1
+field:5.7:reporting	Object	selectable	line 323	objects=1
+field:5.8:visibility	Enum	seller-set	line 329	values=1
+field:5.8:required_credentials[]	Array[Object]	seller-set	line 330	objects=1
+field:5.8:eligible_bidders[]	Array[String]	seller-set	line 331
+field:5.8:terms_acceptance_required	Boolean	seller-set	line 332
+field:5.9:buying_route	Enum	seller-set	line 338	values=1
+field:5.9:transaction_mechanism	Object	selectable	line 339	values=1
+field:5.9:serving_mode	Enum	seller-set	line 340	values=1
+field:5.9:deal_id_issuance	String	derived	line 341
+field:5.9:buyer_requirements	Object	mixed	line 342	objects=2
+field:5.9:serving_platform	String	seller-set	line 343
+field:5.10:external_references[]	Array[Object]	derived	line 349	objects=1
+field:5.10:correlation_id	String	derived	line 350
+field:5.10:billing	Object	seller-set	line 351	objects=1
+field:5.10:supported_order_systems[]	Array[String]	seller-set	line 352

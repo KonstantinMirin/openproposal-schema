@@ -1,0 +1,80 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: execution
+sections: [ "5.9" ]
+types:
+  - name: BuyerRequirements
+    kind: object
+    ir: field:5.9:buyer_requirements
+    source: { decisions: [ D-012, D-027 ] }
+    open: false
+entries:
+  - ir: field:5.9:buying_route
+    digest: cf97c7788378567c4f8b14664ad331afae16ced4f7cb4405619df8e68d8112ce
+    source: { rule: enum-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: BuyingRoute }, presence: optional }
+  - ir: field:5.9:buying_route#description/values:1
+    digest: 7fdf80551311a23d05467036e1a8ff3ddb1b4217b0fe9ed6fac6f158d0e99ad2
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: BuyingRoute, layer: vocabulary, open: true }
+  - ir: field:5.9:transaction_mechanism
+    digest: f64e965f4b27bc9cceae66a1b9829d52eb27d254b18bbe221b66de41db611eb5
+    source: { decision: D-018 }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: TransactionMechanism }, K: { kind: named, name: TransactionMechanism } }
+      presence: optional
+  - ir: field:5.9:transaction_mechanism#description/values:1
+    digest: f6d90d6db8947c8a3141ec73f686c436fdc01b4db98b84bb7c193fcf65442435
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: TransactionMechanism, layer: vocabulary, open: true }
+  - ir: rule:5.9:d510ffe5
+    digest: 61ff19d5ae93ecb1e7f406a252372f580d729d5c6575604bfff596ffaf8a77b0
+    source: { decision: D-030 }
+    as: { role: schema, in: Selectable }
+  - ir: field:5.9:serving_mode
+    digest: 713d37172a58d57f4f2dbe11fba48670f8b9a5f52754f867a13c449a660f38b2
+    source: { rule: enum-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: ServingMode }, presence: optional }
+  - ir: field:5.9:serving_mode#description/values:1
+    digest: 03403ca635ba7592a5dacb31582b45eedf57b3e7ff3267736523b5f52e6a183d
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: ServingMode, layer: vocabulary, open: true }
+  - ir: field:5.9:deal_id_issuance
+    digest: 064acb1a6dfcb9c0cd2788373080091ccd3a991f47a4b1d055046eb5f51272cb
+    source: { rule: domain-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Text }, presence: optional }
+  - ir: field:5.9:buyer_requirements
+    digest: 19ff019961864951f5579cc6142cb0153f9749584c53a78823d8ff2abcb71c4c
+    source: { decisions: [ D-012, D-027 ] }
+    as: { role: property, object: LineItem, type: { kind: named, name: BuyerRequirements }, presence: optional }
+  - ir: field:5.9:buyer_requirements#description/object:1
+    digest: 0b6228bc154412978d5350265f2b047a7788de634feb88e9eb3a5e7fa1b0d417
+    source: { decisions: [ D-012, D-027 ] }
+    as:
+      role: members
+      object: BuyerRequirements
+      members:
+        seat_required: { type: { kind: boolean }, presence: optional }
+        dsp_allowed:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ExternalId } } }
+          presence: optional
+  - ir: field:5.9:buyer_requirements#description/object:2
+    digest: c3237ee1a6dc26edc444e2a846bb5d73fcaca808322b78b0e4634b08547adb7b
+    source: { decisions: [ D-012, D-027 ] }
+    as:
+      role: members
+      object: BuyerRequirements
+      members:
+        dsp_seat_id: { type: { kind: named, name: ExternalId }, presence: optional }
+        dsp_id: { type: { kind: named, name: ExternalId }, presence: optional }
+        seat_owner_entity: { type: { kind: named, name: Text }, presence: optional }
+  - ir: field:5.9:serving_platform
+    digest: 6755aeee541637916ff2959d75837395628b01f5deea9a200accf26eea573107
+    source: { rule: domain-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Text }, presence: optional }

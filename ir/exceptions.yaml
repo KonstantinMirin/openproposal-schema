@@ -1,0 +1,46 @@
+# Exception registry for stage 2 findings.
+#
+# Each entry names one finding by its id, gives a fixed verdict, and says why.
+# Verdicts (src/exceptions.ts):
+#   accepted        the finding is correct, and the specification is fine as written
+#   false_positive  the lint misreads the specification here
+#   mapping         stage 3 resolves it with a reviewed mapping entry
+#   feedback        it goes to the working group as implementation feedback
+# `locks` limits an entry to some lock names; without it, the entry applies to
+# every lock. An entry that names no current finding is stale and fails the build.
+#
+# Only findings with a settled verdict belong here. Open findings are the
+# implementation feedback, so they stay open until someone decides them.
+exceptions:
+  # Names from other standards and protocols. The specification cites them; it doesn't define them.
+  - { finding: "unresolved_identifier:App", verdict: accepted, reason: "AdCOM 1.0 distribution channel name, cited in the § 5.2.1 environments table.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:Site", verdict: accepted, reason: "AdCOM 1.0 distribution channel name, cited in the § 5.2.1 environments table.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:Dooh", verdict: accepted, reason: "AdCOM 1.0 distribution channel name, cited in § 5.1.1 and § 5.2.1.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:Placement", verdict: accepted, reason: "AdCOM 1.0 object name, cited as the source of the § 5.2.2 keys.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:AudioPlacement", verdict: accepted, reason: "AdCOM 1.0 object name, cited in § 5.1.1 and § 5.2.2.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:VideoPlacement", verdict: accepted, reason: "AdCOM 1.0 object name, cited in § 5.1.1 and § 5.2.2.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:VideoPlacement.ptype", verdict: accepted, reason: "AdCOM 1.0 attribute, cited to map `plcmt` in § 5.2.2.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:DisplayPlacement", verdict: accepted, reason: "AdCOM 1.0 object name, cited in § 5.1.1 and § 5.2.2.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:DisplayPlacement.nativefmt", verdict: accepted, reason: "AdCOM 1.0 attribute, cited as the native-ad condition in § 5.1.1.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:Imp", verdict: accepted, reason: "OpenRTB 2.6 object name, cited as the source of the § 5.2.2 keys.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:Audio", verdict: accepted, reason: "OpenRTB 2.6 object name, cited in the § 5.2.2 mapping note.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:playbackmethod", verdict: accepted, reason: "OpenRTB 2.6 attribute name, cited in the § 5.2.2 mapping note.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:app", verdict: accepted, reason: "OpenRTB 2.6 `app` object, cited as the source of the App identity keys.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:app.bundle", verdict: accepted, reason: "OpenRTB 2.6 attribute, cited for `bundle` in § 5.2 and § 5.5.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:app.storeurl", verdict: accepted, reason: "OpenRTB 2.6 attribute, cited for `storeurl` in § 5.2.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:app.domain", verdict: accepted, reason: "OpenRTB 2.6 attribute, cited for `domain` in § 5.2.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:app-ads.txt", verdict: accepted, reason: "IAB Tech Lab app-ads.txt file name, not an OpenProposal field.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:verificationNotExecuted", verdict: accepted, reason: "VAST event name, cited by the creative inspection rules in § 5.4.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:ETag", verdict: accepted, reason: "HTTP response header (RFC 9110), required on the § 2.3 manifest.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:Last-Modified", verdict: accepted, reason: "HTTP response header (RFC 9110), required on the § 2.3 manifest.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:imp.instl", verdict: accepted, reason: "OpenRTB 2.6 attribute, cited in § 5.1.1 as a placement attribute that doesn't change the channel.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:imp.rwdd", verdict: accepted, reason: "OpenRTB 2.6 attribute, cited in § 5.1.1 as a placement attribute that doesn't change the channel.", locks: [with-open-prs] }
+  - { finding: "unresolved_identifier:Line.frequencyinterval", verdict: accepted, reason: "OpenDirect 2.1 attribute, cited in § 5.5 for the calendar period of `frequency_cap.period`.", locks: [with-open-prs] }
+
+  # Names that stand for something outside the object model on purpose.
+  - { finding: "unresolved_identifier:audience_pricing", verdict: accepted, reason: "§ 3.1 names an earlier draft's field to say that `pricing` replaces it." }
+  - { finding: "unresolved_identifier:io_id", verdict: accepted, reason: "§ 5.10 cites a Prisma key as an example of a buyer-owned external reference." }
+  - { finding: "unresolved_identifier:min_line_items", verdict: accepted, reason: "§ 8 open question 5 asks whether to add this field; it doesn't exist yet." }
+
+  # Lint misreads.
+  - { finding: "value_set_subset:converted | expired | released", verdict: false_positive, reason: "The § 5.6.2 transitions sentence lists the end states of `state`; it doesn't declare a second value set." }

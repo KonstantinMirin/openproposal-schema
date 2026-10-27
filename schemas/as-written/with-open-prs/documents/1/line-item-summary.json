@@ -1,0 +1,80 @@
+{
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/line-item-summary.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The OpenProposal `LineItemSummary` profile: the fields of the `LineItem` document that the specification lists for it.",
+  "properties": {
+    "addressable_scale": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Count",
+      "description": "Reachable units in the flight, recomputed against the buyer's selection. Not segment size"
+    },
+    "channel": {
+      "$ref": "../../modules/line-item/1/line-item.json#/$defs/Channel",
+      "description": "`display` | `video` | `audio` | `ctv` | `dooh` | `native`, each defined in 5.1.1. The discriminator for how the rest of the line item is read"
+    },
+    "committed_metrics": {
+      "description": "`{ metric, value, basis }` tuples — `viewable_rate` for display, `completion_rate` for video/audio/CTV, an audience-modelled metric for DOOH. Seller declares a ceiling; a buyer MAY request above it",
+      "items": {
+        "$ref": "../../modules/guarantees/1/guarantees.json#/$defs/CommittedMetricsEntry"
+      },
+      "type": "array"
+    },
+    "content_detail": {
+      "$ref": "../../modules/inventory/1/inventory.json#/$defs/ContentDetail",
+      "description": "Shows, series, sections, network verticals"
+    },
+    "environments": {
+      "$ref": "../../modules/representation/1/representation.json#/$defs/LineItemSummaryEnvironmentsSelection",
+      "description": "The line item's `environments`, projected to `available[]`."
+    },
+    "formats": {
+      "$ref": "../../modules/representation/1/representation.json#/$defs/LineItemSummaryFormatsSelection",
+      "description": "The line item's `formats`, projected to `included[]`."
+    },
+    "has_requires": {
+      "type": "boolean"
+    },
+    "line_item_id": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Identifier",
+      "description": "Identity within the proposal"
+    },
+    "min_spend": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Amount",
+      "description": "Minimum spend for this line item"
+    },
+    "placement": {
+      "$ref": "../../modules/representation/1/representation.json#/$defs/LineItemSummaryPlacement",
+      "description": "The line item's `placement`, projected to `reward`, `instl`, `plcmt`, and `skip`."
+    },
+    "pricing": {
+      "description": "The line item's `pricing[]`, each entry projected to `cost_method`, `gross_rate`, and `currency`.",
+      "items": {
+        "$ref": "../../modules/representation/1/representation.json#/$defs/LineItemSummaryPricingEntry"
+      },
+      "type": "array"
+    },
+    "properties": {
+      "$ref": "../../modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesSelection",
+      "description": "The line item's `properties`, projected to `available[].name`."
+    },
+    "transaction_mechanism": {
+      "$ref": "../../modules/execution/1/execution.json#/$defs/TransactionMechanismSelection",
+      "description": "`available[]` from `DIRECT_IO` | `PROGRAMMATIC_GUARANTEED` | `PREFERRED_DEAL` | `PRIVATE_AUCTION` | `OPEN_AUCTION`. A seller MAY offer the same inventory through more than one"
+    }
+  },
+  "required": [
+    "addressable_scale",
+    "channel",
+    "committed_metrics",
+    "content_detail",
+    "environments",
+    "formats",
+    "has_requires",
+    "line_item_id",
+    "min_spend",
+    "pricing",
+    "transaction_mechanism"
+  ],
+  "title": "LineItemSummary",
+  "type": "object"
+}

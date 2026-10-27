@@ -1,0 +1,367 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: inventory
+sections: [ "5.2", 5.2.1, 5.2.2 ]
+types:
+  - name: ContentDetail
+    kind: object
+    ir: field:5.2:content_detail
+    source: { decision: D-016 }
+    open: true
+    description: "The shows, series, sections, and network verticals the line item's inventory holds. The specification states no members, so the object accepts any."
+  - name: AppsEntry
+    kind: object
+    ir: "key:5.2:apps[].platform"
+    locks: [ with-open-prs ]
+    source: { rule: key-table-object }
+    open: false
+  - name: Placement
+    kind: object
+    ir: key:5.2.2:placement.reward
+    locks: [ with-open-prs ]
+    source: { rule: key-table-object }
+    open: false
+  - name: PlcmtSubtype
+    kind: vocabulary
+    ir: key:5.2.2:placement.plcmt
+    locks: [ with-open-prs ]
+    source: { decisions: [ D-013, D-014, D-024 ] }
+    open: false
+    terms: [ "1", "2", "3", "4", "5", "6", "7", "8", "9" ]
+    list: { name: "List: Plcmt Subtypes - Video" }
+  - name: PlaybackMethod
+    kind: vocabulary
+    ir: "key:5.2.2:placement.playmethod[]"
+    locks: [ with-open-prs ]
+    source: { decision: D-024 }
+    open: false
+    terms: [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11" ]
+    list: { name: "List: Playback Methods" }
+  - name: ApiFramework
+    kind: vocabulary
+    ir: "key:5.2.2:placement.api[]"
+    locks: [ with-open-prs ]
+    source: { decision: D-024 }
+    open: true
+    terms: [ "1", "2", "3", "4", "5", "6", "7", "8", "9" ]
+    list: { name: "List: API Frameworks" }
+entries:
+  - ir: field:5.2:properties
+    digest: 8167901b1024772db9ede8143ce1d5009d6effcfd66b290f82e427a00940b50c
+    locks: [ main ]
+    source: { decisions: [ D-018, D-020 ] }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments:
+          T: { kind: apply, constructor: CatalogRefOr, arguments: { T: { kind: named, name: PropertiesOption } } }
+          K: { kind: named, name: Uuid }
+      presence: optional
+  - ir: field:5.2:properties
+    digest: 4115b24e46ceb6cf1b12d1730a313c02123ae5b3ed6739bb9fefdaadc10ea478
+    locks: [ with-open-prs ]
+    source: { decisions: [ D-018, D-020 ] }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments:
+          T: { kind: apply, constructor: CatalogRefOr, arguments: { T: { kind: named, name: PropertiesOption } } }
+          K: { kind: named, name: Uuid }
+      presence: optional
+  - ir: field:5.2:properties#description/object:1
+    digest: d17ed59027f652ad048ca0fb7bae6984613c7b5dfc4273560958ce7006b42990
+    locks: [ main ]
+    source: { decision: D-024 }
+    as:
+      role: type
+      name: PropertiesOption
+      layer: object
+      open: false
+      members:
+        id: { type: { kind: named, name: Uuid }, presence: optional }
+        name: { type: { kind: named, name: Text }, presence: optional }
+        domains:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Domain } } }
+          presence: optional
+        supported_formats:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: FormatId } } }
+          presence: optional
+  - ir: field:5.2:properties#description/object:1
+    digest: 21095d8df24b1478821abe8102f66a3e90e4d8635d79d28277a108d272cbf9de
+    locks: [ with-open-prs ]
+    source: { decision: D-024 }
+    as:
+      role: type
+      name: PropertiesOption
+      layer: object
+      open: false
+      members:
+        id: { type: { kind: named, name: Uuid }, presence: optional }
+        name: { type: { kind: named, name: Text }, presence: optional }
+        domains:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Domain } } }
+          presence: optional
+        apps:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: AppsEntry } } }
+          presence: optional
+        supported_formats:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: FormatId } } }
+          presence: optional
+  - ir: rule:5.2:3d2307e8
+    digest: f2c52dfab737e467825ef5e73e955f62b45e1c6721ec0ab2a582644192f37f3f
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: schema, in: PropertiesOption }
+  - ir: field:5.2:content_detail
+    digest: e5dc0ce4102338d1e9363ae1d2de7fe4b6acacb482b2b3806da30b30a8d80e6e
+    source: { decision: D-016 }
+    as: { role: property, object: LineItem, type: { kind: named, name: ContentDetail }, presence: optional }
+  - ir: field:5.2:environments
+    digest: 9620f7dbd886ab646236c463a61295b37031e109a44ba55fb348fb59630c8ab4
+    locks: [ main ]
+    source: { decision: D-018 }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: Environment }, K: { kind: named, name: Environment } }
+      presence: optional
+  - ir: field:5.2:environments
+    digest: 84b5b18b0b2d226a00eba1247dbe8f69f6214baa012d419d2d50878eb0669a95
+    locks: [ with-open-prs ]
+    source: { decision: D-018 }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: Environment }, K: { kind: named, name: Environment } }
+      presence: optional
+  - ir: field:5.2:environments#description/values:1
+    digest: ce5d37486929f1d04c45a68640b59c8995669804f880b262ca33ed4c07f5afc7
+    locks: [ main ]
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: Environment, layer: vocabulary, open: true }
+  - ir: field:5.2:environments#description/values:1
+    digest: 3e926c674da1b400c7d5a740bc9f0f39c87a805eed358ce30e34fbe02e37421a
+    locks: [ with-open-prs ]
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: Environment, layer: vocabulary, open: true }
+  - ir: field:5.2:placement
+    digest: efe7fb8d687de04c417b4ae3dc66f0a8ffd450ed1341fb1457aa0290f818c7f3
+    locks: [ with-open-prs ]
+    source: { rule: keyed-object-field }
+    as: { role: property, object: LineItem, type: { kind: named, name: Placement }, presence: optional }
+  - ir: rule:5.2:f3d3f9e8
+    digest: 8b18fd138cba2473076f1cedd5ce8284a836808d0c5ac65354248f8dbcc0cae3
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: rule, object: LineItem }
+  - ir: sentence:5.2:055318c5
+    digest: 1159b5630177a78bdb2b753620dd8a62237c683674b47ab50c4fe8a367027964
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2:b4f0ce3f
+    digest: 8e966fd77d451a0c8cd227dbe92279a5adcc48fb123676fb2d67479d1722148a
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: "key:5.2:apps[].platform"
+    digest: 59beae2d5527f57e7a37a80004b386db37ffae3fd116cb50c5bd84e9c30aa281
+    locks: [ with-open-prs ]
+    source: { rule: enum-row }
+    as: { role: property, object: AppsEntry, type: { kind: named, name: StorePlatform }, presence: required }
+  - ir: "key:5.2:apps[].platform#meaning/values:1"
+    digest: b061fb6ff0027a0c58c9882e1d7720cbd814f5e9c3babb32d337f0d8e7e0ef58
+    locks: [ with-open-prs ]
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: StorePlatform, layer: vocabulary, open: true }
+  - ir: "key:5.2:apps[].bundle"
+    digest: 59f9924d3d8ee09a637650c5ab939c28dcf07905af01337dac1bfa74a038d6d0
+    locks: [ with-open-prs ]
+    source: { rule: domain-row }
+    as: { role: property, object: AppsEntry, type: { kind: named, name: ExternalId }, presence: required }
+  - ir: "key:5.2:apps[].storeurl"
+    digest: ff0b57e686b74d4d7954d4f807d16f837493476801ec8813d4b42463df5760d3
+    locks: [ with-open-prs ]
+    source: { rule: domain-row }
+    as: { role: property, object: AppsEntry, type: { kind: named, name: Url }, presence: optional }
+  - ir: "key:5.2:apps[].domain"
+    digest: 225b562dcf1a6bb5794204f48f457410c578cee81a69e2906f3c994b3a747eb4
+    locks: [ with-open-prs ]
+    source: { rule: domain-row }
+    as: { role: property, object: AppsEntry, type: { kind: named, name: Domain }, presence: optional }
+  - ir: sentence:5.2:a976a022
+    digest: f364ecadf8068e6046a5452c0d584f527dc714563218f51f1ff1c0e700dfc486
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: def:5.2.1:environments.web_desktop
+    digest: fc9e8f19430aa98b5221e55f14e552f2d45140fda9a72ddf9f223c8e8a880c1c
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Environment }
+  - ir: def:5.2.1:environments.web_mobile
+    digest: 597226422bc5b1d02c0154dc633c7713bc0d38a31db78c679eed3afec27f2ebf
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Environment }
+  - ir: def:5.2.1:environments.app_mobile
+    digest: f92942a442d7a518f5aa113e7be4b11b2d53f399124316be59ab39d4091c720b
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Environment }
+  - ir: def:5.2.1:environments.ctv
+    digest: 09f296c7839bd87454e1725b3e95e5928443061a81b45e9d42060c264538522f
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Environment }
+  - ir: def:5.2.1:environments.dooh
+    digest: e79ca7086e2c65e04ae00013edc8dfc85ef0947722649e27aaa25e5d84e715f5
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Environment }
+  - ir: rule:5.2.1:cc42a1f8
+    digest: e997800cb64e5db5c061617420685bd24d85ac97cc51c170f34d36526154e37d
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: rule, object: LineItem }
+  - ir: sentence:5.2.2:4076adca
+    digest: d76efae93f99344c4c74e2fb1cffdc78993c5155838aa3038bcc720c01ac0b1b
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.2.2:463dfafd
+    digest: eee71b1ff54c633f884713ce121e5b82ef4ecc041de54921c9ab66336402c469
+    locks: [ with-open-prs ]
+    source: { decision: D-024 }
+    as: { role: schema, in: Placement }
+  - ir: sentence:5.2.2:af7851e2
+    digest: 5f7710238851ecc4a50e1e1834bd6d4ef78f35a1dd1d781c06d93665e1a5e421
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.2.2:placement.reward
+    digest: 81dad5cb11e58c90e15a2d623375ffdf8e31217948a200d10e6d5cbdac120042
+    locks: [ with-open-prs ]
+    source: { decision: D-039 }
+    as: { role: property, object: Placement, type: { kind: boolean }, presence: optional }
+  - ir: key:5.2.2:placement.reward#meaning/values:1
+    digest: a1ee2de06115664b61cd55dd1806c6f7bf19446b7c9a49840198ae8c461aeddd
+    locks: [ with-open-prs ]
+    source: { decision: D-039 }
+    as: { role: schema, in: Placement }
+  - ir: key:5.2.2:placement.instl
+    digest: 2334f8c26628f80ae242e03e2b5556817cb4958765bb2036951355997119b8a7
+    locks: [ with-open-prs ]
+    source: { decision: D-039 }
+    as: { role: property, object: Placement, type: { kind: boolean }, presence: optional }
+  - ir: key:5.2.2:placement.instl#meaning/values:1
+    digest: 5fe7e04e0c8cca1273e43e89848fcf392ca02a6409f65ef91bd28a28dfd53d35
+    locks: [ with-open-prs ]
+    source: { decision: D-039 }
+    as: { role: schema, in: Placement }
+  - ir: key:5.2.2:placement.plcmt
+    digest: bfb50cd7c0a3028f0a69f338b91e05496e8d19d3c8e48422480bead6fe17b125
+    locks: [ with-open-prs ]
+    source: { decision: D-024 }
+    as: { role: property, object: Placement, type: { kind: named, name: PlcmtSubtype }, presence: conditional }
+  - ir: key:5.2.2:placement.skip
+    digest: 17938cd996b69f208a2d9cb397eb1cc84b4b21a0568d9f251d76c70a470ba483
+    locks: [ with-open-prs ]
+    source: { decision: D-039 }
+    as: { role: property, object: Placement, type: { kind: boolean }, presence: optional }
+  - ir: key:5.2.2:placement.skip#meaning/values:1
+    digest: 1294ccc918818f88289d69bf7d0350045b6612ced1e557420ff93721dfe91c75
+    locks: [ with-open-prs ]
+    source: { decision: D-039 }
+    as: { role: schema, in: Placement }
+  - ir: key:5.2.2:placement.skipafter
+    digest: 7eb11e62931be7a67537c85a3e6e1609978155b48c0219644d3998f796a1c36d
+    locks: [ with-open-prs ]
+    source: { rule: domain-row }
+    as: { role: property, object: Placement, type: { kind: named, name: Duration }, presence: optional }
+  - ir: "key:5.2.2:placement.playmethod[]"
+    digest: 26d9a29e723df164840aeccd180c087753a8ef0daa061610df42052c0bacb6c5
+    locks: [ with-open-prs ]
+    source: { decision: D-024 }
+    as:
+      role: property
+      object: Placement
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PlaybackMethod } } }
+      presence: optional
+  - ir: "key:5.2.2:placement.api[]"
+    digest: 17090845d7638e560a7b0ed6f3d42223dc6a6425a24e12f3b63a18c64a2a5843
+    locks: [ with-open-prs ]
+    source: { decision: D-024 }
+    as:
+      role: property
+      object: Placement
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ApiFramework } } }
+      presence: optional
+  - ir: key:5.2.2:placement.refresh
+    digest: 6244ad9f757a4a1e0cfe02384783ab1a3e9f62c785f988eb089ce351c9372adf
+    locks: [ with-open-prs ]
+    source: { rule: inline-object-row }
+    as: { role: property, object: Placement, type: { kind: named, name: Refresh }, presence: optional }
+  - ir: key:5.2.2:placement.refresh#meaning/object:1
+    digest: 27ac3f05aa6a1411815e69eb0e22b90e343a5120ffac0dcc1a98e7336305c066
+    locks: [ with-open-prs ]
+    source: { decisions: [ D-024, D-040 ] }
+    as:
+      role: type
+      name: Refresh
+      layer: object
+      open: false
+      members: { min_interval_s: { type: { kind: named, name: Duration }, presence: required } }
+  - ir: sentence:5.2.2:37fcff5a
+    digest: eeda39e6ab87e9dc80e2398a1b403239a6b4b08476dc455878e6cd6aa0636255
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.2:d640a947
+    digest: 5f816d7abd555623b0525af49078bee1c8a18e11f566df0d0077425a9b2992b2
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.2:3e19d307
+    digest: 94dd2495fd0067d5cff94c41d3b92932914a95a0e36ef39ba883b8f7db7b7477
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.2:b9b60857
+    digest: 13b4494b2c922ae7792ade8bda00ef40e70e7e41faf7930d1fc1cf9dcfa20f6e
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.2:724e97b8
+    digest: 5c8ad5c642dd07bda9ab78cf4b4f1b67f8afda68d97761b6f3cbf5937b8f737e
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.2.2:6f05ff6d
+    digest: 79facc65db150bde0402569453bab3746b5519aa839b5aebfe3dfa0567a95ed9
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:5.2.2:8f7b65da
+    digest: 93c86ce3be0a8632875068aeb51152e4209e2028542d67b0300128d81985afaa
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.2.2:f9a1a6d5
+    digest: 55a75b3759267d3ce395ff7c66237f3fff0e0aea8350f090f790277b4c3d2cbc
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: rule, object: LineItem }

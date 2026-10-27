@@ -1,0 +1,39 @@
+format: 1
+id: G-060
+date: 2026-10-27
+question: What values do the type examples show, and what does the type-examples-generate gate read to build them?
+decision: >-
+  `generateTypeExamples` takes the lock's specification examples, as
+  `lockExamples` loads them, and `specValues` reads their scalars by the
+  schema location of the property each one is a value of, in the order of
+  the specification's sections, keeping a value only where that location's
+  emitted schema accepts it. A scalar of an example takes that value first,
+  and else its primitive's showcase value (G-059) or its vocabulary's
+  representative term, the first term an example uses and else the first
+  core term. The minimal example is the corpus baseline with those values
+  where it still holds. A full selection holds two options, the first in
+  `included[]` and the second priced in `pricing`, with a `max_select`
+  of at least 1, and a list of scalars holds two items where the examples
+  give two. `scripts/ci.ts` and `npm run type-examples` load the examples
+  before the gate, and a lock whose examples no source yields skips the
+  gate as failed. The fixture whose Amount schema rejected the first valid
+  vector now rejects the showcase values too, with `minimum: 5000`, since
+  the minimal example shows the showcase value. Two type-examples tests
+  are added and two are rewritten for the new values; the suite holds 365
+  tests, and `MIN_TESTS` is 365.
+rationale: >-
+  Every example is still checked against its schema with Ajv 2020 and
+  against every rule one payload decides, in the generator and in the
+  committed file, and a failing one still fails the build; only the values
+  change. The fixture still fails on a minimal Amount example its schema
+  rejects, the case it was written for. type-examples-valid changes only
+  because its input type no longer names the specification's examples, and
+  the guard because the CI script loads them. The committed examples are
+  regenerated, and their notes fall from 13 types to 1 on main
+  (PriceDelta) and from 15 to 2 with the open PRs (PriceDelta and
+  LineItem's exclusions).
+accepts:
+  - { gate: guard, fingerprint: 3d1d602db9828de078977fce19daf256be3dac5a3024667c0218919f637f4f41 }
+  - { gate: npm-test, fingerprint: bb680818556302df2ecb0091ac03aa97427a90e3bf07ecd2501c7e3d6e856981 }
+  - { gate: type-examples-generate, fingerprint: d4e7a7fda199a85e266358220fa0ea699b083a3b7466e9a575c57cd4235f087a }
+  - { gate: type-examples-valid, fingerprint: eff640206be20b43008cc8a0f2848537182972df882d6417728068c28d997997 }

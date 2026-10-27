@@ -1,0 +1,21 @@
+format: 1
+id: G-054
+date: 2026-10-27
+question: How does the test suite keep the extraction report's numbers from going stale?
+decision: >-
+  The extraction report's counts, the open PRs' additions, and the findings
+  they add are generated blocks: `npm run extraction-report` renders them
+  from each lock's committed IR and findings, and a new test fails when the
+  committed report differs from the render, and checks the counts a review
+  found stale against `test/golden/with-open-prs/counts.json`. The report's
+  numbers with the open PRs now follow the IR: 26 `must_without_field`
+  findings, 79 RFC 2119 sentences, 37 MUST, 15 MUST NOT, and 73 open
+  findings with 27 decided, and the PRs add 51 findings, not 58. A second
+  test checks that the render rewrites only the blocks the report marks.
+  The test suite holds 356 tests, so `MIN_TESTS` is 356.
+rationale: >-
+  The report was written by hand, and the PRs' updates left its numbers
+  behind the IR. A test now holds every generated number to the IR, every
+  earlier test stays, and the floor rises, so no gate is weaker.
+accepts:
+  - { gate: npm-test, fingerprint: e97535f803f5cc38c288568c7e9b86b9c445b11b0fc288029dd65e57062ce6d5 }

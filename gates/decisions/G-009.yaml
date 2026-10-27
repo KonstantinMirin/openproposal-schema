@@ -1,0 +1,27 @@
+format: 1
+id: G-009
+date: 2026-10-26
+question: How do the extractor and the lint read a format such as `HH:MM`, a row's one value beside prose, and the external names PR #123 and PR #119 cite?
+decision: >-
+  The extractor reads a code span as a `lhs: rhs` expression only with a
+  space after the colon, as YAML writes a key, so `HH:MM` names no
+  identifier; `lhs = rhs` is read as before. The lint reads a row's clause
+  of prose that ends in "or" and one term, as "IANA time zone name, or
+  `viewer_local`", as a value list of one, so the term resolves. The
+  exception registry accepts three more external names: OpenDirect 2.1
+  `Line.frequencyinterval`, and OpenRTB 2.6 `imp.instl` and `imp.rwdd`. A
+  test runs the lint on #123's clock text and on its amendment's, and
+  another on a row's one value; a third reads the colon forms. The test
+  suite holds 308 tests, so its floor rises to 308.
+rationale: >-
+  `HH:MM` is a format, not a member and its value, and a value list may
+  hold one value, so each finding the change removes was the lint
+  misreading the text. A clause that holds a code span declares nothing, so
+  no name the lint flagged before resolves by accident, and the three
+  accepted names are cited from other standards, as the other external
+  names are. The tests fail on each misreading, and the test floor rises,
+  so no gate is weaker.
+accepts:
+  - { gate: committed-files, fingerprint: 01da6029f5b43e91c03102fc18a91682cd885b626b3fcf12615edf7e8cd9ffa9 }
+  - { gate: extraction, fingerprint: e77c281dd698de6e82a88087662f52f3b598b26e7965051307c4255e5aee5531 }
+  - { gate: npm-test, fingerprint: df302aa9e5ea0a046bfd20e8bb3c67c4414918082673d1ca8f165e452c151992 }

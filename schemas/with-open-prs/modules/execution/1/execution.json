@@ -1,0 +1,118 @@
+{
+  "$defs": {
+    "BuyerRequirements": {
+      "additionalProperties": false,
+      "properties": {
+        "dsp_allowed": {
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          },
+          "type": "array"
+        },
+        "dsp_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+        },
+        "dsp_seat_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+        },
+        "seat_owner_entity": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+        },
+        "seat_required": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "BuyingRoute": {
+      "anyOf": [
+        {
+          "enum": [
+            "DIRECT_PUBLISHER",
+            "PUBLISHER_AD_SERVER",
+            "SSP_PLATFORM",
+            "DSP",
+            "SEARCH_SOCIAL"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "ServingMode": {
+      "anyOf": [
+        {
+          "enum": [
+            "client_side",
+            "ssai",
+            "dai"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "TransactionMechanism": {
+      "anyOf": [
+        {
+          "enum": [
+            "DIRECT_IO",
+            "PROGRAMMATIC_GUARANTEED",
+            "PREFERRED_DEAL",
+            "PRIVATE_AUCTION",
+            "OPEN_AUCTION"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "TransactionMechanismSelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, and `pricing` gives the change in price for each other option.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "#/$defs/TransactionMechanism"
+          },
+          "type": "array"
+        },
+        "included": {
+          "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the UUID the seller mints for it.",
+          "items": {
+            "$ref": "#/$defs/TransactionMechanism"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        },
+        "pricing": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
+          },
+          "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the UUID the seller mints for it.",
+          "propertyNames": {
+            "$ref": "#/$defs/TransactionMechanism"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "available",
+        "included"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/execution/1/execution.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `execution` module: the vocabularies, objects, unions, and constructor copies of § 5.9.",
+  "title": "execution"
+}

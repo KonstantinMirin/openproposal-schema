@@ -1,0 +1,71 @@
+# Rule vectors for § 5.2 to § 5.2.2. Regenerate a digest with
+# `npm run cite -- <rule ID>`.
+format: 1
+module: inventory
+rules:
+  # `plcmt` is REQUIRED for video ads; the `placement.plcmt` key row states the condition.
+  - rule: rule:5.2:f3d3f9e8
+    digest: 8b18fd138cba2473076f1cedd5ce8284a836808d0c5ac65354248f8dbcc0cae3
+    locks: [with-open-prs]
+    decision: D-035
+    sources: [key:5.2.2:placement.plcmt]
+    valid:
+      - value: { channel: video, placement: { plcmt: 1 } }
+      - value: { channel: display, placement: { instl: true } }
+      - value: { channel: display }
+    invalid:
+      - value: { channel: video, placement: { skip: true } }
+      - value: { channel: video }
+
+  # Each `environments.available[]` value matches an impression of the line item's `channel`.
+  - rule: rule:5.2.1:cc42a1f8
+    digest: e997800cb64e5db5c061617420685bd24d85ac97cc51c170f34d36526154e37d
+    locks: [with-open-prs]
+    decision: D-035
+    valid:
+      - value: { channel: display, environments: { available: [web_desktop, web_mobile, app_mobile], included: [web_desktop] } }
+      - value: { channel: dooh, environments: { available: [dooh], included: [dooh] } }
+      - value: { channel: ctv, environments: { available: [ctv], included: [ctv] } }
+    invalid:
+      - value: { channel: dooh, environments: { available: [web_desktop], included: [web_desktop] } }
+      - value: { channel: ctv, environments: { available: [ctv, web_mobile], included: [ctv] } }
+
+  # Third-party viewability measurement in app and CTV needs OMID 1.0 (7).
+  - rule: rule:5.2.2:f9a1a6d5
+    digest: 55a75b3759267d3ce395ff7c66237f3fff0e0aea8350f090f790277b4c3d2cbc
+    locks: [with-open-prs]
+    decision: D-035
+    valid:
+      - value:
+          channel: display
+          environments: { available: [app_mobile], included: [app_mobile] }
+          placement: { api: [7] }
+          committed_metrics: [{ metric: viewable_rate, value: 0.7 }]
+          measurement_source: { available: [{ id: 0b6c3f4e-8f1a-4c2d-9e57-3a1d2b4c5e60, vendor: verifier.example }], included: [] }
+        context: { Proposal.seller_id: examplepub }
+      - value:
+          channel: display
+          environments: { available: [app_mobile], included: [app_mobile] }
+          committed_metrics: [{ metric: viewable_rate, value: 0.7 }]
+          measurement_source: { available: [{ id: 5d2e7a90-1c3b-4f6e-8a24-9b7c6d5e4f31, vendor: examplepub }], included: [] }
+        context: { Proposal.seller_id: examplepub }
+      - value:
+          channel: display
+          environments: { available: [web_desktop], included: [web_desktop] }
+          committed_metrics: [{ metric: viewable_rate, value: 0.7 }]
+          measurement_source: { available: [{ id: 0b6c3f4e-8f1a-4c2d-9e57-3a1d2b4c5e60, vendor: verifier.example }], included: [] }
+        context: { Proposal.seller_id: examplepub }
+    invalid:
+      - value:
+          channel: display
+          environments: { available: [app_mobile], included: [app_mobile] }
+          committed_metrics: [{ metric: viewable_rate, value: 0.7 }]
+          measurement_source: { available: [{ id: 0b6c3f4e-8f1a-4c2d-9e57-3a1d2b4c5e60, vendor: verifier.example }], included: [] }
+        context: { Proposal.seller_id: examplepub }
+      - value:
+          channel: ctv
+          environments: { available: [ctv], included: [ctv] }
+          placement: { api: [6] }
+          committed_metrics: [{ metric: viewable_rate, value: 0.7 }]
+          measurement_source: { available: [{ id: 5d2e7a90-1c3b-4f6e-8a24-9b7c6d5e4f31, vendor: examplepub }, { id: 0b6c3f4e-8f1a-4c2d-9e57-3a1d2b4c5e60, vendor: verifier.example }], included: [] }
+        context: { Proposal.seller_id: examplepub }

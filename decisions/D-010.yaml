@@ -1,0 +1,27 @@
+format: 1
+id: D-010
+status: proposed
+kind: gap
+author: agent
+question: Is the § 3.1 `delta_pct` a percentage or a fraction, and how far below zero may it go?
+covers:
+  - ir: key:3.1:pricing
+    digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
+    quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+options:
+  - id: percent-from-minus-100
+    summary: A percentage, so 10 is a 10 % surcharge, and at least −100.
+  - id: fraction
+    summary: A fraction, so 0.1 is a 10 % surcharge, and at least −1, like the metrics of D-005.
+  - id: unbounded-percent
+    summary: A percentage with no bound.
+chosen: percent-from-minus-100
+rationale: >-
+  The key is named `pct`, so a reader writes 10 for 10 %; reading it as a
+  fraction would make 10 a 1000 % surcharge. D-005 makes rate metrics
+  fractions because their names don't say percent; this name does. A change
+  below −100 % would make the rate negative, which `Rate` forbids, so −100 is
+  the lower bound and nothing else is.
+feedback: >-
+  State that `delta_pct` is a percentage, such as 10 for 10 %, and at least
+  −100. Say which rate it applies to: the gross rate, presumably.

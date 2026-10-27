@@ -1,0 +1,31 @@
+format: 1
+id: G-051
+date: 2026-10-27
+question: How does the internal-term check tell a constructor's copy, a summary profile, and the pipeline's model from the same words in ordinary English?
+decision: >-
+  The internal-term pattern matches "copy" only in the constructor sense: a
+  selectable, settable, ordered, constructor, or template copy, or a copy
+  of a constructor or template. It matches "profile" only as a summary
+  profile, "a profile of", or "is a profile". It matches "model" as the
+  model or our model, with or without "generated" or "pipeline's", and as a
+  generated or the pipeline's model, singular or plural. So "To view a copy
+  of this license", "keeps a copy of the proposal", "the list copies
+  AdCOM's codes", "audience profile", and "Web Bot Auth profile" read as
+  plain English, and "the generated model", "our model", and "the
+  pipeline's model" read as internal. The test lists each of these in its
+  direction, and three fixtures put the generated model, the pipeline's
+  model, and a template copy in the text the report shows; each fails the
+  gate.
+rationale: >-
+  The pattern flagged ordinary English, so a correct sentence for the
+  working group failed, and it missed three ways of naming the pipeline's
+  model. The narrowing drops only matches outside the constructor and
+  profile senses: a bare "a copy", "each copy", or "the copy" and a bare
+  "profile" no longer match, and a constructor's copy still does by its
+  kind or as a copy of a constructor, while a constructor's name in the
+  text is still caught by the type-name check. The model pattern matches
+  more, every fixture stays, and three are added, so no internal term the
+  gate caught in the constructor or profile sense goes uncaught.
+accepts:
+  - { gate: feedback, fingerprint: 3fe2b92575c20b72c7505c22ff5b7fe38687528f60580424a5557a4d1fd442fa }
+  - { gate: npm-test, fingerprint: ad1d52455493403e4b4556947bd274ca1627d8ec6bace34f8b957a697a238377 }

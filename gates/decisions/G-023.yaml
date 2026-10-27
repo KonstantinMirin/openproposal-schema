@@ -1,0 +1,64 @@
+format: 1
+id: G-023
+date: 2026-10-26
+question: Which gates change when a declared vocabulary may say what its terms mean, as a frequency cap's period says it spells OpenDirect's codes and which terms are calendar periods?
+decision: >-
+  A vocabulary the mapping declares may carry a `description`, what its
+  terms mean where no row says; the mapping format allows it on a vocabulary
+  only. The model keeps it, the emitter puts it before the list's citation
+  and the terms' codes, and the SDKs add it to the vocabulary's doc comment.
+  `FrequencyCapPeriod` says that each term spells an OpenDirect 2.1
+  `Line.frequencyinterval` code, that `hour`, `day`, `week`, and `month` are
+  calendar periods on the line item's clock, a `day` from midnight to
+  midnight and a week from Monday, and that `flight`, OpenDirect's
+  `LineDuration`, is no calendar period but runs between the flight's start
+  and end. A test checks the emitted description on both locks. The test
+  suite holds 322 tests, so its floor rises to 322.
+rationale: >-
+  The description adds prose and changes no value a schema accepts, so every
+  gate checks what it checked; the mapping format rejects a description on
+  any other kind, and the test floor rises, so no gate is weaker.
+accepts:
+  - { gate: comparison, fingerprint: a517d0be58544d496ab15da68583f4877d6565db6f234b22725cbefa89f29504 }
+  - { gate: convention-beside-reference, fingerprint: b53fcd0d03d90699a85f27f98dde7062c7eb591476c27aefccaf86f6504ddee0 }
+  - { gate: convention-inline, fingerprint: 2017d5b7b5b78a083336b8f59a65ba6a914eae6c675595a37c297ed5dbde6bee }
+  - { gate: convention-keywords, fingerprint: 538d528b1c314001f0c37cb049fd9c042f7a5b4ce746e527cb9e15efd2a9baab }
+  - { gate: convention-layers, fingerprint: 041b565dc8b670b7c056bca817f1bece73e3f018cc7c5806740ed12fc854de25 }
+  - { gate: convention-lists, fingerprint: 75d20e7b7e52c853f74486a9f0e2f9d1421ab82d568480ac48401ec5cffe1fa9 }
+  - { gate: convention-modules, fingerprint: 2efef3b67a8dd4cb9df66a14e562b4564779282bc1cc2bf9a8910ef5b4ea5b73 }
+  - { gate: convention-unions, fingerprint: 8465ce3c9ddfd81bb7e22af9d3059b51e9671300ae647fbe42ede4685a624b2e }
+  - { gate: corpus-generates, fingerprint: f2e4facdb88e1d4710332603b2b16e064d49c530a36762c549a2959a4afe9e7b }
+  - { gate: corpus-isolation, fingerprint: 64a0e66b6c3c6cad55d37db3eb583e78e674a3bf66df4f90acdec3a114ff8029 }
+  - { gate: domains-homonyms, fingerprint: bcc63990dbdb9da9861f3e1105c9d3193c50179dcd1e9a63d3528b27cd87a075 }
+  - { gate: domains-properties, fingerprint: 9900480be0db93e05a74862727234ba3d9e65556e175d03d5aeff583f75f117c }
+  - { gate: domains-used, fingerprint: 226b13199c719970e2cebc83cc7d4b7b9fb5e796304a20738f7a52cbeee2bf83 }
+  - { gate: duplication-kernel, fingerprint: 3366616afd23e2b7c3c9c348a7f922b30ec3ee35ebf3a85a33a3a4982258e8a0 }
+  - { gate: duplication-model, fingerprint: 8be4eedecb988e62a47f00f424b8984ff91976786431c22f120cfb854bcd6c65 }
+  - { gate: examples-listing, fingerprint: 3bfd0a61e21df8c869878fa2cbfc41c0262dbb0217f423c569185d4578622c70 }
+  - { gate: examples-validate, fingerprint: c70a03b25fce93a6bb6b68c512a399baea86e6bad09906901043cec4c779abcf }
+  - { gate: feedback, fingerprint: ead38e085535ff2ddda33a148a89abbc3095b2794f81befcb305787bce0d220c }
+  - { gate: fidelity, fingerprint: 5118b5b8b727c2b702f411ca3e65d64d34f505d54f5d866c244a21cc9e4b57ee }
+  - { gate: frozen-releases, fingerprint: 5a748375b3d6dfafd640023a5663c3606bd0a75f73c405dbfa478bd97332146d }
+  - { gate: frozen-reviewed, fingerprint: ef4ffae8c9d19eb7680d23389d7a7a853ff4e612696d536d629adbf70674c55a }
+  - { gate: map-drift, fingerprint: 408a7f1328beb1f8d8a3f5fe6cda2351569dc07236e5d896df652711bafe5e3a }
+  - { gate: mapping-bijection, fingerprint: 0bab8e1a647cfc1f887371c7b234e538c20a69b390d128e8fa9196dbdeb2a89f }
+  - { gate: mapping-constructors, fingerprint: 3bf4df70f830d36a653e50f5ad3ef10d9c71bf46e380818048095ee1322c71f7 }
+  - { gate: mapping-current, fingerprint: 778b4adf70e610e30bbe67ed66cc3d252df0f5bad644aa6529ac67361b2c7ed3 }
+  - { gate: mapping-load, fingerprint: 33a0cace64022492c22716929d4f98ac6197adf1a06d53bca6de34da6efbe9ce }
+  - { gate: mapping-location, fingerprint: d9c6f2a6cc51eb2eadfa72cf19d43010d673a5182998cd5e523abc9d7c20f7cd }
+  - { gate: mapping-names, fingerprint: 0fb75252ce0436f8697b6ae71110fc92ebd9a4d3053139c37a6a9de55e353614 }
+  - { gate: mapping-rules, fingerprint: 3d79ceb8f0cedd2d582eec7234029932087251d5896ab92cccb69e85a254b163 }
+  - { gate: mapping-sources, fingerprint: 98fe793ca847821f051394d92fd68c4b6492b19bf634db259a085e49f0b47a7b }
+  - { gate: model-resolves, fingerprint: 7a16c2441dc339cbfe43966d982f91a8f82106c9c2fe814044d02199f611831d }
+  - { gate: modules-depends, fingerprint: 5fb5f5cf7bf40dd1115d1068efbbb1de3c6acc6ca2719868ab1f1107c41b2660 }
+  - { gate: nesting, fingerprint: 9d7644627d360afc4b8648a56109c9c1a5bde8c96c37ccc280819366c08e5817 }
+  - { gate: npm-test, fingerprint: ba8e0d620ee816847a5e678d23b7612f1dd9d85260929e471f228bd0562ff1a6 }
+  - { gate: release-breaking, fingerprint: 145a88d6f7871e80909cf6397f8e6ff1ca03793f7bd4f33df220c88a2acb28b3 }
+  - { gate: release-builds, fingerprint: 9b59cc8a5b72b3d4cc4f26a37feb7a2f463f0354ca80a0d99a61e6467388e9b0 }
+  - { gate: release-digests, fingerprint: e11fd66b9894b006c57f6fdf97bef29ccedb2df77fd6512d2d272aa5ce303182 }
+  - { gate: round-trip, fingerprint: f655e7b4387f2dd7fa9089b257dc740fb542837cb2c50c5b8d8f6704d78822de }
+  - { gate: rule-vectors, fingerprint: bb6b8d49114b9d7b2cfce5a8bfaeacfe399e5d98fb8cbb040c8718c931ec7bf1 }
+  - { gate: rules-emit, fingerprint: bcb261ff05610dd1354c6e4c3befd49a032f2a538f6238dd7d410fe3ef3d5009 }
+  - { gate: schemas-conventions, fingerprint: e9e1c28e16fd0f5a25432ce0a4748ffdb6d0af6ef6cf85c96dbd8922f15de436 }
+  - { gate: schemas-emit, fingerprint: bf987f79ebb3734a2a49a0d842327d165122a8e2314b6a5ea7dba8f021a91381 }
+  - { gate: sdk-generate, fingerprint: 30159eaa78182e9b205db2266df199c0a40a4599173ff7c167750c43d12f123b }

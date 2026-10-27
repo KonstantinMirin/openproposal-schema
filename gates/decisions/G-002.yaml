@@ -1,0 +1,38 @@
+format: 1
+id: G-002
+date: 2026-10-25
+question: How does the fidelity gate stop a rule or a departure from excusing a disagreement it doesn't explain, and which constraints does the oracle read that it missed?
+decision: >-
+  A rule no longer excuses an invalid vector the schema accepts by listing the
+  constraint's element among its sources. A constraint the schema can't state
+  passes only when gates/fidelity-expected.yaml lists it under `ruled` with
+  its rule, the rule applies to an object on the constraint's path, and one
+  of its invalid vectors is a payload the constraint rules out. A departure
+  lists the forms it departs from on each cover, not on the whole record, and
+  a listed form that excuses no disagreement fails; a proposed departure
+  excuses, and the gate's line names it with its status. The oracle now reads
+  a condition on a member of an enclosing object and tests every other value
+  its row lists, counting a condition whose member lists none; sentences
+  "`x` is `a` or `b`"; a named list's codes; YAML examples under a field's
+  name; a fraction for a Number and a string of no format for a Timestamp or
+  an Offset. It counts every sentence, every closed vocabulary no closed
+  value list reaches, and the statements it reads through a row. Fixtures
+  reproduce the independent review's mutations: Selectable's `included[]`
+  no longer required, `plcmt` required on every channel, the code 9, the
+  term `best_effort`, and the term `keyword` dropped, `gross_rate` typed as a
+  count, and `valid_from` as text. The decision record format moves `departs`
+  onto each cover, which the mapping gates load.
+rationale: >-
+  Rules come from the mapping, so letting any rule that names an element
+  excuse it let the side under test feed the verdict: the review removed
+  `included` from the selectable structure's required members and every one
+  of its constraints passed, excused by an unrelated rule. Each change here
+  removes a way to pass and adds constraints the oracle checks, so no gate is
+  weaker. The stronger oracle found two disagreements, in the § 5.6.3 YAML
+  example, whose readable line item IDs the UUID departure D-037 already
+  explains; D-037 now covers that block and departs from its example form.
+accepts:
+  - { gate: fidelity, fingerprint: f9df49e0032b1550eb78b9deafbc9da303d2821104399d502c5cdbb57008019a }
+  - { gate: guard, fingerprint: e9c062b922915a834d6865a07eced3ba03a5a8a4907b87fa47767bc3ee8eb3c8 }
+  - { gate: mapping-current, fingerprint: 1f7007dddfc463cda793eb3137a02f1de1a184b32622f11c7d4d081a55252c87 }
+  - { gate: mapping-load, fingerprint: 75f30e2b3ff15f63ab61a0be62aeb99a22025be4e6ed8bf26a4ff63fff6b57b2 }

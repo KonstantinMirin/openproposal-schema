@@ -1,0 +1,471 @@
+# Constructors (type rules § 7, layer 2). Each one is a template that exists
+# only in the model. Its shell is the schema of one concrete copy, written with
+# JSON Schema 2020-12 keywords; every type position is a slot, `$model`, that
+# holds a model type. The emitter publishes one named copy per use, and fills
+# List and Map in place. The parts are the named types the shells share.
+# Spec sources are quoted and digested; regenerate a quote and a digest with
+# `npm run cite -- <IR element ID>`.
+format: 1
+constructors:
+  - name: Selectable
+    description: A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, and `pricing` gives the change in price for each other option.
+    parameters:
+      - name: T
+        accepts: named
+        description: The type of one option, such as a format ID or a property.
+      - name: K
+        accepts: string
+        names: T
+        carries:
+          member: id
+          decision: D-046
+          departure: D-047
+          description: The identity the seller mints for the option, which `included[]` and the `pricing` keys name it by.
+        description: The type that names one option in `included[]` and the `pricing` keys. A string option is named by its value, so `K` is `T`, such as a format ID; an object option is named by its `id`, so `K` is `Uuid`, the identity the seller mints for the option, and the option carries `id`, required.
+      - name: B
+        accepts: any
+        optional: true
+        description: The bare value that may stand in for the full form. Without it, the copy is the full form only.
+    naming: { from: field, suffix: Selection }
+    shell:
+      type: object
+      properties:
+        available: { $model: { kind: apply, constructor: List, arguments: { T: { kind: parameter, name: T } } } }
+        included: { $model: { kind: apply, constructor: List, arguments: { T: { kind: parameter, name: K } } }, description: "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the UUID the seller mints for it." }
+        pricing: { $model: { kind: apply, constructor: Map, arguments: { K: { kind: parameter, name: K }, V: { kind: named, name: PriceDelta } } }, description: "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the UUID the seller mints for it." }
+        max_select: { $model: { kind: named, name: Count } }
+      required: [available, included]
+      additionalProperties: false
+    fallback:
+      parameter: B
+      suffix: OrValue
+      statement: rule:3.1:f8b0c287
+      decision: D-008
+    rules:
+      - id: constructor:Selectable:options-named
+        statement: Each `included[]` entry and each `pricing` key names an option in `available[]`. A string option is named by its value, and an object option by its `id`.
+        source: { decision: D-007 }
+        arguments: { T: { kind: named, name: FormatId }, K: { kind: named, name: FormatId } }
+        valid:
+          - { available: ["display/300x250", "display/970x250"], included: ["display/300x250"], pricing: { "display/970x250": { delta_cpm: 3 } } }
+          - { available: ["display/300x250"], included: [] }
+        invalid:
+          - { available: ["display/300x250"], included: ["display/728x90"] }
+          - { available: ["display/300x250"], included: [], pricing: { "display/728x90": { delta_cpm: 1 } } }
+      - id: constructor:Selectable:priced-beyond-included
+        statement: No `pricing` key names an option in `included[]`. The base rate covers the included options, and `pricing` gives the change in price for each option beyond them.
+        source:
+          spec:
+            - ir: key:3.1:pricing
+              digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
+              quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+            - ir: key:3.1:included[]
+              digest: 8ec666d51bf96c60f03793156f832384d83126b7e98f3112259b423bc624b78b
+              quote: "`included[]` | REQUIRED | Which options are in the base rate. MAY be empty"
+        arguments: { T: { kind: named, name: FormatId }, K: { kind: named, name: FormatId } }
+        valid:
+          - { available: ["display/300x250", "display/970x250"], included: ["display/300x250"], pricing: { "display/970x250": { delta_cpm: 3 } } }
+          - { available: ["display/300x250", "display/970x250"], included: [], pricing: { "display/300x250": { delta_cpm: 1 }, "display/970x250": { delta_cpm: 3 } } }
+        invalid:
+          - { available: ["display/300x250", "display/970x250"], included: ["display/300x250"], pricing: { "display/300x250": { delta_cpm: 1 } } }
+    vectors:
+      - arguments: { T: { kind: named, name: FormatId }, K: { kind: named, name: FormatId } }
+        valid:
+          - { available: ["display/300x250", "display/728x90"], included: ["display/300x250"], pricing: { "display/728x90": { delta_cpm: 3 } }, max_select: 2 }
+          - { available: ["audio/host-read-30s"], included: [] }
+        invalid:
+          - { available: ["display/300x250"] }
+          - { included: [] }
+          - { available: ["display/300x250"], included: [], max_select: -1 }
+          - { available: ["display/300x250"], included: [], pricing: { "display/300x250": {} } }
+          - { available: ["display/300x250"], included: [], default: "display/300x250" }
+          - { available: [300], included: [] }
+          - { available: ["display/300x250"], included: ["300x250"] }
+          - { available: ["display/300x250"], included: [], pricing: { "300x250": { delta_cpm: 1 } } }
+          - "display/300x250"
+      - arguments: { T: { kind: named, name: FormatId }, K: { kind: named, name: FormatId }, B: { kind: named, name: FormatId } }
+        valid:
+          - "display/300x250"
+          - { available: ["display/300x250"], included: ["display/300x250"] }
+        invalid:
+          - 300
+          - { available: ["display/300x250"] }
+    sources:
+      spec:
+        - ir: marker:3:selectable
+          digest: 9d4920aaf4e7581b9e328b70600205e70277c7ca1a1f6275a8736c157cd1999d
+          quote: "`selectable` | The buyer chooses from a seller-declared set. Each option MAY carry a price delta. Resolves without seller assent."
+        - ir: rule:3.1:f3c3cab7
+          digest: d228e1dfba5ae266474b8184f4d55612ea607481e33f1a1eeb8da4102ef906ae
+          quote: "Every field marked `selectable` MUST declare:"
+        - ir: key:3.1:available[]
+          digest: e56c463d4043e1f551eae09af84db75ecf3185079f60194536361b619af55af5
+          quote: "`available[]` | REQUIRED | The options the seller offers"
+        - ir: key:3.1:included[]
+          digest: 8ec666d51bf96c60f03793156f832384d83126b7e98f3112259b423bc624b78b
+          quote: "`included[]` | REQUIRED | Which options are in the base rate. MAY be empty"
+        - ir: rule:3.1:ff8838af
+          digest: 36e4b0c48894abc60ddd2f7ebc3e9bda8f6e95efc4b28e17162a36e093a3143a
+          quote: MAY be empty
+        - ir: key:3.1:pricing
+          digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
+          quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+        - ir: key:3.1:max_select
+          digest: 199cab600b78dcd9dc40358fa8a94ec4d323f2bcf2fd7922a62b008af465d820
+          quote: "`max_select` | OPTIONAL | Cap on how many options the buyer may choose"
+        - ir: rule:3.1:f8b0c287
+          digest: d60c77636afc33649141f8de560cbf2e0f599b124779ea89b069f9b08a9181cd
+          quote: A field marked `selectable` that carries a bare value and no `available[]` MUST be treated as `seller-set`.
+      design:
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+        - doc: docs/design/type-rules.md
+          section: 8. Unions and conditions
+
+  - name: Settable
+    description: A field the buyer sets to one of the values the seller allows, `allowed[]`, for a type whose values have no order, such as a geo code or a device category.
+    parameters:
+      - name: T
+        accepts: unordered
+        description: The type of the value the buyer sets, such as a geo code. Its values have no order, so its bounds are a set, never a range.
+      - name: B
+        accepts: any
+        optional: true
+        description: The bare value that may stand in for the full form. Without it, the copy is the full form only.
+    naming: { from: field, suffix: Bounds }
+    shell:
+      type: object
+      properties:
+        allowed: { $model: { kind: apply, constructor: List, arguments: { T: { kind: parameter, name: T } } } }
+      required: [allowed]
+      additionalProperties: false
+    fallback:
+      parameter: B
+      suffix: OrValue
+      statement: rule:3.2:4f3b0a9c
+      decision: D-008
+    vectors:
+      - arguments: { T: { kind: named, name: ExternalId } }
+        valid:
+          - { allowed: ["US", "US-CA"] }
+          - { allowed: [] }
+        invalid:
+          - {}
+          - { min: "US" }
+          - { allowed: ["US"], max: "US-CA" }
+          - { allowed: [840] }
+          - "US"
+      - arguments: { T: { kind: named, name: ExternalId }, B: { kind: named, name: ExternalId } }
+        valid:
+          - "US"
+          - { allowed: ["US"] }
+        invalid:
+          - 840
+          - {}
+    sources:
+      spec:
+        - ir: marker:3:settable
+          digest: 66671c35883697ab396f64f940b5566cca0b389bef1aa9fcaed09f2b8c20d961
+          quote: "`settable` | The buyer supplies a value within seller-declared bounds. Resolves without seller assent."
+        - ir: rule:3.2:ee009430
+          digest: b70f59e2c68b16af32a8ad7ee513de31c1f1bd7a3c1540f17ba556688780a7cf
+          quote: "Every field marked `settable` MUST declare its bounds: either `allowed[]` (an enumerated set) or `min` / `max` (a numeric or date range)."
+        - ir: rule:3.2:4f3b0a9c
+          digest: 07c583d4952414b695fe884dd3b8b2257e046904bec68931d240feef4ad28988
+          quote: A field marked `settable` that carries a bare value and no bounds MUST be treated as `seller-set`.
+      design:
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+        - doc: docs/design/type-rules.md
+          section: 8. Unions and conditions
+
+  - name: Range
+    description: A range of values from `min` to `max`, with at least one bound, such as the bounds within which the buyer sets a frequency cap.
+    parameters:
+      - name: T
+        accepts: ordered
+        description: The type of each bound, a number or a timestamp.
+    naming: { from: field, suffix: Range }
+    shell:
+      type: object
+      properties:
+        min: { $model: { kind: parameter, name: T } }
+        max: { $model: { kind: parameter, name: T } }
+      additionalProperties: false
+      minProperties: 1
+    rules:
+      - id: constructor:Range:ordered
+        statement: "`min` is at most `max`: numbers compare as numbers, and timestamps as instants."
+        source:
+          spec:
+            - ir: field:5.5:frequency_cap#description/object:1
+              digest: adbcfc3ac2b7bc7c0bda1069751986267cf304dbafb4ee388d9c2f62b43ba305
+              quote: "{ max: { min, max }, period, basis: device | household | listener }"
+          decision: D-011
+        arguments: { T: { kind: named, name: Count } }
+        valid:
+          - { min: 1, max: 6 }
+          - { min: 4, max: 4 }
+        invalid:
+          - { min: 6, max: 1 }
+    vectors:
+      - arguments: { T: { kind: named, name: Count } }
+        valid:
+          - { min: 1, max: 6 }
+          - { min: 1 }
+          - { max: 6 }
+        invalid:
+          - {}
+          - { min: -1 }
+          - { min: "1" }
+          - { min: 1, step: 1 }
+          - 3
+    sources:
+      spec:
+        - ir: field:5.5:frequency_cap#description/object:1
+          digest: adbcfc3ac2b7bc7c0bda1069751986267cf304dbafb4ee388d9c2f62b43ba305
+          quote: "{ max: { min, max }, period, basis: device | household | listener }"
+        - ir: rule:3.2:ee009430
+          digest: b70f59e2c68b16af32a8ad7ee513de31c1f1bd7a3c1540f17ba556688780a7cf
+          quote: "Every field marked `settable` MUST declare its bounds: either `allowed[]` (an enumerated set) or `min` / `max` (a numeric or date range)."
+      design:
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+
+  - name: CatalogRefOr
+    description: A value given inline, or a reference to the seller's catalog entry that holds it, never both.
+    parameters:
+      - name: T
+        accepts: closed
+        description: The type of the inline value. Its values aren't objects, or are objects that reject the members they don't name, so a value can't carry both an inline value and a `catalog_ref` (rule:2.2:696ee27b).
+    naming: { from: argument, parameter: T, suffix: OrCatalogRef }
+    shell:
+      anyOf:
+        - { $model: { kind: parameter, name: T } }
+        - { $model: { kind: named, name: CatalogReference } }
+    vectors:
+      - arguments: { T: { kind: named, name: PriceDelta } }
+        valid:
+          - { delta_cpm: 2 }
+          - { catalog_ref: "examplepub/price-deltas/premium@1" }
+        invalid:
+          - { delta_cpm: 2, catalog_ref: "examplepub/price-deltas/premium@1" }
+          - { catalog_ref: "examplepub/price-deltas/premium" }
+          - {}
+          - "examplepub/price-deltas/premium@1"
+    sources:
+      spec:
+        - ir: rule:2.2:c610e803
+          digest: d92a309b641f5804a63417966289d0dd289ae5243884b49fab292652386ab7b0
+          quote: "Any field whose value is drawn from a seller-maintained catalog MAY carry a reference in place of an inline value:"
+        - ir: code:2.2:1
+          digest: 5b0b87b43dbc9c1a24ed8f3e2bd71d22c5d790a6f786b980bd554f64a71436a0
+          quote: |-
+            catalog_ref: "<seller_namespace>/<collection>/<entry_id>@<version>"
+            example:     "examplepub/audiences/smb-decision-makers@3"
+        - ir: rule:2.2:696ee27b
+          digest: 9b517ad2b69750533a5be0079e02aaf389a5e013eceb9c55d4f37b9bb2c67388
+          quote: A field MUST carry either an inline value or a `catalog_ref`, never both.
+      design:
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+        - doc: docs/design/type-rules.md
+          section: 8. Unions and conditions
+
+  - name: List
+    description: An ordered list of values of one type.
+    parameters:
+      - name: T
+        accepts: named
+        description: The type of each item. It is named, so a list never holds an inline form (type rules § 4).
+    naming: { from: inline }
+    shell:
+      type: array
+      items: { $model: { kind: parameter, name: T } }
+    vectors:
+      - arguments: { T: { kind: named, name: FormatId } }
+        valid:
+          - []
+          - ["display/300x250", "display/728x90"]
+        invalid:
+          - ["display/300x250", 300]
+          - "display/300x250"
+          - {}
+    sources:
+      spec:
+        - ir: field:5.6:pricing[]
+          digest: 362371b22d681a7cf62432d36c01b9a96ee682c497028234b637b2a3f0df8b0b
+          quote: "`pricing[]` | Array[Object] | mixed | See below"
+        - ir: key:3.1:available[]
+          digest: e56c463d4043e1f551eae09af84db75ecf3185079f60194536361b619af55af5
+          quote: "`available[]` | REQUIRED | The options the seller offers"
+      design:
+        - doc: docs/design/type-rules.md
+          section: 4. Named or inline
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+
+  - name: Map
+    description: An object whose keys are values of one type and whose values are of another, such as one price change per option key.
+    parameters:
+      - name: K
+        accepts: string
+        description: The type of each key. A JSON object key is a string.
+      - name: V
+        accepts: named
+        description: The type of each value. It is named, so a map never holds an inline form (type rules § 4).
+    naming: { from: inline }
+    shell:
+      type: object
+      propertyNames: { $model: { kind: parameter, name: K } }
+      additionalProperties: { $model: { kind: parameter, name: V } }
+    vectors:
+      - arguments: { K: { kind: named, name: FormatId }, V: { kind: named, name: Count } }
+        valid:
+          - {}
+          - { "display/300x250": 5000, "display/728x90": 500 }
+        invalid:
+          - { "display/300x250": -1 }
+          - { "display/300x250": "5000" }
+          - { "300x250": 10 }
+          - []
+    sources:
+      spec:
+        - ir: key:3.1:pricing#meaning/object:1
+          digest: 1d2ea6996d7c3bbf4808776d7399e4719b79687764674d92f08a885763ad61fe
+          quote: "{ option_id: { delta_cpm | delta_flat | delta_pct } }"
+      design:
+        - doc: docs/design/type-rules.md
+          section: 4. Named or inline
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+
+parts:
+  - name: PriceDelta
+    description: The change in price when the buyer selects an option outside `included[]`, given as exactly one of a change to the CPM, a flat change, or a change in percent.
+    concept: option-price-delta
+    shell:
+      type: object
+      properties:
+        delta_cpm: { $model: { kind: named, name: PriceAdjustment } }
+        delta_flat: { $model: { kind: named, name: PriceAdjustment } }
+        delta_pct: { $model: { kind: named, name: PercentChange } }
+      additionalProperties: false
+      minProperties: 1
+      maxProperties: 1
+    vectors:
+      valid:
+        - { delta_cpm: 2 }
+        - { delta_flat: 12000 }
+        - { delta_pct: -5 }
+      invalid:
+        - {}
+        - { delta_cpm: 2, delta_flat: 100 }
+        - { delta_pct: -150 }
+        - { delta_cpm: "2" }
+        - { delta_bps: 3 }
+    sources:
+      spec:
+        - ir: key:3.1:pricing#meaning/object:1
+          digest: 1d2ea6996d7c3bbf4808776d7399e4719b79687764674d92f08a885763ad61fe
+          quote: "{ option_id: { delta_cpm | delta_flat | delta_pct } }"
+      design:
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+
+  - name: CatalogReference
+    description: A reference that stands in for an inline value, given as the `catalog_ref` of the catalog entry that holds the value.
+    concept: catalog-ref
+    shell:
+      type: object
+      properties:
+        catalog_ref: { $model: { kind: named, name: CatalogRef } }
+      required: [catalog_ref]
+      additionalProperties: false
+    vectors:
+      valid:
+        - { catalog_ref: "examplepub/audiences/smb-decision-makers@3" }
+      invalid:
+        - {}
+        - { catalog_ref: "examplepub/audiences/smb-decision-makers" }
+        - { catalog_ref: "examplepub/audiences/smb-decision-makers@3", id: "ep:smb-decision-makers" }
+    sources:
+      spec:
+        - ir: code:2.2:1
+          digest: 5b0b87b43dbc9c1a24ed8f3e2bd71d22c5d790a6f786b980bd554f64a71436a0
+          quote: |-
+            catalog_ref: "<seller_namespace>/<collection>/<entry_id>@<version>"
+            example:     "examplepub/audiences/smb-decision-makers@3"
+        - ir: rule:2.2:696ee27b
+          digest: 9b517ad2b69750533a5be0079e02aaf389a5e013eceb9c55d4f37b9bb2c67388
+          quote: A field MUST carry either an inline value or a `catalog_ref`, never both.
+      design:
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+
+  - name: DaypartWindow
+    description: A window of the week in which a line item's ads may serve, read on the line item's clock, as Google Ad Manager writes a day part. On each day `days[]` names, the window runs from `start` up to `end`, which is exclusive and later than `start`. `start` is never `24:00`, the end of the day.
+    concept: daypart-window
+    decisions:
+      - { decision: D-004, locks: [main] }
+      - { decision: D-038, locks: [main] }
+      - { decision: D-045 }
+    shell:
+      type: object
+      properties:
+        days: { $model: { kind: apply, constructor: List, arguments: { T: { kind: named, name: DayName } } }, minItems: 1, uniqueItems: true }
+        start: { $model: { kind: named, name: TimeOfDay } }
+        end: { $model: { kind: named, name: TimeOfDay } }
+      required: [days, start, end]
+      additionalProperties: false
+      if: { type: object, properties: { start: { const: "24:00" } }, required: [start] }
+      then: false
+    rules:
+      - id: kernel:DaypartWindow:ordered
+        statement: "`end` is later than `start`. The window holds each minute from `start` up to `end`, so a window that crosses midnight is two windows."
+        source:
+          spec:
+            - ir: sentence:5.5:348ea676
+              digest: b653534aab2fd12f0dad1b1f4422634068e90af810a75414b00aa4d346e379fc
+              quote: A `daypart` window is `{ days[], start, end }`, with `days[]` from Monday to Sunday, `start` and `end` as HH:MM, and `end` exclusive, later than `start`, and allowed to be `24:00`.
+              locks: [with-open-prs]
+          decision: D-004
+          decision_locks: [main]
+        valid:
+          - { days: [monday, friday], start: "06:00", end: "10:00" }
+          - { days: [saturday, sunday], start: "00:00", end: "24:00" }
+          - { days: [monday], start: "23:00", end: "24:00" }
+        invalid:
+          - { days: [monday], start: "22:00", end: "02:00" }
+          - { days: [monday], start: "09:00", end: "09:00" }
+          - { days: [monday], start: "00:00", end: "00:00" }
+    vectors:
+      valid:
+        - { days: [monday, tuesday], start: "06:00", end: "10:30" }
+        - { days: [sunday], start: "23:00", end: "24:00" }
+      invalid:
+        - { days: [monday], start: "06:00" }
+        - { days: [mon], start: "06:00", end: "10:00" }
+        - { days: [monday], start: "24:00", end: "24:00" }
+        - { days: [monday], start: "6:00", end: "10:00" }
+        - { days: [monday], start: { hour: 6, minute: 0 }, end: { hour: 10, minute: 0 } }
+        - { days: [monday], start: "06:00", end: "10:00", time_zone: "America/New_York" }
+        - { days: [], start: "06:00", end: "10:00" }
+        - { days: [monday, monday], start: "06:00", end: "10:00" }
+    sources:
+      spec:
+        - ir: field:5.5:daypart
+          digest: 25c80cd35ce4831dfbd372627f2d794511fffe5f029243e586ee1e607be4fdc2
+          quote: "`daypart` | Object | settable | `allowed[]` of time windows"
+          locks: [main]
+        - ir: field:5.5:daypart
+          digest: b34d1818bf80b3e5947f9902057ac882707ef3a893fc370c97efc81487d64080
+          quote: "`daypart` | Object | settable | `allowed[]` of `{ days[], start, end }`: `days[]` from `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`, HH:MM civil time, `end` exclusive, up to `24:00`"
+          locks: [with-open-prs]
+        - ir: sentence:5.5:348ea676
+          digest: b653534aab2fd12f0dad1b1f4422634068e90af810a75414b00aa4d346e379fc
+          quote: A `daypart` window is `{ days[], start, end }`, with `days[]` from Monday to Sunday, `start` and `end` as HH:MM, and `end` exclusive, later than `start`, and allowed to be `24:00`.
+          locks: [with-open-prs]
+      standards:
+        - name: Google Ad Manager API, DayPart
+          url: https://developers.google.com/ad-manager/api/reference/latest/LineItemService.DayPart

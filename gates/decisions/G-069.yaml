@@ -1,0 +1,30 @@
+format: 1
+id: G-069
+date: 2026-10-27
+question: What keeps a link into the type map from opening another view than it names, or another page?
+decision: >-
+  The type map and the examples page read their addresses with one router,
+  `src/site/assets/route.js`, which the site check and the tests load in
+  Node. The router takes the canonical names, `lock` (`main`,
+  `with-open-prs`), `variant` (`as-written`, `proposals`), and `view`
+  (`schema`, `example`), and other names of each, such as the switches'
+  labels as slugs, `variant=with-proposals` among them; it lists every
+  change it makes, and a value it doesn't know changes only that setting,
+  where an address with one such value once opened the defaults. A hash
+  that is no route, such as the skip link's `#main`, keeps the view. The
+  site check now fails on a link into the type map that the router
+  rewrites, and on a script that sets `location` or a history entry other
+  than a hash, which would leave the page. Two fixtures cover them. Nine
+  tests read every canonical address back, every other name of every
+  parameter and value in combination, the address that opened the
+  defaults, and every link the pages write; the suite holds 398 tests, and
+  `MIN_TESTS` is 398.
+rationale: >-
+  An address the router reads one way and the check another can pass the
+  check and open the wrong build, so both read it with the same code. The
+  checks only add problems. site-builds' fingerprint changes because its
+  check, fixtures, and assets changed, and npm-test's because of the new
+  tests and the test floor.
+accepts:
+  - { gate: npm-test, fingerprint: 63b07623279edb3d2232f1dd826422b29714b12f06167d66c60ae0af20a0c4e2 }
+  - { gate: site-builds, fingerprint: 57301383c09c20b63e0fcef423de7fe1c66175edfbf23ed864c695e57f73ec02 }

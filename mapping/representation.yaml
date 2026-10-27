@@ -1,0 +1,110 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: representation
+sections: [ "2.1" ]
+depends: [ commercial, execution, guarantees, inventory, line-item, proposal ]
+types: []
+entries:
+  - ir: rule:2.1:2e481f6f
+    digest: 8e7174a9f45f226290f9d5125760d9e151c9d2301aa8b702e0e2758775ef543d
+    source: { decision: D-028 }
+    as: { role: profile, profile: Summary, document: LineItem }
+  - ir: rule:2.1:948e2b02
+    digest: d73007c4f00ee65f89f1ffebba4a24a699310dd4992410d26e3576b54575f9e0
+    source: { decision: D-029 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:2.1:5e6cb5f0
+    digest: c3d6b26feae94fc61ee3037803cc382fa0f3481fb664eafb9546bdf254ce381a
+    locks: [ main ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: block:2.1:3/identifiers:1
+    digest: cbcaa410cbcd800b1bf4167c9ae823a6814a7b474f7c95857205fae9160ae94e
+    locks: [ main ]
+    source: { decision: D-028 }
+    as:
+      role: profile
+      profile: Summary
+      document: LineItem
+      reads: [ { item: property names, paths: [ "properties.available[].name" ] } ]
+  - ir: block:2.1:3/identifiers:1
+    digest: 404539a2c4ac9f44b47fd286a6466aa8e85b5fdd9106382b8d2adc4d461edff4
+    locks: [ with-open-prs ]
+    source: { decision: D-028 }
+    as:
+      role: profile
+      profile: Summary
+      document: LineItem
+      members: { has_requires: { type: { kind: boolean }, presence: required } }
+      reads: [ { item: property names, paths: [ "properties.available[].name" ] } ]
+  - ir: sentence:2.1:f23277b4
+    digest: cbb9d2ea718529c793bbe4edaf6d092935092d38090f370d9538d9e9b914d0ca
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.1:1f55a1be
+    digest: f42ace24c81efdda71dbc2e79fcc491a562668dbf1456b3c6a3f4c5e5b90d252
+    locks: [ main ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: block:2.1:4/identifiers:1
+    digest: 2f58041e29b322b5d1cd351d86ff76d053160c7b1454e906e7dec7d7f2fd46f7
+    locks: [ main ]
+    source: { decision: D-028 }
+    as: { role: profile, profile: Summary, document: Proposal }
+  - ir: block:2.1:4/identifiers:1
+    digest: def19a83d055b1d619c296e617dde93ff70844726ad73a39735a2756fd90ec6e
+    locks: [ with-open-prs ]
+    source: { decision: D-028 }
+    as: { role: profile, profile: Summary, document: Proposal }
+  - ir: sentence:2.1:80ac0822
+    digest: 0097daf002a8e88c8498bc7593551687535fdc689b0d61f67d736cb94a25ede1
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.1:ba90b505
+    digest: 86d0d29da5fe9e02ce1649d2879715baba3eb7112c09969a7617bf41cc3ad119
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:2.1:8d97860b
+    digest: 632004985ab089736510115823dea396e4e684cbde12b5634dca30006721708d
+    locks: [ main ]
+    source: { decision: D-029 }
+    as: { role: obligation, party: seller }
+  - ir: rule:2.1:8d97860b
+    digest: 4c7d43fb094edc1ab170b38a76d00b2d2908a705c5a31ffd9b073bf97bdfdf56
+    locks: [ with-open-prs ]
+    source: { decision: D-029 }
+    as: { role: obligation, party: seller }
+  - ir: rule:2.1:5d7284d5
+    digest: 39bd1ad54c175c544257384cd7ef04fe8af1570a098675981d3083cfe575ba2b
+    locks: [ with-open-prs ]
+    source: { decision: D-029 }
+    as: { role: obligation, party: seller }
+  - ir: block:2.1:7/identifiers:1
+    digest: ae5f5e049601e16f6ba06ff8ab8e21d2c4bcc1ce1a86c48bb6d0ed0f2ce5d985
+    locks: [ with-open-prs ]
+    source: { decision: D-028 }
+    as: { role: profile, profile: Summary, document: LineItem }
+  - ir: sentence:2.1:0fb18f29
+    digest: 9e392502dedcc34644c81de2f9dc8060d1d9b28b470b6f82713955b20778ab56
+    locks: [ main ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.1:0fb18f29
+    digest: e8d691b8160b4b5f2e0ac7671897d2870dcb5d3958cfc3a1ee3a2b456f9ae341
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:2.1:2f9d603c
+    digest: db005f7abf6e0f64795c6486f2bf4f4b97cc14aa54b848cf17a9fbdf3f14ddae
+    locks: [ main ]
+    source: { decision: D-029 }
+    as: { role: obligation, party: seller }
+  - ir: rule:2.1:2f9d603c
+    digest: bba0337e051de46b3c9dc214a297bdb5908767e804407b5be5ba8840511bc40d
+    locks: [ with-open-prs ]
+    source: { decision: D-029 }
+    as: { role: obligation, party: seller }

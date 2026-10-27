@@ -1,0 +1,23 @@
+# Rule vectors for § 5.8. Regenerate a digest with `npm run cite -- <rule ID>`.
+format: 1
+module: eligibility
+rules:
+  # `terms_ref` is hash-pinned and frozen at `agreed`.
+  - rule: rule:5.8:59a01393
+    digest: aac0652bc71ae2e1eb1544ac8cbd25d20ebb31022cfcae8997d55c54c49ad99a
+    locks: [with-open-prs]
+    decision: D-034
+    valid:
+      - party: seller
+        before: { status: published, terms_ref: { url: "https://examplepub.example/terms/io.pdf", sha256: 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08, version: "1" } }
+        after: { status: published, terms_ref: { url: "https://examplepub.example/terms/io.pdf", sha256: 60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752, version: "2" } }
+      - party: buyer
+        before: { status: agreed, terms_ref: { url: "https://examplepub.example/terms/io.pdf", sha256: 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08, version: "1" } }
+        after: { status: agreed, terms_ref: { url: "https://examplepub.example/terms/io.pdf", sha256: 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08, version: "1" } }
+    invalid:
+      - party: seller
+        before: { status: agreed, terms_ref: { url: "https://examplepub.example/terms/io.pdf", sha256: 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08, version: "1" } }
+        after: { status: agreed, terms_ref: { url: "https://examplepub.example/terms/io.pdf", sha256: 60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752, version: "2" } }
+      - party: seller
+        before: { status: published, terms_ref: { url: "https://examplepub.example/terms/io.pdf", sha256: 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08, version: "1" } }
+        after: { status: published, terms_ref: { url: "https://examplepub.example/terms/io.pdf", version: "2" } }

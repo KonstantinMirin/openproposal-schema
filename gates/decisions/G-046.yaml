@@ -1,0 +1,24 @@
+format: 1
+id: G-046
+date: 2026-10-26
+question: How is a Timestamp held to RFC 3339's date-time, when the date-time format check accepts a space for `T` and an offset of `+05` or `+0500`?
+decision: >-
+  The `Timestamp` primitive carries a `pattern` beside `format: date-time`,
+  RFC 3339's `date-time` grammar with a `T` or `t` between the date and the
+  time and an offset of `Z`, `z`, or `+hh:mm`, so only that form passes
+  every validator; the format still rejects a date the calendar doesn't
+  have. Its invalid vectors add `2026-10-07 10:00:00+05`,
+  `2026-10-07T10:00:00+0500`, `2026-10-07T10:00:00+05`, and
+  `2026-10-07 10:00:00Z`, which the kernel gate, the corpus, and the SDK
+  gates check. The plain generator drops the pattern beside a `date-time`,
+  and Pydantic's parser takes two of the four, so PG-13 lists those two
+  vectors.
+rationale: >-
+  The schema accepted point-in-time strings RFC 3339 doesn't, so it now
+  rejects more, with four invalid vectors every SDK must reach. The plain
+  generator's exemption names two cases where a third-party generator
+  diverges from the stricter schema; every other check stays, so no gate
+  is weaker.
+accepts:
+  - { gate: plain-exemptions-file, fingerprint: 96f70565bdc6e5492d226954021f2abf8df83b4f7a367c14fed213dea7918278 }
+  - { gate: plain-parity, fingerprint: 5e9580ae45ddff3e2156330dfef233d80dc8dc2b7c7232aadc283e5497ac610c }

@@ -1,0 +1,94 @@
+format: 1
+id: G-007
+date: 2026-10-26
+question: How do the gates read the line item's clock and the daypart window's one time of day, which the open-PRs lock now states with PR #123?
+decision: >-
+  The extractor reads "REQUIRED with" in a presence: the members it names in
+  code spans, or for "either" the two code spans of the sentence before it,
+  and fails where "either" has no such sentence. The emitter states a member
+  required with a sibling as `dependentRequired`, and with a member of a
+  sibling's object as `dependentSchemas` with an `if` on that object, beside
+  the object's own `if` / `then`. A part may reject one value of one member
+  with `if` / `then: false`, as a daypart window rejects a `start` of
+  `24:00`. The corpus finds both as constraints, builds their baselines,
+  and isolates their mutants; the SDK builders and the three runtimes check
+  both; the output gate reads a dependency's required names against the
+  object it keys and the member's object. The fidelity oracle's conditional
+  form reads a presence required with members, with new fixtures that drop
+  each dependency or widen the period one to the whole cap. A mapping rule,
+  `restated-part`, maps an inline object that writes exactly a part's
+  members to that part, and a part may be restated. A primitive's, part's,
+  or rule's decision applies only on the locks `decision_locks` lists, and a
+  primitive's lock-scoped spec source only on its lock. The round trip
+  renders a part's members where a row's inline object restates it. The
+  plain generator's exemptions drop the `Hour` and `Minute` cases, which no
+  longer exist, and add the cases for the new keywords the generator drops,
+  each under the reason that covers it, with PG-11 for `dependentSchemas`.
+  The component fixture of the domain gate uses `TimeOfDay`, the component
+  that replaces `Hour`. The test suite holds 305 tests, so its floor rises
+  to 305.
+rationale: >-
+  PR #123 states `time_zone` as "REQUIRED with either", which the extractor
+  couldn't parse, and the window as `HH:MM` civil times, which the kernel's
+  `{ hour, minute }` object contradicted. Each change reads or states more
+  of what the text says: two conditions the schema can now express in
+  standard keywords instead of a rule, one constraint of the window in the
+  schema instead of prose, and every new constraint isolated in the corpus
+  and checked by the oracle and all three SDKs. No check accepts a value it
+  rejected, every new exemption names a case the reference rejects and the
+  generator can't, and the test floor rises, so no gate is weaker.
+accepts:
+  - { gate: committed-files, fingerprint: 1d2cb1336ad029e7d759fa98e0cc3841853aa589a4fabaa5811767b26512a6fb }
+  - { gate: comparison, fingerprint: 4ab898a8f65076136ebfeca32919d5e8b29137908eb2666154848b77645b4f6d }
+  - { gate: constructor-sources, fingerprint: 59d4daca952449f344a06d8a8327fccf08219b19be2ad1da430714912c5b28ad }
+  - { gate: constructors-check, fingerprint: ed876fe2f4015d29caf885750ea44994fd67e41ed2e46bc4da55f208cac15df0 }
+  - { gate: constructors-load, fingerprint: ff64781ab21faf97253cd75509c5a909363d57a74e93871ea424243f54852980 }
+  - { gate: convention-beside-reference, fingerprint: 2991c28fb0e44ad12718846378841fb4b2c7e2e2f07d6048e23d78c69b4b8281 }
+  - { gate: convention-inline, fingerprint: 1657daa94768c3c184c7e96a4a6e0ecb7737c1de3cfcb885bd4f8c0c8c93f605 }
+  - { gate: convention-keywords, fingerprint: d362104b9a168e3ca4be620296bfedec33a74367603d50a00f9c399e9722dd67 }
+  - { gate: convention-layers, fingerprint: e2a6af721ae30a3e6f27df509c12b1cc1d84edbc07627aa7a3980ce9d209dc29 }
+  - { gate: convention-lists, fingerprint: ede77f27ecf9695760a0abb4f2dc7704761843e3a0adea24e20e4be986623b00 }
+  - { gate: convention-modules, fingerprint: a61c4ee896f5af2eb54897dbe552539a90efe7d6c80758b9c0516cd6118e0b28 }
+  - { gate: convention-unions, fingerprint: f0b38afa4a71e72b1e8a581a6b54aba3bb6dd1737f8775b145bdde1dc0697a99 }
+  - { gate: corpus-generates, fingerprint: 08917458ed2582b3e9f5162e39ffc399dd8a6f4bb99382fe498825c1f6398554 }
+  - { gate: corpus-isolation, fingerprint: 692bdb2abe1668a9ac7c8668128cda3b060cbac0ed1e482e87debd7c300321fb }
+  - { gate: domain-sources, fingerprint: 249d41c96fdfaea562e66d40cb70e4d1f498487bb940cd43f74b1f963dcc8f5b }
+  - { gate: domains-homonyms, fingerprint: 02adb9fa967670e04bc4823225cf5013285f15a2cf7f739d95f2ff985c8ad619 }
+  - { gate: domains-properties, fingerprint: fad0c6c887bd986e90912e16419cd9489d1c868c73ef6a7b679ceb4a96d0955c }
+  - { gate: domains-used, fingerprint: 142af27d788848b1cda76ad11eb9d651d70d0476c8e598fd5a8ec71f5b6d9d7c }
+  - { gate: duplication-kernel, fingerprint: 7e3058402354ca05535d7a613456d31b005640ec73829e973c0b98001c1035d8 }
+  - { gate: duplication-model, fingerprint: a5d80dcba4b7432e6860fb82d5347c4866aa20bcf2db8614f07929dfa12d3db3 }
+  - { gate: examples-listing, fingerprint: 5f214cf80aff62d849be8276dc067a37a361e0f8706ff41260e6f9d644943dd1 }
+  - { gate: examples-validate, fingerprint: 2f12098e7bfac37c94d5fea0bf597dcc1965c35a74d1dc8d6940ce05a95f8dea }
+  - { gate: extraction, fingerprint: cf142e2e4630a5dea2165a5062b3f3e65172ff204cf42764d3da5316fda85ddb }
+  - { gate: feedback, fingerprint: 5481777e1a2ff2c28ce2089faa9c6e5f2a76b0639b92ff8a51225bdbfb2e81fa }
+  - { gate: fidelity, fingerprint: acb62d6cbfb0912c6372333646ffc5a2a96fb9dac99e5daa16cd56c97ec7c140 }
+  - { gate: frozen-releases, fingerprint: 6f28f8570c7b5816b6907fa5dd56009d2a92d81fdc8dd578510300c18f2aa3dc }
+  - { gate: frozen-reviewed, fingerprint: b5897e56d604d7c7d00e5b07566f4c0aa3b1d2bb1d3a90d3d0d9c370d41029f7 }
+  - { gate: kernel-check, fingerprint: 7301fcdb87422c66f33a8ba187b8925f7d3da5c2f6bae49ce5c1b618680aa00b }
+  - { gate: kernel-engines, fingerprint: f00c7013422db7acdbf140a11a095781e4bffadec6d95df4aa1649baa3297d15 }
+  - { gate: kernel-load, fingerprint: 53cc278f6e846c8b90b60649e5b5a382fbbc2f952dd0128e9eda03bb66e7c53a }
+  - { gate: kernel-sources, fingerprint: 7a75a06a2335c5d115fef1726ad186fe0a4df8cd78a1242168043b825136fff1 }
+  - { gate: map-drift, fingerprint: 82f87869df1c9f67279cbb1b732c856d9a3ecdf096b19c5725c25970175a66a9 }
+  - { gate: mapping-bijection, fingerprint: 811e8132ac03e0560b96d2193c04eefeff299aee9d6f3239120ba30d32ee3bae }
+  - { gate: mapping-constructors, fingerprint: 0d14974ece91bf41bd9c8d10f0fc33868d4c8cb0d9c33e58817368ee8d6c62d8 }
+  - { gate: mapping-current, fingerprint: 9f9321b62f1c0d7808a5b9b84a5d2362de26a70600dabbd95f85e0a85a326ca7 }
+  - { gate: mapping-location, fingerprint: c1fb85716d69744e3cb0d0e0e7dafee5c2bc4117ccf50221dcdad7cd9ef1e1ab }
+  - { gate: mapping-names, fingerprint: 5e18f6210be7ec198f6224a8537b4885ce0ccb086a9ac54bbe9bba3537e9f0c6 }
+  - { gate: mapping-rules, fingerprint: ed357bb586c204f7c500fbe5576362feb02f74e2c98ba46db13b32733ea0d049 }
+  - { gate: mapping-sources, fingerprint: 1597e9f8f91030913e4a5253149e930128c55e3fcd6aca5908b0761fa86d7340 }
+  - { gate: model-resolves, fingerprint: ed3c58aed9a92024ec3908094a91b4e067e9fe42616447464d413b289873b30d }
+  - { gate: modules-depends, fingerprint: f0fa3f68060ce4fa3c77e3b0627b9751169f7f291d6da70dcbbe0d117a569bfc }
+  - { gate: nesting, fingerprint: fa10c7123457569ca1b768d14a2a9ca0329a3cbecd7672fe43f6ac5723cd8c73 }
+  - { gate: npm-test, fingerprint: 527c20dccaa6f902b408721602ed8bfdd05653170abd8ae7e2bc00c670194a98 }
+  - { gate: plain-exemptions-file, fingerprint: d93ed78941ab1cab1462cd2fab2ad29bfcba19c0a830f4d3bad679254f0cc952 }
+  - { gate: plain-parity, fingerprint: 513a21361a7c4d9a2008f50d15b56fa72408e6a1ab34eab9ffae32e0b6880b41 }
+  - { gate: release-breaking, fingerprint: efbad2f17d821a6da55b208c771204ea5c9b25395808c69e0ed972ea6d2a7f96 }
+  - { gate: release-builds, fingerprint: 35c8e5d123e0348ab52b3a5f63fdf21727d463940d6bcf6597c46b29ea4f1c30 }
+  - { gate: release-digests, fingerprint: fe6bdb668b229f7d4d27b808fa1b845b200a095cd24bbf0108fdf2e051a5c4fb }
+  - { gate: round-trip, fingerprint: 4dded2f50b99be06f9af2fc2fe3d797b34e32d8a95eb8f1431f30f4520c0e549 }
+  - { gate: rule-vectors, fingerprint: f262bc7ee760e74f19ebbd0b547f501c703c29b97d952df451924c431bec1937 }
+  - { gate: rules-emit, fingerprint: 6548c4f876cff515a564b348a82a36bf101b9c19b511741e9fb942346863ac7e }
+  - { gate: schemas-conventions, fingerprint: 89760d44eacbfd8b437227c0f2e7f2c12a3aa69a9dba0f1ed0639eea35393510 }
+  - { gate: schemas-emit, fingerprint: 088b52e78b992d1bc60efd68f47be7bae991d623b9e378733878f45417d78cd9 }
+  - { gate: sdk-generate, fingerprint: 281a6b1426f1721b55d69b61457cd357696782d3f1947cf9d2609f3c6e858b17 }

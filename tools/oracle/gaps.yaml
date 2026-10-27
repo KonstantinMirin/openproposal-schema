@@ -1,0 +1,28 @@
+# The kernel vectors to which the reference oracle gives a verdict other
+# than the stated one. The oracle is python-jsonschema with the format
+# checkers tools/oracle/requirements.txt pins; `date-time` is
+# rfc3339-validator. Each gap says what the oracle does and which standard
+# gives the stated verdict. The kernel-engines gate in `npm run ci` fails on
+# a disagreement not listed here, on a listed one that no longer occurs, and
+# on a file written for other versions than the pins. The oracle's
+# acceptance of a trailing-newline mutant, the Python `$` defect, isn't
+# listed; the gate counts it.
+format: 1
+oracle: jsonschema 4.26.0, rfc3339-validator 0.1.4
+gaps:
+  - id: OG-1
+    reason: >-
+      rfc3339-validator's grammar writes the seconds as `[0-5]` and a digit,
+      so it rejects a leap second; its docstring says leap seconds are not
+      supported. RFC 3339 § 5.6 allows `time-second` 60, and § 5.7 places a
+      leap second at 23:59:60 UTC, as `2016-12-31T23:59:60Z`. Ajv and the
+      SDKs accept it.
+    vectors:
+      - { primitive: Timestamp, value: "2016-12-31T23:59:60Z", oracle: rejects }
+  - id: OG-2
+    reason: >-
+      rfc3339-validator rejects the year 0000, which it treats as no valid
+      date. RFC 3339 § 5.6 writes `date-fullyear` as any four digits, so
+      `0000-01-01T00:00:00Z` is valid. Ajv and the SDKs accept it.
+    vectors:
+      - { primitive: Timestamp, value: "0000-01-01T00:00:00Z", oracle: rejects }

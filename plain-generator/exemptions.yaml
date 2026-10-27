@@ -1,0 +1,165 @@
+# The parity cases where the classes a plain generator writes from the
+# published schema alone differ from the reference (type rules § 10). The
+# generator is datamodel-code-generator, as tools/plaingen/requirements.txt
+# pins it, with the options src/plain-parity.ts names. Each exemption says
+# what the generator does with the schema that makes its classes diverge.
+# The plain-generator gate in `npm run ci` fails on a divergence not listed
+# here and on a listed one that no longer occurs. A case runs on each lock
+# it exists on; an exemption with `locks` applies to those locks only.
+format: 1
+generator: datamodel-code-generator 0.86.0
+exemptions:
+  - id: PG-1
+    reason: >-
+      The generator writes no `if` / `then`, so a member that a condition
+      requires, such as `currency` when `basis` is `spend`, is optional in
+      the class and its absence passes, and a member whose type a condition
+      narrows, such as `amount`, a count when `basis` is `units`, keeps its
+      wider type. A part's `then: false`, such as a daypart window's, which
+      rejects a `start` of `24:00`, goes with it, so that window passes.
+    cases:
+      - { label: "corpus DaypartWindow#/then mutant", kind: verdict }
+      - { label: "corpus Commitment#/then/required/currency mutant", kind: verdict }
+      - { label: "corpus Commitment#/else/then/properties/amount/$ref mutant", kind: verdict }
+      - { label: "corpus MinCommitmentEntry#/then/required/currency mutant", kind: verdict }
+      - { label: "corpus MinCommitmentEntry#/else/then/properties/amount/$ref mutant", kind: verdict }
+      - { label: "corpus Proposal#/then/required/brief_ref mutant", kind: verdict }
+      - { label: "corpus LineItem#/then/required/terms_ref mutant", kind: verdict }
+  - id: PG-2
+    reason: >-
+      The generator drops `minProperties` and `maxProperties`, so an object
+      with too few or too many members passes.
+    cases:
+      - { label: "corpus MaxRange#/minProperties mutant", kind: verdict }
+      - { label: "corpus PriceDelta#/maxProperties mutant", kind: verdict }
+      - { label: "corpus PriceDelta#/minProperties mutant", kind: verdict }
+  - id: PG-3
+    reason: >-
+      For a string with `format: uri`, the generator writes Pydantic's
+      `AnyUrl` and drops the `pattern` beside it, so `Url` takes an `http:`
+      URL its pattern `^https://.+$` rejects.
+    cases:
+      - { label: "corpus Url#/pattern mutant", kind: verdict }
+      - { label: "primitive Url invalid vector 1", kind: verdict }
+  - id: PG-4
+    reason: >-
+      Pydantic's `AnyUrl` parses as the WHATWG URL standard does and strips
+      a trailing newline, so a `uri` with one passes, where RFC 3986 and
+      type rules § 2 reject it.
+    cases:
+      - { label: "primitive Url valid vector 1 with a trailing newline", kind: verdict }
+      - { label: "primitive Url valid vector 2 with a trailing newline", kind: verdict }
+  - id: PG-5
+    reason: >-
+      For `format: date-time` and `duration`, the generator writes Python's
+      `datetime` and `timedelta`, which Pydantic parses leniently: a JSON
+      number is a Unix time or a count of seconds, and `2 days` is a
+      duration. JSON Schema rejects each.
+    cases:
+      - { label: "corpus Duration#/type mutant", kind: verdict }
+      - { label: "corpus Timestamp#/type mutant", kind: verdict }
+      - { label: "primitive Duration invalid vector 4", kind: verdict }
+  - id: PG-6
+    reason: >-
+      Pydantic encodes a `datetime` and a `timedelta` in its own spelling,
+      with microseconds and in days, so `PT48H` comes back as `P2D` and
+      `.250` as `.250000`, and a lowercase `t` and `z` and the offset
+      `-00:00` come back as `T` and `Z`: the same instant or length, but not
+      the same JSON value.
+    cases:
+      - { label: "corpus Duration#/format baseline", kind: encoding }
+      - { label: "corpus Duration#/type baseline", kind: encoding }
+      - { label: "primitive Timestamp valid vector 2", kind: encoding }
+      - { label: "primitive Timestamp valid vector 3", kind: encoding }
+      - { label: "primitive Timestamp valid vector 4", kind: encoding }
+      - { label: "primitive Duration valid vector 1", kind: encoding }
+      - { label: "primitive Duration valid vector 3", kind: encoding }
+      - { label: "corpus Refresh#/additionalProperties baseline", kind: encoding }
+      - { label: "corpus Refresh#/required/min_interval_s baseline", kind: encoding }
+      - { label: "corpus Refresh#/type baseline", kind: encoding }
+  - id: PG-7
+    reason: >-
+      With strict types, which keep the string "3" from passing as an
+      integer, Pydantic's strict `int` also rejects an integral float such
+      as `1.0`, which JSON Schema counts as an integer. Without strict
+      types, both pass.
+    cases:
+      - { label: "primitive Count valid vector 1 written 0.0", kind: verdict }
+      - { label: "primitive Count valid vector 1 written 0e0", kind: verdict }
+      - { label: "primitive Count valid vector 2 written 1500000.0", kind: verdict }
+      - { label: "primitive Count valid vector 2 written 1500000e0", kind: verdict }
+      - { label: "primitive Count valid vector 3 written 9007199254740991.0", kind: verdict }
+      - { label: "primitive Count valid vector 3 written 9007199254740991e0", kind: verdict }
+      - { label: "primitive VendorCode valid vector 1 written 500.0", kind: verdict }
+      - { label: "primitive VendorCode valid vector 1 written 500e0", kind: verdict }
+      - { label: "primitive VendorCode valid vector 2 written 1024.0", kind: verdict }
+      - { label: "primitive VendorCode valid vector 2 written 1024e0", kind: verdict }
+  - id: PG-8
+    reason: >-
+      For an object keyed by `propertyNames` with a `$ref`, the generator
+      writes a dict keyed by a `RootModel` class, which isn't hashable, so
+      validating a non-empty map raises a `TypeError`. Every selection's
+      `pricing`, such as `FormatsSelection`'s, is such a map, so a selection
+      that prices its options can't be read.
+    cases:
+      - { label: "constructor Map vectors[0] as Map<FormatId, Count> valid 2", kind: error }
+  - id: PG-9
+    reason: >-
+      The generator drops `dependentRequired`, so a money member without the
+      `currency` it requires beside it passes, and so does an amount without
+      the `basis` that says what it counts, and a daypart without the
+      `time_zone` that reads it.
+    cases:
+      - { label: "corpus LineItem#/dependentRequired/daypart/time_zone mutant", kind: verdict }
+      - { label: "corpus PricingEntry#/dependentRequired/agreed_rate/currency mutant", kind: verdict }
+      - { label: "corpus PricingEntry#/dependentRequired/floor/currency mutant", kind: verdict }
+      - { label: "corpus PricingEntry#/dependentRequired/gross_rate/currency mutant", kind: verdict }
+      - { label: "corpus PricingEntry#/dependentRequired/seller_rate/currency mutant", kind: verdict }
+      - { label: "corpus MinCommitmentEntry#/dependentRequired/amount/basis mutant", kind: verdict }
+  - id: PG-10
+    reason: >-
+      For `format: uuid`, the generator writes Python's `UUID`, which Pydantic
+      parses as Python does: a `urn:uuid:` prefix, braces, and no hyphens all
+      pass, where JSON Schema takes the RFC 9562 string form only, and it
+      encodes a UUID in lowercase, so an uppercase one doesn't come back as
+      the same JSON value.
+    cases:
+      - { label: "corpus Uuid#/format mutant", kind: verdict }
+      - { label: "primitive Uuid invalid vector 1", kind: verdict }
+      - { label: "primitive Uuid invalid vector 2", kind: verdict }
+      - { label: "primitive Uuid invalid vector 3", kind: verdict }
+      - { label: "primitive Uuid valid vector 2", kind: encoding }
+  - id: PG-11
+    reason: >-
+      The generator drops a `dependentSchemas` entry with its `if` / `then`,
+      so a line item whose frequency cap has a `period` and no `time_zone`
+      passes.
+    cases:
+      - { label: "corpus LineItem#/dependentSchemas/frequency_cap/then/required/time_zone mutant", kind: verdict }
+  - id: PG-12
+    reason: >-
+      The generator drops `uniqueItems` on a list, which it types as a
+      plain list, so a daypart window that names one day twice passes. It
+      keeps `minItems`, as `min_length`, so a window with no day fails.
+    cases:
+      - { label: "corpus DaypartWindow#/properties/days/uniqueItems mutant", kind: verdict }
+  - id: PG-13
+    reason: >-
+      For a string with `format: date-time`, the generator writes Python's
+      `datetime` and drops the `pattern` beside it, and Pydantic parses ISO
+      8601 more leniently than RFC 3339, so a `Timestamp` with a space in
+      place of `T` and a `Z` offset, or with the offset `+0500`, passes,
+      where the pattern rejects it. It rejects the space with `+05`, and
+      `+05` alone, as the pattern does.
+    cases:
+      - { label: "primitive Timestamp invalid vector 6", kind: verdict }
+      - { label: "primitive Timestamp invalid vector 8", kind: verdict }
+  - id: PG-14
+    reason: >-
+      For a string with `format: date-time`, the generator writes Python's
+      `datetime`, which has no second 60 and no year 0, so Pydantic rejects
+      the leap second `2016-12-31T23:59:60Z` and the year `0000`, which RFC
+      3339 § 5.6 allows and the schema accepts.
+    cases:
+      - { label: "primitive Timestamp valid vector 5", kind: verdict }
+      - { label: "primitive Timestamp valid vector 6", kind: verdict }

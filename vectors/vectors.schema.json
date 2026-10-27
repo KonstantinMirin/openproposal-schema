@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/vectors/vectors.schema.json",
+  "title": "OpenProposal rule vectors",
+  "description": "Stage 5b input: vectors/<module>.yaml. The valid and invalid test vectors of each rule that JSON Schema can't express (type rules § 9), for the rules whose mapping entries, or whose § 3 marker rows, sit in the module's sections. Each entry stores the digest of its rule's element, so it goes stale when the rule's text changes, and cites a decision record where the vectors read more than the rule's own sentence says. The schema of the vectors' type accepts every vector, so the rule alone decides it. The primitives' and constructors' rules keep their vectors in kernel/primitives.yaml and kernel/constructors.yaml.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "module", "rules"],
+  "properties": {
+    "format": {
+      "description": "Version of this format.",
+      "const": 1
+    },
+    "module": {
+      "description": "Equals the file name without `.yaml`, and a mapping file's module.",
+      "$ref": "#/$defs/token"
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule", "digest", "valid", "invalid"],
+      "properties": {
+        "rule": {
+          "description": "The rule's ID: the IR element of its statement, such as `rule:5.5:2eab2842`, or, for a mutability marker, its § 3 marker row, such as `marker:3:seller-set`.",
+          "type": "string",
+          "pattern": "^[a-z][a-z-]*:\\S+$"
+        },
+        "digest": {
+          "description": "The digest of the rule's element when the vectors were written, as `npm run cite` prints it. A different current digest makes the vectors stale.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "locks": {
+          "description": "Lock names the entry applies to. Without it, the entry applies to every lock that has the rule.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/token" }
+        },
+        "decision": {
+          "description": "The decision record behind the vectors' reading of the rule. It must cover the rule's element.",
+          "type": "string",
+          "pattern": "^D-[0-9]{3,}$"
+        },
+        "sources": {
+          "description": "IR elements beyond the rule's own text that its vectors rest on, such as a sentence on the next line or the row of a condition the schema leaves to the rules. The cited decision covers each one, so a change to it makes the decision stale; each joins the rule's sources.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*:\\S+$" }
+        },
+        "type": {
+          "description": "The named type each vector's payloads are instances of. Without it, the rule's owner, which must then be an emitted type.",
+          "type": "string",
+          "pattern": "^[A-Z][A-Za-z0-9]*$"
+        },
+        "valid": {
+          "description": "Cases that conform to the rule.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/vector" }
+        },
+        "invalid": {
+          "description": "Cases that break the rule, though the schema accepts each payload.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/vector" }
+        }
+      }
+    },
+    "vector": {
+      "oneOf": [
+        {
+          "description": "One payload, for a rule about one payload: a comparison, a membership, a uniqueness, or arithmetic.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value"],
+          "properties": { "value": {}, "context": { "$ref": "#/$defs/context" } }
+        },
+        {
+          "description": "A pair of versions and the party that produced `after` from `before`, for a mutability rule.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["party", "before", "after"],
+          "properties": {
+            "party": { "enum": ["buyer", "seller"] },
+            "before": {},
+            "after": {},
+            "context": { "$ref": "#/$defs/context" }
+          }
+        },
+        {
+          "description": "A payload and what its receiver does with it, for a rule about receiver behavior: `process` it, `skip` it and go on with the rest of the proposal, or `reject` the proposal. The receiver recognizes the core terms of every vocabulary and no namespaced term.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "response"],
+          "properties": {
+            "value": {},
+            "response": { "enum": ["process", "skip", "reject"] },
+            "context": { "$ref": "#/$defs/context" }
+          }
+        }
+      ]
+    },
+    "context": {
+      "description": "Facts the rule reads that no payload of the vector's type holds, each keyed by the property that holds it in another type, such as `Proposal.seller_id`. Each value is an instance of that property's type.",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^[A-Z][A-Za-z0-9]*\\.[a-z][a-z0-9_]*$" }
+    },
+    "token": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    }
+  }
+}

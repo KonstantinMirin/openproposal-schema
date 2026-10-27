@@ -1,0 +1,21 @@
+format: 1
+id: G-042
+date: 2026-10-26
+question: Do the examples gate's rule against a finding that cites a gap and a departure, and the kernel placement of a module's vocabulary, each have a known-bad fixture?
+decision: >-
+  The examples gate gets a fixture that adds a gap to a departure's finding,
+  which the gate fails as citing a gap and a departure. The mapping-sources
+  gate fails on a type entry that places its vocabulary in the kernel,
+  `module: kernel`, apart from its file's module, unless a decision it cites
+  has a sentence that says the type is the kernel's and why; a fixture
+  removes that sentence from D-013, which places `Party`. The mapping-names
+  gate shares the code, so its fingerprint changes with no change to what
+  it checks.
+rationale: >-
+  The rule on a finding's causes had no known-bad fixture, and the
+  `module: kernel` field needed a decision only by convention. The gates add
+  a check and two fixtures and drop none, so no gate is weaker.
+accepts:
+  - { gate: examples-validate, fingerprint: dd9ad0224bf6cd3688fd6e3ae05dafd7640bbd12c090a791497226d3c6a687e6 }
+  - { gate: mapping-names, fingerprint: 16cba23a250f70a34b58d57c54bf0182d599683a73d067aa0d3933396c6ca2b0 }
+  - { gate: mapping-sources, fingerprint: 3106c714927ad2000952d42c28b0c38f569eb025bfe5c488b597dd5cbd5e0632 }

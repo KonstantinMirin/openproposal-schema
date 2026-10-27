@@ -1,0 +1,22 @@
+format: 1
+id: G-021
+date: 2026-10-26
+question: How does the fidelity oracle read a named list that reserves codes for vendors, as List API Frameworks reserves 500 and up?
+decision: >-
+  A sentence that gives a member any code of a named list reads, beside the
+  list's codes, the first code the list reserves for vendors, from
+  `kernel/lists.yaml`'s `vendor`: every integer from it up is a listed value.
+  For `api[]`, 500 is valid, and 499, below the vendor codes, and 10, after
+  the last code, are invalid; a list with no vendor codes, such as List:
+  Plcmt Subtypes - Video, stays closed at its codes. Two fixtures close the
+  API frameworks, so 500 fails, and start the vendor codes at 499, so 499
+  passes. A test checks the reading and the vectors. The test suite holds 321
+  tests, so its floor rises to 321.
+rationale: >-
+  The oracle read List: API Frameworks as closed at its nine codes, so it
+  tested 10 and never a vendor code, and a schema that rejected every vendor
+  code, or accepted 499, passed. It now tests both sides of the vendor bound,
+  keeps every vector it had, and the test floor rises, so no gate is weaker.
+accepts:
+  - { gate: fidelity, fingerprint: dc9d3340b979e64b28f46ec8eccd455f410e5d8b3fcff401e05199a34406fd09 }
+  - { gate: npm-test, fingerprint: 0a3002b1444f40120e7821da181af463865857f068b4c82c01cfaa92fbea9b76 }

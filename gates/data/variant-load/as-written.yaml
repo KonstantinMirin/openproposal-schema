@@ -1,0 +1,222 @@
+# A known-bad variant file for the variant-load gate: the D-039 switch names no option.
+# The as-written variant: the schemas with every change we propose switched
+# off. Each switch names a departure record and the option of it the variant
+# takes, the form the text or its examples write, and says how the variant
+# reads the field. Every point the text leaves open stays filled by its gap
+# record, in both variants. `npm run ci` checks that every departure has one
+# switch, that each retyped element is one its departure covers, and that the
+# variant differs from the schemas we propose only where a switch says.
+format: 1
+name: as-written
+description: >-
+  The schemas as the specification and its examples write the points our
+  proposals change: opaque string IDs, the integers 0 and 1 for AdCOM's
+  flags, spans as the text or its examples write them, bare terms where the
+  text lists none, calendar dates for a flight, and options with only the
+  members the text lists. Every point the text leaves open is filled as in
+  the schemas we propose.
+concepts:
+  - name: bare-term
+    domain: term
+    meaning: A term or word the text names no list or form for, written bare as the examples write it, which a receiver compares by exact equality.
+  - name: calendar-date
+    domain: time
+    meaning: A day of the calendar, which names no instant until a time zone reads it.
+primitives:
+  - name: Identifier
+    description: The identity of a record a party mints, such as a proposal or a line item, written as any string, as the specification types it. The text states no form, so a receiver compares two identities by exact string equality.
+    type: string
+    concept: minted-id
+    constraints: {}
+    sources:
+      spec:
+        - ir: field:4.1:proposal_id
+          digest: fb8604e60eabfa2db105b17ca562af8ba2f20784907dcce349772ce83054088d
+          quote: "`proposal_id` | String | immutable | Unique identity for the proposal object"
+        - ir: field:5.1:line_item_id
+          digest: 60cd2aeea40121597f5e2b0725417665bc560c9b677000d3dfbc432d1c88c969
+          quote: "`line_item_id` | String | immutable | Identity within the proposal"
+    vectors:
+      valid: [ "examplepub-us-q4-2026-omni", "business-daily-display", "7c9e6679-7425-40de-944b-e07fc1f90ae7", "" ]
+      invalid: [ 42, true, null, [ "business-daily-display" ] ]
+    showcase: [ "examplepub-q4-2026-display", "examplepub-q4-2026-video" ]
+  - name: IntegerFlag
+    description: A yes or no, written as the integer `0` (no) or `1` (yes), as AdCOM 1.0 and OpenRTB 2.6 write the flag of the same name.
+    type: integer
+    concept: flag
+    locks: [ with-open-prs ]
+    constraints:
+      minimum: 0
+      maximum: 1
+    sources:
+      spec:
+        - ir: key:5.2.2:placement.reward#meaning/values:1
+          digest: a1ee2de06115664b61cd55dd1806c6f7bf19446b7c9a49840198ae8c461aeddd
+          quote: "`0` (no) | `1` (yes)"
+          locks: [ with-open-prs ]
+        - ir: rule:5.2.2:463dfafd
+          digest: eee71b1ff54c633f884713ce121e5b82ef4ecc041de54921c9ab66336402c469
+          quote: Each key takes an integer, except `playmethod[]` and `api[]`, which take arrays of integers, and `refresh`, an object whose `min_interval_s` is a REQUIRED integer.
+          locks: [ with-open-prs ]
+      standards:
+        - name: AdCOM 1.0, Object Placement (`reward`), Object DisplayPlacement (`instl`), Object VideoPlacement (`skip`)
+          url: https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#object_placement
+    vectors:
+      valid: [ 0, 1 ]
+      invalid: [ 2, -1, 0.5, true, "1" ]
+    showcase: [ 1, 0 ]
+  - name: BareTerm
+    description: A term or word written bare, letters and digits joined by underscores, such as `modeled`, `daily`, or `30d`, as the specification's examples write it where the text lists no values and states no form.
+    type: string
+    concept: bare-term
+    constraints:
+      pattern: '^[A-Za-z0-9]+(_[A-Za-z0-9]+)*$'
+    decision: D-041
+    sources:
+      spec:
+        - ir: field:5.3:audiences#description/object:1
+          digest: 0a7d355ab5dcb787717d01988764dcca8895bdc0b1252de9e8269ad516e7ac6b
+          quote: "{ id, name, taxonomy_ref, provenance, addressable_scale }"
+        - ir: field:5.7:reporting#description/object:1
+          digest: 15b343617f534633524b7226be5e3f1d36fa7042fd26aa52c5fde05bc1e50adb
+          quote: "{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency }"
+    vectors:
+      valid: [ "modeled", "seller_reported", "vast_4_2", "daily", "30d" ]
+      invalid: [ "", "examplepub.example:mrc", "two words", "trailing_", "_leading", "a__b", 7 ]
+    showcase: [ "first_party", "modeled" ]
+  - name: CalendarDate
+    description: A calendar date, written as an RFC 3339 `full-date`, `YYYY-MM-DD`, such as `2026-10-06`, as the specification's examples write a flight's start and end. A date names no instant until a time zone reads it, and the text names none for a flight.
+    type: string
+    concept: calendar-date
+    constraints:
+      format: date
+    decision: D-042
+    sources:
+      spec:
+        - ir: key:5.6.1:commitment.flight_start
+          digest: f55507bcfbcdffa24a4949e12e1e59a92cef3e9b56f23e47b59e6b8c20f0d4fb
+          quote: "`flight_start` | REQUIRED | The buyer's campaign start. Distinct from `valid_from`"
+      standards:
+        - name: RFC 3339, Date and Time on the Internet (full-date)
+          url: https://www.rfc-editor.org/rfc/rfc3339#section-5.6
+    vectors:
+      valid: [ "2026-10-06", "2026-12-21", "2028-02-29" ]
+      invalid: [ "2026-13-01", "2026-02-30", "2026-10-06T00:00:00Z", "20261006", "2026-1-6", 20261006 ]
+    showcase: [ "2026-10-06", "2026-12-21" ]
+switches:
+  - decision: D-037
+    option: opaque-string
+    reads: >-
+      Every ID a party mints, and every reference to one, is any string, as
+      the text types `proposal_id` and `line_item_id`: `proposal_id`,
+      `line_item_id`, `asset_id`, `correlation_id`, `idempotency_key`, a
+      commitment's `proposal_id`, `requires`' line items, and the `id` of
+      every object option, which `included[]` and the `pricing` keys name it
+      by.
+    replace:
+      - { type: Uuid, with: Identifier }
+    rewrite:
+      - { in: Selectable, from: "the UUID the seller mints for it", to: "the identity the seller mints for it" }
+      - { in: Selectable, from: "so `K` is `Uuid`, the identity", to: "so `K` is the type of that `id`, the identity" }
+  - decision: D-039
+    reads: >-
+      `placement.reward`, `instl`, and `skip` are the integers `0` (no) and
+      `1` (yes), as § 5.2.2 and AdCOM 1.0 write them.
+    retype:
+      - { ir: key:5.2.2:placement.reward, from: boolean, to: IntegerFlag, locks: [ with-open-prs ] }
+      - { ir: key:5.2.2:placement.instl, from: boolean, to: IntegerFlag, locks: [ with-open-prs ] }
+      - { ir: key:5.2.2:placement.skip, from: boolean, to: IntegerFlag, locks: [ with-open-prs ] }
+    convert:
+      - { from: true, to: 1 }
+  - decision: D-040
+    option: as-written
+    reads: >-
+      A production option's `lead_time` is prose, such as "10 business
+      days"; a report's `cadence`, an availability's `granularity`, and a
+      measurement source's `attribution_window` are bare words, such as
+      `daily` and `30d`; and `placement.skipafter` and
+      `refresh.min_interval_s` are whole seconds, as § 5.2.2 and AdCOM 1.0
+      write them. `hold_duration`, which the text writes as an ISO 8601
+      duration, stays one.
+    retype:
+      - { ir: "field:5.4:production#description/object:1", member: lead_time, from: Duration, to: Text }
+      - { ir: "field:5.7:reporting#description/object:1", member: cadence, from: Duration, to: BareTerm }
+      - { ir: "field:5.6:availability#description/object:1", member: granularity, from: Duration, to: BareTerm }
+      - { ir: "field:5.7:measurement_source#description/object:1", member: attribution_window, from: Duration, to: BareTerm }
+      - { ir: key:5.2.2:placement.skipafter, from: Duration, to: Count, locks: [ with-open-prs ] }
+      - { ir: "key:5.2.2:placement.refresh#meaning/object:1", member: min_interval_s, from: Duration, to: Count, locks: [ with-open-prs ] }
+  - decision: D-041
+    option: bare-term
+    reads: >-
+      Each field whose values are terms the text doesn't list takes a bare
+      term, such as `modeled`, `vast_4_2`, `mrc`, or `s3`: an audience's
+      `provenance`, `creative_delivery.protocol`, an asset's
+      `approval_status`, `availability`'s `unit` and `basis`,
+      `committed_metrics[]`'s `basis`, `reporting`'s `delivery_mechanism`,
+      and, on `main`, an external reference's `role`.
+    replace:
+      - { type: AssetApprovalStatus, with: BareTerm }
+      - { type: AvailabilityBasis, with: BareTerm }
+      - { type: AvailabilityUnit, with: BareTerm }
+      - { type: CreativeDeliveryProtocol, with: BareTerm }
+      - { type: ExternalReferenceRole, with: BareTerm, locks: [ main ] }
+      - { type: MeasurementBasis, with: BareTerm }
+      - { type: Provenance, with: BareTerm }
+      - { type: ReportingDeliveryMechanism, with: BareTerm }
+    convert:
+      - { from: "measure.example:impressions", to: impressions }
+  - decision: D-042
+    option: date
+    reads: >-
+      A commitment's `flight_start` and `flight_end` are calendar dates,
+      such as `2026-10-06`, as the examples write them. The text names no
+      time zone that reads them.
+    retype:
+      - { ir: key:5.6.1:commitment.flight_start, from: Timestamp, to: CalendarDate }
+      - { ir: key:5.6.1:commitment.flight_end, from: Timestamp, to: CalendarDate }
+    rewrite:
+      - { in: Timestamp, from: ", the start of a flight included", to: "" }
+      - { in: FrequencyCapPeriod, from: "between two Timestamps", to: "between two calendar dates" }
+  - decision: D-047
+    option: as-written
+    reads: >-
+      The production, measurement source, and reporting options have only
+      the members the text lists, and no `id`, so `included[]` and the
+      `pricing` keys can't name them.
+    withhold: [ ProductionOption, MeasurementSourceOption, ReportingOption ]
+    findings:
+      - example: examples/line-item-audio.yaml
+        path: /production/available/0/id
+        kind: undefined_key
+        value: seller_built
+        reason: The example gives a production option an `id`, which the text doesn't list among its members.
+      - example: examples/line-item-audio.yaml
+        path: /production/available/1/id
+        kind: undefined_key
+        value: buyer_supplied
+        reason: The example gives a production option an `id`, which the text doesn't list among its members.
+      - example: examples/line-item-display.yaml
+        path: /measurement_source/included/0
+        kind: rule
+        rule: constructor:Selectable:options-named
+        value: IAS
+        reason: As written, a measurement source has no `id`, so `included[]` can't name it; the example names it by its `vendor`.
+      - example: examples/line-item-display.yaml
+        path: /reporting/included/0
+        kind: rule
+        rule: constructor:Selectable:options-named
+        value: aggregate
+        reason: As written, a reporting option has no `id`, so `included[]` can't name it; the example names it by its `feed_type`.
+      - example: examples/line-item-display.yaml
+        path: /reporting/pricing/log_level
+        kind: rule
+        rule: constructor:Selectable:options-named
+        value: { delta_flat: 2500 }
+        reason: As written, a reporting option has no `id`, so a `pricing` key can't name it; the example names it by its `feed_type`.
+      - example: examples/line-item-rewarded-video.yaml
+        path: /measurement_source/included/0
+        kind: rule
+        rule: constructor:Selectable:options-named
+        value: IAS
+        locks: [ with-open-prs ]
+        reason: As written, a measurement source has no `id`, so `included[]` can't name it; the example names it by its `vendor`.

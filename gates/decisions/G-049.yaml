@@ -1,0 +1,20 @@
+format: 1
+id: G-049
+date: 2026-10-26
+question: What do the examples gate and the feedback test read once the records carry the verified wording of the #121 gist?
+decision: >-
+  The records' questions, feedback, and chosen readings take the gist's
+  verified wording: long sentences split, and lists written as items. The
+  recorded reasons of eight example failures get back the `id` code span
+  that an earlier edit dropped, so they read "a catalog entry's `id`
+  included", and two of them say the namespaced-terms proposal in a
+  sentence of its own. The examples gate reads those reasons, so its
+  fingerprint changes with no change to what it checks. The feedback test
+  adds assertions that two decisions render their lists as items and that
+  no reason drops the code span.
+rationale: >-
+  Only the text for the working group changes; every check stays, and the
+  test asserts more, so no gate is weaker.
+accepts:
+  - { gate: examples-validate, fingerprint: 68f5c5f78dc6c43c0b98d879cd2dd1ee263d511bb24a3942ee4b9ccdab046b65 }
+  - { gate: npm-test, fingerprint: 51f6886265945d0fadb320dce1ef8fe0f3261499e07462bc11db18b43be97055 }

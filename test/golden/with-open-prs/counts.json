@@ -1,0 +1,118 @@
+{
+  "ir": {
+    "sections": 45,
+    "tables": 24,
+    "tables_by_layout": {
+      "appendix-a": 1,
+      "appendix-b": 1,
+      "concept-standard": 1,
+      "field": 12,
+      "key-meaning": 2,
+      "key-required-meaning": 3,
+      "key-required-meaning-mapping": 1,
+      "marker-meaning": 1,
+      "value-condition": 1,
+      "value-distribution-device": 1
+    },
+    "table_rows": 223,
+    "table_rows_by_layout": {
+      "appendix-a": 80,
+      "appendix-b": 8,
+      "concept-standard": 4,
+      "field": 80,
+      "key-meaning": 8,
+      "key-required-meaning": 17,
+      "key-required-meaning-mapping": 8,
+      "marker-meaning": 7,
+      "value-condition": 6,
+      "value-distribution-device": 5
+    },
+    "fields": 80,
+    "field_names": 81,
+    "fields_by_marker": {
+      "derived": 11,
+      "immutable": 7,
+      "mixed": 2,
+      "requestable": 3,
+      "selectable": 13,
+      "seller-set": 36,
+      "settable": 4,
+      "supplied": 4
+    },
+    "fields_by_owner": {
+      "line_item": 63,
+      "proposal": 17
+    },
+    "keys": 33,
+    "keys_by_layout": {
+      "key-meaning": 8,
+      "key-required-meaning": 17,
+      "key-required-meaning-mapping": 8
+    },
+    "definitions": 11,
+    "markers": 7,
+    "concepts": 4,
+    "value_lists": 31,
+    "value_lists_by_origin": {
+      "inline_object": 9,
+      "prose": 2,
+      "table_cell": 20
+    },
+    "inline_objects": 29,
+    "inline_objects_by_origin": {
+      "prose": 3,
+      "table_cell": 26
+    },
+    "statements": 80,
+    "statements_body": 79,
+    "statements_by_level": {
+      "MAY": 15,
+      "MUST": 37,
+      "MUST NOT": 15,
+      "OPTIONAL": 4,
+      "REQUIRED": 7,
+      "SHOULD NOT": 1
+    },
+    "statements_with_keyword": {
+      "MAY": 16,
+      "MUST": 40,
+      "MUST NOT": 15,
+      "OPTIONAL": 5,
+      "REQUIRED": 7,
+      "SHOULD NOT": 1
+    },
+    "sentences": 78,
+    "code_spans": 346,
+    "identifier_lists": 3,
+    "code_blocks": 6,
+    "appendix_a_rows": 80,
+    "appendix_b_rows": 8
+  },
+  "findings": {
+    "total": 100,
+    "open": 73,
+    "by_kind": {
+      "duplicate_field_disagrees": 1,
+      "name_reused_with_different_values": 2,
+      "value_set_duplicate": 2,
+      "value_set_subset": 2,
+      "unresolved_identifier": 39,
+      "array_suffix_mismatch": 6,
+      "expression_value_unknown": 2,
+      "object_without_structure": 7,
+      "option_shape_missing": 5,
+      "enum_without_values": 1,
+      "must_without_field": 26,
+      "marker_undefined": 1,
+      "key_presence_unstated": 2,
+      "key_required_is_marker": 1,
+      "presence_unstated": 2,
+      "unnumbered_heading": 1
+    },
+    "by_verdict": {
+      "open": 73,
+      "false_positive": 1,
+      "accepted": 26
+    }
+  }
+}

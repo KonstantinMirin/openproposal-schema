@@ -1,0 +1,435 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/mapping/mapping.schema.json",
+  "title": "OpenProposal mapping file",
+  "description": "Stage 3 input, one file per module: mapping/<module>.yaml. The file names the specification sections the module owns. Each entry maps one IR element in those sections to what it becomes in the model, and stores the element's digest so the entry goes stale when the element changes. `types` declares the model types that no single IR element defines.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "module", "sections", "entries"],
+  "properties": {
+    "format": {
+      "description": "Version of this format.",
+      "const": 1
+    },
+    "module": {
+      "description": "The module every entry in the file belongs to. Equals the file name without `.yaml`.",
+      "$ref": "#/$defs/module"
+    },
+    "sections": {
+      "description": "The specification sections the module owns, as IR section IDs such as `5.6` or `5.4/creative-inspection-and-previews`. Every section belongs to exactly one module, and every entry's element sits in one of its file's sections.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[A-Za-z0-9.]+(/[a-z0-9-]+)?$" }
+    },
+    "depends": {
+      "description": "The other modules whose types this module's types may reference, the kernel aside, which every module may reference (type rules § 3). The convention gate fails on a reference to a module the file doesn't list, on a listed module that no type references on any lock, and on a cycle.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/module" }
+    },
+    "types": {
+      "description": "Model types that no single IR element defines: a document, an object that a key table or sub-field rows describe, an object or vocabulary that a decision gives a shape, and a union that a slash type names.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/declaration" }
+    },
+    "entries": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ir", "digest", "source", "as"],
+      "properties": {
+        "ir": {
+          "description": "The IR element ID, such as `field:5.6:pricing[].cost_method`.",
+          "$ref": "#/$defs/irId"
+        },
+        "digest": {
+          "description": "The element's digest when the entry was written. A different current digest makes the entry stale.",
+          "$ref": "#/$defs/sha256"
+        },
+        "locks": {
+          "description": "Lock names the entry applies to. Without it, the entry applies to every lock.",
+          "$ref": "#/$defs/locks"
+        },
+        "source": { "$ref": "#/$defs/source" },
+        "as": { "$ref": "#/$defs/target" }
+      },
+      "if": {
+        "required": ["as"],
+        "properties": {
+          "as": {
+            "type": "object",
+            "required": ["role", "layer"],
+            "properties": { "role": { "const": "type" }, "layer": { "const": "vocabulary" } }
+          }
+        }
+      },
+      "then": {
+        "description": "Type rules § 6: whether a vocabulary is open is recorded with a decision record.",
+        "properties": { "source": { "type": "object", "properties": { "rule": false } } }
+      }
+    },
+    "source": {
+      "description": "What decided an entry or a declaration: a deterministic mapping rule (src/mapping-rules.ts), or one or more decision records, each of which covers the element.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["rule"],
+          "properties": { "rule": { "$ref": "#/$defs/token" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["decision"],
+          "properties": { "decision": { "$ref": "#/$defs/decisionId" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["decisions"],
+          "properties": { "decisions": { "type": "array", "minItems": 2, "uniqueItems": true, "items": { "$ref": "#/$defs/decisionId" } } }
+        }
+      ]
+    },
+    "declaration": {
+      "description": "A model type that no single IR element defines, tagged by `kind`.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "kind", "source"],
+      "properties": {
+        "name": { "$ref": "#/$defs/name" },
+        "kind": { "enum": ["document", "object", "vocabulary", "union"] },
+        "ir": {
+          "description": "The IR element the type comes from, such as the field row whose value it is, or a row of the key table that describes it. A rule source checks the type against it, and a decision source must cover it.",
+          "$ref": "#/$defs/irId"
+        },
+        "locks": { "$ref": "#/$defs/locks" },
+        "source": { "$ref": "#/$defs/source" },
+        "open": {
+          "description": "As for a type entry: a vocabulary with namespaced terms, or an object that accepts members it doesn't name.",
+          "type": "boolean"
+        },
+        "members": { "$ref": "#/$defs/members" },
+        "includes": {
+          "description": "An object that carries every field of a profile, as the emitter projects it from the profile's document, besides its own `members`, such as a manifest entry that carries a proposal's Summary Representation (type rules § 3). Names the profile as `<Document><Profile>`.",
+          "$ref": "#/$defs/name"
+        },
+        "terms": {
+          "description": "A vocabulary's core terms, where no value list states them, spelled as the specification spells them.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[A-Za-z0-9]+(_[A-Za-z0-9]+)*$" }
+        },
+        "description": {
+          "description": "What a vocabulary's terms mean where no row says, such as how they spell a code list's codes and what each one counts, or what an object holds, which an open object whose members the specification doesn't state says in the text's words, for the schema's and the SDKs' description. The terms, the list, and the members stay the source of the values.",
+          "type": "string",
+          "minLength": 12
+        },
+        "list": {
+          "description": "The code list of another standard, in `kernel/lists.yaml`, whose codes the vocabulary's terms are, one term for each code (type rules § 6). A term is its code, a decimal term an integer code, unless `codes` maps it to the code it stands for.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name"],
+          "properties": {
+            "name": { "type": "string", "minLength": 3 },
+            "codes": {
+              "description": "Each term spelled as the specification spells its terms, with the code it stands for, where the two differ, such as `flight` for OpenDirect's `LineDuration`.",
+              "type": "object",
+              "minProperties": 1,
+              "propertyNames": { "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$" },
+              "additionalProperties": { "type": "string", "pattern": "^[A-Za-z0-9]+$" }
+            }
+          }
+        },
+        "any_of": {
+          "description": "A union's branches (type rules § 8).",
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/typeRef" }
+        }
+      },
+      "oneOf": [
+        { "properties": { "kind": { "const": "document" }, "open": false, "terms": false, "any_of": false, "includes": false, "list": false, "description": false } },
+        { "required": ["open"], "properties": { "kind": { "const": "object" }, "terms": false, "any_of": false, "list": false } },
+        { "required": ["open"], "properties": { "kind": { "const": "vocabulary" }, "members": false, "any_of": false, "includes": false }, "dependentRequired": { "list": ["terms"] } },
+        { "required": ["any_of"], "properties": { "kind": { "const": "union" }, "open": false, "members": false, "terms": false, "includes": false, "list": false, "description": false } }
+      ]
+    },
+    "members": {
+      "description": "An object's members, keyed by member name without `[]`. A member that holds a list is typed with `List`.",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "presence"],
+        "properties": {
+          "type": { "$ref": "#/$defs/typeRef" },
+          "presence": {
+            "description": "As for a property. No inline object states presence, so a member is `optional` unless a statement makes it required and a decision says so.",
+            "enum": ["required", "optional", "conditional"]
+          },
+          "description": {
+            "description": "Where the member's value comes from, for a member no row describes, such as a terms document's version as its publisher writes it. A type names how a value validates, not where it comes from (type rules § 3a).",
+            "type": "string",
+            "minLength": 12
+          }
+        }
+      }
+    },
+    "target": {
+      "description": "What the element becomes, tagged by `role`. Names the IR already gives, such as a property name or a term, are not repeated here.",
+      "oneOf": [
+        {
+          "description": "A field or key row becomes a property of an object or document. The property names are the last segments of the IR names.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["role", "object", "type", "presence"],
+          "properties": {
+            "role": { "const": "property" },
+            "object": { "$ref": "#/$defs/name" },
+            "type": { "$ref": "#/$defs/typeRef" },
+            "presence": {
+              "description": "`conditional` takes its condition from the IR, as in \"REQUIRED when `basis = spend`\".",
+              "enum": ["required", "optional", "conditional"]
+            }
+          }
+        },
+        {
+          "description": "The element defines a named type, such as a value list defining a vocabulary or an inline object defining an object. An object or document lists its members.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["role", "name", "layer"],
+          "properties": {
+            "role": { "const": "type" },
+            "name": { "$ref": "#/$defs/name" },
+            "layer": { "enum": ["primitive", "constructor", "vocabulary", "object", "document"] },
+            "open": {
+              "description": "A vocabulary: true for a core list plus namespaced terms (type rules § 6). An object: true if it accepts members it doesn't name, false if it rejects them (type rules § 4). A document is closed.",
+              "type": "boolean"
+            },
+            "members": { "$ref": "#/$defs/members" },
+            "module": {
+              "description": "A vocabulary that no module owns, such as the two parties every § 3 marker names, belongs to the kernel, beside `Marker` (type rules § 3). The entry stays in the file of the module that owns its element's section, and a decision it cites says why, in a sentence that says the type is the kernel's, as \"`Party` is the kernel's\", with its reason; the mapping-sources gate checks it.",
+              "const": "kernel"
+            }
+          },
+          "if": { "properties": { "layer": { "const": "vocabulary" } } },
+          "then": { "required": ["open"], "properties": { "open": { "type": "boolean" }, "members": false } },
+          "else": {
+            "if": { "properties": { "layer": { "const": "object" } } },
+            "then": { "required": ["open"], "properties": { "open": { "type": "boolean" }, "module": false } },
+            "else": {
+              "if": { "properties": { "layer": { "const": "document" } } },
+              "then": { "properties": { "open": false, "module": false } },
+              "else": { "properties": { "open": false, "members": false, "module": false } }
+            }
+          }
+        },
+        {
+          "description": "The element lists more members of an object that a declaration defines, as the second inline object of a `mixed` field does.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["role", "object", "members"],
+          "properties": {
+            "role": { "const": "members" },
+            "object": { "$ref": "#/$defs/name" },
+            "members": { "$ref": "#/$defs/members" }
+          }
+        },
+        {
+          "description": "The element restates a named type that another entry defines, such as a value list declared twice.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["role", "name"],
+          "properties": {
+            "role": { "const": "same" },
+            "name": { "$ref": "#/$defs/name" }
+          }
+        },
+        {
+          "description": "A value-definition row defines one term of a vocabulary. The term is the IR value.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["role", "vocabulary"],
+          "properties": {
+            "role": { "const": "term" },
+            "vocabulary": { "$ref": "#/$defs/name" }
+          }
+        },
+        {
+          "description": "The element becomes a rule beyond the schema (type rules § 9) that a check of one payload, or of two versions and the acting party, can decide. Its owner is the smallest type that contains every field it mentions, or the `Marker` vocabulary for a rule about every field that carries a marker. The rule ID is the IR element ID.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["role", "object"],
+          "properties": {
+            "role": { "const": "rule" },
+            "object": { "$ref": "#/$defs/name" }
+          }
+        },
+        {
+          "description": "The element becomes an obligation (type rules § 9): a requirement or a permission on a party's behavior that no check of a payload can decide, such as rejecting a stale commitment attempt. The obligation ID is the IR element ID.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["role", "party"],
+          "properties": {
+            "role": { "const": "obligation" },
+            "party": { "enum": ["seller", "buyer", "consumer", "implementation"] }
+          }
+        },
+        {
+          "description": "A statement the schema of one named type, constructor, or part already expresses, such as a bound on a primitive.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["role", "in"],
+          "properties": {
+            "role": { "const": "schema" },
+            "in": { "$ref": "#/$defs/name" }
+          }
+        },
+        {
+          "description": "The element carries no conformance content.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["role"],
+          "properties": { "role": { "const": "informative" } }
+        },
+        {
+          "description": "The element is an example of part of a named type's value, such as a YAML block of line-item fields. The examples gate validates it.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["role", "object"],
+          "properties": {
+            "role": { "const": "example" },
+            "object": { "$ref": "#/$defs/name" }
+          }
+        },
+        {
+          "description": "The element states what a profile of a document holds, such as the § 2.1 Summary Representation. The model projects each path the element lists from the document, and each path a cited decision reads from an item the element writes in prose, `reads`; `members` are the members a profile has that the document doesn't.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["role", "profile", "document"],
+          "properties": {
+            "role": { "const": "profile" },
+            "profile": { "$ref": "#/$defs/name" },
+            "document": { "$ref": "#/$defs/name" },
+            "members": { "$ref": "#/$defs/members" },
+            "reads": {
+              "description": "What a cited decision reads from the items the element writes in prose: each prose item, `item`, as the element writes it, with the `paths` the decision reads it as, such as § 2.1's \"property names\" read as `properties.available[].name`, each as the tables write a path. The text names no member, so each member keeps the presence its object gives it (type rules § 4). The fidelity gate refuses an item the element doesn't write in prose, and a path that starts at a field one of the element's code paths names, which would widen what that path projects.",
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["item", "paths"],
+                "properties": {
+                  "item": { "type": "string", "minLength": 1 },
+                  "paths": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\[\\])?(\\.[a-z][a-z0-9_]*(\\[\\])?)*$" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "description": "The element is generated from the model and checked by the round trip, such as an Appendix A row.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["role"],
+          "properties": { "role": { "const": "rendered" } }
+        }
+      ]
+    },
+    "typeRef": {
+      "description": "A property's type, tagged by `kind`: a named type, the inline boolean, a constructor applied to a type, or a constructor's parameter.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "name"],
+          "properties": {
+            "kind": { "const": "named" },
+            "name": { "$ref": "#/$defs/name" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind"],
+          "properties": { "kind": { "const": "boolean" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "constructor", "arguments"],
+          "properties": {
+            "kind": { "const": "apply" },
+            "constructor": { "$ref": "#/$defs/name" },
+            "arguments": {
+              "description": "One type per parameter of the constructor, keyed by the parameter's name, as `kernel/constructors.yaml` declares it, such as `{ T: … }` for `List`.",
+              "type": "object",
+              "minProperties": 1,
+              "propertyNames": { "$ref": "#/$defs/name" },
+              "additionalProperties": { "$ref": "#/$defs/typeRef" }
+            },
+            "name": {
+              "description": "Overrides the name that type rules § 7 derives for the concrete copy. Needs a decision record.",
+              "$ref": "#/$defs/name"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "name"],
+          "properties": {
+            "kind": { "const": "parameter" },
+            "name": { "$ref": "#/$defs/name" }
+          }
+        }
+      ]
+    },
+    "module": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "name": {
+      "description": "A model type name.",
+      "type": "string",
+      "pattern": "^[A-Z][A-Za-z0-9]*$"
+    },
+    "token": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "irId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z-]*:\\S+$"
+    },
+    "decisionId": {
+      "type": "string",
+      "pattern": "^D-[0-9]{3,}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "locks": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" }
+    }
+  }
+}

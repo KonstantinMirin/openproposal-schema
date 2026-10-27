@@ -1,0 +1,104 @@
+format: 1
+id: D-036
+status: proposed
+kind: gap
+author: agent
+question: Where is the currency of a money value, and must it be present with the value?
+covers:
+  - ir: field:5.6:pricing[]
+    digest: 362371b22d681a7cf62432d36c01b9a96ee682c497028234b637b2a3f0df8b0b
+    quote: "`pricing[]` | Array[Object] | mixed | See below"
+  - ir: field:5.6:pricing[].gross_rate
+    digest: f432867a10e6b5662c58996ee4f1c3ea14cddc65968fb1f879bbc703940b9621
+    quote: "`pricing[].gross_rate` | Number | seller-set | The list rate the buyer pays"
+  - ir: field:5.6:pricing[].currency
+    digest: c3fe3033ef8ca1012e67b36b728cc3383f4f4b4642ded0b50c4537216dcafde1
+    quote: "`pricing[].currency` | String | seller-set | ISO-4217"
+  - ir: key:5.6.1:commitment.amount
+    digest: 9e4c291747cc047e67c9ef7b1b6f9776d02bb2e82de16dfe9b8079e42921e804
+    quote: "`amount` | REQUIRED | The figure committed"
+  - ir: key:5.6.1:commitment.basis
+    digest: 60358fb6f38d2a19fe2464ba3899a71d40e741ec7710e1f2437448b48794ab11
+    quote: "`basis` | REQUIRED | `spend` | `units`"
+  - ir: key:5.6.1:commitment.currency
+    digest: 19e4d985eb2f3a597bafe8f3233448688dcfd827a2e41bc2b8fe1886c5e9ce33
+    quote: "`currency` | REQUIRED when `basis = spend` | ISO-4217"
+  - ir: key:5.6.3:requires.min_commitment[]#meaning/object:1
+    digest: 42864a103fd4ba66991bdf1f48cb93772c0567a6c109abdeabac4591e0013699
+    quote: "{ line_item_id, basis, amount, currency }"
+    locks:
+      - with-open-prs
+  - ir: field:5.6:min_spend
+    digest: 9950b94692a4b0250d54a54d47eca0f63c96a7b9d26607cded57896d46e5c8c4
+    quote: "`min_spend` | Number | seller-set | Minimum spend for this line item"
+  - ir: field:5.6:commitment_bounds#description/object:1
+    digest: 3554f2d78be2145dbef1d127f3e38c57e531bc19965d5834eb2b995d0af016b8
+    quote: "{ min_impressions, max_impressions, min_budget, max_budget }"
+  - ir: field:5.4:production#description/object:1
+    digest: 00eb00879b4a550444376e9812df5389c4a7066a43b48982f04bc6f35974f62d
+    quote: "{ custom_unit, build_owner, lead_time, cost }"
+  - ir: key:3.1:pricing
+    digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
+    quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+  - ir: key:3.1:pricing#meaning/object:1
+    digest: 1d2ea6996d7c3bbf4808776d7399e4719b79687764674d92f08a885763ad61fe
+    quote: "{ option_id: { delta_cpm | delta_flat | delta_pct } }"
+options:
+  - id: sibling-currency
+    summary: >-
+      Every money value is a bare number of at least 0. Every object that
+      carries one carries a `currency` (ISO 4217) beside it, required with the
+      value. A currency is never inherited from an enclosing object. The
+      commitment and a `min_commitment[]` threshold have a `basis` that says
+      whether `amount` is money. When `basis` is `spend`, the amount is money
+      and its currency is required. When `basis` is `units`, it is a whole count
+      of units with no currency. Where the specification gives an object money
+      and no currency, the schema carries the money alone until it adds one.
+  - id: inherited
+    summary: A money value with no currency beside it is in the currency of the line item's `pricing[]`.
+  - id: money-object
+    summary: Every money value is an object `{ amount, currency }`.
+chosen: sibling-currency
+rationale: >-
+  The specification writes money as a bare number with a sibling currency:
+  `pricing[].currency` beside `gross_rate`, `seller_rate`, and `floor`, and
+  the commitment's `currency`, REQUIRED when `basis` is `spend`. OpenRTB
+  writes money the same way, with `bidfloor` beside `bidfloorcur` and `price`
+  beside `cur`. A CPM-style rate is a sum of money per unit of the cost
+  method, so it is the same concept as a budget and takes the same type. A
+  money value without its currency can't be read, so where the value is
+  required the currency is required, and where the value is optional the
+  currency is required when the value is present, which `dependentRequired`
+  states. Where the specification gives the currency a condition, as the
+  commitment does, the condition says when the value is money, and the schema
+  keeps it. The commitment's `basis` is `spend` or `units`, so its `amount`
+  is money for `spend` and a count of units for `units`, a whole number of at
+  least 0, as `derived_units` is. A `min_commitment[]` threshold writes
+  `basis`, `amount`, and `currency` as the commitment does, so it is read the
+  same way: its currency is required when `basis` is `spend`, a units
+  threshold has none, and its amount is a count when `basis` is `units`. An
+  amount means nothing without its basis, so a threshold that gives an amount
+  gives its `basis`. Inheriting a currency fails because `pricing[]` is
+  a list: its entries may name different currencies, so none of them defines
+  the currency of `min_spend` or of a budget bound. A `{ amount, currency }`
+  object would depart further from the specification's form and from OpenRTB's
+  than the missing currencies need.
+evidence:
+  - https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/2.6.md#3.2.4
+feedback: >-
+  Give every object that carries money a `currency` (ISO 4217) beside it. Make
+  it required with the money, as the commitment does for `basis = spend`.
+
+  - These have no currency in their object: `min_spend`, the budget bounds of
+  `commitment_bounds`, a production option's `cost`, and an option's `delta_cpm`
+  and `delta_flat`.
+
+  - `pricing[]` is a list whose entries may name different currencies, so it
+  can't supply one for a line-item amount.
+
+  - State for a `min_commitment[]` threshold, as for the commitment, that
+  `currency` is REQUIRED when `basis = spend`. Also state that a threshold with
+  an `amount` gives its `basis`.
+
+  - State for both that `amount` is a whole number of units when `basis` is
+  `units`.

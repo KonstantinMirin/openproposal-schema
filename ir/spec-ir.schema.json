@@ -1,0 +1,1705 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/ir/spec-ir.schema.json",
+  "title": "OpenProposal specification IR",
+  "description": "Stage 1 output: every field, key, value list, inline object, RFC 2119 statement, and prose sentence that names an identifier of the OpenProposal specification, with its source location.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ir_version",
+    "input",
+    "counts",
+    "sections",
+    "tables",
+    "fields",
+    "keys",
+    "definitions",
+    "markers",
+    "concepts",
+    "value_lists",
+    "inline_objects",
+    "statements",
+    "sentences",
+    "code_spans",
+    "identifier_lists",
+    "code_blocks",
+    "appendix_a",
+    "appendix_b"
+  ],
+  "properties": {
+    "ir_version": {
+      "const": 1
+    },
+    "input": {
+      "$ref": "#/$defs/input"
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "integer",
+            "minimum": 0
+          },
+          {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ]
+      }
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/section"
+      }
+    },
+    "tables": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/table"
+      }
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/field"
+      }
+    },
+    "keys": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/key"
+      }
+    },
+    "definitions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/definition"
+      }
+    },
+    "markers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/markerDef"
+      }
+    },
+    "concepts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/concept"
+      }
+    },
+    "value_lists": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/valueList"
+      }
+    },
+    "inline_objects": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/inlineObject"
+      }
+    },
+    "statements": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/statement"
+      }
+    },
+    "sentences": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sentence"
+      }
+    },
+    "code_spans": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/codeSpan"
+      }
+    },
+    "identifier_lists": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/identifierList"
+      }
+    },
+    "code_blocks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/codeBlock"
+      }
+    },
+    "appendix_a": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "section",
+            "table",
+            "rows"
+          ],
+          "properties": {
+            "section": {
+              "type": "string"
+            },
+            "table": {
+              "type": "string"
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/appendixARow"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "appendix_b": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "section",
+            "table",
+            "rows",
+            "distribution"
+          ],
+          "properties": {
+            "section": {
+              "type": "string"
+            },
+            "table": {
+              "type": "string"
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/appendixBRow"
+              }
+            },
+            "distribution": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/$defs/distribution"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "sha1": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "upstream",
+        "commit",
+        "path",
+        "blob",
+        "base",
+        "merge_order",
+        "sha256",
+        "bytes"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "upstream": {
+          "type": "string"
+        },
+        "commit": {
+          "$ref": "#/$defs/sha1"
+        },
+        "path": {
+          "type": "string"
+        },
+        "blob": {
+          "$ref": "#/$defs/sha1"
+        },
+        "base": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/sha1"
+            }
+          ]
+        },
+        "merge_order": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "loc": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "section",
+        "line"
+      ],
+      "properties": {
+        "section": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "table": {
+          "type": "string"
+        },
+        "row": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "text": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "markdown",
+        "text"
+      ],
+      "properties": {
+        "markdown": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "column": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "markdown",
+        "text"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "markdown": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "fieldPath": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "segments"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "segments": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "array"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+              },
+              "array": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+    "typeExpr": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "name"
+          ],
+          "properties": {
+            "kind": {
+              "const": "scalar"
+            },
+            "name": {
+              "enum": [
+                "String",
+                "Integer",
+                "Number",
+                "Boolean",
+                "Enum",
+                "Object",
+                "Timestamp",
+                "Offset"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "items"
+          ],
+          "properties": {
+            "kind": {
+              "const": "array"
+            },
+            "items": {
+              "$ref": "#/$defs/typeExpr"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "members"
+          ],
+          "properties": {
+            "kind": {
+              "const": "union"
+            },
+            "members": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "$ref": "#/$defs/typeExpr"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "presence": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "clauses"
+          ],
+          "properties": {
+            "kind": {
+              "const": "clauses"
+            },
+            "clauses": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "level",
+                  "qualifier",
+                  "condition"
+                ],
+                "properties": {
+                  "level": {
+                    "enum": [
+                      "REQUIRED",
+                      "RECOMMENDED",
+                      "OPTIONAL"
+                    ]
+                  },
+                  "qualifier": {
+                    "enum": [
+                      "when",
+                      "for",
+                      "with",
+                      "otherwise",
+                      null
+                    ]
+                  },
+                  "condition": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "members": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "marker"
+          ],
+          "properties": {
+            "kind": {
+              "const": "marker"
+            },
+            "marker": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "number",
+        "title",
+        "heading",
+        "depth",
+        "anchor",
+        "part",
+        "parent",
+        "line"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "number": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "heading": {
+          "type": "string"
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "anchor": {
+          "type": "string"
+        },
+        "part": {
+          "enum": [
+            "front",
+            "body",
+            "appendix"
+          ]
+        },
+        "parent": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "parentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "via",
+        "label",
+        "identifier",
+        "field",
+        "member_of"
+      ],
+      "properties": {
+        "via": {
+          "enum": [
+            "heading",
+            "label",
+            "header",
+            "section"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "identifier": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "field": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "member_of": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "table": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "layout",
+        "section",
+        "line",
+        "header",
+        "rows",
+        "parent"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^table:"
+        },
+        "layout": {
+          "type": "string"
+        },
+        "section": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "header": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/parentRef"
+            }
+          ]
+        }
+      }
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "owner",
+        "names",
+        "name_cell",
+        "type",
+        "marker",
+        "description",
+        "presence",
+        "value_lists",
+        "inline_objects",
+        "statements",
+        "digest",
+        "loc"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^field:"
+        },
+        "owner": {
+          "enum": [
+            "proposal",
+            "line_item"
+          ]
+        },
+        "names": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/fieldPath"
+          }
+        },
+        "name_cell": {
+          "type": "string"
+        },
+        "type": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "raw",
+            "parsed"
+          ],
+          "properties": {
+            "raw": {
+              "type": "string"
+            },
+            "parsed": {
+              "$ref": "#/$defs/typeExpr"
+            }
+          }
+        },
+        "marker": {
+          "enum": [
+            "immutable",
+            "seller-set",
+            "selectable",
+            "settable",
+            "supplied",
+            "requestable",
+            "derived",
+            "mixed"
+          ]
+        },
+        "description": {
+          "$ref": "#/$defs/text"
+        },
+        "presence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/presence"
+            }
+          ]
+        },
+        "value_lists": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inline_objects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "statements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "loc": {
+          "$ref": "#/$defs/loc"
+        }
+      }
+    },
+    "key": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "layout",
+        "key",
+        "required",
+        "meaning",
+        "mapping",
+        "value_lists",
+        "inline_objects",
+        "statements",
+        "digest",
+        "loc"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^key:"
+        },
+        "layout": {
+          "type": "string"
+        },
+        "key": {
+          "$ref": "#/$defs/fieldPath"
+        },
+        "required": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "raw",
+                "parsed"
+              ],
+              "properties": {
+                "raw": {
+                  "type": "string"
+                },
+                "parsed": {
+                  "$ref": "#/$defs/presence"
+                }
+              }
+            }
+          ]
+        },
+        "meaning": {
+          "$ref": "#/$defs/text"
+        },
+        "mapping": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "column",
+                "markdown",
+                "text"
+              ],
+              "properties": {
+                "column": {
+                  "type": "string"
+                },
+                "markdown": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "value_lists": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inline_objects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "statements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "loc": {
+          "$ref": "#/$defs/loc"
+        }
+      }
+    },
+    "definition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "layout",
+        "subject",
+        "value",
+        "columns",
+        "value_lists",
+        "inline_objects",
+        "statements",
+        "digest",
+        "loc"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^def:"
+        },
+        "layout": {
+          "type": "string"
+        },
+        "subject": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "value": {
+          "type": "string"
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/column"
+          }
+        },
+        "value_lists": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inline_objects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "statements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "loc": {
+          "$ref": "#/$defs/loc"
+        }
+      }
+    },
+    "markerDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "marker",
+        "meaning",
+        "value_lists",
+        "inline_objects",
+        "statements",
+        "digest",
+        "loc"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^marker:"
+        },
+        "marker": {
+          "type": "string"
+        },
+        "meaning": {
+          "$ref": "#/$defs/text"
+        },
+        "value_lists": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inline_objects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "statements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "loc": {
+          "$ref": "#/$defs/loc"
+        }
+      }
+    },
+    "concept": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "columns",
+        "value_lists",
+        "inline_objects",
+        "statements",
+        "digest",
+        "loc"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^concept:"
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/column"
+          }
+        },
+        "value_lists": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inline_objects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "statements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "loc": {
+          "$ref": "#/$defs/loc"
+        }
+      }
+    },
+    "valueList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "host",
+        "origin",
+        "subject",
+        "items",
+        "context_after",
+        "loc"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "table_cell",
+            "prose",
+            "inline_object"
+          ]
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "identifier",
+                "relation"
+              ],
+              "properties": {
+                "identifier": {
+                  "type": "string"
+                },
+                "relation": {
+                  "enum": [
+                    "from",
+                    "member"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "items": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "value",
+              "annotation"
+            ],
+            "properties": {
+              "value": {
+                "type": "string"
+              },
+              "annotation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "context_after": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "loc": {
+          "$ref": "#/$defs/loc"
+        }
+      }
+    },
+    "objectForm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "combinator",
+        "members"
+      ],
+      "properties": {
+        "combinator": {
+          "enum": [
+            "all",
+            "one_of"
+          ]
+        },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/member"
+          }
+        }
+      }
+    },
+    "member": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "array",
+        "value"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "array": {
+          "type": "boolean"
+        },
+        "value": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "object"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "object"
+                },
+                "object": {
+                  "$ref": "#/$defs/objectForm"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "items",
+                "value_list"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "values"
+                },
+                "items": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "value_list": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "inlineObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "host",
+        "origin",
+        "source",
+        "text",
+        "anchor",
+        "form",
+        "context_before",
+        "context_after",
+        "loc"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "table_cell",
+            "prose"
+          ]
+        },
+        "source": {
+          "enum": [
+            "text",
+            "code",
+            "mixed"
+          ]
+        },
+        "text": {
+          "type": "string"
+        },
+        "anchor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "form": {
+          "$ref": "#/$defs/objectForm"
+        },
+        "context_before": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "context_after": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "loc": {
+          "$ref": "#/$defs/loc"
+        }
+      }
+    },
+    "statement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "host",
+        "part",
+        "keywords",
+        "level",
+        "text",
+        "identifiers",
+        "loc"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^rule:"
+        },
+        "host": {
+          "type": "string"
+        },
+        "part": {
+          "enum": [
+            "front",
+            "body"
+          ]
+        },
+        "keywords": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "MUST NOT",
+              "SHALL NOT",
+              "SHOULD NOT",
+              "NOT RECOMMENDED",
+              "MUST",
+              "SHALL",
+              "SHOULD",
+              "REQUIRED",
+              "RECOMMENDED",
+              "MAY",
+              "OPTIONAL"
+            ]
+          }
+        },
+        "level": {
+          "enum": [
+            "MUST NOT",
+            "SHALL NOT",
+            "SHOULD NOT",
+            "NOT RECOMMENDED",
+            "MUST",
+            "SHALL",
+            "SHOULD",
+            "REQUIRED",
+            "RECOMMENDED",
+            "MAY",
+            "OPTIONAL"
+          ]
+        },
+        "text": {
+          "type": "string"
+        },
+        "identifiers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "loc": {
+          "$ref": "#/$defs/loc"
+        }
+      }
+    },
+    "sentence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "host",
+        "part",
+        "text",
+        "identifiers",
+        "loc"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^sentence:"
+        },
+        "host": {
+          "type": "string"
+        },
+        "part": {
+          "enum": [
+            "front",
+            "body"
+          ]
+        },
+        "text": {
+          "type": "string"
+        },
+        "identifiers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "loc": {
+          "$ref": "#/$defs/loc"
+        }
+      }
+    },
+    "codeSpan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "kind",
+        "lhs",
+        "rhs",
+        "host",
+        "loc"
+      ],
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "path",
+            "expression",
+            "literal",
+            "other"
+          ]
+        },
+        "lhs": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rhs": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "host": {
+          "type": "string"
+        },
+        "loc": {
+          "$ref": "#/$defs/loc"
+        }
+      }
+    },
+    "identifierList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "host",
+        "items",
+        "loc"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "text",
+              "code"
+            ],
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "code": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "loc": {
+          "$ref": "#/$defs/loc"
+        }
+      }
+    },
+    "codeBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "lang",
+        "text",
+        "digest",
+        "loc"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^code:"
+        },
+        "lang": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "text": {
+          "type": "string"
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "loc": {
+          "$ref": "#/$defs/loc"
+        }
+      }
+    },
+    "appendixARow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "names",
+        "name_cell",
+        "section_cell",
+        "section_number",
+        "type",
+        "marker",
+        "digest",
+        "loc"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^appendix-a:"
+        },
+        "names": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/fieldPath"
+          }
+        },
+        "name_cell": {
+          "type": "string"
+        },
+        "section_cell": {
+          "type": "string"
+        },
+        "section_number": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "raw",
+            "parsed"
+          ],
+          "properties": {
+            "raw": {
+              "type": "string"
+            },
+            "parsed": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/$defs/typeExpr"
+                }
+              ]
+            }
+          }
+        },
+        "marker": {
+          "type": "string"
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "loc": {
+          "$ref": "#/$defs/loc"
+        }
+      }
+    },
+    "appendixBRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "marker",
+        "count",
+        "count_cell",
+        "meaning",
+        "fields",
+        "digest",
+        "loc"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^appendix-b:"
+        },
+        "marker": {
+          "type": "string"
+        },
+        "count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "count_cell": {
+          "type": "string"
+        },
+        "meaning": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "label",
+              "names",
+              "owner"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "names": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "owner": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "loc": {
+          "$ref": "#/$defs/loc"
+        }
+      }
+    },
+    "distribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total",
+        "buyer",
+        "selectable",
+        "settable",
+        "supplied",
+        "requestable",
+        "remaining",
+        "round_trip",
+        "up_front",
+        "loc"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "buyer": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "selectable": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "settable": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "supplied": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "requestable": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "remaining": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "round_trip": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "up_front": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "loc": {
+          "$ref": "#/$defs/loc"
+        }
+      }
+    }
+  }
+}

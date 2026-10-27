@@ -1,0 +1,68 @@
+format: 1
+id: G-035
+date: 2026-10-26
+question: Which gates change when `Party` moves to the kernel beside `Marker`, and each open object carries a description of what its row says it holds?
+decision: >-
+  A type entry that defines a vocabulary may name `kernel` as its `module`,
+  for a vocabulary no module owns; the mapping schema allows it on a
+  vocabulary only, and the entry stays in the file of the module that owns
+  its section, so the bijection and section gates hold. `Party`, the two
+  parties every § 3 marker names, is the kernel's now, emitted in
+  kernel.json, and the creative module no longer depends on proposal. An
+  open object's declaration may give a `description`, which the model, the
+  schemas, and the SDK types carry; each open object gives one from its
+  row's prose, and the D-016 feedback proposes a structure for each, read
+  from that prose, which the schema doesn't adopt. A vocabulary whose terms
+  rest on no element is no longer taken for the marker vocabulary. The test
+  suite holds 341 tests, so its floor rises to 341.
+rationale: >-
+  The model placed a kernel concept in one module and made another module
+  depend on it, and the open objects emitted no description although their
+  rows describe them. Every gate keeps its checks, the module and section
+  gates still hold every entry to its section's file, and the test floor
+  rises, so no gate is weaker.
+accepts:
+  - { gate: comparison, fingerprint: f3c7173fffdbb317917700271a734db1da9266088c65f59d37e37b2195ceba5b }
+  - { gate: convention-beside-reference, fingerprint: e6c5b8dcc14ddea4e675a78bb338f9407e07c1f5e78761d5090e3e337b37703a }
+  - { gate: convention-inline, fingerprint: 6c27bf35a4c56db110da51f5b57a6ef6d98d56d3a3dbe53e25f0b702d5f93c68 }
+  - { gate: convention-keywords, fingerprint: 0564a144cda56ac0c69e4b346982b5400f682f3c2fd54b0a4c04704fe6ac0cb3 }
+  - { gate: convention-layers, fingerprint: fa71b879351489edc576da19a9e84eaa11cf6073fbe9e46dd7bb5a42cee8ce78 }
+  - { gate: convention-lists, fingerprint: ff7bf54c7dcf169af3c530c624b7fcd8817e9fce72417de6d9f484d681c77d4d }
+  - { gate: convention-modules, fingerprint: fd79495e81c4018c3480e009e7e764d483fef896f30de05422180a8b4e6ba7bf }
+  - { gate: convention-unions, fingerprint: 4b4479249f4237293fb48c972cc9b5d83740a86a2dd270b7f0644c0fd7d906ba }
+  - { gate: corpus-generates, fingerprint: b5c530bf91df8af1843ebfa628cfe80feac103bce4e12293665d96e911172165 }
+  - { gate: corpus-isolation, fingerprint: 37228a789b83d049b4d04cf0da00576215932696753388e9bc5cb52cb8e166da }
+  - { gate: domains-homonyms, fingerprint: 8b968a5ce23170ba2d2194a88e345623ba1e2e90e3e7ee78e0c8a45153b79ef0 }
+  - { gate: domains-properties, fingerprint: d2bda7039e79163c495faae28c74d7d40f21496da8da78e4b0de50b60e3c9895 }
+  - { gate: domains-used, fingerprint: d73bcc7209ac66bce74b2d6c0f53dd3ea83ccca981541bdf6130ef05f188fbec }
+  - { gate: duplication-kernel, fingerprint: 40c405c9026ad106b8517fe6c65a842764ee2b5752e5983434b4bc246ef0cd4e }
+  - { gate: duplication-model, fingerprint: 78a9e341cf746d6bae992309ce941cd520193a005554a2c6aefca11de43657a7 }
+  - { gate: examples-listing, fingerprint: 79dacb9d8e59d92b672bf850f2e1e83e754953e68d8cea9b6b6462e5a6e0c718 }
+  - { gate: examples-validate, fingerprint: fa41c3466c71e1239a83d0629875d2d8b3a80f9d932fd2736cd2eaee6f283970 }
+  - { gate: feedback, fingerprint: b415a95f9841e2a72c8002eaedd37ff0824aaa43de43f5bd733514bdd513cb6c }
+  - { gate: fidelity, fingerprint: 2ed8a9d64f5eaa68574c46040a19f7d07fafa9009558f982f296fceffe45b153 }
+  - { gate: frozen-releases, fingerprint: 1fe49b77089c6704d1e2f26952f0ab8122c836fc93934be86b29b56b7129ed8c }
+  - { gate: frozen-reviewed, fingerprint: 13939c8d2591aa42d89180ff9db711561c51b4fa1d34541e821bc9ff8467789f }
+  - { gate: map-drift, fingerprint: 1aef4ea0834bf9ea4fa8e97a88834b0b27242d6674ce060134ce4e38fab3b34d }
+  - { gate: mapping-bijection, fingerprint: c1b960879c0bc52d628d61d737b2eeb1a6e4692873a235176640a18e23c56c9e }
+  - { gate: mapping-constructors, fingerprint: fc8defe67671dd4e87fd809125751186b9e5a42e20dca71a6830c15d27bb8038 }
+  - { gate: mapping-current, fingerprint: 65b1be2cbb5c2ed9d12009e779118f7df41a7217385033aa45b3988e40eaafb1 }
+  - { gate: mapping-load, fingerprint: f6039cfe794ac7cdbd6495eaa2d600f625202f8f9cdd71b54a692b54ce4e0b71 }
+  - { gate: mapping-location, fingerprint: 2ab979cb4ca7578695a79d799b4605375f854061cd060c7a838e484f73f953a9 }
+  - { gate: mapping-names, fingerprint: 92df81c8135fef19a234ec60706041e7fbd1d715312d4bba5ae569390be61e0e }
+  - { gate: mapping-rules, fingerprint: 7a8b77cafb5efcc115a865e39ca37ea1182a7a681e62bed1fa6049af1227cd41 }
+  - { gate: mapping-sources, fingerprint: a93f762742d161ea2957192f387a7e3151646fedc8556f0e610a47ba3442edcb }
+  - { gate: model-resolves, fingerprint: 81e7aa55027d039da9866fb569a8f772fba4888ffe5de2a3cb7a97422fb2e1b6 }
+  - { gate: modules-depends, fingerprint: 56269751034d8f27145b4e295fb33a4d338548260098062cddd809a905c953d9 }
+  - { gate: nesting, fingerprint: cff02825825231bd05b6be36a10e8655b44f667d4b5aebd0705336b6356a2c0e }
+  - { gate: npm-test, fingerprint: 13e5c680a8c685bbb86cc965354c340caad59f679bd95e91af9578902d73bc48 }
+  - { gate: release-breaking, fingerprint: 971bc97f76d4116173e2831f313f9e3824f2165724ceaed8ccfc6b5213961665 }
+  - { gate: release-builds, fingerprint: 056b3eb5ca01eff1369e0867707761f31e7d33733c3509a100a127ea15c1297f }
+  - { gate: release-digests, fingerprint: d5dd920dff83c49e4d535430d83ab5aa5cf703b91c1d029f1dfabe080b92e4d6 }
+  - { gate: round-trip, fingerprint: e64212d6322975b4eba6a20c67aae7e9b949c647ae3c91dca9ac9c35dea29a1d }
+  - { gate: rule-checks, fingerprint: 265e4f7a27eea56c0f456be1112ac252cf095b08b0af9b8ab63b3ee6103d350b }
+  - { gate: rule-vectors, fingerprint: ff98cafad22c40b34af1126887b9f74dae9b318d51cca74c88a2d37cec19f511 }
+  - { gate: rules-emit, fingerprint: 7bd273423ffba14683cda31603ab53fba7243965d3191a47f7dd1b1c13f90e56 }
+  - { gate: schemas-conventions, fingerprint: 565dbdc03cc864cbddba4f894c4e884afe3dbf2aea6384bd9b95f4f2816b8d57 }
+  - { gate: schemas-emit, fingerprint: 3a99ab4f808e2db54974f851461110f715146833ff721432ccd163d461ee65e0 }
+  - { gate: sdk-generate, fingerprint: f1f9568cbde8d5ec90171faf54b507c09e675ca6968f911b2505a43b14f21eff }

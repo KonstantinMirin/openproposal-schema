@@ -1,0 +1,80 @@
+format: 1
+id: G-056
+date: 2026-10-27
+question: Must every constructor be applied on some lock, and does removing OrderedSettable, which no field applies, weaken a gate?
+decision: >-
+  A new gate, `constructors-applied`, fails when no mapping entry or
+  declaration applies a constructor on any lock, at any depth of its
+  arguments or inside the shell of an applied constructor or of a part the
+  mapping reaches, unless the constructor's `kept` cites an existing decision
+  that says why it stays. A `kept` on an applied constructor is stale and
+  fails. `Map` passes because `Selectable`'s `pricing` applies it. Its
+  fixtures add an unapplied template, take `Map` out of `Selectable`'s shell
+  and the mapping, put a stale `kept` on `Range`, and keep an unapplied
+  template by a decision that doesn't exist. `OrderedSettable` is removed
+  with its rule `constructor:OrderedSettable:ordered`: no settable field
+  states the `min` / `max` form at the field (`geo`, `device`, and `daypart`
+  declare `allowed[]`, `frequency_cap` carries its range in `max`, a
+  `Range`, and `commitment` is the object of § 5.6.1). The § 3.2 bounds
+  sentence is mapped to `Range`, and its bare-value sentence, now cited by
+  `Settable` alone, is mapped by the rule `kernel-source`. The constructor
+  tests that used `OrderedSettable` use `Range` or `Settable`, a new test
+  covers the gate, the test suite holds 357 tests, and `MIN_TESTS` is 357.
+rationale: >-
+  The new gate adds a check and relaxes none. The other fingerprints change
+  because the code they reach changed: the `Constructor` type gains `kept`,
+  and the constructors format schema allows it, which every gate that reads
+  the constructors or `src/constructors.ts` reaches; `src/rule-checks.ts`
+  loses the check of the removed rule, and `src/mapping-sources.ts` the
+  removed name; the CI script runs the new gate, which the guard reads; and
+  the test tree changed. No check, fixture, or exemption is removed or
+  loosened: each test kept its assertion on a constructor that exists, and
+  the floor rises.
+accepts:
+  - { gate: comparison, fingerprint: 00a348ebc19689ff62cfd2502abe330bded2fa1519dc15c2e6b0bbc8ed41756c }
+  - { gate: constructor-sources, fingerprint: 1896a79fb9cb8530f74542dafa68e7ac3cb8252843b670beb95ff936168cbf84 }
+  - { gate: constructors-applied, fingerprint: e04c1e69bc78850cfd48a1e610e5e558b883cb0c146fdffce5a885b177f7e95a }
+  - { gate: constructors-check, fingerprint: e50d0414e37230047f56c00d1c91d596a2eaba9bd4fe7c2cacb871a904d4852d }
+  - { gate: constructors-load, fingerprint: 732c25dc7afc09d1d7f26fcd935d9f50b3e2dbdfc77248d6cce045daad6e8487 }
+  - { gate: convention-beside-reference, fingerprint: c8871e47874ff9229a7ab13b9093a3fc14418a2b450aee167c011b80ad6a7e13 }
+  - { gate: convention-inline, fingerprint: abccc1ef0e45021f6622701d76fd8bca54c2789d9aea616e7954190f8ef3612d }
+  - { gate: convention-keywords, fingerprint: 93f1f2c101ddb332a331d9a2661f02f7d3d6d0e4307ed43699dfe8623d144f12 }
+  - { gate: convention-layers, fingerprint: 7c73bbf1b21a78267b5ee9afc6562ba6fdc5005b090a831337020fee91f3c475 }
+  - { gate: convention-lists, fingerprint: 7be658af8fd63111f0e31d45955d0b5884443f1ccd375a7c78f3fbca545d3442 }
+  - { gate: convention-modules, fingerprint: 467ca5a0bf7e894324a48f28c0d3c88125923094327dcd9f0a68caf9552a3b01 }
+  - { gate: convention-unions, fingerprint: a614fef59626f520d6f3effd4765cd23ce6857ade89cc51133259522fe630c5c }
+  - { gate: corpus-generates, fingerprint: 5410d051a908c5764cceb5b3dccae726d4b1c7bb0af868d146aaee64f6458874 }
+  - { gate: corpus-isolation, fingerprint: ee3f78d56b1af43b3a3bf36097adc5289992f37bf8c772259fcd6c6b6fc2c544 }
+  - { gate: domains-homonyms, fingerprint: d214a17abf66c754099aa1a916ded5666691143d55dbee6a9fae8c3ed3933b91 }
+  - { gate: domains-properties, fingerprint: c4d9c56274cb2d9450bf858414ccf30d339b18edb84c63a07efbe6ba03ce75b6 }
+  - { gate: domains-used, fingerprint: 39836ebcfd029675dc2c05cdbaa3fbc0452dbdb54b3bc30e814dad121d51c8cb }
+  - { gate: duplication-kernel, fingerprint: cc35b428a195c2809a460bd3516aa8f013eb6b4f1ea91f0ff97fc26715386560 }
+  - { gate: duplication-model, fingerprint: 1f0da31a57ba4f93a46556bce8b5a019bc6b0c73fb03ff61c6e6ffed81b9d443 }
+  - { gate: examples-listing, fingerprint: b6af2cf7c1be0673a5d7916953309b00266a6635b25ee5d63205a69f7d124be0 }
+  - { gate: examples-validate, fingerprint: 0d62c7647a256b6f408628d7e9af5138d3c31d44eb932d59e196ed1f1a830706 }
+  - { gate: feedback, fingerprint: fffb260d6433604cb1bc04dc5696618cb969c01a1c169fac80309b2b6ba27d18 }
+  - { gate: fidelity, fingerprint: d32395a564d9da86eea874da0af1bd2bd1d4c4f19378b76555ad0a34fdb969fd }
+  - { gate: frozen-releases, fingerprint: aa9d23d9399d5c686671b94429cc706f8bc6657486442623f1b25ea67cda7d0c }
+  - { gate: frozen-reviewed, fingerprint: 1252540bf5e5efb057c3097c4100456a3e7f08524e4eb17d95d6373f94a5a2f5 }
+  - { gate: guard, fingerprint: dc12c653a9d801848f7f97686b3511ae373774836aed589f8af8e0de4b260a21 }
+  - { gate: map-drift, fingerprint: ac375ca7bb47a4d2b7515f88e4513bd40764d46720360de260f1c6a73aca82b8 }
+  - { gate: mapping-bijection, fingerprint: d9447db6fcf891fee5634329bec6a2dcfc694c525f8568fa7e1eab059e46f001 }
+  - { gate: mapping-constructors, fingerprint: 7a956d4020d1dd8e40c2dd7f363f0dd8e3b3663188952e4981a0c5c2732df822 }
+  - { gate: mapping-location, fingerprint: facbd4d28cda666d1f8a07c03a46bb0ea9d2fc40e7dba47537f8a269fc894acf }
+  - { gate: mapping-names, fingerprint: 62d9b1f123c83412c814615b96dde1a2e1434691a2f1dc2dc873dde81ee15186 }
+  - { gate: mapping-rules, fingerprint: d1ab1996e91a58ac68160565632a7ab17845b1691ebdb3de1e4a20be00ff8328 }
+  - { gate: mapping-sources, fingerprint: 87318a11cb2b0763578baf6ab5ac454e0752ca066f7cccb8931b97c33d039ddf }
+  - { gate: model-resolves, fingerprint: e2ef8150410b8d23bf61ba6540b4eb63592b8c1166d1dfe22f48a831fab601bb }
+  - { gate: modules-depends, fingerprint: a2c45d56ecdaef80dca1d5067c3b3ef18cf78e64063a99dc6c2d3f609610a020 }
+  - { gate: nesting, fingerprint: 90ac80a73eab25457c3b6455c80242ed9251ef2b34aa88411fe09c92817f011a }
+  - { gate: npm-test, fingerprint: ac9d66f801a54a13235c8f5b4083064ce414906aa10bdd240483deb491e7ce83 }
+  - { gate: release-breaking, fingerprint: 6931d03a6596f24b03205d2ac8a7c19b7b09a10c8b2b86ac849cc2a0719d92a4 }
+  - { gate: release-builds, fingerprint: 2a021ae21b746b9f1b8a2a08272c62fe787376ccd203be9d0672ab4a1cb84551 }
+  - { gate: release-digests, fingerprint: 5105204881a26e3d779991194158c35cd954776b69e9f8ed27cd09105ad42e02 }
+  - { gate: round-trip, fingerprint: 277ceb207d6159479c6ec52a14c0fe11932e05ae5243b3e55319b8e241d73071 }
+  - { gate: rule-checks, fingerprint: 7cd3d42171a3b52627b9750de4e3439470ba31fe53817d79df6465574c4b7225 }
+  - { gate: rule-vectors, fingerprint: 8a0a328299ca6a396f5dc0ec4836bda204e70f2f994f64fed2c22e441fd7b575 }
+  - { gate: rules-emit, fingerprint: 07bdcec1eb2d25a8d5ccaada0b7a92ee445a6f17be47f18b10c7eb27bd20f4bf }
+  - { gate: schemas-conventions, fingerprint: 11682a2a4da119484b9af07a4738ca282d97ea1f400a55499b6dd08dc27c434c }
+  - { gate: schemas-emit, fingerprint: 7d930671c91946076ab6342ca60dc145f29af7313aeea15f79a567ce3d33f0ba }
+  - { gate: sdk-generate, fingerprint: c1c5312ac3d7c6eb9b6e2bfe1a0a9c93f1bdc22e5c55fc1a3a8e95bd10cdc77d }

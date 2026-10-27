@@ -1,0 +1,57 @@
+{
+  "name": "openproposal-schema",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Deterministic pipeline that turns the OpenProposal 3.0 markdown specification into machine-readable schemas.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22 <23"
+  },
+  "scripts": {
+    "fetch": "tsx src/cli/fetch.ts",
+    "extract": "tsx src/cli/extract.ts",
+    "cite": "tsx src/cli/cite.ts",
+    "map": "tsx src/cli/map.ts",
+    "resolve": "tsx src/cli/resolve.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test --test-reporter=spec \"test/**/*.test.ts\"",
+    "setup:oracle": "python3.12 -m venv .venv && .venv/bin/pip install --quiet --require-hashes --no-deps -r tools/oracle/requirements.txt",
+    "setup:sdk": ".venv/bin/pip install --quiet --require-hashes --no-deps -r tools/sdk/requirements.txt",
+    "setup:plaingen": ".venv/bin/pip install --quiet --require-hashes --no-deps -r tools/plaingen/requirements.txt",
+    "ci": "tsx scripts/ci.ts",
+    "emit": "tsx src/cli/emit.ts",
+    "rules": "tsx src/cli/rules.ts",
+    "render": "tsx src/cli/render.ts",
+    "examples": "tsx src/cli/examples.ts",
+    "release": "tsx src/cli/release.ts",
+    "corpus": "tsx src/cli/corpus.ts",
+    "type-examples": "tsx src/cli/type-examples.ts",
+    "sdk": "tsx src/cli/sdk.ts",
+    "compare": "tsx src/cli/compare.ts",
+    "feedback": "tsx src/cli/feedback.ts",
+    "fidelity": "tsx src/cli/fidelity.ts",
+    "gates": "tsx gates/cli.ts",
+    "extraction-report": "tsx src/cli/extraction-report.ts",
+    "provenance": "tsx src/cli/provenance.ts",
+    "site": "tsx src/cli/site.ts",
+    "site:deploy": "tsx src/cli/site-deploy.ts"
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "github-slugger": "2.0.0",
+    "mdast-util-to-string": "4.0.0",
+    "remark-gfm": "4.0.1",
+    "remark-parse": "11.0.0",
+    "unified": "11.0.5",
+    "yaml": "2.9.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/mdast": "4.0.4",
+    "@types/node": "22.20.5",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}

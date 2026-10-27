@@ -1,0 +1,32 @@
+format: 1
+id: D-003
+status: proposed
+kind: gap
+author: agent
+question: How is a SHA-256 hash written, and does the value name its algorithm?
+covers:
+  - ir: field:5.8:terms_ref
+    digest: c65b1714f353bd191478e58c22e966ba7aea717efd79a61aa495c477fc4249b1
+    quote: "`terms_ref` | Object | seller-set | OPTIONAL; REQUIRED when `terms_acceptance_required` is `true`. `{ url, sha256, version }`: the legal terms or IO template the buyer accepts at assent. Hash-pinned, so assent (§ 4.1) binds to an exact document"
+    locks: [with-open-prs]
+options:
+  - id: bare-hex
+    summary: 64 lowercase hexadecimal characters. The field name, `sha256`, names the algorithm.
+  - id: prefixed
+    summary: "`sha256:` followed by 64 lowercase hexadecimal characters, as the initial conventions § 9 wrote it."
+  - id: base64
+    summary: The 32 hash bytes in base64, as Subresource Integrity writes them.
+chosen: bare-hex
+rationale: >-
+  The specification names the field `sha256`, so a prefix in the value would
+  repeat the algorithm, and a value with another prefix would contradict the
+  field name. Lowercase hex is what `sha256sum`, git, and most tools print,
+  and allowing one case gives each hash one spelling, so equal hashes compare
+  equal as strings. The initial conventions' `sha256:` prefix predates the
+  field name. If another algorithm is ever needed, a new field names it.
+evidence:
+  - https://csrc.nist.gov/pubs/fips/180-4/upd1/final
+  - docs/design/initial-conventions.md § 9
+feedback: >-
+  State the encoding of `sha256` values: 64 lowercase hexadecimal characters
+  of the SHA-256 of the exact bytes the URL returns.

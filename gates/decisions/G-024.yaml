@@ -1,0 +1,15 @@
+format: 1
+id: G-024
+date: 2026-10-26
+question: Does a test hold the review's two wording fixes, a playback method's label and a content category's description?
+decision: >-
+  A test checks that `PlaybackMethod`'s code 7 carries AdCOM 1.0's full
+  wording, as `kernel/lists.yaml` says each label is written at the pinned
+  commit, and that an exclusion's `iab_content_category` says the text writes
+  an ID as `IAB-CT3.0:<id>`. The test suite holds 323 tests, so its floor
+  rises to 323.
+rationale: >-
+  The fixes change prose only, and the test fails if either goes back; the
+  test floor rises, so no gate is weaker.
+accepts:
+  - { gate: npm-test, fingerprint: f2bd9d6d0ce5b59f6589c16a973bc9b403f397c6e8342e1145088979f18aacbc }

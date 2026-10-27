@@ -1,0 +1,49 @@
+format: 1
+id: D-026
+status: proposed
+kind: gap
+author: agent
+question: What type does each § 5.6 field, key, and member take where the specification gives no format?
+covers:
+  - ir: field:5.6:pricing[].cost_method
+    digest: 91f19d1af64820acbb6d4eafa21c2cc664e9339516af84d59dff12212501f498
+    quote: "`pricing[].cost_method` | Enum | seller-set | CPM, CPC, flat, etc."
+  - ir: field:5.6:availability#description/object:1
+    digest: 8a93eee2b91a74d8f7ce7fa00ed1af2b272702885b71d981fc562b711d8b40be
+    quote: "{ unit, basis, as_of, granularity, type: forecast | reservable, quantity }"
+  - ir: field:5.6:commitment_bounds#description/object:1
+    digest: 3554f2d78be2145dbef1d127f3e38c57e531bc19965d5834eb2b995d0af016b8
+    quote: "{ min_impressions, max_impressions, min_budget, max_budget }"
+  - ir: key:5.6.3:requires.min_commitment[]#meaning/object:1
+    digest: 42864a103fd4ba66991bdf1f48cb93772c0567a6c109abdeabac4591e0013699
+    quote: "{ line_item_id, basis, amount, currency }"
+    locks: [with-open-prs]
+options:
+  - id: as-listed
+    summary: >-
+      Each takes the schema type or value list its meaning names. `cost_method`
+      and the availability's terms take open vocabularies. A budget is an amount
+      of money, and a count is a whole number, neither negative.
+  - id: open
+    summary: Each takes the bare JSON type the table names.
+chosen: as-listed
+rationale: >-
+  The domain model types the § 5.6 rows a concept names: the rates and the
+  committed amount are money, `Amount` (D-036), the flight's start and end
+  points in time, `Timestamp` (D-001), the commitment's `version` the proposal's
+  revision number, a `Count`, and `hold_available` a flag. `cost_method` is an Enum with no value
+  list, only "CPM, CPC, flat, etc."; those three are the core terms of the
+  open vocabulary `CostMethod`, spelled as the specification spells them, and
+  § 5.6.3 uses `flat`. In `availability`, `unit` and `basis` are terms the
+  specification doesn't list, each the open vocabulary of its own concept
+  (D-041); `granularity` is the length of time each figure covers, a
+  `Duration` (D-040); `as_of` is a `Timestamp` and `quantity` a `Count`. The
+  bounds of `commitment_bounds` are counts of impressions and amounts of
+  money. A `min_commitment[]` threshold has a line item ID, a `Uuid` (D-037),
+  the commitment's `basis` vocabulary, an `Amount`, and a `CurrencyCode`.
+evidence:
+  - examples/line-item-display.yaml (pricing, commitment)
+  - examples/line-item-ctv-bonus.yaml (requires)
+feedback: >-
+  Give `cost_method` its value list, and list the values of `availability`'s
+  `unit` and `basis`.

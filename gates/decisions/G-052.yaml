@@ -1,0 +1,24 @@
+format: 1
+id: G-052
+date: 2026-10-27
+question: How does the feedback gate find a code span a line break folds, when a span is written with two backticks or holds a backtick?
+decision: >-
+  The folded-span check reads code spans as CommonMark does: a run of
+  backticks opens a span that the next run of as many backticks closes, so
+  "`` ` ``" is one span on one line, and a double-backtick span that closes
+  on a later line folds. A run that no run of as many backticks closes,
+  which shows as literal backticks, fails too, and a backslash escapes a
+  backtick outside a span. A fixture gives a recorded reason a
+  double-backtick span across a line break, which counting single backticks
+  missed, and it fails the gate. The test adds a one-line span that holds a
+  backtick, which counting single backticks flagged, a span inside a
+  double-backtick span, an unclosed run, and an escaped backtick.
+rationale: >-
+  Counting single backticks paired the wrong ones: it flagged a correct
+  one-line span that holds a backtick and missed a double-backtick span that
+  folds. Matching runs finds every span counting found in text written with
+  single backticks, finds the two it missed, and fails on a stray run it let
+  through, so no gate is weaker.
+accepts:
+  - { gate: feedback, fingerprint: bbbd1f552e3b86827bfce90dded3f6b906f0b30da55941316ddfc699e3db5ced }
+  - { gate: npm-test, fingerprint: 35dfb5f4c6ff65c67efbea0c0ffce2a14e17927b8cde0af323f62adab9ad92e1 }

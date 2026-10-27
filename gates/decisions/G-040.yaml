@@ -1,0 +1,23 @@
+format: 1
+id: G-040
+date: 2026-10-26
+question: Does the feedback say where each lint finding is on each lock, and say how each MUST statement that names no field is checked, rather than list it as something an authoring rule removes?
+decision: >-
+  A lint finding records the sections it points to on each lock, and the
+  details' Where column lists a place the finding has on only some of its
+  locks apart, as "with the open PRs, also § 5.2.2". The row of the MUST
+  statements that name no field or key is "MUST statements that need
+  conformance test vectors or bind a party", in the comment's table and the
+  details, and the details give each statement how the outputs check it:
+  the test vectors of a rule on one payload, the schemas, or an obligation
+  on the party the decisions name. The feedback gate fails on such a
+  statement that no rule, obligation, or schema statement places; a fixture
+  removes one. The test suite holds 346 tests, so its floor rises to 346.
+rationale: >-
+  The details listed locations of the open PRs as if they were on `main`,
+  and framed statements that need test vectors or bind a party as removable
+  by an authoring rule. The gate adds a check and a fixture and drops none,
+  and the test floor rises, so no gate is weaker.
+accepts:
+  - { gate: feedback, fingerprint: fd0e71763a1ed9b1c6fcfe44c67321971d638ae8598e186d22a8224cf7bbc8f9 }
+  - { gate: npm-test, fingerprint: 34750bb3b5d7eea37908be5daee4cc5ceff7a587ace62369ec3ad96c1cbfec00 }

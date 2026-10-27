@@ -1,0 +1,38 @@
+# OpenProposal 3.0 — Example: Rewarded video line item (spec § 6.7)
+# Illustrative only. In-app rewarded video across a pack of puzzle games.
+line_item_id:   "puzzle-games-rewarded"
+status:         published
+channel:        video
+properties:     { available: [{ id: "puzzle-pack", name: "Puzzle game pack" }],
+                  included: ["puzzle-pack"] }
+environments:   { available: ["app_mobile"], included: ["app_mobile"] }
+placement:                             # every impression of this line item (§ 5.2)
+  reward:       1
+  instl:        1
+  plcmt:        3                      # Interstitial (3)
+  skip:         0                      # watched to the end for the reward
+  playmethod:   [3]                    # Initiates on Click with Sound On (3)
+  api:          [6, 7]                 # MRAID 3.0 (6), OMID 1.0 (7)
+formats:        { available: ["video/30s"], included: ["video/30s"] }
+creative_delivery: { method: buyer_hosted, protocol: vast_4_2, secure_required: true }
+
+frequency_cap:  { max: { min: 1, max: 3 }, period: "day", basis: device }
+time_zone:      viewer_local
+
+pricing:
+  - { cost_method: CPM, gross_rate: 22.00, floor: 19.50,
+      price_valid_until: "2026-12-01T23:59:59Z", currency: USD }
+
+commitment_bounds: { min_budget: 10000.00 }
+
+committed_metrics:
+  - { metric: completion_rate, value: 0.95, basis: mrc }
+  - { metric: viewable_rate,   value: 0.90, basis: mrc }
+measurement_source:                    # third-party vendors run through OMID 1.0 (7)
+  available:    [{ vendor: "IAS", attribution_window: "30d" },
+                 { vendor: "DoubleVerify", attribution_window: "30d" }]
+  included:     ["IAS"]
+
+buying_route:          SSP_PLATFORM
+transaction_mechanism: { available: ["PREFERRED_DEAL"], included: ["PREFERRED_DEAL"] }
+serving_mode:          client_side

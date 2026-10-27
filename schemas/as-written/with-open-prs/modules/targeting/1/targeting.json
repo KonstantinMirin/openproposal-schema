@@ -1,0 +1,272 @@
+{
+  "$defs": {
+    "AppBundleEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "bundle": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+        },
+        "platform": {
+          "$ref": "../../inventory/1/inventory.json#/$defs/StorePlatform"
+        }
+      },
+      "required": [
+        "bundle",
+        "platform"
+      ],
+      "type": "object"
+    },
+    "DaypartBounds": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets to one of the values the seller allows, `allowed[]`, for a type whose values have no order, such as a geo code or a device category.",
+      "properties": {
+        "allowed": {
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/DaypartWindow"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "allowed"
+      ],
+      "type": "object"
+    },
+    "DeviceBounds": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets to one of the values the seller allows, `allowed[]`, for a type whose values have no order, such as a geo code or a device category.",
+      "properties": {
+        "allowed": {
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "allowed"
+      ],
+      "type": "object"
+    },
+    "Enforcement": {
+      "enum": [
+        "pre_serve",
+        "best_effort"
+      ],
+      "type": "string"
+    },
+    "ExclusionType": {
+      "enum": [
+        "domain",
+        "app_bundle",
+        "iab_content_category",
+        "keyword"
+      ],
+      "type": "string"
+    },
+    "Exclusions": {
+      "additionalProperties": false,
+      "properties": {
+        "app_bundle": {
+          "items": {
+            "$ref": "#/$defs/AppBundleEntry"
+          },
+          "type": "array"
+        },
+        "domain": {
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Domain"
+          },
+          "type": "array"
+        },
+        "iab_content_category": {
+          "description": "IDs of categories of the IAB Tech Lab Content Taxonomy, each carried as written. The specification's example writes one as `IAB-CT3.0:<id>`, the taxonomy's version and the category's ID.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          },
+          "type": "array"
+        },
+        "keyword": {
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+          },
+          "type": "array"
+        },
+        "list_ref": {
+          "$ref": "#/$defs/ListRef"
+        }
+      },
+      "type": "object"
+    },
+    "ExclusionsAccepted": {
+      "additionalProperties": false,
+      "properties": {
+        "enforcement": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Enforcement"
+          },
+          "propertyNames": {
+            "$ref": "#/$defs/ExclusionType"
+          },
+          "type": "object"
+        },
+        "max_entries": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+          },
+          "propertyNames": {
+            "$ref": "#/$defs/ExclusionType"
+          },
+          "type": "object"
+        },
+        "types": {
+          "items": {
+            "$ref": "#/$defs/ExclusionType"
+          },
+          "type": "array"
+        },
+        "verification": {
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "FrequencyCap": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "$ref": "#/$defs/FrequencyCapBasis"
+        },
+        "max": {
+          "$ref": "#/$defs/MaxRange"
+        },
+        "period": {
+          "$ref": "#/$defs/FrequencyCapPeriod"
+        }
+      },
+      "type": "object"
+    },
+    "FrequencyCapBasis": {
+      "anyOf": [
+        {
+          "enum": [
+            "device",
+            "household",
+            "listener"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "FrequencyCapPeriod": {
+      "description": "The period a frequency cap counts over. Each term is OpenDirect 2.1's code spelled as the specification spells its terms. `hour`, `day`, `week`, and `month` are calendar periods on the line item's clock, so a `day` runs from midnight to midnight and a count starts again at midnight, not 24 hours after an impression, and a week starts on Monday. `flight`, OpenDirect's `LineDuration`, is no calendar period: it runs from the flight's start to its end, between two calendar dates; The codes of OpenDirect 2.1 Line.frequencyinterval (https://github.com/InteractiveAdvertisingBureau/OpenDirect/blob/82bc294314aba017fc639ba634aecc53adfd675f/OpenDirect.v2.1.final.md#object_line); `hour`: Hour; `day`: Day; `week`: Week; `month`: Month; `flight`: LineDuration",
+      "enum": [
+        "hour",
+        "day",
+        "week",
+        "month",
+        "flight"
+      ],
+      "type": "string"
+    },
+    "Geo": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GeoSelection"
+        },
+        {
+          "$ref": "#/$defs/GeoBounds"
+        }
+      ]
+    },
+    "GeoBounds": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets to one of the values the seller allows, `allowed[]`, for a type whose values have no order, such as a geo code or a device category.",
+      "properties": {
+        "allowed": {
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "allowed"
+      ],
+      "type": "object"
+    },
+    "GeoSelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, and `pricing` gives the change in price for each other option.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          },
+          "type": "array"
+        },
+        "included": {
+          "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the identity the seller mints for it.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        },
+        "pricing": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
+          },
+          "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the identity the seller mints for it.",
+          "propertyNames": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "available",
+        "included"
+      ],
+      "type": "object"
+    },
+    "ListRef": {
+      "additionalProperties": false,
+      "properties": {
+        "sha256": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Digest"
+        },
+        "url": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Url"
+        }
+      },
+      "type": "object"
+    },
+    "MaxRange": {
+      "additionalProperties": false,
+      "description": "A range of values from `min` to `max`, with at least one bound, such as the bounds within which the buyer sets a frequency cap.",
+      "minProperties": 1,
+      "properties": {
+        "max": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        },
+        "min": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/targeting/1/targeting.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `targeting` module: the vocabularies, objects, unions, and constructor copies of § 5.5.",
+  "title": "targeting"
+}

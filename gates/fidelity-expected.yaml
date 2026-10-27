@@ -1,0 +1,20 @@
+# The disagreements the fidelity gate (gates/fidelity.ts) expects, each group under
+# the open task that removes them. The gate fails on a disagreement listed nowhere,
+# on a listed one whose detail changed, and on a listed one that no longer occurs,
+# so the task that fixes the model removes its entries. This file is an exemption:
+# changing it changes the gate's fingerprint, which a gate decision must accept.
+format: 1
+groups: []
+# Constraints the schema can't state, left to a rule. The gate passes such an
+# invalid vector only when the listed rule applies to an object on the
+# constraint's path and gives an invalid vector the constraint rules out, and
+# fails an entry that no longer disagrees.
+ruled:
+  - constraint: "key:5.2.2:placement.plcmt#conditional@line_item.placement.plcmt"
+    locks: [ with-open-prs ]
+    rule: "rule:5.2:f3d3f9e8"
+    reason: >-
+      § 5.2.2 makes `plcmt` REQUIRED for video ads, a condition on the line
+      item's `channel`, which sits outside the `placement` object, so the
+      `Placement` schema can't state it. The rule states it, with an invalid
+      vector of a video line item whose placement has no `plcmt`.

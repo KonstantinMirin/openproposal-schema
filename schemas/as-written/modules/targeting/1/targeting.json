@@ -1,0 +1,111 @@
+{
+  "$defs": {
+    "DaypartBounds": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets to one of the values the seller allows, `allowed[]`, for a type whose values have no order, such as a geo code or a device category.",
+      "properties": {
+        "allowed": {
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/DaypartWindow"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "allowed"
+      ],
+      "type": "object"
+    },
+    "DeviceBounds": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets to one of the values the seller allows, `allowed[]`, for a type whose values have no order, such as a geo code or a device category.",
+      "properties": {
+        "allowed": {
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "allowed"
+      ],
+      "type": "object"
+    },
+    "FrequencyCap": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "$ref": "#/$defs/FrequencyCapBasis"
+        },
+        "max": {
+          "$ref": "#/$defs/MaxRange"
+        },
+        "period": {
+          "$ref": "#/$defs/FrequencyCapPeriod"
+        }
+      },
+      "type": "object"
+    },
+    "FrequencyCapBasis": {
+      "anyOf": [
+        {
+          "enum": [
+            "device",
+            "household",
+            "listener"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "FrequencyCapPeriod": {
+      "description": "The period a frequency cap counts over. Each term is OpenDirect 2.1's code spelled as the specification spells its terms. `hour`, `day`, `week`, and `month` are calendar periods on the line item's clock, so a `day` runs from midnight to midnight and a count starts again at midnight, not 24 hours after an impression, and a week starts on Monday. `flight`, OpenDirect's `LineDuration`, is no calendar period: it runs from the flight's start to its end, between two calendar dates; The codes of OpenDirect 2.1 Line.frequencyinterval (https://github.com/InteractiveAdvertisingBureau/OpenDirect/blob/82bc294314aba017fc639ba634aecc53adfd675f/OpenDirect.v2.1.final.md#object_line); `hour`: Hour; `day`: Day; `week`: Week; `month`: Month; `flight`: LineDuration",
+      "enum": [
+        "hour",
+        "day",
+        "week",
+        "month",
+        "flight"
+      ],
+      "type": "string"
+    },
+    "GeoBounds": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets to one of the values the seller allows, `allowed[]`, for a type whose values have no order, such as a geo code or a device category.",
+      "properties": {
+        "allowed": {
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "allowed"
+      ],
+      "type": "object"
+    },
+    "MaxRange": {
+      "additionalProperties": false,
+      "description": "A range of values from `min` to `max`, with at least one bound, such as the bounds within which the buyer sets a frequency cap.",
+      "minProperties": 1,
+      "properties": {
+        "max": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        },
+        "min": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/modules/targeting/1/targeting.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `targeting` module: the vocabularies, objects, unions, and constructor copies of § 5.5.",
+  "title": "targeting"
+}

@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/ir/findings.schema.json",
+  "title": "OpenProposal spec lint findings",
+  "description": "Stage 2 output: findings over the IR, each with an optional disposition from the exception registry.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ir_version",
+    "input",
+    "counts",
+    "findings"
+  ],
+  "properties": {
+    "ir_version": {
+      "const": 1
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "commit",
+        "blob"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "commit": {
+          "$ref": "#/$defs/sha1"
+        },
+        "blob": {
+          "$ref": "#/$defs/sha1"
+        }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total",
+        "open",
+        "by_kind",
+        "by_verdict"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "open": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "by_kind": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "by_verdict": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    }
+  },
+  "$defs": {
+    "sha1": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "loc": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "section",
+        "line"
+      ],
+      "properties": {
+        "section": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "table": {
+          "type": "string"
+        },
+        "row": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "message",
+        "subjects",
+        "locs",
+        "details",
+        "disposition"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "message": {
+          "type": "string"
+        },
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "locs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/loc"
+          }
+        },
+        "details": {
+          "type": "object"
+        },
+        "disposition": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "verdict",
+                "reason"
+              ],
+              "properties": {
+                "verdict": {
+                  "enum": [
+                    "accepted",
+                    "false_positive",
+                    "mapping",
+                    "feedback"
+                  ]
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 12
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+format: 1
+id: G-026
+date: 2026-10-26
+question: How does the feedback gate keep the model's type names out of the text for the working group?
+decision: >-
+  The internal-term check reads the type names from each lock's model and
+  fails a line of `comment.md` or `details.md` that names one in a code span,
+  or that names one of two or more words, such as `GeoBounds`, anywhere,
+  unless the specification writes the name itself, in a Type cell or a code
+  span, as it writes `Timestamp` and AdCOM's `Placement`. A one-word name in
+  prose, such as "Count", is an English word and passes. The untagged unions
+  table names each union by the rows it rests on, a copy's argument's
+  included, and lists each form in the specification's terms: an object by
+  the members the text writes, a primitive or a part by its description's
+  first clause, and a copy by the § 3 structure it is; forms that differ
+  between the locks are two rows. D-007, D-013, D-019, D-023, and D-026 say
+  what the schemas do in plain words. Two fixtures put `ExternalId` in a code span
+  and `DaypartWindow` in prose, and a test checks the names and the
+  exceptions. The test suite holds 325 tests, so its floor rises to 325.
+rationale: >-
+  The check caught a decision ID or a path, not a type name, so a reading
+  such as "as an `ExternalId`" reached the working group. It now catches
+  every model type name the specification doesn't write, the earlier checks
+  stay, and the test floor rises, so no gate is weaker.
+accepts:
+  - { gate: feedback, fingerprint: 490067996e9e3727413af9d919eb1584582e1678bc6c954bbac850bcf19dd941 }
+  - { gate: npm-test, fingerprint: fb4b8877343974ee4faa4d577c3fa99bbeec1b2ec8fb1895f2652ee259597690 }

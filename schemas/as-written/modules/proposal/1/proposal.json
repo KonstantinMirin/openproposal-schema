@@ -1,0 +1,80 @@
+{
+  "$defs": {
+    "Assent": {
+      "description": "The buyer's and the seller's assent records, with their timestamps, for the binding version; the signature scheme is WS1. The specification states no members, so the object accepts any.",
+      "type": "object"
+    },
+    "NegotiationAction": {
+      "enum": [
+        "proposed",
+        "countered",
+        "accepted",
+        "declined",
+        "withdrawn"
+      ],
+      "type": "string"
+    },
+    "NegotiationHistoryEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/NegotiationAction"
+        },
+        "actor": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Party"
+        },
+        "at": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Timestamp"
+        },
+        "fields_changed": {
+          "description": "The fields the step changed, each named by its path as the specification's tables write it, such as `pricing[].gross_rate`, and compared by exact equality.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          },
+          "type": "array"
+        },
+        "version": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count",
+          "description": "The proposal's revision number, its `version`, that the step proposed, countered, accepted, declined, or withdrew."
+        }
+      },
+      "type": "object"
+    },
+    "ProposalStatus": {
+      "enum": [
+        "draft",
+        "published",
+        "under_review",
+        "agreed",
+        "withdrawn",
+        "expired"
+      ],
+      "type": "string"
+    },
+    "ProposalType": {
+      "enum": [
+        "standard",
+        "custom"
+      ],
+      "type": "string"
+    },
+    "Specifications": {
+      "anyOf": [
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+        },
+        {
+          "$ref": "#/$defs/SpecificationsDetail"
+        }
+      ]
+    },
+    "SpecificationsDetail": {
+      "description": "Structured detail at media-kit depth. The specification states no members, so the object accepts any.",
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/modules/proposal/1/proposal.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `proposal` module: the vocabularies, objects, unions, and constructor copies of § 4, § 4.1, and § 4.2.",
+  "title": "proposal"
+}

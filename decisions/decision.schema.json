@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/decisions/decision.schema.json",
+  "title": "OpenProposal decision record",
+  "description": "One decision per file: decisions/<id>.yaml. It quotes the IR elements it covers and stores their digests, so it goes stale when one of them changes. Mapping entries cite it as their source.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "id", "status", "kind", "author", "question", "covers", "options", "chosen", "rationale"],
+  "properties": {
+    "format": {
+      "description": "Version of this format.",
+      "const": 1
+    },
+    "id": {
+      "description": "Equals the file name without `.yaml`.",
+      "$ref": "#/$defs/decisionId"
+    },
+    "status": {
+      "description": "`proposed` until a human accepts it; `filed` once it is raised with the working group; `superseded` when a later record replaces it. A release fails on a `proposed` record.",
+      "enum": ["proposed", "accepted", "filed", "superseded"]
+    },
+    "kind": {
+      "description": "`gap`: the specification leaves the point open, and the decision chooses a reading. `departure`: the specification settles the point, in its text or in the form its examples write, and the decision proposes a change. An example that follows the specification but not a departure is a finding of the departure, and its reason says that the example follows the text.",
+      "enum": ["gap", "departure"]
+    },
+    "author": {
+      "description": "Who proposed the decision: `agent`, or a person's name.",
+      "type": "string",
+      "minLength": 1
+    },
+    "question": {
+      "description": "What the specification leaves open, as one question.",
+      "type": "string",
+      "minLength": 12
+    },
+    "covers": {
+      "description": "The IR elements the decision rests on, each quoted and digested.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/cover" }
+    },
+    "options": {
+      "description": "The alternatives considered, including the chosen one.",
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "summary"],
+        "properties": {
+          "id": { "$ref": "#/$defs/token" },
+          "summary": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "chosen": {
+      "description": "The `id` of one option.",
+      "$ref": "#/$defs/token"
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 12
+    },
+    "evidence": {
+      "description": "Further sources, such as an example file and line, or another specification.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "feedback": {
+      "description": "What the specification should say instead, for the implementation feedback to the working group.",
+      "type": "string",
+      "minLength": 12
+    },
+    "issue": {
+      "description": "Where the decision was filed. Required when `status` is `filed`.",
+      "$ref": "#/$defs/issue"
+    },
+    "superseded_by": {
+      "description": "The record that replaces this one. Required when `status` is `superseded`.",
+      "$ref": "#/$defs/decisionId"
+    },
+    "sets_aside": {
+      "description": "The types the decision gives a field whose structure the specification doesn't state, such as an open vocabulary with no core terms, each with the field that holds it. The duplication and value-list gates set aside exactly these: a type of no structure that no record lists fails, and so does a listed type that is gone, has a structure, or isn't the field's.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "field", "ir"],
+        "properties": {
+          "type": { "description": "The type's name.", "type": "string", "pattern": "^[A-Z][A-Za-z0-9]*$" },
+          "field": { "description": "The field or member that holds the type, as the specification writes its path, such as `reporting.delivery_mechanism`.", "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\[\\])?(\\.[a-z][a-z0-9_]*(\\[\\])?)*$" },
+          "ir": { "description": "The IR element that defines the type, which the record covers.", "type": "string", "pattern": "^[a-z][a-z-]*:\\S+$" },
+          "locks": { "$ref": "#/$defs/cover/properties/locks" }
+        }
+      }
+    }
+  },
+  "if": { "properties": { "status": { "const": "filed" } } },
+  "then": { "required": ["issue"], "properties": { "issue": { "$ref": "#/$defs/issue" } } },
+  "allOf": [
+    {
+      "description": "Only a departure lists, on a cover, the forms it departs from.",
+      "if": { "properties": { "kind": { "const": "gap" } } },
+      "then": { "properties": { "covers": { "type": "array", "items": { "type": "object", "properties": { "departs": false } } } } }
+    }
+  ],
+  "else": {
+    "if": { "properties": { "status": { "const": "superseded" } } },
+    "then": { "required": ["superseded_by"], "properties": { "superseded_by": { "$ref": "#/$defs/decisionId" } } },
+    "else": { "not": { "required": ["superseded_by"], "properties": { "superseded_by": { "$ref": "#/$defs/decisionId" } } } }
+  },
+  "$defs": {
+    "cover": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ir", "digest", "quote"],
+      "properties": {
+        "ir": {
+          "description": "The IR element ID.",
+          "type": "string",
+          "pattern": "^[a-z][a-z-]*:\\S+$"
+        },
+        "digest": {
+          "description": "The element's digest when the record was written. A different current digest makes the record stale.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "quote": {
+          "description": "The element's text as `npm run cite` prints it. The gate compares it with the IR, so a quote can't be edited by hand.",
+          "type": "string",
+          "minLength": 1
+        },
+        "locks": {
+          "description": "Lock names the cover applies to. Without it, the cover applies to every lock.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" }
+        },
+        "departs": {
+          "description": "For a departure: the constraint forms of this element that it changes, as the fidelity gate reads them from the specification (`required`, `optional`, `conditional`, `type`, `values`, `contains`, `member`, `empty`, `example`). The gate lets the schema disagree with this element's constraint of a listed form, and with no other, and fails a listed form that excuses no disagreement on a lock the cover applies to, so a departure about one element's type excuses neither its presence nor another element it covers.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["required", "optional", "conditional", "type", "values", "contains", "member", "empty", "example"] }
+        }
+      }
+    },
+    "issue": {
+      "type": "string",
+      "pattern": "^https://\\S+$"
+    },
+    "decisionId": {
+      "type": "string",
+      "pattern": "^D-[0-9]{3,}$"
+    },
+    "token": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    }
+  }
+}

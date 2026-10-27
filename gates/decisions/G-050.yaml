@@ -1,0 +1,54 @@
+format: 1
+id: G-050
+date: 2026-10-27
+question: How does the fidelity gate keep a decision's reading of a list's prose item from widening the projection the list's code paths give?
+decision: >-
+  A profile entry's `paths` becomes `reads`: each prose item a cited
+  decision reads, `item`, with the paths it reads that item as, so D-028
+  reads "property names" as `properties.available[].name`. The fidelity
+  oracle refuses a reading of an item the list doesn't write in prose, a
+  reading of a list no MUST-contain statement introduces, and a path that
+  starts at a field one of the list's code paths names, and the gate fails
+  on each refusal. The readings, `mapping/*.yaml#reads`, join the gate's
+  exemptions, so its fingerprint covers them and a new reading needs a gate
+  decision. Three fixtures widen the summary's `formats` to the whole field
+  with readings of each member the list doesn't name, read a prose item the
+  list doesn't write, and read a list that only a "whichever of" statement
+  gives; each fails the gate. A test checks each refusal. The gates that
+  load the mapping read its type, so their fingerprints change with no
+  change to what they check. The test suite holds 354 tests, so `MIN_TESTS`
+  is 354.
+rationale: >-
+  G-036 says the oracle's one input from the mapping can only add a check,
+  since a reading only narrows what a projection may hold. That is wrong: a
+  reading's path joins the projection, so each object it steps into may
+  hold one more member, and a reading of `formats.available[]` and
+  `formats.pricing` let a summary carry most of the line item's `formats`.
+  The oracle now accepts only a reading that can't reach an object a code
+  path projects, every earlier check stays, and the fixtures and the test
+  are added, so no gate is weaker.
+accepts:
+  - { gate: comparison, fingerprint: 32c95d4848eb165efae57c64279bad71e6bd3087c5b95640465cdb59611dce9f }
+  - { gate: convention-beside-reference, fingerprint: ba1d2005705e10766dce653c45a1aa2eea2dfa18a16e8ba8f033479dc2a288c5 }
+  - { gate: convention-inline, fingerprint: 9616771f80a485ba345ada9773ec4297e48de54508cbfaebf937eb5f1d2d9683 }
+  - { gate: convention-keywords, fingerprint: e5f8e9149fed1efd21f166a8f932a3b14c3d136b94c43e470da3648c4db90788 }
+  - { gate: convention-layers, fingerprint: ffa327764e2e0fc83d2ceec1162a21f113047c0d2c0ffb7cbc9ef95b7921e7c4 }
+  - { gate: convention-lists, fingerprint: 63c0c11c1c06fdea17a213784c1d10056856877d66f063978d212bbcb32c9897 }
+  - { gate: convention-modules, fingerprint: 5bc44ceb3b2e3573f313a0b5fed1253edcbdcbc2ac0f0733d85feaf03aeb8689 }
+  - { gate: convention-unions, fingerprint: f4b011615194a5165af32b6bb0ede5b62854b5a3683ddf5b49b525f4267d51da }
+  - { gate: duplication-kernel, fingerprint: 145858097bcbd5b51da643e36fb7914ac3dbba3dcf96484297df8a9ae079ec96 }
+  - { gate: feedback, fingerprint: fff7ff4aa685de024a7d5423c15df4a7a470e0919b828b1498a1886a44d77cca }
+  - { gate: fidelity, fingerprint: a6fab1d3b77d44ca27843dcc7849fc8b14b492bd0bb5a4e027919de88157cec2 }
+  - { gate: map-drift, fingerprint: d53c0ad1984ea3fdcd4b67d1ca3f666e4a6e941fbd2a4d2631b6200c8181de60 }
+  - { gate: mapping-bijection, fingerprint: 571a8e7018c04fbd049adfc70edf58f342a89f30b243e718b9c5dec41d514bba }
+  - { gate: mapping-constructors, fingerprint: cdb447d17c3fc32a9e5f2f32c0e63783fa209bee091d0d2f860af046c61c9d04 }
+  - { gate: mapping-current, fingerprint: 3265322d3cf1cce32f73e2d6024572974ad0a4a9c20173fb75662747f7f71278 }
+  - { gate: mapping-load, fingerprint: 6e804b465aba60c32040c1d8de51f8185d17bd76e9a656c7624658583c3e289a }
+  - { gate: mapping-location, fingerprint: 8c2cf5aa1f610f64be32e1d2e70794dc92d0768f808d63dedb09114f879510ef }
+  - { gate: mapping-names, fingerprint: 9d2facdde1ea47d7e44ca7ccc1b88b083b7ffe330d02474a1768e4d621c7b16d }
+  - { gate: mapping-rules, fingerprint: d4ed109bb2fbd5ae2dc1e6769d6c6a68bf656683b870063ff17bfd3097a8d117 }
+  - { gate: mapping-sources, fingerprint: cc3b12d9051e144cfe2d7a467c4210f91f1297bd07fa433d7eec5a303d7c3c6b }
+  - { gate: model-resolves, fingerprint: 8277e7bae8d091b8bfd3377cb8e6492fe2ee46ee3e8e9d174f6a992d31c1e50e }
+  - { gate: modules-depends, fingerprint: 6511bd5b6ea54dd3f8a8fdda69ac9d79d0c011b42ea8aa286c0c70f60f71244a }
+  - { gate: nesting, fingerprint: 5647e2af9ec35151363a2afa7b336c5f3978e721884b6eeb0ddcc54589bf474b }
+  - { gate: npm-test, fingerprint: 6c728cdc8fdbbc2c3485e71c020e59592099cc48366047401b41e3ef9b36cc48 }

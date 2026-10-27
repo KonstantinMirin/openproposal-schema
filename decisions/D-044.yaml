@@ -1,0 +1,61 @@
+format: 1
+id: D-044
+status: proposed
+kind: gap
+author: agent
+question: What values does a frequency cap's `period` take, and is a period a calendar period or a length of time?
+covers:
+  - ir: field:5.5:frequency_cap#description/object:1
+    digest: adbcfc3ac2b7bc7c0bda1069751986267cf304dbafb4ee388d9c2f62b43ba305
+    quote: "{ max: { min, max }, period, basis: device | household | listener }"
+  - ir: sentence:5.5:bcaa431b
+    digest: dd32a6368f87c6f3cc3b6ecb6ff87b8aa69d0332a9b99e1a2b7467f2c3ea5f00
+    quote: Like the calendar Day of OpenDirect 2.1 `Line.frequencyinterval`, `frequency_cap.period` is a calendar period in `time_zone`; weeks start on Monday.
+    locks: [with-open-prs]
+options:
+  - id: opendirect-intervals
+    summary: >-
+      One of the OpenDirect 2.1 `Line.frequencyinterval` intervals, in the
+      specification's spelling: `hour`, `day`, `week`, `month`, or `flight`,
+      OpenDirect's `LineDuration`. The first four are calendar periods on the
+      line item's clock, so a `day` runs from midnight to midnight. `flight`
+      runs from the flight's start to its end, between its two points in time.
+  - id: rolling-duration
+    summary: An ISO 8601 duration, such as `P1D`, read as a rolling span of that length, as `hold_duration` is.
+  - id: as-written
+    summary: A word, as the examples write `day`, from no list.
+chosen: opendirect-intervals
+rationale: >-
+  The text names `period` and lists no value for it, and every example
+  writes `day`. With the open PRs, the text says that `period` is a calendar
+  period in `time_zone`, like the calendar Day of OpenDirect 2.1
+  `Line.frequencyinterval`, and that weeks start on Monday. A calendar period
+  isn't a length of time: a calendar day runs from midnight to midnight in a
+  zone, so it is 23 or 25 hours long on the day the clocks change, and it
+  resets every count at midnight, where a rolling `P1D` resets 24 hours after
+  each impression. So the period is a term, not a `Duration`. OpenDirect 2.1,
+  where a direct buy's line lands, lists the intervals `Day`, `Month`,
+  `Week`, `Hour`, and `LineDuration`, and states the calendar meaning for
+  `Day`. The schema takes those intervals, spelled as the specification
+  spells its terms, with `flight` for `LineDuration`, the commitment's
+  flight, so the examples' `day` stays valid. `flight` is no calendar period:
+  a flight's start and end are points in time (D-042), so it runs between
+  them, whatever the clock, and only `hour`, `day`, `week`, and `month` are
+  read on the line item's clock, with weeks from Monday, as the open PRs'
+  text says. The list is closed: a seller
+  can't count against a period a receiver doesn't know how to reset. Whether
+  a period is calendar or rolling is an open question of the PR that adds the
+  clock; the schema reads it as calendar, as that PR's text states, and on
+  `main`, whose text names no clock, as the same calendar period, so the two
+  locks agree.
+evidence:
+  - https://github.com/InteractiveAdvertisingBureau/OpenDirect/blob/82bc294314aba017fc639ba634aecc53adfd675f/OpenDirect.v2.1.final.md#object_line
+  - examples/line-item-display.yaml (frequency_cap)
+feedback: >-
+  List the values of `frequency_cap.period`: the OpenDirect 2.1
+  `Line.frequencyinterval` intervals, `hour` | `day` | `week` | `month` |
+  `flight`. Here `flight` is OpenDirect's `LineDuration`, the commitment's
+  flight. Say that `hour`, `day`, `week`, and `month` are calendar periods on
+  the line item's clock, as #123 does. A `day` then runs from midnight to
+  midnight, not for 24 hours, and a week starts on Monday. Say that `flight`
+  runs from the flight's start to its end, which are points in time.

@@ -1,0 +1,56 @@
+format: 1
+id: G-059
+date: 2026-10-27
+question: Where do the type examples take a primitive's value when the specification's examples give none, and what keeps that value valid?
+decision: >-
+  Each primitive in `kernel/primitives.yaml` declares `showcase`, one or
+  two values a reader's example payload shows, such as a realistic UUID, an
+  amount of 18.5, or a sentence of prose; the second is for a list's second
+  item. `kernel/kernel.schema.json` requires it, with one or two distinct
+  values. `checkKernel` checks each showcase value with the Ajv validator
+  that checks a valid vector, and runs each rule of the primitive on it, so
+  a showcase currency is one ISO 4217 assigns and a showcase zone is one
+  the IANA database lists. Two new kernel-check fixtures fail: an Amount
+  showcase of -18.5, and a CurrencyCode showcase of `ABC`. A new kernel
+  test covers both and a time zone the database doesn't list, the test
+  suite holds 363 tests, and `MIN_TESTS` is 363.
+rationale: >-
+  The kernel gate checks more and relaxes nothing: every vector, mutant, and
+  rule check runs as before, and the showcase values add checks of their
+  own. The other gates change only because the `Primitive` declaration they
+  reach gained the `showcase` member, the kernel schema they read requires
+  it, and `src/kernel.ts` imports the rule checks; none of them changes
+  what it checks, and the showcase values are no conformance vectors, so the
+  corpus, the rules, and the SDK cases are unchanged.
+accepts:
+  - { gate: comparison, fingerprint: 32f4fa528467a4ab00316c75d47c302386cff4a8ba7651d9bb3fc8a3b737e7f7 }
+  - { gate: constructors-applied, fingerprint: 682909baae519e48a8bd4c40b4e6d207a484ead24b297ddc0abdc3bcac08e931 }
+  - { gate: constructors-check, fingerprint: 98aa57efccfb0b261b8e4907bb7b2a1a6323fb8d856d4605287fd3a9aec3548c }
+  - { gate: convention-beside-reference, fingerprint: 186bb294359e2b77975e593eb52963c2cebf7d9d8125d81a752a17a09ba337d3 }
+  - { gate: convention-inline, fingerprint: c6d517aa772876e1eab0301556e10d18dde173932a446b920a208d77a1c06ae0 }
+  - { gate: convention-keywords, fingerprint: 12fbf65d881e745fe7297785af7bfe4dadafa17f23268d26b9ff637dd0d9b5d5 }
+  - { gate: convention-layers, fingerprint: 37852f0845d2c306871003c88bfcb834b5f5fbd7d97a2413f366bf3efc1b0442 }
+  - { gate: convention-lists, fingerprint: c13bbc0a93cd59aa57b8bf5111e40e0ed10f4c1887dfde399b9643cea7a594bd }
+  - { gate: convention-modules, fingerprint: 1465e794d61aacf9072f74e11dfebf7a0e2c5f70d7eb274746b5f94f195ac6ad }
+  - { gate: convention-unions, fingerprint: 343c24ba8cfbd655622744310f1f062b26572e3692531ed46062f14686c04560 }
+  - { gate: corpus-generates, fingerprint: 937abe01a9b5ce945dd5e85df6ce828aa96d9a19fc703ae95006331a1a6e3039 }
+  - { gate: duplication-kernel, fingerprint: a47e731e2bd805c6706cb6c884c38ef55bdc203a173f167e7402f8451f327a5f }
+  - { gate: duplication-model, fingerprint: ec280492f5e4465580bcdb15fdf9f75ef80d717f8b97902d7ba4b47bd8449747 }
+  - { gate: feedback, fingerprint: 9c281d74303bb67a58f1f9cc3833cbf5ba15dac378c6f984dfecbdda245b23d5 }
+  - { gate: fidelity, fingerprint: d22ada76a7f5fa23a345e3b115887b5715537b16a1424622d932393663fcb9f8 }
+  - { gate: kernel-check, fingerprint: 3cd8d151ac32326b8c298e5fedd780bf130d94ba8e5a318cb144ceab6abc35fe }
+  - { gate: kernel-engines, fingerprint: 440cd8e537c89e1c47e3cde13468965458f9381f1128ee47500565bc1a364ac9 }
+  - { gate: kernel-load, fingerprint: cb91b59599e150134f63bb30517ca8a557b106f7dcc6e8ad2dbe014b6088ec25 }
+  - { gate: kernel-sources, fingerprint: f6b2f497378fa129c183d45d0bd276615cd8e7f5db9395b3bc6a710b7e0de45a }
+  - { gate: map-drift, fingerprint: 3b366b1ecdca1c049e8be6b6f6e7c078d3233856d8f14c945e7fdd124a62e55f }
+  - { gate: mapping-bijection, fingerprint: d5e37c1490ff35b838a652a387d1a538f3ff11f4ede69cf6ddc06e912973196f }
+  - { gate: mapping-constructors, fingerprint: c16e4a32b875223a6396e2d63a77ddc442fb5be443020ef59e25c8904545baa5 }
+  - { gate: mapping-location, fingerprint: c5c3e5ba439d42624dc2f20b6afe01d65bdb25705fc4749284f62609d1971a87 }
+  - { gate: mapping-rules, fingerprint: 3acda933cf247b32aba23c116376ea6741ac026a2779852cb683d193bfe04ff6 }
+  - { gate: model-resolves, fingerprint: e8d93ca72649bb4c9d0065d27ec44498eb7acbb69f04583832905a3269962a14 }
+  - { gate: nesting, fingerprint: 3a7dd8055887216cfe3f3e2a003b58e1bffb1d31551175403b5e1ea9f20cd888 }
+  - { gate: npm-test, fingerprint: c4a099fd4bd0589c284961cc5664e2ef83ec2e991333c5408f175274773e715f }
+  - { gate: schemas-emit, fingerprint: 1d9a31f3491d2a87a616ec46f03b1f7d55a3e5d429619705209bee41de89c8ab }
+  - { gate: sdk-generate, fingerprint: 4037c294ac148a184a3ca4e8764f559ca5dd37601aebad5d25bce6d05dba9cb3 }
+  - { gate: type-examples-generate, fingerprint: adc9e6212459de6ec0a9574c00aaa0e11f8e3aa78e2a1f7deaddcf7b19233980 }
+  - { gate: type-examples-valid, fingerprint: b2ac0e83040467b0414bd6bf5f541b952049a4ac7d870950448ffe544428e445 }

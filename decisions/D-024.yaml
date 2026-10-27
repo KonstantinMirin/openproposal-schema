@@ -1,0 +1,91 @@
+format: 1
+id: D-024
+status: proposed
+kind: gap
+author: agent
+question: What type does each member of the § 5.2 and § 5.3 objects take, and each key of the § 5.2 tables that no rule types?
+covers:
+  - ir: key:5.2.2:placement.plcmt
+    digest: bfb50cd7c0a3028f0a69f338b91e05496e8d19d3c8e48422480bead6fe17b125
+    quote: "`plcmt` | REQUIRED for video ads (`channel` `video`, or video on `channel` `ctv`); otherwise OPTIONAL | One value from List: Plcmt Subtypes - Video: Instream (1), Accompanying Content (2), Interstitial (3), No Content/Standalone (4), Pause (5), Screensaver (6), Overlay (7), Squeezeback (8), In-scene (9) | `VideoPlacement.ptype`, `video.plcmt`"
+    locks: [with-open-prs]
+  - ir: key:5.2.2:placement.skipafter
+    digest: 7eb11e62931be7a67537c85a3e6e1609978155b48c0219644d3998f796a1c36d
+    quote: "`skipafter` | OPTIONAL | When `skip` is `1`: seconds the ad plays before the placement enables skipping | `VideoPlacement.skipafter`, `AudioPlacement.skipafter`, `video.skipafter`"
+    locks: [with-open-prs]
+  - ir: key:5.2.2:placement.playmethod[]
+    digest: 26d9a29e723df164840aeccd180c087753a8ef0daa061610df42052c0bacb6c5
+    quote: "`playmethod[]` | OPTIONAL | Video or audio. Values from List: Playback Methods in use, such as Initiates without any specific user interaction with Sound On (1), Initiates without any specific user interaction Sound Off by Default (2), Initiates on Click with Sound On (3) and Continuous Playback (7) | `VideoPlacement.playmethod`, `AudioPlacement.playmethod`, `video.playbackmethod`"
+    locks: [with-open-prs]
+  - ir: key:5.2.2:placement.api[]
+    digest: 17090845d7638e560a7b0ed6f3d42223dc6a6425a24e12f3b63a18c64a2a5843
+    quote: "`api[]` | OPTIONAL | Values from List: API Frameworks that every impression supports, such as MRAID 3.0 (6), OMID 1.0 (7) and SIMID 1.1 (9) | `DisplayPlacement.api`, `VideoPlacement.api`, `AudioPlacement.api`, `banner.api`, `video.api`, `audio.api`"
+    locks: [with-open-prs]
+  - ir: field:5.2:properties#description/object:1
+    digest: d17ed59027f652ad048ca0fb7bae6984613c7b5dfc4273560958ce7006b42990
+    quote: "{ id, name, domains, supported_formats }"
+    locks: [main]
+  - ir: field:5.2:properties#description/object:1
+    digest: 21095d8df24b1478821abe8102f66a3e90e4d8635d79d28277a108d272cbf9de
+    quote: "{ id, name, domains, apps, supported_formats }"
+    locks: [with-open-prs]
+  - ir: key:5.2.2:placement.refresh#meaning/object:1
+    digest: 27ac3f05aa6a1411815e69eb0e22b90e343a5120ffac0dcc1a98e7336305c066
+    quote: "{ min_interval_s }"
+    locks: [with-open-prs]
+  - ir: rule:5.2.2:463dfafd
+    digest: eee71b1ff54c633f884713ce121e5b82ef4ecc041de54921c9ab66336402c469
+    quote: Each key takes an integer, except `playmethod[]` and `api[]`, which take arrays of integers, and `refresh`, an object whose `min_interval_s` is a REQUIRED integer.
+    locks: [with-open-prs]
+  - ir: sentence:5.2.2:af7851e2
+    digest: 5f7710238851ecc4a50e1e1834bd6d4ef78f35a1dd1d781c06d93665e1a5e421
+    quote: "`plcmt`, `playmethod[]` and `api[]` take any code in List: Plcmt Subtypes - Video, List: Playback Methods and List: API Frameworks respectively."
+    locks: [with-open-prs]
+  - ir: field:5.3:audiences#description/object:1
+    digest: 0a7d355ab5dcb787717d01988764dcca8895bdc0b1252de9e8269ad516e7ac6b
+    quote: "{ id, name, taxonomy_ref, provenance, addressable_scale }"
+  - ir: field:5.3:buyer_supplied#description/object:1
+    digest: d5cdd605af129db6ef8a658446a915a300cb4b1abe0f7ff6a2ae97f9fbb99f8f
+    quote: "{ segments_allowed, suppression_allowed, match_rate_expected, segments[], suppression_list }"
+options:
+  - id: as-listed
+    summary: >-
+      Each member takes the schema type its meaning names, such as a timestamp
+      or a URL. A code from an AdCOM list is the code. A plural member without
+      `[]` is a list.
+  - id: open-objects
+    summary: Each object accepts any members.
+chosen: as-listed
+rationale: >-
+  No inline object gives its members types, so each member takes the type of
+  the concept its name and the examples call for. A property's or an
+  audience's `id` names a catalog entry the seller mints, a `Uuid` (D-037),
+  and a `name` is `Text`. `domains` is a list of `Domain`, and with the open
+  PRs `apps` is a list of the app objects that the App identity table
+  describes; both are plural, the examples write lists, and the table is
+  headed `apps[]`, though the object writes them without `[]`.
+  `supported_formats` lists format IDs, `FormatId` like the formats themselves
+  (D-019). An audience's `taxonomy_ref` names an entry of a taxonomy another
+  party keeps, an `ExternalId`, its `provenance` a term of the open vocabulary
+  `Provenance` (D-041), and its `addressable_scale` a `Count`. In
+  `buyer_supplied`, the two permissions are booleans, `match_rate_expected` is
+  a `Fraction` (D-005), `segments[]` lists the buyer's segment IDs as its own
+  systems write them, and `suppression_list` is an open object (D-016). In
+  `placement`, § 5.2.2 says every key takes an integer, `playmethod[]` and
+  `api[]` arrays of integers, and `refresh` an object whose `min_interval_s`
+  is a REQUIRED integer, so `min_interval_s` is a required member, a length of
+  time (D-040). `plcmt`, `playmethod[]`, and `api[]` take any code of List:
+  Plcmt Subtypes - Video, List: Playback Methods, and List: API Frameworks,
+  so each is the vocabulary of its list's codes, as AdCOM 1.0 writes them at
+  the commit the text links: `PlcmtSubtype`, whose row writes out all nine,
+  `PlaybackMethod`, and `ApiFramework`, whose rows name some codes "such as".
+  The first two are closed; List: API Frameworks also reserves the codes
+  from 500 for vendors, so `ApiFramework` is open to a `VendorCode`.
+  `reward`, `instl`, and `skip` are flags (D-039).
+evidence:
+  - examples/line-item-display.yaml (properties, audiences, buyer_supplied)
+  - examples/line-item-ctv.yaml (properties with apps)
+  - examples/line-item-rewarded-video.yaml (placement)
+feedback: >-
+  Type the members of each inline object, and write each list member with `[]`,
+  as `domains[]` and `apps[]`. Name the values of `provenance`.

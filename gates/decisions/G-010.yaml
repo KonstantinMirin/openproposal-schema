@@ -1,0 +1,45 @@
+format: 1
+id: G-010
+date: 2026-10-26
+question: How does a kernel part cite more than one decision, as the daypart window does on `main`?
+decision: >-
+  A part lists its decisions under `decisions`, one for each member or
+  constraint its sources don't state, and `decision_locks` scopes them all;
+  the model carries each one on the locks it applies on. The daypart window
+  cites D-004 for its shape and for its `start` that is never `24:00`, and
+  D-038 for the clock that reads it, both on `main` only. A test checks
+  that a part's decisions exist and that the old single `decision` key no
+  longer loads. The test suite holds 309 tests, so its floor rises to 309.
+rationale: >-
+  The window's `start` constraint comes from D-004, which chose `HH:MM`
+  ends where only `end` can be `24:00`, and the part cited only D-038, the
+  clock. Every gate that reads a part's decisions reads each one, a missing
+  one still fails the constructors check, and the test floor rises, so no
+  gate is weaker. The other gates' fingerprints change because they reach
+  the model's resolver, whose lock-scoped decisions now read a list.
+accepts:
+  - { gate: comparison, fingerprint: dfe9d80168965dc7d05cf56cf00877bba82544053b894af6e710ea987b5c91ae }
+  - { gate: constructor-sources, fingerprint: cf6d5cd7200e2e32e576072c2b458b2456eb91a7798c1ff10ef954fa2c99aa63 }
+  - { gate: constructors-check, fingerprint: 07fadc00cd34cb232516fadff5b47c3a6aab185b3a4131a997eefaf8a8ca57eb }
+  - { gate: constructors-load, fingerprint: a62b6afead4b273d4d22e5ea69403149f896148bd2760c6acc6042a20b0a5518 }
+  - { gate: convention-beside-reference, fingerprint: aa90b350cd38053c72a18c5e96c687581cd52b0b53a76fd0164dcd3cad21f289 }
+  - { gate: convention-inline, fingerprint: 2b497ca29d4799d931dbfce7af483926bbffadbf7a9896b0f88ae8d8ace40416 }
+  - { gate: convention-keywords, fingerprint: c885a141d242b2a67356480061d79cb2820a17757b3996cdca81a65e82f7851d }
+  - { gate: convention-layers, fingerprint: 59e83131dacb9aeadf37579e919421185b6930e600856fca4c8166b41a93ea50 }
+  - { gate: convention-lists, fingerprint: 22a3dc5b9a468304a0143126a23949a591bda4ae6d4fb3118b79fc3f96d19683 }
+  - { gate: convention-modules, fingerprint: 4bcbc2e79270d81196a1a4344248a3aa53598ab6f89503f2b8a2ee0bbe750af5 }
+  - { gate: convention-unions, fingerprint: a95a235562a70ffc917b726c549e197595839298091645687b972fbabfe6f5b8 }
+  - { gate: duplication-kernel, fingerprint: b6eabc485dc752583e7a4db95ae1e3960556a47656309f079408244b0035f836 }
+  - { gate: duplication-model, fingerprint: cee319e9527c2c34295b6e8b0f5608154e550b5b0099a0656b202761d99e5fc3 }
+  - { gate: feedback, fingerprint: 898930619665b144434cea1bea9e99ca9e508810b1714fdfca2a9fba9654592b }
+  - { gate: fidelity, fingerprint: c1f20298a54fdd72dbb3819c4b7590072a6e6d67ea506a5de6d31774b80bb491 }
+  - { gate: map-drift, fingerprint: 000e031b2e26c27d77381d64634719a72cde87f744ec109e2db76f78f52c7d58 }
+  - { gate: mapping-bijection, fingerprint: 018a506040930d991e79c61bd811f551af39d47fc3d8ed5b82e61ffb5cde5077 }
+  - { gate: mapping-constructors, fingerprint: 02c316b51b3a48dbbb47f6409a2759522f765e6ca491e460df4503def028b4b1 }
+  - { gate: mapping-location, fingerprint: 1d3c4b3db46128a98ceb54cde220b55da819a6be50d5a08b2e3bab0b4a7ec518 }
+  - { gate: mapping-rules, fingerprint: 85138b34e8cd3cb484b0376fc137010ea01c9ad302f425234160e6f77974f96e }
+  - { gate: model-resolves, fingerprint: 09e12ae686db79c1715afc0c9a8fa2abbac370f7d8165165be36d3c23574b690 }
+  - { gate: nesting, fingerprint: 78f39df6e4ca1698eefd40a9001dedab0e55f074b432ad33e4b3909d2f95e845 }
+  - { gate: npm-test, fingerprint: aaf1a4412d391c8f63dab9b6983d7707453113ec0b2d9f4a49b0d8f3f58b752b }
+  - { gate: schemas-emit, fingerprint: 4b716687dc3b06a0c3670fcf49ae85f34b60b66c64df52ae1f6dbc8b46f72699 }
+  - { gate: sdk-generate, fingerprint: 18da243d50e8edbd1ffc90348164aa99de3aada1f5bf440dd5988e59878b729d }

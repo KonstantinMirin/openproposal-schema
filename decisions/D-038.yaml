@@ -1,0 +1,58 @@
+format: 1
+id: D-038
+status: proposed
+kind: gap
+author: agent
+question: In which time zone are a line item's calendar values read, its daypart windows, its frequency cap's period, and the days of its flight?
+covers:
+  - ir: field:5.5:daypart
+    digest: 25c80cd35ce4831dfbd372627f2d794511fffe5f029243e586ee1e607be4fdc2
+    quote: "`daypart` | Object | settable | `allowed[]` of time windows"
+    locks: [main]
+  - ir: field:5.5:frequency_cap
+    digest: f369947b6f5c84e82213fe929568d135b73b2daef366a6309fdf4f933fc2938b
+    quote: "`frequency_cap` | Object | settable | `{ max: { min, max }, period, basis: device | household | listener }`. Basis matters: CTV typically caps at household, audio at listener"
+    locks: [main]
+  - ir: key:5.6.1:commitment.flight_start
+    digest: f55507bcfbcdffa24a4949e12e1e59a92cef3e9b56f23e47b59e6b8c20f0d4fb
+    quote: "`flight_start` | REQUIRED | The buyer's campaign start. Distinct from `valid_from`"
+  - ir: key:5.6.1:commitment.flight_end
+    digest: d3bd830cbe989315172dc25dcb1f42bdb93752cfa4f6f0112d4fca784f286345
+    quote: "`flight_end` | REQUIRED | The buyer's campaign end. Distinct from `valid_until`"
+options:
+  - id: line-item-time-zone
+    summary: >-
+      One clock per line item reads its daypart windows and its frequency cap's
+      period, as the `time_zone` of #123 does. The schemas add no such field
+      until the text has it. A Timestamp, a flight's start and end included,
+      stays an RFC 3339 instant with an offset, which needs no clock.
+  - id: zone-suffix
+    summary: Each Timestamp carries its zone as an RFC 9557 suffix, such as `2026-10-06T00:00:00-04:00[America/New_York]`.
+  - id: per-window
+    summary: Each daypart window names its own time zone.
+chosen: line-item-time-zone
+rationale: >-
+  A daypart window and a frequency cap's period are calendar values: a window
+  is a time of day and a period resets at a calendar boundary (D-044), and
+  both move with daylight saving time, which an offset doesn't record. Ad
+  servers read them in one time zone per line item, and an IANA name records
+  daylight saving time where an offset doesn't. RFC 9557 suffixes put a zone
+  on each value, which lets two values of one line item disagree, and few
+  JSON Schema validators check them. A zone per daypart window has the same
+  defect. On `main` the specification has no `time_zone` field, so the schema
+  adds none. The open PR that adds `time_zone` makes it the clock for the
+  daypart and the frequency cap's period only, with `viewer_local` beside the
+  IANA names, and with it the schema types the field from the text. Neither
+  text says which clock reads a flight: the examples write `flight_start`
+  and `flight_end` as calendar dates, which name no instant until a zone
+  reads them, and the schema writes them as Timestamps (D-042), which need
+  none. So the flight's clock stays open on both locks.
+evidence:
+  - https://developers.google.com/ad-manager/api/reference/latest/LineItemService.DayPartTargeting
+  - https://www.iana.org/time-zones
+feedback: >-
+  Adopt the line item `time_zone` that #123 adds, an IANA zone name or
+  `viewer_local`, as the clock for `daypart` and `frequency_cap.period`. One
+  clock is still open. The examples write `flight_start` and `flight_end` as
+  calendar dates. Say which zone reads their days, or write them as RFC 3339
+  date-times with an offset, which need no zone.

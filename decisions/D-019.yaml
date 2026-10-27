@@ -1,0 +1,108 @@
+format: 1
+id: D-019
+status: proposed
+kind: gap
+author: agent
+question: What is the option type of each selectable or settable field whose options the specification describes only in prose?
+covers:
+  - ir: field:5.4:formats
+    digest: 2a8a55ef5666b057f31306cadf667fc01dff13e5cc5e009f00d3f649de375016
+    quote: "`formats` | Object | selectable | `available[]` of registry format ids namespaced by channel (`display/300x250`, `audio/host-read-30s`), `included[]`, `pricing`, `max_select`"
+  - ir: field:5.4:production
+    digest: 0168284e2ec3d43c2249add202b7c657a7a4b37fe78ccfbf2cee694a3e76d199
+    quote: "`production` | Object | selectable | Custom units. `available[]` of build options with `pricing` and `lead_time`; `{ custom_unit, build_owner, lead_time, cost }`"
+  - ir: field:5.5:geo
+    digest: 43710e564ef799d8f814bad00224216293ba574c123c139c7195b5d5c23058e6
+    quote: "`geo` | Object | settable | `allowed[]` of geo codes the buyer may select within"
+    locks: [main]
+  - ir: field:5.5:geo
+    digest: 889b802bbd3f71ad3e60d307f0c54fa98c95a997bca3a79ffb67203b3c685535
+    quote: "`geo` | Object | selectable | `available[]` of geo codes with `included[]`, `pricing` deltas and `max_select` (§ 3.1), for a line item priced by market. A `geo` that declares only `allowed[]` is `settable`. See below"
+    locks: [with-open-prs]
+  - ir: field:5.5:device
+    digest: 265e83a84f1efb967c4a62daab8adb8b69139f794b7cc080b03c5c28cf4828d4
+    quote: "`device` | Object | settable | `allowed[]` of device categories"
+  - ir: field:5.5:daypart
+    digest: 25c80cd35ce4831dfbd372627f2d794511fffe5f029243e586ee1e607be4fdc2
+    quote: "`daypart` | Object | settable | `allowed[]` of time windows"
+    locks: [main]
+  - ir: field:5.6:cancellation_policy
+    digest: 6c8bbcd373f89f5fdf8c0e6a3e9f43bc0e26cc1b5ba35a4f13c2dd246f37dba4
+    quote: "`cancellation_policy` | Object | selectable | `available[]` of cancellation rights with `pricing` per option"
+  - ir: field:5.6:exclusivity
+    digest: 5012d5c8189fd4016ce87f254fff0fa14c929365d9efc3f2256ccfcf80b73c46
+    quote: "`exclusivity` | Object | selectable | `available[]` of exclusivity terms with `pricing`"
+  - ir: field:5.7:shortfall_remedy
+    digest: 9fdb8ca07f421677f7d411f9e9d3bc189128d125a8229b9622fed9779af55824
+    quote: "`shortfall_remedy` | Object | selectable | `available[]` from `makegood` | `credit` | `none`, plus `remedy_terms`"
+  - ir: field:5.4:production#description/object:1
+    digest: 00eb00879b4a550444376e9812df5389c4a7066a43b48982f04bc6f35974f62d
+    quote: "{ custom_unit, build_owner, lead_time, cost }"
+options:
+  - id: as-listed
+    summary: >-
+      - A format ID is written `<channel>/<format>`, as the row namespaces it by
+      channel, with neither part empty.
+
+      - Geo codes and device categories are codes that other lists define,
+      carried as written. Each field's description names its list.
+
+      - A daypart option is a time window `{ days[], start, end }`, as Google Ad
+      Manager writes a day part.
+
+      - Cancellation rights and exclusivity terms are open objects.
+
+      - `production`'s inline object is its option.
+
+      - `shortfall_remedy` takes its listed remedies.
+  - id: ids
+    summary: Format IDs, geo codes, and device categories are opaque IDs, and daypart time windows are open objects.
+  - id: open-options
+    summary: Every such option is an open object.
+chosen: as-listed
+rationale: >-
+  `Selectable` and `Settable` can't be copied without their option type.
+  The row states a format ID's form: "registry format ids namespaced by
+  channel", written `display/300x250` and `audio/host-read-30s`. A namespace
+  is a prefix, so a format ID holds a channel and a format, joined by the `/`
+  the row writes, and `300x250` alone isn't one. That constraint comes from
+  the row's text, not from the example files, and it validates differently
+  from any other ID, so a format ID is a `FormatId`, with the pattern
+  `<channel>/<format>`. The text says nothing about what each part holds, so
+  the schema takes the least it can: neither part is empty or holds a `/`, a
+  space, or a control character. Every format ID the text or an example
+  writes has that form: `available[]`, a property's `supported_formats`, and
+  an asset's `format_ref`. Geo codes and device categories are codes from
+  lists that other systems keep, and a receiver compares each as written,
+  the way it compares any ID another system defines, so each is an
+  `ExternalId`, and the field's description says which list it comes from.
+  They come from lists the specification doesn't name: the examples write ISO
+  3166-1 alpha-3 codes and ISO 3166-2 codes for `geo`, so no one code list
+  fits, and the text states no form for either. A geo bound and a device
+  bound are then copies of one application, `Settable<ExternalId>`, each
+  named after its field.
+  A daypart option is a time window, which follows the ad server convention
+  (D-004). Cancellation rights and exclusivity terms have no members anywhere
+  in the specification, so each is an open object (D-016), named as type rules
+  § 7 names an option: `CancellationPolicyOption` and `ExclusivityOption`.
+  `production`'s object `{ custom_unit, build_owner, lead_time, cost }`
+  follows "`available[]` of build options", so it is the option, named
+  `ProductionOption`. `shortfall_remedy` takes `makegood`, `credit`, and
+  `none`; the prose adds `remedy_terms` beside them, which has no type and no
+  place in the selectable structure, so the model leaves it out.
+evidence:
+  - examples/line-item-display.yaml (geo)
+  - examples/line-item-audio.yaml (geo and production)
+feedback: >-
+  Give each selectable and settable field its option type:
+
+  - The `formats` row namespaces a format ID by channel, as `display/300x250`.
+  State that grammar as `<channel>/<format>`, and say what a channel and a
+  format may hold. Then `300x250` alone is rejected everywhere a format ID
+  appears: `formats`, a property's `supported_formats`, and an asset's
+  `format_ref`.
+
+  - Name the code lists for `geo` and `device`, and define a cancellation right
+  and an exclusivity term.
+
+  - Say where `remedy_terms` goes and what it holds.

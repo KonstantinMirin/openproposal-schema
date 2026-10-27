@@ -1,0 +1,269 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/variants/variant.schema.json",
+  "title": "OpenProposal schema variant",
+  "description": "A variant of the schemas, such as variants/as-written.yaml: for each decision of kind departure, the option of it the variant takes and what that does to the pipeline's inputs before the model resolves. Every point the text leaves open stays filled by its gap record. `npm run ci` checks that every departure has one switch, that each retyped element is one its departure covers, and that the variant's model differs from the proposed one only where a switch says.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "name",
+    "description",
+    "primitives",
+    "switches"
+  ],
+  "properties": {
+    "format": {
+      "const": 1
+    },
+    "name": {
+      "description": "The variant's name: its file's name, and the directory its outputs go to under each output directory, such as schemas/as-written/.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "description": {
+      "description": "What the variant is, for a reader.",
+      "type": "string",
+      "minLength": 12
+    },
+    "concepts": {
+      "description": "Concepts the written forms need that kernel/domains.yaml doesn't hold.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "domain",
+          "meaning"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+          },
+          "domain": {
+            "description": "The value domain of kernel/domains.yaml the concept belongs to.",
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+          },
+          "meaning": {
+            "type": "string",
+            "minLength": 12
+          }
+        }
+      }
+    },
+    "primitives": {
+      "description": "The types the written forms need that the proposed schemas don't use, each a kernel primitive in the kernel's own format, with vectors the kernel gate checks.",
+      "type": "array",
+      "items": {
+        "$ref": "https://github.com/KonstantinMirin/openproposal-schema/kernel/kernel.schema.json#/$defs/primitive"
+      }
+    },
+    "switches": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/switch"
+      }
+    }
+  },
+  "$defs": {
+    "locks": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+      }
+    },
+    "typeName": {
+      "type": "string",
+      "pattern": "^([A-Z][A-Za-z0-9]*|boolean)$"
+    },
+    "switch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision",
+        "option",
+        "reads"
+      ],
+      "properties": {
+        "decision": {
+          "description": "The departure record the switch turns off.",
+          "type": "string",
+          "pattern": "^D-[0-9]{3}$"
+        },
+        "option": {
+          "description": "The option of the record the variant takes; never the chosen one.",
+          "type": "string",
+          "minLength": 1
+        },
+        "reads": {
+          "description": "How the variant reads the fields the departure changes, for a reader.",
+          "type": "string",
+          "minLength": 12
+        },
+        "replace": {
+          "description": "Types the departure introduces, each replaced everywhere by the form the text writes.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "type",
+              "with"
+            ],
+            "properties": {
+              "type": {
+                "$ref": "#/$defs/typeName"
+              },
+              "with": {
+                "$ref": "#/$defs/typeName"
+              },
+              "locks": {
+                "$ref": "#/$defs/locks"
+              }
+            }
+          }
+        },
+        "retype": {
+          "description": "Elements whose type, or one member's type, changes from the proposed form to the written one.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "ir",
+              "from",
+              "to"
+            ],
+            "properties": {
+              "ir": {
+                "type": "string",
+                "pattern": "^[a-z][a-z-]*:\\S+$"
+              },
+              "member": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "from": {
+                "$ref": "#/$defs/typeName"
+              },
+              "to": {
+                "$ref": "#/$defs/typeName"
+              },
+              "locks": {
+                "$ref": "#/$defs/locks"
+              }
+            }
+          }
+        },
+        "withhold": {
+          "description": "Option objects the constructor gives no member their text doesn't list.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/typeName"
+          }
+        },
+        "convert": {
+          "description": "A rule vector's value at a retyped member, in the proposed form, and the written form it becomes.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "from",
+              "to"
+            ],
+            "properties": {
+              "from": {},
+              "to": {}
+            }
+          }
+        },
+        "rewrite": {
+          "description": "Text in the description of a primitive, a constructor, or a declared type that states the proposed form, and what the variant says instead.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "in",
+              "from",
+              "to"
+            ],
+            "properties": {
+              "in": {
+                "$ref": "#/$defs/typeName"
+              },
+              "from": {
+                "type": "string",
+                "minLength": 1
+              },
+              "to": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "findings": {
+          "description": "The specification examples' failures under the variant that the switch causes, each with its example, location, kind, value, and why. Every other failure under the variant is a recorded finding of a gap.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "example",
+              "path",
+              "kind",
+              "value",
+              "reason"
+            ],
+            "properties": {
+              "example": {
+                "type": "string",
+                "minLength": 1
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^(/.*)?$"
+              },
+              "kind": {
+                "enum": [
+                  "load",
+                  "invalid",
+                  "undefined_key",
+                  "rule"
+                ]
+              },
+              "rule": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {},
+              "locks": {
+                "$ref": "#/$defs/locks"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 12
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

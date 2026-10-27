@@ -1,0 +1,67 @@
+format: 1
+id: D-046
+status: proposed
+kind: gap
+author: agent
+question: What names an object option in `included[]` and the `pricing` keys, and must a property's or an audience option's `id` be present?
+covers:
+  - ir: key:3.1:included[]
+    digest: 8ec666d51bf96c60f03793156f832384d83126b7e98f3112259b423bc624b78b
+    quote: "`included[]` | REQUIRED | Which options are in the base rate. MAY be empty"
+  - ir: key:3.1:pricing
+    digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
+    quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+  - ir: field:5.2:properties#description/object:1
+    digest: d17ed59027f652ad048ca0fb7bae6984613c7b5dfc4273560958ce7006b42990
+    quote: "{ id, name, domains, supported_formats }"
+    locks:
+      - main
+  - ir: field:5.2:properties#description/object:1
+    digest: 21095d8df24b1478821abe8102f66a3e90e4d8635d79d28277a108d272cbf9de
+    quote: "{ id, name, domains, apps, supported_formats }"
+    locks:
+      - with-open-prs
+  - ir: field:5.3:audiences#description/object:1
+    digest: 0a7d355ab5dcb787717d01988764dcca8895bdc0b1252de9e8269ad516e7ac6b
+    quote: "{ id, name, taxonomy_ref, provenance, addressable_scale }"
+  - ir: field:5.6:cancellation_policy
+    digest: 6c8bbcd373f89f5fdf8c0e6a3e9f43bc0e26cc1b5ba35a4f13c2dd246f37dba4
+    quote: "`cancellation_policy` | Object | selectable | `available[]` of cancellation rights with `pricing` per option"
+  - ir: field:5.6:exclusivity
+    digest: 5012d5c8189fd4016ce87f254fff0fa14c929365d9efc3f2256ccfcf80b73c46
+    quote: "`exclusivity` | Object | selectable | `available[]` of exclusivity terms with `pricing`"
+options:
+  - id: required-id
+    summary: >-
+      An object option is named by its `id`. Every object option carries one,
+      required: the identity the seller mints for it.
+  - id: own-member
+    summary: Each option is named by a member of its own that sets it apart, such as a measurement source's `vendor` or a report's `feed_type`.
+  - id: optional-id
+    summary: An object option may carry `id`, and one without it can't be named in `included[]` or `pricing`.
+chosen: required-id
+rationale: >-
+  § 3.1 keys `pricing` by `option_id`, and `included[]` lists which options
+  are in the base rate, so every option that can be included or priced needs
+  a name. A string option is its own name. The text doesn't say what names an
+  object option, and the property and audience options write `id` with no
+  presence. A member of an option's own, such as `vendor` or `feed_type`,
+  isn't unique: a seller can offer one vendor with two attribution windows,
+  or one feed type at two cadences. An optional `id` leaves an option that
+  `included[]` and `pricing` can't name. So an object option is named by its
+  `id`, which it carries, required: the constructor gives it, as a rule of
+  the selectable template, to each object type that is an option, and the
+  mapping keeps the members the text writes. The property and audience
+  options keep the `id` they write and make it required, and the
+  cancellation and exclusivity options, whose members the text doesn't
+  state, carry it too. An option given as a `catalog_ref` has no `id`
+  (D-007). The `id` is a UUID, as every ID a party mints is (D-037). Giving
+  an `id` to the production, measurement source, and reporting options, whose
+  members the text lists without one, changes what the text settles, so that
+  part is a change we propose (D-047).
+evidence:
+  - examples/line-item-display.yaml (properties and audiences)
+feedback: >-
+  Say that `included[]` and the `pricing` keys name an object option by its
+  `id`. Mark the `id` of a property and an audience option REQUIRED. Give the
+  cancellation and exclusivity options an `id` once their members are defined.

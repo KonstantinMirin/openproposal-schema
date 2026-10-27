@@ -1,0 +1,254 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/kernel/kernel.schema.json",
+  "title": "OpenProposal kernel primitives",
+  "description": "Stage 4 input: kernel/primitives.yaml. Each primitive is defined once, with the concept it represents, one constraint set, a description, its sources, and test vectors. Spec sources are quoted and digested, so a primitive goes stale when a row it rests on changes. The emitters turn each primitive into one named JSON Schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "primitives"],
+  "properties": {
+    "format": {
+      "description": "Version of this format.",
+      "const": 1
+    },
+    "primitives": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/primitive" }
+    }
+  },
+  "$defs": {
+    "primitive": {
+      "type": "object",
+      "additionalProperties": false,
+      "dependentRequired": { "decision_locks": ["decision"] },
+      "required": ["name", "description", "type", "concept", "constraints", "sources", "vectors", "showcase"],
+      "properties": {
+        "name": { "$ref": "#/$defs/name" },
+        "description": {
+          "description": "The published description: what a value means, for someone who receives a payload.",
+          "type": "string",
+          "minLength": 12
+        },
+        "type": {
+          "description": "The JSON type of a value.",
+          "enum": ["string", "number", "integer"]
+        },
+        "constraints": { "$ref": "#/$defs/constraints" },
+        "concept": {
+          "description": "The concept of `kernel/domains.yaml` the primitive represents: the concept's type, or one of its components. Two primitives with the same structure are distinct when they represent different concepts, whose meanings the domain model states.",
+          "$ref": "#/$defs/conceptName"
+        },
+        "locks": {
+          "description": "The locks the primitive is published on. Without it, the primitive is published on every lock. The domain gate fails on a primitive that no document reaches on a lock it is published on.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" }
+        },
+        "decision": {
+          "description": "The decision record behind a constraint the sources don't state.",
+          "$ref": "#/$defs/decisionId"
+        },
+        "decision_locks": { "$ref": "#/$defs/decisionLocks" },
+        "sources": { "$ref": "#/$defs/sources" },
+        "vectors": {
+          "description": "Values the constraint set must accept and must reject. The kernel gate checks each one with a 2020-12 validator that asserts `format`.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["valid", "invalid"],
+          "properties": {
+            "valid": { "type": "array", "minItems": 1 },
+            "invalid": { "type": "array", "minItems": 1 }
+          }
+        },
+        "showcase": {
+          "description": "The value a reader's example payload shows where the specification's examples give none, such as a realistic UUID or an amount of 18.5, and a second, different one for the second item of a list that holds two. The kernel gate checks each one as it checks a valid vector, and against the primitive's rules.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true
+        },
+        "rules": {
+          "description": "Rules on a value that JSON Schema can't express (type rules § 9). The schema accepts every vector of a rule; the rule rejects the invalid ones.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/rule" }
+        }
+      },
+      "if": { "properties": { "type": { "const": "string" } } },
+      "then": {
+        "properties": {
+          "constraints": {
+            "type": "object",
+            "propertyNames": { "enum": ["pattern", "format", "minLength", "maxLength", "enum"] }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "constraints": {
+            "type": "object",
+            "propertyNames": { "enum": ["minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum"] }
+          }
+        }
+      }
+    },
+    "constraints": {
+      "description": "The one constraint set, written with the JSON Schema 2020-12 validation keywords the emitter copies as they are. Empty means the type alone, for a primitive that carries a meaning but no constraint.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pattern": {
+          "description": "A regular expression in the ECMA-262 dialect, as JSON Schema 2020-12 requires (core § 6.4), anchored with `^` and `$`. It uses no construct that RE2 or Python `re` reads differently: no lookaround, no backreference, and no `\\d`, `\\w`, or `\\s`. The kernel gate runs each pattern in ECMA-262, Go's RE2, and Python `re`. Python's `$` also matches before a final newline, so the gate writes it `\\Z` there, and the conformance vectors include a trailing-newline mutant of each valid vector.",
+          "type": "string",
+          "pattern": "^\\^.*\\$$"
+        },
+        "format": {
+          "description": "A format that JSON Schema 2020-12 defines.",
+          "enum": ["date", "date-time", "duration", "uri", "uuid"]
+        },
+        "minLength": { "type": "integer", "minimum": 0 },
+        "maxLength": { "type": "integer", "minimum": 1 },
+        "minimum": { "type": "number" },
+        "maximum": { "type": "number" },
+        "exclusiveMinimum": { "type": "number" },
+        "exclusiveMaximum": { "type": "number" },
+        "enum": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "sources": {
+      "description": "Where the primitive comes from. At least one kind is present.",
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "spec": {
+          "description": "Specification elements, quoted and digested as `npm run cite` prints them.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/cover" }
+        },
+        "standards": {
+          "description": "External standards the constraint set follows.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "url"],
+            "properties": {
+              "name": { "type": "string", "minLength": 2 },
+              "url": { "type": "string", "pattern": "^https://\\S+$" }
+            }
+          }
+        },
+        "design": {
+          "description": "Sections of this repository's design documents. The kernel gate checks that each heading exists.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["doc", "section"],
+            "properties": {
+              "doc": { "type": "string", "pattern": "^docs/[a-z0-9/_-]+\\.md$" },
+              "section": { "description": "The heading text without its `#` marks.", "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "source", "valid", "invalid"],
+      "properties": {
+        "id": {
+          "description": "`kernel:<primitive>:<token>`. The primitive is the rule's owner.",
+          "type": "string",
+          "pattern": "^kernel:[A-Z][A-Za-z0-9]*:[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+        },
+        "statement": { "type": "string", "minLength": 12 },
+        "source": {
+          "description": "Where the rule comes from (type rules § 9): specification elements, quoted and digested; an external standard; or the decision record behind it. The kernel gate checks that a spec source is current on each lock and that a decision exists.",
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "spec": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/cover" } },
+            "standard": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["name", "url"],
+              "properties": {
+                "name": { "type": "string", "minLength": 2 },
+                "url": { "type": "string", "pattern": "^https://\\S+$" }
+              }
+            },
+            "decision": { "$ref": "#/$defs/decisionId" },
+            "decision_locks": { "$ref": "#/$defs/decisionLocks" }
+          },
+          "dependentRequired": { "decision_locks": ["decision"] }
+        },
+        "valid": { "type": "array", "minItems": 1 },
+        "invalid": { "type": "array", "minItems": 1 }
+      }
+    },
+    "cover": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ir", "digest", "quote"],
+      "properties": {
+        "ir": {
+          "description": "The IR element ID.",
+          "type": "string",
+          "pattern": "^[a-z][a-z-]*:\\S+$"
+        },
+        "digest": {
+          "description": "The element's digest when the source was written. A different current digest makes the primitive stale.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "quote": {
+          "description": "The element's text as `npm run cite` prints it.",
+          "type": "string",
+          "minLength": 1
+        },
+        "locks": {
+          "description": "Lock names the source applies to. Without it, the source applies to every lock.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" }
+        }
+      }
+    },
+    "name": {
+      "description": "A model type name.",
+      "type": "string",
+      "pattern": "^[A-Z][A-Za-z0-9]*$"
+    },
+    "conceptName": {
+      "description": "A concept name of `kernel/domains.yaml`.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "decisionLocks": {
+      "description": "The locks the decision applies on, where the sources state the constraint on every other lock, such as a daypart's form, which an open PR states and `main` leaves to a decision. Without it, the decision applies on every lock the type is published on.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" }
+    },
+    "decisionId": {
+      "type": "string",
+      "pattern": "^D-[0-9]{3,}$"
+    }
+  }
+}

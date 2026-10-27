@@ -1,0 +1,34 @@
+format: 1
+id: G-022
+date: 2026-10-26
+question: Where does a part state a bound on one of its own lists, so every generator reads it, as a daypart window's `days` holds at least one day, each once?
+decision: >-
+  A part's list slot may carry `minItems` and `uniqueItems` beside its
+  `$model`, which must apply `List`; the constructors format rejects them
+  beside any other slot, and a bound in `dependentSchemas`, which G-014
+  allowed, is gone, with the constructors check, the corpus's special cases,
+  and the SDK builder's reading of it. A daypart window's `days` is
+  `{ type: array, items: DayName, minItems: 1, uniqueItems: true }`. The
+  corpus reads the two bounds as it reads them on any list, the SDK builder
+  reads a list member's bounds into the shape the runtimes check, and the
+  plain generator keeps `minItems`, so PG-12 lists only the `uniqueItems`
+  mutant. A test checks that a bound sits only on a list slot, and the emit
+  test checks the bounds on the list on both locks. The test suite holds 321
+  tests, so its floor stays at 321.
+rationale: >-
+  The bounds were standard keywords nested in `dependentSchemas`, which the
+  plain generator drops, so PG-12 excused two mutants where JSON Schema and
+  the generator could state one of them on the list itself. On the list, the
+  generator rejects a window with no day, the corpus still has both isolated
+  mutants, the SDKs check the same bounds, and the exemption shrinks to the
+  one the generator really loses, so no gate is weaker.
+accepts:
+  - { gate: constructors-check, fingerprint: 6c146e25ba6a07519a87c20811dfee38120ffc79339c687a2d195a4bf2e2a1ae }
+  - { gate: corpus-generates, fingerprint: 52f698f714073bf4a200da4886e83fa200a696e60c0f5cb3077b7d55faf2477e }
+  - { gate: corpus-isolation, fingerprint: c53a0dc3b108c7635eb7753adfc4d88eefdbc98f14fd3ea807c3f5ddc8e969f9 }
+  - { gate: fidelity, fingerprint: 8d0f9a6ada107be61617049d0bb205a46c36d3d6c49f4c0a4563fb098c26760a }
+  - { gate: npm-test, fingerprint: 61f71602f41015fb33e9b09ae78a87395cd13841dda0bbe3baf069d20d04feae }
+  - { gate: plain-exemptions-file, fingerprint: 84275316ce8659c256cf8256c22f3e36a458f940ef0867b8fcc64117d9afa70c }
+  - { gate: plain-parity, fingerprint: 4f05f8ad04819ea94c60ee8d7b2851fcd1e3644e49491ed137253cec55793c73 }
+  - { gate: release-breaking-corpus, fingerprint: 09497bd4ea7951d2aef70ed1a10b8f5a24c503922aa8bec44675536d95a057ee }
+  - { gate: sdk-generate, fingerprint: 5592b00e82d86e18d01da57c5bc2577988030c8fbe35287eac93710ae45257f2 }

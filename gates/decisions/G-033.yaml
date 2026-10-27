@@ -1,0 +1,27 @@
+format: 1
+id: G-033
+date: 2026-10-26
+question: Which gates change when the model holds each constructor-given `id` to a gap and, on an option whose members the text lists, a departure, and describes each projected summary member by what it holds?
+decision: >-
+  Where the model gives an object option the `id` its selectable copy names
+  it by, the model-resolves gate fails when `carries` cites a decision that
+  isn't a gap, when a closed option, whose members the text lists without
+  the `id`, has no departure named under `carries`, and when the departure
+  named isn't a departure record. Two fixtures drop the departure from
+  `carries` and record D-047 as a gap. A profile's projected member is
+  described by what it holds of the document's field, such as "The line
+  item's `formats`, projected to `included[]`", in place of the field row's
+  description, which describes the whole field. Type rules § 4 says the
+  given `id` is the one required member with no requiring element, and how
+  the gate holds it.
+rationale: >-
+  A constructor could give a listed option a member the text doesn't list
+  as if the text left it open, and no gate noticed; now the model-resolves
+  gate checks the kind of each decision it cites, its fixtures fail it, and
+  every other check stays, so no gate is weaker. The descriptions change
+  only text the schema carries.
+accepts:
+  - { gate: comparison, fingerprint: fee6e36922fbe8865169a12e150f737975088f9d146f64152aeb43d9d579eb8d }
+  - { gate: domains-homonyms, fingerprint: 9d990b8a98af49da085c0576622b5911b098adc011831c6d0be8260e4702f3ac }
+  - { gate: model-resolves, fingerprint: 4cd4d5cf17b8afaa72a0e81af82175a4d1d9ac493183ffe6c73cdd09edddcc3a }
+  - { gate: npm-test, fingerprint: 4654a63f44617ec5530db649feab4fb4fe3fcaeea1e71bad6930654f848eb7ce }

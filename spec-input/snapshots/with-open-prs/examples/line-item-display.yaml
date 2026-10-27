@@ -1,0 +1,115 @@
+# OpenProposal 3.0 — Example: Display line item, fully worked (spec § 6.2)
+# Shows selectable audiences with per-option pricing, a catalog reference,
+# a buyer commitment, and settable bounds.
+line_item_id:   "business-daily-display"
+status:         published
+channel:        display
+
+properties:
+  available:    [{ id: "business-daily", domains: ["business-daily.example"] },
+                 { id: "markets-weekly", domains: ["markets-weekly.example"] }]
+  included:     ["business-daily"]
+  pricing:      { markets-weekly: { delta_cpm: 2.00 } }
+  max_select:   2
+
+environments:
+  available:    ["web_desktop", "web_mobile"]
+  included:     ["web_desktop", "web_mobile"]
+
+audiences:
+  available:
+    - catalog_ref: "examplepub/audiences/smb-decision-makers@3"
+    - { id: "ep:hnw-investors", provenance: modeled, addressable_scale: 1100000 }
+    - { id: "ep:cfo-finance-leaders", provenance: first_party, addressable_scale: 480000 }
+  included:     ["ep:smb-decision-makers"]
+  pricing:      { "ep:hnw-investors":       { delta_cpm: 4.00 },
+                  "ep:cfo-finance-leaders": { delta_cpm: 6.50 } }
+  max_select:   2
+
+addressable_scale: 3200000            # derived; recomputed on selection
+
+activation_route:
+  available:    ["publisher_side", "clean_room"]
+  included:     ["publisher_side"]
+  pricing:      { clean_room: { delta_cpm: 1.50 } }
+
+buyer_supplied:
+  segments_allowed:    true
+  suppression_allowed: true
+  match_rate_expected: 0.65
+  suppression_list:    { source: "advertiser_crm", size: 340000, match_method: "ramp_id" }
+
+formats:
+  available:    ["display/300x250", "display/728x90", "display/970x250"]
+  included:     ["display/300x250"]
+  pricing:      { "display/970x250": { delta_cpm: 3.00 } }
+
+creative_delivery: { method: buyer_hosted, protocol: javascript_tag, secure_required: true }
+materials_due:     "2026-09-24"
+
+geo:            { allowed: ["US-NY", "US-CA", "US-IL", "US-TX"] }
+frequency_cap:  { max: { min: 1, max: 5 }, period: "day", basis: device }
+time_zone:      "America/New_York"
+
+exclusions_accepted:                   # what this seller can enforce (§ 5.5)
+  types:        [domain, iab_content_category, keyword]
+  max_entries:  { domain: 5000, keyword: 500 }
+  enforcement:  { domain: pre_serve, iab_content_category: pre_serve, keyword: best_effort }
+exclusions:                            # supplied by the buyer
+  domain:       ["example-gambling.example"]
+  keyword:      ["crypto"]
+
+pricing:
+  - cost_method:       CPM
+    gross_rate:        24.00
+    agreed_rate:       24.00          # derived: no priced options included
+    seller_rate:       20.40
+    floor:             21.00
+    price_valid_until: "2026-11-15T23:59:59Z"
+    currency:          USD
+
+commitment_bounds: { min_budget: 10000.00, max_budget: 500000.00 }
+
+commitment:
+  proposal_id:     "examplepub-us-q4-2026-omni"
+  version:         1
+  basis:           spend
+  amount:          80000.00
+  currency:        USD
+  flight_start:    "2026-10-06"
+  flight_end:      "2026-12-21"
+  derived_units:   3333333             # derived: 80000.00 / 24.00 × 1000
+  idempotency_key: "agency-a-camp1-business-daily-display-8f42c1a9"
+
+hold_status:    { hold_available: true, hold_duration: "P7D",
+                  hold_scope: line_item, state: none }
+
+committed_metrics:
+  - { metric: viewable_rate, value: 0.70, basis: mrc }
+measurement_source:
+  available:    [{ vendor: "IAS", attribution_window: "30d" },
+                 { vendor: "DoubleVerify", attribution_window: "30d" }]
+  included:     ["IAS"]
+shortfall_remedy: { available: ["makegood", "credit"], included: ["makegood"] }
+reporting:
+  available:    [{ feed_type: aggregate, cadence: daily, delivery_mechanism: api },
+                 { feed_type: log_level, cadence: daily, delivery_mechanism: s3 }]
+  included:     ["aggregate"]
+  pricing:      { log_level: { delta_flat: 2500.00 } }
+
+visibility:            registry_gated
+required_credentials:  [{ type: dsp_seat, scheme: jwt_keypair,
+                          issuer: "dsp-a", id_required: true }]
+terms_acceptance_required: true
+terms_ref:             { url: "https://examplepub.example/legal/io-terms-2026.pdf",
+                         sha256: "<sha256 of the terms document>", version: "2026.1" }
+
+buying_route:           PUBLISHER_AD_SERVER
+transaction_mechanism:  { available: ["PROGRAMMATIC_GUARANTEED", "PREFERRED_DEAL"],
+                          included: ["PROGRAMMATIC_GUARANTEED"] }
+serving_mode:           client_side
+buyer_requirements:     { seat_required: true, dsp_allowed: ["dsp-a", "dsp-b"],
+                          dsp_seat_id: "seat-99812", dsp_id: "dsp-a-prod",
+                          seat_owner_entity: "Agency A" }
+
+correlation_id:  "ep-q4-2026-commitment/business-daily-display"

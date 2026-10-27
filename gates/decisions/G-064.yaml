@@ -1,0 +1,34 @@
+format: 1
+id: G-064
+date: 2026-10-27
+question: Which base does every emitted schema's `$id` take, now that the public site serves the schemas?
+decision: >-
+  `SCHEMA_BASE` in `src/emit.ts` is `https://openproposal.noetis.dev/`, so
+  each file's `$id` is its path under the public site, such as
+  `https://openproposal.noetis.dev/schemas/kernel/1/kernel.json`, where the
+  site serves it. Every `$ref` between files stays relative. The schemas,
+  rules, corpus, type examples, and release manifests are regenerated; the
+  model, the SDK types, the comparison, and the feedback don't change.
+rationale: >-
+  Only the base string changes, which every gate whose code reaches
+  `emitSchemas` or `schemaIdOf` digests, so their fingerprints change and no
+  check does. The output gates still check that every `$id` is the file's
+  path under the base and that every `$ref` resolves, and the release
+  gates recompute every digest from the regenerated files. No release is
+  frozen, so no frozen file's `$id` changes.
+accepts:
+  - { gate: comparison, fingerprint: 0ab07922ccbc5097eca32575f0312875602aed0832e5628fbae014abb5e49775 }
+  - { gate: corpus-generates, fingerprint: 42a617e7e9c41b003d5f0f40ecac272751248e6c75e3b062518f42441e661c42 }
+  - { gate: corpus-isolation, fingerprint: f917929b465607d1551e58ee52f6b65d8367674a313dffa37ace9a48633fb212 }
+  - { gate: examples-validate, fingerprint: 4e3869729f2c1d660c51bd6802033497a548ff0f6b639311a925f63bcd574228 }
+  - { gate: fidelity, fingerprint: ce68721e604c6cbb5978c6fa9c9e17de40a0de0d87bc4e73b26e8570b6f0a92e }
+  - { gate: field-examples, fingerprint: 4dfb3241ff5073e10066fc78b2fe28201f109bf320ce23211d78df23c809298f }
+  - { gate: release-breaking, fingerprint: 59c09b1549f4ef9699aa4c1ce1a6c802163ba8f1e016ddd63c9a82cd804dcf76 }
+  - { gate: release-builds, fingerprint: 2c535d1f859aec3c42626128dd98020b66203df54be623ded05863051a964bcc }
+  - { gate: rule-vectors, fingerprint: faaa8f96e3c756bb009c29117bc5b90812977fb5652cfb8daf1f32d00b641188 }
+  - { gate: rules-emit, fingerprint: 0dccb55d60c9c64c9f7f033041e59f8c68b30bdd23312a95871e0078630d38f8 }
+  - { gate: schemas-conventions, fingerprint: 5edf0dcd56a849f10fbe5684afbd24aecddb7c2223648fe54d5e6ea6fff7d969 }
+  - { gate: schemas-emit, fingerprint: 341e28a12ffb8f4ce877a4cc5f6660be1a9f24c66c6d2965619a4479bf0b9809 }
+  - { gate: type-examples-generate, fingerprint: 650fc688cf183adb9a54046e21c353c147cd0a9e0c090a25bfe2d73f08fd3730 }
+  - { gate: type-examples-valid, fingerprint: 6db0a88eb893847c801b3b16aae93b06c2184d82269b2b47c4915caf06a815a8 }
+  - { gate: variant-examples, fingerprint: d088627bcf40ddbb8940d48f8a966f1094cdc36be759869b923ac023418f7b4e }

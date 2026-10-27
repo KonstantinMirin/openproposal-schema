@@ -1,0 +1,40 @@
+format: 1
+id: G-053
+date: 2026-10-27
+question: How do the kernel and plain-generator gates hold a Timestamp's lowercase, unknown-offset, leap-second, and year-0000 spellings, which the reference oracle and the plain generator don't all accept?
+decision: >-
+  Timestamp gains four valid vectors: `2026-10-25t09:00:00z`, with a
+  lowercase `t` and `z` (RFC 3339 § 5.6 NOTE), `2026-10-25T09:00:00-00:00`,
+  the unknown local offset (§ 4.3), the leap second `2016-12-31T23:59:60Z`
+  (§ 5.7), and `0000-01-01T00:00:00Z`. Ajv, Go's RE2, and the TypeScript,
+  Python, and Go SDKs accept each. The reference oracle's `date-time`
+  checker, rfc3339-validator 0.1.4, rejects the leap second and the year
+  0000, so the kernel-engines gate reads a new file, `tools/oracle/gaps.yaml`,
+  validated by its schema, where each is a numbered gap, OG-1 and OG-2, with
+  the oracle's verdict and the reason. The gate fails on an oracle
+  disagreement the file doesn't list, on a listed one that no longer
+  occurs, and on a file written for other versions than the pins, and the
+  file is one of its exemptions, so its fingerprint covers it. Three
+  fixtures drop the leap-second gap, list a gap the oracle doesn't have, and
+  name another rfc3339-validator; each fails the gate. The plain
+  generator's Pydantic `datetime` rejects the leap second and the year 0000,
+  a new exemption PG-14, and writes the lowercase and `-00:00` spellings
+  back as `T` and `Z`, two cases PG-6 now lists. The published Timestamp
+  description says what the pattern accepts: `T` or `t`, and `Z`, `z`,
+  `+hh:mm`, or `-hh:mm`. The guard reads the CI script, which passes the
+  gaps to the gate, so its fingerprint changes with no change to what it
+  checks.
+rationale: >-
+  The vectors add four verdicts every engine is held to. The oracle may
+  differ only on a vector the gaps file lists with the exact value and
+  verdict, which RFC 3339 shows the oracle gets wrong, where before it could
+  differ nowhere but on a trailing-newline mutant; a listed gap that heals
+  fails, so the file can't outlive the defect. Every earlier check stays,
+  and the plain generator's divergences are listed one by one, so no gate
+  is weaker.
+accepts:
+  - { gate: guard, fingerprint: 81aaddcad7b4959dbcb42e9fa25e0053b11ca4c945ab3035c8d41dd9be3d050e }
+  - { gate: kernel-engines, fingerprint: 2554514ec997d974ba1a75c0b5020d17069096db1d25fe09f2a2aa212cc5cb0f }
+  - { gate: npm-test, fingerprint: bfb1f7fc2975e0031de79cb5af9a26c3e06a619f982c1dd8cc8185459611c8c6 }
+  - { gate: plain-exemptions-file, fingerprint: db87c761b6772c61b8a340d5d5bf1fd866a390b419fce67a2f8956962b342916 }
+  - { gate: plain-parity, fingerprint: f14d2aedc40854534feeac60f1dc0d85e48ecfefbbf5ac813107a100b80bb25f }

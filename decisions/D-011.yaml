@@ -1,0 +1,39 @@
+format: 1
+id: D-011
+status: proposed
+kind: gap
+author: agent
+question: What makes a `min` / `max` pair a range? May it give one bound only, or none, and must `min` be at most `max`?
+covers:
+  - ir: rule:3.2:ee009430
+    digest: b70f59e2c68b16af32a8ad7ee513de31c1f1bd7a3c1540f17ba556688780a7cf
+    quote: "Every field marked `settable` MUST declare its bounds: either `allowed[]` (an enumerated set) or `min` / `max` (a numeric or date range)."
+  - ir: field:5.5:frequency_cap#description/object:1
+    digest: adbcfc3ac2b7bc7c0bda1069751986267cf304dbafb4ee388d9c2f62b43ba305
+    quote: "{ max: { min, max }, period, basis: device | household | listener }"
+options:
+  - id: one-or-both-ordered
+    summary: A range gives one bound or both, never neither, and `min` is at most `max`.
+  - id: both-ordered
+    summary: A range gives both bounds, and `min` is at most `max`.
+  - id: as-written
+    summary: "Both bounds are optional and unordered, so `{}` and `{ min: 5, max: 1 }` are ranges."
+chosen: one-or-both-ordered
+rationale: >-
+  § 3.2 calls the pair "a numeric or date range", and its "`min` / `max`"
+  reads as either bound or both. A range with one bound, such as "at most 10",
+  is a range in the ordinary sense, and nothing in the specification rules it
+  out. A pair with no bound declares nothing, which § 3.2 forbids for a
+  settable field ("MUST declare its bounds"), and in `frequency_cap`'s `max` it
+  would leave the buyer nothing to set within. A pair whose `min` is above its
+  `max` holds no value at all, so the seller's bounds would admit nothing; no
+  example writes one. The form that carries the pair is `Range`: it has
+  `minProperties: 1` in its schema, and the order is the rule
+  `constructor:Range:ordered`, since JSON Schema can't compare two members.
+evidence:
+  - kernel/constructors.yaml (Range)
+feedback: >-
+  State that a `min` / `max` range gives one bound or both, and that `min` is at
+  most `max`. Also say how an inline object, such as `frequency_cap`'s
+  `{ min, max }`, marks a member as required or optional. No inline object in
+  the specification does.

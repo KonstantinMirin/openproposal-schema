@@ -1,0 +1,40 @@
+format: 1
+id: G-019
+date: 2026-10-26
+question: Which gates change when a format ID is a type of its own again, and how does the fidelity oracle read a row that namespaces its options?
+decision: >-
+  `FormatId` is a primitive again, `<channel>/<format>`, and its concept,
+  `format-id`, is back in the domain file; this record accepts the concept
+  again, so the guard reads concepts in ID order, as it reads gates: a later
+  record's `concepts` accepts a concept an earlier record retires, and a
+  retired concept back with no later record that accepts it still fails,
+  which a new fixture shows. `formats.available[]`, a property's
+  `supported_formats[]`, and an asset's `format_ref` are format IDs. The
+  fidelity oracle reads a new form, `namespaced`: a row whose options are
+  "`available[]` of … namespaced by <what> (`a/b`, `c/d`)" gives each
+  example as a valid option and each example without its namespace, such as
+  `300x250`, as an invalid one, and a row that says "namespaced" any other
+  way is listed as unread. A fixture types the format IDs as external IDs,
+  and the gate fails on `300x250`. `FormatId` lists `300x250` among its
+  invalid vectors, the `Map` constructor's invalid vector `{ "300x250": 10 }`
+  is back, PG-8 names its case `Map<FormatId, Count>`, and the engine tests
+  count 37 trailing-newline mutants, with the three of `FormatId`'s valid
+  vectors. The test suite holds 320 tests, so its floor rises to 320.
+rationale: >-
+  This corrects G-016's rationale: `FormatId`'s pattern came from the row's
+  text, "registry format ids namespaced by channel (`display/300x250`, …)",
+  which states that a format ID holds a channel prefix, not from the
+  examples. A namespaced ID validates differently from any other ID, so by
+  the rule a primitive exists only where a value validates differently, it is
+  a type of its own, and G-016's collapse dropped a constraint the text
+  states. The oracle now reads that constraint, so the gate fails where it
+  passed before; the guard still fails a retired concept that comes back
+  unaccepted; the kernel and constructor vectors gain cases; and the test
+  floor rises, so no gate is weaker.
+concepts: [format-id]
+accepts:
+  - { gate: fidelity, fingerprint: 781d492c02c672c42503610018ed150541bb7abc140c023d72d3d1bd7ad0efc1 }
+  - { gate: guard, fingerprint: c8ee6aa9b6b89779d219563fe9ef10ddc4e4da7c89291b4e7cecf5466b5134b2 }
+  - { gate: npm-test, fingerprint: 71bd37703f4bff03abf9539e59e2e84b3339639c37a16908bbd60f0ec6d67c9a }
+  - { gate: plain-exemptions-file, fingerprint: 1713c76154492f72c1ceb5f274e0d9c758f980ae6c3c55ecd281e10e0b188281 }
+  - { gate: plain-parity, fingerprint: f76ae61b4c39586dd8f2136329c265b073c5944fc245389660eef94e058eec41 }

@@ -1,0 +1,43 @@
+format: 1
+id: D-045
+status: proposed
+kind: gap
+author: agent
+question: May a daypart window's `days[]` be empty, or name one day twice?
+covers:
+  - ir: field:5.5:daypart
+    digest: 25c80cd35ce4831dfbd372627f2d794511fffe5f029243e586ee1e607be4fdc2
+    quote: "`daypart` | Object | settable | `allowed[]` of time windows"
+    locks: [main]
+  - ir: field:5.5:daypart
+    digest: b34d1818bf80b3e5947f9902057ac882707ef3a893fc370c97efc81487d64080
+    quote: "`daypart` | Object | settable | `allowed[]` of `{ days[], start, end }`: `days[]` from `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`, HH:MM civil time, `end` exclusive, up to `24:00`"
+    locks: [with-open-prs]
+  - ir: sentence:5.5:348ea676
+    digest: b653534aab2fd12f0dad1b1f4422634068e90af810a75414b00aa4d346e379fc
+    quote: A `daypart` window is `{ days[], start, end }`, with `days[]` from Monday to Sunday, `start` and `end` as HH:MM, and `end` exclusive, later than `start`, and allowed to be `24:00`.
+    locks: [with-open-prs]
+options:
+  - id: days-at-least-one-each-once
+    summary: "`days[]` names at least one day, and each day at most once."
+  - id: any-list
+    summary: "`days[]` is any list of day names, the empty one and repeated days included."
+chosen: days-at-least-one-each-once
+rationale: >-
+  The text writes `days[]` and says which values it takes, not how many, so
+  neither bound is the text's. A window applies on each day it names, so a
+  window with no day never applies, and an allowed window that never applies
+  offers the buyer nothing; a day named twice adds no day to the window.
+  Google Ad Manager, whose day part the window follows (D-004), shows the
+  first bound: a `DayPart` holds one `dayOfWeek`, "Day of the week the target
+  applies to. This field is required.", so a day part with no day can't be
+  written there, and a window of several days is one day part for each day.
+  Ad Manager has no list of days in which a day could repeat, so the second
+  bound rests on the window's meaning alone. The schema states both on the
+  list, `minItems: 1` and `uniqueItems: true`, and the list stays a list, not
+  a set, so its order is the writer's.
+evidence:
+  - "https://developers.google.com/ad-manager/api/reference/latest/LineItemService.DayPart (dayOfWeek: \"Day of the week the target applies to. This field is required.\")"
+feedback: >-
+  Say that a daypart window's `days[]` names at least one day, and each day
+  at most once.

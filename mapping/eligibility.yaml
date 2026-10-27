@@ -1,0 +1,97 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: eligibility
+sections: [ "5.8" ]
+types: []
+entries:
+  - ir: field:5.8:visibility
+    digest: b2a567ff0d509b7ce5d3ab397de07e2227a35e10519d11a4f7dfa646d6698864
+    source: { rule: enum-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Visibility }, presence: optional }
+  - ir: field:5.8:visibility#description/values:1
+    digest: 9c8f080eb7b26334d2f8e6a25a584e2b7862482d9461fc241a21750312474fdf
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: Visibility, layer: vocabulary, open: false }
+  - ir: "field:5.8:required_credentials[]"
+    digest: fac7964209ce21929491f958097d410e89a354c591f10b07c4e15265329ca3fd
+    source: { rule: inline-object-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: RequiredCredentialsEntry } } }
+      presence: optional
+  - ir: "field:5.8:required_credentials[]#description/object:1"
+    digest: 51ac831bb1eb05acb0c47847addae4a80e19323e55d30338e231872df19d2bf7
+    source: { decision: D-027 }
+    as:
+      role: type
+      name: RequiredCredentialsEntry
+      layer: object
+      open: false
+      members:
+        type: { type: { kind: named, name: CredentialType }, presence: optional }
+        scheme: { type: { kind: named, name: CredentialScheme }, presence: optional }
+        issuer: { type: { kind: named, name: ExternalId }, presence: optional }
+        id_required: { type: { kind: boolean }, presence: optional }
+  - ir: "field:5.8:required_credentials[]#description/object:1/scheme"
+    digest: fe9a7ae41571f95511cb58c6e436f6c227752c2052a988371fd516937a6115db
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: CredentialScheme, layer: vocabulary, open: true }
+  - ir: "field:5.8:required_credentials[]#description/object:1/type"
+    digest: c18c4724c4b1468ef7cfd8a2450fd45fbc77a70a5f47a1c195f7d169e85a7f92
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: CredentialType, layer: vocabulary, open: false }
+  - ir: "field:5.8:eligible_bidders[]"
+    digest: 377ad11d09a2b66329d8d7f32f46f187f2d0ba5d06ac90980630554720456d9a
+    source: { rule: domain-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ExternalId } } }
+      presence: optional
+  - ir: field:5.8:terms_acceptance_required
+    digest: 0243a3b7686e677b229229ed525e3ceb6ac606d6e71bac139abf02de3260ceef
+    source: { rule: scalar-field }
+    as: { role: property, object: LineItem, type: { kind: boolean }, presence: optional }
+  - ir: field:5.8:terms_ref
+    digest: c65b1714f353bd191478e58c22e966ba7aea717efd79a61aa495c477fc4249b1
+    locks: [ with-open-prs ]
+    source: { rule: inline-object-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: TermsRef }, presence: conditional }
+  - ir: field:5.8:terms_ref#description/object:1
+    digest: 51d70daf01993e106693752a529bed2816a32dc1328eb9ce9b846e1a0422c5d8
+    locks: [ with-open-prs ]
+    source: { decision: D-027 }
+    as:
+      role: type
+      name: TermsRef
+      layer: object
+      open: false
+      members:
+        url: { type: { kind: named, name: Url }, presence: optional }
+        sha256: { type: { kind: named, name: Digest }, presence: optional }
+        version:
+          type: { kind: named, name: ExternalId }
+          presence: optional
+          description: "The terms document's version as its publisher writes it, such as `2026.1`. It is compared by exact equality, with no order."
+  - ir: rule:5.8:6ee577a5
+    digest: 598f721a3a77708b45d4f236d73c78de0dd8fb6ff3691db47defb0a863362977
+    locks: [ with-open-prs ]
+    source: { rule: presence-statement }
+    as: { role: schema, in: LineItem }
+  - ir: rule:5.8:59a01393
+    digest: aac0652bc71ae2e1eb1544ac8cbd25d20ebb31022cfcae8997d55c54c49ad99a
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: rule, object: LineItem }
+  - ir: rule:5.8:d02f49a2
+    digest: 9c8b744da242d1253d0a15061b9294b1f6ec387a321b50715c14b5166a0021ed
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:5.8:986d7d0f
+    digest: 81b2de689a9e5d35e4271762268c3fa1c9f55cb0fa9e18d35e1d4c565133435f
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/tools/oracle/gaps.schema.json",
+  "title": "Reference oracle gaps",
+  "description": "The kernel vectors to which the reference oracle, python-jsonschema with the format checkers tools/oracle/requirements.txt pins, gives a verdict other than the stated one, each under a numbered gap with the reason. The kernel-engines gate fails on a disagreement this file doesn't list, on a listed one that no longer occurs, and on a file written for other versions than the pins.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "oracle", "gaps"],
+  "properties": {
+    "format": { "description": "Version of this format.", "const": 1 },
+    "oracle": {
+      "description": "The packages and versions the gaps were checked against, as `jsonschema 4.26.0, rfc3339-validator 0.1.4`. Each must be the pinned one.",
+      "type": "string",
+      "pattern": "^[a-z0-9-]+ [0-9][0-9a-z.]*(, [a-z0-9-]+ [0-9][0-9a-z.]*)*$"
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "reason", "vectors"],
+        "properties": {
+          "id": { "description": "The gap's number, such as `OG-1`.", "type": "string", "pattern": "^OG-[1-9][0-9]*$" },
+          "reason": { "description": "What the oracle does that gives the vector another verdict, and which standard says the stated one.", "type": "string", "minLength": 1 },
+          "vectors": {
+            "description": "The vectors it covers, each by its primitive, its value, and the verdict the oracle gives.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["primitive", "value", "oracle"],
+              "properties": {
+                "primitive": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9]*$" },
+                "value": {},
+                "oracle": { "description": "The oracle's verdict, which the stated one isn't.", "enum": ["accepts", "rejects"] }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "$defs": {
+    "LineItemSummaryEnvironmentsSelection": {
+      "additionalProperties": false,
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "../../inventory/1/inventory.json#/$defs/Environment"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "available"
+      ],
+      "type": "object"
+    },
+    "LineItemSummaryFormatsSelection": {
+      "additionalProperties": false,
+      "properties": {
+        "included": {
+          "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the identity the seller mints for it.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/FormatId"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "included"
+      ],
+      "type": "object"
+    },
+    "LineItemSummaryPlacement": {
+      "additionalProperties": false,
+      "properties": {
+        "instl": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/IntegerFlag",
+          "description": "`0` (no) | `1` (yes). The ad is interstitial or full screen"
+        },
+        "plcmt": {
+          "$ref": "../../inventory/1/inventory.json#/$defs/PlcmtSubtype",
+          "description": "One value from List: Plcmt Subtypes - Video: Instream (1), Accompanying Content (2), Interstitial (3), No Content/Standalone (4), Pause (5), Screensaver (6), Overlay (7), Squeezeback (8), In-scene (9)"
+        },
+        "reward": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/IntegerFlag",
+          "description": "`0` (no) | `1` (yes). The user receives a reward for viewing the ad"
+        },
+        "skip": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/IntegerFlag",
+          "description": "Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad"
+        }
+      },
+      "type": "object"
+    },
+    "LineItemSummaryPricingEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "cost_method": {
+          "$ref": "../../commercial/1/commercial.json#/$defs/CostMethod",
+          "description": "CPM, CPC, flat, etc."
+        },
+        "currency": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/CurrencyCode",
+          "description": "ISO-4217"
+        },
+        "gross_rate": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount",
+          "description": "The list rate the buyer pays"
+        }
+      },
+      "required": [
+        "cost_method",
+        "currency",
+        "gross_rate"
+      ],
+      "type": "object"
+    },
+    "LineItemSummaryPropertiesOption": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+        }
+      },
+      "type": "object"
+    },
+    "LineItemSummaryPropertiesOptionOrCatalogRef": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LineItemSummaryPropertiesOption"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/CatalogReference"
+        }
+      ],
+      "description": "A value given inline, or a reference to the seller's catalog entry that holds it, never both."
+    },
+    "LineItemSummaryPropertiesSelection": {
+      "additionalProperties": false,
+      "properties": {
+        "available": {
+          "description": "The line item's `properties.available[]`, each entry projected to `name`.",
+          "items": {
+            "$ref": "#/$defs/LineItemSummaryPropertiesOptionOrCatalogRef"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "available"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/representation/1/representation.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `representation` module: the vocabularies, objects, unions, and constructor copies of § 2.1.",
+  "title": "representation"
+}

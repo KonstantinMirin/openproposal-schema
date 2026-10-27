@@ -1,0 +1,22 @@
+# Fixture for the decision-record format, over the synthetic spec.md beside this directory.
+format: 1
+id: D-001
+status: proposed
+kind: gap
+author: agent
+question: Is the cost_method vocabulary closed, or a core list plus namespaced terms?
+covers:
+  - ir: field:5.6:pricing[].cost_method
+    digest: 9305a06751baf0699a010595e20fc5707ba976bd43a64dca4dc2e6ffc337bfd0
+    quote: "`pricing[].cost_method` | Enum | seller-set | `cpm` | `flat`"
+  - ir: field:5.6:pricing[].cost_method#description/values:1
+    digest: 485672d8de1e0315833132b4c680df0482d99ecf76f339a0ff5499940f9e86a6
+    quote: "`cpm` | `flat`"
+options:
+  - id: closed
+    summary: An enum of cpm and flat. A new method needs a new release.
+  - id: open
+    summary: The core list cpm and flat, plus NamespacedTerm for other methods.
+chosen: open
+rationale: Sellers price in methods the list doesn't name, and a closed list breaks the wire on every addition.
+feedback: State that cost_method is a core list that a seller may extend with namespaced terms.

@@ -1,0 +1,49 @@
+format: 1
+id: D-020
+status: proposed
+kind: gap
+author: agent
+question: Which fields may carry a `catalog_ref` in place of an inline value?
+covers:
+  - ir: field:5.2:properties
+    digest: 8167901b1024772db9ede8143ce1d5009d6effcfd66b290f82e427a00940b50c
+    quote: "`properties` | Object | selectable | `available[]` of `{ id, name, domains, supported_formats }`, `included[]`, `pricing`, `max_select`"
+    locks: [main]
+  - ir: field:5.2:properties
+    digest: 4115b24e46ceb6cf1b12d1730a313c02123ae5b3ed6739bb9fefdaadc10ea478
+    quote: "`properties` | Object | selectable | `available[]` of `{ id, name, domains, apps, supported_formats }`, `included[]`, `pricing`, `max_select`. Each property MUST carry `domains`, `apps` or both"
+    locks: [with-open-prs]
+  - ir: field:5.3:audiences
+    digest: 273649330d46a8fb5e90121fdad4864fa49d29ce6c34dce7c90fc37282e40b96
+    quote: "`audiences` | Object | selectable | `available[]` of `{ id, name, taxonomy_ref, provenance, addressable_scale }`, `included[]`, `pricing` as `delta_cpm` per option, `max_select`"
+  - ir: rule:2.2:c610e803
+    digest: d92a309b641f5804a63417966289d0dd289ae5243884b49fab292652386ab7b0
+    quote: "Any field whose value is drawn from a seller-maintained catalog MAY carry a reference in place of an inline value:"
+  - ir: code:2.2:1
+    digest: 5b0b87b43dbc9c1a24ed8f3e2bd71d22c5d790a6f786b980bd554f64a71436a0
+    quote: |-
+      catalog_ref: "<seller_namespace>/<collection>/<entry_id>@<version>"
+      example:     "examplepub/audiences/smb-decision-makers@3"
+options:
+  - id: audience-and-property-options
+    summary: Each option in `audiences.available[]` and `properties.available[]` is an inline value or a catalog reference.
+  - id: every-option
+    summary: Every option of every selectable field.
+  - id: whole-fields
+    summary: Each field as a whole
+chosen: audience-and-property-options
+rationale: >-
+  § 2.2 allows a reference for "any field whose value is drawn from a
+  seller-maintained catalog" but never says which fields those are. The only
+  reference in the specification and the examples is an audience in
+  `audiences.available[]`, and § 2.3 says that large property lists use
+  `catalog_ref`. Audiences and properties are the catalog-backed objects a
+  seller maintains; formats, environments, and the other options are codes and
+  terms, not catalog entries. So `CatalogRefOr` wraps exactly those two option
+  types, which are closed objects, as its parameter requires.
+evidence:
+  - examples/line-item-display.yaml (audiences)
+feedback: >-
+  List the fields, or the options, that may carry a `catalog_ref`. Say whether a
+  reference replaces one option or a whole field, as § 2.3's "large lists use
+  `catalog_ref`" suggests.

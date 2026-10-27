@@ -1,0 +1,24 @@
+format: 1
+id: G-005
+date: 2026-10-25
+question: How does the feedback gate catch text for the working group that names this repository's paths, records, or pipeline?
+decision: >-
+  The feedback gate's check for internal citations now also fails on a
+  repository path such as `kernel/…`, `mapping/…`, or `src/…`, a gate
+  decision or task ID such as `G-002` or `ops-c4g.23`, and the pipeline's
+  own terms: "the mapping", "kernel type", and a constructor's parameter. A
+  path under `examples/` is the specification's own and passes. Its new
+  fixtures put each of these into a decision's feedback, its question, or
+  what the schemas do. The six decisions whose text used those terms now say
+  it in the working group's: a schema type, a value list, and the selectable
+  or settable field. The test suite holds one more test, so its floor rises
+  to 290.
+rationale: >-
+  The review found details that told the working group what "the
+  constructor" takes "in the mapping" and which "kernel type" each member
+  takes, which the check passed because it knew only document names,
+  commands, and decision IDs. The check now rejects more, so no gate is
+  weaker.
+accepts:
+  - { gate: feedback, fingerprint: 305b667fa2954ff7db6c3845473c77706e8b496b904c491527bcbff08850651b }
+  - { gate: npm-test, fingerprint: 62b391de8bec2a47350ffbf45d5d1c07ce6878efb82aeeb9fa1e31790e4a9966 }

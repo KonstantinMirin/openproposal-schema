@@ -1,0 +1,38 @@
+format: 1
+id: D-006
+status: proposed
+kind: gap
+author: agent
+question: Which URL schemes may a URL field carry?
+covers:
+  - ir: rule:2.3:99777739
+    digest: 406feb42eaa323b7ecfc76a14cc5018b0571b0ed8a54b9059f49d101885f4e65
+    quote: A seller MAY publish `https://<seller domain>/.well-known/openproposal.json`.
+    locks: [with-open-prs]
+  - ir: key:5.2:apps[].storeurl
+    digest: ff0b57e686b74d4d7954d4f807d16f837493476801ec8813d4b42463df5760d3
+    quote: "`storeurl` | OPTIONAL | Store listing URL. As `app.storeurl`"
+    locks: [with-open-prs]
+  - ir: field:5.8:terms_ref
+    digest: c65b1714f353bd191478e58c22e966ba7aea717efd79a61aa495c477fc4249b1
+    quote: "`terms_ref` | Object | seller-set | OPTIONAL; REQUIRED when `terms_acceptance_required` is `true`. `{ url, sha256, version }`: the legal terms or IO template the buyer accepts at assent. Hash-pinned, so assent (§ 4.1) binds to an exact document"
+    locks: [with-open-prs]
+options:
+  - id: https-only
+    summary: An absolute `https` URL.
+  - id: http-or-https
+    summary: An absolute `http` or `https` URL.
+  - id: any-uri
+    summary: Any absolute URI, whatever its scheme.
+chosen: https-only
+rationale: >-
+  Every URL in the specification is one an agent fetches: the § 2.3 manifest,
+  a store listing, and the terms a buyer assents to. Over plain `http`, a
+  network attacker can substitute what the agent reads, and the § 2.3 manifest
+  URL is already `https`. A name that is never fetched, such as an extension
+  identifier, is a `Uri`, not a `Url`. The initial conventions § 2 already
+  stated the `https` rule.
+evidence:
+  - docs/design/initial-conventions.md § 2
+feedback: >-
+  State that every URL field carries an absolute `https` URL.

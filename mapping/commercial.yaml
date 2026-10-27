@@ -1,0 +1,425 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: commercial
+sections: [ "5.6", 5.6.1, 5.6.2, 5.6.3 ]
+types:
+  - name: PricingEntry
+    kind: object
+    ir: "field:5.6:pricing[]"
+    source: { rule: sub-field-object }
+    open: false
+  - name: CostMethod
+    kind: vocabulary
+    ir: "field:5.6:pricing[].cost_method"
+    source: { decisions: [ D-013, D-014, D-026 ] }
+    open: true
+    terms: [ CPM, CPC, flat ]
+  - name: AvailabilityBasis
+    kind: vocabulary
+    ir: field:5.6:availability#description/object:1
+    source: { decision: D-041 }
+    open: true
+  - name: AvailabilityUnit
+    kind: vocabulary
+    ir: field:5.6:availability#description/object:1
+    source: { decision: D-041 }
+    open: true
+  - name: CancellationPolicyOption
+    kind: object
+    ir: field:5.6:cancellation_policy
+    source: { decisions: [ D-016, D-019 ] }
+    open: true
+    description: "A cancellation right the seller offers, priced in `pricing` beside the others. The specification states no members, so the option accepts any beside the `id` that names it."
+  - name: ExclusivityOption
+    kind: object
+    ir: field:5.6:exclusivity
+    source: { decisions: [ D-016, D-019 ] }
+    open: true
+    description: "An exclusivity term the seller offers, priced in `pricing` beside the others. The specification states no members, so the option accepts any beside the `id` that names it."
+  - name: CreativePolicy
+    kind: object
+    ir: field:5.6:creative_policy
+    source: { decision: D-016 }
+    open: true
+    description: "The content and category restrictions on creative. The specification states no members, so the object accepts any."
+  - name: Commitment
+    kind: object
+    ir: key:5.6.1:commitment.proposal_id
+    locks: [ with-open-prs ]
+    source: { rule: key-table-object }
+    open: false
+  - name: Commitment
+    kind: object
+    ir: key:5.6.1:commitment.basis
+    locks: [ main ]
+    source: { rule: key-table-object }
+    open: false
+  - name: HoldStatus
+    kind: object
+    ir: key:5.6.2:hold_status.hold_available
+    source: { rule: key-table-object }
+    open: false
+  - name: Requires
+    kind: object
+    ir: "key:5.6.3:requires.all_of[]"
+    locks: [ with-open-prs ]
+    source: { rule: key-table-object }
+    open: false
+entries:
+  - ir: "field:5.6:pricing[]"
+    digest: 362371b22d681a7cf62432d36c01b9a96ee682c497028234b637b2a3f0df8b0b
+    source: { rule: sub-field-array }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PricingEntry } } }
+      presence: optional
+  - ir: "field:5.6:pricing[].cost_method"
+    digest: 91f19d1af64820acbb6d4eafa21c2cc664e9339516af84d59dff12212501f498
+    source: { decision: D-026 }
+    as: { role: property, object: PricingEntry, type: { kind: named, name: CostMethod }, presence: optional }
+  - ir: "field:5.6:pricing[].gross_rate"
+    digest: f432867a10e6b5662c58996ee4f1c3ea14cddc65968fb1f879bbc703940b9621
+    source: { rule: domain-row }
+    as: { role: property, object: PricingEntry, type: { kind: named, name: Amount }, presence: optional }
+  - ir: "field:5.6:pricing[].agreed_rate"
+    digest: fddb11299e9061fe008737676d347a540cc4a21ffaadb153b5cf7765f312d3c6
+    source: { rule: domain-row }
+    as: { role: property, object: PricingEntry, type: { kind: named, name: Amount }, presence: optional }
+  - ir: "field:5.6:pricing[].seller_rate"
+    digest: 314758d24a50efd1b2b8813f612feb3630d3635c709cd98d136a482f6ebbc049
+    source: { rule: domain-row }
+    as: { role: property, object: PricingEntry, type: { kind: named, name: Amount }, presence: optional }
+  - ir: "field:5.6:pricing[].price_valid_until"
+    digest: d5f73077d16f2df27e85bbb8df330143da8f86fd4c531ecf4da35b9cac37f6f1
+    source: { rule: scalar-field }
+    as: { role: property, object: PricingEntry, type: { kind: named, name: Timestamp }, presence: optional }
+  - ir: "field:5.6:pricing[].currency"
+    digest: c3fe3033ef8ca1012e67b36b728cc3383f4f4b4642ded0b50c4537216dcafde1
+    source: { rule: domain-row }
+    as: { role: property, object: PricingEntry, type: { kind: named, name: CurrencyCode }, presence: optional }
+  - ir: "field:5.6:pricing[].floor"
+    digest: c635c8c9f7c2bc45268481c963866fc8a5bc289c2ed6c22c8ad5115b2529c1d7
+    locks: [ main ]
+    source: { rule: domain-row }
+    as: { role: property, object: PricingEntry, type: { kind: named, name: Amount }, presence: optional }
+  - ir: "field:5.6:pricing[].floor"
+    digest: 2a2f1c3a1f72fae862344a6b30acedcb6510ab6cf43f9c7f13a837680ed1a3ca
+    locks: [ with-open-prs ]
+    source: { rule: domain-row }
+    as: { role: property, object: PricingEntry, type: { kind: named, name: Amount }, presence: optional }
+  - ir: rule:5.6:d539a004
+    digest: 0e4061aab1182ecd04ebec1c67a7bcb1f7e06946b25ce6555c4e84ffc4124de4
+    source: { rule: presence-statement }
+    as: { role: schema, in: PricingEntry }
+  - ir: field:5.6:availability
+    digest: b4ed5d990a935b6631892a0226c22e9fb5e59ce490e47aee6daa92439a8c1dc4
+    source: { rule: inline-object-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Availability }, presence: optional }
+  - ir: field:5.6:availability#description/object:1
+    digest: 8a93eee2b91a74d8f7ce7fa00ed1af2b272702885b71d981fc562b711d8b40be
+    source: { decisions: [ D-026, D-040 ] }
+    as:
+      role: type
+      name: Availability
+      layer: object
+      open: false
+      members:
+        unit: { type: { kind: named, name: AvailabilityUnit }, presence: optional }
+        basis: { type: { kind: named, name: AvailabilityBasis }, presence: optional }
+        as_of: { type: { kind: named, name: Timestamp }, presence: optional }
+        granularity: { type: { kind: named, name: Duration }, presence: optional }
+        type: { type: { kind: named, name: AvailabilityType }, presence: optional }
+        quantity: { type: { kind: named, name: Count }, presence: optional }
+  - ir: field:5.6:availability#description/object:1/type
+    digest: dc3ea40456542ff1a1b4b9c77cc6b2a59b0cc47f1fcdfeae55325e9fed841c90
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: AvailabilityType, layer: vocabulary, open: false }
+  - ir: field:5.6:commitment_bounds
+    digest: 3d6b55ccbb5761eb4f56168a6bebd5435000158fa03caecde0c15b1294351680
+    source: { rule: inline-object-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: CommitmentBounds }, presence: optional }
+  - ir: field:5.6:commitment_bounds#description/object:1
+    digest: 3554f2d78be2145dbef1d127f3e38c57e531bc19965d5834eb2b995d0af016b8
+    source: { decision: D-026 }
+    as:
+      role: type
+      name: CommitmentBounds
+      layer: object
+      open: false
+      members:
+        min_impressions: { type: { kind: named, name: Count }, presence: optional }
+        max_impressions: { type: { kind: named, name: Count }, presence: optional }
+        min_budget: { type: { kind: named, name: Amount }, presence: optional }
+        max_budget: { type: { kind: named, name: Amount }, presence: optional }
+  - ir: field:5.6:commitment
+    digest: a6b61b5855529925630d06290e44a856dea4dd6895a2e7a1db62361cc2587d3f
+    source: { decision: D-021 }
+    as: { role: property, object: LineItem, type: { kind: named, name: Commitment }, presence: optional }
+  - ir: field:5.6:hold_status
+    digest: e18137474b7d90b5e03f6a0098d1f689853b2bbdd4b13f81ead20e1b7714f11e
+    source: { rule: keyed-object-field }
+    as: { role: property, object: LineItem, type: { kind: named, name: HoldStatus }, presence: optional }
+  - ir: field:5.6:min_spend
+    digest: 9950b94692a4b0250d54a54d47eca0f63c96a7b9d26607cded57896d46e5c8c4
+    source: { rule: domain-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Amount }, presence: optional }
+  - ir: field:5.6:cancellation_policy
+    digest: 6c8bbcd373f89f5fdf8c0e6a3e9f43bc0e26cc1b5ba35a4f13c2dd246f37dba4
+    source: { decisions: [ D-018, D-019 ] }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: CancellationPolicyOption }, K: { kind: named, name: Uuid } }
+      presence: optional
+  - ir: field:5.6:exclusivity
+    digest: 5012d5c8189fd4016ce87f254fff0fa14c929365d9efc3f2256ccfcf80b73c46
+    source: { decisions: [ D-018, D-019 ] }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: ExclusivityOption }, K: { kind: named, name: Uuid } }
+      presence: optional
+  - ir: field:5.6:creative_policy
+    digest: aa3353469e3bafe74a8022b1fadfe0694ac15c0f840b266a7089d8ac8d18c996
+    source: { decision: D-016 }
+    as: { role: property, object: LineItem, type: { kind: named, name: CreativePolicy }, presence: optional }
+  - ir: field:5.6:requires
+    digest: a478530fd131acb77c7529c05b5cf7177ea71e8b6f2293c353d3e1db259db2a3
+    locks: [ with-open-prs ]
+    source: { rule: keyed-object-field }
+    as: { role: property, object: LineItem, type: { kind: named, name: Requires }, presence: optional }
+  - ir: rule:5.6:d539a004-2
+    digest: 4e751affb39cfc123e99a1ec55632e3249973e3a7e29f08bbb2e006ccb199e8d
+    locks: [ with-open-prs ]
+    source: { rule: presence-statement }
+    as: { role: schema, in: LineItem }
+  - ir: rule:5.6.1:e250f467
+    digest: 71c45471a5ffb8ffa96912ac35f02dd12e54a5ee02ce59235cb229e691327dbe
+    locks: [ main ]
+    source: { decision: D-031 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:5.6.1:bb93abda
+    digest: 6a56ad25c7e3755437084cda46e4ad4f10b3d94f2129aae231ff89a78ff72e89
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.6.1:commitment.proposal_id
+    digest: 5786eb882e01494be61d482b94b44011a8669f93a79419c1e74db23908e04453
+    locks: [ with-open-prs ]
+    source: { rule: domain-row }
+    as: { role: property, object: Commitment, type: { kind: named, name: Uuid }, presence: required }
+  - ir: key:5.6.1:commitment.version
+    digest: 394505396cda2bb39d2e3e57aec4d9f3135b74d215b31c1483869965339ac648
+    locks: [ with-open-prs ]
+    source: { rule: domain-row }
+    as: { role: property, object: Commitment, type: { kind: named, name: Count }, presence: required }
+  - ir: key:5.6.1:commitment.basis
+    digest: 60358fb6f38d2a19fe2464ba3899a71d40e741ec7710e1f2437448b48794ab11
+    source: { rule: enum-row }
+    as: { role: property, object: Commitment, type: { kind: named, name: CommitmentBasis }, presence: required }
+  - ir: key:5.6.1:commitment.basis#meaning/values:1
+    digest: fb3c418be5b3a6d64ce4c1723965a7119b64d62cfac7e826da479d6ce023282c
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: CommitmentBasis, layer: vocabulary, open: false }
+  - ir: key:5.6.1:commitment.amount
+    digest: 9e4c291747cc047e67c9ef7b1b6f9776d02bb2e82de16dfe9b8079e42921e804
+    source: { rule: domain-row }
+    as: { role: property, object: Commitment, type: { kind: named, name: Amount }, presence: required }
+  - ir: key:5.6.1:commitment.currency
+    digest: 19e4d985eb2f3a597bafe8f3233448688dcfd827a2e41bc2b8fe1886c5e9ce33
+    source: { rule: domain-row }
+    as: { role: property, object: Commitment, type: { kind: named, name: CurrencyCode }, presence: conditional }
+  - ir: key:5.6.1:commitment.flight_start
+    digest: f55507bcfbcdffa24a4949e12e1e59a92cef3e9b56f23e47b59e6b8c20f0d4fb
+    source: { rule: domain-row }
+    as: { role: property, object: Commitment, type: { kind: named, name: Timestamp }, presence: required }
+  - ir: key:5.6.1:commitment.flight_end
+    digest: d3bd830cbe989315172dc25dcb1f42bdb93752cfa4f6f0112d4fca784f286345
+    source: { rule: domain-row }
+    as: { role: property, object: Commitment, type: { kind: named, name: Timestamp }, presence: required }
+  - ir: key:5.6.1:commitment.derived_units
+    digest: a9f6d92f09ae371454efb08c6b7e3ae3a5d7340cedd195cb446ce3da2db6735f
+    source: { rule: domain-row }
+    as: { role: property, object: Commitment, type: { kind: named, name: Count }, presence: optional }
+  - ir: key:5.6.1:commitment.idempotency_key
+    digest: 47264d377373977897dc60c399d4e61a15e862743a2ff4e2fab92830ca3f3550
+    source: { rule: domain-row }
+    as: { role: property, object: Commitment, type: { kind: named, name: Uuid }, presence: required }
+  - ir: rule:5.6.1:6f403dba
+    digest: eca307cbc007002ce5a8e75fe6accdd9b6395e089237e159924ef1cad9833fbb
+    locks: [ with-open-prs ]
+    source: { decision: D-031 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:5.6.1:b7271e6a
+    digest: 5dd839c74bf1f8491a622216e9764d980816d4a413cbf9e8e64f990290dcc332
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.6.1:499ec00e
+    digest: 19c7bcb1d4fa89cfd05bd682985280743aa936b6968ac4c34ca7364c443dd9b0
+    locks: [ with-open-prs ]
+    source: { decision: D-031 }
+    as: { role: obligation, party: seller }
+  - ir: rule:5.6.1:1a7143ff
+    digest: 44f5ae878944ae366a00baa3a5e7e9d88c5088cfaf0f60103e8f7c209a48b143
+    locks: [ with-open-prs ]
+    source: { decision: D-031 }
+    as: { role: obligation, party: seller }
+  - ir: rule:5.6.1:852ec5db
+    digest: 153969413c0e7f5e86d216817764b9a32a509f5eb3c8c0dfb9b6913f48fbd35b
+    locks: [ with-open-prs ]
+    source: { decision: D-031 }
+    as: { role: obligation, party: seller }
+  - ir: rule:5.6.1:d672decc
+    digest: 15f7feadd159044cc4d9abd57a7a2928a7007b405aa8ba9a976f16108d99f77b
+    locks: [ with-open-prs ]
+    source: { decision: D-031 }
+    as: { role: obligation, party: seller }
+  - ir: rule:5.6.1:7de026a6
+    digest: 6009fbef413dd136cee2e9b6dd456f09f0c19e86061ccc8280deb54a6303d258
+    locks: [ with-open-prs ]
+    source: { decision: D-031 }
+    as: { role: obligation, party: seller }
+  - ir: key:5.6.2:hold_status.hold_available
+    digest: 201a73f56ae7a6f7c81671b5a989999e5e68f5a5e75b72046ea852d93480867c
+    source: { rule: domain-row }
+    as: { role: property, object: HoldStatus, type: { kind: boolean }, presence: optional }
+  - ir: key:5.6.2:hold_status.hold_duration
+    digest: 926e46e5c6325e98292a30a6655d0991d1979a9e07c1c637c9d256aa82659493
+    source: { rule: domain-row }
+    as: { role: property, object: HoldStatus, type: { kind: named, name: Duration }, presence: optional }
+  - ir: key:5.6.2:hold_status.hold_scope
+    digest: b1fb8e8b2a3235d7132a29c5a3aaa524cd08aacdfdc64935f4cea29b397b19bc
+    source: { rule: enum-row }
+    as: { role: property, object: HoldStatus, type: { kind: named, name: HoldScope }, presence: optional }
+  - ir: key:5.6.2:hold_status.hold_scope#meaning/values:1
+    digest: dab79267d8bd007e4e9bb01a8e7a533aa3bc89ab7b366709aac91d830ed41b01
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: HoldScope, layer: vocabulary, open: false }
+  - ir: key:5.6.2:hold_status.state
+    digest: fe70e7fdc64091cdc4c9ed234646e89c65af13c3610230ca5d686d227ca3c5b0
+    source: { rule: enum-row }
+    as: { role: property, object: HoldStatus, type: { kind: named, name: HoldState }, presence: optional }
+  - ir: key:5.6.2:hold_status.state#meaning/values:1
+    digest: 9677c985dbf5ad54f792ceeb107989dc55fe0547b1e6c083a245873f0f97e8a6
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: HoldState, layer: vocabulary, open: false }
+  - ir: key:5.6.2:hold_status.hold_expires_at
+    digest: d298da40613999b40a53bab56e17f7c8af9488207a3755391ce3c368a2556cb8
+    source: { rule: domain-row }
+    as: { role: property, object: HoldStatus, type: { kind: named, name: Timestamp }, presence: optional }
+  - ir: block:5.6.2:1/values:1
+    digest: c4f05bca19873a07f8a165ff6a69d25967eec96b3611c0dba1accd7c5c24b3fb
+    source: { decision: D-030 }
+    as: { role: rule, object: HoldStatus }
+  - ir: sentence:5.6.2:516faad1
+    digest: 2a548d3ef33b3aafd2fa6449fa5f767298acc8696d23a9f243e3c115c77bfc8d
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.6.2:774f52b4
+    digest: 11142c151ba5ff5f5862e36d05ce4337272c6891f441ebdddeb2c30fdac74eef
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: "key:5.6.3:requires.all_of[]"
+    digest: ba606c815b2f294442e06b436f9b146cdad79fc400cfe5586a1906370ee74c7c
+    locks: [ with-open-prs ]
+    source: { rule: domain-row }
+    as:
+      role: property
+      object: Requires
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Uuid } } }
+      presence: optional
+  - ir: rule:5.6.3:17fe6f2c
+    digest: e0bb97075ca5ed6eddefbfca311587c03d2fe5a6fe6f9eb249a8469dd9c83939
+    locks: [ with-open-prs ]
+    source: { decision: D-031 }
+    as: { role: obligation, party: seller }
+  - ir: "key:5.6.3:requires.any_of[]"
+    digest: a9c3ff73e8f7dbce358a1c75350766332e8f8db4cfca291bf7775f7f0ba38929
+    locks: [ with-open-prs ]
+    source: { rule: domain-row }
+    as:
+      role: property
+      object: Requires
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Uuid } } }
+      presence: optional
+  - ir: rule:5.6.3:497d445c
+    digest: 0d87ef80c197d3f1f3fdd856f0277309379fec1cca87058ffba793d28a62f268
+    locks: [ with-open-prs ]
+    source: { decision: D-031 }
+    as: { role: obligation, party: seller }
+  - ir: "key:5.6.3:requires.min_commitment[]"
+    digest: 20c1f219e005f083975463458cfb7a87c7bb8f343fc8fb5390e9b0a72d422060
+    locks: [ with-open-prs ]
+    source: { rule: inline-object-row }
+    as:
+      role: property
+      object: Requires
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: MinCommitmentEntry } } }
+      presence: optional
+  - ir: "key:5.6.3:requires.min_commitment[]#meaning/object:1"
+    digest: 42864a103fd4ba66991bdf1f48cb93772c0567a6c109abdeabac4591e0013699
+    locks: [ with-open-prs ]
+    source: { decision: D-026 }
+    as:
+      role: type
+      name: MinCommitmentEntry
+      layer: object
+      open: false
+      members:
+        line_item_id: { type: { kind: named, name: Uuid }, presence: optional }
+        basis: { type: { kind: named, name: CommitmentBasis }, presence: optional }
+        amount: { type: { kind: named, name: Amount }, presence: optional }
+        currency: { type: { kind: named, name: CurrencyCode }, presence: optional }
+  - ir: code:5.6.3:1
+    digest: 3c4b19331f24fca760db7f76364af71ac968ba0af555f028bea2568fcdcd4db9
+    locks: [ with-open-prs ]
+    source: { decision: D-033 }
+    as: { role: example, object: LineItem }
+  - ir: sentence:5.6.3:6bbcd82c
+    digest: 064a7b8ad82ce11c5959878973a38f3b60391dc52782758f2201968ef795ffcd
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.6.3:84e2eae9
+    digest: 679372c8d2d43f2c96105ffa03e6de8f9029147040ba1db29fb2464586c01833
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.6.3:db94cd1e
+    digest: 686a2ae481c05e78ee836c53ffb7f07d44cbf39c4254bad84d73b73212d97c66
+    locks: [ with-open-prs ]
+    source: { decision: D-031 }
+    as: { role: obligation, party: seller }
+  - ir: rule:5.6.3:39e4afbb
+    digest: f2332950d941b37f8081dc9d34a1db6dcbe0dc8183014e301803773d777a3dea
+    locks: [ with-open-prs ]
+    source: { decision: D-031 }
+    as: { role: obligation, party: seller }
+  - ir: rule:5.6.3:7d683b70
+    digest: 0be768c3247f8bcca28872cead0f66b81c093a72b5559a24562ef75ca0e2c1ad
+    locks: [ with-open-prs ]
+    source: { decision: D-031 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:5.6.3:3061bf96
+    digest: 7d20f52c597bb9a51ef1d9c0f0a157246e99a6787eb925be2705a092357fcfac
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.6.3:946d6fc1
+    digest: a40f57c2c000f5241a13f146e5c7c52fafc1c2ec8edd18598d05ed7268c066c2
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.6.3:b4da8d14
+    digest: 6484411f47dd56769aada66dabfa0b3f2bd52ed635f4e8ef38fce9fc19599b57
+    locks: [ with-open-prs ]
+    source: { decision: D-031 }
+    as: { role: obligation, party: seller }

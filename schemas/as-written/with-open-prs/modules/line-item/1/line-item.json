@@ -1,0 +1,38 @@
+{
+  "$defs": {
+    "Channel": {
+      "anyOf": [
+        {
+          "enum": [
+            "display",
+            "video",
+            "audio",
+            "ctv",
+            "dooh",
+            "native"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "LineItemStatus": {
+      "enum": [
+        "draft",
+        "published",
+        "under_review",
+        "agreed",
+        "withdrawn",
+        "sold_out",
+        "expired"
+      ],
+      "type": "string"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/line-item/1/line-item.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `line-item` module: the vocabularies, objects, unions, and constructor copies of § 3.3, § 5, § 5.1, and § 5.1.1.",
+  "title": "line-item"
+}

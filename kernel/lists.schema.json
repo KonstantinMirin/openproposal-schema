@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/kernel/lists.schema.json",
+  "title": "External code lists",
+  "description": "The code lists other standards keep, which the specification cites, each with its codes as the standard writes them at a pinned commit, or at a version its keeper publishes outside git.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "lists"],
+  "properties": {
+    "format": { "const": 1 },
+    "lists": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "standard", "url", "codes"],
+        "properties": {
+          "name": {
+            "description": "The list's name as the specification writes it, such as `List: API Frameworks` or `Line.frequencyinterval`.",
+            "type": "string",
+            "minLength": 3
+          },
+          "standard": {
+            "description": "The standard that keeps the list, with its version.",
+            "type": "string",
+            "minLength": 3
+          },
+          "url": {
+            "description": "The list in the standard, at a pinned commit; or, for a list its keeper publishes outside git, the `https` URL of the file the keeper publishes, with the list's `version` and the file's `sha256`.",
+            "type": "string",
+            "pattern": "^https://\\S+$"
+          },
+          "version": {
+            "description": "The version the keeper gives the list, such as ISO 4217's publication date or the IANA database's release, for a list published outside git.",
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "description": "The SHA-256 of the file the URL served at `version`, 64 lowercase hex digits.",
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "copy": {
+            "description": "The repository's copy of the file the URL served at `version`, under `kernel/sources/`, for a URL that serves only the keeper's latest version, so `sha256` stays verifiable. The kernel gate checks that the copy's SHA-256 is `sha256` and, for ISO 4217's List One, that it publishes `version` and holds exactly the list's codes and labels.",
+            "type": "string",
+            "pattern": "^kernel/sources/[A-Za-z0-9._-]+$"
+          },
+          "vendor": {
+            "description": "The codes the list reserves for vendors, each code from `from` up, as AdCOM 1.0 writes \"500+ Vendor-specific codes\".",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["from", "label"],
+            "properties": { "from": { "type": "integer", "minimum": 1 }, "label": { "type": "string", "minLength": 1 } }
+          },
+          "codes": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["code"],
+              "properties": {
+                "code": {
+                  "description": "The code as the standard writes it: an integer, a word, or a name of words joined by `/`, `_`, `+`, or `-`, as an IANA zone name is.",
+                  "anyOf": [
+                    { "type": "integer", "minimum": 0 },
+                    { "type": "string", "pattern": "^[A-Za-z0-9]+([/_+-][A-Za-z0-9]+)*$" }
+                  ]
+                },
+                "label": { "description": "The standard's name for the code.", "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        },
+        "if": {
+          "properties": {
+            "url": { "type": "string", "pattern": "^https://github\\.com/[^/]+/[^/]+/blob/[0-9a-f]{40}/.+#.+$" }
+          }
+        },
+        "then": { "properties": { "version": false, "sha256": false } },
+        "else": { "required": ["version", "sha256"] }
+      }
+    }
+  }
+}

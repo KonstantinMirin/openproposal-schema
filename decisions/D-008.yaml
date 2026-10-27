@@ -1,0 +1,47 @@
+format: 1
+id: D-008
+status: proposed
+kind: gap
+author: agent
+question: What is the bare value that a selectable or settable field may carry in place of its full form?
+covers:
+  - ir: rule:3.1:f8b0c287
+    digest: d60c77636afc33649141f8de560cbf2e0f599b124779ea89b069f9b08a9181cd
+    quote: A field marked `selectable` that carries a bare value and no `available[]` MUST be treated as `seller-set`.
+  - ir: rule:3.2:4f3b0a9c
+    digest: 07c583d4952414b695fe884dd3b8b2257e046904bec68931d240feef4ad28988
+    quote: A field marked `settable` that carries a bare value and no bounds MUST be treated as `seller-set`.
+  - ir: rule:3:b51cedb6
+    digest: fde9bc5c8e7d5ea0efdf20ad2cda4220d910e865daeb0d98f67288ec2f1493f9
+    quote: An unset `selectable` or `settable` field takes its declared `included[]` or default, and that default MUST be explicit in the proposal.
+options:
+  - id: one-option
+    summary: A single value of the option type `T`, as the initial design proposed.
+  - id: option-list
+    summary: A list of values of the option type `T`.
+  - id: per-use
+    summary: >-
+      A selectable or settable field that takes a bare value accepts it in place
+      of its full form, typed as that field's value. A field that takes none
+      accepts only the full form.
+chosen: per-use
+rationale: >-
+  The specification never says what a bare value is, and it types every
+  selectable and settable field as Object. A single option can't state a
+  seller-set `geo` of several codes, and a list doesn't fit a single
+  cancellation right. `frequency_cap` is settable, but its bounds sit inside
+  `max`, so a bare value there would replace `max`, not the field. One type for
+  every field would be a guess that's wrong for some of them. With a parameter,
+  the template guesses nothing, and each use records its choice against its own
+  rows. Without `B`, the copy is the full form only.
+evidence:
+  - examples/line-item-display.yaml:50-51 (geo and frequency_cap)
+  - docs/design/initial-design.md
+feedback: >-
+  State the type of the bare value for each selectable and settable field, or
+  drop the fallback. Without it, a seller-set value is the full form, with one
+  option in `available[]` and the same option in `included[]`. Then no schema
+  needs an [untagged union](#untagged-unions) of the two forms. Also name the
+  keys for the buyer's choice of a selectable or settable field, and for an
+  unset settable field's explicit default. § 3 requires both, but § 3.1 and §
+  3.2 don't declare them.

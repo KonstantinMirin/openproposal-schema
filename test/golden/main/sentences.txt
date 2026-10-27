@@ -1,0 +1,28 @@
+sentence:1:1b060817	line 39	Custom proposal — built in response to a buyer's agent brief, referenced via `brief_ref`.
+sentence:1.1:9c7bf74f	line 43	Each line item lands in the one its `transaction_mechanism` maps to:
+sentence:2.1:5e6cb5f0	line 79	`line_item_id` · `channel` · `content_detail` · property names · `formats.included[]` · `pricing.cost_method` · `pricing.gross_rate` · `min_spend` · `addressable_scale` · `committed_metrics[]` · `transaction_mechanism`
+sentence:2.1:1f55a1be	line 84	plus, from the parent proposal: `proposal_id` · `seller_name` · `description` · `valid_from` · `valid_until`.
+sentence:2.1:0fb18f29	line 89	Full Representation — every field, with all `catalog_ref` values resolved.
+sentence:2.2:77e63626	line 103	A `catalog_ref` is not inheritance.
+sentence:3:cb1810ae	line 131	Only `requestable` fields require the counterparty to respond.
+sentence:3.1:817b18c0	line 152	`audience_pricing` in earlier drafts was the precedent for this pattern — it expressed "if you change X, the price moves by Y".
+sentence:3.1:49d63f3e	line 153	`pricing` generalises it to every dimension a seller is willing to vary, and replaces it.
+sentence:5.5:4869abaa	line 253	A bare value means the field is `seller-set`.
+sentence:5.6.1:bb93abda	line 286	Frozen when status becomes `agreed`.
+sentence:5.6.2:516faad1	line 312	Transitions: `none` → `requested` → `held` → (`expired` | `released` | `converted`).
+sentence:5.6.2:774f52b4	line 313	`converted` is terminal and occurs when the line item reaches `agreed`.
+sentence:6:b55a7db8	line 358	Runnable copies of every example below live in `examples/`.
+sentence:6.1:140f66aa	line 362	See `examples/proposal.yaml`.
+sentence:6.2:0ea01d1d	line 366	Shows `selectable` audiences with per-option pricing, a catalog reference, a buyer commitment, and `settable` bounds.
+sentence:6.2:c19128b7	line 367	See `examples/line-item-display.yaml`.
+sentence:6.3:24bee9be	line 372	See `examples/line-item-ctv.yaml`.
+sentence:6.4:dd9e06dd	line 376	See `examples/line-item-audio.yaml`.
+sentence:7:41ebd0f7	line 384	`description`, `specifications`, `best_for` and `seasonality_notes` are what a model needs to decide whether to look further.
+sentence:7:256da220	line 390	Channel support cost one new field and one generalisation — `channel`, and `committed_metrics[]` as tuples — rather than a schema fork per channel.
+sentence:8:0bda15d9	line 409	Do seller catalogs (`catalog_ref`) belong in 3.0, or should the object stay fully inline until a later version?
+sentence:8:4b17719a	line 411	Once one line item guarantees `viewable_rate` and another `completion_rate`, there is no normalised way for a buying agent to compare or optimise across them.
+sentence:8:410d8824	line 415	The format registry has no entries for `audio/*`, `ctv/*` or `dooh/*`.
+sentence:8:01a13e05	line 416	`specs` delegates to a registry that cannot currently answer for half the declared channels.
+sentence:8:3549c05c	line 418	Is a `min_line_items` field needed on the proposal to require a bundle purchase, or is that left to buyer discretion?
+sentence:8:f134c883	line 420	Should `payment_terms` and `invoicing_party` be catalog references rather than repeated on every line item, given they are usually identical across a seller's shelf?
+sentence:8:4a7b806f	line 423	`environments[]` needs validation against real inventory.

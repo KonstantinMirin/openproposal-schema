@@ -1,0 +1,36 @@
+format: 1
+id: G-065
+date: 2026-10-27
+question: What holds the public site, which `npm run site` builds from the repository, to working links, a strict Content-Security-Policy, public text, and repeatable bytes?
+decision: >-
+  `npm run site` builds the site into `site/`, which git ignores, with
+  `src/site/build.ts`, which reads the committed outputs and resolves each
+  lock's proposed and as-written builds in process. A new gate, site-builds
+  (`buildSite` and `checkSite`), fails on an internal link or resource that
+  names no file of the site, a link into the type map that names a type its
+  build lacks, a script without `src`, an inline style or event handler, a
+  resource from another origin, and text that names another protocol, an internal task
+  or gate ID, or a local path, with a fixture for each. A new gate,
+  site-deterministic, compares two runs of `npm run site` in separate
+  processes with the in-process build. `spec-input/provenance/`, which
+  `npm run provenance` writes from the open-PRs lock's clone, gives the
+  site the PR that wrote each line of that lock. A variant's concepts now
+  name their value domain, which variant-check checks against
+  `kernel/domains.yaml`. Six site tests are added; the suite holds 386
+  tests, and `MIN_TESTS` is 386.
+rationale: >-
+  The new gates add checks and relax none. The variant gates' fingerprints
+  change because a variant concept gains a required `domain`, which the
+  schema and `checkVariant` now check; the guard because the CI script runs
+  the site gates; and npm-test because of the new tests. The site isn't
+  committed: like the model under `build/`, it is a function of committed
+  files, and the determinism gate holds it to that.
+accepts:
+  - { gate: guard, fingerprint: 365b5933dd2d752d40a5c9192228763058ee32b3e6cb6e337bc1b77e6c2b7950 }
+  - { gate: npm-test, fingerprint: 86ef4ccb27e6306731bba6bf6cd1ad87938f3274433d4da08cece16f2391524a }
+  - { gate: site-builds, fingerprint: 642fdec5673e360f9d2f57138f7fb9d0de1f8b34b003153b016548c702413e06 }
+  - { gate: site-deterministic, fingerprint: 22ed061616db644cd9a7cda3ec286bb2a0bd97e5b8e31cb9d60f0f3a51a52ddd }
+  - { gate: variant-check, fingerprint: 760e741ac05c95bcc75e6df64bf0609fcc4459f506a5f71e219e6325159936f2 }
+  - { gate: variant-diff, fingerprint: a10f66b7d16efb5e39b839c988cb398fa39ea06dcb4eb1def3d73ef8a3400c0d }
+  - { gate: variant-examples, fingerprint: cae5e5e03609d8107253b67195be107cd3a95d740d24b54cac543ddaf7e078dd }
+  - { gate: variant-load, fingerprint: c83e5b77a08b395ac9defc12f4124eeb7e07f194893f6ccbb3a503b778d3d6b3 }

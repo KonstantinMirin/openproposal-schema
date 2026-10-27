@@ -1,0 +1,75 @@
+{
+  "$defs": {
+    "CredentialScheme": {
+      "anyOf": [
+        {
+          "enum": [
+            "api_key",
+            "oauth2_client_credentials",
+            "jwt_keypair",
+            "oidc_federated",
+            "none"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "CredentialType": {
+      "enum": [
+        "iab_registry",
+        "dsp_seat",
+        "custom"
+      ],
+      "type": "string"
+    },
+    "RequiredCredentialsEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "id_required": {
+          "type": "boolean"
+        },
+        "issuer": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+        },
+        "scheme": {
+          "$ref": "#/$defs/CredentialScheme"
+        },
+        "type": {
+          "$ref": "#/$defs/CredentialType"
+        }
+      },
+      "type": "object"
+    },
+    "TermsRef": {
+      "additionalProperties": false,
+      "properties": {
+        "sha256": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Digest"
+        },
+        "url": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Url"
+        },
+        "version": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId",
+          "description": "The terms document's version as its publisher writes it, such as `2026.1`. It is compared by exact equality, with no order."
+        }
+      },
+      "type": "object"
+    },
+    "Visibility": {
+      "enum": [
+        "public",
+        "registry_gated",
+        "named"
+      ],
+      "type": "string"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/eligibility/1/eligibility.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `eligibility` module: the vocabularies, objects, unions, and constructor copies of § 5.8.",
+  "title": "eligibility"
+}

@@ -1,0 +1,35 @@
+# OpenProposal 3.0 — Example: CTV line item (spec § 6.3)
+line_item_id:   "weather-app-ctv"
+status:         published
+channel:        ctv
+properties:     { available: [{ id: "weather-app" }], included: ["weather-app"] }
+environments:   { available: ["ctv"], included: ["ctv"] }
+formats:        { available: ["ctv/instream-15s", "ctv/instream-30s"],
+                  included: ["ctv/instream-15s"],
+                  pricing: { "ctv/instream-30s": { delta_cpm: 8.00 } } }
+creative_delivery: { method: seller_hosted, protocol: vast_4_2, secure_required: true }
+
+frequency_cap:  { max: { min: 1, max: 4 }, period: "day", basis: household }
+
+pricing:
+  - { cost_method: CPM, gross_rate: 45.00, floor: 39.60,
+      price_valid_until: "2026-12-01T23:59:59Z", currency: USD }
+
+commitment_bounds: { min_budget: 25000.00 }
+commitment:
+  basis: spend
+  amount: 160000.00
+  currency: USD
+  flight_start: "2026-10-06"
+  flight_end:   "2026-12-21"
+  idempotency_key: "agency-a-camp1-weather-app-ctv-3b7e0d52"
+
+hold_status:    { hold_available: true, hold_duration: "P14D",
+                  hold_scope: line_item, state: held,
+                  hold_expires_at: "2026-10-01T00:00:00Z" }
+
+committed_metrics: [{ metric: completion_rate, value: 0.95, basis: seller_reported }]
+buying_route:      SSP_PLATFORM
+transaction_mechanism: { available: ["PRIVATE_AUCTION"], included: ["PRIVATE_AUCTION"] }
+serving_mode:      ssai
+correlation_id:    "ep-q4-2026-commitment/weather-app-ctv"

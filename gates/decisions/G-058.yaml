@@ -1,0 +1,16 @@
+format: 1
+id: G-058
+date: 2026-10-27
+question: What does the feedback test expect once the open-PRs lock lists every edit INTEGRATION-r4 records outside a conflict hunk?
+decision: >-
+  The lock's `edits` lists the two edits it left out, merge 12 moving #17's
+  App identity block back above § 5.2.1 and merge 13 setting the
+  rewarded-video example's header to § 6.7, beside merge 14's
+  `time_zone: viewer_local`. The feedback test expects the inputs paragraph
+  to name all three, in merge order.
+rationale: >-
+  The lock now says everything the integration changed beside its merges,
+  as INTEGRATION-r4.md records it, so the expected sentence follows it. The
+  test keeps every assertion, so no gate is weaker. `MIN_TESTS` stays 362.
+accepts:
+  - { gate: npm-test, fingerprint: 7193aa877f77211cd652f572e840ac0a49ee89fe52c020346d8820996204db21 }

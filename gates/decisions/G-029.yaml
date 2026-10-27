@@ -1,0 +1,44 @@
+format: 1
+id: G-029
+date: 2026-10-26
+question: Which gates change when every rule that one payload decides has a deterministic check, and the examples gate runs the checks over the examples?
+decision: >-
+  A new gate, rule-checks, fails a rule whose vectors are payloads that has
+  no check in src/rule-checks.ts and rests on no list the repository leaves
+  unpinned, a check on a rule about two versions or a receiver's response,
+  and a check that doesn't give each of its rule's vectors its verdict; three
+  fixtures miss an invalid vector, add a payload rule with no check, and add
+  a valid vector the check rejects. Eleven rules have checks: the selectable
+  option names and prices, the order of a range, an ordered bound, and a
+  daypart window, and the line-item rules on resolved catalog references,
+  environments per channel, measurement vendors without OMID, `plcmt` for
+  video, hash-pinned list references, and accepted exclusion types. ISO
+  4217's currency codes and the IANA zone names aren't pinned, so their two
+  rules have none. The examples gate runs each check on every value of the
+  type its rule reads, in the union branches that accept the value, and the
+  document's checks on a code block's fields as part of the document; a
+  violation is a failure of kind `rule` that names its rule and rests on the
+  rule's elements and on those along its path, and a check that turns on
+  what the example leaves out is undecided and listed in the gate's line.
+  The findings format adds the kind `rule` and the `rule` it breaks, and a
+  finding's key adds the rule; a new fixture removes a rule finding. Five
+  findings, four on `main` and five with the open PRs: the display and
+  rewarded-video examples name options in `included[]` and `pricing` that no
+  option carries as its `id`, under D-007 and D-046. The feedback calls such
+  a finding "breaks a rule". The test suite holds 334 tests, so its floor
+  rises to 334.
+rationale: >-
+  The examples gate checked the schemas only, so an example that broke a
+  rule the model states passed. Every rule one payload decides now runs on
+  every example, the checks are held to the rules' vectors, the violations
+  are recorded findings, not exemptions, and the test floor rises, so no
+  gate is weaker.
+accepts:
+  - { gate: comparison, fingerprint: e27355f43fb4ef18d7c62b9f1dd4978ba50e418255206eab6f45472ee3030158 }
+  - { gate: examples-validate, fingerprint: eb33e5cb9be5650c8203ff5157bd89d11b5b5f431ffdc9364c65b6eb03d4a5cb }
+  - { gate: feedback, fingerprint: 24311e9bcadbba0298b778567f4ccfc1fc193dc7115c48cc81604e3fe5e2dca5 }
+  - { gate: findings-load, fingerprint: 1495a392156831cecee1e0602590096e39fcd5f85b0206bba35b84918bf9ead8 }
+  - { gate: findings-locks, fingerprint: c0e026fb302cb3c5b3edb0ed6a658619ee6a25f97a9109c737b9065f264b831c }
+  - { gate: guard, fingerprint: 4df05762a9000771c0e8256993772cf55eec34258a88fb1b527ce27f60826bc6 }
+  - { gate: npm-test, fingerprint: 9fe3f8ef8fe250a88bd26ef304d8f587798b6122ad3f548c75da7a219335a8c9 }
+  - { gate: rule-checks, fingerprint: 607dd3ec073ac3c2a70311d083ccc371c0e3fe2b7f73acf171f17fba479e5399 }

@@ -1,0 +1,29 @@
+format: 1
+id: G-061
+date: 2026-10-27
+question: Where do the type examples take the value of an open object, and of a summary's member, that the specification's examples give?
+decision: >-
+  `specValues` keeps, besides the scalars, the whole value an example gives
+  a member whose schema is an open object, one that names no members and
+  accepts any, where the member's schema accepts it, so the display line
+  item's `suppression_list` shows the specification's
+  `{ source, size, match_method }` and not `{}`. `projections` maps each
+  property of a profile, and of an object that projects another type, to
+  the property it projects, and a summary's member takes the values the
+  specification gives that property where the member's schema accepts them,
+  so the proposal summary shows the proposal's `seller_name`,
+  `description`, and offer window, and the line item summary its price.
+  The count of values from the specification's examples counts both. One
+  type-examples test is added; the suite holds 366 tests, and `MIN_TESTS`
+  is 366.
+rationale: >-
+  The generate gate checks every example against its schema with Ajv 2020
+  and against every rule one payload decides as before, and a failing one
+  still fails the build; only where some values come from changes. Its
+  fixtures are unchanged and still fail as they did. The committed examples
+  are regenerated: the summaries' and the suppression list's values now come
+  from the specification's examples, and an equal offer window in the
+  proposal summary is gone.
+accepts:
+  - { gate: npm-test, fingerprint: abb8db4d3f7becaa0727065a9936bd94c2cdc7f0af6717ec6caa0bb1c97aff4d }
+  - { gate: type-examples-generate, fingerprint: 4a9b7e23680619d68c22fdee250cce3a5c7c7d76aae0d58319b4865b4e888d55 }

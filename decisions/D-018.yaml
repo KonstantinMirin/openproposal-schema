@@ -1,0 +1,104 @@
+format: 1
+id: D-018
+status: proposed
+kind: gap
+author: agent
+question: Which selectable and settable fields take a bare value in place of their full form?
+covers:
+  - ir: field:5.2:properties
+    digest: 8167901b1024772db9ede8143ce1d5009d6effcfd66b290f82e427a00940b50c
+    quote: "`properties` | Object | selectable | `available[]` of `{ id, name, domains, supported_formats }`, `included[]`, `pricing`, `max_select`"
+    locks: [main]
+  - ir: field:5.2:properties
+    digest: 4115b24e46ceb6cf1b12d1730a313c02123ae5b3ed6739bb9fefdaadc10ea478
+    quote: "`properties` | Object | selectable | `available[]` of `{ id, name, domains, apps, supported_formats }`, `included[]`, `pricing`, `max_select`. Each property MUST carry `domains`, `apps` or both"
+    locks: [with-open-prs]
+  - ir: field:5.2:environments
+    digest: 9620f7dbd886ab646236c463a61295b37031e109a44ba55fb348fb59630c8ab4
+    quote: "`environments` | Object | selectable | `available[]` from `web_desktop` | `web_mobile` | `app_mobile` | `ctv` | `dooh` | `audio_streaming`"
+    locks: [main]
+  - ir: field:5.2:environments
+    digest: 84b5b18b0b2d226a00eba1247dbe8f69f6214baa012d419d2d50878eb0669a95
+    quote: "`environments` | Object | selectable | `available[]` from `web_desktop` | `web_mobile` | `app_mobile` | `ctv` | `dooh`, each defined in 5.2.1"
+    locks: [with-open-prs]
+  - ir: field:5.3:audiences
+    digest: 273649330d46a8fb5e90121fdad4864fa49d29ce6c34dce7c90fc37282e40b96
+    quote: "`audiences` | Object | selectable | `available[]` of `{ id, name, taxonomy_ref, provenance, addressable_scale }`, `included[]`, `pricing` as `delta_cpm` per option, `max_select`"
+  - ir: field:5.3:activation_route
+    digest: 186f13498c109878a31ce2cc5a9d3337f48d7c0ddc6c4190d24e20a4bf1255a9
+    quote: "`activation_route` | Object | selectable | `available[]` from `publisher_side` | `clean_room` | `id_partner`, `included[]`, `pricing`"
+  - ir: field:5.4:formats
+    digest: 2a8a55ef5666b057f31306cadf667fc01dff13e5cc5e009f00d3f649de375016
+    quote: "`formats` | Object | selectable | `available[]` of registry format ids namespaced by channel (`display/300x250`, `audio/host-read-30s`), `included[]`, `pricing`, `max_select`"
+  - ir: field:5.4:production
+    digest: 0168284e2ec3d43c2249add202b7c657a7a4b37fe78ccfbf2cee694a3e76d199
+    quote: "`production` | Object | selectable | Custom units. `available[]` of build options with `pricing` and `lead_time`; `{ custom_unit, build_owner, lead_time, cost }`"
+  - ir: field:5.5:geo
+    digest: 43710e564ef799d8f814bad00224216293ba574c123c139c7195b5d5c23058e6
+    quote: "`geo` | Object | settable | `allowed[]` of geo codes the buyer may select within"
+    locks: [main]
+  - ir: field:5.5:geo
+    digest: 889b802bbd3f71ad3e60d307f0c54fa98c95a997bca3a79ffb67203b3c685535
+    quote: "`geo` | Object | selectable | `available[]` of geo codes with `included[]`, `pricing` deltas and `max_select` (§ 3.1), for a line item priced by market. A `geo` that declares only `allowed[]` is `settable`. See below"
+    locks: [with-open-prs]
+  - ir: field:5.5:device
+    digest: 265e83a84f1efb967c4a62daab8adb8b69139f794b7cc080b03c5c28cf4828d4
+    quote: "`device` | Object | settable | `allowed[]` of device categories"
+  - ir: field:5.5:daypart
+    digest: 25c80cd35ce4831dfbd372627f2d794511fffe5f029243e586ee1e607be4fdc2
+    quote: "`daypart` | Object | settable | `allowed[]` of time windows"
+    locks: [main]
+  - ir: field:5.5:daypart
+    digest: b34d1818bf80b3e5947f9902057ac882707ef3a893fc370c97efc81487d64080
+    quote: "`daypart` | Object | settable | `allowed[]` of `{ days[], start, end }`: `days[]` from `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`, HH:MM civil time, `end` exclusive, up to `24:00`"
+    locks: [with-open-prs]
+  - ir: field:5.5:frequency_cap
+    digest: f369947b6f5c84e82213fe929568d135b73b2daef366a6309fdf4f933fc2938b
+    quote: "`frequency_cap` | Object | settable | `{ max: { min, max }, period, basis: device | household | listener }`. Basis matters: CTV typically caps at household, audio at listener"
+  - ir: field:5.6:commitment
+    digest: a6b61b5855529925630d06290e44a856dea4dd6895a2e7a1db62361cc2587d3f
+    quote: "`commitment` | Object | settable | The buyer's actual commitment. See 5.6.1"
+  - ir: field:5.6:cancellation_policy
+    digest: 6c8bbcd373f89f5fdf8c0e6a3e9f43bc0e26cc1b5ba35a4f13c2dd246f37dba4
+    quote: "`cancellation_policy` | Object | selectable | `available[]` of cancellation rights with `pricing` per option"
+  - ir: field:5.6:exclusivity
+    digest: 5012d5c8189fd4016ce87f254fff0fa14c929365d9efc3f2256ccfcf80b73c46
+    quote: "`exclusivity` | Object | selectable | `available[]` of exclusivity terms with `pricing`"
+  - ir: field:5.7:measurement_source
+    digest: b2908c3f817bef4cc596a8e15af373e8098053d36c37d34231eadae3e4351be5
+    quote: "`measurement_source` | Object | selectable | `available[]` of `{ vendor, attribution_window, qualifier }` with `pricing`. Lets a buyer transact in its own currency"
+  - ir: field:5.7:shortfall_remedy
+    digest: 9fdb8ca07f421677f7d411f9e9d3bc189128d125a8229b9622fed9779af55824
+    quote: "`shortfall_remedy` | Object | selectable | `available[]` from `makegood` | `credit` | `none`, plus `remedy_terms`"
+  - ir: field:5.7:reporting
+    digest: a3b05974750ac1c85b48f1edc5b0d8413d6ee3782abf19663dcc88605c30830e
+    quote: "`reporting` | Object | selectable | `available[]` of `{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency }` with `pricing`"
+  - ir: field:5.9:transaction_mechanism
+    digest: f64e965f4b27bc9cceae66a1b9829d52eb27d254b18bbe221b66de41db611eb5
+    quote: "`transaction_mechanism` | Object | selectable | `available[]` from `DIRECT_IO` | `PROGRAMMATIC_GUARANTEED` | `PREFERRED_DEAL` | `PRIVATE_AUCTION` | `OPEN_AUCTION`. A seller MAY offer the same inventory through more than one"
+  - ir: rule:3.1:f8b0c287
+    digest: d60c77636afc33649141f8de560cbf2e0f599b124779ea89b069f9b08a9181cd
+    quote: A field marked `selectable` that carries a bare value and no `available[]` MUST be treated as `seller-set`.
+  - ir: rule:3.2:4f3b0a9c
+    digest: 07c583d4952414b695fe884dd3b8b2257e046904bec68931d240feef4ad28988
+    quote: A field marked `settable` that carries a bare value and no bounds MUST be treated as `seller-set`.
+options:
+  - id: none
+    summary: >-
+      None. Each field takes its full form only. A seller-set value is the full
+      form: one option in `available[]` and the same option in `included[]`, or
+      one value in `allowed[]`.
+  - id: one-value
+    summary: Every field also takes one value of its option type.
+chosen: none
+rationale: >-
+  § 3.1, § 3.2, and § 5.5 let a field carry a bare value and treat it as
+  seller-set, but they never say what a bare value is (D-008). For most fields
+  any choice would invent structure: a bare `geo` could be one code or
+  several, a bare `frequency_cap` would replace its `max`, and the examples
+  write none. The full form states every seller-set value already. With no
+  bare value, the constructors take no `B`, and the untagged fallback union of
+  type rules § 8 doesn't occur.
+feedback: >-
+  State the type of the bare value for each selectable and settable field, or
+  drop the fallback in § 3.1, § 3.2, and § 5.5.

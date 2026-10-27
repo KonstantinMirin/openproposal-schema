@@ -1,0 +1,85 @@
+format: 1
+id: G-015
+date: 2026-10-26
+question: How do the gates read the AdCOM code lists that § 5.2.2's placement keys take, now that each is a vocabulary that cites its list?
+decision: >-
+  `kernel/lists.yaml` holds AdCOM 1.0's List: Plcmt Subtypes - Video, List:
+  Playback Methods, and List: API Frameworks at the commit § 5.2.2 links, and
+  a list may record the codes it reserves for vendors. `PlcmtSubtype`,
+  `PlaybackMethod`, and `ApiFramework` are vocabularies that cite their
+  lists; a vocabulary that cites a list is open exactly when the list
+  reserves vendor codes, and then its extension is `VendorCode`, whose
+  minimum must be the list's first vendor code. The fidelity oracle reads
+  the sentence "`plcmt`, `playmethod[]` and `api[]` take any code in List: …
+  respectively" with the lists' codes, as a closed value list per member,
+  with two fixtures that drop a listed code and accept an unlisted one. The
+  value-list gate keys a vocabulary by the list it cites, so two lists whose
+  codes are the same numbers aren't one list, and two vocabularies of one
+  list still fail. The SDKs take an open vocabulary's extension type from
+  the model. PG-7 lists `VendorCode`'s integral floats in place of the two
+  primitives'. Tests check the vocabularies' schemas, the sentence's
+  reading, and the value-list keying. The test suite holds 316 tests, so its
+  floor rises to 316.
+rationale: >-
+  The sentence names the lists without writing their codes, so the oracle
+  couldn't read it, and the two primitives accepted any positive integer,
+  which the sentence rules out for a code no list holds. Each check now
+  reads more of what the text says, the value-list gate still fails on one
+  list defined twice, the exemptions name the same strict-integer cases for
+  the one integer primitive left, and the test floor rises, so no gate is
+  weaker.
+retires:
+  - concept: api-framework
+    reason: An API framework is a code of AdCOM's List API Frameworks, a list another standard keeps, so it is a term of the vocabulary ApiFramework, which cites the list, not a primitive of its own (ops-c4g.27).
+  - concept: playback-method
+    reason: A playback method is a code of AdCOM's List Playback Methods, a list another standard keeps, so it is a term of the vocabulary PlaybackMethod, which cites the list, not a primitive of its own (ops-c4g.27).
+accepts:
+  - { gate: comparison, fingerprint: 7d0d063a0d9db15a797f14e77caaee70724bab3efec55102ae9673fbdf85b513 }
+  - { gate: constructors-check, fingerprint: 3c15b6651cc6f43e44aaf0397aa50f2a3e87b7e1bfc48b4049b0c51c4554126f }
+  - { gate: convention-beside-reference, fingerprint: 508e521a47994b7661ad52f7d9523ee4d86893a92fb74e04d505ce966c258f7a }
+  - { gate: convention-inline, fingerprint: 191c054267d34b7ee416830d2f8a5b354e2a075a47658de040f12fb9df3a5090 }
+  - { gate: convention-keywords, fingerprint: 6f070228dec48162737efad5413f686f36249b4c09d4f81d379470d71c509e16 }
+  - { gate: convention-layers, fingerprint: 45da6a35baf56a5fdb94de8958bb122381700a98252cae9b7ee43adba89161d9 }
+  - { gate: convention-lists, fingerprint: 4df808b0c489a64baed772736de0269ec396812f935187160428d19d9f8f1419 }
+  - { gate: convention-modules, fingerprint: 1a8f8956fd2758ccb1761380b5a2ca6b79a635df9df3b6e779ef9b1c0db64151 }
+  - { gate: convention-unions, fingerprint: 083599102b70e94aa69759d869b60a526b163fc93e07865bb977bd9b7ac7e6ac }
+  - { gate: corpus-generates, fingerprint: 183e2f74fad93f89926ba55086b438ea9a47dcd8e8af6839ec05c92772fba14d }
+  - { gate: corpus-isolation, fingerprint: 0d163decba00d901267783ba466b7ab868d1963b33a8eb927329ba5a800e660f }
+  - { gate: domains-homonyms, fingerprint: 6e2b7b8f51049650413acfa8dcbb79cee57e3839add1c54bfd4022a02e8dd679 }
+  - { gate: domains-properties, fingerprint: de126cea6fd045afbed88a03f27b8d9d776f7d951d6ffe86d95f0004f19f546f }
+  - { gate: domains-used, fingerprint: 75f6cd47d748880b14508c834f9b282eb030c4450134b1aadedc7ae4f371751f }
+  - { gate: duplication-kernel, fingerprint: 74854864cdaabaca38be3c4cd92af18038b6d913e319afd5cc1412ea228687d1 }
+  - { gate: duplication-model, fingerprint: 41394c4e8bef3b217682f26d89232f8de4e79d1ae7d229442e4acf0138469119 }
+  - { gate: examples-listing, fingerprint: a6189212a2edc7ebd4ecdf03fdbc9686180e841d39637896c69168e3f9aa44b0 }
+  - { gate: examples-validate, fingerprint: 6d83aa584ed534454e167929625f65004ee82bd1ff874b0b2fbc58b47f6144f1 }
+  - { gate: feedback, fingerprint: cde0ad15e0dbe02771c7dcddb6f84728181dcddbcc9f737911faf5a311785ec2 }
+  - { gate: fidelity, fingerprint: bd7e2ac20bba529e63878dbebac0dbfda78f3e48707e50ad90b930e53039da4e }
+  - { gate: frozen-releases, fingerprint: 646938eefe617eb55a40d0e24f4c0910f1690e692caf5366628ab9dd5c388140 }
+  - { gate: frozen-reviewed, fingerprint: 4a6077914f2d58d3f6fbfdbada44d3c4bed0d456d95ca762e4a23b1eb62fff9a }
+  - { gate: kernel-check, fingerprint: e4dd3782be59e56864d30b72b79d3548fe56cf5cd975536f909212c0f2e141bc }
+  - { gate: kernel-engines, fingerprint: 91fc2ad57c79a33bacd0c9b6b3373c715c5606e1a91c20393ca91de6ca46397b }
+  - { gate: kernel-load, fingerprint: c2edf39c40ca5bf6f3b597f79b63013f574e28c25580114e6cba96c6c0af0374 }
+  - { gate: kernel-sources, fingerprint: 528334f402fa9bbd41465de0c7e181c7c03c084c049b12947bdb53c8be87546b }
+  - { gate: map-drift, fingerprint: 1573dcd21491d7f5cbad84ebe80eb333832f77a43fbc7b1438c1b38aa9364bb5 }
+  - { gate: mapping-bijection, fingerprint: af4789f58f600cfb54db389492936c0c9e55ed6f60eaccd9a1cbf36f491ec601 }
+  - { gate: mapping-constructors, fingerprint: 77889bc132913b64049e294c818a9c56f3461f74f87dbbe49150a4000917d85d }
+  - { gate: mapping-current, fingerprint: 77ff01fc597c6efe9499ef68b152d24f5783faf79e5d2b6fe0f491991a216904 }
+  - { gate: mapping-location, fingerprint: ffdd8466ccaa27d2c544b2b32f5d19e134df6cca42fe7959f7e360d3dcba93d9 }
+  - { gate: mapping-names, fingerprint: 269737ba198619ccb30aba34fa0a0486104913bba8aa961db138884526f2a0ba }
+  - { gate: mapping-rules, fingerprint: ceff956cfe88cb0419433399fb5e475f8ced9c02912a2c9cd8440ea390285e5f }
+  - { gate: mapping-sources, fingerprint: 0fd24cde3e543812f9b69df488958488cd626de529be4dc0676c92f253385ad7 }
+  - { gate: model-resolves, fingerprint: cbe46f2ab50592feb7584bd1c3eedcbbfc9c6f5aec47b4bce71953b57747336e }
+  - { gate: modules-depends, fingerprint: 14e4f159cb511eb3b6b3fe090e5d332aa5a1a58bea62f381e4ca1c35115600c2 }
+  - { gate: nesting, fingerprint: 60f8ba0ae745ac43d854a691f4f655d2e3e9c1a014be3bae5dd00fa25e7cd6d6 }
+  - { gate: npm-test, fingerprint: 07da2a0a9e7ae1ebc917134ad87929d41b485567303def213ce3f9fe49190924 }
+  - { gate: plain-exemptions-file, fingerprint: 47ae4903ca583255a7a9aea6021558ce078338c15649ab74378755a83b8113db }
+  - { gate: plain-parity, fingerprint: 585f0274f78096cc665d940ad8ec8e00d43e9ca12fe0f179e5204b958f7c8e95 }
+  - { gate: release-breaking, fingerprint: a6d4bd12cfdd751bb819b962abf012d53ce8602844ad5de4e63aff2a1e03e43c }
+  - { gate: release-builds, fingerprint: f5bf8276a1ddaa2b4fccf2d4fb55cc8d06346e7ffe09c129aefdabb0cd59dc68 }
+  - { gate: release-digests, fingerprint: 2b01cce9995a73ccfca9336c10710681fc743bb82d353c96bdd53053eb7f9eda }
+  - { gate: round-trip, fingerprint: 9143926666260e5d4edb2a174fa40e4de5b06223b6e0b7e031d41531841036d3 }
+  - { gate: rule-vectors, fingerprint: bc39d6023007253bbecb51395f6dc6007e498441239a7cd42f21f40a37d2ef34 }
+  - { gate: rules-emit, fingerprint: ce7da630812d033a2cf4f2008f658fc965e4024633b3087922b70510f45c4e2b }
+  - { gate: schemas-conventions, fingerprint: 0d8fd2d033fdc483123c7f37901f41084ecba465b5f300ea0dddc9ecf6bb5b65 }
+  - { gate: schemas-emit, fingerprint: 737f6a551923ca244a620021bc3465dfbd0bd83090e910b8b0b5af7e91f1e368 }
+  - { gate: sdk-generate, fingerprint: 3a167a59910c2b09b6e3e615da258a908799fa61cd8bb3e03a9c5e721e9944d0 }

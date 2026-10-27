@@ -1,0 +1,90 @@
+# The cells where the tables rendered from the model differ from the
+# specification's. `npm run render` prints every difference; each one here
+# cites the decision record that makes the model differ there. The round-trip
+# gate in `npm run ci` fails on a difference not recorded here, on a recorded
+# one whose text changed, and on one that no longer occurs.
+format: 1
+differences:
+  - table: table:5.2:1
+    row: field:5.2:properties
+    column: Description
+    locks: [main]
+    spec: "`available[]` of `{ id, name, domains, supported_formats }`, `included[]`, `pricing`, `max_select`"
+    model: "`available[]` of `{ id, name, domains[], supported_formats[] }`, `included[]`, `pricing`, `max_select`"
+    decision: D-024
+    reason: >-
+      The option's plural members are lists, which the generated table writes
+      with `[]`;
+      the inline object writes them without it.
+  - table: table:5.2:1
+    row: field:5.2:properties
+    column: Description
+    locks: [with-open-prs]
+    spec: "`available[]` of `{ id, name, domains, apps, supported_formats }`, `included[]`, `pricing`, `max_select`. Each property MUST carry `domains`, `apps` or both"
+    model: "`available[]` of `{ id, name, domains[], apps[], supported_formats[] }`, `included[]`, `pricing`, `max_select`. Each property MUST carry `domains`, `apps` or both"
+    decision: D-024
+    reason: >-
+      The option's plural members are lists, which the generated table writes
+      with `[]`;
+      the inline object writes them without it, though the App identity table
+      is headed `apps[]`.
+  - table: table:5.2.2:1
+    row: key:5.2.2:placement.reward
+    column: Meaning
+    locks: [with-open-prs]
+    spec: "`0` (no) | `1` (yes). The user receives a reward for viewing the ad"
+    model: "`false` | `true`. The user receives a reward for viewing the ad"
+    decision: D-039
+    reason: >-
+      A yes-or-no value is a JSON boolean, as every other flag of the
+      specification is; the row copies AdCOM's `0` and `1`.
+  - table: table:5.2.2:1
+    row: key:5.2.2:placement.instl
+    column: Meaning
+    locks: [with-open-prs]
+    spec: "`0` (no) | `1` (yes). The ad is interstitial or full screen"
+    model: "`false` | `true`. The ad is interstitial or full screen"
+    decision: D-039
+    reason: >-
+      A yes-or-no value is a JSON boolean, as every other flag of the
+      specification is; the row copies AdCOM's `0` and `1`.
+  - table: table:5.2.2:1
+    row: key:5.2.2:placement.skip
+    column: Meaning
+    locks: [with-open-prs]
+    spec: "Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad"
+    model: "Video or audio. `false` | `true`. The placement lets the user skip the ad"
+    decision: D-039
+    reason: >-
+      A yes-or-no value is a JSON boolean, as every other flag of the
+      specification is; the row copies AdCOM's `0` and `1`.
+  - table: table:5.4:1
+    row: field:5.4:production
+    column: Description
+    spec: "Custom units. `available[]` of build options with `pricing` and `lead_time`; `{ custom_unit, build_owner, lead_time, cost }`"
+    model: "Custom units. `available[]` of build options with `pricing` and `lead_time`; `{ custom_unit, build_owner, lead_time, cost, id }`"
+    decision: D-047
+    reason: >-
+      We propose an `id`, REQUIRED, beside the members the inline object
+      lists, so that `included[]` and the `pricing` keys name the option by
+      it.
+  - table: table:5.7:1
+    row: field:5.7:measurement_source
+    column: Description
+    spec: "`available[]` of `{ vendor, attribution_window, qualifier }` with `pricing`. Lets a buyer transact in its own currency"
+    model: "`available[]` of `{ vendor, attribution_window, qualifier, id }` with `pricing`. Lets a buyer transact in its own currency"
+    decision: D-047
+    reason: >-
+      We propose an `id`, REQUIRED, beside the members the inline object
+      lists, so that `included[]` and the `pricing` keys name the option by
+      it.
+  - table: table:5.7:1
+    row: field:5.7:reporting
+    column: Description
+    spec: "`available[]` of `{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency }` with `pricing`"
+    model: "`available[]` of `{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency, id }` with `pricing`"
+    decision: D-047
+    reason: >-
+      We propose an `id`, REQUIRED, beside the members the inline object
+      lists, so that `included[]` and the `pricing` keys name the option by
+      it.

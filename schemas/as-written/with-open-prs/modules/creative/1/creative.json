@@ -1,0 +1,177 @@
+{
+  "$defs": {
+    "Approval": {
+      "description": "The seller's creative review SLA and revision policy. The specification states no members, so the object accepts any.",
+      "type": "object"
+    },
+    "AssetsEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "approval_status": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/BareTerm"
+        },
+        "asset_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
+        },
+        "format_ref": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/FormatId"
+        },
+        "submitted_at": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Timestamp"
+        },
+        "url_or_tag": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+        }
+      },
+      "type": "object"
+    },
+    "CreativeDelivery": {
+      "additionalProperties": false,
+      "properties": {
+        "endpoint": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Url"
+        },
+        "method": {
+          "$ref": "#/$defs/CreativeDeliveryMethod"
+        },
+        "protocol": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/BareTerm"
+        },
+        "secure_required": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "CreativeDeliveryMethod": {
+      "anyOf": [
+        {
+          "enum": [
+            "buyer_hosted",
+            "seller_hosted",
+            "api",
+            "platform_managed"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "FormatsSelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, and `pricing` gives the change in price for each other option.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/FormatId"
+          },
+          "type": "array"
+        },
+        "included": {
+          "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the identity the seller mints for it.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/FormatId"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        },
+        "pricing": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
+          },
+          "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the identity the seller mints for it.",
+          "propertyNames": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/FormatId"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "available",
+        "included"
+      ],
+      "type": "object"
+    },
+    "MaterialsDue": {
+      "anyOf": [
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Timestamp"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Duration"
+        }
+      ]
+    },
+    "ProductionOption": {
+      "additionalProperties": false,
+      "properties": {
+        "build_owner": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Party"
+        },
+        "cost": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount"
+        },
+        "custom_unit": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+        },
+        "lead_time": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+        }
+      },
+      "type": "object"
+    },
+    "ProductionSelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, and `pricing` gives the change in price for each other option.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "#/$defs/ProductionOption"
+          },
+          "type": "array"
+        },
+        "included": {
+          "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the identity the seller mints for it.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
+        },
+        "pricing": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
+          },
+          "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the identity the seller mints for it.",
+          "propertyNames": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "available",
+        "included"
+      ],
+      "type": "object"
+    },
+    "Specs": {
+      "description": "A format's specs, as the referenced format registry entry defines them; the specification hardcodes no shape per channel, so the object accepts any member.",
+      "type": "object"
+    },
+    "ThirdPartyTags": {
+      "description": "The third-party tag wrapper types and VAST versions the seller accepts. The specification states no members, so the object accepts any.",
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/creative/1/creative.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `creative` module: the vocabularies, objects, unions, and constructor copies of § 5.4.",
+  "title": "creative"
+}

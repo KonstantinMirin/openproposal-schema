@@ -1,0 +1,55 @@
+format: 1
+id: D-022
+status: proposed
+kind: gap
+author: agent
+question: What type does `geo` take when § 5.5 lets it declare either the selectable structure or `allowed[]`?
+covers:
+  - ir: field:5.5:geo
+    digest: 43710e564ef799d8f814bad00224216293ba574c123c139c7195b5d5c23058e6
+    quote: "`geo` | Object | settable | `allowed[]` of geo codes the buyer may select within"
+    locks: [main]
+  - ir: field:5.5:geo
+    digest: 889b802bbd3f71ad3e60d307f0c54fa98c95a997bca3a79ffb67203b3c685535
+    quote: "`geo` | Object | selectable | `available[]` of geo codes with `included[]`, `pricing` deltas and `max_select` (§ 3.1), for a line item priced by market. A `geo` that declares only `allowed[]` is `settable`. See below"
+    locks: [with-open-prs]
+  - ir: rule:5.5:ac74a0a6
+    digest: a0b915a0233da3dc5b56c9034c8408fbe6ee395de748014c263bb7fd758d0b3f
+    quote: "`geo` MAY instead declare the selectable structure of § 3.1, so a line item can be priced by market."
+    locks: [with-open-prs]
+  - ir: rule:5.5:02097f4e
+    digest: 49bf6d4b9beae22b2597f8a40a5c4788404de441a37cae8d94838565a6b041f4
+    quote: "A seller whose rate differs by market MAY declare `geo` with the selectable structure of § 3.1:"
+    locks: [with-open-prs]
+  - ir: rule:5.5:e6f552da
+    digest: 90286fdc3a5696d9bbf62f18413d525db9e02c39dd617465d7c02e6f400f4eca
+    quote: A `geo` that declares `allowed[]` and no `available[]` MUST be treated as `settable` (§ 3.2).
+    locks: [with-open-prs]
+  - ir: rule:5.5:51ca125e
+    digest: d96c72a7f90f14538921d34eea24b252b6998bced505a5cb7bd1f6f458a12f6c
+    quote: A `geo` MUST NOT declare both.
+    locks: [with-open-prs]
+options:
+  - id: union
+    summary: >-
+      An untagged union of its selectable form and its settable form. A
+      validator tells them apart, because each is closed and requires a
+      different key.
+  - id: selectable-only
+    summary: The selectable structure only, as its marker says.
+chosen: union
+rationale: >-
+  With the open PRs, `geo` is marked selectable, but § 5.5 says a `geo` that
+  declares only `allowed[]` is settable and that it must not declare both, and
+  the display example declares `allowed[]`. The marker can't decide the type,
+  so `geo` is `Geo`, `anyOf` the copies `GeoSelection` and `GeoBounds`, both of geo codes, `ExternalId` (D-019). The
+  copies are closed and require `available[]` and `allowed[]`, so no value
+  fits both, which is § 5.5's "MUST NOT declare both". On `main`, `geo` is
+  settable only. This is a fourth untagged union beside the three type rules §
+  8 lists.
+evidence:
+  - examples/line-item-display.yaml (geo)
+  - examples/line-item-audio.yaml (geo)
+feedback: >-
+  Give `geo` one marker, or a tag that says which structure it declares. It is
+  the only field whose marker depends on its content.

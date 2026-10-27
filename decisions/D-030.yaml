@@ -1,0 +1,116 @@
+format: 1
+id: D-030
+status: proposed
+kind: gap
+author: agent
+question: How is each § 4 and § 5 field statement checked, as a schema, a rule on payloads, or an obligation on a party's behavior?
+covers:
+  - ir: block:5.6.2:1/values:1
+    digest: c4f05bca19873a07f8a165ff6a69d25967eec96b3611c0dba1accd7c5c24b3fb
+    quote: "`expired` | `released` | `converted`"
+  - ir: rule:4.1:8e9aacb8
+    digest: 089fde20d5aa0c8c4d3ea3675f3ba09cf81f4d4a9615d0a627bee1cb3f823dba
+    quote: Entries MUST NOT be edited or removed
+  - ir: rule:4.1:fae6ebab
+    digest: 6029b960f5e992bfd132ecadad927d812706780f56e4c5922571174dec942040
+    quote: "`proposal_template_id` MUST NOT be required for a buyer to transact."
+    locks: [with-open-prs]
+  - ir: rule:5.1.1:4c696214
+    digest: 7ac30a69a02052ba51a89307d9daf5c79947714c6c0a16312b6b018b3006bbd8
+    quote: The seller MUST serve a line item only on impressions of its `channel`.
+    locks: [with-open-prs]
+  - ir: rule:5.1.1:ce115ccf
+    digest: e08bbdb0049bcf108e99bf58469a37f95118b3e482634842ff9852bf1151393c
+    quote: A consumer MUST skip a line item whose `channel` it does not recognise, and MUST NOT reject the proposal because of it.
+    locks: [with-open-prs]
+  - ir: rule:5.2:3d2307e8
+    digest: f2c52dfab737e467825ef5e73e955f62b45e1c6721ec0ab2a582644192f37f3f
+    quote: Each property MUST carry `domains`, `apps` or both
+    locks: [with-open-prs]
+  - ir: rule:5.2:f3d3f9e8
+    digest: 8b18fd138cba2473076f1cedd5ce8284a836808d0c5ac65354248f8dbcc0cae3
+    quote: "`plcmt` is REQUIRED for video ads."
+    locks: [with-open-prs]
+  - ir: rule:5.2.1:cc42a1f8
+    digest: e997800cb64e5db5c061617420685bd24d85ac97cc51c170f34d36526154e37d
+    quote: Each `environments.available[]` value MUST match at least one impression to which 5.1.1 gives the line item's `channel`.
+    locks: [with-open-prs]
+  - ir: rule:5.2.2:6f05ff6d
+    digest: 79facc65db150bde0402569453bab3746b5519aa839b5aebfe3dfa0567a95ed9
+    quote: The seller MUST NOT deliver the line item to an impression that does not match a key that is present.
+    locks: [with-open-prs]
+  - ir: sentence:5.2.2:8f7b65da
+    digest: 93c86ce3be0a8632875068aeb51152e4209e2028542d67b0300128d81985afaa
+    quote: An impression matches `api[]` when it supports every listed framework, `playmethod[]` when its playback method is one of the listed values, and `refresh` when the slot renders each creative for at least `min_interval_s` seconds before it refreshes, or does not refresh.
+    locks: [with-open-prs]
+  - ir: rule:5.2.2:f9a1a6d5
+    digest: 55a75b3759267d3ce395ff7c66237f3fff0e0aea8350f090f790277b4c3d2cbc
+    quote: Unless `api[]` includes OMID 1.0 (7), a line item whose `committed_metrics[]` includes `viewable_rate` and whose `environments.available[]` includes `app_mobile` or `ctv` SHOULD NOT offer a `measurement_source` vendor other than the seller.
+    locks: [with-open-prs]
+  - ir: rule:5.4:2eaa294f
+    digest: 61f09f4e064e43f2fa580ac4cbf4d7d5c34bd64f2539c58b40351900d38338fd
+    quote: A buyer MAY request a later date
+  - ir: rule:5.5:c6cd99b1
+    digest: ecf474b29c56f51b0728b8f63f2878d572447353dbaac30d8e7713fe0dd84d97
+    quote: A seller MUST reject an entry whose platform it cannot determine, rather than apply it across stores.
+    locks: [with-open-prs]
+  - ir: rule:5.5:2eab2842
+    digest: b3baf45c379d1aa9883f9fdc122e7646f9b4cfee17bc532c3291f486c198c168
+    quote: A buyer MUST NOT supply an exclusion type absent from `exclusions_accepted.types`.
+    locks: [with-open-prs]
+  - ir: rule:5.5:3e6033ee
+    digest: 4fb084125e6bdcaee6a6d26f4c6f12cf3b4dedbddfd35297296ed1fa311706af
+    quote: A seller MUST reject it deterministically rather than ignore it.
+    locks: [with-open-prs]
+  - ir: rule:5.5:7fdb152c
+    digest: 98ca6fcdb366d5599e227fea69d0712396e21066d370b59bff40912299a3a794
+    quote: A seller MUST NOT present `best_effort` enforcement as a guarantee.
+    locks: [with-open-prs]
+  - ir: rule:5.5:16494a1a
+    digest: 855cc7c52aa4330ff909d07b79740de5114d8f109cc015572cad24a87f313e2c
+    quote: "`list_ref` MUST be hash-pinned, and resolved into the stored record at `agreed`, as for `catalog_ref` (§ 2.2)."
+    locks: [with-open-prs]
+  - ir: rule:5.7:4994173c
+    digest: 49df828c767ca4a88396c5d0d566a026506a90ae23eec522d12849b159e6aff6
+    quote: Seller declares a ceiling; a buyer MAY request above it
+  - ir: rule:5.8:59a01393
+    digest: aac0652bc71ae2e1eb1544ac8cbd25d20ebb31022cfcae8997d55c54c49ad99a
+    quote: "`terms_ref` MUST be hash-pinned and frozen at `agreed`."
+    locks: [with-open-prs]
+  - ir: rule:5.8:d02f49a2
+    digest: 9c8b744da242d1253d0a15061b9294b1f6ec387a321b50715c14b5166a0021ed
+    quote: A seller MUST NOT disclose a buyer's `exclusions` to any party other than that buyer.
+    locks: [with-open-prs]
+  - ir: rule:5.9:d510ffe5
+    digest: 61ff19d5ae93ecb1e7f406a252372f580d729d5c6575604bfff596ffaf8a77b0
+    quote: A seller MAY offer the same inventory through more than one
+options:
+  - id: by-subject
+    summary: >-
+      A statement about one line item's or proposal's fields, or about two
+      versions, is a rule owned by the smallest object it mentions. A statement
+      about delivery, disclosure, or how a seller treats a request is an
+      obligation. A statement the schema already says maps to the schema.
+  - id: all-obligations
+    summary: Every statement outside the tables is an obligation.
+chosen: by-subject
+rationale: >-
+  Rules on a line item: `plcmt` for video ads, environments that match the
+  channel, the OMID condition on third-party measurement, exclusion types
+  within `exclusions_accepted.types`, `list_ref` and `terms_ref` pinned and
+  resolved or frozen at `agreed`, a consumer skipping an unknown channel (type
+  rules § 9), and the requestable `materials_due` and `committed_metrics[]`,
+  which compare two versions. Rules on a proposal: `negotiation_history[]` is
+  append-only. Rules on `HoldStatus`: the hold transitions `none` →
+  `requested` → `held` → `expired`, `released`, or `converted`. "Each property
+  MUST carry `domains`, `apps` or both" is the property option's schema, and
+  offering one inventory "through more than one" mechanism is the selectable
+  structure's list. The rest are obligations of the seller: serving only its
+  channel, delivering only to impressions that match `placement`, rejecting an
+  app entry whose platform it can't determine or an unaccepted exclusion type,
+  never presenting `best_effort` as a guarantee, never disclosing a buyer's
+  exclusions, and never requiring `proposal_template_id`.
+feedback: >-
+  Put each cross-field requirement in the section of the object that holds all
+  its fields, and mark seller behavior apart from requirements on the
+  document.

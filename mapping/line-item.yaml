@@ -1,0 +1,103 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: line-item
+sections: [ "3.3", "5", "5.1", 5.1.1 ]
+depends: [ audience, commercial, creative, eligibility, execution, guarantees, inventory, settlement, targeting ]
+types:
+  - name: LineItem
+    kind: document
+    ir: field:5.1:line_item_id
+    source: { rule: document-owner }
+entries:
+  - ir: rule:3.3:f58949fc
+    digest: 6c93d77b27d0fbb964292425a405002f7b9149e94231de70ce970bb09038a5ae
+    locks: [ main ]
+    source: { decision: D-029 }
+    as: { role: obligation, party: seller }
+  - ir: rule:3.3:1acc7d0d
+    digest: fb78ec803f2f53a2f4bd26ec2792b70c55172066eb018368fbd64844f2bee13c
+    locks: [ with-open-prs ]
+    source: { decision: D-029 }
+    as: { role: obligation, party: seller }
+  - ir: field:5.1:line_item_id
+    digest: 60cd2aeea40121597f5e2b0725417665bc560c9b677000d3dfbc432d1c88c969
+    source: { rule: domain-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Uuid }, presence: optional }
+  - ir: field:5.1:status
+    digest: a17160d7d827de70558f79ec33b231f2ca899bcf91f5f38abb70447c36ab7627
+    source: { rule: enum-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: LineItemStatus }, presence: optional }
+  - ir: field:5.1:status#description/values:1
+    digest: 3f71478ce1321fa0b10133011b802bd1163d99cb842c0d094a104a12651a5c93
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: LineItemStatus, layer: vocabulary, open: false }
+  - ir: field:5.1:channel
+    digest: b60715fd356a24e39edc7fd59dc51c0c4a2acf9d9307cc68436bfaffc2b26405
+    locks: [ main ]
+    source: { rule: enum-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Channel }, presence: optional }
+  - ir: field:5.1:channel
+    digest: 4c0cb2415963ce34fe96960b5a3adcce0fa6edf7ce23763353c8bd726382f412
+    locks: [ with-open-prs ]
+    source: { rule: enum-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Channel }, presence: optional }
+  - ir: field:5.1:channel#description/values:1
+    digest: 2c9675aecf427259e6868f7d5167ce62fa48654f11677aa0ecdd4e639deb0882
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: Channel, layer: vocabulary, open: true }
+  - ir: sentence:5.1.1:5c446bbd
+    digest: 5294abaf1669cc6d9148c90f8872e807c68af3ed41d2c3697784e38f83da7fc3
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: def:5.1.1:channel.dooh
+    digest: d1bba9102900730605a740d32cec363c8c2d382499eae2fc2768dccaeee80800
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Channel }
+  - ir: def:5.1.1:channel.audio
+    digest: 88a6c85592a38c9d19edb0df59c3e68ee0db38380e3dbdf7aeaced3a035ee092
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Channel }
+  - ir: def:5.1.1:channel.ctv
+    digest: 15f10806bc36998bac0012166cdf3b72ba89ad1d69c0511a60bb1183e5422d28
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Channel }
+  - ir: def:5.1.1:channel.native
+    digest: 1a2087aca42d3a776529870b8419b5b090f3026c122acb360db00e5a1cdedbbd
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Channel }
+  - ir: def:5.1.1:channel.video
+    digest: 68b21fd8ad5a7fea4a79c5ebac040b0e0d64223a912612abcd6292e8f9541b6e
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Channel }
+  - ir: def:5.1.1:channel.display
+    digest: c73de2743306b91a2f2f84087298bbf496c2fadf6a8ad2c5a394b4c4586b1854
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Channel }
+  - ir: rule:5.1.1:4c696214
+    digest: 7ac30a69a02052ba51a89307d9daf5c79947714c6c0a16312b6b018b3006bbd8
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:5.1.1:f84d6159
+    digest: 3ef6e6b8bd579c16192ba3de76955cda98807bc57ebefc0e7a4144436754b55d
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.1.1:ce115ccf
+    digest: e08bbdb0049bcf108e99bf58469a37f95118b3e482634842ff9852bf1151393c
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: rule, object: LineItem }
+  - ir: sentence:5.1.1:1156bb62
+    digest: c86cee1d6223809708f0d974807b4507ee842b83b746a963d4afddc59906572a
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }

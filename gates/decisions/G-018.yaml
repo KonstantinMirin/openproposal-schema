@@ -1,0 +1,32 @@
+format: 1
+id: G-018
+date: 2026-10-26
+question: Does the lint that G-009 accepted still find every misspelled name, and how does it read a row's one value and a colon without a space?
+decision: >-
+  A row's one value, as "IANA time zone name, or `viewer_local`", is a value
+  of that row's field only: it resolves where the row writes it and as the
+  value of an expression on that field, such as `time_zone = viewer_local`,
+  and never as a name anywhere else, so a typo that a row declares, such as
+  `sellr_id`, is still unresolved in a sentence. A colon without a space
+  makes an expression again, as before G-009, except in a time-of-day
+  format, `HH:MM`, `hh:mm`, or two digits on each side, such as `24:00`, so
+  `staus:published` is checked as `staus: published` is. The IR and the lint
+  findings of both locks don't change, so #123's text still adds no finding
+  of rule 4 or rule 7. The tests hold the review's typos as fixtures:
+  `sellr_id` beside a row that declares it, `staus:published`, and
+  `status:archived`, a value the field doesn't list. The test suite holds
+  319 tests, so its floor rises to 319.
+rationale: >-
+  This corrects G-009's claim that no name the lint flagged before resolves
+  by accident. A row's one value went into the names every code span
+  resolves against, so any name a row declared that way resolved in every
+  section, and reading a colon as an expression only with a space after it
+  hid every unspaced `member:value`, a format or not. Both were false
+  negatives. A value resolves now only on its own row's field, and only a
+  time-of-day format leaves the expression form, so the lint finds what it
+  found before G-009 and still reads #123's format and one value. The tests
+  fail on each false negative, and the test floor rises, so no gate is
+  weaker.
+accepts:
+  - { gate: extraction, fingerprint: f2da80e27282ef5415284fe5317f93ca2962796d52e5675aa3d7083f650a3106 }
+  - { gate: npm-test, fingerprint: 84c5e39444ac000eb8a08384259b3f93b212bba7a85516886b4a903173cd0525 }

@@ -1,0 +1,36 @@
+format: 1
+id: D-009
+status: proposed
+kind: gap
+author: agent
+question: Which characters may each part of a `catalog_ref` hold?
+covers:
+  - ir: code:2.2:1
+    digest: 5b0b87b43dbc9c1a24ed8f3e2bd71d22c5d790a6f786b980bd554f64a71436a0
+    quote: |-
+      catalog_ref: "<seller_namespace>/<collection>/<entry_id>@<version>"
+      example:     "examplepub/audiences/smb-decision-makers@3"
+  - ir: rule:2.2:3916a8f2
+    digest: 511cade5dc52dec990f091f7293a343392bae81a91404e3a81983b040edf9315
+    quote: References MUST be version-pinned.
+options:
+  - id: delimiters-only
+    summary: Any characters except the delimiters `/` and `@`, a space, and control characters; each part non-empty.
+  - id: token-parts
+    summary: Letters, digits, `_`, and `-` only, with an integer version.
+  - id: uri-path
+    summary: Each part is an RFC 3986 path segment, percent-encoded.
+chosen: delimiters-only
+rationale: >-
+  The specification gives the four parts and their delimiters, and one example,
+  but no character set. Splitting on `/` and `@` is unambiguous only if no part
+  holds them, and "version-pinned" needs a non-empty version after `@`. Nothing
+  else is stated, so nothing else is constrained: the example's version is an
+  integer, but a date or a SemVer pins a version as well. A space or a control
+  character in a reference is a copy error, never a name, and excluding them
+  keeps a trailing newline invalid, as type rules § 2 requires of every
+  pattern.
+feedback: >-
+  Give the `catalog_ref` grammar: the characters each part may hold, and the
+  form of `<version>`. Say whether `<seller_namespace>` is the seller's identity
+  domain, as a namespaced term's domain is.

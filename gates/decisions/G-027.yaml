@@ -1,0 +1,79 @@
+format: 1
+id: G-027
+date: 2026-10-26
+question: Which gates change when every object option of a selectable field carries a required `id`, which the constructor gives?
+decision: >-
+  `Selectable`'s `K` parameter `carries` the member `id` (D-046): where `K`
+  isn't `T`, the model gives each object type that is an option, or that a
+  `CatalogRefOr` option holds, the property `id`, typed `K`, required, and
+  marked `given` by the constructor, with no element of its own where the
+  text writes no `id`. The property and audience options keep their `id`
+  row and make it required. The model fails an option that types its `id`
+  as anything but `K`, with a new fixture; the constructor check fails a
+  `carries` decision that doesn't exist, with a test. The beside-a-reference
+  gate allows `given` on a model property, which is provenance, not a
+  constraint. The duplication gate sets aside an open option whose only
+  property is the given `id`, as it set aside the open option with no
+  property before, and a new fixture makes two such options state their own
+  `id` and fails them as twins. The examples walk rests a copy's member, and
+  each item of a list member, on its template's row for the key, so a name
+  in `included[]` rests on § 3.1's `included[]` row too. The findings: 6 new,
+  4 on `main` and 6 with the open PRs, where a measurement source or a
+  reporting option has no `id`, under D-046; the production options' `id`s
+  are readable names now, invalid under D-037, not undefined keys; and the
+  four findings that name an option by its `vendor` or `feed_type` cite
+  D-046 too. Three round-trip differences record the `id` the production,
+  measurement source, and reporting rows gain. One rule's vectors give their
+  measurement source options an `id`. The test suite holds 328 tests, so its
+  floor rises to 328.
+rationale: >-
+  The rule that `included[]` and `pricing` name an object option by its `id`
+  was unsatisfiable for the options that have none. Every schema now
+  requires the `id`, which rejects payloads it accepted before, and only
+  where D-046 says so; the examples that disagree are recorded findings, not
+  exemptions; two gates gain a failure with a fixture each; the set-aside
+  covers exactly the objects it covered before; and the test floor rises, so
+  no gate is weaker.
+accepts:
+  - { gate: comparison, fingerprint: dd843816eca1b52ef8d0c6674217ab7a994314e162b22dbf3d6b0eeedd5fee94 }
+  - { gate: constructor-sources, fingerprint: ae21f1b25481fa0313f606dfa5523a32071640c128e3403987b4e27a5a860c08 }
+  - { gate: constructors-check, fingerprint: fd38bd7b97114e34f0ecdc5a717981b4e4589707dbbd110d29b7e82d48c36eec }
+  - { gate: constructors-load, fingerprint: 44f94540b4848d95ef4d1733d86323185a92594e34fb28ac8b9ff56435d79fcf }
+  - { gate: convention-beside-reference, fingerprint: af69da998947c105a684bd1bc6407ea8d084166d80ac0f52dedd08ee7973594f }
+  - { gate: convention-inline, fingerprint: 6bec73a77a3ee31a736454e8746163bf09e5db5cfd22f1e819f5f588a203cf46 }
+  - { gate: convention-keywords, fingerprint: 5ae52bcb9cdccfe30573f0b21d1e4f1a41ce589e69afbd78db397c08cbec2994 }
+  - { gate: convention-layers, fingerprint: 4b792b0a0fad2474f0da34bc9fbf077d2adfc5a0a0c6bd36bd16612d7af9ba2a }
+  - { gate: convention-lists, fingerprint: f089989fc56b8dbeb61c6eddcca5a004fc5fe1e13e871f326dc40bfea2369a00 }
+  - { gate: convention-modules, fingerprint: 6743fa2b896e3a364420ba21c69452d3153da7fdbd5c687bc56e246d1bedd742 }
+  - { gate: convention-unions, fingerprint: 533d84e2367ee6eff66f36c860a54f2893bf2144bce7b5ea54a4fe583aac4823 }
+  - { gate: corpus-generates, fingerprint: bf73e464be9ecb08f6e1b8c29f8bb497d40f08ee452cd53be3993ba8160b8d9b }
+  - { gate: corpus-isolation, fingerprint: dee0301d2450afc9fbfd6227aff3c05a40261aff3446f2a93bfef28e625482f3 }
+  - { gate: domains-homonyms, fingerprint: 553fd28b5b90127bc42dbd4bf2484953d8db3ce930f30d860f0bc5604a5cae91 }
+  - { gate: domains-properties, fingerprint: 3917c625b1ce8fbdc61625baca57782e05c75f0e2924ef4cc5f7dd83ef11307a }
+  - { gate: domains-used, fingerprint: d50745c3aff0b55be94802311a3342651f17a53dc90a5c3ea6f33daf4504192b }
+  - { gate: duplication-kernel, fingerprint: 8ecf50b6d0b0e09208ea33f2e0e25bd5ed038463ccba122bc07c62592a208cfb }
+  - { gate: duplication-model, fingerprint: 8db1d2d5a9ebf2ee564ebda9f02c698d246660958286ed29ac1ab5890bbf7a69 }
+  - { gate: examples-listing, fingerprint: 21fc51df7b191b9b47d72b5632bf177bbfbe14067a7307ab27b16fde6089197d }
+  - { gate: examples-validate, fingerprint: 56665b3b025efe27aafafa787478bd27efcc41b90b9bdb43d000d6c60d3f573f }
+  - { gate: feedback, fingerprint: 87be1d795362dc420e0d30bd4592fe43f29185249431b91ccec9d2f1bc415fb2 }
+  - { gate: fidelity, fingerprint: 9d3d5f4d386f2109de1b4a789d22e9cd29aca48199eb8ece0bd1a4025ff4b383 }
+  - { gate: frozen-releases, fingerprint: 59e9f20d8cd118d8ac518bed4df8c402de37b0daa991bb821d920b165f351c25 }
+  - { gate: frozen-reviewed, fingerprint: c144468d727114d14a897085d104d32b6333a054abbe0f4cadbd53d81ed4ac7d }
+  - { gate: map-drift, fingerprint: 73c1be808f4e5c82f6f33e68e9414abae649e4d112106f11948c38e1f7310c17 }
+  - { gate: mapping-bijection, fingerprint: 4c042617bf81e1130e2844a861f9a1c6c3e55156fe2cc4b3cb9cacdbc1c12fce }
+  - { gate: mapping-constructors, fingerprint: b9b041e5bbdfbf6b528e856f20aad529f5caeac3ad23ab7877d24914c5f1b596 }
+  - { gate: mapping-location, fingerprint: dbb8eadf5fa8134d311234e08514fcb72d3b61c11107a5dad441d4b9d615d15e }
+  - { gate: mapping-rules, fingerprint: 26fe205d4975881c4903f13dfc4bb943ec080a16189c56b075cf8523bad185fe }
+  - { gate: model-resolves, fingerprint: 55ab9cb545f08172fc15ab8f0001c60985fd3a953057cd2b1959c292b21d158d }
+  - { gate: modules-depends, fingerprint: 504656130df806070e8f04ed76a303d209977e0d2602a676d9ba1fbd188dbc57 }
+  - { gate: nesting, fingerprint: 6eb1ca88d610807e9e6354ab36b053ff74064a9a1008a6eff29a0e5e28285d69 }
+  - { gate: npm-test, fingerprint: 81b753d917bdd411b06712526e4af788d66c3d273e1d478b12a91a2288a791cd }
+  - { gate: release-breaking, fingerprint: e8601e76c0c14d4a64c347696c492ff6ec58378f5ad244d6a61feed4c601d97e }
+  - { gate: release-builds, fingerprint: df1c2fca77764167bec5a329236f930ded7107c946ed92430e97f901cb4367ea }
+  - { gate: release-digests, fingerprint: 0f2517609ccc8a1d3338880aa85f146718d9a12d19c56dcb3705d39a16fce8a4 }
+  - { gate: round-trip, fingerprint: e369f8545a5df9d7fcb5ce9c79c84ca0346235e0297b6c0782153e62689abc24 }
+  - { gate: rule-vectors, fingerprint: 2cb3e5f49c702514d9ff5f18f771d9c5b858e4b2f722b22484acd61b057cace0 }
+  - { gate: rules-emit, fingerprint: 220c364e599dbf9cd75b1a22fd10b1d418251913611367cbd3d354c4207b1a00 }
+  - { gate: schemas-conventions, fingerprint: bdfcae566365d19ea8d00b25abb3a435c6173c3acf0fa088d0ce495fae5bfc62 }
+  - { gate: schemas-emit, fingerprint: 2271f1e7794992180cb955e26d14d8c2728f9ec7731efce7799bc397e4496999 }
+  - { gate: sdk-generate, fingerprint: 83b90e12b4b60574c77aeb51df1809b6f176342919b8aa87f548d473349995c0 }

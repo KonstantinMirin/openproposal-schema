@@ -1,0 +1,172 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: overview
+sections: [ front, "1", "1.1", "2", "6", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6", "6.7", "7", "8" ]
+types: []
+entries:
+  - ir: rule:front:ceff832d
+    digest: 0841680010a3f1c59922c85c9288de1869dc0b53c2fb8d702aaccf0faa5341c4
+    source: { rule: front-matter }
+    as: { role: informative }
+  - ir: sentence:1:1b060817
+    digest: 7302d45de96077a82d2555890f7983a7831b4d468ad58888e6ad113c1609e777
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:1.1:9c7bf74f
+    digest: 27ec6f9b4bfb395b62f6d6ae34eefbcc37d2f5a5f557ebad0f386a9c31592ed0
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: concept:1.1:1
+    digest: 6487f546acec2e65654d027d2fa0ffb3e4412825c6d1c0e3caa39eb6a19d2243
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: concept:1.1:2
+    digest: 462c48f2627fa308d815143e86263caa1d8876e1df9f337ab5fbcdc02d2160bc
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: concept:1.1:3
+    digest: 4d18cd4365cd712c7ce344b730d7a1aa30d9e7548b3fc8cd505d5b47abb8c74d
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: concept:1.1:4
+    digest: 7b3041372e2445e4dcc8cedb7fdd001cc870cd29f89e077bfedc212001c30c36
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: code:2:1
+    digest: 6fd06bb0a8b32f969721cbcecbb27cd9d0f02e42825a81434137086afe2d66a7
+    source: { decision: D-033 }
+    as: { role: informative }
+  - ir: rule:2:4ae8f775
+    digest: 7b7a4e9aec10b20c71883badcb8f72e9f7fc0febc0c9bf6588ad4b590843342f
+    source: { decision: D-029 }
+    as: { role: obligation, party: consumer }
+  - ir: rule:2:7d544674
+    digest: f9d6b0a316c889a452a8fb36043a826ada0c36bcca5a518a930d7c3124db1cff
+    source: { decision: D-029 }
+    as: { role: schema, in: LineItem }
+  - ir: rule:2:2ea1196f
+    digest: 7aaad189bdae2d572c4d875332a6be38e927bf2a1dc19959b4644cff6762c7fc
+    locks: [ main ]
+    source: { decision: D-029 }
+    as: { role: obligation, party: buyer }
+  - ir: rule:2:ace530d6
+    digest: f8be632e757302355bcaf1cdd85da9758a40dff5c0707a58d4343b3187b9d3b8
+    locks: [ with-open-prs ]
+    source: { decision: D-029 }
+    as: { role: obligation, party: buyer }
+  - ir: sentence:2:f059053f
+    digest: 9bacbb4117761806579974995d79cc5d0c1bb469ae04ecee4e00f241b9f64b69
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:6:b55a7db8
+    digest: bd4cd49a1bae8c856ddc2b8580a7c506af655db428f6e465e0f046a9a923d5ad
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:6.1:140f66aa
+    digest: 3cfc9683bae1ba5a2cb3cb9c057b5d4ad3e756e6c495fe8aa7a934efaa7a3605
+    source: { rule: example-file }
+    as: { role: example, object: Proposal }
+  - ir: sentence:6.2:0ea01d1d
+    digest: 8714d093271fd142aa66ffcdfa52a001cfefaf1401573e311592f91818af3496
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:6.2:c19128b7
+    digest: bc05a280dfe9c39a1591eac64108f720d0d887bf018f0905b07ee86ab46be5dc
+    source: { rule: example-file }
+    as: { role: example, object: LineItem }
+  - ir: sentence:6.3:db7467a3
+    digest: 4f90bf7144e8eb02bcb3910ae9a359cc470fde42cb27e4870b4e0009fcd062d0
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:6.3:24bee9be
+    digest: 072dc232a7e4550653cca8cb26c64a6bfadbe5f1cfe3f558d9e84bf628d5675d
+    source: { rule: example-file }
+    as: { role: example, object: LineItem }
+  - ir: sentence:6.4:dd9e06dd
+    digest: 25e3ed45afaa6b220af84bf1e4e174984b7e397b35b7aadcbc4896253945ef0e
+    source: { rule: example-file }
+    as: { role: example, object: LineItem }
+  - ir: sentence:6.5:15fe6026
+    digest: 81a3776f9e6a9027023f6a465020ca28b8a75bf82ccccdbeb92f6f19f1b8b694
+    locks: [ with-open-prs ]
+    source: { rule: example-file }
+    as: { role: example, object: LineItem }
+  - ir: sentence:6.6:832ad0f8
+    digest: df8522dc4326ed3432476c07cbda8448e3b9723dc4ee61172abdec22000afe68
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:6.6:70160ee0
+    digest: 300e8c96d594f8b188384af65735bb63f326c913732f58c653e8f52888b7275f
+    locks: [ with-open-prs ]
+    source: { rule: example-file }
+    as: { role: example, object: Manifest }
+  - ir: sentence:6.7:844bf24a
+    digest: 263037f29a6175fb86574fb13227386b9e6ad6eda558f4bfab2676cb5c3274c6
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:6.7:d6388541
+    digest: b978e68343100298d4e8135e9c2b1d31cb4460260cc52b955db734719af73034
+    locks: [ with-open-prs ]
+    source: { rule: example-file }
+    as: { role: example, object: LineItem }
+  - ir: sentence:7:41ebd0f7
+    digest: f68d99f75a4d6d7a75bb9ac23f8eb2171e3153048ef5dd21886ebff9096ed7cd
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:7:256da220
+    digest: e7f1fa2f350d69358fae4903617808575f963f5af60b7a51d4995f7cc29e80da
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:7:acf0d49d
+    digest: ad0ce752a70e7c0a108a85f336da8e3a731d871f9e562948fb64b8ca93d994ef
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:7:4f1fa2e5
+    digest: f79c6f5b5504273951e2ee6454b504441785f420b536b43c279098235ab68bc8
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:7:9cfe55f2
+    digest: 97e0dc6f2696bf736ceb56e08747e734c553acccd4281188f5e2abd2cb4ecd9c
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:7:4e066ba3
+    digest: 868baebe28146623eb3bad56d595bfed2ecb63022f428afcd3d7d0a42095f967
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:8:0bda15d9
+    digest: ef9840cdce54f9776c7efd69de6708d9fe258ffbdc2bc80951f7169477f32932
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:8:4b17719a
+    digest: 34e93c98956249262a70f6a4db591c9c418731bb0a5b8b742152da70cb148ccd
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:8:410d8824
+    digest: c3c11da83558ff0cd152755f32ac9b5fe4dfcd9403b9fc49ee9e2a28f3fb0438
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:8:01a13e05
+    digest: 3dbb82c36ee1d52d9378c468a0f21d8af84c1e3eb53b10a26ecda22a6c74d975
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:8:3549c05c
+    digest: 4db4f4175e0e5520599fca64fb224b74b4e14df91a79ae7ff3af0b468b14f415
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:8:f134c883
+    digest: 5c7494962a76416ab366543d68bf3793684369eaea9c8c660040383382254906
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:8:4a7b806f
+    digest: 7db08cc316e20296d5edb50234bf768bbdab108db3f474eaa6511776e5e5bc08
+    source: { rule: prose-sentence }
+    as: { role: informative }

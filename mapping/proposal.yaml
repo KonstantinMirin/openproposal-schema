@@ -1,0 +1,184 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: proposal
+sections: [ "4", "4.1", "4.2" ]
+types:
+  - name: Proposal
+    kind: document
+    ir: field:4.1:proposal_id
+    source: { rule: document-owner }
+  - name: Assent
+    kind: object
+    ir: field:4.1:assent
+    source: { decision: D-016 }
+    open: true
+    description: "The buyer's and the seller's assent records, with their timestamps, for the binding version; the signature scheme is WS1. The specification states no members, so the object accepts any."
+  - name: Specifications
+    kind: union
+    ir: field:4.2:specifications
+    source: { decisions: [ D-016, D-017 ] }
+    any_of: [ { kind: named, name: Text }, { kind: named, name: SpecificationsDetail } ]
+  - name: SpecificationsDetail
+    kind: object
+    ir: field:4.2:specifications
+    source: { decisions: [ D-016, D-017 ] }
+    open: true
+    description: "Structured detail at media-kit depth. The specification states no members, so the object accepts any."
+entries:
+  - ir: field:4.1:proposal_id
+    digest: fb8604e60eabfa2db105b17ca562af8ba2f20784907dcce349772ce83054088d
+    source: { rule: domain-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: Uuid }, presence: optional }
+  - ir: field:4.1:version
+    digest: 0d60d71f86bb7ba75bce82f30d59f3a971355af3191a622f5ee2e856069fb67f
+    locks: [ main ]
+    source: { rule: domain-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: Count }, presence: optional }
+  - ir: field:4.1:version
+    digest: a09ae7827a52ff907bbe2cb190b88a430dd2a075fe1f098c2f024ff7ba097988
+    locks: [ with-open-prs ]
+    source: { rule: domain-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: Count }, presence: optional }
+  - ir: field:4.1:seller_id
+    digest: 98c167e650ac7cbe7a3fe910d218292ae19d16156e9a575875776ba335e4e833
+    source: { rule: domain-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: ExternalId }, presence: optional }
+  - ir: field:4.1:seller_name
+    digest: 270af1c40363b766b5013891995f439c36dbfe87392a61eec853cc14203bb712
+    source: { rule: domain-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: Text }, presence: optional }
+  - ir: field:4.1:type
+    digest: 35095315db54643d41a55ea9b5e8b8840ed8af88949879b9e664f2d7f19d172f
+    source: { rule: enum-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: ProposalType }, presence: optional }
+  - ir: field:4.1:type#description/values:1
+    digest: ca19474b34999ea939d03107e0a9dceaf7abe2d56b469ae64f29c8a2c13257b4
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: ProposalType, layer: vocabulary, open: false }
+  - ir: field:4.1:proposal_template_id
+    digest: 5f43a39db8284176822173553f81108c25fea3e72083caeffb881d5050e8a39c
+    locks: [ with-open-prs ]
+    source: { rule: domain-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: ExternalId }, presence: optional }
+  - ir: rule:4.1:d539a004
+    digest: 7a0c87bfe4e277354e4234f1e296faf65e96ea564107d035b1016607aa6370cd
+    locks: [ with-open-prs ]
+    source: { rule: presence-statement }
+    as: { role: schema, in: Proposal }
+  - ir: field:4.1:status
+    digest: bdc344b98d2bc62fc489ecf7061c9ec2357ade93de698665c0ff758953cc8cae
+    source: { rule: enum-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: ProposalStatus }, presence: optional }
+  - ir: field:4.1:status#description/values:1
+    digest: cabf49b77090b1d9d2b5dc594584cf6bb1506a5bd4440dbdd40528aa40cfaf35
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: ProposalStatus, layer: vocabulary, open: false }
+  - ir: field:4.1:assent
+    digest: 9306decda4e7acc0d22679fb45574d8d8f500e44c09023a25112e40458cd2be8
+    source: { decision: D-016 }
+    as: { role: property, object: Proposal, type: { kind: named, name: Assent }, presence: optional }
+  - ir: "field:4.1:valid_from,valid_until"
+    digest: 9c5853eb24269fa128f158276e85a0e45be848cce58efe34fa1739a06514e9a0
+    source: { rule: scalar-field }
+    as: { role: property, object: Proposal, type: { kind: named, name: Timestamp }, presence: optional }
+  - ir: field:4.1:brief_ref
+    digest: 482c83600e1a104be57aaa70c91f4df5bec6b6bdc7621b8c8cdb9283d768eeaa
+    source: { rule: domain-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: ExternalId }, presence: conditional }
+  - ir: rule:4.1:1a0e1d65
+    digest: 4cee8e297ebc3f2899cde08ec2cda7d688e7354e6288db4e465ef692677f3c88
+    source: { rule: presence-statement }
+    as: { role: schema, in: Proposal }
+  - ir: "field:4.1:negotiation_history[]"
+    digest: abbd4590610b8e0e54e96209a13ee1d28abf6147841ca1fc9f3b19b22e8c03a4
+    source: { rule: inline-object-row }
+    as:
+      role: property
+      object: Proposal
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: NegotiationHistoryEntry } } }
+      presence: optional
+  - ir: "field:4.1:negotiation_history[]#description/object:1"
+    digest: 4e6fe4bb14cccd020b8d8e903fb098ce6de02c4a07e3c93fe9e1730709c4503d
+    source: { decision: D-027 }
+    as:
+      role: type
+      name: NegotiationHistoryEntry
+      layer: object
+      open: false
+      members:
+        version:
+          type: { kind: named, name: Count }
+          presence: optional
+          description: "The proposal's revision number, its `version`, that the step proposed, countered, accepted, declined, or withdrew."
+        actor: { type: { kind: named, name: Party }, presence: optional }
+        action: { type: { kind: named, name: NegotiationAction }, presence: optional }
+        fields_changed:
+          type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ExternalId } } }
+          presence: optional
+          description: "The fields the step changed, each named by its path as the specification's tables write it, such as `pricing[].gross_rate`, and compared by exact equality."
+        at: { type: { kind: named, name: Timestamp }, presence: optional }
+  - ir: "field:4.1:negotiation_history[]#description/object:1/action"
+    digest: 2f88df68f495e29d676b7fcdf23295f77f78e905e88b7a048edd3ef2d6a16516
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: NegotiationAction, layer: vocabulary, open: false }
+  - ir: "field:4.1:negotiation_history[]#description/object:1/actor"
+    digest: 3e5ab816e90d30ce9976f57b4a4cded920951dbab1bbda74d386b92fb61c0537
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: Party, layer: vocabulary, open: false, module: kernel }
+  - ir: rule:4.1:8e9aacb8
+    digest: 089fde20d5aa0c8c4d3ea3675f3ba09cf81f4d4a9615d0a627bee1cb3f823dba
+    source: { decision: D-030 }
+    as: { role: rule, object: Proposal }
+  - ir: field:4.1:linked_execution
+    digest: af2a98767432fd7fcecb2b2fced2a26e295676e29e23d7e42e9da56983e5ad28
+    locks: [ with-open-prs ]
+    source: { rule: enum-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: LinkedExecution }, presence: optional }
+  - ir: field:4.1:linked_execution#description/values:1
+    digest: 568258406c10dcee2fb6db23def782ff5b60749fc79a5e66feec5ee9ad4b060e
+    locks: [ with-open-prs ]
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: LinkedExecution, layer: vocabulary, open: false }
+  - ir: sentence:4.1:9e990c7e
+    digest: 6931f47a3f70fed06db89a8b5e3a0f62903eb43069b95a59f5415e2ca60511c0
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:4.1:fae6ebab
+    digest: 6029b960f5e992bfd132ecadad927d812706780f56e4c5922571174dec942040
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: obligation, party: seller }
+  - ir: field:4.2:description
+    digest: d8f9bd51c2ecf2a1311600c2fad1dda1b1b8f74269700a3f3ae6018a8beba30d
+    source: { rule: domain-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: Text }, presence: required }
+  - ir: rule:4.2:86398bec
+    digest: 0729d80adcf83b399edc0913051d0ccc3c32917608f81f978fb80c7230214344
+    source: { rule: presence-statement }
+    as: { role: schema, in: Proposal }
+  - ir: field:4.2:specifications
+    digest: 2557955239ae4bfb7f4a786063ac4250508c2541bc86198ff12bf1a00c56b0f0
+    source: { decisions: [ D-016, D-017 ] }
+    as: { role: property, object: Proposal, type: { kind: named, name: Specifications }, presence: optional }
+  - ir: "field:4.2:best_for[]"
+    digest: 4a9b533b2efb864c58a34a23e06d7788501a0c07cba58bfa9ead7c89e9dcb4c2
+    source: { rule: domain-row }
+    as:
+      role: property
+      object: Proposal
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Text } } }
+      presence: optional
+  - ir: "field:4.2:not_suitable_for[]"
+    digest: 90017ea8f4ac27e03fb7a3655c68ef299f3e0d2705575c428bff5865b1da9f2b
+    source: { rule: domain-row }
+    as:
+      role: property
+      object: Proposal
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Text } } }
+      presence: optional
+  - ir: field:4.2:seasonality_notes
+    digest: 33869d96c87875efa58c05a56f748e10c70beaf72e89bec328f29de4c6c3ece6
+    source: { rule: domain-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: Text }, presence: optional }

@@ -1,0 +1,24 @@
+format: 1
+id: G-070
+date: 2026-10-27
+question: What changes in the site's gates when the site gains a page on how the schemas are built?
+decision: >-
+  The site gains `how-it-is-built.html`, linked from the top navigation of
+  every page and twice from the landing page. It explains each step of the
+  pipeline and what it shapes in the type map and the downloads, with an
+  inline SVG diagram of the pipeline in a wide and a tall layout, and it
+  follows the line item's `formats` from its specification row to its
+  example value. Its counts, quote, digest, emitted schema, and example
+  value are read from the build, and `mapLink` now writes `view` always and
+  can expand members of the composition with `open`. No check changes: the
+  site check holds the new page to every check the others pass. Three tests
+  cover the page's links, its worked example against the build, and the
+  diagram's two layouts; the suite holds 401 tests, and `MIN_TESTS` is 401.
+rationale: >-
+  site-builds' fingerprint changes because `buildSite` now reaches the new
+  page's code and the stylesheet it reads gained the page's rules, not
+  because a check did. npm-test's changes because of the new tests and the
+  test floor.
+accepts:
+  - { gate: npm-test, fingerprint: b60351cec01bd1db6d1e862fcd5f05d9b552c691c392e34bb17a3f907f306004 }
+  - { gate: site-builds, fingerprint: 88df7c0bb7330843fa7b00470f12be7526f469153ce6596709d242d52207ee4c }

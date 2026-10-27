@@ -1,0 +1,41 @@
+# Fixture for the mapping format, over the synthetic spec.md beside this directory.
+format: 1
+module: pricing
+sections: ["5.6"]
+entries:
+  - ir: field:5.6:pricing[]
+    digest: 0324ac9347c9078d600ee524c00ae87040fc2b610cc386957ace853421a10e7f
+    source: { rule: array-of-object }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PricingEntry } } }
+      presence: optional
+  - ir: field:5.6:pricing[].cost_method
+    digest: 9305a06751baf0699a010595e20fc5707ba976bd43a64dca4dc2e6ffc337bfd0
+    source: { decision: D-001 }
+    as:
+      role: property
+      object: PricingEntry
+      type: { kind: named, name: CostMethod }
+      presence: required
+  - ir: field:5.6:pricing[].cost_method#description/values:1
+    digest: 485672d8de1e0315833132b4c680df0482d99ecf76f339a0ff5499940f9e86a6
+    source: { decision: D-001 }
+    as: { role: type, name: CostMethod, layer: vocabulary, open: true }
+  - ir: field:5.6:pricing[].gross_rate
+    digest: 5db055e19dd48c6b29569346139505dc3f4ca75556eea0be7d5010f4b98c3fc2
+    source: { rule: number-is-amount }
+    as:
+      role: property
+      object: PricingEntry
+      type: { kind: named, name: Amount }
+      presence: optional
+  - ir: field:5.6:hold_available
+    digest: 7fd5fafcefd67459322fa3b020b16fb63602df0149224c038b620c6d9d262d4d
+    source: { rule: boolean-inline }
+    as: { role: property, object: LineItem, type: { kind: boolean }, presence: optional }
+  - ir: rule:5.6:96b1b3b3
+    digest: 07b4571436764262f43041b6e7713e1069be24e397d42918074140493f695adc
+    source: { rule: bound-on-primitive }
+    as: { role: schema, in: Amount }

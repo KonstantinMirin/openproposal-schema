@@ -1,0 +1,108 @@
+format: 1
+id: D-037
+status: proposed
+kind: departure
+author: agent
+question: How is the ID of a record a party mints written, so that every party compares it the same way?
+covers:
+  - ir: field:4.1:proposal_id
+    digest: fb8604e60eabfa2db105b17ca562af8ba2f20784907dcce349772ce83054088d
+    quote: "`proposal_id` | String | immutable | Unique identity for the proposal object"
+  - ir: field:5.1:line_item_id
+    digest: 60cd2aeea40121597f5e2b0725417665bc560c9b677000d3dfbc432d1c88c969
+    quote: "`line_item_id` | String | immutable | Identity within the proposal"
+  - ir: field:5.10:correlation_id
+    digest: e015a269b356797dbfe7737b7178f592b5fe280e8a95db0d446724b685cc80d9
+    quote: "`correlation_id` | String | derived | One identity for this line item's commitment, carried across every system it touches"
+  - ir: key:5.6.1:commitment.idempotency_key
+    digest: 47264d377373977897dc60c399d4e61a15e862743a2ff4e2fab92830ca3f3550
+    quote: "`idempotency_key` | REQUIRED | Buyer-generated, unique per commitment attempt"
+  - ir: sentence:5.6.1:b7271e6a
+    digest: 5dd839c74bf1f8491a622216e9764d980816d4a413cbf9e8e64f990290dcc332
+    quote: An `idempotency_key` is opaque and scoped to one buyer and seller pair.
+    locks:
+      - with-open-prs
+  - ir: rule:5.6.1:6f403dba
+    digest: eca307cbc007002ce5a8e75fe6accdd9b6395e089237e159924ef1cad9833fbb
+    quote: The seller MUST NOT interpret it.
+    locks:
+      - with-open-prs
+  - ir: key:5.6.1:commitment.proposal_id
+    digest: 5786eb882e01494be61d482b94b44011a8669f93a79419c1e74db23908e04453
+    quote: "`proposal_id` | REQUIRED | The proposal the commitment is made against"
+    locks:
+      - with-open-prs
+  - ir: key:5.6.3:requires.all_of[]
+    digest: ba606c815b2f294442e06b436f9b146cdad79fc400cfe5586a1906370ee74c7c
+    quote: "`all_of[]` | Line items that MUST all be in the same commitment"
+    locks:
+      - with-open-prs
+  - ir: key:5.6.3:requires.any_of[]
+    digest: a9c3ff73e8f7dbce358a1c75350766332e8f8db4cfca291bf7775f7f0ba38929
+    quote: "`any_of[]` | Line items of which at least one MUST be in the same commitment"
+    locks:
+      - with-open-prs
+  - ir: key:5.6.3:requires.min_commitment[]#meaning/object:1
+    digest: 42864a103fd4ba66991bdf1f48cb93772c0567a6c109abdeabac4591e0013699
+    quote: "{ line_item_id, basis, amount, currency }"
+    locks:
+      - with-open-prs
+  - ir: code:5.6.3:1
+    digest: 3c4b19331f24fca760db7f76364af71ac968ba0af555f028bea2568fcdcd4db9
+    quote: |-
+      requires:
+        all_of:  ["business-daily-display", "weather-app-ctv"]
+        any_of:  []
+        min_commitment:
+          - { line_item_id: "business-daily-display", basis: spend, amount: 50000.00, currency: USD }
+    locks:
+      - with-open-prs
+    departs: [ example ]
+  - ir: field:5.4:assets[]#description/object:1
+    digest: e2ecbfe1e06380fb7c9966174c58ecc73d617563de6860287b1cd414bebcfff6
+    quote: "{ asset_id, format_ref, url_or_tag, submitted_at, approval_status }"
+  - ir: field:5.2:properties#description/object:1
+    digest: d17ed59027f652ad048ca0fb7bae6984613c7b5dfc4273560958ce7006b42990
+    quote: "{ id, name, domains, supported_formats }"
+    locks:
+      - main
+  - ir: field:5.2:properties#description/object:1
+    digest: 21095d8df24b1478821abe8102f66a3e90e4d8635d79d28277a108d272cbf9de
+    quote: "{ id, name, domains, apps, supported_formats }"
+    locks:
+      - with-open-prs
+  - ir: field:5.3:audiences#description/object:1
+    digest: 0a7d355ab5dcb787717d01988764dcca8895bdc0b1252de9e8269ad516e7ac6b
+    quote: "{ id, name, taxonomy_ref, provenance, addressable_scale }"
+options:
+  - id: uuid
+    summary: A UUID in the RFC 9562 string form, which JSON Schema's `uuid` format checks.
+  - id: opaque-string
+    summary: Any string the minting party chooses.
+chosen: uuid
+rationale: >-
+  The specification types these IDs as strings and says only that each is an
+  identity. A party mints each one, and other parties and systems carry it
+  back, so two independently minted IDs must not collide, and every party must
+  compare an ID the same way. A UUID needs no coordination to be unique, and
+  JSON Schema's `uuid` format checks its string form, which RFC 9562 reads
+  without regard to case. An ID that another system keeps, such as a DSP seat
+  or a registry entry, stays as that system writes it, and so does
+  `proposal_template_id`, which links a proposal to the seller's own template
+  and which the text calls opaque to buyers. A reference to a minted record,
+  such as a commitment's `proposal_id` or `requires.all_of[]`, carries the
+  same identity, so it is a UUID too. With the open PRs, the text says an
+  `idempotency_key` is opaque and that the seller MUST NOT interpret it. A
+  UUID stays opaque: the schema checks only how it is written, and the seller
+  still compares it for equality and reads nothing from it. The schema
+  departs from the text, which lets the buyer write any string, and from the
+  examples, which write readable names.
+evidence:
+  - https://www.rfc-editor.org/rfc/rfc9562
+feedback: >-
+  Write every ID a party mints as a UUID (RFC 9562), and every reference to one.
+  That covers `proposal_id`, `line_item_id`, `asset_id`, `correlation_id`,
+  `idempotency_key`, and the `id` of a property or an audience option. A UUID
+  keeps `idempotency_key` opaque: a seller checks how it is written and compares
+  it, and still reads nothing from it. The examples write readable names such as
+  `business-daily-display`, which two sellers can mint alike.

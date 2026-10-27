@@ -1,0 +1,58 @@
+format: 1
+id: G-034
+date: 2026-10-26
+question: Which gates change when kernel/lists.yaml pins ISO 4217 and the IANA time zone database, so the currency-code and zone-name rules have checks that run over the examples?
+decision: >-
+  kernel/lists.yaml pins ISO 4217 List One at its 2026-09-17 publication and
+  the zone and link names of IANA tzdata 2026e, each with the URL of the file
+  its keeper publishes, its version, and the file's SHA-256; the lists schema
+  requires the version and the digest where the URL isn't a pinned GitHub
+  commit, and admits zone names as codes. The two rules that rest on them,
+  `kernel:CurrencyCode:assigned` and `kernel:TimeZone:listed`, have checks
+  that read the pinned codes, so the rule-checks gate no longer sets them
+  aside as resting on an unpinned list: it fails a payload rule with no
+  check, and a check that rests on a list the gate isn't given. The rule
+  checks gate and the examples gate take the pinned codes, and the examples
+  run the two checks on every currency code and zone name they hold, which
+  all pass. A fixture drops ISO 4217 from the codes. The test suite holds
+  340 tests, so its floor rises to 340.
+rationale: >-
+  Two rules one payload decides ran nowhere because their lists weren't
+  pinned. They now run on their vectors and on the examples, the unpinned
+  exemption is gone, a new fixture fails the gate, and the test floor rises,
+  so no gate is weaker.
+accepts:
+  - { gate: comparison, fingerprint: e465734e075a4a3cf4b926a982f636d8575c6ca977de27f5e437b2e8be20a2b4 }
+  - { gate: constructors-check, fingerprint: c21f96aadb5c14d50434cf71fb4bafe950510828937a212c854ccd1207986a3b }
+  - { gate: convention-beside-reference, fingerprint: 2cbe3df068d33c24bffc160240a74d29caced0037e847e27aef9ef872670687f }
+  - { gate: convention-inline, fingerprint: 4c96b9a6c5f5102ff326d1c9935377665fb8c623d4bc326fcbd022e09af0d8fa }
+  - { gate: convention-keywords, fingerprint: b564177bbfb197f9f6f61ea3f62530f821a6bfed0d1dcf12e3fb9cb5f765c521 }
+  - { gate: convention-layers, fingerprint: 6074d4525c1b312da09177b8d8d13b1bdfc79a2b557dd803c7ab9130b502258e }
+  - { gate: convention-lists, fingerprint: fef8dd0d1b3e695a9f7d443eec94b2262bdb417e83fc8d6220587acfa478d8f2 }
+  - { gate: convention-modules, fingerprint: 62d6eda14aa386455c9d59423ce030bb07549c7423399fb34aba8c7727050543 }
+  - { gate: convention-unions, fingerprint: 79fc6c44d07503a1d8296b6510549769d367aa9c7e5fda3f690c37b32ee0abee }
+  - { gate: corpus-generates, fingerprint: 3f68739691426bbe04112dbca2573fdeb937e7911b8ffeaa49950b497a749d45 }
+  - { gate: duplication-kernel, fingerprint: 1aeb018d1b9a2d375f513a166dbaad6d74b41c6428ec45b6deecdd318cd0feb7 }
+  - { gate: duplication-model, fingerprint: 0be5313bd5fdd4841f5222dceb6b2e0871860f0874bc38199b6de89e0039f7c9 }
+  - { gate: examples-validate, fingerprint: ca1a0bf1c5f64153a73f5d7fd574482a05232dd605995204d545364de9959124 }
+  - { gate: feedback, fingerprint: 8b4b68780c46ee19242fdc4494f2efdbe0988b3bd8d56ac6b2c0bd9bfd96926e }
+  - { gate: fidelity, fingerprint: 18ea4925ca67aacb4a9adc198923b05c629611d72e2c1fb2430609c3a3b9d0f0 }
+  - { gate: guard, fingerprint: 2012491ed0b1d0d7173c853183ff8f4824b260b698a8de53a50d9ae45254a81a }
+  - { gate: kernel-check, fingerprint: 0274ed2a9692267d1e3728a654668b316a7f442590199fa80badfd1dfd0b9088 }
+  - { gate: kernel-engines, fingerprint: 56e9130e50946c726409cae3d32874fbe87aedd74c89a212c86b6ef0f3d65b28 }
+  - { gate: kernel-load, fingerprint: f0e4a9244c3450e8036252fe73c3986a243fb291b9e7b6874713cc483ca7b17e }
+  - { gate: kernel-sources, fingerprint: e86ca0852304d699504629f9e2d73b2f2efaeaa934add219bff6b4651b075466 }
+  - { gate: map-drift, fingerprint: 7f047cff2b9a300b5221f9a2de5d7913e24075f7808f50567f440e7c59fc7056 }
+  - { gate: mapping-bijection, fingerprint: 90cc4763e429abbefd89589480c5c8ce09e2e0fcc11f3c724d0b7f12bec02905 }
+  - { gate: mapping-constructors, fingerprint: 5d90db04d0b558d0dab34ab2d907b99e3beb83ba5383e07f0a9f45979f8f0d98 }
+  - { gate: mapping-current, fingerprint: df2b775bd5e2ded09130473272dcb0fc986c1a33965989a512d4d20778af9bd2 }
+  - { gate: mapping-location, fingerprint: 0c3b84ed8ac11163343ad39fd739128ebe5ed798acda52e3f54a3f35f7a6921c }
+  - { gate: mapping-names, fingerprint: 02ff0905b67283748e6191b708758b9a05a430382d564dd0ab0dbc21b9cc54d4 }
+  - { gate: mapping-rules, fingerprint: 2be35c0554846f6cbe37733c7998d84424aae9b237f2082deb9a4b569ced0b11 }
+  - { gate: mapping-sources, fingerprint: e6b5d38eade78a2763154739eff9053e97dd37d3f3376568371920adaca4d628 }
+  - { gate: model-resolves, fingerprint: 70977ddb5bead87ef604e19788ba156e6effa14212a63b229ad66dc3247c6063 }
+  - { gate: nesting, fingerprint: bc62aac0fa7803273b1c50385b38d8d15afa7f5d1c17502462a1e00ddfa25868 }
+  - { gate: npm-test, fingerprint: 449ef540139bc71ae8e4462fa42e9ad14bcceb3db0514430a39d3f963372dd73 }
+  - { gate: rule-checks, fingerprint: 9b1c782fc58ea08499b1838f66ce412e69fb5206166d3d5a52488d085fd68ef2 }
+  - { gate: schemas-emit, fingerprint: c8f1a03804d90b9bf35da5e304f94f6deab708814f85e50bf09478f5ae00cdc3 }
+  - { gate: sdk-generate, fingerprint: b3b260469fc22925109f437c67bfbee5cb54a899126095fd9b545b9dfdd30860 }

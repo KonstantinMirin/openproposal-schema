@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/kernel/domains.schema.json",
+  "title": "OpenProposal value domains",
+  "description": "Stage 3 input, read before the mapping: kernel/domains.yaml. It lists the value domains the specification talks about, and under each domain its concepts: what a value means, the one kernel type that represents it, and the specification elements and standards it rests on. Every primitive and part declares its concept, and every scalar property of the model resolves to one (type rules § 3a).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "domains", "homonyms", "shared_structures", "bases"],
+  "properties": {
+    "format": {
+      "description": "Version of this format.",
+      "const": 1
+    },
+    "domains": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/domain" }
+    },
+    "homonyms": {
+      "description": "Member names that recur across objects with different concepts, each with the decision that explains the difference. The domain gate fails on a recurring name whose properties resolve to more than one concept and isn't listed, and on a listed name whose properties no longer differ.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/homonym" }
+    },
+    "shared_structures": {
+      "description": "Concepts whose types have one structure, each set with the decisions that make them distinct types and the reason a receiver treats them differently. The duplication gate fails on two kernel types with one structure whose concepts no set lists together, on a set whose types no longer share one structure, and on a set that names a concept no kernel type represents.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/sharedStructure" }
+    },
+    "bases": {
+      "description": "Vocabularies whose term says what a sibling member's value is, such as a commitment's `basis`, which makes its `amount` money for `spend` and a count for `units`. The model gives the member each term's type while the vocabulary holds that term, and a sibling the money requires is required only while the value is money.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/basis" }
+    }
+  },
+  "$defs": {
+    "domain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "description", "concepts"],
+      "properties": {
+        "name": { "$ref": "#/$defs/conceptName" },
+        "description": { "type": "string", "minLength": 12 },
+        "vocabularies": {
+          "description": "Set on the term domain only: each vocabulary the mapping declares is a concept of this domain, whose terms are its meaning, so a property a vocabulary types resolves to that vocabulary.",
+          "const": true
+        },
+        "concepts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/concept" }
+        }
+      }
+    },
+    "concept": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "meaning", "type", "sources"],
+      "properties": {
+        "name": { "$ref": "#/$defs/conceptName" },
+        "meaning": {
+          "description": "What a value of the concept means, in one or two sentences.",
+          "type": "string",
+          "minLength": 12
+        },
+        "type": {
+          "description": "The one model type that represents the concept: a kernel primitive or part, or `boolean` for a two-valued flag.",
+          "type": "string",
+          "pattern": "^([A-Z][A-Za-z0-9]*|boolean)$"
+        },
+        "components": {
+          "description": "Kernel types that exist only inside the concept's type, such as the hour of a time of day. They declare the concept too, and no property is typed by one directly.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "kernel.schema.json#/$defs/name" }
+        },
+        "requires": {
+          "description": "A sibling member every object that carries a value of the concept also carries, such as the `currency` beside a money value. Where a value's member is required, the sibling is required; where it is optional, the sibling is required when the value is present.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["member", "concept", "decision", "lacking"],
+          "properties": {
+            "member": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+            "concept": { "$ref": "#/$defs/conceptName" },
+            "decision": {
+              "description": "The decision record that states the rule and asks the specification for the sibling where it lacks one. It covers every element `lacking` lists.",
+              "$ref": "kernel.schema.json#/$defs/decisionId"
+            },
+            "lacking": {
+              "description": "Every element whose value of the concept has no such sibling in its object, so the object carries the value alone until the specification adds the sibling. The gate passes a value without its sibling only where one of its elements is listed, and fails on a listed element that no such value rests on.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["ir"],
+                "properties": {
+                  "ir": { "type": "string", "pattern": "^[a-z][a-z-]*:\\S+$" },
+                  "locks": { "$ref": "kernel.schema.json#/$defs/cover/properties/locks" }
+                }
+              }
+            }
+          }
+        },
+        "sources": {
+          "description": "What the concept rests on. `spec` lists the elements that hold or state a value of the concept; a field or key row listed here is typed by the concept's type (mapping rule `domain-row`). On each lock where the type is published, the concept cites an element in scope or a standard.",
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "spec": { "type": "array", "minItems": 1, "items": { "$ref": "kernel.schema.json#/$defs/cover" } },
+            "standards": { "$ref": "kernel.schema.json#/$defs/sources/properties/standards" }
+          }
+        }
+      }
+    },
+    "homonym": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["member", "decision", "reason"],
+      "properties": {
+        "member": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "decision": { "$ref": "kernel.schema.json#/$defs/decisionId" },
+        "reason": { "type": "string", "minLength": 12 }
+      }
+    },
+    "sharedStructure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["concepts", "decisions", "reason"],
+      "properties": {
+        "concepts": {
+          "description": "Every concept whose type has the structure. Two kernel types with one structure pass the duplication gate only when one set lists both concepts.",
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/conceptName" }
+        },
+        "decisions": {
+          "description": "The decision records that make these concepts distinct types.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "kernel.schema.json#/$defs/decisionId" }
+        },
+        "reason": {
+          "description": "How a receiver treats a value of each concept differently, though the schema can't tell them apart.",
+          "type": "string",
+          "minLength": 12
+        }
+      }
+    },
+    "basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vocabulary", "member", "terms", "decision"],
+      "properties": {
+        "vocabulary": { "$ref": "kernel.schema.json#/$defs/name" },
+        "member": {
+          "description": "The sibling member whose value the term describes.",
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "terms": {
+          "description": "Each term of the vocabulary, with the concept the member's value is while the vocabulary holds it. The member's own type is one of these concepts' types; each other term narrows it.",
+          "type": "object",
+          "minProperties": 2,
+          "additionalProperties": { "$ref": "#/$defs/conceptName" }
+        },
+        "decision": { "$ref": "kernel.schema.json#/$defs/decisionId" }
+      }
+    },
+    "conceptName": { "$ref": "kernel.schema.json#/$defs/conceptName" }
+  }
+}

@@ -1,0 +1,22 @@
+format: 1
+id: G-039
+date: 2026-10-26
+question: Does the feedback list each example's places once under a decision, and give the findings at one place one reason?
+decision: >-
+  Under each decision, the list of the examples that disagree with the
+  text, or follow it but not a change we propose, names each example once,
+  with each of its places once, and says when an example or a place is only
+  on some locks. The feedback gate fails when two findings at one place, in
+  one of the report's tables, give different reasons, since the row shows
+  the place once; a fixture gives one of them another reason. The findings
+  at the display and rewarded-video examples' measurement source and
+  reporting choices now give one reason each. The test suite holds 345
+  tests, so its floor rises to 345.
+rationale: >-
+  The lists repeated a place once per failure there, and three rows showed
+  two near-identical reasons one after the other. The gate adds a check and
+  a fixture and drops none, and the test floor rises, so no gate is weaker.
+accepts:
+  - { gate: examples-validate, fingerprint: 04b7b0c16393cbde526bb254c4a4ef293d5fa4a5b6c0c460a427604e7c863f81 }
+  - { gate: feedback, fingerprint: d4c0e0efcd8560e87e24c03554dcb99979bed72c96ceb6c3c7c14e1740791b0e }
+  - { gate: npm-test, fingerprint: 305c69f49f1f2a2cae6317822d21f372bfd952b55b7ed09a134e7f613bace9c4 }

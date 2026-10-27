@@ -1,0 +1,52 @@
+format: 1
+id: D-007
+status: proposed
+kind: gap
+author: agent
+question: Must each `included[]` entry and each `pricing` key of a selectable field name an option in `available[]`, and what names an option?
+covers:
+  - ir: key:3.1:available[]
+    digest: e56c463d4043e1f551eae09af84db75ecf3185079f60194536361b619af55af5
+    quote: "`available[]` | REQUIRED | The options the seller offers"
+  - ir: key:3.1:included[]
+    digest: 8ec666d51bf96c60f03793156f832384d83126b7e98f3112259b423bc624b78b
+    quote: "`included[]` | REQUIRED | Which options are in the base rate. MAY be empty"
+  - ir: key:3.1:pricing
+    digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
+    quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+options:
+  - id: option-key
+    summary: >-
+      Yes. Each entry and each key names an option of `available[]`. A string
+      option is named by its value, so the name is a value of the option's own
+      type. An object option is named by its `id`, the UUID the seller mints for
+      it.
+  - id: position
+    summary: Yes. Each entry and each key is the zero-based position of an option in `available[]`.
+  - id: unchecked
+    summary: No rule. The entries and keys are free strings.
+chosen: option-key
+rationale: >-
+  "Which options are in the base rate" and "Delta per option" only make sense
+  if each entry names an option, and the `pricing` row names its keys
+  `option_id`. Every example writes a string option as itself (`formats`) and
+  an object option by its `id` (`properties`, `audiences`). A position breaks
+  when the seller reorders `available[]`. JSON Schema can't compare one member
+  with another, so the check is the rule `constructor:Selectable:options-named`
+  with test vectors. Each entry and key validates as what it names: a string
+  option's name is the option's own value, so a format named in `included[]`
+  is checked as a format ID, and an object option's name is its `id`, the
+  identity the seller mints for it, a `Uuid` (D-037). The template takes that
+  type as its parameter `K`, which each use gives as the option's type or as
+  `Uuid`, and its description says what each entry and key names. A name is
+  no type of its own: it validates as the identity it names.
+evidence:
+  - examples/line-item-display.yaml:8-27 (properties and audiences)
+  - examples/line-item-audio.yaml:6-14 (formats and production)
+feedback: >-
+  State that each `included[]` entry and each `pricing` key names an option in
+  `available[]`. A string option is named by its value, and an object option by
+  its `id`. Also say what names an option given as a `catalog_ref`. The display
+  example includes `ep:smb-decision-makers` for the option
+  `examplepub/audiences/smb-decision-makers@3`, a key that can't be read off the
+  reference.

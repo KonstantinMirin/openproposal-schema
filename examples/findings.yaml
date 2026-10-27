@@ -1,0 +1,972 @@
+# The places where an example fails against the emitted schemas, uses a key
+# the model doesn't define, or breaks a rule that one payload decides.
+# `npm run examples` prints every failure; each one here cites the decision
+# records its location rests on. Its reason says where the example disagrees
+# with the text, or, for a change we propose, that the example follows the
+# text and what the change would write. A finding of a SHOULD rule is
+# `severity: warning`. Under `undecided` are the rules' checks that an
+# example's values can't decide, each with the decision that says why. The
+# examples gate in `npm run ci` fails on a failure or an undecided check not
+# recorded here, on a recorded one whose value changed, and on one that no
+# longer occurs.
+format: 1
+findings:
+  - example: code:5.5:1
+    path: /exclusions/list_ref/sha256
+    kind: invalid
+    value: "<hash>"
+    locks: [with-open-prs]
+    decisions: [D-003]
+    reason: >-
+      A SHA-256 hash is 64 lowercase hex digits. The § 5.5 block writes the
+      placeholder `<hash>`.
+  - example: code:5.5:1
+    path: /exclusions/list_ref/url
+    kind: invalid
+    value: "<url>"
+    locks: [with-open-prs]
+    decisions: [D-006]
+    reason: >-
+      A URL is an absolute `https` URL. The § 5.5 block writes the placeholder
+      `<url>`.
+  - example: code:5.6.3:1
+    path: /requires/all_of/0
+    kind: invalid
+    value: "business-daily-display"
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for `all_of[]`: it
+      writes the readable name `business-daily-display`. We propose a UUID for
+      every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: code:5.6.3:1
+    path: /requires/all_of/1
+    kind: invalid
+    value: "weather-app-ctv"
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for `all_of[]`: it
+      writes the readable name `weather-app-ctv`. We propose a UUID for every ID
+      a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: code:5.6.3:1
+    path: /requires/min_commitment/0/line_item_id
+    kind: invalid
+    value: "business-daily-display"
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for `line_item_id`: it
+      writes the readable name `business-daily-display`. We propose a UUID for
+      every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-audio.yaml
+    path: /commitment/flight_end
+    kind: invalid
+    value: "2026-12-21"
+    decisions: [D-042]
+    reason: >-
+      The example follows the text, which gives `flight_end` no form: it writes
+      the calendar date `2026-12-21`. We propose an RFC 3339 date-time for every
+      point in time, such as `2026-12-21T00:00:00-05:00`.
+  - example: examples/line-item-audio.yaml
+    path: /commitment/flight_start
+    kind: invalid
+    value: "2026-10-06"
+    decisions: [D-042]
+    reason: >-
+      The example follows the text, which gives `flight_start` no form: it
+      writes the calendar date `2026-10-06`. We propose an RFC 3339 date-time
+      for every point in time, such as `2026-10-06T00:00:00-04:00`.
+  - example: examples/line-item-audio.yaml
+    path: /commitment/idempotency_key
+    kind: invalid
+    value: "agency-a-camp1-streaming-audio-a7c33e10"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for `idempotency_key`:
+      it writes the readable name `agency-a-camp1-streaming-audio-a7c33e10`. We
+      propose a UUID for every ID a party mints, such as
+      `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-audio.yaml
+    path: /commitment/proposal_id
+    kind: invalid
+    value: "examplepub-us-q4-2026-omni"
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for `proposal_id`: it
+      writes the readable name `examplepub-us-q4-2026-omni`. We propose a UUID
+      for every ID a party mints, such as
+      `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-audio.yaml
+    path: /committed_metrics/0/basis
+    kind: invalid
+    value: "seller_reported"
+    decisions: [D-041]
+    reason: >-
+      The example follows the text, which lists no terms for `basis`: it writes
+      `seller_reported`. We propose namespaced terms in a field until the
+      specification lists its core terms, `seller_reported` among them.
+  - example: examples/line-item-audio.yaml
+    path: /correlation_id
+    kind: invalid
+    value: "ep-q4-2026-commitment/streaming-audio"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which types `correlation_id` as a String: it
+      writes the readable name `ep-q4-2026-commitment/streaming-audio`. We
+      propose a UUID for every ID a party mints, such as
+      `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-audio.yaml
+    path: /line_item_id
+    kind: invalid
+    value: "streaming-audio"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which types `line_item_id` as a String: it
+      writes the readable name `streaming-audio`. We propose a UUID for every ID
+      a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-audio.yaml
+    path: /production/available/0/id
+    kind: invalid
+    value: "seller_built"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which gives a production option no `id`:
+      the example writes one, the readable name `seller_built`, as every object
+      option carries. We propose a UUID for every ID a party mints, an object
+      option's `id` included, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-audio.yaml
+    path: /production/available/0/lead_time
+    kind: invalid
+    value: "10 business days"
+    decisions: [D-040]
+    reason: >-
+      The example follows the text, which gives `lead_time` no form: it writes
+      `10 business days`. We propose an ISO 8601 duration for every length of
+      time; a lead time in business days needs a calendar the specification
+      doesn't define yet.
+  - example: examples/line-item-audio.yaml
+    path: /production/available/1/id
+    kind: invalid
+    value: "buyer_supplied"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which gives a production option no `id`:
+      the example writes one, the readable name `buyer_supplied`, as every object
+      option carries. We propose a UUID for every ID a party mints, an object
+      option's `id` included, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-audio.yaml
+    path: /production/available/1/lead_time
+    kind: invalid
+    value: "0"
+    decisions: [D-040]
+    reason: >-
+      The example follows the text, which gives `lead_time` no form: it writes
+      `0`. We propose an ISO 8601 duration for every length of time, `P0D` here.
+  - example: examples/line-item-ctv-bonus.yaml
+    path: /creative_delivery/protocol
+    kind: invalid
+    value: "vast_4_2"
+    locks: [with-open-prs]
+    decisions: [D-041]
+    reason: >-
+      The example follows the text, which lists no terms for `protocol`: it
+      writes `vast_4_2`. We propose namespaced terms in a field until the
+      specification lists its core terms, `vast_4_2` among them.
+  - example: examples/line-item-ctv-bonus.yaml
+    path: /line_item_id
+    kind: invalid
+    value: "weather-app-ctv-bonus"
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which types `line_item_id` as a String: it
+      writes the readable name `weather-app-ctv-bonus`. We propose a UUID for
+      every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-ctv-bonus.yaml
+    path: /properties/available/0
+    kind: invalid
+    value: {"id":"weather-app"}
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for an option's `id`:
+      it writes the readable name `weather-app`. We propose a UUID for every ID
+      a party mints, a catalog entry's `id` included.
+  - example: examples/line-item-ctv-bonus.yaml
+    path: /requires/all_of/0
+    kind: invalid
+    value: "business-daily-display"
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for `all_of[]`: it
+      writes the readable name `business-daily-display`. We propose a UUID for
+      every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-ctv-bonus.yaml
+    path: /requires/all_of/1
+    kind: invalid
+    value: "weather-app-ctv"
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for `all_of[]`: it
+      writes the readable name `weather-app-ctv`. We propose a UUID for every ID
+      a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-ctv-bonus.yaml
+    path: /requires/min_commitment/0/line_item_id
+    kind: invalid
+    value: "business-daily-display"
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for `line_item_id`: it
+      writes the readable name `business-daily-display`. We propose a UUID for
+      every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-ctv.yaml
+    path: /commitment/flight_end
+    kind: invalid
+    value: "2026-12-21"
+    decisions: [D-042]
+    reason: >-
+      The example follows the text, which gives `flight_end` no form: it writes
+      the calendar date `2026-12-21`. We propose an RFC 3339 date-time for every
+      point in time, such as `2026-12-21T00:00:00-05:00`.
+  - example: examples/line-item-ctv.yaml
+    path: /commitment/flight_start
+    kind: invalid
+    value: "2026-10-06"
+    decisions: [D-042]
+    reason: >-
+      The example follows the text, which gives `flight_start` no form: it
+      writes the calendar date `2026-10-06`. We propose an RFC 3339 date-time
+      for every point in time, such as `2026-10-06T00:00:00-04:00`.
+  - example: examples/line-item-ctv.yaml
+    path: /commitment/idempotency_key
+    kind: invalid
+    value: "agency-a-camp1-weather-app-ctv-3b7e0d52"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for `idempotency_key`:
+      it writes the readable name `agency-a-camp1-weather-app-ctv-3b7e0d52`. We
+      propose a UUID for every ID a party mints, such as
+      `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-ctv.yaml
+    path: /commitment/proposal_id
+    kind: invalid
+    value: "examplepub-us-q4-2026-omni"
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for `proposal_id`: it
+      writes the readable name `examplepub-us-q4-2026-omni`. We propose a UUID
+      for every ID a party mints, such as
+      `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-ctv.yaml
+    path: /committed_metrics/0/basis
+    kind: invalid
+    value: "seller_reported"
+    decisions: [D-041]
+    reason: >-
+      The example follows the text, which lists no terms for `basis`: it writes
+      `seller_reported`. We propose namespaced terms in a field until the
+      specification lists its core terms, `seller_reported` among them.
+  - example: examples/line-item-ctv.yaml
+    path: /correlation_id
+    kind: invalid
+    value: "ep-q4-2026-commitment/weather-app-ctv"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which types `correlation_id` as a String: it
+      writes the readable name `ep-q4-2026-commitment/weather-app-ctv`. We
+      propose a UUID for every ID a party mints, such as
+      `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-ctv.yaml
+    path: /creative_delivery/protocol
+    kind: invalid
+    value: "vast_4_2"
+    decisions: [D-041]
+    reason: >-
+      The example follows the text, which lists no terms for `protocol`: it
+      writes `vast_4_2`. We propose namespaced terms in a field until the
+      specification lists its core terms, `vast_4_2` among them.
+  - example: examples/line-item-ctv.yaml
+    path: /line_item_id
+    kind: invalid
+    value: "weather-app-ctv"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which types `line_item_id` as a String: it
+      writes the readable name `weather-app-ctv`. We propose a UUID for every ID
+      a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-ctv.yaml
+    path: /properties/available/0
+    kind: invalid
+    value: {"id":"weather-app"}
+    locks: [main]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for an option's `id`:
+      it writes the readable name `weather-app`. We propose a UUID for every ID
+      a party mints, a catalog entry's `id` included.
+  - example: examples/line-item-ctv.yaml
+    path: /properties/available/0
+    kind: invalid
+    value: {"id":"weather-app","apps":[{"platform":"roku","bundle":"000000","storeurl":"https://channelstore.roku.com/details/000000/weather-app","domain":"weather-app.example"}]}
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for an option's `id`:
+      it writes the readable name `weather-app`. We propose a UUID for every ID
+      a party mints, a catalog entry's `id` included.
+  - example: examples/line-item-display.yaml
+    path: /audiences/available/1
+    kind: invalid
+    value: {"id":"ep:hnw-investors","provenance":"modeled","addressable_scale":1100000}
+    decisions: [D-037, D-041]
+    reason: >-
+      The example follows the text, which states no form for an option's `id`
+      and lists no terms for `provenance`: it writes the readable name
+      `ep:hnw-investors` and the term `modeled`. We propose a UUID for every ID
+      a party mints, a catalog entry's `id` included. We also propose
+      namespaced terms in a field until the specification lists its core terms.
+  - example: examples/line-item-display.yaml
+    path: /audiences/available/2
+    kind: invalid
+    value: {"id":"ep:cfo-finance-leaders","provenance":"first_party","addressable_scale":480000}
+    decisions: [D-037, D-041]
+    reason: >-
+      The example follows the text, which states no form for an option's `id`
+      and lists no terms for `provenance`: it writes the readable name
+      `ep:cfo-finance-leaders` and the term `first_party`. We propose a UUID for
+      every ID a party mints, a catalog entry's `id` included. We also propose
+      namespaced terms in a field until the specification lists its core terms.
+  - example: examples/line-item-display.yaml
+    path: /buyer_supplied/suppression_list/match_method
+    kind: undefined_key
+    value: "ramp_id"
+    decisions: [D-016]
+    reason: >-
+      The specification gives `suppression_list` no structure, so the
+      generated schemas leave it an open object and define none of its keys. The example uses
+      `source`, `size`, and `match_method`, which the specification should
+      define.
+  - example: examples/line-item-display.yaml
+    path: /buyer_supplied/suppression_list/size
+    kind: undefined_key
+    value: 340000
+    decisions: [D-016]
+    reason: >-
+      The specification gives `suppression_list` no structure, so the
+      generated schemas leave it an open object and define none of its keys. The example uses
+      `source`, `size`, and `match_method`, which the specification should
+      define.
+  - example: examples/line-item-display.yaml
+    path: /buyer_supplied/suppression_list/source
+    kind: undefined_key
+    value: "advertiser_crm"
+    decisions: [D-016]
+    reason: >-
+      The specification gives `suppression_list` no structure, so the
+      generated schemas leave it an open object and define none of its keys. The example uses
+      `source`, `size`, and `match_method`, which the specification should
+      define.
+  - example: examples/line-item-display.yaml
+    path: /commitment/flight_end
+    kind: invalid
+    value: "2026-12-21"
+    decisions: [D-042]
+    reason: >-
+      The example follows the text, which gives `flight_end` no form: it writes
+      the calendar date `2026-12-21`. We propose an RFC 3339 date-time for every
+      point in time, such as `2026-12-21T00:00:00-05:00`.
+  - example: examples/line-item-display.yaml
+    path: /commitment/flight_start
+    kind: invalid
+    value: "2026-10-06"
+    decisions: [D-042]
+    reason: >-
+      The example follows the text, which gives `flight_start` no form: it
+      writes the calendar date `2026-10-06`. We propose an RFC 3339 date-time
+      for every point in time, such as `2026-10-06T00:00:00-04:00`.
+  - example: examples/line-item-display.yaml
+    path: /commitment/idempotency_key
+    kind: invalid
+    value: "agency-a-camp1-business-daily-display-8f42c1a9"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for `idempotency_key`:
+      it writes the readable name
+      `agency-a-camp1-business-daily-display-8f42c1a9`. We propose a UUID for
+      every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-display.yaml
+    path: /commitment/proposal_id
+    kind: invalid
+    value: "examplepub-us-q4-2026-omni"
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for `proposal_id`: it
+      writes the readable name `examplepub-us-q4-2026-omni`. We propose a UUID
+      for every ID a party mints, such as
+      `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-display.yaml
+    path: /committed_metrics/0/basis
+    kind: invalid
+    value: "mrc"
+    decisions: [D-041]
+    reason: >-
+      The example follows the text, which lists no terms for `basis`: it writes
+      `mrc`. We propose namespaced terms in a field until the specification
+      lists its core terms, `mrc` among them.
+  - example: examples/line-item-display.yaml
+    path: /correlation_id
+    kind: invalid
+    value: "ep-q4-2026-commitment/business-daily-display"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which types `correlation_id` as a String: it
+      writes the readable name `ep-q4-2026-commitment/business-daily-display`.
+      We propose a UUID for every ID a party mints, such as
+      `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-display.yaml
+    path: /creative_delivery/protocol
+    kind: invalid
+    value: "javascript_tag"
+    decisions: [D-041]
+    reason: >-
+      The example follows the text, which lists no terms for `protocol`: it
+      writes `javascript_tag`. We propose namespaced terms in a field until the
+      specification lists its core terms, `javascript_tag` among them.
+  - example: examples/line-item-display.yaml
+    path: /line_item_id
+    kind: invalid
+    value: "business-daily-display"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which types `line_item_id` as a String: it
+      writes the readable name `business-daily-display`. We propose a UUID for
+      every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-display.yaml
+    path: /materials_due
+    kind: invalid
+    value: "2026-09-24"
+    decisions: [D-017]
+    reason: >-
+      `materials_due` is Timestamp/Offset: an RFC 3339 date-time or an ISO 8601
+      duration. The example writes the calendar date `2026-09-24`, which is
+      neither. The example should write a date-time, or the Type should add a
+      date.
+  - example: examples/line-item-display.yaml
+    path: /measurement_source/available/0/attribution_window
+    kind: invalid
+    value: "30d"
+    decisions: [D-040]
+    reason: >-
+      The example follows the text, which gives `attribution_window` no form: it
+      writes `30d`. We propose an ISO 8601 duration for every length of time,
+      `P30D` here.
+  - example: examples/line-item-display.yaml
+    path: /measurement_source/available/1/attribution_window
+    kind: invalid
+    value: "30d"
+    decisions: [D-040]
+    reason: >-
+      The example follows the text, which gives `attribution_window` no form: it
+      writes `30d`. We propose an ISO 8601 duration for every length of time,
+      `P30D` here.
+  - example: examples/line-item-display.yaml
+    path: /properties/available/0
+    kind: invalid
+    value: {"id":"business-daily","domains":["business-daily.example"]}
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for an option's `id`:
+      it writes the readable name `business-daily`. We propose a UUID for every
+      ID a party mints, a catalog entry's `id` included.
+  - example: examples/line-item-display.yaml
+    path: /properties/available/1
+    kind: invalid
+    value: {"id":"markets-weekly","domains":["markets-weekly.example"]}
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for an option's `id`:
+      it writes the readable name `markets-weekly`. We propose a UUID for every
+      ID a party mints, a catalog entry's `id` included.
+  - example: examples/line-item-display.yaml
+    path: /reporting/available/0/cadence
+    kind: invalid
+    value: "daily"
+    decisions: [D-040]
+    reason: >-
+      The example follows the text, which gives `cadence` no form: it writes
+      `daily`. We propose an ISO 8601 duration for every length of time, `P1D`
+      here.
+  - example: examples/line-item-display.yaml
+    path: /reporting/available/0/delivery_mechanism
+    kind: invalid
+    value: "api"
+    decisions: [D-041]
+    reason: >-
+      The example follows the text, which lists no terms for
+      `delivery_mechanism`: it writes `api`. We propose namespaced terms in a
+      field until the specification lists its core terms, `api` among them.
+  - example: examples/line-item-display.yaml
+    path: /reporting/available/1/cadence
+    kind: invalid
+    value: "daily"
+    decisions: [D-040]
+    reason: >-
+      The example follows the text, which gives `cadence` no form: it writes
+      `daily`. We propose an ISO 8601 duration for every length of time, `P1D`
+      here.
+  - example: examples/line-item-display.yaml
+    path: /reporting/available/1/delivery_mechanism
+    kind: invalid
+    value: "s3"
+    decisions: [D-041]
+    reason: >-
+      The example follows the text, which lists no terms for
+      `delivery_mechanism`: it writes `s3`. We propose namespaced terms in a
+      field until the specification lists its core terms, `s3` among them.
+  - example: examples/line-item-display.yaml
+    path: /terms_ref/sha256
+    kind: invalid
+    value: "<sha256 of the terms document>"
+    locks: [with-open-prs]
+    decisions: [D-003]
+    reason: >-
+      A SHA-256 hash is 64 lowercase hex digits. The example writes the
+      placeholder `<sha256 of the terms document>`, so it doesn't show a
+      hash-pinned `terms_ref`.
+  - example: examples/line-item-rewarded-video.yaml
+    path: /committed_metrics/0/basis
+    kind: invalid
+    value: "mrc"
+    locks: [with-open-prs]
+    decisions: [D-041]
+    reason: >-
+      The example follows the text, which lists no terms for `basis`: it writes
+      `mrc`. We propose namespaced terms in a field until the specification
+      lists its core terms, `mrc` among them.
+  - example: examples/line-item-rewarded-video.yaml
+    path: /committed_metrics/1/basis
+    kind: invalid
+    value: "mrc"
+    locks: [with-open-prs]
+    decisions: [D-041]
+    reason: >-
+      The example follows the text, which lists no terms for `basis`: it writes
+      `mrc`. We propose namespaced terms in a field until the specification
+      lists its core terms, `mrc` among them.
+  - example: examples/line-item-rewarded-video.yaml
+    path: /creative_delivery/protocol
+    kind: invalid
+    value: "vast_4_2"
+    locks: [with-open-prs]
+    decisions: [D-041]
+    reason: >-
+      The example follows the text, which lists no terms for `protocol`: it
+      writes `vast_4_2`. We propose namespaced terms in a field until the
+      specification lists its core terms, `vast_4_2` among them.
+  - example: examples/line-item-rewarded-video.yaml
+    path: /line_item_id
+    kind: invalid
+    value: "puzzle-games-rewarded"
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which types `line_item_id` as a String: it
+      writes the readable name `puzzle-games-rewarded`. We propose a UUID for
+      every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-rewarded-video.yaml
+    path: /measurement_source/available/0/attribution_window
+    kind: invalid
+    value: "30d"
+    locks: [with-open-prs]
+    decisions: [D-040]
+    reason: >-
+      The example follows the text, which gives `attribution_window` no form: it
+      writes `30d`. We propose an ISO 8601 duration for every length of time,
+      `P30D` here.
+  - example: examples/line-item-rewarded-video.yaml
+    path: /measurement_source/available/1/attribution_window
+    kind: invalid
+    value: "30d"
+    locks: [with-open-prs]
+    decisions: [D-040]
+    reason: >-
+      The example follows the text, which gives `attribution_window` no form: it
+      writes `30d`. We propose an ISO 8601 duration for every length of time,
+      `P30D` here.
+  - example: examples/line-item-rewarded-video.yaml
+    path: /placement/instl
+    kind: invalid
+    value: 1
+    locks: [with-open-prs]
+    decisions: [D-039]
+    reason: >-
+      The example follows the text, which writes `instl` as AdCOM's `0` or `1`:
+      it writes `1`. We propose a JSON boolean for every flag, `true` here.
+  - example: examples/line-item-rewarded-video.yaml
+    path: /placement/reward
+    kind: invalid
+    value: 1
+    locks: [with-open-prs]
+    decisions: [D-039]
+    reason: >-
+      The example follows the text, which writes `reward` as AdCOM's `0` or `1`:
+      it writes `1`. We propose a JSON boolean for every flag, `true` here.
+  - example: examples/line-item-rewarded-video.yaml
+    path: /placement/skip
+    kind: invalid
+    value: 0
+    locks: [with-open-prs]
+    decisions: [D-039]
+    reason: >-
+      The example follows the text, which writes `skip` as AdCOM's `0` or `1`:
+      it writes `0`. We propose a JSON boolean for every flag, `false` here.
+  - example: examples/line-item-rewarded-video.yaml
+    path: /properties/available/0
+    kind: invalid
+    value: {"id":"puzzle-pack","name":"Puzzle game pack"}
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for an option's `id`:
+      it writes the readable name `puzzle-pack`. We propose a UUID for every ID
+      a party mints, a catalog entry's `id` included.
+  - example: examples/manifest.json
+    path: /proposals/0
+    kind: invalid
+    value: {"proposal_id":"examplepub-us-q4-2026-omni","version":1,"seller_name":"Example Publisher US","description":"Cross-channel Example Publisher US package spanning display, in-stream video and CTV. Business and financial audience skew, weekday-heavy delivery.","valid_from":"2026-10-01T00:00:00Z","valid_until":"2026-12-31T23:59:59Z","full_url":"https://examplepub.example/openproposal/examplepub-us-q4-2026-omni","line_items":[{"line_item_id":"weather-app-ctv","channel":"ctv","properties":["weather-app"],"formats":{"included":["ctv/instream-15s"]},"pricing":{"cost_method":"CPM","gross_rate":45.0},"committed_metrics":[{"metric":"completion_rate","value":0.95,"basis":"seller_reported"}],"transaction_mechanism":["PRIVATE_AUCTION"]},{"line_item_id":"streaming-audio","channel":"audio","formats":{"included":["audio/produced-30s"]},"pricing":{"cost_method":"CPM","gross_rate":18.0},"committed_metrics":[{"metric":"completion_rate","value":0.92,"basis":"seller_reported"}],"transaction_mechanism":["PREFERRED_DEAL"]}]}
+    locks: [with-open-prs]
+    decisions: [D-028]
+    reason: >-
+      § 2.1 says a summary MUST contain, from the parent proposal,
+      `linked_execution`, and § 2.3 says each `proposals[]` entry carries the
+      proposal's summary; this entry gives no `linked_execution`. The example
+      should give it.
+  - example: examples/manifest.json
+    path: /proposals/0/line_items
+    kind: undefined_key
+    value: [{"line_item_id":"weather-app-ctv","channel":"ctv","properties":["weather-app"],"formats":{"included":["ctv/instream-15s"]},"pricing":{"cost_method":"CPM","gross_rate":45},"committed_metrics":[{"metric":"completion_rate","value":0.95,"basis":"seller_reported"}],"transaction_mechanism":["PRIVATE_AUCTION"]},{"line_item_id":"streaming-audio","channel":"audio","formats":{"included":["audio/produced-30s"]},"pricing":{"cost_method":"CPM","gross_rate":18},"committed_metrics":[{"metric":"completion_rate","value":0.92,"basis":"seller_reported"}],"transaction_mechanism":["PREFERRED_DEAL"]}]
+    locks: [with-open-prs]
+    decisions: [D-028]
+    reason: >-
+      § 2.3 says each `proposals[]` entry carries the summaries of its line
+      items, but names no key for them, so the generated schemas leave the
+      entry open and define none. The example calls the key `line_items`, which the
+      specification should name.
+  - example: examples/manifest.json
+    path: /proposals/0/proposal_id
+    kind: invalid
+    value: "examplepub-us-q4-2026-omni"
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which types `proposal_id` as a String: it
+      writes the readable name `examplepub-us-q4-2026-omni`. We propose a UUID
+      for every ID a party mints, such as
+      `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/proposal.yaml
+    path: /proposal_id
+    kind: invalid
+    value: "examplepub-us-q4-2026-omni"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which types `proposal_id` as a String: it
+      writes the readable name `examplepub-us-q4-2026-omni`. We propose a UUID
+      for every ID a party mints, such as
+      `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
+  - example: examples/line-item-audio.yaml
+    path: /production/included/0
+    kind: invalid
+    value: "buyer_supplied"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which gives a production option no `id`: the
+      example writes one, the readable name `buyer_supplied`, and `included[]`
+      names the option by it. We propose a UUID `id` for every object option, as
+      for every ID a party mints, so `included[]` names the option by that UUID.
+  - example: examples/line-item-audio.yaml
+    path: /production/pricing
+    kind: invalid
+    value: {"seller_built": {"delta_flat": 12000}}
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which gives a production option no `id`: the
+      example writes one, the readable name `seller_built`, and the `pricing`
+      keys name the option by it. We propose a UUID `id` for every object
+      option, as for every ID a party mints, so the `pricing` keys name the
+      option by that UUID.
+  - example: examples/line-item-ctv-bonus.yaml
+    path: /properties/included/0
+    kind: invalid
+    value: "weather-app"
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for an option's `id`:
+      `included[]` names the property by the readable ID `weather-app` its
+      `available[]` gives it. We propose a UUID for every ID a party mints, an
+      option's `id` included, so `included[]` names the property by that UUID.
+  - example: examples/line-item-ctv.yaml
+    path: /properties/included/0
+    kind: invalid
+    value: "weather-app"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for an option's `id`:
+      `included[]` names the property by the readable ID `weather-app` its
+      `available[]` gives it. We propose a UUID for every ID a party mints, an
+      option's `id` included, so `included[]` names the property by that UUID.
+  - example: examples/line-item-display.yaml
+    path: /audiences/included/0
+    kind: invalid
+    value: "ep:smb-decision-makers"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for an option's `id`:
+      `included[]` writes the readable ID `ep:smb-decision-makers`. We propose a
+      UUID for every ID a party mints. The entry names the option given as the
+      catalog reference
+      `examplepub/audiences/smb-decision-makers@3`,
+      though, and that option carries no `id`, so a UUID alone doesn't name it
+      either. What names an option given as a catalog reference is a point the
+      text leaves open, listed with the examples that disagree with the text.
+  - example: examples/line-item-display.yaml
+    path: /audiences/pricing
+    kind: invalid
+    value: {"ep:hnw-investors": {"delta_cpm": 4}, "ep:cfo-finance-leaders": {"delta_cpm": 6.5}}
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for an option's `id`:
+      the `pricing` keys name the audiences by the readable IDs
+      `ep:cfo-finance-leaders` and `ep:hnw-investors` their `available[]`
+      gives them. We propose a UUID for every ID a party mints, an option's
+      `id` included, so the `pricing` keys name each audience by that UUID.
+  - example: examples/line-item-display.yaml
+    path: /measurement_source/included/0
+    kind: invalid
+    value: "IAS"
+    decisions: [D-037, D-047]
+    reason: >-
+      The example follows the text, which gives a measurement source option no
+      `id`: `included[]` names the option by its `vendor`, `IAS`, which no
+      option of `available[]` carries as its `id`. We propose an `id` on every
+      object option, a UUID as for every ID a party mints, so that
+      `included[]` names the option by that UUID.
+  - example: examples/line-item-display.yaml
+    path: /properties/included/0
+    kind: invalid
+    value: "business-daily"
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for an option's `id`:
+      `included[]` names the property by the readable ID `business-daily` its
+      `available[]` gives it. We propose a UUID for every ID a party mints, an
+      option's `id` included, so `included[]` names the property by that UUID.
+  - example: examples/line-item-display.yaml
+    path: /properties/pricing
+    kind: invalid
+    value: {"markets-weekly": {"delta_cpm": 2}}
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for an option's `id`:
+      the `pricing` keys name the property by the readable ID `markets-weekly`
+      its `available[]` gives it. We propose a UUID for every ID a party mints,
+      an option's `id` included, so the `pricing` keys name the property by that
+      UUID.
+  - example: examples/line-item-display.yaml
+    path: /reporting/included/0
+    kind: invalid
+    value: "aggregate"
+    decisions: [D-037, D-047]
+    reason: >-
+      The example follows the text, which gives a reporting option no `id`:
+      `included[]` names the option by its `feed_type`, `aggregate`, which no
+      option of `available[]` carries as its `id`. We propose an `id` on every
+      object option, a UUID as for every ID a party mints, so that
+      `included[]` names the option by that UUID.
+  - example: examples/line-item-display.yaml
+    path: /reporting/pricing
+    kind: invalid
+    value: {"log_level": {"delta_flat": 2500}}
+    decisions: [D-037, D-047]
+    reason: >-
+      The example follows the text, which gives a reporting option no `id`:
+      the `pricing` keys name the option by its `feed_type`, `log_level`. We
+      propose an `id` on every object option, a UUID as for every ID a party
+      mints, so that the `pricing` keys name the option by that UUID.
+  - example: examples/line-item-rewarded-video.yaml
+    path: /measurement_source/included/0
+    kind: invalid
+    value: "IAS"
+    locks: [with-open-prs]
+    decisions: [D-037, D-047]
+    reason: >-
+      The example follows the text, which gives a measurement source option no
+      `id`: `included[]` names the option by its `vendor`, `IAS`, which no
+      option of `available[]` carries as its `id`. We propose an `id` on every
+      object option, a UUID as for every ID a party mints, so that
+      `included[]` names the option by that UUID.
+  - example: examples/line-item-rewarded-video.yaml
+    path: /properties/included/0
+    kind: invalid
+    value: "puzzle-pack"
+    locks: [with-open-prs]
+    decisions: [D-037]
+    reason: >-
+      The example follows the text, which states no form for an option's `id`:
+      `included[]` names the property by the readable ID `puzzle-pack` its
+      `available[]` gives it. We propose a UUID for every ID a party mints, an
+      option's `id` included, so `included[]` names the property by that UUID.
+  - example: examples/line-item-display.yaml
+    path: /measurement_source/available/0
+    kind: invalid
+    value: {"vendor": "IAS", "attribution_window": "30d"}
+    decisions: [D-047]
+    reason: >-
+      The example follows the text, which lists a measurement source option's
+      members as `vendor`, `attribution_window`, and `qualifier`: this option,
+      from `IAS`, has no `id`. We propose an `id`, REQUIRED, on every
+      object option, so that `included[]` and the `pricing` keys name the
+      option by it.
+  - example: examples/line-item-display.yaml
+    path: /measurement_source/available/1
+    kind: invalid
+    value: {"vendor": "DoubleVerify", "attribution_window": "30d"}
+    decisions: [D-047]
+    reason: >-
+      The example follows the text, which lists a measurement source option's
+      members as `vendor`, `attribution_window`, and `qualifier`: this option,
+      from `DoubleVerify`, has no `id`. We propose an `id`, REQUIRED, on every
+      object option, so that `included[]` and the `pricing` keys name the
+      option by it.
+  - example: examples/line-item-display.yaml
+    path: /reporting/available/0
+    kind: invalid
+    value: {"feed_type": "aggregate", "cadence": "daily", "delivery_mechanism": "api"}
+    decisions: [D-047]
+    reason: >-
+      The example follows the text, which lists a reporting option's members
+      without an `id`: this `aggregate` report has none. We propose an `id`,
+      REQUIRED, on every object option, so that `included[]` and the
+      `pricing` keys name the option by it.
+  - example: examples/line-item-display.yaml
+    path: /reporting/available/1
+    kind: invalid
+    value: {"feed_type": "log_level", "cadence": "daily", "delivery_mechanism": "s3"}
+    decisions: [D-047]
+    reason: >-
+      The example follows the text, which lists a reporting option's members
+      without an `id`: this `log_level` report has none. We propose an `id`,
+      REQUIRED, on every object option, so that `included[]` and the
+      `pricing` keys name the option by it.
+  - example: examples/line-item-rewarded-video.yaml
+    path: /measurement_source/available/0
+    kind: invalid
+    value: {"vendor": "IAS", "attribution_window": "30d"}
+    locks: [with-open-prs]
+    decisions: [D-047]
+    reason: >-
+      The example follows the text, which lists a measurement source option's
+      members as `vendor`, `attribution_window`, and `qualifier`: this option,
+      from `IAS`, has no `id`. We propose an `id`, REQUIRED, on every
+      object option, so that `included[]` and the `pricing` keys name the
+      option by it.
+  - example: examples/line-item-rewarded-video.yaml
+    path: /measurement_source/available/1
+    kind: invalid
+    value: {"vendor": "DoubleVerify", "attribution_window": "30d"}
+    locks: [with-open-prs]
+    decisions: [D-047]
+    reason: >-
+      The example follows the text, which lists a measurement source option's
+      members as `vendor`, `attribution_window`, and `qualifier`: this option,
+      from `DoubleVerify`, has no `id`. We propose an `id`, REQUIRED, on every
+      object option, so that `included[]` and the `pricing` keys name the
+      option by it.
+  - example: examples/line-item-display.yaml
+    path: /audiences/included/0
+    kind: rule
+    rule: constructor:Selectable:options-named
+    value: "ep:smb-decision-makers"
+    decisions: [D-007]
+    reason: >-
+      The text doesn't say what names an option given as a `catalog_ref`;
+      `included[]` names the option `examplepub/audiences/smb-decision-makers@3`
+      by `ep:smb-decision-makers`, which no option of `available[]` is or
+      carries as its `id`. The text should say what names such an option, and
+      the example should name it that way.
+  - example: examples/line-item-display.yaml
+    path: /measurement_source/included/0
+    kind: rule
+    rule: constructor:Selectable:options-named
+    value: "IAS"
+    decisions: [D-047]
+    reason: >-
+      The example follows the text, which gives a measurement source option no
+      `id`: `included[]` names the option by its `vendor`, `IAS`, which no
+      option of `available[]` carries as its `id`. We propose an `id` on every
+      object option, a UUID as for every ID a party mints, so that
+      `included[]` names the option by that UUID.
+  - example: examples/line-item-display.yaml
+    path: /reporting/included/0
+    kind: rule
+    rule: constructor:Selectable:options-named
+    value: "aggregate"
+    decisions: [D-047]
+    reason: >-
+      The example follows the text, which gives a reporting option no `id`:
+      `included[]` names the option by its `feed_type`, `aggregate`, which no
+      option of `available[]` carries as its `id`. We propose an `id` on every
+      object option, a UUID as for every ID a party mints, so that
+      `included[]` names the option by that UUID.
+  - example: examples/line-item-display.yaml
+    path: /reporting/pricing/log_level
+    kind: rule
+    rule: constructor:Selectable:options-named
+    value: {"delta_flat": 2500}
+    decisions: [D-047]
+    reason: >-
+      The example follows the text, which gives a reporting option no `id`:
+      the `pricing` key names the option by its `feed_type`, `log_level`,
+      which no option of `available[]` carries as its `id`. We propose an `id`
+      on every object option, so that the `pricing` keys name the option by
+      it.
+  - example: examples/line-item-rewarded-video.yaml
+    path: /measurement_source/included/0
+    kind: rule
+    rule: constructor:Selectable:options-named
+    value: "IAS"
+    locks: [with-open-prs]
+    decisions: [D-047]
+    reason: >-
+      The example follows the text, which gives a measurement source option no
+      `id`: `included[]` names the option by its `vendor`, `IAS`, which no
+      option of `available[]` carries as its `id`. We propose an `id` on every
+      object option, a UUID as for every ID a party mints, so that
+      `included[]` names the option by that UUID.
+undecided:
+  - example: code:5.5:1
+    path: ""
+    rule: rule:5.5:16494a1a
+    locks: [with-open-prs]
+    decisions: [D-035]
+    reason: >-
+      The § 5.5 block shows a `list_ref` with its `sha256` and leaves out the
+      line item's `status`, so whether the reference is resolved at `agreed`
+      turns on a status the block doesn't show.
+  - example: examples/line-item-ctv-bonus.yaml
+    path: ""
+    rule: rule:5.2:f3d3f9e8
+    locks: [with-open-prs]
+    decisions: [D-035]
+    reason: >-
+      `plcmt` is REQUIRED for video on `channel` `ctv`, and this `ctv` line
+      item gives none. No field says whether its ads are video: its format ID
+      `ctv/instream-15s` is namespaced by channel, the format registry has no
+      `ctv/*` entries, and the text lists no delivery protocols.

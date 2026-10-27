@@ -1,0 +1,112 @@
+format: 1
+id: D-034
+status: proposed
+kind: gap
+author: agent
+question: What change does each mutability rule allow, between two versions and the party that made it, where the specification states the rule only in prose?
+covers:
+  - ir: marker:3:immutable
+    digest: 36e4c2830d95e3c4ae4166cdaccae23edbe3bfa8a26898faea72ba1cb8e37586
+    quote: "`immutable` | Set once at creation. Neither party may change it."
+  - ir: marker:3:seller-set
+    digest: 143411b52aa9e85874cc5f79024d330988c510ddf7f2981d59408e54a8730a60
+    quote: "`seller-set` | The seller sets it and MAY revise it while status is `draft` or `published`. The buyer cannot change it directly."
+  - ir: marker:3:selectable
+    digest: 9d4920aaf4e7581b9e328b70600205e70277c7ca1a1f6275a8736c157cd1999d
+    quote: "`selectable` | The buyer chooses from a seller-declared set. Each option MAY carry a price delta. Resolves without seller assent."
+  - ir: marker:3:settable
+    digest: 66671c35883697ab396f64f940b5566cca0b389bef1aa9fcaed09f2b8c20d961
+    quote: "`settable` | The buyer supplies a value within seller-declared bounds. Resolves without seller assent."
+  - ir: marker:3:supplied
+    digest: ef075b4b9dcb9458ccaa36725478dc9e802f29a2ecefe182844fc36f506f69c2
+    quote: "`supplied` | The buyer provides data or an artifact. The seller does not pre-populate it."
+  - ir: marker:3:requestable
+    digest: 0b447aa32ebfda424aa6e3d5c1f9e47d6189e495400007b71e0caba46fd695f5
+    quote: "`requestable` | The buyer MAY ask for a value outside the declared space. Requires explicit seller assent."
+  - ir: marker:3:derived
+    digest: 7780967a402373bc1adc17783a9a589c88cb96424ef5908103565641580781df
+    quote: "`derived` | Computed from other fields. Neither party sets it directly."
+  - ir: block:5.6.2:1/values:1
+    digest: c4f05bca19873a07f8a165ff6a69d25967eec96b3611c0dba1accd7c5c24b3fb
+    quote: "`expired` | `released` | `converted`"
+  - ir: sentence:5.6.2:516faad1
+    digest: 2a548d3ef33b3aafd2fa6449fa5f767298acc8696d23a9f243e3c115c77bfc8d
+    quote: "Transitions: `none` → `requested` → `held` → (`expired` | `released` | `converted`)."
+  - ir: sentence:5.6.2:774f52b4
+    digest: 11142c151ba5ff5f5862e36d05ce4337272c6891f441ebdddeb2c30fdac74eef
+    quote: "`converted` is terminal and occurs when the line item reaches `agreed`."
+  - ir: rule:4.1:8e9aacb8
+    digest: 089fde20d5aa0c8c4d3ea3675f3ba09cf81f4d4a9615d0a627bee1cb3f823dba
+    quote: Entries MUST NOT be edited or removed
+  - ir: rule:5.4:2eaa294f
+    digest: 61f09f4e064e43f2fa580ac4cbf4d7d5c34bd64f2539c58b40351900d38338fd
+    quote: A buyer MAY request a later date
+  - ir: rule:5.7:4994173c
+    digest: 49df828c767ca4a88396c5d0d566a026506a90ae23eec522d12849b159e6aff6
+    quote: Seller declares a ceiling; a buyer MAY request above it
+  - ir: rule:5.8:59a01393
+    digest: aac0652bc71ae2e1eb1544ac8cbd25d20ebb31022cfcae8997d55c54c49ad99a
+    quote: "`terms_ref` MUST be hash-pinned and frozen at `agreed`."
+    locks:
+      - with-open-prs
+options:
+  - id: narrow-reading
+    summary: >-
+      Read each rule as narrowly as its words allow, and give it the vectors
+      that reading decides:
+
+      - A field's status is the status of the document that holds it.
+
+      - A settable value is bounds the buyer narrows.
+
+      - Seller assent is the seller's version.
+
+      - A MAY grants only the change it names.
+
+      - A derived field changes only with the fields it is computed from.
+  - id: no-vectors
+    summary: Leave the prose-only mutability rules without vectors until the specification states them precisely.
+chosen: narrow-reading
+rationale: >-
+  Type rules § 9 gives every rule a valid and an invalid vector, and a
+  mutability rule's vector is a pair of versions plus the acting party, so
+  leaving these rules without vectors fails the gate. The vectors read each
+  rule as follows. `immutable`: the value never changes, and a version that
+  first sets it after creation changes it. `seller-set`: only the seller
+  changes the value, and only while the status of the document that holds the
+  field, the line item or the proposal, is `draft` or `published`.
+  `selectable`: the buyer changes `included[]` and leaves `available[]`,
+  `pricing`, and `max_select`, the seller-declared set, as they are.
+  `settable`: in draft 1 a settable field holds only its bounds (D-018), so
+  the buyer's value is bounds within the seller's: `allowed[]` a subset of
+  the seller's. `supplied`: the buyer sets the value, and a seller's version
+  that sets it pre-populates it. `requestable`: a buyer's version that changes
+  the value is a request; the request takes effect only in a version the
+  seller makes, so a buyer can't grant its own hold request (`requested` to
+  `held`). `derived`: neither party changes the value on its own, so a
+  version that changes it and nothing else sets it directly. A MAY grants
+  only the change it names: a buyer may request a later `materials_due`, not
+  an earlier one, and a `committed_metrics[]` value above the seller's
+  ceiling, not below it. `negotiation_history[]` keeps every entry of the
+  earlier version, unchanged and in order, and may add entries after them.
+  The hold `state` moves only along `none` → `requested` → `held` →
+  (`expired` | `released` | `converted`), whichever party acts, and `expired`,
+  `released`, and `converted` are terminal. `terms_ref` is hash-pinned when it
+  carries `sha256`, and frozen when no version whose status is `agreed`
+  changes it.
+feedback: >-
+  State each mutability rule as a check on two versions and the acting party.
+  Also say:
+
+  - whose status the `seller-set` rule reads
+
+  - where a settable field holds the buyer's value
+
+  - how a version shows seller assent to a request
+
+  - whether a buyer may ask for an earlier `materials_due` or a lower committed
+  metric
+
+  - which party may move the hold `state`
+
+  - whether `expired` and `released` are terminal, as `converted` is

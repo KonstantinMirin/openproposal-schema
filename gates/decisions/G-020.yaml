@@ -1,0 +1,73 @@
+format: 1
+id: G-020
+date: 2026-10-26
+question: Which gates change when a selectable field's `included[]` and `pricing` keys are typed by what names an option, the option's own type or its UUID `id`?
+decision: >-
+  `Selectable` takes a second parameter, `K`, the type that names an option
+  in `included[]` and the `pricing` keys, and a parameter may say which
+  parameter's options it names (`names`). The constructor check fails a use
+  whose `K` isn't `T` for an option whose values are strings, a string
+  primitive or a vocabulary, or isn't `Uuid` for any other option, the `id`
+  the seller mints (D-007, D-037); two fixtures name an object option by an
+  external ID and a format by an external ID. Every use in the mapping gives
+  `K`: the format IDs are checked in `formats.included[]` and its `pricing`
+  keys too, and the property, audience, production, measurement source,
+  reporting, cancellation, and exclusivity options are named by a UUID. The
+  `Selectable` vectors add a format ID without its channel in `included[]`
+  and in a `pricing` key, both invalid. The examples gate rests a map whose
+  key its key type rejects on the key type's elements, and records 13 new
+  findings, 10 on `main` and 13 with the open PRs, where an example names an
+  object option by a readable name or by another member, each under D-037.
+  The SDKs' `Selectable` generic takes `K`. The tests check the copy's
+  `included[]` and `pricing`, the `K` check, and the SDK expressions.
+rationale: >-
+  The slot said an object option is named by its `id`, which is a UUID, but
+  typed every name `ExternalId`, so no name was checked at all. Each name now
+  validates as what it names, so a schema rejects names it accepted before,
+  and only where the text or a decision says what the name is; the examples
+  that disagree are recorded findings, not exemptions; the constructor check
+  gains a failure and two fixtures; and no gate's test floor falls, so no
+  gate is weaker.
+accepts:
+  - { gate: comparison, fingerprint: dd8caa578dbf1ce1f9cb6ec5011bfc6630115b080687bf13a2c9358c7e2f61d7 }
+  - { gate: constructor-sources, fingerprint: 7fc71d8e0eb3fdd0280b0de0bfaef8b745193f3f0defc1150ac760855179bfd1 }
+  - { gate: constructors-check, fingerprint: 64474fe2e59172cad7261f00fa75ef5e7874d0ec2e01458c590172f8f3ede3c3 }
+  - { gate: constructors-load, fingerprint: 5f1e5959547c5064e979fe33102a4673f8fcfded280a16e7a817b2bfc96349d6 }
+  - { gate: convention-beside-reference, fingerprint: 6c4dcb3b0d5e7ca24041d5331b7a1aa64fce78559371afa13429a38cb00e0bab }
+  - { gate: convention-inline, fingerprint: aac8498eb84f57215c0b33533fe877b353556ceed800cce2e5ace5e60c6786d0 }
+  - { gate: convention-keywords, fingerprint: 90bd6f3243530c4221265c6821186bbe163077912b0066afe29679c7cfdb0eb9 }
+  - { gate: convention-layers, fingerprint: 4198921603860967b697d2318ccaf93e0775d2a1b9530ccb2bdaeb68972f430e }
+  - { gate: convention-lists, fingerprint: d8de0783b642516e0041ad8ed5aea09154dec8f206e2c9bb9ba60def4a219ddd }
+  - { gate: convention-modules, fingerprint: eaf0d2eb778307235a127ad3a27bbd80e400411bc46ee5d4225afa8df4959a7a }
+  - { gate: convention-unions, fingerprint: c91d9470a96772023fb8d4db0896bad030b4b4bbf69db454d9d49dc087b83014 }
+  - { gate: corpus-generates, fingerprint: def22a018d79e8a43114b07a1af3ad7ca36ed497b72a43dd0f6093090486bcbd }
+  - { gate: corpus-isolation, fingerprint: c335f0e65c33c27cf203e60f006061b586bf280e0c9fb230cab92d7464f5dcdd }
+  - { gate: domains-homonyms, fingerprint: 44548bcf715bfbda63b88008f3003cfee94e8992faaa40d8b19486c6c3b71d04 }
+  - { gate: domains-properties, fingerprint: 2b1dd679613f2d1c63ec6fe272bc55228ad80abe6c2bc824690b2fe435aea895 }
+  - { gate: domains-used, fingerprint: 3ea91fa849f107845e6a109900a57d89cf6e38a1a44db8106460d93c4cc5bbd8 }
+  - { gate: duplication-kernel, fingerprint: ff8b128458fd9b75b05894b7c0f8d0691c2dee77b020d8cac96cf180d9be2327 }
+  - { gate: duplication-model, fingerprint: 5b8703c87618a9777be8e3d96fae768c0921c338641a5c694a73e8ef39caee4c }
+  - { gate: examples-listing, fingerprint: 7e2d99eb4416dab768aab3f717e9ecc840c53d3bd3d92b5117f85990f1a86a93 }
+  - { gate: examples-validate, fingerprint: 684cbf9d4d072529c9e7f8fd74c2f359c70f0d81fc9e3a290b7ba03122cb9830 }
+  - { gate: feedback, fingerprint: b8140ecd069c71e84bc97aee5db998ead3d47fca30f5011b8179a9121f1a18bc }
+  - { gate: fidelity, fingerprint: 035c8a78611505d3ab099731c229386fc2a4137a5d1fde86e7d82f4669bcd21a }
+  - { gate: frozen-releases, fingerprint: 5dc00de48f402248dfb19002aa81f65c3d0439cbd44e562531dc505914a413ab }
+  - { gate: frozen-reviewed, fingerprint: cdf81afa38e3849bf27d8b888707e9e79c570a5d17ddd835cee3ddbd9760fbe6 }
+  - { gate: map-drift, fingerprint: 47503ecd575ecaaf48f74d4606ef73e267b33a26efb24f2d5072c2e312c328a6 }
+  - { gate: mapping-bijection, fingerprint: cc8aa45dee5817d31c10df228b41fe79eab73da23151344e263bea0dae695db3 }
+  - { gate: mapping-constructors, fingerprint: f4cc7e6e0b760c6ecd9b63b2fc0a32ddc5cb175d4bf035fe321e11c64ec6e0f6 }
+  - { gate: mapping-location, fingerprint: ddc9d65c57ebfe46cd4a8a3a5feb4381f469c7d5d7fa12b58d32e4cf8f32a78f }
+  - { gate: mapping-rules, fingerprint: 527d6a84fc8879d8203daf944ee346718048b6b91975dbea35cd9f3cd3d76545 }
+  - { gate: model-resolves, fingerprint: ae0ae37d76b17356c782295ebcc0d2a5ae27b80e71bc3cc63850e167af730d4a }
+  - { gate: modules-depends, fingerprint: 1a56cd1e69ef4bb6f5ac7fecbcd60127dd710bfa1eaa4624c19e63dc998d6833 }
+  - { gate: nesting, fingerprint: 58ecc00b3b06eef550155e2a14ba3a60b161fbeeb38b90693678bf26b833f6a3 }
+  - { gate: npm-test, fingerprint: 9bcf75b8dd1ce9f61b0fb2ccd802df6b8da18cc25ea5056f662a19695be079a7 }
+  - { gate: release-breaking, fingerprint: 6ff0322fb472d506d9fce7edf3c70cdf2309172912fcacb57f86feed4214452f }
+  - { gate: release-builds, fingerprint: 83542383b24bec054e11b0b046f00237dd9c15d4fff2bb085415c9b288ac11fb }
+  - { gate: release-digests, fingerprint: b310e1b89e2a1c1747bdfaad0d2cae96757c7c64d85d7f77de08deff8c95a4d2 }
+  - { gate: round-trip, fingerprint: 9167c0590d5f95d84eb37359e8a3d782ec32c6f8521637119a661454a34dcaf2 }
+  - { gate: rule-vectors, fingerprint: 76146a0c8ba99f21ada46e790f340f20a198e74098de9b4c057233e91bf5bd29 }
+  - { gate: rules-emit, fingerprint: 38a5b5bad5d1e8e7b55277375b87ad2999953867f9db7571e5eb40d5165f68d0 }
+  - { gate: schemas-conventions, fingerprint: 5dfcbcaadcd6747801728afb05cceb73dcdc50e08eb41fb5bb3b2cad64d45807 }
+  - { gate: schemas-emit, fingerprint: 55765812370bd52304e2af9a2a597407495496a55776162e7299b56597d0adca }
+  - { gate: sdk-generate, fingerprint: aa93dc47afa8bc43350a0e444303e3cf7e489c53a245e0dc49856839b1823b45 }

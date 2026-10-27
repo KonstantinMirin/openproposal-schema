@@ -1,0 +1,36 @@
+format: 1
+id: G-048
+date: 2026-10-26
+question: How does the feedback gate hold the generated gist to working links into the specification, and to the record lists and lock facts the details now show?
+decision: >-
+  The feedback gate also renders the details and checks their lint tables:
+  each finding with a place on `main` links at least one of its lines, and
+  every link is the permalink of the snapshot's specification at the
+  default lock's full commit, at a line the file has, that isn't blank, and
+  that is under the heading of the section the link names. A finding about
+  a whole table has no line, and the gate's note counts it. The gate also
+  fails on a list item in a record's folded text with no blank line before
+  it, which YAML would fold into the line above. Four fixtures move a
+  finding past the end of the specification, move one into another section,
+  give the default lock a branch name for a commit, and give a record a
+  list item with no blank line. A lock that merges PRs now names the day
+  its heads were live, `heads_on`, and what the integration changed beside
+  the merges, `edits`, and the loader fails on either one without
+  `merge_order`, on a lock with `merge_order` and no `heads_on`, and on a
+  date the calendar doesn't have. The gates that load a lock read the
+  loader, and the test suite gains five tests, so their fingerprints
+  change with no change to what they check.
+rationale: >-
+  The gist the generator writes links each finding to its line, so a
+  broken or moved link would mislead the working group; the gate now fails
+  on one. Every earlier check stays, the loader rejects more, and the
+  fixtures and tests are added, so no gate is weaker.
+accepts:
+  - { gate: committed-files, fingerprint: 0ce7dc92fcdf7bddc78142c91410e4f3c670f5016f53d5c4fdd94c9b2e1403a0 }
+  - { gate: comparison, fingerprint: 432d18152d248e98ce15949bc4149aaec2c399d33c37cee2c2281ecd297e688d }
+  - { gate: examples-listing, fingerprint: b28bc184168517931f07291d92114bb445b98dfa6caa6e9a17144124da476677 }
+  - { gate: extraction, fingerprint: 6e283c409264cab0f50fc79dbc73f647461461a50a3ee6331f7cbd0ff390b292 }
+  - { gate: feedback, fingerprint: a773ce2c003199a6262fe9692d3c9b47f182763d3426440857e43eca85a97180 }
+  - { gate: npm-test, fingerprint: 5c70b88698d2bbea166c5686671fc770db7b82cf41bc7e7e01445197b25ca60c }
+  - { gate: snapshot, fingerprint: 657bf94f3c5a23b71c0e80f3f15ab231d87a49631b2ea48242b1eb009b388902 }
+  - { gate: spec-input, fingerprint: af6a0a67b738a25c9254e90ecc8c28878f6358c2b20fe1d51cd80bcd52ef9e3c }

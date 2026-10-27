@@ -1,0 +1,141 @@
+# Rule vectors for the kernel's sections: the § 3 mutability markers, each
+# a rule owned by the `Marker` vocabulary (type rules § 2), and the § 2.2
+# catalog-reference rule. A marker rule's vectors are pairs of versions of a
+# line item and the party that made the change (type rules § 9). The schema
+# accepts every payload; the rule alone decides each vector. Regenerate a
+# digest with `npm run cite -- <rule ID>`.
+format: 1
+module: kernel
+rules:
+  - rule: marker:3:immutable
+    digest: 36e4c2830d95e3c4ae4166cdaccae23edbe3bfa8a26898faea72ba1cb8e37586
+    decision: D-034
+    type: LineItem
+    valid:
+      - party: seller
+        before: { line_item_id: "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01", channel: display, status: draft, min_spend: 10000 }
+        after: { line_item_id: "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01", channel: display, status: draft, min_spend: 20000 }
+    invalid:
+      - party: seller
+        before: { line_item_id: "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01", status: draft }
+        after: { line_item_id: "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c02", status: draft }
+      - party: buyer
+        before: { line_item_id: "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01", channel: display }
+        after: { line_item_id: "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01", channel: video }
+      - party: seller
+        before: { status: draft }
+        after: { line_item_id: "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01", status: draft }
+
+  - rule: marker:3:seller-set
+    digest: 143411b52aa9e85874cc5f79024d330988c510ddf7f2981d59408e54a8730a60
+    decision: D-034
+    type: LineItem
+    valid:
+      - party: seller
+        before: { status: draft, min_spend: 10000 }
+        after: { status: draft, min_spend: 20000 }
+      - party: seller
+        before: { status: published, visibility: public }
+        after: { status: published, visibility: named }
+    invalid:
+      - party: buyer
+        before: { status: draft, min_spend: 10000 }
+        after: { status: draft, min_spend: 5000 }
+      - party: seller
+        before: { status: agreed, min_spend: 10000 }
+        after: { status: agreed, min_spend: 20000 }
+      - party: seller
+        before: { status: under_review, visibility: public }
+        after: { status: under_review, visibility: named }
+
+  - rule: marker:3:selectable
+    digest: 9d4920aaf4e7581b9e328b70600205e70277c7ca1a1f6275a8736c157cd1999d
+    decision: D-034
+    type: LineItem
+    valid:
+      - party: buyer
+        before: { formats: { available: ["display/300x250", "display/970x250"], included: ["display/300x250"] } }
+        after: { formats: { available: ["display/300x250", "display/970x250"], included: ["display/970x250"] } }
+    invalid:
+      - party: buyer
+        before: { formats: { available: ["display/300x250"], included: ["display/300x250"] } }
+        after: { formats: { available: ["display/300x250", "display/970x250"], included: ["display/300x250"] } }
+      - party: buyer
+        before: { formats: { available: ["display/300x250", "display/970x250"], included: ["display/300x250"], max_select: 1 } }
+        after: { formats: { available: ["display/300x250", "display/970x250"], included: ["display/300x250"], max_select: 2 } }
+
+  - rule: marker:3:settable
+    digest: 66671c35883697ab396f64f940b5566cca0b389bef1aa9fcaed09f2b8c20d961
+    decision: D-034
+    type: LineItem
+    valid:
+      - party: buyer
+        before: { device: { allowed: [phone, tablet, connected_tv] } }
+        after: { device: { allowed: [phone] } }
+    invalid:
+      - party: buyer
+        before: { device: { allowed: [phone] } }
+        after: { device: { allowed: [phone, connected_tv] } }
+
+  - rule: marker:3:supplied
+    digest: ef075b4b9dcb9458ccaa36725478dc9e802f29a2ecefe182844fc36f506f69c2
+    decision: D-034
+    type: LineItem
+    valid:
+      - party: buyer
+        before: { line_item_id: "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01" }
+        after: { line_item_id: "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01", buyer_supplied: { segments: [seg-1] } }
+    invalid:
+      - party: seller
+        before: { line_item_id: "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01" }
+        after: { line_item_id: "3f6c2a10-5b7e-4c1d-9a8e-2b4d6f8a0c01", buyer_supplied: { segments: [seg-1] } }
+
+  - rule: marker:3:requestable
+    digest: 0b447aa32ebfda424aa6e3d5c1f9e47d6189e495400007b71e0caba46fd695f5
+    decision: D-034
+    type: LineItem
+    valid:
+      - party: buyer
+        before: { hold_status: { state: none } }
+        after: { hold_status: { state: requested } }
+      - party: seller
+        before: { hold_status: { state: requested } }
+        after: { hold_status: { state: held, hold_expires_at: "2026-11-01T00:00:00Z" } }
+      - party: buyer
+        before: { materials_due: "2026-11-01T17:00:00Z" }
+        after: { materials_due: "2026-11-08T17:00:00Z" }
+    invalid:
+      - party: buyer
+        before: { hold_status: { state: requested } }
+        after: { hold_status: { state: held, hold_expires_at: "2026-11-01T00:00:00Z" } }
+
+  - rule: marker:3:derived
+    digest: 7780967a402373bc1adc17783a9a589c88cb96424ef5908103565641580781df
+    decision: D-034
+    type: LineItem
+    valid:
+      - party: seller
+        before: { status: draft, min_spend: 10000, addressable_scale: 2000000 }
+        after: { status: draft, min_spend: 20000, addressable_scale: 2000000 }
+    invalid:
+      - party: buyer
+        before: { addressable_scale: 2000000 }
+        after: { addressable_scale: 5000000 }
+      - party: seller
+        before: { status: draft, addressable_scale: 2000000 }
+        after: { status: draft, addressable_scale: 5000000 }
+
+  - rule: rule:2.2:06ccee9f
+    digest: 88f6179c8487ecb60b3f98de8b1ecbbec92e618a36e441133f4f4447957c23b7
+    decision: D-035
+    valid:
+      - value:
+          status: agreed
+          audiences: { available: [{ id: "9d2e4b61-0c3a-4f5e-8b7d-1a2c3e4f5a6b", name: SMB decision makers }], included: ["9d2e4b61-0c3a-4f5e-8b7d-1a2c3e4f5a6b"] }
+      - value:
+          status: published
+          audiences: { available: [{ catalog_ref: examplepub/audiences/smb-decision-makers@3 }], included: [] }
+    invalid:
+      - value:
+          status: agreed
+          audiences: { available: [{ catalog_ref: examplepub/audiences/smb-decision-makers@3 }], included: [] }

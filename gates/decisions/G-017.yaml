@@ -1,0 +1,40 @@
+format: 1
+id: G-017
+date: 2026-10-26
+question: Which gates change when no version is a type of its own, the proposal's revision number being a Count and the specification's version an ExternalId?
+decision: >-
+  `Version` and `SemVer` are no primitives, and the `version` domain, with
+  its `revision` and `semantic-version` concepts, leaves the domain file. The
+  `count` concept cites the proposal's `version` row on both locks and the
+  commitment's `version` key, so mapping rule `domain-row` types them
+  `Count`; a negotiation step's and a manifest entry's `version` are `Count`
+  members with a description, and the manifest's `spec_version` an
+  `ExternalId` member, carried as the specification names a release, such as
+  `3.0`. D-043, which departed to three-part versions, is removed, and so is
+  the example finding that cited it. The shared structure of `count` and
+  `revision` goes; the twin tests use `ExternalId`, `FieldPath`, and `Text`
+  instead, the integral-float tests use `VendorCode` and `ApiFramework`
+  instead of `Version`, the engine tests count 34 trailing-newline mutants,
+  since `SemVer`'s four pattern vectors are gone, and the release format's
+  version pattern is checked against the Semantic Versioning 2.0.0 core. PG-7 drops `Version`'s six
+  integral-float cases with the primitive. A test checks every version's type. The test suite holds 318 tests, so its
+  floor rises to 318.
+rationale: >-
+  A revision number validates and is compared like any count of things, and
+  a release name like any ID another party publishes, so neither is a type
+  of its own; the text writes `3.0`, so nothing departs from it. Every gate
+  still checks every type the model holds, each test keeps its check with a
+  type that still exists, and the test floor rises, so no gate is weaker.
+retires:
+  - concept: revision
+    reason: A proposal's revision number is a whole number of revisions, compared by size, so it is a Count with a description that says it is the proposal's revision number (ops-c4g.27).
+  - concept: semantic-version
+    reason: The manifest's spec_version names a release of the specification, a document another party publishes, as the specification writes it, such as 3.0, so it is an ExternalId; nothing departs from the text (ops-c4g.27).
+accepts:
+  - { gate: domains-homonyms, fingerprint: 0ceea30a641948f2f295a854ec1a11beed55aa9a2fcd5b97342d7ec793c19d1e }
+  - { gate: duplication-kernel, fingerprint: 1fbea430a40f221ecacfe63c8832661f9a2e4c10f1f5fd67f3a33632f7ed98cc }
+  - { gate: duplication-model, fingerprint: ae23421457c0b0a8f2642e653869b3f5930744fc2d3c93c7a34f6a5218a8b688 }
+  - { gate: examples-validate, fingerprint: 518b8220af7c9ae85cc236016d8cf951bd3d29bf7fc704571624a09614d96c53 }
+  - { gate: npm-test, fingerprint: 2506b8d59c980882196b326e6be6d68ef768545b50d64ebc127c75e6769fb5e9 }
+  - { gate: plain-exemptions-file, fingerprint: e20bfd65c94d50b4366915e2ef9a077b127e5c4c7df90d16c6bd2ffafc5e63ea }
+  - { gate: plain-parity, fingerprint: 89270cfebe050ee8048b560211c4a1fa12514dd0ff2795e67dce94c4bb2877f7 }

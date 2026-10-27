@@ -1,0 +1,70 @@
+format: 1
+id: D-033
+status: proposed
+kind: gap
+author: agent
+question: What do the specification's code blocks other than the § 2.2 grammar map to?
+covers:
+  - ir: code:2:1
+    digest: 6fd06bb0a8b32f969721cbcecbb27cd9d0f02e42825a81434137086afe2d66a7
+    quote: |-
+      Proposal          → the merchandising pitch, identity, lifecycle state and assent
+      Line Items[]      → fully self-contained buyable units, each in exactly one channel
+  - ir: code:5.5:1
+    digest: 3d4d2212c0ab979644dedee89d969ec3476d83148a041374420a72352bd82819
+    quote: |-
+      exclusions_accepted:
+        types:        [domain, app_bundle, iab_content_category, keyword]
+        max_entries:  { domain: 5000, keyword: 500 }
+        enforcement:  { domain: pre_serve, app_bundle: pre_serve,
+                        iab_content_category: pre_serve, keyword: best_effort }
+        verification: ["IAS", "DoubleVerify"]
+      
+      exclusions:
+        domain:           ["example-gambling.example"]
+        app_bundle:       [{ platform: roku, bundle: "123456" }]
+        iab_content_category: ["IAB-CT3.0:<id>"]   # IAB Content Taxonomy ids
+        keyword:          ["crypto"]
+        list_ref:         { url: "<url>", sha256: "<hash>" }
+    locks: [with-open-prs]
+  - ir: code:5.5:2
+    digest: 5acce570d4fbb58bf8c8dce3dd60d00f7a2097fc295c6c42284aa390b53dfb68
+    quote: |-
+      geo:
+        available:  ["SGP", "THA", "IDN", "MYS"]
+        included:   ["SGP", "THA"]
+        pricing:    { "IDN": { delta_cpm: 18.00 }, "MYS": { delta_cpm: 21.00 } }
+        max_select: 4
+    locks: [with-open-prs]
+  - ir: code:5.6.3:1
+    digest: 3c4b19331f24fca760db7f76364af71ac968ba0af555f028bea2568fcdcd4db9
+    quote: |-
+      requires:
+        all_of:  ["business-daily-display", "weather-app-ctv"]
+        any_of:  []
+        min_commitment:
+          - { line_item_id: "business-daily-display", basis: spend, amount: 50000.00, currency: USD }
+    locks: [with-open-prs]
+  - ir: code:5.5:3
+    digest: 22c938fda2241c77855a8f9e0093eaa23902313c1f8ebf1db716bad0b566adf9
+    quote: |-
+      # Late fringe, 23:00 to 01:00, Monday night into Tuesday
+      daypart:
+        allowed:
+          - { days: [monday],  start: "23:00", end: "24:00" }
+          - { days: [tuesday], start: "00:00", end: "01:00" }
+      time_zone: "America/New_York"
+    locks: [with-open-prs]
+options:
+  - id: by-content
+    summary: The § 2 diagram is informative, and each YAML block of line-item fields is an example of a line item.
+  - id: informative
+    summary: Every code block is informative.
+chosen: by-content
+rationale: >-
+  The § 2 block is a diagram of the two documents, with no field. The § 5.5
+  and § 5.6.3 blocks are YAML values of line-item fields
+  (`exclusions_accepted`, `exclusions`, `geo`, `daypart` with `time_zone`, and
+  `requires`), so each is an
+  example of part of a line item, which the examples gate validates as it
+  validates `examples/`.

@@ -1,0 +1,23 @@
+format: 1
+id: G-037
+date: 2026-10-26
+question: What does the display example's catalog audience finding say, when the UUID we propose doesn't name an option given as a catalog reference?
+decision: >-
+  The finding of the display example's `/audiences/included/0` under D-037
+  says what the example writes and what we propose, and no longer promises
+  that a UUID names the option: the option is a catalog reference, which
+  carries no `id`, so it points to the open point of what names such an
+  option, the D-007 finding at the same place. The finding still cites one
+  kind of decision. The preamble of the feedback's table of examples that
+  follow the text says that a reason names any open point the change alone
+  doesn't settle, which holds for every row. A test checks that a UUID in
+  that entry still breaks the options-named rule, so the gap finding stays.
+  The test suite holds 343 tests, so its floor rises to 343.
+rationale: >-
+  The reason promised a remedy the options-named rule refutes. Only a
+  recorded reason and a table's preamble change; every check stays, and the
+  test floor rises, so no gate is weaker.
+accepts:
+  - { gate: examples-validate, fingerprint: b388a1f9cfe40a085a5a1968bdc989cfeff6a4b6dd4042e92305d3ba888fc54f }
+  - { gate: feedback, fingerprint: ec0bfa974eb7c324e025cddb61b50cdaec564937e5e137c8582b749f66268146 }
+  - { gate: npm-test, fingerprint: ba3013dfdaa24b701321a09701020379553e7c3e185d4147feebb16690bd1f6c }

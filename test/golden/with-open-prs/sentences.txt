@@ -1,0 +1,78 @@
+sentence:1:1b060817	line 39	Custom proposal — built in response to a buyer's agent brief, referenced via `brief_ref`.
+sentence:1.1:9c7bf74f	line 43	Each line item lands in the one its `transaction_mechanism` maps to:
+sentence:2:f059053f	line 69	A line item that declares `requires` (§ 5.6.3) may be committed only when its conditions are met.
+sentence:2.1:f23277b4	line 80	`line_item_id` · `channel` · `environments.available[]` · `content_detail` · property names · `formats.included[]` · `pricing.cost_method` · `pricing.gross_rate` · `min_spend` · `addressable_scale` · `committed_metrics[]` · `transaction_mechanism` · `has_requires`
+sentence:2.1:80ac0822	line 86	plus, from the parent proposal: `proposal_id` · `seller_name` · `description` · `valid_from` · `valid_until` · `linked_execution`.
+sentence:2.1:ba90b505	line 89	`has_requires` is `true` when the line item declares `requires` (§ 5.6.3), so a screening agent does not recommend a line item that cannot be bought on its own.
+sentence:2.1:0fb18f29	line 98	Full Representation — every field, with all `catalog_ref` values resolved.
+sentence:2.2:77e63626	line 112	A `catalog_ref` is not inheritance.
+sentence:2.3:b43aefff	line 126	Contents: `{ seller_id, generated_at, spec_version, proposals[] }`, where each entry in `proposals[]` carries `proposal_id`, `version`, the Summary Representation (§ 2.1) of each line item, and a `full_url` for the second phase.
+sentence:2.3:c1b9a69d	line 132	Only standard proposals appear, and within them only line items whose `visibility` (§ 5.8) is `public`.
+sentence:2.3:329c49c5	line 133	`registry_gated` and `named` line items do not.
+sentence:2.3:4456a7fb	line 137	Property lists stay as names in the summary; large lists use `catalog_ref` (§ 2.2).
+sentence:2.3:7c617825	line 144	Propose: fetch the Full Representation of shortlisted line items from `full_url`, then compose and commit as usual.
+sentence:3:cb1810ae	line 165	Only `requestable` fields require the counterparty to respond.
+sentence:3.1:817b18c0	line 186	`audience_pricing` in earlier drafts was the precedent for this pattern — it expressed "if you change X, the price moves by Y".
+sentence:3.1:49d63f3e	line 187	`pricing` generalises it to every dimension a seller is willing to vary, and replaces it.
+sentence:4.1:9e990c7e	line 232	Each issued proposal has an independent `status`, `version` and `negotiation_history[]`.
+sentence:5.1.1:5c446bbd	line 267	Conditions are stated in AdCOM 1.0 terms: the distribution channel, the ad's media (`Placement` subtypes) and the device type.
+sentence:5.1.1:f84d6159	line 291	Placement type, such as interstitial or rewarded (OpenRTB 2.6 `video.plcmt`, `imp.instl` and `imp.rwdd`), does not change the channel.
+sentence:5.1.1:1156bb62	line 296	Impressions in linear TV, including addressable linear, are outside this table: they have no `channel` value in 3.0.
+sentence:5.2:055318c5	line 308	`apps[]` identifies the apps behind a property sold in `app_mobile` or `ctv`.
+sentence:5.2:b4f0ce3f	line 309	Keys follow the OpenRTB 2.6 `app` object where one exists.
+sentence:5.2:a976a022	line 319	Seller authorisation for an app is checked through `app-ads.txt` on its developer domain, not through the property's `domains`.
+sentence:5.2.2:4076adca	line 342	Keys follow AdCOM 1.0 `Placement` and its `DisplayPlacement`, `VideoPlacement` and `AudioPlacement` subtypes, and the matching OpenRTB 2.6 `Imp` attributes.
+sentence:5.2.2:af7851e2	line 350	`plcmt`, `playmethod[]` and `api[]` take any code in List: Plcmt Subtypes - Video, List: Playback Methods and List: API Frameworks respectively.
+sentence:5.2.2:37fcff5a	line 368	`plcmt` takes its OpenRTB 2.6 name.
+sentence:5.2.2:d640a947	line 368	AdCOM 1.0 carries the same list as `VideoPlacement.ptype`.
+sentence:5.2.2:3e19d307	line 369	OpenRTB 2.6 `Audio` has no `skip`, `skipafter` or `playbackmethod`, so for audio those keys map to AdCOM 1.0 `AudioPlacement` only.
+sentence:5.2.2:b9b60857	line 373	An absent key does not constrain it: a line item that omits `instl` can deliver to interstitial and non-interstitial impressions alike.
+sentence:5.2.2:724e97b8	line 375	AdCOM 1.0 reads an absent `reward` or `instl` as `0`; here it means either value.
+sentence:5.2.2:8f7b65da	line 378	An impression matches `api[]` when it supports every listed framework, `playmethod[]` when its playback method is one of the listed values, and `refresh` when the slot renders each creative for at least `min_interval_s` seconds before it refreshes, or does not refresh.
+sentence:5.4/creative-inspection-and-previews:239a73ec	line 428	The presence of a URL in VAST `<ClickThrough>` does not establish that requesting it is safe for inspection.
+sentence:5.5:47d3cab4	line 451	Each targeting field except `time_zone`, `exclusions_accepted`, and `exclusions` declares bounds, not a value.
+sentence:5.5:4869abaa	line 452	A bare value means the field is `seller-set`.
+sentence:5.5:00b99440	line 453	For `exclusions_accepted` and `exclusions`, the seller declares what it can enforce, and the buyer supplies its lists.
+sentence:5.5:79d7d557	line 487	Each `app_bundle[]` entry is `{ platform, bundle }`.
+sentence:5.5:ad1441a7	line 487	`bundle` is the OpenRTB 2.6 `app.bundle` value; `platform` names the store (`ios` | `android` | `roku` | `fire_tv` | `samsung_tv` and other store platforms).
+sentence:5.5:8d595b9a	line 492	`iab_content_category[]` entries are IAB Content Taxonomy ids.
+sentence:5.5:262ff404	line 493	`enforcement` is `pre_serve` or `best_effort` per type.
+sentence:5.5:ff5099f2	line 514	`pricing` deltas add to `agreed_rate` as for any selectable field (§ 3.1).
+sentence:5.5:348ea676	line 516	A `daypart` window is `{ days[], start, end }`, with `days[]` from Monday to Sunday, `start` and `end` as HH:MM, and `end` exclusive, later than `start`, and allowed to be `24:00`.
+sentence:5.5:3ec41b49	line 530	`time_zone` names a zone in the IANA time zone database, such as America/New_York or UTC.
+sentence:5.5:bcaa431b	line 533	Like the calendar Day of OpenDirect 2.1 `Line.frequencyinterval`, `frequency_cap.period` is a calendar period in `time_zone`; weeks start on Monday.
+sentence:5.6.1:bb93abda	line 562	Frozen when status becomes `agreed`.
+sentence:5.6.1:b7271e6a	line 577	An `idempotency_key` is opaque and scoped to one buyer and seller pair.
+sentence:5.6.2:516faad1	line 604	Transitions: `none` → `requested` → `held` → (`expired` | `released` | `converted`).
+sentence:5.6.2:774f52b4	line 605	`converted` is terminal and occurs when the line item reaches `agreed`.
+sentence:5.6.3:6bbcd82c	line 624	A bonus line item is a line item with `requires` and its own pricing, such as a discounted `gross_rate` or `cost_method: flat` at 0.
+sentence:5.6.3:84e2eae9	line 625	A conditional discount is modelled as a separate line item that `requires` unlocks, not as a price that changes according to the other line items selected.
+sentence:5.6.3:3061bf96	line 634	If a line item referenced in `requires` becomes `sold_out` or `withdrawn` before commitment, the dependent line item becomes non-committable.
+sentence:5.6.3:946d6fc1	line 635	After `agreed`, cancellation of a referenced line item is governed by the dependent line item's `cancellation_policy`.
+sentence:5.8:986d7d0f	line 662	`exclusions` (§ 5.5) reveal the buyer's strategy.
+sentence:5.10:e8da0f9e	line 687	OpenProposal supplies the agreed record, `terms_ref` and `correlation_id` a connector needs.
+sentence:6:b55a7db8	line 694	Runnable copies of every example below live in `examples/`.
+sentence:6.1:140f66aa	line 698	See `examples/proposal.yaml`.
+sentence:6.2:0ea01d1d	line 702	Shows `selectable` audiences with per-option pricing, a catalog reference, a buyer commitment, and `settable` bounds.
+sentence:6.2:c19128b7	line 703	See `examples/line-item-display.yaml`.
+sentence:6.3:db7467a3	line 708	Shows a buyer commitment naming the `proposal_id` and `version` it was priced against (§ 5.6.1).
+sentence:6.3:24bee9be	line 709	See `examples/line-item-ctv.yaml`.
+sentence:6.4:dd9e06dd	line 716	See `examples/line-item-audio.yaml`.
+sentence:6.5:15fe6026	line 721	See `examples/line-item-ctv-bonus.yaml`.
+sentence:6.6:832ad0f8	line 726	The display line item is `registry_gated`, so it is not listed.
+sentence:6.6:70160ee0	line 727	See `examples/manifest.json`.
+sentence:6.7:844bf24a	line 732	Shows `placement` on in-app rewarded video, with OMID support that lets a buyer select a third-party `measurement_source`.
+sentence:6.7:d6388541	line 733	See `examples/line-item-rewarded-video.yaml`.
+sentence:7:41ebd0f7	line 742	`description`, `specifications`, `best_for` and `seasonality_notes` are what a model needs to decide whether to look further.
+sentence:7:256da220	line 748	Channel support cost one new field and one generalisation — `channel`, and `committed_metrics[]` as tuples — rather than a schema fork per channel.
+sentence:7:acf0d49d	line 762	Each has its own `proposal_id` per counterparty or destination, and may carry `proposal_template_id` (§ 4.1) to trace it back to its template.
+sentence:7:4f1fa2e5	line 765	Buyer-specific terms, such as annual rates and named visibility, live on the issued proposal's line items: `visibility: named`, `eligible_bidders[]` and their own `pricing[]`.
+sentence:7:9cfe55f2	line 769	Buyer–seller relationships are expressed as issued proposals (`visibility: named`, `eligible_bidders[]` set to that buyer, with the negotiated `pricing[]`) plus the buyer agent's business rules.
+sentence:7:4e066ba3	line 773	`agreement_ref` and `terms_ref` (§ 5.10, § 5.8) point at the agreement and terms a line item is executed under; IO generation happens through connectors.
+sentence:8:0bda15d9	line 787	Do seller catalogs (`catalog_ref`) belong in 3.0, or should the object stay fully inline until a later version?
+sentence:8:4b17719a	line 789	Once one line item guarantees `viewable_rate` and another `completion_rate`, there is no normalised way for a buying agent to compare or optimise across them.
+sentence:8:410d8824	line 793	The format registry has no entries for `audio/*`, `ctv/*` or `dooh/*`.
+sentence:8:01a13e05	line 794	`specs` delegates to a registry that cannot currently answer for half the declared channels.
+sentence:8:3549c05c	line 796	Is a `min_line_items` field needed on the proposal to require a bundle purchase, or is that left to buyer discretion?
+sentence:8:f134c883	line 798	Should `payment_terms` and `invoicing_party` be catalog references rather than repeated on every line item, given they are usually identical across a seller's shelf?
+sentence:8:4a7b806f	line 801	`environments[]` needs validation against real inventory.

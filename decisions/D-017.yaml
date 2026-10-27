@@ -1,0 +1,31 @@
+format: 1
+id: D-017
+status: proposed
+kind: gap
+author: agent
+question: What does a field typed with two types joined by a slash, such as Timestamp/Offset, hold?
+covers:
+  - ir: field:4.2:specifications
+    digest: 2557955239ae4bfb7f4a786063ac4250508c2541bc86198ff12bf1a00c56b0f0
+    quote: "`specifications` | String/Object | seller-set | Structured detail at media-kit depth"
+  - ir: field:5.4:materials_due
+    digest: cfa54510f53148d77ef0133fffea985d275148ab926796713470f40d9827f5b2
+    quote: "`materials_due` | Timestamp/Offset | requestable | Deadline for creative to land. A buyer MAY request a later date"
+options:
+  - id: union
+    summary: "Either type: an untagged union (`anyOf`) of the two named types, with Offset read as an ISO 8601 duration."
+  - id: first-type
+    summary: Only the first type.
+chosen: union
+rationale: >-
+  The slash is the specification's own way to write "either". Type rules § 8
+  already lists `materials_due` as an untagged union that draft 1 requires,
+  and `specifications` (String/Object) is the same case. A Timestamp and an
+  ISO 8601 duration are told apart by their format, and a string and an object
+  by their JSON type. Offset has no definition; a duration is the only reading
+  in which an offset is written without a reference point, and the kernel's
+  `Duration` already writes one.
+feedback: >-
+  Tag the two forms of `materials_due` and say what an Offset counts from,
+  such as the flight start. The display example writes a date, `2026-09-24`,
+  which is neither form.

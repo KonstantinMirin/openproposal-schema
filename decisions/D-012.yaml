@@ -1,0 +1,63 @@
+format: 1
+id: D-012
+status: proposed
+kind: gap
+author: agent
+question: Is `mixed` an eighth marker, and may an implementation add markers of its own?
+covers:
+  - ir: field:5.6:pricing[]
+    digest: 362371b22d681a7cf62432d36c01b9a96ee682c497028234b637b2a3f0df8b0b
+    quote: "`pricing[]` | Array[Object] | mixed | See below"
+  - ir: field:5.9:buyer_requirements
+    digest: 19ff019961864951f5579cc6142cb0153f9749584c53a78823d8ff2abcb71c4c
+    quote: "`buyer_requirements` | Object | mixed | `{ seat_required, dsp_allowed[] }` are seller-set; `{ dsp_seat_id, dsp_id, seat_owner_entity }` are supplied"
+  - ir: marker:3:immutable
+    digest: 36e4c2830d95e3c4ae4166cdaccae23edbe3bfa8a26898faea72ba1cb8e37586
+    quote: "`immutable` | Set once at creation. Neither party may change it."
+  - ir: marker:3:seller-set
+    digest: 143411b52aa9e85874cc5f79024d330988c510ddf7f2981d59408e54a8730a60
+    quote: "`seller-set` | The seller sets it and MAY revise it while status is `draft` or `published`. The buyer cannot change it directly."
+  - ir: marker:3:selectable
+    digest: 9d4920aaf4e7581b9e328b70600205e70277c7ca1a1f6275a8736c157cd1999d
+    quote: "`selectable` | The buyer chooses from a seller-declared set. Each option MAY carry a price delta. Resolves without seller assent."
+  - ir: marker:3:settable
+    digest: 66671c35883697ab396f64f940b5566cca0b389bef1aa9fcaed09f2b8c20d961
+    quote: "`settable` | The buyer supplies a value within seller-declared bounds. Resolves without seller assent."
+  - ir: marker:3:supplied
+    digest: ef075b4b9dcb9458ccaa36725478dc9e802f29a2ecefe182844fc36f506f69c2
+    quote: "`supplied` | The buyer provides data or an artifact. The seller does not pre-populate it."
+  - ir: marker:3:requestable
+    digest: 0b447aa32ebfda424aa6e3d5c1f9e47d6189e495400007b71e0caba46fd695f5
+    quote: "`requestable` | The buyer MAY ask for a value outside the declared space. Requires explicit seller assent."
+  - ir: marker:3:derived
+    digest: 7780967a402373bc1adc17783a9a589c88cb96424ef5908103565641580781df
+    quote: "`derived` | Computed from other fields. Neither party sets it directly."
+  - ir: field:5.9:buyer_requirements#description/object:1
+    digest: 0b6228bc154412978d5350265f2b047a7788de634feb88e9eb3a5e7fa1b0d417
+    quote: "{ seat_required, dsp_allowed[] }"
+  - ir: field:5.9:buyer_requirements#description/object:2
+    digest: c3237ee1a6dc26edc444e2a846bb5d73fcaca808322b78b0e4634b08547adb7b
+    quote: "{ dsp_seat_id, dsp_id, seat_owner_entity }"
+options:
+  - id: members-carry-markers
+    summary: "The markers are the seven of § 3, a closed list. A `mixed` field has no marker of its own: each of its sub-fields or member objects carries one."
+  - id: eighth-marker
+    summary: "`mixed` is an eighth marker, meaning that the field's members carry their own markers."
+  - id: open-markers
+    summary: The markers are an open vocabulary that an implementation may extend with namespaced terms.
+chosen: members-carry-markers
+rationale: >-
+  § 3 says every field carries exactly one marker and defines seven. The two
+  fields marked `mixed` state their members' markers instead: each `pricing[]`
+  sub-field has a row with its own marker, and `buyer_requirements` says its
+  first object is seller-set and its second is supplied. So `mixed` summarizes
+  the members; it isn't a rule of its own. A marker is a mutability rule that
+  every SDK enforces between two versions, and an unknown marker can't be
+  enforced, so the list is closed. The model keeps the seven as the kernel
+  vocabulary `Marker`, whose terms the marker rows define, and the rules for
+  each marker belong to it.
+feedback: >-
+  Either define `mixed` in § 3 as "the field's members carry their own markers",
+  or give `pricing[]` and `buyer_requirements` rows for their members. Each row
+  carries one marker, as `pricing[]` already has. State that the seven markers
+  are the complete list.

@@ -1,0 +1,90 @@
+format: 1
+id: D-016
+status: proposed
+kind: gap
+author: agent
+question: What does an object field hold when the specification gives it no structure?
+covers:
+  - ir: field:4.1:assent
+    digest: 9306decda4e7acc0d22679fb45574d8d8f500e44c09023a25112e40458cd2be8
+    quote: "`assent` | Object | derived | Buyer and seller assent records and timestamps for the binding version. Signature scheme is WS1"
+  - ir: field:4.2:specifications
+    digest: 2557955239ae4bfb7f4a786063ac4250508c2541bc86198ff12bf1a00c56b0f0
+    quote: "`specifications` | String/Object | seller-set | Structured detail at media-kit depth"
+  - ir: field:5.2:content_detail
+    digest: e5dc0ce4102338d1e9363ae1d2de7fe4b6acacb482b2b3806da30b30a8d80e6e
+    quote: "`content_detail` | Object | seller-set | Shows, series, sections, network verticals"
+  - ir: field:5.4:specs
+    digest: f3fa67ecc797ea15ee4ad04313861161f3e8fcec742af3d24e4ab1f99f20273a
+    quote: "`specs` | Object | seller-set | As defined by the referenced format registry entry. OpenProposal does not hardcode a shape per channel"
+  - ir: field:5.4:third_party_tags
+    digest: 7c3e68646af2fcaf101cdd07a8abe4fd7ec5a36eabd7ed4e06a71e0d8b626d80
+    quote: "`third_party_tags` | Object | seller-set | Accepted wrapper types and VAST versions"
+  - ir: field:5.4:approval
+    digest: 099f711760829277a50ff8ea557e2d9131e53c929b364a23770815cbe7a074c8
+    quote: "`approval` | Object | seller-set | Review SLA and revision policy"
+  - ir: field:5.6:cancellation_policy
+    digest: 6c8bbcd373f89f5fdf8c0e6a3e9f43bc0e26cc1b5ba35a4f13c2dd246f37dba4
+    quote: "`cancellation_policy` | Object | selectable | `available[]` of cancellation rights with `pricing` per option"
+  - ir: field:5.6:exclusivity
+    digest: 5012d5c8189fd4016ce87f254fff0fa14c929365d9efc3f2256ccfcf80b73c46
+    quote: "`exclusivity` | Object | selectable | `available[]` of exclusivity terms with `pricing`"
+  - ir: field:5.6:creative_policy
+    digest: aa3353469e3bafe74a8022b1fadfe0694ac15c0f840b266a7089d8ac8d18c996
+    quote: "`creative_policy` | Object | seller-set | Content and category restrictions on creative"
+  - ir: field:5.3:buyer_supplied#description/object:1
+    digest: d5cdd605af129db6ef8a658446a915a300cb4b1abe0f7ff6a2ae97f9fbb99f8f
+    quote: "{ segments_allowed, suppression_allowed, match_rate_expected, segments[], suppression_list }"
+options:
+  - id: open-object
+    summary: A named object that accepts any members, so the field validates as an object and the members stay the field's owner's to define.
+  - id: invent-shape
+    summary: Members chosen from the prose and the examples.
+  - id: text
+    summary: A string.
+chosen: open-object
+rationale: >-
+  Seven fields are typed Object and described only in prose: `assent`,
+  `specifications`, `content_detail`, `specs`, `third_party_tags`, `approval`,
+  and `creative_policy`. The cancellation rights and exclusivity terms that
+  `cancellation_policy` and `exclusivity` offer, and the `suppression_list`
+  member of `buyer_supplied`, are the same case. Type rules § 4 names every
+  object, so each one is a named object, and it accepts any members, because
+  the specification states none and members chosen here would be invented
+  fields. `specs` is defined by the format registry and `assent` by WS1, which
+  confirms that their structure lives elsewhere. `specifications` is typed
+  String/Object, so its object branch is the open object
+  `SpecificationsDetail` (D-017). A daypart's time window isn't among them:
+  the window follows the ad server convention (D-004). Each open object's
+  schema and SDK type carry what its row says of it, so a reader sees what
+  it holds though its members are unstated. The structures the feedback
+  proposes, read from each row's prose, stay proposals: the schema keeps the
+  objects open until the text states their members.
+evidence:
+  - examples/line-item-display.yaml (suppression_list)
+feedback: >-
+  Define each of these objects, or say where it is defined, as `specs` does for
+  the format registry. Until then an implementation can't validate or compare
+  them, and two implementations will fill them differently. Name the members of
+  a cancellation right and an exclusivity term, beside the `id` that names each
+  option. Say whether `specifications` is free form. For the rest, each row's
+  prose suggests a structure, which we propose as the starting point:
+
+  - `assent` as `{ buyer, seller }`. Each party's record is
+  `{ version, at, signature }`: the version it assents to, when, and a signature
+  in the scheme the row calls WS1.
+
+  - `third_party_tags` as `{ wrapper_types[], vast_versions[] }`.
+
+  - `approval` as `{ review_sla, revision_policy }`, the SLA a length of time.
+
+  - `content_detail` as
+  `{ shows[], series[], sections[], network_verticals[] }`.
+
+  - `creative_policy` as `{ content_restrictions[], category_restrictions[] }`,
+  the content and the category restrictions its row names. Say whether a
+  category restriction names a category of the IAB Tech Lab Content Taxonomy, of
+  its Ad Product Taxonomy, or of another list.
+
+  - `suppression_list` as `{ source, size, match_method }`, the members the
+  display example writes.

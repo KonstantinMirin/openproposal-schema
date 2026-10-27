@@ -1,0 +1,64 @@
+format: 1
+id: D-047
+status: proposed
+kind: departure
+author: agent
+question: Do the production, measurement source, and reporting options carry an `id` that `included[]` and the `pricing` keys name them by?
+covers:
+  - ir: key:3.1:included[]
+    digest: 8ec666d51bf96c60f03793156f832384d83126b7e98f3112259b423bc624b78b
+    quote: "`included[]` | REQUIRED | Which options are in the base rate. MAY be empty"
+  - ir: key:3.1:pricing
+    digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
+    quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+  - ir: field:5.4:production
+    digest: 0168284e2ec3d43c2249add202b7c657a7a4b37fe78ccfbf2cee694a3e76d199
+    quote: "`production` | Object | selectable | Custom units. `available[]` of build options with `pricing` and `lead_time`; `{ custom_unit, build_owner, lead_time, cost }`"
+  - ir: field:5.4:production#description/object:1
+    digest: 00eb00879b4a550444376e9812df5389c4a7066a43b48982f04bc6f35974f62d
+    quote: "{ custom_unit, build_owner, lead_time, cost }"
+  - ir: field:5.7:measurement_source
+    digest: b2908c3f817bef4cc596a8e15af373e8098053d36c37d34231eadae3e4351be5
+    quote: "`measurement_source` | Object | selectable | `available[]` of `{ vendor, attribution_window, qualifier }` with `pricing`. Lets a buyer transact in its own currency"
+  - ir: field:5.7:measurement_source#description/object:1
+    digest: 7213fd41321c72d119261e7a84890af68599b6801c2fc5cef92127295fb4ed22
+    quote: "{ vendor, attribution_window, qualifier }"
+  - ir: field:5.7:reporting
+    digest: a3b05974750ac1c85b48f1edc5b0d8413d6ee3782abf19663dcc88605c30830e
+    quote: "`reporting` | Object | selectable | `available[]` of `{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency }` with `pricing`"
+  - ir: field:5.7:reporting#description/object:1
+    digest: 15b343617f534633524b7226be5e3f1d36fa7042fd26aa52c5fde05bc1e50adb
+    quote: "{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency }"
+options:
+  - id: add-id
+    summary: Yes. Each of these options carries `id`, required, beside the members the text lists, and `included[]` and the `pricing` keys name the option by it.
+  - id: own-member
+    summary: No. Each option is named by a member the text lists for it, such as a measurement source's `vendor` or a report's `feed_type`.
+  - id: as-written
+    summary: No. The options keep the members the text lists, and `included[]` and the `pricing` keys can't name them.
+chosen: add-id
+rationale: >-
+  The text lists the members of a production option, `{ custom_unit,
+  build_owner, lead_time, cost }`, of a measurement source, `{ vendor,
+  attribution_window, qualifier }`, and of a report, `{ feed_type, cadence,
+  delivery_mechanism, metrics_provided[], latency }`, and none is an `id`.
+  An object option is named by its `id` (D-046), so these options can't be
+  included or priced as the text writes them. None of the listed members
+  names one option: a seller can offer one vendor with two attribution
+  windows, or one feed type at two cadences, and two build options can share
+  a custom unit. So each of these options carries `id`, required, beside the
+  members the text lists, and the model gives it as it gives every object
+  option its `id`. The schema departs from the text, which lists the members
+  without one, and from the examples that follow it: the display example
+  names a measurement source by its `vendor` and a report by its
+  `feed_type`, and the audio example writes an `id` the text doesn't list.
+evidence:
+  - examples/line-item-display.yaml (measurement_source and reporting)
+  - examples/line-item-audio.yaml (production)
+feedback: >-
+  Write `id`, REQUIRED, into the production, measurement source, and reporting
+  options, so that `included[]` and the `pricing` keys name each option by it.
+  The text lists these options' members without an `id`. The display example
+  names a measurement source by its `vendor`, `IAS`, and a report by its
+  `feed_type`, `aggregate`, as the text allows. A second source from one vendor,
+  or a second report of one feed type, would need a name of its own.

@@ -1,0 +1,528 @@
+# Kernel primitives (type rules § 3, layer 1). Each primitive is defined once,
+# and represents one concept of kernel/domains.yaml. Every other type
+# references a primitive by name and never repeats its constraints. Spec
+# sources are quoted and digested; regenerate a quote and a digest with
+# `npm run cite -- --all-locks <IR element ID>`.
+format: 1
+primitives:
+  # Identity, reference, and text
+  - name: Uuid
+    description: The identity of a record a party mints, written as a UUID in the RFC 9562 string form, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`. Its hexadecimal digits are case-insensitive, so two parties compare UUIDs without regard to case.
+    type: string
+    concept: minted-id
+    constraints:
+      format: uuid
+    decision: D-037
+    sources:
+      spec:
+        - ir: field:4.1:proposal_id
+          digest: fb8604e60eabfa2db105b17ca562af8ba2f20784907dcce349772ce83054088d
+          quote: "`proposal_id` | String | immutable | Unique identity for the proposal object"
+        - ir: field:5.1:line_item_id
+          digest: 60cd2aeea40121597f5e2b0725417665bc560c9b677000d3dfbc432d1c88c969
+          quote: "`line_item_id` | String | immutable | Identity within the proposal"
+      standards:
+        - name: RFC 9562, Universally Unique IDentifiers (UUIDs)
+          url: https://www.rfc-editor.org/rfc/rfc9562
+    vectors:
+      valid: ["7c9e6679-7425-40de-944b-e07fc1f90ae7", "7C9E6679-7425-40DE-944B-E07FC1F90AE7", "00000000-0000-0000-0000-000000000000"]
+      invalid: ["urn:uuid:7c9e6679-7425-40de-944b-e07fc1f90ae7", "{7c9e6679-7425-40de-944b-e07fc1f90ae7}", "7c9e6679742540de944be07fc1f90ae7", "7c9e6679-7425-40de-944b-e07fc1f90ae", "business-daily-display", 42]
+    showcase: ["3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b", "a1c9e5f0-27b3-4d8e-9f61-0c4b7d2e8a93"]
+
+  - name: ExternalId
+    description: The identity of a record, a code, or a version that another system or list defines, such as a registry entry, a DSP seat, a geo code, a content category, a published document's version, or a field of the specification, named by its path as the specification's tables write it, carried as that system writes it. A receiver compares it by exact string equality and doesn't parse it; the field's description names where it comes from.
+    type: string
+    concept: external-id
+    constraints: {}
+    sources:
+      spec:
+        - ir: field:4.1:seller_id
+          digest: 98c167e650ac7cbe7a3fe910d218292ae19d16156e9a575875776ba335e4e833
+          quote: "`seller_id` | String | immutable | IAB Tech Lab registry reference"
+        - ir: field:5.8:eligible_bidders[]
+          digest: 377ad11d09a2b66329d8d7f32f46f187f2d0ba5d06ac90980630554720456d9a
+          quote: "`eligible_bidders[]` | Array[String] | seller-set | Permitted seat or buyer ids"
+    vectors:
+      valid: ["seat-99812", "IAS", "reg:examplepub-digital"]
+      invalid: [42, null]
+    showcase: ["EP-104233", "EP-104871"]
+
+  - name: Text
+    description: Prose for people and agents to read. A receiver doesn't parse it or compare it.
+    type: string
+    concept: text
+    constraints: {}
+    sources:
+      spec:
+        - ir: field:4.2:description
+          digest: d8f9bd51c2ecf2a1311600c2fad1dda1b1b8f74269700a3f3ae6018a8beba30d
+          quote: '`description` | String | seller-set | REQUIRED. Prose, not a name. Where the "why buy" case is made, including which channels a multi-channel proposal spans'
+        - ir: field:4.2:seasonality_notes
+          digest: 33869d96c87875efa58c05a56f748e10c70beaf72e89bec328f29de4c6c3ece6
+          quote: "`seasonality_notes` | String | seller-set | When the proposal performs differently"
+    vectors:
+      valid: ["Prose, not a name.", ""]
+      invalid: [7, true]
+    showcase: ["Weekday reach among business news readers in the US.", "Weekend reach among markets news readers in the US."]
+
+  # Network
+
+  - name: Url
+    description: An absolute `https` URL that a receiver may fetch.
+    type: string
+    concept: url
+    constraints:
+      format: uri
+      pattern: '^https://.+$'
+    decision: D-006
+    sources:
+      spec:
+        - ir: rule:2.3:99777739
+          digest: 406feb42eaa323b7ecfc76a14cc5018b0571b0ed8a54b9059f49d101885f4e65
+          quote: A seller MAY publish `https://<seller domain>/.well-known/openproposal.json`.
+          locks: [with-open-prs]
+        - ir: key:5.2:apps[].storeurl
+          digest: ff0b57e686b74d4d7954d4f807d16f837493476801ec8813d4b42463df5760d3
+          quote: "`storeurl` | OPTIONAL | Store listing URL. As `app.storeurl`"
+          locks: [with-open-prs]
+      standards:
+        - name: RFC 3986, Uniform Resource Identifier (URI) Generic Syntax
+          url: https://www.rfc-editor.org/rfc/rfc3986
+      design:
+        - doc: docs/design/initial-conventions.md
+          section: 2. Primitives are defined once
+    vectors:
+      valid: ["https://examplepub.example/.well-known/openproposal.json", "https://examplepub.example/terms/io-2026.pdf"]
+      invalid: ["http://examplepub.example/terms", "examplepub.example/terms", "https://", "https://exa mple.example/"]
+    showcase: ["https://examplepub.example/terms/io-2026.pdf", "https://examplepub.example/specs/display-2026.pdf"]
+
+  - name: Domain
+    description: A domain name, written as lowercase A-labels with at least two labels, a top-level label that starts with a letter, and no trailing dot, such as `examplepub.example`.
+    type: string
+    concept: domain-name
+    constraints:
+      pattern: '^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]([a-z0-9-]{0,61}[a-z0-9])?$'
+      maxLength: 253
+    decision: D-002
+    sources:
+      spec:
+        - ir: field:5.2:properties
+          digest: 8167901b1024772db9ede8143ce1d5009d6effcfd66b290f82e427a00940b50c
+          quote: "`properties` | Object | selectable | `available[]` of `{ id, name, domains, supported_formats }`, `included[]`, `pricing`, `max_select`"
+          locks: [main]
+        - ir: field:5.2:properties
+          digest: 4115b24e46ceb6cf1b12d1730a313c02123ae5b3ed6739bb9fefdaadc10ea478
+          quote: "`properties` | Object | selectable | `available[]` of `{ id, name, domains, apps, supported_formats }`, `included[]`, `pricing`, `max_select`. Each property MUST carry `domains`, `apps` or both"
+          locks: [with-open-prs]
+        - ir: key:5.2:apps[].domain
+          digest: 225b562dcf1a6bb5794204f48f457410c578cee81a69e2906f3c994b3a747eb4
+          quote: "`domain` | RECOMMENDED | Developer domain, against which `app-ads.txt` is checked. As `app.domain`"
+          locks: [with-open-prs]
+      standards:
+        - name: RFC 1123, Requirements for Internet Hosts (host name syntax)
+          url: https://www.rfc-editor.org/rfc/rfc1123
+        - name: RFC 5890, Internationalized Domain Names for Applications (A-labels)
+          url: https://www.rfc-editor.org/rfc/rfc5890
+    vectors:
+      valid: ["examplepub.example", "example-gambling.example", "xn--bcher-kva.example", "a.b.c.example"]
+      invalid: ["Examplepub.example", "localhost", "-examplepub.example", "examplepub..example", "examplepub.example.", "https://examplepub.example", "1.2.3.4", "192.168.0.1", "examplepub.123"]
+    showcase: ["examplepub.example", "markets-weekly.example"]
+
+  # Codes
+
+  - name: FormatId
+    description: The ID of a creative format in the format registry, namespaced by channel and written `<channel>/<format>`, such as `display/300x250` or `audio/host-read-30s`. Neither part is empty or holds a `/`, a space, or a control character. A receiver compares it by exact string equality.
+    type: string
+    concept: format-id
+    constraints:
+      pattern: '^[^\x00-\x20\x7f/]+/[^\x00-\x20\x7f/]+$'
+    decision: D-019
+    sources:
+      spec:
+        - ir: field:5.4:formats
+          digest: 2a8a55ef5666b057f31306cadf667fc01dff13e5cc5e009f00d3f649de375016
+          quote: "`formats` | Object | selectable | `available[]` of registry format ids namespaced by channel (`display/300x250`, `audio/host-read-30s`), `included[]`, `pricing`, `max_select`"
+    vectors:
+      valid: ["display/300x250", "audio/host-read-30s", "examplepub.example:podcast/host-read"]
+      invalid: ["300x250", "display/", "/300x250", "display/300 x 250", "display/300x250/2", 300]
+    showcase: ["display/300x250", "display/728x90"]
+
+  # Money
+
+  - name: CurrencyCode
+    description: An ISO 4217 alphabetic currency code, such as `USD`.
+    type: string
+    concept: currency
+    constraints:
+      pattern: '^[A-Z]{3}$'
+    sources:
+      spec:
+        - ir: field:5.6:pricing[].currency
+          digest: c3fe3033ef8ca1012e67b36b728cc3383f4f4b4642ded0b50c4537216dcafde1
+          quote: "`pricing[].currency` | String | seller-set | ISO-4217"
+        - ir: key:5.6.1:commitment.currency
+          digest: 19e4d985eb2f3a597bafe8f3233448688dcfd827a2e41bc2b8fe1886c5e9ce33
+          quote: "`currency` | REQUIRED when `basis = spend` | ISO-4217"
+      standards:
+        - name: ISO 4217, Codes for the representation of currencies
+          url: https://www.iso.org/iso-4217-currency-codes.html
+    vectors:
+      valid: ["USD", "EUR", "SGD"]
+      invalid: ["usd", "US", "USDT", 840]
+    showcase: ["USD", "EUR"]
+    rules:
+      - id: kernel:CurrencyCode:assigned
+        statement: A CurrencyCode MUST be an alphabetic code that ISO 4217 currently assigns.
+        source:
+          standard:
+            name: ISO 4217, Codes for the representation of currencies
+            url: https://www.iso.org/iso-4217-currency-codes.html
+        valid: ["USD", "JPY"]
+        invalid: ["ABC", "QQQ"]
+
+  - name: Amount
+    description: A sum of money or a price per unit of a cost method, never negative, such as a budget, a minimum spend, or a CPM. It is in the currency of the `currency` member of the object that carries it, and the cost method says what a rate is per.
+    type: number
+    concept: amount
+    constraints:
+      minimum: 0
+    decision: D-036
+    sources:
+      spec:
+        - ir: field:5.6:min_spend
+          digest: 9950b94692a4b0250d54a54d47eca0f63c96a7b9d26607cded57896d46e5c8c4
+          quote: "`min_spend` | Number | seller-set | Minimum spend for this line item"
+        - ir: key:5.6.1:commitment.amount
+          digest: 9e4c291747cc047e67c9ef7b1b6f9776d02bb2e82de16dfe9b8079e42921e804
+          quote: "`amount` | REQUIRED | The figure committed"
+        - ir: field:5.6:pricing[].gross_rate
+          digest: f432867a10e6b5662c58996ee4f1c3ea14cddc65968fb1f879bbc703940b9621
+          quote: "`pricing[].gross_rate` | Number | seller-set | The list rate the buyer pays"
+      standards:
+        - name: OpenRTB 2.6, Object Imp (`bidfloor` and `bidfloorcur`)
+          url: https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/2.6.md#3.2.4
+    vectors:
+      valid: [0, 25000, 12.5]
+      invalid: [-1, -0.01, "25000"]
+    showcase: [18.5, 2500]
+
+  - name: PriceAdjustment
+    description: A signed change to a price or a sum of money, such as the change an option makes to the CPM, or a flat surcharge or discount. A negative value lowers the price.
+    type: number
+    concept: price-adjustment
+    constraints: {}
+    decision: D-036
+    sources:
+      spec:
+        - ir: key:3.1:pricing
+          digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
+          quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+    vectors:
+      valid: [-2.5, 0, 3]
+      invalid: ["-2.5", null]
+    showcase: [2.5, -1.5]
+
+  # Ratios and quantities
+
+  - name: PercentChange
+    description: A relative change to a price in percent, from −100 up, such as 10 for a 10 % surcharge or −5 for a 5 % discount.
+    type: number
+    concept: percent-change
+    constraints:
+      minimum: -100
+    decision: D-010
+    sources:
+      spec:
+        - ir: key:3.1:pricing
+          digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
+          quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+    vectors:
+      valid: [10, -5, -100, 0, 250]
+      invalid: [-100.5, "10", null]
+    showcase: [10, -5]
+
+  - name: Fraction
+    description: A proportion from 0 to 1, such as 0.7 for 70 %.
+    type: number
+    concept: fraction
+    constraints:
+      minimum: 0
+      maximum: 1
+    decision: D-005
+    sources:
+      spec:
+        - ir: field:5.7:committed_metrics[]
+          digest: 2c123e829ef892456b09671dfd52243f1bef0db8b067aa9c5d184dc07411caf5
+          quote: "`committed_metrics[]` | Array[Object] | requestable | `{ metric, value, basis }` tuples — `viewable_rate` for display, `completion_rate` for video/audio/CTV, an audience-modelled metric for DOOH. Seller declares a ceiling; a buyer MAY request above it"
+        - ir: field:5.3:buyer_supplied
+          digest: 18d87a0de58116db76d7152a7f96bc722dc700b91f053406b32e4299e7910504
+          quote: "`buyer_supplied` | Object | supplied | `{ segments_allowed, suppression_allowed, match_rate_expected, segments[], suppression_list }`. `match_rate_expected` is the seller's stated expectation; `segments[]` and `suppression_list` are buyer-populated"
+    vectors:
+      valid: [0, 0.7, 1]
+      invalid: [70, -0.1, 1.01]
+    showcase: [0.7, 0.85]
+
+  - name: Count
+    description: A whole number of things, never negative and at most 2^53 − 1, such as impressions, options, or a proposal's revisions, which its `version` counts.
+    type: integer
+    concept: count
+    constraints:
+      minimum: 0
+      maximum: 9007199254740991
+    sources:
+      spec:
+        - ir: field:5.3:addressable_scale
+          digest: 1289f106e9861b03225c1fc7056b164eac34f82d73fc327c7009b0c8b9111e24
+          quote: "`addressable_scale` | Integer | derived | Reachable units in the flight, recomputed against the buyer's selection. Not segment size"
+        - ir: key:3.1:max_select
+          digest: 199cab600b78dcd9dc40358fa8a94ec4d323f2bcf2fd7922a62b008af465d820
+          quote: "`max_select` | OPTIONAL | Cap on how many options the buyer may choose"
+      standards:
+        - name: RFC 7493, The I-JSON Message Format (integers within the IEEE 754 double range, section 2.2)
+          url: https://www.rfc-editor.org/rfc/rfc7493#section-2.2
+      design:
+        - doc: docs/design/type-rules.md
+          section: 3a. Value domains
+    vectors:
+      valid: [0, 1500000, 9007199254740991]
+      invalid: [-1, 2.5, "3", 9007199254740992]
+    showcase: [250000, 500000]
+
+  # Time
+
+  - name: Timestamp
+    description: A point in time, written as an RFC 3339 date-time with a UTC offset, such as `2026-10-25T09:00:00Z`, the start of a flight included. It follows RFC 3339's grammar, with a `T` or `t` between the date and the time and an offset of `Z`, `z`, `+hh:mm`, or `-hh:mm`, never a space, `+05`, or `+0500`. Several spellings name one instant, such as `Z` and `+00:00`, so a receiver compares two Timestamps as instants, not as strings.
+    type: string
+    concept: instant
+    constraints:
+      format: date-time
+      pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}[Tt][0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?([Zz]|[+-][0-9]{2}:[0-9]{2})$'
+    decision: D-001
+    sources:
+      spec:
+        - ir: field:4.1:valid_from,valid_until
+          digest: 9c5853eb24269fa128f158276e85a0e45be848cce58efe34fa1739a06514e9a0
+          quote: "`valid_from` · `valid_until` | Timestamp | seller-set | ISO-8601 window the offer holds. This is the offer window, not the campaign flight"
+        - ir: key:5.6.2:hold_status.hold_expires_at
+          digest: d298da40613999b40a53bab56e17f7c8af9488207a3755391ce3c368a2556cb8
+          quote: "`hold_expires_at` | Absolute timestamp, set when the hold is granted"
+      standards:
+        - name: RFC 3339, Date and Time on the Internet (date-time)
+          url: https://www.rfc-editor.org/rfc/rfc3339
+    vectors:
+      valid: ["2026-10-25T09:00:00Z", "2026-10-25T09:00:00.250-05:00", "2026-10-25t09:00:00z", "2026-10-25T09:00:00-00:00", "2016-12-31T23:59:60Z", "0000-01-01T00:00:00Z"]
+      invalid: ["2026-10-25", "2026-10-25T09:00:00", "2026-02-30T09:00:00Z", "20261025T090000Z", "2026-10-07 10:00:00+05", "2026-10-07T10:00:00+0500", "2026-10-07T10:00:00+05", "2026-10-07 10:00:00Z"]
+    showcase: ["2026-11-02T09:00:00Z", "2026-12-21T23:59:59Z"]
+
+  - name: Duration
+    description: A length of time, written as an ISO 8601 duration in the grammar of RFC 3339 Appendix A, such as `PT48H`.
+    type: string
+    concept: duration
+    constraints:
+      format: duration
+    decision: D-001
+    sources:
+      spec:
+        - ir: key:5.6.2:hold_status.hold_duration
+          digest: 926e46e5c6325e98292a30a6655d0991d1979a9e07c1c637c9d256aa82659493
+          quote: "`hold_duration` | ISO-8601 duration the hold runs for"
+      standards:
+        - name: RFC 3339, Appendix A, ISO 8601 collected ABNF (duration)
+          url: https://www.rfc-editor.org/rfc/rfc3339#appendix-A
+    vectors:
+      valid: ["PT48H", "P2D", "P1W", "P1DT12H"]
+      invalid: ["48h", "P", "PT", "2 days"]
+    showcase: ["P7D", "PT48H"]
+
+  - name: TimeOfDay
+    description: A civil time of day, written `HH:MM` from `00:00` to `24:00`, read on the line item's clock. `24:00` is the end of the day, so it ends a window and never starts one.
+    type: string
+    concept: daypart-window
+    constraints:
+      pattern: '^(([01][0-9]|2[0-3]):[0-5][0-9]|24:00)$'
+    decision: D-004
+    decision_locks: [main]
+    sources:
+      spec:
+        - ir: field:5.5:daypart
+          digest: 25c80cd35ce4831dfbd372627f2d794511fffe5f029243e586ee1e607be4fdc2
+          quote: "`daypart` | Object | settable | `allowed[]` of time windows"
+          locks: [main]
+        - ir: field:5.5:daypart
+          digest: b34d1818bf80b3e5947f9902057ac882707ef3a893fc370c97efc81487d64080
+          quote: "`daypart` | Object | settable | `allowed[]` of `{ days[], start, end }`: `days[]` from `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`, HH:MM civil time, `end` exclusive, up to `24:00`"
+          locks: [with-open-prs]
+        - ir: sentence:5.5:348ea676
+          digest: b653534aab2fd12f0dad1b1f4422634068e90af810a75414b00aa4d346e379fc
+          quote: A `daypart` window is `{ days[], start, end }`, with `days[]` from Monday to Sunday, `start` and `end` as HH:MM, and `end` exclusive, later than `start`, and allowed to be `24:00`.
+          locks: [with-open-prs]
+      standards:
+        - name: ISO 8601-1, Date and time (time of day in the extended format hh:mm)
+          url: https://www.iso.org/standard/70907.html
+    vectors:
+      valid: ["09:00", "00:00", "23:59", "24:00"]
+      invalid: ["24:30", "24:01", "25:00", "12:60", "9:00", "09:00:00", "0900", "T09:00", 900]
+    showcase: ["09:00", "17:00"]
+
+  - name: DayName
+    description: A day of the week, named in lowercase English, from `monday` to `sunday`.
+    type: string
+    concept: daypart-window
+    constraints:
+      enum: [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+    decision: D-004
+    decision_locks: [main]
+    sources:
+      spec:
+        - ir: field:5.5:daypart
+          digest: 25c80cd35ce4831dfbd372627f2d794511fffe5f029243e586ee1e607be4fdc2
+          quote: "`daypart` | Object | settable | `allowed[]` of time windows"
+          locks: [main]
+        - ir: field:5.5:daypart
+          digest: b34d1818bf80b3e5947f9902057ac882707ef3a893fc370c97efc81487d64080
+          quote: "`daypart` | Object | settable | `allowed[]` of `{ days[], start, end }`: `days[]` from `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`, HH:MM civil time, `end` exclusive, up to `24:00`"
+          locks: [with-open-prs]
+      standards:
+        - name: ISO 8601-1, Date and time (calendar week from Monday to Sunday)
+          url: https://www.iso.org/standard/70907.html
+        - name: Google Ad Manager API, DayOfWeek
+          url: https://developers.google.com/ad-manager/api/reference/latest/LineItemService.DayOfWeek
+    vectors:
+      valid: ["monday", "sunday"]
+      invalid: ["Monday", "mon", "1", 1]
+    showcase: ["monday", "friday"]
+
+  - name: TimeZone
+    description: The clock a line item's daypart and frequency cap period are read on, a zone name of the IANA time zone database, such as `America/New_York` or `UTC`, or `viewer_local`, the clock where the ad renders. A zone name follows the zone's daylight saving rules, which a fixed offset doesn't.
+    type: string
+    concept: time-zone
+    locks: [with-open-prs]
+    constraints:
+      pattern: '^(viewer_local|[A-Z][A-Za-z0-9_+-]*(/[A-Za-z0-9_+-]+)*)$'
+    sources:
+      spec:
+        - ir: field:5.5:time_zone
+          digest: c3a3201d895ffca4363f6b17d138858db2a32c7ba2bb5352647cec4a596de13d
+          quote: "`time_zone` | String | seller-set | IANA time zone name, or `viewer_local` (where the ad renders). The clock for `daypart` and `frequency_cap.period`. REQUIRED with either"
+          locks: [with-open-prs]
+        - ir: sentence:5.5:3ec41b49
+          digest: d28f7a045f76828d2402a2595875e5dc09466aac3c71c79f5f20c833b51e312f
+          quote: "`time_zone` names a zone in the IANA time zone database, such as America/New_York or UTC."
+          locks: [with-open-prs]
+      standards:
+        - name: IANA Time Zone Database, zone names
+          url: https://www.iana.org/time-zones
+    vectors:
+      valid: ["America/New_York", "UTC", "viewer_local", "America/Argentina/Buenos_Aires", "Etc/GMT+5"]
+      invalid: ["", "america/new_york", "viewer-local", "viewer_Local", "-05:00", "EST 5", "America/", "/UTC", 0]
+    showcase: ["America/New_York", "Europe/London"]
+    rules:
+      - id: kernel:TimeZone:listed
+        statement: A `TimeZone` other than `viewer_local` MUST be a zone name that the IANA time zone database lists.
+        source:
+          spec:
+            - ir: sentence:5.5:3ec41b49
+              digest: d28f7a045f76828d2402a2595875e5dc09466aac3c71c79f5f20c833b51e312f
+              quote: "`time_zone` names a zone in the IANA time zone database, such as America/New_York or UTC."
+              locks: [with-open-prs]
+          standard:
+            name: IANA Time Zone Database, zone names
+            url: https://www.iana.org/time-zones
+        valid: ["America/New_York", "Europe/London", "viewer_local"]
+        invalid: ["America/Springfield", "Mars/Olympus_Mons", "Viewer_local", "UTC+5"]
+
+  # Terms, references, and digests
+
+  - name: NamespacedTerm
+    description: A term outside a vocabulary's core list, written `<domain>:<term>`, where the domain is the definer's identity domain, such as `examplepub.example:podcast_host_read`.
+    type: string
+    concept: namespaced-term
+    constraints:
+      pattern: '^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]([a-z0-9-]{0,61}[a-z0-9])?:[A-Za-z0-9]+(_[A-Za-z0-9]+)*$'
+    decision: D-002
+    sources:
+      standards:
+        - name: RFC 1123, Requirements for Internet Hosts (host name syntax)
+          url: https://www.rfc-editor.org/rfc/rfc1123
+      design:
+        - doc: docs/design/type-rules.md
+          section: 6. Vocabularies
+        - doc: docs/design/initial-conventions.md
+          section: 3. Lists are defined once
+    vectors:
+      valid: ["examplepub.example:podcast_host_read", "measure.example:attention_index"]
+      invalid: ["podcast_host_read", "Examplepub.example:podcast_host_read", "examplepub.example:", "examplepub:podcast_host_read", "1.2.3.4:podcast_host_read"]
+    showcase: ["examplepub.example:custom_term", "examplepub.example:other_term"]
+
+  - name: VendorCode
+    description: A code that an AdCOM 1.0 list reserves for vendors, 500 or more, as List API Frameworks reserves "500+ Vendor-specific codes". It extends a vocabulary of the list's codes.
+    type: integer
+    concept: vendor-code
+    locks: [with-open-prs]
+    constraints:
+      minimum: 500
+    sources:
+      standards:
+        - name: AdCOM 1.0, List API Frameworks (500+ Vendor-specific codes)
+          url: https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#list_apiframeworks
+    vectors:
+      valid: [500, 1024]
+      invalid: [499, 9, "500", 500.5]
+    showcase: [500, 501]
+
+  - name: CatalogRef
+    description: A version-pinned reference to an entry in a seller-maintained catalog, written `<seller_namespace>/<collection>/<entry_id>@<version>`, such as `examplepub/audiences/smb-decision-makers@3`. No part is empty or holds a `/`, an `@`, a space, or a control character.
+    type: string
+    concept: catalog-ref
+    constraints:
+      pattern: '^[^\x00-\x20\x7f/@]+/[^\x00-\x20\x7f/@]+/[^\x00-\x20\x7f/@]+@[^\x00-\x20\x7f/@]+$'
+    decision: D-009
+    sources:
+      spec:
+        - ir: code:2.2:1
+          digest: 5b0b87b43dbc9c1a24ed8f3e2bd71d22c5d790a6f786b980bd554f64a71436a0
+          quote: |-
+            catalog_ref: "<seller_namespace>/<collection>/<entry_id>@<version>"
+            example:     "examplepub/audiences/smb-decision-makers@3"
+        - ir: rule:2.2:3916a8f2
+          digest: 511cade5dc52dec990f091f7293a343392bae81a91404e3a81983b040edf9315
+          quote: References MUST be version-pinned.
+    vectors:
+      valid: ["examplepub/audiences/smb-decision-makers@3", "ep/properties/business-daily@2026-10"]
+      invalid:
+        - "examplepub/audiences/smb-decision-makers"
+        - "examplepub/audiences@3"
+        - "examplepub/audiences/smb/decision-makers@3"
+        - "examplepub/audiences/smb-decision-makers@"
+        - "examplepub/audiences/smb-decision-makers@3@4"
+        - "examplepub//smb-decision-makers@3"
+        - "examplepub/audiences/smb decision makers@3"
+    showcase: ["examplepub/audiences/smb-decision-makers@3", "examplepub/audiences/hnw-investors@1"]
+
+  - name: Digest
+    description: A SHA-256 hash of the exact bytes it pins, written as 64 lowercase hexadecimal characters.
+    type: string
+    concept: digest
+    locks: [with-open-prs]
+    constraints:
+      pattern: '^[0-9a-f]{64}$'
+    decision: D-003
+    sources:
+      spec:
+        - ir: field:5.8:terms_ref
+          digest: c65b1714f353bd191478e58c22e966ba7aea717efd79a61aa495c477fc4249b1
+          quote: "`terms_ref` | Object | seller-set | OPTIONAL; REQUIRED when `terms_acceptance_required` is `true`. `{ url, sha256, version }`: the legal terms or IO template the buyer accepts at assent. Hash-pinned, so assent (§ 4.1) binds to an exact document"
+          locks: [with-open-prs]
+      standards:
+        - name: FIPS 180-4, Secure Hash Standard (SHA-256)
+          url: https://csrc.nist.gov/pubs/fips/180-4/upd1/final
+      design:
+        - doc: docs/design/initial-conventions.md
+          section: 9. Digests
+    vectors:
+      valid: ["e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"]
+      invalid:
+        - "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        - "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        - "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b85"
+    showcase: ["8bc1e566c463606f2971c6f29669a988ff5fa2e1cba04721e63b871133a4958b", "644197a08014b4a8b77075a2e3fd3bc0c69568254a8c805892559f1369dfaa47"]

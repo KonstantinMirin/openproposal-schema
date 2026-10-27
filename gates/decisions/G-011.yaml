@@ -1,0 +1,24 @@
+format: 1
+id: G-011
+date: 2026-10-26
+question: How does the corpus build a baseline for a part whose rules read its members, such as a daypart window?
+decision: >-
+  A part whose kernel rules read its members starts its baseline from a
+  value every one of those rules lists as valid, and builds only the
+  members a case forces or pins: a daypart window's baseline is
+  `{ days: [monday, friday], start: "06:00", end: "10:00" }`, not
+  `{ days: [], start: "09:00", end: "09:00" }`, which the ordered rule
+  rejects. The fidelity oracle builds its vectors with the same builder. A
+  test checks that every daypart window a baseline of either corpus holds
+  ends after it starts. The test suite holds 310 tests, so its floor rises
+  to 310.
+rationale: >-
+  A baseline is a valid payload, and a window that ends where it starts
+  breaks the window's rule, so an SDK that ran the rule rejected the
+  corpus's valid cases. The mutants still isolate one keyword each, the
+  isolation gate checks them as before, and the test floor rises, so no
+  gate is weaker.
+accepts:
+  - { gate: corpus-generates, fingerprint: 065b8f468929540a46c7e479e42309f76233f306028c81ef53f03fdd39da00bd }
+  - { gate: fidelity, fingerprint: 43cbdac08be3657414a52e34bd8b576036aa3a4b6b7e50a5909776fa380064b0 }
+  - { gate: npm-test, fingerprint: 80fe58e9f863935c2d6924f5c0eae141f771ae6fe8d5f7a4a5f0a94e531558c6 }

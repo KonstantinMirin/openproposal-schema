@@ -1,0 +1,24 @@
+format: 1
+id: G-032
+date: 2026-10-26
+question: Which gates change when the fidelity oracle holds each summary projection to the paths its MUST-contain list names, and the sources gate's profile-path check gets a fixture?
+decision: >-
+  The fidelity oracle reads each MUST-contain list, and each "plus" list that
+  continues it, as a projection: each object one of its paths steps into,
+  below the root, holds only the members the list's paths name there and a
+  sibling the domain model makes one of them require, as a rate requires its
+  `currency`; a step a listed path ends at is the whole field, and the root,
+  which also holds the prose items and the members the profile adds, isn't
+  checked. A member beyond them fails the gate. Two fixtures widen the
+  summary's `formats` and, with the open PRs, its `environments` back to the
+  whole field, which keeps every listed path required and so passed before.
+  The mapping-sources gate gains a fixture for the profile-path check G-028
+  added: a path through a member no covered element writes.
+rationale: >-
+  A projection widened back to its whole field kept every listed path
+  required, so no presence vector caught it. The oracle now reads the list's
+  paths as what the projection holds, both gates gain fixtures that fail
+  them, and nothing is removed, so no gate is weaker.
+accepts:
+  - { gate: fidelity, fingerprint: 4ab54a30716fd9f1f3aed53587d79d6b90382531b135c41ea1b557ae2701916a }
+  - { gate: mapping-sources, fingerprint: 58d0f28c7cba69ddec0fca6b0fe56a469b02cad37dab6ea49a10705ccc4c161e }

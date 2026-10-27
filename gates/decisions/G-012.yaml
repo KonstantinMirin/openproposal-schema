@@ -1,0 +1,29 @@
+format: 1
+id: G-012
+date: 2026-10-26
+question: How do the mapping and the round trip read the daypart row of PR #123 at 9783ec8, which lists the window's days as one value list?
+decision: >-
+  Mapping rule `restated-value-list` also maps a value list whose values,
+  in order, are a kernel primitive's `enum` to what that primitive's schema
+  expresses, so the daypart row's `monday` | … | `sunday` is
+  `{ role: schema, in: DayName }`, with no decision. The round trip renders
+  a value list that gives a member of a part the row's type holds from the
+  primitive that member's items are, so the row's days are rendered from
+  `DayName`. A test checks the entry and the rendering, and that a
+  `DayName` without `sunday` renders differently. The test suite holds 311
+  tests, so its floor rises to 311.
+rationale: >-
+  The amendment states the day list in the row, where it was a range
+  before, and the list is exactly `DayName`'s, so a rule maps it, and the
+  round trip compares the model's days with the text's instead of leaving
+  the list unrendered. A list that matches no primitive or vocabulary, or
+  two, still needs a decision, and a `DayName` that drifts from the text
+  fails the round trip, so no gate is weaker.
+accepts:
+  - { gate: comparison, fingerprint: 26b29f3097f3eab432bc0c860c2b7538b9c793e9bef5a686e7922caee29edda6 }
+  - { gate: map-drift, fingerprint: b608c9fabee06878314c1d83271826eaa646323a219754b3e947c6c7d3aa9ce4 }
+  - { gate: mapping-bijection, fingerprint: 6c9da0670f752ba9d20d4e67a5d9787a93572aca8a87e31cca91bb1cd14303e7 }
+  - { gate: mapping-location, fingerprint: a10dc6320936fabcdb881418b1cd9cb460076c2d227a0ab68ebb8c3d705a4436 }
+  - { gate: mapping-rules, fingerprint: 6a3f32b830ba9e87822b49405f66e25475ac00238371c88016f861e00e90f8b0 }
+  - { gate: npm-test, fingerprint: aecf4e762c57053d859057b0b0417e7b345cad1a6a011c719f6aa47a16579223 }
+  - { gate: round-trip, fingerprint: 0261a60aa7e70163a45f6e33248b5ffa334a756462041f04b9310ae404f4f44f }

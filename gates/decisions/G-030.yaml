@@ -1,0 +1,42 @@
+format: 1
+id: G-030
+date: 2026-10-26
+question: Which gates change when the rules' checks leave undecided what a code block or a ctv line item doesn't say, compare a range by its parameter's type, and record undecided checks and SHOULD warnings as the findings are recorded?
+decision: >-
+  The `plcmt`, measurement-vendor, environments, and agreed-status checks
+  read a code block as part of a line item: a block that shows a member the
+  rule reads and leaves out the one the verdict turns on is undecided, and
+  one that shows none of them holds. The `plcmt` check reads its key row,
+  "REQUIRED for video ads (`channel` `video`, or video on `channel` `ctv`)":
+  a `ctv` line item with no `plcmt` is undecided, since no field says its ads
+  are video (D-035), so the ctv bonus example is undecided, not silent. A
+  measurement option given as a `catalog_ref` leaves the vendor rule
+  undecided. A range compares its bounds by the type its copy's `T` names,
+  numbers as numbers and timestamps as instants parsed from the RFC 3339
+  form, never with `Date.parse` on other text, and the rule-checks gate
+  takes the model to know each type; a daypart window compares times of
+  day. Each undecided check is recorded under `undecided` in
+  examples/findings.yaml with a decision that covers an element its rule
+  rests on, and the examples gate fails on one not recorded and on a
+  recorded one that is decided now; two are recorded, both with the open
+  PRs. A rule finding carries its rule's severity, and a SHOULD rule's is
+  recorded as `severity: warning`, which the gate compares. New fixtures
+  remove a recorded undecided check, record a MUST finding as a warning, and
+  hide a range's bound type from the rule-checks gate. The test suite holds
+  338 tests, so its floor rises to 338.
+rationale: >-
+  The checks decided what the examples don't say: a ctv line item passed
+  silently, a block's missing placement failed it, and a range compared the
+  text `"5"` with `"1"` as years. Every undecided check is now reviewed and
+  held by the gate, which no note line did, the checks keep every vector's
+  verdict, each fixture fails its gate, and the test floor rises, so no gate
+  is weaker.
+accepts:
+  - { gate: comparison, fingerprint: e07078a52c36efbfa817991f36bc7652c64f46e57096d62bed4acec87e2a5fbd }
+  - { gate: examples-validate, fingerprint: a8ebd07b3557806270f93c857987a3fc6d537afe422541056f33dcbf4762b1a9 }
+  - { gate: feedback, fingerprint: 0969c31f9723b5d9a9f2e4b361dcc0e3df8bccd717f421c77a46073448385f50 }
+  - { gate: findings-load, fingerprint: dd75b540276f21f14b635080c121e013e2de70e37472e519ed8995f5868f2fc3 }
+  - { gate: findings-locks, fingerprint: c51868f408ff8fb992bdcccf32afa71f4e465388391a991414887292c887140c }
+  - { gate: guard, fingerprint: 88bc9842b097d18fdff97750fa3e9f46ea7b220f7cb71bf7ee6bdca60305ee9e }
+  - { gate: npm-test, fingerprint: e8bc54391bb13b32dc32494ffa86443489d4f52ca7a44a7c0eb4db34ff2b765c }
+  - { gate: rule-checks, fingerprint: 496169175e3ef057087ea3281119c080ea5325d08ffb2f8023c08cb37813eae8 }

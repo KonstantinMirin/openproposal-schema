@@ -1,0 +1,33 @@
+rule:front:ceff832d	MUST NOT	line 7	It is not a ratified IAB Tech Lab standard and MUST NOT be treated as one.
+rule:2:7d544674	MUST	line 62	Each line item MUST be fully self-contained.
+rule:2:4ae8f775	MUST NOT	line 62	A field on a line item MUST NOT inherit its value from the proposal or from a sibling line item.
+rule:2:2ea1196f	MAY	line 67	A buyer MAY select and commit a subset of a proposal's line items, unless the proposal explicitly mandates linked execution through its binding terms.
+rule:2.1:948e2b02	MAY	line 76	A catalog response MAY return it.
+rule:2.1:2e481f6f	MUST	line 76	It MUST contain, per line item:
+rule:2.1:8d97860b	MUST	line 87	`catalog_ref` values MUST remain unresolved in a summary.
+rule:2.1:2f9d603c	MUST	line 90	A full fetch MUST return it.
+rule:2.2:c610e803	MAY	line 94	Any field whose value is drawn from a seller-maintained catalog MAY carry a reference in place of an inline value:
+rule:2.2:696ee27b	MUST	line 102	A field MUST carry either an inline value or a `catalog_ref`, never both.
+rule:2.2:3916a8f2	MUST	line 106	References MUST be version-pinned.
+rule:2.2:fd522468	MUST	line 106	A catalog entry MUST be immutable once referenced; a change creates a new version.
+rule:2.2:bee40541	MUST	line 108	References MUST resolve during discovery.
+rule:2.2:06ccee9f	MUST	line 109	When a proposal reaches status `agreed`, every `catalog_ref` MUST be replaced by its resolved value in the stored record, so the committed artifact is self-contained and immutable.
+rule:3:e768cdf1	MAY	line 122	The seller sets it and MAY revise it while status is `draft` or `published`.
+rule:3:d5ed9b66	MAY	line 123	Each option MAY carry a price delta.
+rule:3:82c2f1b0	MAY	line 126	The buyer MAY ask for a value outside the declared space.
+rule:3:07a16404	MUST	line 129	`selectable`, `settable` and `supplied` fields MUST resolve without a round trip — everything needed to validate and price them is declared in the proposal.
+rule:3:b51cedb6	MUST	line 134	An unset `selectable` or `settable` field takes its declared `included[]` or default, and that default MUST be explicit in the proposal.
+rule:3.1:f3c3cab7	MUST	line 140	Every field marked `selectable` MUST declare:
+rule:3.1:ff8838af	MAY	line 145	MAY be empty
+rule:3.1:f8b0c287	MUST	line 149	A field marked `selectable` that carries a bare value and no `available[]` MUST be treated as `seller-set`.
+rule:3.2:ee009430	MUST	line 158	Every field marked `settable` MUST declare its bounds: either `allowed[]` (an enumerated set) or `min` / `max` (a numeric or date range).
+rule:3.2:4f3b0a9c	MUST	line 161	A field marked `settable` that carries a bare value and no bounds MUST be treated as `seller-set`.
+rule:3.3:f58949fc	MUST	line 166	Because audiences, properties and formats are `selectable`, `addressable_scale` and `availability` MUST be recomputed against the buyer's actual selection.
+rule:4.1:1a0e1d65	REQUIRED	line 191	REQUIRED when `type` is `custom`
+rule:4.1:8e9aacb8	MUST NOT	line 192	Entries MUST NOT be edited or removed
+rule:4.2:86398bec	REQUIRED	line 200	REQUIRED.
+rule:5.4:2eaa294f	MAY	line 247	A buyer MAY request a later date
+rule:5.6:d539a004	OPTIONAL	line 274	OPTIONAL.
+rule:5.6.1:e250f467	MUST NOT	line 299	A request carrying an `idempotency_key` already seen MUST return the original result and MUST NOT create a second commitment.
+rule:5.7:4994173c	MAY	line 320	Seller declares a ceiling; a buyer MAY request above it
+rule:5.9:d510ffe5	MAY	line 339	A seller MAY offer the same inventory through more than one

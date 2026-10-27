@@ -1,0 +1,30 @@
+format: 1
+id: G-004
+date: 2026-10-25
+question: How does CI keep a gate decision from being edited after the fact, and how is a gate removed without editing the record that accepted it?
+decision: >-
+  A new gate, decisions-append-only, fails when `git diff -M
+  --diff-filter=MDR` against a base edits, deletes, or renames a record under
+  gates/decisions/. In GitHub Actions the job sets GATE_BASE to the pull
+  request's base or the push's previous commit and fetches it before the
+  gate script; the workflow gate requires both, and keeps its rules that no
+  step or job carries an `if` or a `continue-on-error`. Locally, `npm run ci`
+  compares with origin/main. Its fixtures delete every record, edit an
+  accepted fingerprint in a tree built from the base, and name a base the
+  clone doesn't hold. A gate decision may list `retires_gates`: the guard
+  then stops expecting the gate, an earlier record's `accepts` of it stays as
+  written, and a retired gate that still runs fails, as a removed gate that
+  no record retires does. The test suite holds three more tests, so its
+  floor rises to 289.
+rationale: >-
+  The guard compared each fingerprint with the latest record that names the
+  gate, so a record edited in place could accept a weakened gate with no
+  trace, and removing a gate forced exactly such an edit. Records are now
+  only appended, which CI checks against the commit the change is made on,
+  and a gate leaves through a record of its own. Nothing a gate checked
+  before is checked less.
+accepts:
+  - { gate: decisions-append-only, fingerprint: 3d3ab0512677103c4b01cd02e8eaeb3c1955109438bdfccd9cdbfe9f9b2c1410 }
+  - { gate: guard, fingerprint: d23ed52ee96697609c7fb86655766b935aedfe4f19a4ca0b392de0e8326d531f }
+  - { gate: npm-test, fingerprint: b2af6399bba48c7024585f0379020e805c90a13c1db90bb7dda7c1813205bfa6 }
+  - { gate: workflow, fingerprint: 8a527158c6ef7894e5e07fb8a7c080990841d38dad8c720277dbaf6fd49c6ca5 }

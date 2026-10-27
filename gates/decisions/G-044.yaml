@@ -1,0 +1,24 @@
+format: 1
+id: G-044
+date: 2026-10-26
+question: Does the feedback gate catch the model, a constructor's copy, and a profile in the working group's text, as a review found them there?
+decision: >-
+  The internal-term check also fails on "the model", on "copy" in the sense
+  of a constructor's copy, as "its selectable copy" or "a copy of a
+  constructor", and on "profile", in the text for the working group; "copy"
+  as a verb, as § 5.2.2 copies an AdCOM list, stays plain English. The
+  records that used them say instead "its selectable form", "the generated
+  schemas leave", "the generated table writes", "the proposal's summary",
+  and "a separate inspection specification". Two fixtures give a reason and
+  a summary those terms. The round-trip and examples gates read the records
+  whose reasons changed, so their fingerprints change with no change to what
+  they check.
+rationale: >-
+  The check missed internal terms a review found in the generated text. It
+  catches more now and drops nothing, and two fixtures are added, so no gate
+  is weaker.
+accepts:
+  - { gate: examples-validate, fingerprint: 227e8008a1eb1efc752c20d488f1839caed5d285f8229a3a9a4eaaf4c1f5e38e }
+  - { gate: feedback, fingerprint: 266018ced5e3ac0e41bcff45c3d18e1d908b00cf5602df1bce95c1be748d3f61 }
+  - { gate: npm-test, fingerprint: 989439577c69db278b904f68881b6d34d0d32072a0d8eb0bbed7bdbf25885d95 }
+  - { gate: round-trip, fingerprint: 1baa1d9e4929c8a4c5c924f079d3aaa58e916d2d3e0778f2514e283a19ea7670 }

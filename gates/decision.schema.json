@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/gates/decision.schema.json",
+  "title": "Gate decision",
+  "description": "One record per file: gates/decisions/<id>.yaml, never edited, deleted, or renamed once the base holds it. A change to a gate's code, its fixtures or their data, or an exemption it reads changes the gate's fingerprint, and the guard gate fails until a gate decision names the gate and accepts the new fingerprint. A record says why. A concept a record accepts can leave kernel/domains.yaml only through a later record's `retires`. Gate decisions are about the tooling, so they don't go to the working group.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "id", "date", "question", "decision", "rationale"],
+  "properties": {
+    "format": { "const": 1 },
+    "id": { "description": "Equals the file name without `.yaml`.", "type": "string", "pattern": "^G-[0-9]{3}$" },
+    "date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "question": { "description": "What the change answers, as one question.", "type": "string", "minLength": 12 },
+    "decision": { "description": "What changed in the gates.", "type": "string", "minLength": 12 },
+    "rationale": { "description": "Why the change makes no gate weaker, or why a gate is relaxed and what covers what it no longer checks.", "type": "string", "minLength": 12 },
+    "accepts": {
+      "description": "Each gate the record accepts, with the fingerprint `npm run gates -- fingerprints` prints for it.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["gate", "fingerprint"],
+        "properties": {
+          "gate": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "fingerprint": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        }
+      }
+    },
+    "concepts": {
+      "description": "The concepts of kernel/domains.yaml the record accepts.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }
+    },
+    "retires_gates": {
+      "description": "Gates the record removes, each with why. An earlier record that accepts a retired gate stays as it was written, since records are append-only.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["gate", "reason"],
+        "properties": {
+          "gate": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "reason": { "type": "string", "minLength": 12 }
+        }
+      }
+    },
+    "retires": {
+      "description": "Concepts the record removes from the model, each with why; a gate that reports a concept unused is not a reason on its own.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["concept", "reason"],
+        "properties": {
+          "concept": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "reason": { "type": "string", "minLength": 12 }
+        }
+      }
+    }
+  }
+}

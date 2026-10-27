@@ -1,0 +1,26 @@
+format: 1
+id: G-068
+date: 2026-10-27
+question: What keeps a region of a site page from scrolling inside the page?
+decision: >-
+  The site check fails on a stylesheet rule that sets `overflow`,
+  `overflow-x`, `overflow-y`, `overflow-block`, or `overflow-inline` to
+  `auto` or `scroll`, or sets a `max-height` or `max-block-size` other than
+  `none`, and on a script that sets an element's overflow or height cap.
+  The stylesheet drops each such rule: a JSON tree, a table, the type map's
+  layers, and a download's file list now flow in the page, a long line
+  wraps, and a table's rows stack on a narrow screen. A JSON tree opens two
+  levels deep and loses its "Full height" button. Three fixtures cover the
+  new checks: a JSON tree capped to a scroll region, a list capped to a
+  height, and a script that sets a height cap. Two tests cover the check
+  and the tree; the suite holds 389 tests, and `MIN_TESTS` is 389.
+rationale: >-
+  The site's owner rejects any scrolling viewport inside a document, and a
+  check of the built stylesheet and scripts catches one before a browser
+  shows it. The check only adds problems, so every page it passed before
+  either passes or held a scroll region. site-builds' fingerprint changes
+  because its check and fixtures grew and the assets it reads changed, and
+  npm-test's because of the new tests and the test floor.
+accepts:
+  - { gate: npm-test, fingerprint: 1470dc12be1c037fd82b01e918dbd11b937b24a805520af4fc10c6aa9d0ed3b6 }
+  - { gate: site-builds, fingerprint: d028b0c7708432cf4ff2f7a3523438f4e9a6822f88818e4af420bfd579402ac5 }

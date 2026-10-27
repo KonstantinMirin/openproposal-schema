@@ -1,0 +1,81 @@
+format: 1
+id: D-040
+status: proposed
+kind: departure
+author: agent
+question: How is a length of time written where the specification or its examples write it as prose, a word, or a count of seconds?
+covers:
+  - ir: field:5.4:production#description/object:1
+    digest: 00eb00879b4a550444376e9812df5389c4a7066a43b48982f04bc6f35974f62d
+    quote: "{ custom_unit, build_owner, lead_time, cost }"
+  - ir: key:5.2.2:placement.skipafter
+    digest: 7eb11e62931be7a67537c85a3e6e1609978155b48c0219644d3998f796a1c36d
+    quote: "`skipafter` | OPTIONAL | When `skip` is `1`: seconds the ad plays before the placement enables skipping | `VideoPlacement.skipafter`, `AudioPlacement.skipafter`, `video.skipafter`"
+    locks:
+      - with-open-prs
+  - ir: key:5.2.2:placement.refresh#meaning/object:1
+    digest: 27ac3f05aa6a1411815e69eb0e22b90e343a5120ffac0dcc1a98e7336305c066
+    quote: "{ min_interval_s }"
+    locks:
+      - with-open-prs
+  - ir: field:5.6:availability#description/object:1
+    digest: 8a93eee2b91a74d8f7ce7fa00ed1af2b272702885b71d981fc562b711d8b40be
+    quote: "{ unit, basis, as_of, granularity, type: forecast | reservable, quantity }"
+  - ir: field:5.7:measurement_source#description/object:1
+    digest: 7213fd41321c72d119261e7a84890af68599b6801c2fc5cef92127295fb4ed22
+    quote: "{ vendor, attribution_window, qualifier }"
+  - ir: field:5.7:reporting#description/object:1
+    digest: 15b343617f534633524b7226be5e3f1d36fa7042fd26aa52c5fde05bc1e50adb
+    quote: "{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency }"
+  - ir: sentence:5.2.2:4076adca
+    digest: d76efae93f99344c4c74e2fb1cffdc78993c5155838aa3038bcc720c01ac0b1b
+    quote: Keys follow AdCOM 1.0 `Placement` and its `DisplayPlacement`, `VideoPlacement` and `AudioPlacement` subtypes, and the matching OpenRTB 2.6 `Imp` attributes.
+    locks:
+      - with-open-prs
+  - ir: rule:5.2.2:463dfafd
+    digest: eee71b1ff54c633f884713ce121e5b82ef4ecc041de54921c9ab66336402c469
+    quote: Each key takes an integer, except `playmethod[]` and `api[]`, which take arrays of integers, and `refresh`, an object whose `min_interval_s` is a REQUIRED integer.
+    locks:
+      - with-open-prs
+  - ir: key:5.2.2:placement.refresh
+    digest: 6244ad9f757a4a1e0cfe02384783ab1a3e9f62c785f988eb089ce351c9372adf
+    quote: "`refresh` | OPTIONAL | `{ min_interval_s }`: minimum seconds a creative renders before the slot refreshes | OpenRTB 2.6 only: `imp.refresh.refsettings[].minint`"
+    locks:
+      - with-open-prs
+options:
+  - id: duration
+    summary: An ISO 8601 duration in the grammar of RFC 3339 Appendix A, as `hold_duration` is.
+  - id: as-written
+    summary: Each as the specification or its examples write it, prose for `lead_time`, a word for `cadence` and `granularity`, `30d` for `attribution_window`, and integer seconds for `skipafter` and `min_interval_s`.
+chosen: duration
+rationale: >-
+  Each of these is a length of time: a production lead time, a reporting
+  option's cadence, the granularity of an
+  availability figure, a measurement's attribution window, how long an ad
+  plays before it may be skipped, and the shortest interval between
+  refreshes. The specification already writes `hold_duration` as an ISO 8601
+  duration, so one concept takes one form, and a receiver reads every length
+  of time with one parser. For most of them the text names no form, and the
+  examples write prose, a word, or `30d`: "10 business days" and `0` for a
+  lead time, `daily` for a cadence, and `30d` for an attribution window. A
+  frequency cap's period isn't one: it is a calendar period, a term (D-044).
+  For `skipafter` and `min_interval_s` the text does name
+  one: § 5.2.2 says its keys follow AdCOM 1.0 and that each takes an
+  integer, and it counts both in seconds, as AdCOM 1.0 and OpenRTB 2.6 write
+  `skipafter` and `minint`; no example writes either. The schema departs from
+  both: each is a duration, which a seller converts to whole seconds when it
+  builds a bid request.
+feedback: >-
+  Write every length of time as an ISO 8601 duration, as `hold_duration` is.
+  That covers a production option's `lead_time`, a reporting option's `cadence`,
+  `availability`'s `granularity`, and a measurement source's
+  `attribution_window`. It also covers `placement.skipafter` and
+  `refresh.min_interval_s`. The examples write "10 business days" and `0` for a
+  lead time. They write `daily` for a cadence and `30d` for an attribution
+  window, which are `P1D` and `P30D` as durations. § 5.2.2 writes `skipafter`
+  and `min_interval_s` as integer seconds, because AdCOM 1.0 and OpenRTB 2.6
+  write `skipafter` and `minint` that way. A seller that builds a bid request
+  converts each duration to whole seconds, such as `PT5S` to `5`. The `_s` in
+  `min_interval_s` names the unit, which a duration carries, so rename the key
+  `min_interval`. Business days need a calendar the specification doesn't
+  define, so a lead time in business days needs one too.

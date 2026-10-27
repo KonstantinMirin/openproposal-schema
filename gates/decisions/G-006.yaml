@@ -1,0 +1,14 @@
+format: 1
+id: G-006
+date: 2026-10-25
+question: Which tests does the test suite add for the fidelity command and the oracle's conditions and vocabularies, and what floor does it hold?
+decision: >-
+  The test suite adds three tests: the fidelity command with `--out` writes
+  one report per lock, a conditional tests every other value its member's
+  row lists, and a closed vocabulary no closed value list reaches is counted
+  unread. Its floor rises to 293.
+rationale: >-
+  Each test checks behavior the review asked for that no fixture shows. A
+  higher floor fails on more deleted tests, so no gate is weaker.
+accepts:
+  - { gate: npm-test, fingerprint: 76dfa7810b21ea503c273a98f13c1651f34b1470b2bab6bb674108a4726d77fb }

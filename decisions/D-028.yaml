@@ -1,0 +1,118 @@
+format: 1
+id: D-028
+status: proposed
+kind: gap
+author: agent
+question: What do the § 2.1 Summary Representation and the § 2.3 manifest hold?
+covers:
+  - ir: block:2.3:2/object:1
+    digest: eaf0062fe8aa310c046bf2ca847e8004545e32743d21f94e5ac9cd5394275954
+    quote: "{ seller_id, generated_at, spec_version, proposals[] }"
+    locks: [with-open-prs]
+  - ir: rule:2.1:2e481f6f
+    digest: 8e7174a9f45f226290f9d5125760d9e151c9d2301aa8b702e0e2758775ef543d
+    quote: "It MUST contain, per line item:"
+  - ir: rule:2.3:99777739
+    digest: 406feb42eaa323b7ecfc76a14cc5018b0571b0ed8a54b9059f49d101885f4e65
+    quote: A seller MAY publish `https://<seller domain>/.well-known/openproposal.json`.
+    locks: [with-open-prs]
+  - ir: block:2.1:3/identifiers:1
+    digest: cbcaa410cbcd800b1bf4167c9ae823a6814a7b474f7c95857205fae9160ae94e
+    quote: "`line_item_id` · `channel` · `content_detail` · property names · `formats.included[]` · `pricing.cost_method` · `pricing.gross_rate` · `min_spend` · `addressable_scale` · `committed_metrics[]` · `transaction_mechanism`"
+    locks: [main]
+  - ir: block:2.1:3/identifiers:1
+    digest: 404539a2c4ac9f44b47fd286a6466aa8e85b5fdd9106382b8d2adc4d461edff4
+    quote: "`line_item_id` · `channel` · `environments.available[]` · `content_detail` · property names · `formats.included[]` · `pricing.cost_method` · `pricing.gross_rate` · `min_spend` · `addressable_scale` · `committed_metrics[]` · `transaction_mechanism` · `has_requires`"
+    locks: [with-open-prs]
+  - ir: rule:2.1:5d7284d5
+    digest: 39bd1ad54c175c544257384cd7ef04fe8af1570a098675981d3083cfe575ba2b
+    quote: A line item that carries `placement` (§ 5.2) MUST also give, in its summary, whichever of `placement.reward` · `placement.instl` · `placement.plcmt` · `placement.skip` it declares.
+    locks: [with-open-prs]
+  - ir: block:2.1:7/identifiers:1
+    digest: ae5f5e049601e16f6ba06ff8ab8e21d2c4bcc1ce1a86c48bb6d0ed0f2ce5d985
+    quote: "`placement.reward` · `placement.instl` · `placement.plcmt` · `placement.skip`"
+    locks: [with-open-prs]
+  - ir: field:5.2:properties
+    digest: 8167901b1024772db9ede8143ce1d5009d6effcfd66b290f82e427a00940b50c
+    quote: "`properties` | Object | selectable | `available[]` of `{ id, name, domains, supported_formats }`, `included[]`, `pricing`, `max_select`"
+    locks: [main]
+  - ir: field:5.2:properties
+    digest: 4115b24e46ceb6cf1b12d1730a313c02123ae5b3ed6739bb9fefdaadc10ea478
+    quote: "`properties` | Object | selectable | `available[]` of `{ id, name, domains, apps, supported_formats }`, `included[]`, `pricing`, `max_select`. Each property MUST carry `domains`, `apps` or both"
+    locks: [with-open-prs]
+  - ir: block:2.1:4/identifiers:1
+    digest: 2f58041e29b322b5d1cd351d86ff76d053160c7b1454e906e7dec7d7f2fd46f7
+    quote: "`proposal_id` · `seller_name` · `description` · `valid_from` · `valid_until`"
+    locks: [main]
+  - ir: block:2.1:4/identifiers:1
+    digest: def19a83d055b1d619c296e617dde93ff70844726ad73a39735a2756fd90ec6e
+    quote: "`proposal_id` · `seller_name` · `description` · `valid_from` · `valid_until` · `linked_execution`"
+    locks: [with-open-prs]
+  - ir: sentence:2.1:ba90b505
+    digest: 86d0d29da5fe9e02ce1649d2879715baba3eb7112c09969a7617bf41cc3ad119
+    quote: "`has_requires` is `true` when the line item declares `requires` (§ 5.6.3), so a screening agent does not recommend a line item that cannot be bought on its own."
+    locks: [with-open-prs]
+  - ir: sentence:2.3:b43aefff
+    digest: 9bb1f46e61f5cead612c3b31414a82256649f79ee1bf7e646f8865272c74a609
+    quote: "Contents: `{ seller_id, generated_at, spec_version, proposals[] }`, where each entry in `proposals[]` carries `proposal_id`, `version`, the Summary Representation (§ 2.1) of each line item, and a `full_url` for the second phase."
+    locks: [with-open-prs]
+options:
+  - id: profiles
+    summary: >-
+      The summary is a projection of each document onto the listed fields. The
+      manifest is a third document. Its entries include the proposal's summary
+      and add the keys § 2.3 names.
+  - id: hand-written
+    summary: The summary and the manifest are separate objects with their own members.
+chosen: profiles
+rationale: >-
+  § 2.1 lists the fields a summary MUST contain, so the summary is the line
+  item restricted to those fields, plus the listed proposal fields, and the
+  model projects it from the documents (type rules § 9 has no rule for it,
+  because the profile is a schema). It projects paths, not whole fields: the
+  summary's `formats` holds only `included[]`, and each of its `pricing[]`
+  entries holds `cost_method` and `gross_rate`, read as those sub-fields of
+  every entry, with the `currency` a rate requires (D-036). Each path the
+  "MUST contain" list names, and each path "plus, from the parent proposal"
+  continues it with, is required at every step, as type rules § 4 reads a
+  requiring statement that introduces a list. "Property names" names no
+  member, so it is read as the `name` of each option in
+  `properties.available[]`, and it keeps the presence the line item gives
+  each step: a summary may leave `properties` out, and one that carries it
+  carries `available[]`, each entry a `name` or an unresolved `catalog_ref`.
+  `has_requires`, which no table defines, is the boolean that § 2.1 defines
+  in prose. A summary gives the placement keys that its line item declares,
+  so the profile projects `placement` to those four keys, each optional. The
+  summary holds `channel` too, so a video line item's summary gives `plcmt`:
+  the line item must declare it (§ 5.2), and § 2.1 makes the summary give
+  what the line item declares. The profile doesn't restate the § 5.2 rule,
+  though. The rule is the line item's, one rule in one place (type rules
+  § 5), and the summary is a projection of it, published with the
+  `full_url` of the record whose rule decides it; and for the `ctv` line
+  items the summaries hold, the rule is undecided (D-035). The manifest `{ seller_id,
+  generated_at, spec_version, proposals[] }` is published on its own, so it is
+  a document. Its `spec_version` names a release of a document another party
+  publishes, the specification, which names its releases as `3.0`, so it is
+  an `ExternalId`, carried as written and compared by exact equality. § 2.3 says each `proposals[]` entry carries `proposal_id`,
+  `version`, the summaries of its line items, and a `full_url`. So an entry,
+  named `ProposalsEntry` as type rules § 7 names an item of `proposals[]`,
+  includes the proposal's summary profile, which holds `proposal_id`, and
+  adds `version`, as the proposal's own field, and `full_url`. "Carries"
+  states no presence, so the added members are optional (type rules § 4). The
+  key that holds the line-item summaries is unnamed. The manifest example
+  calls it `line_items`, but the example isn't part of the pinned
+  specification, so the entry is open rather than name the key (D-016).
+evidence:
+  - examples/manifest.json
+feedback: >-
+  - Name the key of each manifest entry that holds the line-item summaries, and
+  say which members of an entry are required.
+
+  - Write the summary's paths as they are in the tables:
+  `pricing[].cost_method`, `pricing[].gross_rate`, and
+  `properties.available[].name`. Then the property names are required like every
+  other listed path.
+
+  - List `pricing[].currency`, without which a summary's rate can't be read.
+
+  - Give `has_requires` a row.

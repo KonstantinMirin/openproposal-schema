@@ -1,0 +1,45 @@
+format: 1
+id: G-057
+date: 2026-10-27
+question: What keeps the example payload of every named type current and valid?
+decision: >-
+  `npm run type-examples` writes, per lock, a minimal and a full example of
+  every named type the schemas emit to `type-examples/examples.json` (and
+  `type-examples/with-open-prs/examples.json`). Five new gates check them on
+  each lock: `type-examples-generate`, every example builds, is valid against
+  its schema, and breaks no rule one payload decides; `type-examples-deterministic`,
+  two runs write the same bytes; `type-examples-committed`, the committed file
+  is what the generator writes; `type-examples-valid`, the committed file by
+  itself has one entry per named type and passes the same check; and
+  `type-examples-tracked`, every tracked file under `type-examples/` is one
+  some lock writes. `type-examples/` joins the directories the `untracked`
+  gate reads. The examples gate's rule lookup moves into `checksByType` and
+  `copyOrders` in `src/examples.ts`, which the payload checker shares, and
+  the corpus's part seeds into `partSeeds` in `src/corpus.ts`, which the
+  full builder shares; neither changes what the code does. A new test file
+  covers the generator and the check, the test suite holds 362 tests, and
+  `MIN_TESTS` is 362.
+rationale: >-
+  The new gates add checks and relax none, and each has fixtures that fail
+  it: a schema that rejects its primitive's first vector, a currency code the
+  pinned list no longer assigns, differing runs, a stale committed file, a
+  committed example its schema or a rule rejects, a type with no entry, and a
+  hand-written file. `untracked` reads one more directory. `corpus-generates`,
+  `fidelity`, `examples-validate`, and `comparison` change only because the
+  code they reach was split into the shared helpers, with the same logic; the
+  committed corpus, the examples' findings, and the comparison are unchanged.
+  The guard reads the CI script, which runs the new gates, and the test tree
+  gained a file, and its floor rises.
+accepts:
+  - { gate: comparison, fingerprint: 4acb8b1f776d2588e602185501237d777436a76e2b1438cacec15b91d09762c3 }
+  - { gate: corpus-generates, fingerprint: a33cf383218ef71a88b23d639bcd3c58b7b9facd8c8e8fb3b888170ef90d532a }
+  - { gate: examples-validate, fingerprint: 2b3c29e35dde7eca4653ec208a9fbb1be315d83b12bb1cd2e882ed82f093671a }
+  - { gate: fidelity, fingerprint: af24713742217f1517d830df8550084ff90ce4358eeb30c13b614f69ec2a1d33 }
+  - { gate: guard, fingerprint: dc0f7aa6cdbf8b195ef278579f200c24e294c23e9fe25a16d625e26daef9efde }
+  - { gate: npm-test, fingerprint: 76b364522c7b28ff19e85e366f0fcab9b770b24f7b07f410077a1f288eac6c8c }
+  - { gate: type-examples-committed, fingerprint: 08b000e4743d88ac6a2431ce463f909f908bb4d4bf913192097bb63cc8651f5b }
+  - { gate: type-examples-deterministic, fingerprint: c5a4560b0c905f352b2584ac4cfd3f6ace903f651455f945eca9419e62b0e273 }
+  - { gate: type-examples-generate, fingerprint: cbf20c774f1ced65cb6a42905fd6e6cffd9b46d79f91c615ecec861ce0d510bd }
+  - { gate: type-examples-tracked, fingerprint: cbaadee6ac15a02326cfeae3fa370fb03aa15a3d681de47ae606b6daab39339a }
+  - { gate: type-examples-valid, fingerprint: 17af7e5998e6dde2dc8ea6c4a1c0e6656e16d9f35500074482eabbbb6b6322ba }
+  - { gate: untracked, fingerprint: a6794881f5eb31c62cf2cee4a0ce66808cb2bc3dbde414d1ba8ff9dd504eacfd }

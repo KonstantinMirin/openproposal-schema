@@ -1,0 +1,15 @@
+format: 1
+id: G-043
+date: 2026-10-26
+question: Does the test suite's floor rise with the test that keeps D-016's proposed creative policy to what its row says?
+decision: >-
+  D-016's feedback proposes `creative_policy` as its content and category
+  restrictions, which its row names, and no longer says that a category is
+  an IAB Content Taxonomy ID, which the row doesn't say; it asks instead
+  whether a category comes from the Content Taxonomy, the Ad Product
+  Taxonomy, or another list. A test checks both. The test suite holds 348
+  tests, so its floor rises to 348.
+rationale: >-
+  Only the test floor changes, and it rises, so no gate is weaker.
+accepts:
+  - { gate: npm-test, fingerprint: 549e554be49ca1128486eaf69688ea54c3d03a05da2f61b2661f2a30c542c1fc }

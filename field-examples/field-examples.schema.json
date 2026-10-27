@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/field-examples/field-examples.schema.json",
+  "title": "OpenProposal per-field example values",
+  "description": "Values a reader's example payload shows at a member the specification's examples give no value, in place of the member's primitive showcase value or its vocabulary's representative term. They are for the type examples only, not conformance vectors. Each entry names the member by the IR element its property rests on and the member's name. The type-examples gate fails on an entry whose element or member no longer exists, whose value fails the member's emitted schema or a rule, or whose member the specification's examples now give a value.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "fields"],
+  "properties": {
+    "format": {
+      "description": "Version of this format.",
+      "const": 1
+    },
+    "fields": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/field" }
+    }
+  },
+  "$defs": {
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ir", "member", "values"],
+      "properties": {
+        "ir": {
+          "description": "The IR element the member's property rests on: one of the property's sources in the model, such as `field:5.10:billing#description/object:1` for a member of `billing` or `field:5.9:deal_id_issuance` for the line item's own member.",
+          "type": "string",
+          "pattern": "^[a-z_]+:[^\\s]+$"
+        },
+        "member": {
+          "description": "The member's name in the type that holds it.",
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "values": {
+          "description": "The member's whole value, a list or an object too. A second value is for the second option of a selection, so the two options differ.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2
+        },
+        "locks": {
+          "description": "The locks the entry is for; every lock when absent.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z0-9-]+$" }
+        },
+        "note": {
+          "description": "What a reader should know about the value, which the type examples list beside it, such as that its structure is the feedback's proposal and not the specification's.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

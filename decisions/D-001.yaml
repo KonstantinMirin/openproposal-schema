@@ -1,0 +1,43 @@
+format: 1
+id: D-001
+status: proposed
+kind: gap
+author: agent
+question: Which written form does an ISO 8601 point in time or duration take?
+covers:
+  - ir: field:4.1:valid_from,valid_until
+    digest: 9c5853eb24269fa128f158276e85a0e45be848cce58efe34fa1739a06514e9a0
+    quote: "`valid_from` · `valid_until` | Timestamp | seller-set | ISO-8601 window the offer holds. This is the offer window, not the campaign flight"
+  - ir: key:5.6.2:hold_status.hold_expires_at
+    digest: d298da40613999b40a53bab56e17f7c8af9488207a3755391ce3c368a2556cb8
+    quote: "`hold_expires_at` | Absolute timestamp, set when the hold is granted"
+  - ir: key:5.6.2:hold_status.hold_duration
+    digest: 926e46e5c6325e98292a30a6655d0991d1979a9e07c1c637c9d256aa82659493
+    quote: "`hold_duration` | ISO-8601 duration the hold runs for"
+  - ir: rule:3.2:ee009430
+    digest: b70f59e2c68b16af32a8ad7ee513de31c1f1bd7a3c1540f17ba556688780a7cf
+    quote: "Every field marked `settable` MUST declare its bounds: either `allowed[]` (an enumerated set) or `min` / `max` (a numeric or date range)."
+options:
+  - id: rfc-3339
+    summary: >-
+      The RFC 3339 forms that JSON Schema names as formats. Every point in time
+      is a `date-time` with a required UTC offset. A length of time is a
+      `duration` in the ISO 8601 grammar of RFC 3339 Appendix A.
+  - id: any-iso-8601
+    summary: Any ISO 8601 representation, including the basic format (`20261025T0900`), week and ordinal dates, reduced precision, and local times without an offset.
+chosen: rfc-3339
+rationale: >-
+  ISO 8601 allows many representations of one instant, and a local time
+  without an offset names no instant at all, so two parties can't compare
+  `valid_until` or `hold_expires_at` without agreeing on more. RFC 3339 is the
+  internet profile of ISO 8601. It requires an offset and has one extended
+  form, and JSON Schema's `date-time` and `duration` formats name it exactly,
+  so standard validators check it without a custom pattern. The § 3.2 "date
+  range" bounds are ranges of these points in time.
+evidence:
+  - https://www.rfc-editor.org/rfc/rfc3339
+  - https://json-schema.org/draft/2020-12/json-schema-validation#section-7.3.1
+feedback: >-
+  Name RFC 3339 instead of ISO 8601. Every point in time is an RFC 3339
+  `date-time` with a UTC offset. Durations follow the ISO 8601 duration grammar
+  in RFC 3339 Appendix A.
