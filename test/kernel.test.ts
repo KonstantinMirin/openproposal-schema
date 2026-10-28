@@ -35,7 +35,7 @@ test("the kernel defines each primitive the type rules name, once", () => {
     KERNEL.primitives.map((p) => p.name).sort(),
     [
       "Amount", "CatalogRef", "Count", "CurrencyCode", "DayName", "Digest", "Domain", "Duration",
-      "ExternalId", "FormatId", "Fraction", "NamespacedTerm", "PercentChange",
+      "ExternalId", "FormatId", "Fraction", "Measure", "NamespacedTerm", "PercentChange",
       "PriceAdjustment", "Text", "TimeOfDay", "TimeZone", "Timestamp", "Url", "Uuid", "VendorCode",
     ],
   );
@@ -77,9 +77,11 @@ test("a Budget twin of Amount fails the duplication gate, under a concept of its
   for (const concept of ["budget", "amount"]) {
     const k = structuredClone(KERNEL);
     k.primitives.push({ ...structuredClone(prim("Amount")), name: "Budget", concept, description: "A budget bound, a sum of money, never negative." });
+    // Budget twins Amount; under a concept of its own it twins Measure too, which shares Amount's structure only as money's concept.
     const problems = twins(k);
-    assert.equal(problems.length, 1, `${concept}: ${problems.join("\n")}`);
+    assert.equal(problems.length, concept === "budget" ? 2 : 1, `${concept}: ${problems.join("\n")}`);
     assert.match(problems[0]!, /"Amount" and "Budget" have the same structure/);
+    if (concept === "budget") assert.match(problems[1]!, /"Budget" and "Measure" have the same structure/);
   }
 });
 

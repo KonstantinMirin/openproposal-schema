@@ -3,7 +3,7 @@ id: D-005
 status: proposed
 kind: gap
 author: agent
-question: Is a rate metric such as `viewable_rate`, `completion_rate`, or `match_rate_expected` a fraction from 0 to 1 or a percentage?
+question: Is a committed metric's value a rate or a quantity, and is a rate such as `viewable_rate`, `completion_rate`, or `match_rate_expected` a fraction from 0 to 1 or a percentage?
 covers:
   - ir: field:5.7:committed_metrics[]
     digest: 2c123e829ef892456b09671dfd52243f1bef0db8b067aa9c5d184dc07411caf5
@@ -12,17 +12,36 @@ covers:
     digest: 18d87a0de58116db76d7152a7f96bc722dc700b91f053406b32e4299e7910504
     quote: "`buyer_supplied` | Object | supplied | `{ segments_allowed, suppression_allowed, match_rate_expected, segments[], suppression_list }`. `match_rate_expected` is the seller's stated expectation; `segments[]` and `suppression_list` are buyer-populated"
 options:
-  - id: fraction
-    summary: A number from 0 to 1, so 70 % is 0.7.
+  - id: by-metric
+    summary: A rate is a number from 0 to 1, so 70 % is 0.7; any other committed metric, such as audience impacts for DOOH, is a number that is never negative.
   - id: percent
-    summary: A number from 0 to 100, so 70 % is 70.
-chosen: fraction
+    summary: A rate is a number from 0 to 100, so 70 % is 70; any other committed metric is a number that is never negative.
+  - id: fraction
+    summary: Every committed value is a number from 0 to 1, so 70 % is 0.7.
+chosen: by-metric
 rationale: >-
   A fraction has no unit and multiplies directly, as a derived figure needs.
   With bounds of 0 and 1, the common mistake of sending 70 for 70 % fails
   validation instead of passing as a 7000 % rate; with bounds of 0 and 100, a
-  value of 0.7 meant as 70 % would pass silently. The § 3.1 `delta_pct` is a
-  percentage by its name, so it isn't a Fraction.
+  value of 0.7 meant as 70 % would pass silently. Only a rate is a
+  proportion, though. The text names two rates, `viewable_rate` and
+  `completion_rate`, and for DOOH "an audience-modelled metric", which counts
+  an audience, so a committed value is a fraction while its metric is one of
+  the two rates, and a number that is never negative for any other metric,
+  since a modelled audience need not be whole. A metric the text doesn't
+  name, such as DOOH audience impacts, is written as a namespaced term
+  (D-014), as `example.com:audience_impacts`, and its value is such a
+  number; a rate a vendor names that way can't be bounded, since nothing
+  says it is a rate. A value means nothing without its metric, which says
+  whether it is a rate, so an entry with a `value` gives its `metric`.
+  `match_rate_expected` is a rate by its name. The § 3.1 `delta_pct` is a
+  percentage by its name, so it isn't a fraction. This record first read every
+  committed value as a fraction, which was too broad: it rejected a DOOH line
+  item committing 1,200,000 audience impacts. It was corrected on 2026-10-28
+  to type the value by its metric.
 feedback: >-
-  State that rate metrics and `match_rate_expected` are fractions from 0 to 1,
-  for example 0.7 for 70 %.
+  State, for each metric, whether its value is a rate or a quantity. A rate,
+  such as `viewable_rate`, `completion_rate`, or `match_rate_expected`, is a
+  fraction from 0 to 1, for example 0.7 for 70 %; a quantity, such as audience
+  impacts for DOOH, is a number that is never negative and need not be whole.
+  Also state that an entry with a `value` gives its `metric`.

@@ -1,0 +1,22 @@
+format: 1
+id: G-100
+date: 2026-10-28
+question: What changes in the gates to close the gaps an independent review of the enum drift rename found?
+decision: >-
+  The README named three gates G-097 retires; it names their new IDs, and
+  a test fails a README or NOTICE that names any gate a record retires.
+  Two comments of scripts/ci.ts named the folder "an enum drift/" folder;
+  they name `enum-drift/`, so the guard changes. AdCOM's landing page says
+  what the report does in plain words, so the site gate changes. The
+  snapshots the report reads are kept byte for byte by .gitattributes, as
+  kernel/sources/ is, and a test fails a snapshot file git would convert,
+  so their pinned tree and blob hashes hold on every checkout. Comments and
+  the NOTICE are reflowed. The test suite holds 478 tests, and MIN_TESTS is
+  478.
+rationale: >-
+  Two tests are added and no check is relaxed. The report's bytes and
+  OpenProposal's outputs don't change.
+accepts:
+  - { gate: guard, fingerprint: fe06520065b04eac7833f6696d9943cede519bbc4f647ebc95dbefc79b92d236 }
+  - { gate: npm-test, fingerprint: d1143ea0d152298974ea78b568ada41ae99b0125802693f1b02323c5b83dae12 }
+  - { gate: site-builds, fingerprint: 09822a6780cd85939af82304c3fd5b5010ed981099aadc1780040cfb932ffdb8 }

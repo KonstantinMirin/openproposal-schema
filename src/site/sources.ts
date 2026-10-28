@@ -14,6 +14,8 @@ import { citeText, type Element } from "../elements.ts";
 import { permalink } from "../feedback.ts";
 import type { SpecLock } from "../lock.ts";
 import type { ProvenanceDoc } from "../provenance.ts";
+import type { SectionIds } from "../specs/plugin.ts";
+import { codeQuote, renderQuote, type RenderedQuote } from "./quote.ts";
 
 export interface SourceLink {
   href: string;
@@ -22,7 +24,8 @@ export interface SourceLink {
 
 export interface SourceInfo {
   label: string;
-  quote: string;
+  /** The element's text as the record pins it, rendered: its inline Markdown as HTML, and the text a reader sees. */
+  quote: RenderedQuote;
   /** The first and last line of the element in the lock's specification. */
   lines: [number, number];
   links: SourceLink[];
@@ -33,17 +36,26 @@ export interface SourceInfo {
 const code = (s: string) => `\`${s}\``;
 const ordinal = (n: string) => (n === "1" ? "" : ` ${n}`);
 
+/** How a label names a text's sections: how its plugin says they are identified, and each one's heading. */
+export interface SectionNaming {
+  sections: SectionIds;
+  titleOf: (section: string) => string | undefined;
+}
+
 /**
  * The section's name as a reader cites it: `§ 5.10`, the front matter, or an
- * appendix. A section whose ID is the anchor its heading writes, as
- * `list_devicetypes`, is cited by its heading, as "List: Device Types",
- * where `titleOf` knows it.
+ * appendix. In a numbered text, a heading with no number of its own is
+ * cited by its parent's, under its heading, as `§ 5.4, under "Creative
+ * inspection and previews"`. In an anchored text, a section is cited by its
+ * heading, as "List: Device Types". With no naming given, a section is
+ * cited by its ID.
  */
-function sectionLabel(section: string, titleOf?: (section: string) => string | undefined): string {
+function sectionLabel(section: string, at?: SectionNaming): string {
   if (section === "front") return "The front matter";
-  const numbered = /^[0-9A-Z][0-9.]*(\/|$)/.test(section);
-  const title = numbered ? undefined : titleOf?.(section);
-  return title !== undefined ? title : `§ ${section}`;
+  if (at?.sections === "anchored") return at.titleOf(section) ?? `§ ${section}`;
+  const slash = section.indexOf("/");
+  const title = slash >= 0 ? at?.titleOf(section) : undefined;
+  return title !== undefined ? `${sectionLabel(section.slice(0, slash), at)}, under "${title}"` : `§ ${section}`;
 }
 
 /** What a fragment of an ID names, such as `#description/object:1` for "'s description: the inline object". */
@@ -61,13 +73,13 @@ function fragmentLabel(fragment: string): string {
 }
 
 /** A readable label for an IR element's ID, such as "§ 5.6.1, the `commitment.flight_start` key row". */
-export function elementLabel(id: string, titleOf?: (section: string) => string | undefined): string {
+export function elementLabel(id: string, at?: SectionNaming): string {
   const [kind, section, ...restParts] = id.split(":");
   const rest = restParts.join(":");
   if (kind === "appendix-a") return `Appendix A, row ${section}`;
   if (kind === "appendix-b") return `Appendix B, the ${code(section!)} row`;
   const [head, fragment] = rest.split("#");
-  const where = sectionLabel(section!, titleOf);
+  const where = sectionLabel(section!, at);
   switch (kind) {
     case "field":
       return `${where}, the ${head!.split(",").map(code).join(" and ")} row${fragment ? fragmentLabel(fragment) : ""}`;
@@ -109,14 +121,17 @@ export function elementLines(e: Element): [number, number] {
 const range = (a: number, b: number) => (a === b ? `L${a}` : `L${a}-L${b}`);
 
 /** An element's label, quote, lines, and links on a lock. */
-export function sourceInfo(lock: SpecLock, provenance: ProvenanceDoc | null, id: string, e: Element, titleOf?: (section: string) => string | undefined): SourceInfo {
+export function sourceInfo(lock: SpecLock, provenance: ProvenanceDoc | null, id: string, e: Element, at?: SectionNaming): SourceInfo {
   const lines = elementLines(e);
-  const base = { label: elementLabel(id, titleOf), quote: citeText(e), lines };
+  // A relative link of the text opens where its lines are published, as GitHub resolves it.
+  const quoteOf = (file: string | null) => (e.kind === "code_block" ? codeQuote(citeText(e)) : renderQuote(citeText(e), { base: file }));
+  const fileOf = (href: string) => href.replace(/[?#].*$/, "");
+  const base = { label: elementLabel(id, at), lines };
   if (lock.merge_order === null) {
     const href = permalink(lock, lines[0]).replace(/#L\d+$/, `#${range(lines[0], lines[1])}`);
-    return { ...base, links: [{ href, text: `${range(lines[0], lines[1])} at ${lock.commit.slice(0, 7)}` }] };
+    return { ...base, quote: quoteOf(fileOf(href)), links: [{ href, text: `${range(lines[0], lines[1])} at ${lock.commit.slice(0, 7)}` }] };
   }
-  if (provenance === null) return { ...base, links: [], note: "This input's commit isn't on GitHub, and no line provenance is recorded for it." };
+  if (provenance === null) return { ...base, quote: quoteOf(null), links: [], note: "This input's commit isn't on GitHub, and no line provenance is recorded for it." };
   // Group the element's lines by where they come from, keeping each run of consecutive lines from one commit.
   const links: SourceLink[] = [];
   let unlinked = false;
@@ -141,7 +156,7 @@ export function sourceInfo(lock: SpecLock, provenance: ProvenanceDoc | null, id:
     }
   }
   flush();
-  return { ...base, links, ...(unlinked ? { note: "The integration of the open PRs wrote this text, to resolve a conflict or as its lock records, so no commit on GitHub holds it." } : {}) };
+  return { ...base, quote: quoteOf(links[0] ? fileOf(links[0].href) : null), links, ...(unlinked ? { note: "The integration of the open PRs wrote this text, to resolve a conflict or as its lock records, so no commit on GitHub holds it." } : {}) };
 }
 
 /** The PRs whose lines an element's links name, for a link to each PR. */

@@ -5,7 +5,7 @@
 import { basename } from "node:path";
 import type { SpecLock } from "../lock.ts";
 import { repoRoot } from "../lock.ts";
-import { loadProfile, schemaNamesOf, type SpecProfile } from "../profile.ts";
+import { loadProfile, schemaIdsOf, type SpecProfile } from "../profile.ts";
 import type { SchemaNames } from "../emit.ts";
 import { adcom } from "./adcom/index.ts";
 import { openproposal } from "./openproposal/index.ts";
@@ -69,5 +69,11 @@ export function notationOf(lock: SpecLock): RoundTripNotation {
 /** A lock's spec profile. */
 export const profileOf = (lock: SpecLock): SpecProfile => specOf(repoRoot(lock)).profile;
 
-/** What a lock's schema files are named by: its spec's `$id` base and name. */
-export const schemaNamesOfLock = (lock: SpecLock): SchemaNames => schemaNamesOf(profileOf(lock));
+/** What a spec's schema files are named by: its `$id` base and name, from its profile, and how its text identifies sections, from its plugin. */
+export function schemaNamesOfSpec(spec: Spec): SchemaNames {
+  if (!spec.plugin) throw new Error(`${basename(spec.dir)}: the profile reads no text (front_end: ${spec.profile.front_end}), so no plugin says how its sections are identified`);
+  return { ...schemaIdsOf(spec.profile), sections: spec.plugin.text.sections };
+}
+
+/** What a lock's schema files are named by. */
+export const schemaNamesOfLock = (lock: SpecLock): SchemaNames => schemaNamesOfSpec(specOf(repoRoot(lock)));

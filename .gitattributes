@@ -1,2 +1,4 @@
 # The copies of external code lists are kept byte for byte, so their SHA-256 holds on every checkout.
 kernel/sources/** -text
+# The snapshots the enum drift report reads hash to their pinned git trees and blobs, so they are kept byte for byte too.
+specs/*/enum-drift/snapshots/** -text

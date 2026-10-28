@@ -1,0 +1,45 @@
+format: 1
+id: G-098
+date: 2026-10-28
+question: What changes in the gates when each plugin states how its text identifies sections, instead of the emitter and the site guessing it from the shape of a section's ID?
+decision: >-
+  A plugin's text front end now states `sections`, `numbered` or
+  `anchored`, in place of the optional `numbered` flag that defaulted to
+  true; OpenProposal's and the widgets fixture's say `numbered`, and
+  AdCOM's `anchored`. The emitter's module descriptions (src/emit.ts) read
+  it from the schema names, which carry it from the plugin, and no longer
+  test section IDs against a numbered pattern; the site's citation labels
+  (src/site/sources.ts) name a section by its heading only for an anchored
+  text, and no longer test the ID either. The lint's unnumbered-heading
+  check reads the flag as before. Extraction now fails where a heading
+  disagrees with the flag: an anchored text's plugin that reads a number,
+  or a numbered text's plugin that gives a heading an ID of its own, with
+  a test of each on the widgets fixture, and a test that the module
+  description follows the flag alone. The SDK emitter takes the flag to
+  emit the schemas whose digest it states. Every gate that reaches the
+  plugins, the emitter, or the SDK emitter changes its fingerprint. The
+  test suite holds 474 tests, and MIN_TESTS is 474.
+rationale: >-
+  The behavior is the same on every spec: AdCOM's and OpenProposal's
+  schemas, site, and SDK trees are byte-identical. A guess becomes a
+  stated flag that extraction holds every heading to, so a check is added
+  and none relaxed.
+accepts:
+  - { gate: comparison, fingerprint: 2d39483862950ddb211fffe0185dd04a96aac2f674fd205ab92f8f773a645a31 }
+  - { gate: examples-validate, fingerprint: fcf18441a7897f9b77af944879ebb842ea50d360f85d2c95ce63933485f69503 }
+  - { gate: extraction, fingerprint: ac256f2c3da610c587b0a809d2ca81c12dbd0e79c50e387248f0e94ee17a4c1a }
+  - { gate: feedback, fingerprint: 80aec80922dee2913a0bb06a44fbf731425763265f355770930b0c4cb7387f3b }
+  - { gate: fidelity, fingerprint: 2aa9a03df8a205a35b254fd010e04cff02546f1795d66a89d899371f9aa1be59 }
+  - { gate: field-examples, fingerprint: ceb707708782ddd8c6558f2a3dff5abdf780328ffaf9e5cab5486b4a62d3e3e8 }
+  - { gate: guard, fingerprint: 8fd6763bf006fe34b406a2ad0a5e655e0a1a442f420107e84105605b1b296838 }
+  - { gate: npm-test, fingerprint: 2bf4c180c7973319c90cc90b6e45b5af49df5b1fcde9c865204c683f77f933ae }
+  - { gate: record-wording, fingerprint: 04eec4a813cb22f2cd7e8c5e5018ebbab6d482c7dbe85b11c89b08de07124925 }
+  - { gate: round-trip, fingerprint: c0f74e0b34866929a81cb7c2d0ee5721c3b09cee496cf5ca16f8efe86e1433b5 }
+  - { gate: rule-checks, fingerprint: d33b242cad1bfcd340116fd08c642c1e05b6479089d6c772826f638acfde166d }
+  - { gate: schemas-emit, fingerprint: 10b2bf5cdcf56965e703ed865c8b3b613ce9779cc9721df2fa4a732dc60d6221 }
+  - { gate: sdk-generate, fingerprint: 56c92a26bcdd27abc47ea539b2287f90f2065b504f814fb70accaea43b0108a4 }
+  - { gate: site-builds, fingerprint: 8f1566b34d84ec74738be8d1aebf654f3a7ba408c6182b36404e497fa9429864 }
+  - { gate: spec-profile, fingerprint: e7e4685bf09bc3a8b5a4239a86eef49b40d74cfa87c842b170666c2bc11614c1 }
+  - { gate: type-examples-generate, fingerprint: 9a9df6074652dc91cbf07e74c7802adce952b63ef8076df24288ee14bc9bc243 }
+  - { gate: type-examples-valid, fingerprint: 72d33b352515f9b44c578426c60487932d504a158394b6ac5aa30e48951d18c0 }
+  - { gate: variant-examples, fingerprint: 93c2af0b26f6e0a57ec5a1627cc47831ceae7a35aa86998664dc690b1b344764 }

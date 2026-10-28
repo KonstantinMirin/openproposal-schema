@@ -39,6 +39,7 @@ import { fieldOf, Instantiator, type Constructor, type Model as Templates } from
 import { KEYWORDS, tagOf, walkSchemas } from "./conventions.ts";
 import type { TypeRef } from "./mapping.ts";
 import { KERNEL_MODULE } from "./mapping-rules.ts";
+import type { SectionIds } from "./specs/plugin.ts";
 import { extensionOf, type ModelDoc, type ModelProperty, type ModelType } from "./model.ts";
 
 export const DIALECT = "https://json-schema.org/draft/2020-12/schema";
@@ -52,6 +53,8 @@ export const DIALECT = "https://json-schema.org/draft/2020-12/schema";
 export interface SchemaNames {
   base: string;
   short: string;
+  /** How the spec's text identifies its sections, which its plugin states: a module's description cites numbered sections, and names an anchored text's module by what it holds. */
+  sections: SectionIds;
 }
 
 /** The base of a schema tree's `$id`s, from any of its files: the file's `$id` without the tree's directory and the file's path. Null for an empty tree. */
@@ -432,7 +435,7 @@ export function emitSchemas(model: ModelDoc, dir: string, names: SchemaNames): E
     const ids = modules.get(module)?.sections ?? [];
     const kinds = new Set(Object.keys(d).map((n) => types.get(n)?.kind));
     // A text whose sections carry anchors, not numbers, as AdCOM's, names a module by what it holds.
-    const anchored = model.modules.some((m) => m.sections.some((s) => !/^(front|[0-9A-Z][0-9.]*)(\/|$)/.test(s)));
+    const anchored = names.sections === "anchored";
     const sections = anchored ? "" : sectionList(ids);
     const kernelHolds = anchored
       ? ["the primitives", ...(kinds.has("part") ? ["the parts that constructor copies share"] : []), ...(kinds.has("vocabulary") ? ["the kernel vocabularies"] : [])]

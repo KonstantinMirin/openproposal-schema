@@ -1,0 +1,92 @@
+format: 1
+id: G-103
+date: 2026-10-28
+question: What changes in the gates when a committed metric's value is typed by its metric, a fraction for a rate and a measure for any other, in place of a fraction for every metric?
+decision: >-
+  D-005 read every `committed_metrics[].value` as a fraction from 0 to 1,
+  which was too broad: the as-written schema rejected a DOOH line item
+  committing 1,200,000 audience impressions. The kernel gains the
+  primitive `Measure`, a number never negative, with its vectors (0,
+  1200000, and 14.2 valid; -1, -0.5, and a string invalid), and the
+  quantity domain the concept `measure`, which this record accepts; AdCOM's
+  binding marks it absent. A basis (kernel/domains.yaml, type rules § 3a)
+  may now give `others`, the concept of every term it doesn't name, an
+  open vocabulary's extension terms included; the member's own type is
+  then that concept's type, and each named term narrows it. OpenProposal's
+  binding reads `Metric` so: `viewable_rate` and `completion_rate` make
+  the value a fraction, and every other metric a measure, under D-005. So
+  the value of `CommittedMetricsEntry` is a `Measure`, `if` / `then` /
+  `else` narrows it to a `Fraction` for each rate, and the value requires
+  its metric, as an amount requires its basis. The domains check fails a
+  basis whose other-terms concept is unknown or repeated by a named term,
+  or that names one term with no concept for the others; the model fails a
+  basis whose member type isn't the others' concept, or that names a term
+  its vocabulary doesn't hold, with tests of each. A test holds the four
+  committed schema trees, under Ajv and the reference oracle, to the
+  verdicts: 1,200,000 and 14.2 for a DOOH metric valid; `viewable_rate` 0.7
+  valid and 70 invalid; `completion_rate` 1.01 invalid; a negative count
+  invalid; a value with no metric invalid. `Measure` shares `Amount`'s
+  structure, so the domain file lists `amount` and `measure` together as a
+  shared structure, with D-005 and D-036 and the reason a receiver treats
+  them differently, and the kernel test's Budget twin now fails against
+  both. The plain generator writes no `if` / `then` and drops
+  `dependentRequired`, so the corpus's three new cases of
+  `CommittedMetricsEntry` join the exemptions PG-1 and PG-9 for those very
+  limits. Type rules § 3a states the basis rule with `others`, and § 1 lists
+  `Measure`. Every gate that reads the
+  kernel, the domains, or the model changes its fingerprint. The test suite
+  holds 482 tests, and MIN_TESTS is 482.
+concepts: [measure]
+rationale: >-
+  A schema that rejected what the text allows is corrected, so the
+  committed value's check is relaxed for metrics that aren't rates, where
+  it was wrong; for the two rates it is as strict as before, and the new
+  requirement that a value carry its metric is stricter. Every gate keeps
+  its checks, the domains and model checks gain four, and the corpus
+  derives the new conditions' cases. The two exemptions grow by three
+  cases of the limits they already name, which the oracle and Ajv still
+  check. feedback/details.md changes in D-005's
+  decision alone; comment.md doesn't change.
+accepts:
+  - { gate: comparison, fingerprint: 0dc32b381edfd1f41a6c471bc57774e75afebbfcd818f9d968676232f570b78a }
+  - { gate: constructors-applied, fingerprint: 5af26d68aedf00ff556c3918071f88cbeb6e2c817f2894b97aea5fc9bf0a851c }
+  - { gate: constructors-check, fingerprint: c5dd1c239243d29563bcd3850ce0ce48c7362844bb5ef53915d7bca178ccfc30 }
+  - { gate: convention-beside-reference, fingerprint: ecc5e63d2a18fdc0d7e11d962aff28f0838b0137f3e6ea29f6ca690584c1e6dd }
+  - { gate: convention-inline, fingerprint: 5f2c74ddaa747d569aaa68c5270d7b8b7740182c7a2dad265c0f85a40198bdbe }
+  - { gate: convention-keywords, fingerprint: 31283773d849c47c03c56807ff70a9097121680d5ac8438f9385a5c179f802c1 }
+  - { gate: convention-layers, fingerprint: 448b33be2a33a8ded427cfa74114580e04a8f3d657b96c81fa85bc9a856b696a }
+  - { gate: convention-lists, fingerprint: 4b5edf748623b4ebb6749dc171ffd2c92de3ee0a919742ce2791172e71d77fe8 }
+  - { gate: convention-modules, fingerprint: 4abb80c18a0ae33dd634fcfb12426e275e9688edbd22096079a055f41787f88c }
+  - { gate: convention-unions, fingerprint: 9038e0ec85dad8e85c670a10b520ffdf1ef8497017542657de46b19e626d8b04 }
+  - { gate: corpus-generates, fingerprint: 5461db076373205ff65677e5dd5d5d40c9d07ffeed657af6c91320b40f8bb901 }
+  - { gate: domain-sources, fingerprint: 2068227b7ed97c53de0bdded0e21008abd4bf621139b0d077ad384f6bef859e7 }
+  - { gate: domains-check, fingerprint: e3c3e6b5d4c421d98c31d6ea1fa13c58604fe05d50302211a5ce58e7d485ac7a }
+  - { gate: domains-homonyms, fingerprint: 78bfe7c785204272f33b63cd0eecc563f19936838d3218582211f3b82097577c }
+  - { gate: domains-properties, fingerprint: da12a9398d1e553543311b3d61ce3895700eb8e65709b481a3f8378ead0fe037 }
+  - { gate: duplication-kernel, fingerprint: c76c19908f58d713dc00f29f8f8bbb216874e6dded886d02c33407047ad08c11 }
+  - { gate: duplication-model, fingerprint: b58fc46f8e65983f20544a4b27686911df8646c2534a776cfb9d2880eed388cc }
+  - { gate: feedback, fingerprint: c287d0e7f171c074e5ecb24ac49fec275bcf6f3c55a585ca111d8833be2264aa }
+  - { gate: fidelity, fingerprint: 1ec8b7b2fba39e423d81bf6821e44c0308842409ba37e3570e12edfda7e54b53 }
+  - { gate: field-examples, fingerprint: fd6927b62cc8fcba7a107802d238124e5f0b5032a57f914d2c1f7097fd582031 }
+  - { gate: kernel-check, fingerprint: 2e29c92056ec3cac5b380da724fc9654e7e6b0f41d5cbf1bb477bd725a8e9817 }
+  - { gate: kernel-engines, fingerprint: ec5c3fd669bfd3b9e0987879ef4956db9089a19c7a33e8ea6dbdcf68f71e2512 }
+  - { gate: kernel-load, fingerprint: 5f98d8667bf0178297cd2d7dcd8edde9c288a0a0fadc6ef8e8e7f662f6be9d68 }
+  - { gate: kernel-sources, fingerprint: 51d76801989ac462cad12ab999363d599e84c6c225bd85e796daddafef150a8f }
+  - { gate: map-drift, fingerprint: 522f15facf304bf8bb4c2a4079f10fa4dbe2a71e70ed98f02949e1bd25fdb949 }
+  - { gate: mapping-bijection, fingerprint: 3be82562d713160f89d845ed8ee11eb60cc13df117578f0d9626264061d10f87 }
+  - { gate: mapping-constructors, fingerprint: d45eb86f3c03521a1ccdc94c645bf6c45aba531091dc0566d52fe4de6850e215 }
+  - { gate: mapping-location, fingerprint: a761b2cbed8dbf83d6747947414f422595158db95175ecf9d3e7105fb93798c8 }
+  - { gate: mapping-rules, fingerprint: 960e9ce1ca3715cd316885e92fbc2b7a404c4ba37a3e71b1ca0f451fa5da5b85 }
+  - { gate: model-resolves, fingerprint: c09422548649b45265bb3641966b24a26e45f2a6c69633c9c7db864d6c713b89 }
+  - { gate: nesting, fingerprint: 89fc0aab58da407c82e55fe2873d1a5d8897a1587556333761ef30c3fdfb5819 }
+  - { gate: npm-test, fingerprint: 0a4fc6d0cccad74e0398d7c7de64357f3019d792d7e0e55ead3d68819488880d }
+  - { gate: plain-exemptions-file, fingerprint: 08df8a80eaf00278a7b1956f01e8ab2d470716951dfab560a67e31b946348efb }
+  - { gate: plain-parity, fingerprint: 856791973a557620be3f2770acec0432e38134b0b22d539c33a6a400c80e3d3a }
+  - { gate: record-wording, fingerprint: 0bb943e27dcab250e598c10513968b7470ea417c2a683a82760ce59c848f5b60 }
+  - { gate: schemas-emit, fingerprint: b7488798470ea8da93a370dc2ec7c2957c0a05c7174547597b168e86314d5603 }
+  - { gate: sdk-generate, fingerprint: b7c9323c1e4e61a9a2037012a076d89b37b5fb9319208cd4bfa0676b78a44195 }
+  - { gate: site-builds, fingerprint: 59a3b7fe86700dd1f95b5957724eb533e5bfc6503e1bf0a1c154daa5fe8820d1 }
+  - { gate: type-examples-generate, fingerprint: 42acc8da27e3f349a8ea4316331ad68feeffceb9735642e69eda0bce36e53745 }
+  - { gate: type-examples-valid, fingerprint: 01fe77e9a99ae75d7d09c22ca68d4c03f86f5dccf52ed5aa5a3d6825750e0930 }
+  - { gate: variant-check, fingerprint: 8c7982eb919950fd30ef74e12d645c897f8cb097667cfd0458409d86cc2b709e }
+  - { gate: variant-diff, fingerprint: e22f89974a8ea95e3a61380105dd40a61e84cacaf87cbd5317ec5f234a76eb81 }

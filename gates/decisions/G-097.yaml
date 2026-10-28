@@ -1,0 +1,45 @@
+format: 1
+id: G-097
+date: 2026-10-28
+question: What changes in the gates when AdCOM's drift report is renamed enum drift, so its name no longer collides with gate 8's check that generated files are current?
+decision: >-
+  The report that compares the registry's lists with other artifacts'
+  enums is now the enum drift report. Its folder is enum-drift/ (the
+  root's format schema enum-drift/sources.schema.json, and AdCOM's
+  specs/adcom/enum-drift/ with enum-drift.json and enum-drift.md), its
+  command is `npm run enum-drift`, its code is src/enum-drift.ts, and its
+  gates are gates/enum-drift.ts. The four gates drift-sources,
+  drift-deterministic, drift-committed, and drift-tracked are retired and
+  return as enum-drift-sources, enum-drift-deterministic,
+  enum-drift-committed, and enum-drift-tracked, with the same checks and
+  fixtures on the new paths. enum-drift replaces drift in the outputs
+  stage's folders (spec-profile), the folders no file may be untracked in
+  (untracked), and the root's format folders (layout-tracked). The site
+  gate changes with AdCOM's landing page, which names the report and links
+  it at its new path. The guard changes with scripts/ci.ts. The test suite
+  is unchanged at 472 tests; npm-test changes with the moved test file,
+  and the guard's test now drops each gate a record retires from the gates
+  it expects to run, as the guard does, since this is the first record that
+  retires a gate.
+retires_gates:
+  - { gate: drift-sources, reason: "Renamed enum-drift-sources, with the same checks and fixtures on the report's new folder." }
+  - { gate: drift-deterministic, reason: "Renamed enum-drift-deterministic, with the same check on the report's new command." }
+  - { gate: drift-committed, reason: "Renamed enum-drift-committed, with the same check on the report's new folder." }
+  - { gate: drift-tracked, reason: "Renamed enum-drift-tracked, with the same check on the report's new folder." }
+rationale: >-
+  A rename: every check and fixture of the four gates carries over to its
+  new ID unchanged, apart from the paths and names it reads, so nothing is
+  relaxed. The report's content is unchanged apart from its own name and
+  command in its heading and first line; its numbers are the same.
+  OpenProposal's outputs don't change.
+accepts:
+  - { gate: enum-drift-committed, fingerprint: bcd367e7e70f8488a8d061c49c4db0b82e12ee0966d969ec50910f3721cc30a9 }
+  - { gate: enum-drift-deterministic, fingerprint: d152c42f05c7a931fe4805a7cd01e5a0a7b902050892b057374157e5847741ef }
+  - { gate: enum-drift-sources, fingerprint: 2fc8f49a7d87280700dd1e6a0fd8f68396aef32c20157167378694c3c615cfc4 }
+  - { gate: enum-drift-tracked, fingerprint: 4bef83517157c7c483ce006902b8eb99fccd9142fa9fd2d06d1ca32c67eb90fa }
+  - { gate: guard, fingerprint: c6742663663792c137a507dc7740a0c36ac03213e9f65e81aefb4617e1b6724d }
+  - { gate: layout-tracked, fingerprint: fc8877035722af1b4f50815e5da64969f1e22420f9bcbe482216cf4baac6c694 }
+  - { gate: npm-test, fingerprint: 9b6623011a43db2421439f195aea0dc37aaaaaba5262a7c4a2b137f74bc28550 }
+  - { gate: site-builds, fingerprint: 10f67a3108340b2d8e9b0cea2417d40910c1f0b20cc48f3151546f2ec6aa35d2 }
+  - { gate: spec-profile, fingerprint: 94d3d0bc029bc0e9d67bf30a7faaf05b799da30e5ae9c99e336169932a751425 }
+  - { gate: untracked, fingerprint: 2765ac23798e83cd7efd811723b0f88ea471ce8606c3b424d00035cdbfbbd31f }

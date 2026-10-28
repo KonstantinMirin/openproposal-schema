@@ -56,7 +56,7 @@ export const workflow = defineGate<{ workflow: string; pkg: Pkg; goMods: Record<
  * that runs passes. Raise it when tests are added; lowering it is a gate
  * change a gate decision must accept.
  */
-export const MIN_TESTS = 465;
+export const MIN_TESTS = 483;
 
 /** A word for the shell, quoted. */
 const shellWord = (s: string) => `'${s.replace(/'/g, "'\\''")}'`;
@@ -87,7 +87,7 @@ export const npmTest = defineGate<{ script: string; extra: string[] }>({
  * may be untracked: every spec's folder, the root's tooling and format
  * schemas, and the single-spec layout's other folders (`layoutTracked`).
  */
-export const TRACKED_DIRS = ["specs", "spec-input", "ir", "mapping", "decisions", "kernel", "schemas", "vectors", "rules", "corpus", "type-examples", "field-examples", "sdk", "plain-generator", "roundtrip", "examples", "releases", "comparison", "feedback", "drift", "gates", "variants", "src", "scripts", "test", "tools"];
+export const TRACKED_DIRS = ["specs", "spec-input", "ir", "mapping", "decisions", "kernel", "schemas", "vectors", "rules", "corpus", "type-examples", "field-examples", "sdk", "plain-generator", "roundtrip", "examples", "releases", "comparison", "feedback", "enum-drift", "gates", "variants", "src", "scripts", "test", "tools"];
 
 export const untracked = defineGate<{ untracked: string[] }>({
   id: "untracked",
@@ -102,7 +102,7 @@ export const packageJson = (): Pkg => JSON.parse(readFileSync(join(ROOT, "packag
 /** The single-spec layout's folders at the root that hold nothing now: each spec's inputs and outputs are in its folder. */
 export const MOVED_DIRS = ["spec-input", "schemas", "rules", "corpus", "type-examples", "comparison", "feedback"];
 /** The root's folders that hold only their format schemas, `<dir>/<name>.schema.json`, which every spec's files validate against. */
-export const FORMAT_DIRS = ["ir", "mapping", "decisions", "vectors", "examples", "variants", "field-examples", "roundtrip", "plain-generator", "releases", "drift"];
+export const FORMAT_DIRS = ["ir", "mapping", "decisions", "vectors", "examples", "variants", "field-examples", "roundtrip", "plain-generator", "releases", "enum-drift"];
 
 /** The tracked files the root's moved and format folders hold that the layout doesn't allow there. */
 export function strayAtRoot(tracked: readonly string[]): string[] {

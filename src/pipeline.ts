@@ -34,7 +34,7 @@ export function runStages(lock: SpecLock, bytes: Buffer, exceptions: ExceptionEn
   const text = pluginOf(lock).text;
   const ir = extract(bytes.toString("utf8"), inputRecord(lock, bytes), text);
   const profile = profileOf(lock);
-  const findings = lint(ir, text.lint, { appendices: hasFeature(profile, "appendices"), numbered: text.numbered !== false });
+  const findings = lint(ir, text.lint, { appendices: hasFeature(profile, "appendices"), sections: text.sections });
   const exceptionProblems = applyExceptions(findings, exceptions, lock.name);
   const doc = findingsDoc(lock, findings);
   return { ir, findings: doc, irJson: canonicalJson(ir), findingsJson: canonicalJson(doc), exceptionProblems };

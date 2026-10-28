@@ -9,6 +9,7 @@ import { committedTreeCurrent, flipFirst, onlyGenerated, runTool, sameTreeRuns, 
 import { defineGate, ROOT } from "./harness.ts";
 import { withType } from "./model.ts";
 import type { SpecNames } from "../src/profile.ts";
+import type { SchemaNames } from "../src/emit.ts";
 
 export const plainExemptionsFile = defineGate<{ exemptions: ExemptionsFile; pinned: string; locks: string[] }>({
   id: "plain-exemptions-file",
@@ -22,11 +23,11 @@ export const plainExemptionsFile = defineGate<{ exemptions: ExemptionsFile; pinn
   ],
 });
 
-export const sdkGenerate = defineGate<{ model: ModelDoc; dir: string; schemaDir: string; names: SpecNames }>({
+export const sdkGenerate = defineGate<{ model: ModelDoc; dir: string; schemaDir: string; names: SpecNames; schemaNames: SchemaNames }>({
   id: "sdk-generate",
   title: "SDK types generate from the model",
   check: (i) => {
-    const e = emitSdk(i.model, i.dir, i.schemaDir, i.names);
+    const e = emitSdk(i.model, i.dir, i.schemaDir, i.names, i.schemaNames);
     return { problems: e.problems, note: `${e.files.length} files: ${e.sdk.emitted.length} named types and ${e.sdk.templates.size} generic templates in each of TypeScript, Python, and Go` };
   },
   fixtures: [

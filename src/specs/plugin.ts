@@ -31,6 +31,9 @@ import type { Finding } from "../lint.ts";
 /** The IR collection a table row goes to. The extractor reads `key`, `definition`, `marker`, and `concept` rows; the plugin's `readRow` reads every other kind. */
 export type RowKind = Layout["kind"];
 
+/** How a text identifies its sections: by their numbers, or by the anchors their headings write. */
+export type SectionIds = "numbered" | "anchored";
+
 /** The row kinds the extractor reads the same way for every specification. */
 export const GENERIC_ROWS: readonly RowKind[] = ["key", "definition", "marker", "concept"];
 
@@ -107,8 +110,15 @@ export interface TextFrontEnd {
   readTypeCell?(raw: string, line: number): TypeExpr;
   /** The object a section's key table describes, named by its heading, as AdCOM's `Object: Ad` names `Ad`; null where the heading names none. */
   objectOf?(section: Section): string | null;
-  /** Whether the text numbers its headings, as OpenProposal's "4.1 Identity"; true unless false, as for AdCOM, whose headings carry anchors instead. */
-  numbered?: boolean;
+  /**
+   * How the text identifies its sections, which every plugin states: by the
+   * number each heading writes, as OpenProposal's "4.1 Identity", an
+   * unnumbered heading by its parent's number (`numbered`); or by the
+   * anchor each heading writes, as AdCOM's `<a name="list_devicetypes">`
+   * (`anchored`). A citation names a numbered section by its number and an
+   * anchored one by its heading.
+   */
+  sections: SectionIds;
   /** Whether braces in text write inline objects, as OpenProposal's `{ a, b }` does; true unless false, as for a text whose braces only quote JSON. */
   inlineObjects?: boolean;
   /** Reads the value list that starts at `tokens[start]`, or null. `taken` are tokens another reading holds. */

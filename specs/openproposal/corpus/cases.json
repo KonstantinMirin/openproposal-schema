@@ -1023,6 +1023,55 @@
     },
     {
       "at": "",
+      "baseline": {
+        "metric": "viewable_rate",
+        "value": 0
+      },
+      "id": "CommittedMetricsEntry#/dependentRequired/value/metric",
+      "keyword": "dependentRequired",
+      "member": "value",
+      "mutant": {
+        "value": 0
+      },
+      "name": "metric",
+      "path": "",
+      "schema": "https://openproposal.noetis.dev/schemas/modules/guarantees/1/guarantees.json#/$defs/CommittedMetricsEntry",
+      "type": "CommittedMetricsEntry"
+    },
+    {
+      "at": "/else/then/properties/value",
+      "baseline": {
+        "metric": "completion_rate",
+        "value": 0
+      },
+      "id": "CommittedMetricsEntry#/else/then/properties/value/$ref",
+      "keyword": "$ref",
+      "mutant": {
+        "metric": "completion_rate",
+        "value": 70
+      },
+      "path": "/value",
+      "schema": "https://openproposal.noetis.dev/schemas/modules/guarantees/1/guarantees.json#/$defs/CommittedMetricsEntry",
+      "type": "CommittedMetricsEntry"
+    },
+    {
+      "at": "/then/properties/value",
+      "baseline": {
+        "metric": "viewable_rate",
+        "value": 0
+      },
+      "id": "CommittedMetricsEntry#/then/properties/value/$ref",
+      "keyword": "$ref",
+      "mutant": {
+        "metric": "viewable_rate",
+        "value": 70
+      },
+      "path": "/value",
+      "schema": "https://openproposal.noetis.dev/schemas/modules/guarantees/1/guarantees.json#/$defs/CommittedMetricsEntry",
+      "type": "CommittedMetricsEntry"
+    },
+    {
+      "at": "",
       "baseline": {},
       "id": "CommittedMetricsEntry#/type",
       "keyword": "type",
@@ -3133,6 +3182,26 @@
       "path": "",
       "schema": "https://openproposal.noetis.dev/schemas/modules/targeting/1/targeting.json#/$defs/MaxRange",
       "type": "MaxRange"
+    },
+    {
+      "at": "",
+      "baseline": 0,
+      "id": "Measure#/minimum",
+      "keyword": "minimum",
+      "mutant": -1,
+      "path": "",
+      "schema": "https://openproposal.noetis.dev/schemas/kernel/1/kernel.json#/$defs/Measure",
+      "type": "Measure"
+    },
+    {
+      "at": "",
+      "baseline": 0,
+      "id": "Measure#/type",
+      "keyword": "type",
+      "mutant": "1200000",
+      "path": "",
+      "schema": "https://openproposal.noetis.dev/schemas/kernel/1/kernel.json#/$defs/Measure",
+      "type": "Measure"
     },
     {
       "at": "",

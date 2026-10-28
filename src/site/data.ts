@@ -28,7 +28,7 @@ import { checkVariantDiff, loadVariant, type Variant, type VariantDifference } f
 import type { VariantReport } from "../variant-report.ts";
 import { sourceInfo, type SourceInfo } from "./sources.ts";
 import { REPO_ROOT } from "../repo.ts";
-import { specOf } from "../specs/index.ts";
+import { pluginOf, specOf } from "../specs/index.ts";
 import { brandOf, loadSiteConfig, type SiteBrand, type SiteConfig } from "./config.ts";
 
 /**
@@ -159,10 +159,12 @@ export function sourceInfos(inputs: SiteInputs, lock: SpecLock, ids: Iterable<st
   const ir = inputs.irs.get(lock.name)!;
   const elements = indexElements(ir);
   const titles = new Map(ir.sections.map((s) => [s.id, s.title]));
+  // A text whose sections are anchored cites each by its heading; a numbered one, by its number.
+  const naming = { sections: pluginOf(lock).text.sections, titleOf: (s: string) => titles.get(s) };
   const out: Record<string, SourceInfo> = {};
   for (const id of [...ids].sort()) {
     const e = elements.get(id);
-    if (e) out[id] = sourceInfo(lock, inputs.provenance.get(lock.name) ?? null, id, e, (s) => titles.get(s));
+    if (e) out[id] = sourceInfo(lock, inputs.provenance.get(lock.name) ?? null, id, e, naming);
   }
   return out;
 }

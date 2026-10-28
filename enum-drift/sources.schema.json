@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/KonstantinMirin/openproposal-schema/drift/sources.schema.json",
-  "title": "Drift sources",
-  "description": "The artifacts a registry's drift report compares its code lists with (src/drift.ts): each artifact's upstream, commit, and pinned files, and which of its enums holds each list.",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/enum-drift/sources.schema.json",
+  "title": "Enum drift sources",
+  "description": "The artifacts a registry's enum drift report compares its code lists with (src/enum-drift.ts): each artifact's upstream, commit, and pinned files, and which of its enums holds each list.",
   "type": "object",
   "additionalProperties": false,
   "required": ["format", "lock", "sources", "lists"],

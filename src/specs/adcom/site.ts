@@ -16,7 +16,7 @@ import { lockNames, named } from "../../site/config.ts";
 import { buildOf, sourceInfos, type SiteInputs } from "../../site/data.ts";
 import { esc, inline, page } from "../../site/html.ts";
 import { pipelineFigure } from "../../site/method.ts";
-import { DRIFT_DIR, DRIFT_FILES, type DriftDoc } from "../../drift.ts";
+import { ENUM_DRIFT_DIR, ENUM_DRIFT_FILES, type EnumDriftDoc } from "../../enum-drift.ts";
 import { mapLink, repoLink } from "../../site/pages.ts";
 import type { SiteCopy } from "../../site/copy.ts";
 
@@ -82,7 +82,7 @@ function landingPage(inputs: SiteInputs): string {
   </div>
 </section>
 
-${driftSection(inputs)}
+${enumDriftSection(inputs)}
 <section class="wrap two">
   <div>
     <h2>What it leaves for later</h2>
@@ -104,11 +104,11 @@ ${driftSection(inputs)}
   return page({ path: "index.html", title: `${named(b)} code lists as JSON Schema, unofficial`, description: `An unofficial registry of ${named(b)}'s code lists as JSON Schema vocabularies, generated from the specification text by ${b.publisher}, an IAB Tech Lab member.`, section: "home", body, brand: b });
 }
 
-/** How the registry's lists compare with other artifacts' enums, from the committed drift report; empty where the spec has none. */
-function driftSection(inputs: SiteInputs): string {
-  const file = join(inputs.root, DRIFT_DIR, DRIFT_FILES.data);
+/** How the registry's lists compare with other artifacts' enums, from the committed enum drift report; empty where the spec has none. */
+function enumDriftSection(inputs: SiteInputs): string {
+  const file = join(inputs.root, ENUM_DRIFT_DIR, ENUM_DRIFT_FILES.data);
   if (!existsSync(file)) return "";
-  const doc = JSON.parse(readFileSync(file, "utf8")) as DriftDoc;
+  const doc = JSON.parse(readFileSync(file, "utf8")) as EnumDriftDoc;
   const b = inputs.brand;
   const items = doc.sources.map((s) => {
     const t = doc.totals[s.id]!;
@@ -124,11 +124,11 @@ function driftSection(inputs: SiteInputs): string {
   });
   return `<section class="wrap">
   <h2>How other artifacts compare</h2>
-  <p>Other artifacts define ${b.short}'s lists as enums of their own. A generated report compares each list, code by code, with each artifact's enum; it can report the drift, not fix it.</p>
+  <p>Other artifacts define ${b.short}'s lists as enums of their own. A generated report compares each list, code by code, with each artifact's enum: it reports where each enum departs from its list, and it can't fix it.</p>
   <ul>
     ${items.join("\n    ")}
   </ul>
-  <p>${repoLink(b, "blob", `specs/${b.spec}/${DRIFT_DIR}/${DRIFT_FILES.report}`, "Read the drift report")}, list by list, with a link to each enum at the commit it was read at.</p>
+  <p>${repoLink(b, "blob", `specs/${b.spec}/${ENUM_DRIFT_DIR}/${ENUM_DRIFT_FILES.report}`, "Read the enum drift report")}, list by list, with a link to each enum at the commit it was read at.</p>
 </section>
 `;
 }
@@ -216,7 +216,7 @@ ${pipelineFigure()}
 <section id="example">
 <h2>One list, end to end</h2>
 <ol class="steps">
-<li><h3>The specification row</h3><p>${inline(info.label, "")}${specLink ? `, <a href="${esc(specLink.href)}">${esc(specLink.text)}</a>` : ""}:</p><blockquote>${inline(info.quote, "")}</blockquote></li>
+<li><h3>The specification row</h3><p>${inline(info.label, "")}${specLink ? `, <a href="${esc(specLink.href)}">${esc(specLink.text)}</a>` : ""}:</p><blockquote>${info.quote.html}</blockquote></li>
 <li><h3>The element</h3><p>The extractor records the row as <code>${esc(row.id)}</code>, with the digest <code class="digest">${esc((element.element as { digest: string }).digest)}</code>. Every mapping entry and decision that rests on the row stores that digest, and goes stale when the row changes.</p></li>
 <li><h3>The vocabulary</h3><p>The rule that maps a list's code rows makes the row a term of ${t(vocab.name)}, in the <code>${esc(vocab.module)}</code> module, with the label "${esc(vocab.kind === "vocabulary" ? (vocab.terms.find((x) => x.sources.includes(row.id))?.annotation ?? "") : "")}".</p></li>
 <li><h3>The emitted schema</h3><p>In <a href="${esc(file)}"><code>${esc(file)}</code></a>, under <code>$defs</code>. <a href="${m(vocab.name, "schema")}">Open it in the type map</a>.</p>${json(emitted)}</li>

@@ -1,15 +1,15 @@
 /**
- * The drift report of a registry of code lists (`npm run drift`): each list
- * the registry holds, compared code by code with the enums that other
- * artifacts define for it, such as AdCOM's lists with IAB Tech Lab's
- * adcom-proto and Prebid's Go types.
+ * The enum drift report of a registry of code lists (`npm run
+ * enum-drift`): each list the registry holds, compared code by code with
+ * the enums that other artifacts define for it, such as AdCOM's lists with
+ * IAB Tech Lab's adcom-proto and Prebid's Go types.
  *
- * `drift/sources.yaml`, valid against `drift/sources.schema.json`, is the
- * reviewed input: each artifact's upstream, the commit it is read at, the
+ * `enum-drift/sources.yaml`, valid against
+ * `enum-drift/sources.schema.json`, is the reviewed input: each artifact's upstream, the commit it is read at, the
  * folder its reader reads and that folder's git tree SHA, its license's blob
  * SHA, and which enum of each artifact holds each of the registry's lists,
- * or none. The snapshot under `drift/snapshots/<source>/` holds the whole
- * folder and the license, and the folder must hash to the pinned tree, so
+ * or none. The snapshot under `enum-drift/snapshots/<source>/` holds the
+ * whole folder and the license, and the folder must hash to the pinned tree, so
  * the report and its checks need no clone: no file can be left out or
  * changed. A reachable clone must agree with every pin too.
  *
@@ -35,15 +35,15 @@ import type { ModelDoc } from "./model.ts";
 import { compileSchema } from "./pipeline.ts";
 import { REPO_ROOT } from "./repo.ts";
 
-export const DRIFT_DIR = "drift";
-export const DRIFT_SOURCES = join(DRIFT_DIR, "sources.yaml");
-const SOURCES_SCHEMA = join("drift", "sources.schema.json");
-export const DRIFT_FILES = { data: "drift.json", report: "drift.md" } as const;
+export const ENUM_DRIFT_DIR = "enum-drift";
+export const ENUM_DRIFT_SOURCES = join(ENUM_DRIFT_DIR, "sources.yaml");
+const SOURCES_SCHEMA = join("enum-drift", "sources.schema.json");
+export const ENUM_DRIFT_FILES = { data: "enum-drift.json", report: "enum-drift.md" } as const;
 
 /** How an artifact defines its enums. */
 export type Reader = "proto" | "go";
 
-export interface DriftSource {
+export interface EnumDriftSource {
   id: string;
   /** The artifact's name in prose. */
   title: string;
@@ -59,29 +59,29 @@ export interface DriftSource {
   license: { path: string; blob: string };
 }
 
-export interface DriftList {
+export interface EnumDriftList {
   /** The list's section ID in the registry's IR, its anchor, as `list_devicetypes`. */
   list: string;
   /** For each source, the enum that holds the list, or null where the artifact defines none. */
   enums: Record<string, string | null>;
 }
 
-export interface DriftSources {
+export interface EnumDriftSources {
   format: 1;
   /** The registry lock the report reads. */
   lock: string;
-  sources: DriftSource[];
-  lists: DriftList[];
+  sources: EnumDriftSource[];
+  lists: EnumDriftList[];
   file: string;
 }
 
-/** Loads a spec's `drift/sources.yaml`. Throws when it is invalid. */
-export function loadDriftSources(spec: string): DriftSources {
-  const file = join(spec, DRIFT_SOURCES);
+/** Loads a spec's `enum-drift/sources.yaml`. Throws when it is invalid. */
+export function loadEnumDriftSources(spec: string): EnumDriftSources {
+  const file = join(spec, ENUM_DRIFT_SOURCES);
   const doc = readYaml(file);
   const errors = compileSchema(join(REPO_ROOT, SOURCES_SCHEMA))(doc);
-  if (errors.length > 0) throw new Error(`${file}: not a valid drift sources file: ${errors.join("; ")}`);
-  const loaded = { ...(doc as Omit<DriftSources, "file">), file };
+  if (errors.length > 0) throw new Error(`${file}: not a valid enum drift sources file: ${errors.join("; ")}`);
+  const loaded = { ...(doc as Omit<EnumDriftSources, "file">), file };
   const ids = loaded.sources.map((x) => x.id);
   const twice = ids.find((id, i) => ids.indexOf(id) !== i);
   if (twice !== undefined) throw new Error(`${file}: names the source ${twice} twice`);
@@ -89,7 +89,7 @@ export function loadDriftSources(spec: string): DriftSources {
 }
 
 /** The snapshot folder of a source. */
-export const snapshotDir = (spec: string, s: Pick<DriftSource, "id">): string => join(spec, DRIFT_DIR, "snapshots", s.id);
+export const snapshotDir = (spec: string, s: Pick<EnumDriftSource, "id">): string => join(spec, ENUM_DRIFT_DIR, "snapshots", s.id);
 
 const sha1 = (head: string, body: Buffer) => createHash("sha1").update(`${head} ${body.length}\0`).update(body).digest("hex");
 
@@ -304,11 +304,11 @@ export function readGoEnums(text: string, file: string): EnumDef[] {
 export const readEnums = (reader: Reader, text: string, file: string): EnumDef[] => (reader === "proto" ? readProtoEnums(text, file) : readGoEnums(text, file));
 
 /** The files of a source's folder its reader reads: its `.proto` files, or its `.go` files but tests, at any depth. */
-export const readFiles = (s: Pick<DriftSource, "reader" | "folder">, files: ReadonlyMap<string, Buffer>): string[] =>
+export const readFiles = (s: Pick<EnumDriftSource, "reader" | "folder">, files: ReadonlyMap<string, Buffer>): string[] =>
   [...files.keys()].filter((p) => p.startsWith(`${s.folder}/`) && (s.reader === "proto" ? p.endsWith(".proto") : p.endsWith(".go") && !p.endsWith("_test.go"))).sort();
 
 /** Every file a source's snapshot holds, by its path in the artifact. */
-export function snapshotFiles(spec: string, s: DriftSource): Map<string, Buffer> {
+export function snapshotFiles(spec: string, s: EnumDriftSource): Map<string, Buffer> {
   const dir = snapshotDir(spec, s);
   const out = new Map<string, Buffer>();
   const walk = (rel: string) => {
@@ -322,7 +322,7 @@ export function snapshotFiles(spec: string, s: DriftSource): Map<string, Buffer>
 }
 
 /** Every source's snapshot files, by source. */
-export const allSnapshotFiles = (spec: string, sources: DriftSources): Map<string, Map<string, Buffer>> => new Map(sources.sources.map((s) => [s.id, snapshotFiles(spec, s)]));
+export const allSnapshotFiles = (spec: string, sources: EnumDriftSources): Map<string, Map<string, Buffer>> => new Map(sources.sources.map((s) => [s.id, snapshotFiles(spec, s)]));
 
 /**
  * Checks each source's snapshot against its pins: its folder hashes to the
@@ -330,7 +330,7 @@ export const allSnapshotFiles = (spec: string, sources: DriftSources): Map<strin
  * Where the source's clone is reachable, the clone must have the commit,
  * and the folder and the license there must have the pinned SHAs too.
  */
-export function checkDriftSnapshots(sources: DriftSources, files: Map<string, Map<string, Buffer>>, root: string = REPO_ROOT): { problems: string[]; notes: string[] } {
+export function checkEnumDriftSnapshots(sources: EnumDriftSources, files: Map<string, Map<string, Buffer>>, root: string = REPO_ROOT): { problems: string[]; notes: string[] } {
   const problems: string[] = [];
   const notes: string[] = [];
   for (const s of sources.sources) {
@@ -359,7 +359,7 @@ export function checkDriftSnapshots(sources: DriftSources, files: Map<string, Ma
   return { problems, notes };
 }
 
-/** A list of the registry, as the drift report compares it. */
+/** A list of the registry, as the enum drift report compares it. */
 export interface RegistryList {
   list: string;
   title: string;
@@ -405,7 +405,7 @@ function versions(text: string): string[] {
 }
 
 /** How one list compares with one artifact's enum. */
-export interface ListDrift {
+export interface ListEnumDrift {
   source: string;
   enum: string | null;
   /** Where the enum is defined, as a link at the source's commit; null for none. */
@@ -419,16 +419,16 @@ export interface ListDrift {
   versions: { value: number; label: string; name: string; comment: string; line: number }[];
 }
 
-export interface DriftDoc {
+export interface EnumDriftDoc {
   format: 1;
   input: { lock: string; commit: string; blob: string };
   sources: { id: string; title: string; upstream: string; commit: string; reader: Reader; folder: string; files: number }[];
-  lists: { list: string; title: string; vocabulary: string | null; codes: number; vendor: number | null; drift: ListDrift[] }[];
+  lists: { list: string; title: string; vocabulary: string | null; codes: number; vendor: number | null; drift: ListEnumDrift[] }[];
   totals: Record<string, { compared: number; noEnum: number; listsMissing: number; missing: number; listsExtra: number; extra: number; sentinels: number; narrow: number; versions: number; removedKept: number }>;
 }
 
 /** The blob link of a source's file at its commit, at a line. */
-const lineLink = (s: DriftSource, file: string, line: number) => `${s.upstream}/blob/${s.commit}/${file.split("/").map(encodeURIComponent).join("/")}#L${line}`;
+const lineLink = (s: EnumDriftSource, file: string, line: number) => `${s.upstream}/blob/${s.commit}/${file.split("/").map(encodeURIComponent).join("/")}#L${line}`;
 
 /**
  * Compares each list of the registry with each source's enum for it. Fails
@@ -436,7 +436,7 @@ const lineLink = (s: DriftSource, file: string, line: number) => `${s.upstream}/
  * out, names an enum the source doesn't define, or leaves one of a source's
  * enums unnamed.
  */
-export function compareDrift(input: { sources: DriftSources; ir: SpecIR; model: ModelDoc; files: Map<string, Map<string, Buffer>> }): { doc: DriftDoc; problems: string[] } {
+export function compareEnumDrift(input: { sources: EnumDriftSources; ir: SpecIR; model: ModelDoc; files: Map<string, Map<string, Buffer>> }): { doc: EnumDriftDoc; problems: string[] } {
   const { sources, ir, model } = input;
   const problems: string[] = [];
   const lists = registryLists(ir, model);
@@ -473,7 +473,7 @@ export function compareDrift(input: { sources: DriftSources; ir: SpecIR; model: 
     for (const e of enums.get(s.id)!.keys()) if (!named.has(e)) problems.push(`${where}: ${s.id}'s enum ${e} is named for no list`);
     for (const l of sources.lists) for (const k of Object.keys(l.enums)) if (!sources.sources.some((x) => x.id === k)) problems.push(`${where}: ${l.list} names the source ${k}, which the file doesn't define`);
   }
-  const out: DriftDoc["lists"] = [];
+  const out: EnumDriftDoc["lists"] = [];
   for (const r of lists) {
     const entry = byList.get(r.list);
     if (!entry) {
@@ -482,7 +482,7 @@ export function compareDrift(input: { sources: DriftSources; ir: SpecIR; model: 
     }
     const codes = new Set(r.codes.map((c) => c.value));
     const covered = (v: number) => codes.has(v) || (r.vendor !== null && v >= r.vendor) || (r.positive && v > 0);
-    const drift: ListDrift[] = sources.sources.map((s) => {
+    const drift: ListEnumDrift[] = sources.sources.map((s) => {
       const name = entry.enums[s.id] ?? null;
       const def = name === null ? undefined : enums.get(s.id)!.get(name);
       if (!def) return { source: s.id, enum: null, at: null, missing: [], extra: [], sentinel: null, narrow: null, versions: [] };
@@ -492,7 +492,7 @@ export function compareDrift(input: { sources: DriftSources; ir: SpecIR; model: 
       const sentinel = zero && !codes.has(0) && /unknown$/i.test(zero.name) ? { value: 0, name: zero.name } : null;
       const missing = r.codes.filter((c) => !have.has(c.value));
       const extra = def.values.filter((v) => !covered(v.value) && !(sentinel && v.value === 0)).map((v) => ({ value: v.value, name: v.name, line: v.line }));
-      let narrow: ListDrift["narrow"] = null;
+      let narrow: ListEnumDrift["narrow"] = null;
       if (def.type !== null) {
         const [lo, hi] = goRange(def.type);
         const out = r.codes.map((c) => c.value).filter((v) => v < lo || v > hi);
@@ -515,7 +515,7 @@ export function compareDrift(input: { sources: DriftSources; ir: SpecIR; model: 
     });
     out.push({ list: r.list, title: r.title, vocabulary: r.vocabulary, codes: r.codes.length, vendor: r.vendor, drift });
   }
-  const totals: DriftDoc["totals"] = {};
+  const totals: EnumDriftDoc["totals"] = {};
   for (const s of sources.sources) {
     const rows = out.map((l) => ({ l, d: l.drift.find((d) => d.source === s.id)! }));
     const coded = rows.filter(({ l }) => l.vocabulary !== null);
@@ -545,21 +545,21 @@ export function compareDrift(input: { sources: DriftSources; ir: SpecIR; model: 
   };
 }
 
-export const renderDrift = (doc: DriftDoc): string => canonicalJson(doc);
+export const renderEnumDrift = (doc: EnumDriftDoc): string => canonicalJson(doc);
 
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 const codeList = (xs: number[]) => xs.join(", ");
 
-/** The drift report as markdown, for people to read. */
-export function renderDriftMarkdown(doc: DriftDoc, registry: { name: string }): string {
+/** The enum drift report as markdown, for people to read. */
+export function renderEnumDriftMarkdown(doc: EnumDriftDoc, registry: { name: string }): string {
   const lines: string[] = [];
   const s7 = (c: string) => c.slice(0, 7);
-  lines.push(`# Drift of ${registry.name}'s code lists`, "");
-  lines.push(`Generated by \`npm run drift\` from \`drift/sources.yaml\`; don't edit it by hand. It compares each list of ${registry.name}, as the registry holds it on \`${doc.input.lock}\` (commit \`${s7(doc.input.commit)}\`), code by code with the enum each artifact below defines for it:`, "");
+  lines.push(`# Enum drift of ${registry.name}'s code lists`, "");
+  lines.push(`Generated by \`npm run enum-drift\` from \`enum-drift/sources.yaml\`; don't edit it by hand. It compares each list of ${registry.name}, as the registry holds it on \`${doc.input.lock}\` (commit \`${s7(doc.input.commit)}\`), code by code with the enum each artifact below defines for it:`, "");
   for (const s of doc.sources) lines.push(`- **${s.title}**, [${s.upstream.replace(/^https:\/\/github\.com\//, "")}](${s.upstream}) at [\`${s7(s.commit)}\`](${s.upstream}/tree/${s.commit}): ${plural(s.files, `${s.reader === "proto" ? ".proto" : "Go"} file`)} of [\`${s.folder}/\`](${s.upstream}/tree/${s.commit}/${s.folder}) read.`);
   lines.push("", "Only codes are compared. A code the registry holds and an enum lacks is missing; a value an enum holds that the list doesn't, and that no vendor range or positive-number row covers, is extra. An enum's 0 named \"unknown\", where the list has no code 0, is its unset sentinel and is neither. Where a code's label and the enum's comment, or a protocol buffer value's name, state different versions, the report lists both for a reader to check.", "");
   lines.push("## Totals", "", "| | " + doc.sources.map((s) => s.title).join(" | ") + " |", "|---|" + doc.sources.map(() => "---").join("|") + "|");
-  const row = (label: string, f: (t: DriftDoc["totals"][string]) => string) => lines.push(`| ${label} | ${doc.sources.map((s) => f(doc.totals[s.id]!)).join(" | ")} |`);
+  const row = (label: string, f: (t: EnumDriftDoc["totals"][string]) => string) => lines.push(`| ${label} | ${doc.sources.map((s) => f(doc.totals[s.id]!)).join(" | ")} |`);
   row("Lists with codes compared", (t) => String(t.compared));
   row("Lists with codes and no enum", (t) => String(t.noEnum));
   row("Codes missing", (t) => `${t.missing}, in ${plural(t.listsMissing, "list")}`);
@@ -603,12 +603,12 @@ export function renderDriftMarkdown(doc: DriftDoc, registry: { name: string }): 
 }
 
 /**
- * The drift report's files for a spec, from its committed IR and mapping:
- * `drift.json`, canonical JSON, and `drift.md`, rendered from it, with the
+ * The enum drift report's files for a spec, from its committed IR and mapping:
+ * `enum-drift.json`, canonical JSON, and `enum-drift.md`, rendered from it, with the
  * problems of the sources file. The registry's lock is the one the sources
  * file names.
  */
-export async function driftFiles(spec: string, sources: DriftSources = loadDriftSources(spec), snapshots: Map<string, Map<string, Buffer>> = allSnapshotFiles(spec, sources)): Promise<{ files: Map<string, string>; doc: DriftDoc; problems: string[] }> {
+export async function enumDriftFiles(spec: string, sources: EnumDriftSources = loadEnumDriftSources(spec), snapshots: Map<string, Map<string, Buffer>> = allSnapshotFiles(spec, sources)): Promise<{ files: Map<string, string>; doc: EnumDriftDoc; problems: string[] }> {
   const { allLocks, resolveBuild } = await import("./builds.ts");
   const { loadKernel } = await import("./kernel.ts");
   const { loadConstructors } = await import("./constructors.ts");
@@ -618,11 +618,11 @@ export async function driftFiles(spec: string, sources: DriftSources = loadDrift
   if (!lock) throw new Error(`${sources.file}: names the lock "${sources.lock}", which the spec doesn't have`);
   const build = resolveBuild({ root: spec, lock, mappings: loadMappings(join(spec, "mapping")), decisions: loadDecisions(join(spec, "decisions")), kernel: loadKernel(REPO_ROOT, spec), constructors: loadConstructors(REPO_ROOT, spec) });
   const problems = build.problems.map((p) => `${lock.name}: ${p}`);
-  const { doc, problems: drift } = compareDrift({ sources, ir: build.ir, model: build.model, files: snapshots });
+  const { doc, problems: compared } = compareEnumDrift({ sources, ir: build.ir, model: build.model, files: snapshots });
   const names = specOf(spec).profile.names;
   const files = new Map([
-    [DRIFT_FILES.data, renderDrift(doc)],
-    [DRIFT_FILES.report, renderDriftMarkdown(doc, { name: `${names.short} ${names.edition}` })],
+    [ENUM_DRIFT_FILES.data, renderEnumDrift(doc)],
+    [ENUM_DRIFT_FILES.report, renderEnumDriftMarkdown(doc, { name: `${names.short} ${names.edition}` })],
   ]);
-  return { files, doc, problems: [...problems, ...drift] };
+  return { files, doc, problems: [...problems, ...compared] };
 }

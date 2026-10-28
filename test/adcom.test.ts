@@ -82,7 +82,7 @@ test("AdCOM extracts every list and object: 44 List: sections, 42 with a table o
 });
 
 test("AdCOM's lint reports the anchor typo, the unprefixed anchor, and the lists with no codes, and no appendix or section number it never writes", () => {
-  const kinds = lint(IR, TEXT.lint, { appendices: false, numbered: false }).map((f) => f.id);
+  const kinds = lint(IR, TEXT.lint, { appendices: false, sections: "anchored" }).map((f) => f.id);
   for (const id of ["section_anchor_irregular:list_doohmultipliermeasurementmourcetypes", "section_anchor_irregular:user-agent_source", "list_without_codes:list_doohvenuetypes", "list_without_codes:list_placementsubtypesvideo"]) assert.ok(kinds.includes(id), id);
   assert.ok(!kinds.some((k) => /^(appendix_|unnumbered_heading)/.test(k)));
   // An object its heading names resolves, as `Ad` does; a name in another case, `device.ua`, doesn't.
@@ -110,11 +110,11 @@ test("an HTML table cell fails on markup or a character reference the reader doe
 test("every AdCOM object table names its object, and the lint reports each anchor that departs from the pattern, with how", () => {
   for (const t of IR.tables.filter((x) => x.layout.endsWith("-object"))) assert.ok(t.parent?.identifier, t.id);
   assert.ok(IR.keys.some((k) => k.id === "key:object_eids:ExtendedIdentifiers.source"));
-  const found = lint(IR, TEXT.lint, { appendices: false, numbered: false }).filter((f) => f.kind === "section_anchor_irregular");
+  const found = lint(IR, TEXT.lint, { appendices: false, sections: "anchored" }).filter((f) => f.kind === "section_anchor_irregular");
   const reasons = Object.fromEntries(found.map((f) => [f.subjects[0], (f.details as { reason: string }).reason]));
   assert.deepEqual(reasons, { list_doohmultipliermeasurementmourcetypes: "spelling", list_idmatchmethod: "spelling", list_poddedupe: "abbreviation", object_eid_uids: "abbreviation", object_eids: "abbreviation", "user-agent_source": "prefix" });
   const missing = run(`# **T**\n\n# SPECIFICATION <a name="spec"></a>\n\n### List:  Things\n\nNo anchor.\n`);
-  assert.match(lint(missing, TEXT.lint, { appendices: false, numbered: false }).map((f) => f.message).join("\n"), /List: Things writes no anchor of its own/);
+  assert.match(lint(missing, TEXT.lint, { appendices: false, sections: "anchored" }).map((f) => f.message).join("\n"), /List: Things writes no anchor of its own/);
 });
 
 test("a list's vocabulary is its title in PascalCase with its head noun in the singular, so every name follows from the title alone", async () => {

@@ -2,7 +2,8 @@
 
 /** The OpenProposal `guarantees` module's types. */
 import { z } from "zod";
-import { BareTerm, Duration, ExternalId, Fraction, Identifier, NamespacedTerm, Selectable, Text } from "./kernel.js";
+import * as rt from "./runtime.js";
+import { BareTerm, Duration, ExternalId, Fraction, Identifier, Measure, NamespacedTerm, Selectable, Text } from "./kernel.js";
 
 /** The `Metric` vocabulary: `viewable_rate`, `completion_rate`, or a namespaced term (`NamespacedTerm`), since the vocabulary is open. */
 export type Metric = "viewable_rate" | "completion_rate" | NamespacedTerm;
@@ -18,13 +19,13 @@ export const Metrics = {
 export interface CommittedMetricsEntry {
   basis?: BareTerm;
   metric?: Metric;
-  value?: Fraction;
+  value?: Measure;
 }
 export const CommittedMetricsEntry: z.ZodType<CommittedMetricsEntry> = z.strictObject({
   basis: BareTerm.optional(),
   metric: Metric.optional(),
-  value: Fraction.optional(),
-});
+  value: Measure.optional(),
+}).check(rt.requires("value", ["metric"]), rt.condition("metric", "viewable_rate", [], { value: Fraction }), rt.condition("metric", "completion_rate", [], { value: Fraction }));
 
 /** The `ReportingFeedType` vocabulary: `log_level`, `aggregate`, `none`, or a namespaced term (`NamespacedTerm`), since the vocabulary is open. */
 export type ReportingFeedType = "log_level" | "aggregate" | "none" | NamespacedTerm;

@@ -11,7 +11,7 @@ import { applicationExpr, buildSdkModel, sdkDirOf } from "../src/sdk.ts";
 import { emitSdk } from "../src/sdk-emit.ts";
 import { compareRun, jsonEqual, runGo, runPython, runTypeScript, sdkCases, type SdkCase } from "../src/sdk-parity.ts";
 import type { CorpusDoc } from "../src/corpus.ts";
-import { OP_NAMES, ROOT, SPEC } from "./helpers.ts";
+import { OP_NAMES, OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
 
 const KERNEL = loadKernel(ROOT, SPEC);
 const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
@@ -35,7 +35,7 @@ test("the SDK directory follows the IR directory, with the as-written build as t
 
 test("both locks' SDKs generate with no problem, and every schema type is declared once", () => {
   for (const [model, dir, schemaDir] of [[MAIN, "sdk/proposed", "schemas"], [PRS, "sdk/proposed/with-open-prs", "schemas/with-open-prs"]] as const) {
-    const out = emitSdk(model, dir, schemaDir, OP_NAMES);
+    const out = emitSdk(model, dir, schemaDir, OP_NAMES, OP_SCHEMA);
     assert.deepEqual(out.problems, []);
     const emitted = model.types.filter((t) => t.kind !== "constructor" && !(t.kind === "vocabulary" && t.attribute !== undefined)).map((t) => t.name);
     assert.deepEqual(out.sdk.emitted, [...emitted].sort());
@@ -60,8 +60,8 @@ test("a property is typed by its template applied to its arguments, and its copy
 
 test("the SDKs don't depend on the order of the model's types", () => {
   const reversed: ModelDoc = { ...MAIN, types: [...MAIN.types].reverse() };
-  const a = emitSdk(MAIN, "sdk/proposed", "schemas", OP_NAMES).files;
-  const b = emitSdk(reversed, "sdk/proposed", "schemas", OP_NAMES).files;
+  const a = emitSdk(MAIN, "sdk/proposed", "schemas", OP_NAMES, OP_SCHEMA).files;
+  const b = emitSdk(reversed, "sdk/proposed", "schemas", OP_NAMES, OP_SCHEMA).files;
   assert.deepEqual(b, a);
 });
 

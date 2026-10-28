@@ -73,7 +73,7 @@ export function adcom(_profile: SpecProfile): SpecPlugin {
       keywords,
       // AdCOM's braces quote JSON, as `{"acct": "123"}`; it writes no inline object form.
       inlineObjects: false,
-      numbered: false,
+      sections: "anchored",
       objectOf,
       lint: lintAdcom,
     },

@@ -316,7 +316,7 @@
     var s = B.sources[id];
     if (!s) return "<li><code>" + esc(id) + "</code></li>";
     var links = s.links.map(function (l) { return '<a href="' + esc(l.href) + '">' + esc(l.text) + "</a>"; }).join(", ");
-    return '<li class="src"><details><summary title="' + esc(s.quote) + '"><span class="src-label">' + code(s.label) + "</span>" + (links ? ' <span class="src-links">' + links + "</span>" : ' <span class="note">no link</span>') + "</summary><blockquote>" + code(s.quote) + "</blockquote>" + (s.note ? '<p class="note">' + esc(s.note) + "</p>" : "") + '<p class="note"><code>' + esc(id) + "</code></p></details></li>";
+    return '<li class="src"><details><summary title="' + esc(s.quote.text) + '"><span class="src-label">' + code(s.label) + "</span>" + (links ? ' <span class="src-links">' + links + "</span>" : ' <span class="note">no link</span>') + "</summary><blockquote>" + s.quote.html + "</blockquote>" + (s.note ? '<p class="note">' + esc(s.note) + "</p>" : "") + '<p class="note"><code>' + esc(id) + "</code></p></details></li>";
   }
   function decisionHtml(id) {
     var d = B.decisions[id];

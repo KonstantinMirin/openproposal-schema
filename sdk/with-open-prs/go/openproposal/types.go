@@ -111,6 +111,7 @@ func init() {
 	Types["Manifest"] = TypeOf[Manifest]()
 	Types["MaterialsDue"] = TypeOf[MaterialsDue]()
 	Types["MaxRange"] = TypeOf[MaxRange]()
+	Types["Measure"] = TypeOf[Measure]()
 	Types["MeasurementSourceOption"] = TypeOf[MeasurementSourceOption]()
 	Types["MeasurementSourceSelection"] = TypeOf[MeasurementSourceSelection]()
 	Types["Metric"] = TypeOf[Metric]()

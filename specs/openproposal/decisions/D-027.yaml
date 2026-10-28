@@ -68,8 +68,9 @@ rationale: >-
   list defines, here the specification's own field tables, and each is an
   `ExternalId` whose description says what it names. `at` is a
   `Timestamp`. A committed metric is a `Metric`, whose core terms are the two
-  the prose names, `viewable_rate` and `completion_rate`, with a `Fraction`
-  value (D-005) and a basis of the open vocabulary `MeasurementBasis` (D-041),
+  the prose names, `viewable_rate` and `completion_rate`, with a value its
+  metric types, a `Fraction` for those two rates and a `Measure` for any
+  other (D-005), and a basis of the open vocabulary `MeasurementBasis` (D-041),
   such as `mrc`. A measurement source names its `vendor` as the vendor writes
   its name, an `ExternalId`, its `attribution_window` as a `Duration` (D-040),
   and its `qualifier` as `Text`. A reporting option's `cadence` is the length

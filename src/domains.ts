@@ -80,6 +80,8 @@ export interface Basis {
   member: string;
   /** Each term, with the concept the member's value is while the vocabulary holds it. */
   terms: Record<string, string>;
+  /** The concept the member's value is for every term `terms` doesn't name, an open vocabulary's extension terms included; the member's own type is then this concept's type. */
+  others?: string;
   decision: string;
 }
 
@@ -205,6 +207,11 @@ export function checkDomains(d: Domains, kernel: KernelType[], decisions: Decisi
     const where = `${d.file}: basis "${b.vocabulary}"`;
     cites(where, b.decision);
     for (const [term, c] of Object.entries(b.terms)) if (!concepts.has(c)) problems.push(`${where}: the term "${term}" reads "${b.member}" as "${c}", which is no concept`);
+    if (b.others !== undefined && !concepts.has(b.others)) problems.push(`${where}: every other term reads "${b.member}" as "${b.others}", which is no concept`);
+    // With no concept for the other terms, the member's own type is one term's, so two terms are needed for one to narrow it.
+    if (b.others !== undefined && Object.keys(b.terms).length === 0) problems.push(`${where}: names no term, so nothing narrows "${b.member}" from "${b.others}"; type it as "${b.others}" and remove the basis`);
+    if (b.others === undefined && Object.keys(b.terms).length < 2) problems.push(`${where}: names one term and no concept for the others, so nothing narrows "${b.member}"`);
+    if (b.others !== undefined && Object.values(b.terms).includes(b.others)) problems.push(`${where}: a term reads "${b.member}" as "${b.others}", the concept every other term gives it; leave the term out`);
   }
   const vocabularies = d.domains.filter((x) => x.vocabularies);
   if (vocabularies.length !== 1) problems.push(`${d.file}: ${vocabularies.length} domains hold the vocabularies; exactly one does`);

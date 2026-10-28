@@ -10,7 +10,7 @@ from pydantic import AfterValidator, BeforeValidator, Field, Strict
 from typing_extensions import TypeAliasType
 
 from . import _runtime as rt
-from .kernel import BareTerm, Duration, ExternalId, Fraction, Identifier, NamespacedTerm, Selectable, Text
+from .kernel import BareTerm, Duration, ExternalId, Fraction, Identifier, Measure, NamespacedTerm, Selectable, Text
 
 Metric = TypeAliasType("Metric", Union[Literal["viewable_rate", "completion_rate"], NamespacedTerm])
 """The `Metric` vocabulary: `viewable_rate`, `completion_rate`, or a namespaced term (`NamespacedTerm`), since the vocabulary is open."""
@@ -28,9 +28,11 @@ class Metrics:
 class CommittedMetricsEntry(rt.Closed):
     """The `CommittedMetricsEntry` object of the `guarantees` module."""
 
+    __shape__: ClassVar[rt.Shape] = rt.Shape(requires=(("value", ("metric",)),), conditions=(("metric", "viewable_rate", (), (("value", Fraction),)), ("metric", "completion_rate", (), (("value", Fraction),))))
+
     basis: Optional[BareTerm] = None
     metric: Optional[Metric] = None
-    value: Optional[Fraction] = None
+    value: Optional[Measure] = None
 
 
 ReportingFeedType = TypeAliasType("ReportingFeedType", Union[Literal["log_level", "aggregate", "none"], NamespacedTerm])

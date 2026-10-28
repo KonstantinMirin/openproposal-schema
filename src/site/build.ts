@@ -30,6 +30,7 @@ import { decisionPage, decisionsIndex, examplesPage, filesPage, mapPage, type Fi
 import { siteCopyOf } from "./copy.ts";
 import { rootFiles, type SpecCard } from "./root.ts";
 import { registryPage } from "./registry.ts";
+import { ROOT_LINK } from "./html.ts";
 import { REPO_ROOT, specRoot } from "../repo.ts";
 import { loadSiteConfig, lockNames, named, type SiteConfig } from "./config.ts";
 
@@ -239,6 +240,53 @@ const SCRIPT_BANS: [RegExp, string][] = [
   [/\.style\.(?:overflow\w*|maxHeight)\b|setProperty\(\s*["'](?:overflow|max-height)/, "sets an overflow or a height cap, which makes a region scroll inside the page"],
 ];
 
+/**
+ * What reads as a Markdown link or image left as text, such as `[List: API
+ * Frameworks](https://…`, cut or whole: a `](` in a quote's text. The quote
+ * renderer (src/site/quote.ts) writes every `](` of the text it shows as
+ * `]&#40;`, so a rendered quote holds none, and one that does wasn't rendered.
+ */
+const RAW_MARKDOWN_LINK = /\]\(/;
+
+/**
+ * Each quote a page or a type map's data shows, as the text between its
+ * tags: a page's block quotes and citing lines, and each source's rendered
+ * quote. A source whose quote isn't rendered, as a plain string, is a
+ * problem of its own.
+ */
+function quotesOf(path: string, text: string, problems: string[]): string[] {
+  const shown = (html: string) => html.replace(/<[^>]*>/g, "");
+  if (path.endsWith(".html")) return [...text.matchAll(/<blockquote\b[^>]*>([\s\S]*?)<\/blockquote>|<ul class="cite-lines">([\s\S]*?)<\/ul>/g)].map((m) => shown(m[1] ?? m[2]!));
+  if (!/(^|\/)data\/[^/]+\.json$/.test(path)) return [];
+  const out: string[] = [];
+  for (const [id, s] of Object.entries((JSON.parse(text) as { sources?: Record<string, { quote?: unknown }> }).sources ?? {})) {
+    const q = s.quote as { html?: unknown } | undefined;
+    if (typeof q?.html !== "string") problems.push(`${path}: the source ${id}'s quote isn't rendered; give it the HTML and the text src/site/quote.ts writes`);
+    else out.push(shown(q.html));
+  }
+  return out;
+}
+
+/** The site path a link within the site opens, from the folder of the page that holds it: a folder's index, without its query or fragment. */
+function resolveRef(dir: string, ref: string): string {
+  const file = ref.split("#", 1)[0]!.split("?", 1)[0]!;
+  const target = file.startsWith("/") ? file.slice(1) : posix.normalize(posix.join(dir, file));
+  return target === "" || target === "." || target.endsWith("/") ? `${target === "." ? "" : target}index.html` : target;
+}
+
+/** Each link a page has whose text is the root link's, with whether it sits in the page's site nav. */
+function rootLinks(html: string): { href: string; inNav: boolean }[] {
+  const nav = /<nav aria-label="Site">([\s\S]*?)<\/nav>/.exec(html);
+  const navFrom = nav?.index ?? -1;
+  const navTo = nav ? navFrom + nav[0].length : -1;
+  const out: { href: string; inNav: boolean }[] = [];
+  for (const m of html.matchAll(/<a\b[^>]*?\shref="([^"]*)"[^>]*>([\s\S]*?)<\/a>/g)) {
+    if (m[2]!.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim() !== ROOT_LINK) continue;
+    out.push({ href: m[1]!.replace(/&amp;/g, "&"), inNav: m.index >= navFrom && m.index < navTo });
+  }
+  return out;
+}
+
 /** What `checkSite` checks the site's links into the public repository against: the repository, and the paths its export publishes. */
 export interface ExportCheck {
   repo: string;
@@ -252,8 +300,10 @@ export interface ExportCheck {
  * spec's router reads unchanged; a link into the public repository names a
  * path its export publishes; no page runs inline script or style or loads
  * another origin's resource; no stylesheet or script makes a region scroll
- * inside a page; no script leaves its page; and no text holds what `BANNED`
- * lists.
+ * inside a page; no script leaves its page; every spec's page links back to
+ * the site's root once, in its nav, and no root page does; no quote of a
+ * specification shows a Markdown link as text; and no text holds what
+ * `BANNED` lists.
  */
 export function checkSite(site: Map<string, Buffer>, exported?: ExportCheck): string[] {
   const problems: string[] = [];
@@ -280,6 +330,8 @@ export function checkSite(site: Map<string, Buffer>, exported?: ExportCheck): st
     }
     return types.get(k);
   };
+  // The specs' folders: each first segment of a path whose folder has its own index page.
+  const specs = new Set([...site.keys()].filter((p) => /^[^/]+\/index\.html$/.test(p)).map((p) => p.split("/")[0]!));
   // Every spec's router loads, whether or not a page links its type map with a route.
   for (const path of site.keys()) if (path === "map.html" || path.endsWith("/map.html")) routeOf(path.slice(0, -"map.html".length));
   for (const [path, data] of site) {
@@ -287,7 +339,20 @@ export function checkSite(site: Map<string, Buffer>, exported?: ExportCheck): st
     for (const [re, why] of BANNED) if (re.test(text)) problems.push(`${path}: ${why}: ${re.exec(text)![0]}`);
     if (path.endsWith(".css")) for (const r of scrollRegions(text)) problems.push(`${path}: ${r}`);
     if (path.endsWith(".js")) for (const [re, why] of SCRIPT_BANS) if (re.test(text)) problems.push(`${path}: ${why}: ${re.exec(text)![0]}`);
+    for (const q of quotesOf(path, text, problems)) {
+      const at = q.search(RAW_MARKDOWN_LINK);
+      if (at >= 0) problems.push(`${path}: a quote shows a Markdown link as text, at "${q.slice(Math.max(0, q.lastIndexOf("[", at)), at + 40)}"; render it as a link (src/site/quote.ts)`);
+    }
     if (!path.endsWith(".html")) continue;
+    // A spec's page, any page under a spec's folder, links back to the site's root once, in its nav; a root page has no such link.
+    const back = rootLinks(text).map((l) => ({ ...l, to: resolveRef(posix.dirname(path), l.href) }));
+    if (specs.has(path.split("/")[0]!) && path.includes("/")) {
+      const inNav = back.filter((l) => l.inNav);
+      if (back.length !== 1 || inNav.length !== 1 || inNav[0]!.to !== "index.html") {
+        const where = back.map((l) => `${l.to}${l.inNav ? "" : " outside the nav"}`).join(", ");
+        problems.push(`${path}: ${back.length === 0 ? `has no "${ROOT_LINK}" link back to the site's root` : `has ${back.length === 1 ? `one "${ROOT_LINK}" link` : `${back.length} "${ROOT_LINK}" links`}, to ${where}, where one in its nav to the site's root index.html is`}`);
+      }
+    } else if (!path.includes("/") && back.length > 0) problems.push(`${path}: a root page has an "${ROOT_LINK}" link, which only a spec's page carries`);
     if (/<script(?![^>]*\ssrc=)[^>]*>/i.test(text)) problems.push(`${path}: a script without src, which the Content-Security-Policy blocks`);
     if (/<style[\s>]/i.test(text) || /\sstyle="/i.test(text)) problems.push(`${path}: an inline style, which the Content-Security-Policy blocks`);
     if (/\son[a-z]+="/i.test(text)) problems.push(`${path}: an inline event handler, which the Content-Security-Policy blocks`);
@@ -309,9 +374,8 @@ export function checkSite(site: Map<string, Buffer>, exported?: ExportCheck): st
         continue;
       }
       if (/^[a-z][a-z0-9+.-]*:/i.test(ref) || ref.startsWith("#")) continue;
-      const [file, hash] = ref.split("#", 2) as [string, string | undefined];
-      const target = file.startsWith("/") ? file.slice(1) : posix.normalize(posix.join(dir, file.split("?")[0]!));
-      const resolved = target === "" || target === "." || target.endsWith("/") ? `${target === "." ? "" : target}index.html` : target;
+      const hash = ref.split("#", 2)[1];
+      const resolved = resolveRef(dir, ref);
       if (!site.has(resolved)) {
         problems.push(`${path}: links ${ref}, which the site doesn't hold`);
         continue;

@@ -160,10 +160,14 @@
           "pattern": "^[a-z][a-z0-9_]*$"
         },
         "terms": {
-          "description": "Each term of the vocabulary, with the concept the member's value is while the vocabulary holds it. The member's own type is one of these concepts' types; each other term narrows it.",
+          "description": "Terms of the vocabulary, each with the concept the member's value is while the vocabulary holds it. Without `others`, every term is listed, the member's own type is one of these concepts' types, and each other term narrows it.",
           "type": "object",
-          "minProperties": 2,
+          "minProperties": 1,
           "additionalProperties": { "$ref": "#/$defs/conceptName" }
+        },
+        "others": {
+          "description": "The concept the member's value is for every term `terms` doesn't name, an open vocabulary's extension terms included, such as a committed metric's value, a fraction for a rate the text names and a measure for any other metric. The member's own type is this concept's type, and each listed term narrows it.",
+          "$ref": "#/$defs/conceptName"
         },
         "decision": { "$ref": "kernel.schema.json#/$defs/decisionId" }
       }

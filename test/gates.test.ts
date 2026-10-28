@@ -86,8 +86,12 @@ test("a gate decision the base holds may not change: an edit, a deletion, or a r
 
 test("a removed gate needs a later record that retires it, and a retired gate may not run", async () => {
   const records = loadGateDecisions();
+  // The gates that run now: every accepted one, but those a later record retires.
   const accepted = new Map<string, string>();
-  for (const r of records) for (const a of r.accepts ?? []) accepted.set(a.gate, a.fingerprint);
+  for (const r of records) {
+    for (const a of r.accepts ?? []) accepted.set(a.gate, a.fingerprint);
+    for (const x of r.retires_gates ?? []) accepted.delete(x.gate);
+  }
   const fingerprints = [...accepted] as [string, string][];
   // The concepts the domain file holds now: every accepted one, but those a later record retires.
   const held = new Set<string>();
@@ -102,4 +106,15 @@ test("a removed gate needs a later record that retires it, and a retired gate ma
   const retiring = { format: 1 as const, id: "G-999", date: "2026-10-25", question: "Is the gate gone?", decision: "It is retired.", rationale: "It checked nothing.", retires_gates: [{ gate: "typecheck", reason: "It checked nothing." }], file: "gates/decisions/G-999.yaml" };
   assert.deepEqual((await guard.check({ ...removed, records: [...records, retiring] })).problems, [], "retired by a later record, with the earlier record unchanged");
   assert.match((await guard.check({ ...base, records: [...records, retiring] })).problems.join("; "), /the gate "typecheck" runs, and G-999 retires it/);
+});
+
+test("no document the export publishes names a gate a record retires", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { REPO_ROOT } = await import("../src/repo.ts");
+  const retired = loadGateDecisions().flatMap((r) => (r.retires_gates ?? []).map((x) => x.gate));
+  assert.ok(retired.length > 0);
+  for (const doc of ["README.md", "NOTICE"]) {
+    const text = readFileSync(`${REPO_ROOT}/${doc}`, "utf8");
+    for (const id of retired) assert.doesNotMatch(text, new RegExp(`(?<![-\\w])${id}(?![-\\w])`), `${doc} names the retired gate ${id}`);
+  }
 });

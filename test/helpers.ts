@@ -16,7 +16,7 @@ export const OP: SpecPlugin = specOf(SPEC).plugin!;
 export const OP_NAMES = specOf(SPEC).profile.names;
 
 /** What OpenProposal's schema files are named by. */
-export const OP_SCHEMA = { base: OP_NAMES.schema_base, short: OP_NAMES.short };
+export const OP_SCHEMA = { base: OP_NAMES.schema_base, short: OP_NAMES.short, sections: OP.text.sections };
 
 /** OpenProposal's feedback target and layout. */
 export const OP_FEEDBACK = specOf(SPEC).profile.feedback!;

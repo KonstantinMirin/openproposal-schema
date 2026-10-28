@@ -96,6 +96,10 @@ export const Identifier: z.ZodType<Identifier> = z.string();
 export type IntegerFlag = number;
 export const IntegerFlag: z.ZodType<IntegerFlag> = z.number().gte(0).lte(1).refine(Number.isInteger, "isn't an integer");
 
+/** What a metric that isn't a rate measures, a number never negative and not always whole, such as 1,200,000 audience impacts for DOOH or a modelled audience of 14.2 impacts per play. */
+export type Measure = number;
+export const Measure: z.ZodType<Measure> = z.number().gte(0);
+
 /** A term outside a vocabulary's core list, written `<domain>:<term>`, where the domain is the definer's identity domain, such as `examplepub.example:podcast_host_read`. */
 export type NamespacedTerm = string;
 export const NamespacedTerm: z.ZodType<NamespacedTerm> = z.string().regex(new RegExp("^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]([a-z0-9-]{0,61}[a-z0-9])?:[A-Za-z0-9]+(_[A-Za-z0-9]+)*$", "u"));

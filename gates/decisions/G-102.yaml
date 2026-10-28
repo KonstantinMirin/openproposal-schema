@@ -1,0 +1,22 @@
+format: 1
+id: G-102
+date: 2026-10-28
+question: What changes in the site gate when every spec's page links back to the site's root?
+decision: >-
+  Every page of a spec now starts its nav with one link, "All
+  specifications", to the site's root, which lists the specs. The change is
+  intended on every page under /openproposal/ and /adcom/, and on nothing
+  else: a build before and after differs on 51 of OpenProposal's pages and
+  25 of AdCOM's, each by exactly that link at its depth, and in no other
+  file, the root's pages, stylesheets, scripts, and data included. The
+  site check fails a page under a spec's folder with no such link, with
+  more than one, or with one that resolves anywhere but the root's
+  index.html, with two fixtures, and a test holds every page to one link at
+  its depth and the root's pages to none. The test suite holds 480 tests,
+  and MIN_TESTS is 480.
+rationale: >-
+  The site check gains a rule and loses none; nothing is relaxed. The
+  pages' other bytes, the schemas, and feedback don't change.
+accepts:
+  - { gate: npm-test, fingerprint: 305d3a7d8f878a588ee86defc89c4f8c0a161d7a18989127747c56fb42f001fb }
+  - { gate: site-builds, fingerprint: b851a5ffc4f704a7dfe95ff38a8859c7156cd14b4184b437beb7cbf0e4201351 }

@@ -4,7 +4,7 @@
  * `sdk/` or `sdk/proposed/with-open-prs/`): `ts/`, `python/`, and `go/`.
  * Every file is a function of the model; the emitters read nothing else.
  */
-import { emitSchemas } from "./emit.ts";
+import { emitSchemas, type SchemaNames } from "./emit.ts";
 import type { ModelDoc } from "./model.ts";
 import { treeDigest } from "./release.ts";
 import { allConstants, buildSdkModel, provenanceOf, type SdkFile, type SdkModel } from "./sdk.ts";
@@ -29,11 +29,12 @@ export interface EmittedSdk {
  * directory, such as `schemas/as-written`, whose tree's digest each SDK
  * states as the schema release its types match. `names` are the spec's
  * (its profile's `names`): its packages, and its name in the doc comments.
+ * `schemaNames` name its schema files, as `schemaNamesOfLock` gives them.
  */
-export function emitSdk(model: ModelDoc, sdkDir: string, schemaDir: string, names: SpecNames): EmittedSdk {
+export function emitSdk(model: ModelDoc, sdkDir: string, schemaDir: string, names: SpecNames, schemaNames: SchemaNames): EmittedSdk {
   const { sdk, problems } = buildSdkModel(model, names.short);
   if (problems.length > 0) return { sdk, files: [], problems };
-  const schemas = emitSchemas(model, schemaDir, { base: names.schema_base, short: names.short });
+  const schemas = emitSchemas(model, schemaDir, schemaNames);
   if (schemas.problems.length > 0) return { sdk, files: [], problems: schemas.problems.map((p) => `schemas: ${p}`) };
   const prov = provenanceOf(sdk, treeDigest(schemas.files));
   const named = allConstants(sdk);

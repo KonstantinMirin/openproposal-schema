@@ -35,6 +35,7 @@ export function openproposal(profile: SpecProfile): SpecPlugin {
       readValueList,
       readIdentifierList,
       sectionOf,
+      sections: "numbered",
       markers: MARKERS,
       keywords,
       statesConventions,

@@ -11,7 +11,7 @@ import { assetTokens, buildSite, checkSite, exportTree, fillTokens, hardCodedNam
 import { brandOf, loadSiteConfig, named } from "../src/site/config.ts";
 import { decisionGroups, switches } from "../src/site/pages.ts";
 import { specOf } from "../src/specs/index.ts";
-import { loadSiteInputs } from "../src/site/data.ts";
+import { loadSiteInputs, sourceInfos } from "../src/site/data.ts";
 import { elementLabel, sourceInfo } from "../src/site/sources.ts";
 import { ROOT, SPEC } from "./helpers.ts";
 
@@ -240,4 +240,37 @@ test("a text cites a list by its longest title after \"List:\", on the line wher
   ];
   const got = citingLines(text, titles);
   assert.deepEqual(Object.fromEntries([...got].sort()), { "Device Types": [5], "Placement Subtypes": [4], "Placement Subtypes - Video": [3], "Playback Methods": [1, 2] });
+});
+
+test("a citation names a section as its plugin says the text identifies them, whatever the ID's shape", () => {
+  const titleOf = (s: string) => ({ "5.4/creative-inspection-and-previews": "Creative inspection and previews", list_devicetypes: "List: Device Types", "4.1": "Identity" })[s];
+  assert.equal(elementLabel("rule:5.4/creative-inspection-and-previews:ab12", { sections: "numbered", titleOf }), '§ 5.4, under "Creative inspection and previews", a requirement');
+  assert.equal(elementLabel("def:list_devicetypes:3", { sections: "anchored", titleOf }), "List: Device Types, the row of `3`");
+  // The flag decides, not the ID: a numbered text cites even an anchor-shaped ID by number, and an anchored text cites a number-shaped one by its heading.
+  assert.equal(elementLabel("def:list_devicetypes:3", { sections: "numbered", titleOf }), "§ list_devicetypes, the row of `3`");
+  assert.equal(elementLabel("field:4.1:proposal_id", { sections: "anchored", titleOf }), "Identity, the `proposal_id` row");
+  // The site's builds read the flag from each spec's plugin.
+  const adcom = loadSiteInputs(join(ROOT, "specs", "adcom"), CONFIG);
+  const lock = adcom.locks[0]!;
+  assert.equal(sourceInfos(adcom, lock, ["def:list_devicetypes:3"])["def:list_devicetypes:3"]!.label, "List: Device Types, the row of `3`");
+  const rule = INPUTS.irs.get("with-open-prs")!.statements.find((s) => s.loc.section === "5.4/creative-inspection-and-previews")!;
+  assert.match(sourceInfos(INPUTS, INPUTS.locks.find((l) => l.name === "with-open-prs")!, [rule.id])[rule.id]!.label, /^§ 5\.4, under "Creative inspection and previews", a requirement$/);
+});
+
+test("every spec's page links back to the site's root once, AdCOM's too, and the root's own pages don't", () => {
+  const all = buildSite([INPUTS, loadSiteInputs(join(ROOT, "specs", "adcom"), CONFIG)], CONFIG, TREE);
+  assert.deepEqual(all.problems, []);
+  const adcomPages = [...all.files.keys()].filter((p) => p.startsWith("adcom/") && p.endsWith(".html"));
+  assert.ok(adcomPages.length > 20);
+  for (const p of adcomPages) assert.deepEqual([...all.files.get(p)!.toString("utf8").matchAll(/<a href="([^"]*)">All specifications<\/a>/g)].map((m) => m[1]), [`${"../".repeat(p.split("/").length - 1)}index.html`], p);
+  assert.deepEqual(checkSite(all.files).filter((x) => /All specifications/.test(x)), []);
+  const pages = [...SITE.files.keys()].filter((p) => p.endsWith(".html"));
+  const specPages = pages.filter((p) => p.startsWith(OP));
+  assert.ok(specPages.length > 40);
+  for (const p of specPages) {
+    const html = SITE.files.get(p)!.toString("utf8");
+    const links = [...html.matchAll(/<a href="([^"]*)">All specifications<\/a>/g)].map((m) => m[1]!);
+    assert.deepEqual(links, [`${"../".repeat(p.split("/").length - 1)}index.html`], p);
+  }
+  for (const p of pages.filter((x) => !x.includes("/"))) assert.doesNotMatch(SITE.files.get(p)!.toString("utf8"), /All specifications/, p);
 });

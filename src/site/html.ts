@@ -9,8 +9,9 @@ import { CSP_META, type SiteBrand } from "./config.ts";
 export const esc = (s: unknown): string => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
 /**
- * A record's text as HTML: a backtick span is code, `**x**` is bold, and a
- * decision ID such as `D-046` links to its page. `base` is the path from the
+ * A record's text as HTML: a backtick span is code, `**x**` is bold, a
+ * Markdown link to an http(s) URL is a link and one to anywhere else its
+ * text, and a decision ID such as `D-046` links to its page. `base` is the path from the
  * page to the site's root, such as `../` from a decision page.
  */
 export function inline(text: string, base: string): string {
@@ -23,6 +24,8 @@ export function inline(text: string, base: string): string {
     }
     out.push(
       esc(p)
+        // A Markdown link a record writes for the working group: an http(s) one is a link, and one into the feedback's own page shows its text alone.
+        .replace(/\[([^\]\n]+)\]\(([^)\s]+)\)/g, (_, label: string, url: string) => (/^https?:\/\//.test(url) ? `<a href="${url}">${label}</a>` : label))
         .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
         .replace(/\bD-(\d{3})\b/g, (_, n: string) => `<a href="${base}decisions/D-${n}.html">D-${n}</a>`),
     );
@@ -81,11 +84,14 @@ const NAV: [PageOptions["section"], string, string][] = [
 /** The path from a page to the site's root. */
 export const baseOf = (path: string): string => "../".repeat(path.split("/").length - 1);
 
-/** A whole page of a spec, in the shared layout. */
+/** The text of the link every spec's page has back to the site's root, which lists the specs. */
+export const ROOT_LINK = "All specifications";
+
+/** A whole page of a spec, in the shared layout: its nav starts with the link back to the site's root, one folder up from the spec's. */
 export function page(o: PageOptions): string {
   const base = o.base ?? baseOf(o.path);
   const b = o.brand;
-  const nav = NAV.map(([s, href, label]) => `<a href="${base}${href}"${s === o.section ? ' aria-current="page"' : ""}>${label}</a>`).join("");
+  const nav = `<a href="${base}../index.html">${ROOT_LINK}</a>` + NAV.map(([s, href, label]) => `<a href="${base}${href}"${s === o.section ? ' aria-current="page"' : ""}>${label}</a>`).join("");
   const brand = `<a class="brand" href="${base}index.html"><span class="mark" aria-hidden="true"></span><span>${b.short}&nbsp;${b.edition} <em>JSON&nbsp;Schema</em></span></a>`;
   const foot = `<p>Published by ${b.publisher}, an IAB Tech Lab member. Unofficial: this isn't an IAB Tech Lab artifact, and the ${b.short} specification remains the reference. Generated from ${b.short} ${b.edition} ${b.release}.</p>
     <p>${b.feedback ? `<a href="${b.feedback.issue}">Implementation feedback on issue #${b.feedback.issueNumber}</a> · ` : ""}<a href="${base}decisions/index.html">Decision records</a> · <a href="${base}downloads.html">Files</a></p>`;

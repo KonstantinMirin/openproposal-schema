@@ -1,6 +1,7 @@
 import { stripArrays } from "./grammar/path.ts";
 import { typeMentions } from "./grammar/type-expr.ts";
 import type { Field, IrObjectForm, Loc, SpecIR, ValueList } from "./ir-types.ts";
+import type { SectionIds } from "./specs/plugin.ts";
 
 /** Every kind of finding the lint reports. Findings are data; none of them fails the build. */
 export const FINDING_KINDS = [
@@ -62,20 +63,20 @@ const ownerLabel = (owner: string): string => owner.replaceAll("_", " ");
 const BUYER_MARKERS = ["selectable", "settable", "supplied", "requestable"];
 
 /** Runs every stage 2 check over the IR. Deterministic: findings are sorted by kind, then id. */
-/** What the lint checks beyond what every text has: the appendices, where the profile turns them on, and section numbers, where the text numbers its headings. */
+/** What the lint checks beyond what every text has: the appendices, where the profile turns them on, and section numbers, where the plugin says the text numbers its headings. */
 export interface LintOptions {
-  appendices?: boolean;
-  numbered?: boolean;
+  appendices: boolean;
+  sections: SectionIds;
 }
 
-export function lint(ir: SpecIR, own?: (ir: SpecIR) => Omit<Finding, "disposition">[], opts: LintOptions = {}): Finding[] {
+export function lint(ir: SpecIR, own: ((ir: SpecIR) => Omit<Finding, "disposition">[]) | undefined, opts: LintOptions): Finding[] {
   const out: Finding[] = [];
   const add = (f: Omit<Finding, "disposition">) => out.push({ ...f, disposition: null });
   // The specification's own checks, which its plugin gives.
   for (const f of own?.(ir) ?? []) add(f);
   const universe = buildUniverse(ir);
 
-  if (opts.appendices !== false) {
+  if (opts.appendices) {
     appendixA(ir, add);
     appendixB(ir, add);
   }
@@ -84,7 +85,7 @@ export function lint(ir: SpecIR, own?: (ir: SpecIR) => Omit<Finding, "dispositio
   identifiers(ir, universe, add);
   structure(ir, add);
   musts(ir, universe, add);
-  markersAndPresence(ir, add, opts.numbered !== false);
+  markersAndPresence(ir, add, opts.sections === "numbered");
 
   const seen = new Set<string>();
   for (const f of out) {

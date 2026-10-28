@@ -1,6 +1,7 @@
-# The artifacts the drift report (src/drift.ts, `npm run drift`) compares
-# AdCOM's lists with, and which enum of each holds each list. Each source's
-# folder is read from its snapshot under drift/snapshots/<source>/, which
+# The artifacts the enum drift report (src/enum-drift.ts, `npm run
+# enum-drift`) compares AdCOM's lists with, and which enum of each holds
+# each list. Each source's
+# folder is read from its snapshot under enum-drift/snapshots/<source>/, which
 # holds all of the folder and must hash to the pinned git tree, so no file
 # can be left out; a reachable clone must agree with every pin. A list's
 # enum is null where the artifact defines none for it. Every list of the

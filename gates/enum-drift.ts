@@ -1,9 +1,9 @@
 /**
- * The gates on a registry's drift report (src/drift.ts): its sources' pins
- * and pairs, and the report's determinism and committed bytes. Each runs on
- * a spec that has `drift/sources.yaml`, AdCOM's.
+ * The gates on a registry's enum drift report (src/enum-drift.ts): its
+ * sources' pins and pairs, and the report's determinism and committed bytes. Each runs on
+ * a spec that has `enum-drift/sources.yaml`, AdCOM's.
  */
-import { checkDriftSnapshots, compareDrift, type DriftSources } from "../src/drift.ts";
+import { checkEnumDriftSnapshots, compareEnumDrift, type EnumDriftSources } from "../src/enum-drift.ts";
 import type { SpecIR } from "../src/ir-types.ts";
 import type { ModelDoc } from "../src/model.ts";
 import { committedTreeCurrent, flipFirst, onlyGenerated, sameTreeRuns, type CommittedTreeInput, type TrackedInput, type TreeRunsInput } from "./common.ts";
@@ -15,16 +15,16 @@ const ADCOM = "adcom";
 const withFile = (files: Map<string, Map<string, Buffer>>, source: string, path: string, f: (text: string) => string) =>
   new Map([...files].map(([id, m]) => [id, id !== source ? m : new Map([...m].map(([p, b]) => [p, p === path ? Buffer.from(f(b.toString("utf8"))) : b]))]));
 /** The sources file with one list's enum for one source changed. */
-const withEnum = (s: DriftSources, list: string, source: string, name: string | null): DriftSources => ({ ...s, lists: s.lists.map((l) => (l.list === list ? { ...l, enums: { ...l.enums, [source]: name } } : l)) });
+const withEnum = (s: EnumDriftSources, list: string, source: string, name: string | null): EnumDriftSources => ({ ...s, lists: s.lists.map((l) => (l.list === list ? { ...l, enums: { ...l.enums, [source]: name } } : l)) });
 
-export const driftSources = defineGate<{ sources: DriftSources; files: Map<string, Map<string, Buffer>>; ir: SpecIR; model: ModelDoc }>({
-  id: "drift-sources",
-  title: "drift sources: every artifact's snapshot holds its whole folder at the pinned tree and its license at the pinned blob, a reachable clone agrees, every list of the registry is paired once with each artifact's enum or none, and every enum is paired with a list",
-  code: ["src/drift.ts#checkDriftSnapshots", "src/drift.ts#compareDrift", "src/drift.ts#loadDriftSources"],
-  files: ["drift/sources.schema.json"],
+export const enumDriftSources = defineGate<{ sources: EnumDriftSources; files: Map<string, Map<string, Buffer>>; ir: SpecIR; model: ModelDoc }>({
+  id: "enum-drift-sources",
+  title: "enum drift sources: every artifact's snapshot holds its whole folder at the pinned tree and its license at the pinned blob, a reachable clone agrees, every list of the registry is paired once with each artifact's enum or none, and every enum is paired with a list",
+  code: ["src/enum-drift.ts#checkEnumDriftSnapshots", "src/enum-drift.ts#compareEnumDrift", "src/enum-drift.ts#loadEnumDriftSources"],
+  files: ["enum-drift/sources.schema.json"],
   check: (i) => {
-    const snap = checkDriftSnapshots(i.sources, i.files);
-    const { doc, problems } = compareDrift(i);
+    const snap = checkEnumDriftSnapshots(i.sources, i.files);
+    const { doc, problems } = compareEnumDrift(i);
     return { problems: [...snap.problems, ...problems], note: `${doc.lists.length} lists against ${doc.sources.map((s) => s.title).join(" and ")}; ${snap.notes.join("; ")}` };
   },
   fixtures: [
@@ -40,26 +40,26 @@ export const driftSources = defineGate<{ sources: DriftSources; files: Map<strin
   ],
 });
 
-export const driftDeterministic = defineGate<TreeRunsInput>({
-  id: "drift-deterministic",
-  title: "deterministic drift report",
+export const enumDriftDeterministic = defineGate<TreeRunsInput>({
+  id: "enum-drift-deterministic",
+  title: "deterministic enum drift report",
   code: ["gates/common.ts#sameTreeRuns"],
   check: sameTreeRuns,
   fixtures: [{ name: "a run writes the report differently", spec: ADCOM, mutate: (i) => ({ ...i, runs: [i.runs[0]!, flipFirst(i.runs[1]!)] }), expect: "run 2: " }],
 });
 
-export const driftCommitted = defineGate<CommittedTreeInput>({
-  id: "drift-committed",
+export const enumDriftCommitted = defineGate<CommittedTreeInput>({
+  id: "enum-drift-committed",
   title: (i) => `committed ${i.dir}/ report current`,
   code: ["gates/common.ts#committedTreeCurrent"],
   check: committedTreeCurrent,
   fixtures: [{ name: "a committed report edited by hand", spec: ADCOM, mutate: (i) => ({ ...i, committed: flipFirst(i.committed) }), expect: "differs" }],
 });
 
-export const driftTracked = defineGate<TrackedInput>({
-  id: "drift-tracked",
-  title: "every tracked file under drift/ is the sources file, a pinned snapshot file, or one the report writes",
+export const enumDriftTracked = defineGate<TrackedInput>({
+  id: "enum-drift-tracked",
+  title: "every tracked file under enum-drift/ is the sources file, a pinned snapshot file, or one the report writes",
   code: ["gates/common.ts#onlyGenerated"],
   check: onlyGenerated,
-  fixtures: [{ name: "a snapshot file outside its source's folder", spec: ADCOM, mutate: (i) => ({ ...i, tracked: [...i.tracked, "drift/snapshots/prebid-openrtb/openrtb2/bid.go"] }), expect: "drift/snapshots/prebid-openrtb/openrtb2/bid.go" }],
+  fixtures: [{ name: "a snapshot file outside its source's folder", spec: ADCOM, mutate: (i) => ({ ...i, tracked: [...i.tracked, "enum-drift/snapshots/prebid-openrtb/openrtb2/bid.go"] }), expect: "enum-drift/snapshots/prebid-openrtb/openrtb2/bid.go" }],
 });

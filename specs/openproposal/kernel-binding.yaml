@@ -124,6 +124,13 @@ primitives:
         - ir: key:3.1:max_select
           digest: 199cab600b78dcd9dc40358fa8a94ec4d323f2bcf2fd7922a62b008af465d820
           quote: "`max_select` | OPTIONAL | Cap on how many options the buyer may choose"
+  - name: Measure
+    decision: D-005
+    sources:
+      spec:
+        - ir: field:5.7:committed_metrics[]
+          digest: 2c123e829ef892456b09671dfd52243f1bef0db8b067aa9c5d184dc07411caf5
+          quote: "`committed_metrics[]` | Array[Object] | requestable | `{ metric, value, basis }` tuples — `viewable_rate` for display, `completion_rate` for video/audio/CTV, an audience-modelled metric for DOOH. Seller declares a ceiling; a buyer MAY request above it"
   - name: Timestamp
     decision: D-001
     sources:
@@ -637,6 +644,12 @@ domains:
               quote: "`version` | REQUIRED | The proposal `version` the commitment was priced against"
               locks:
                 - with-open-prs
+      - name: measure
+        sources:
+          spec:
+            - ir: field:5.7:committed_metrics[]
+              digest: 2c123e829ef892456b09671dfd52243f1bef0db8b067aa9c5d184dc07411caf5
+              quote: "`committed_metrics[]` | Array[Object] | requestable | `{ metric, value, basis }` tuples — `viewable_rate` for display, `completion_rate` for video/audio/CTV, an audience-modelled metric for DOOH. Seller declares a ceiling; a buyer MAY request above it"
   - name: time
     concepts:
       - name: instant
@@ -723,6 +736,13 @@ bases:
     member: amount
     terms: { spend: amount, units: count }
     decision: D-036
+  - vocabulary: Metric
+    member: value
+    terms: { viewable_rate: fraction, completion_rate: fraction }
+    others: measure
+    decision: D-005
 shared_structures:
   - concepts: [external-id, text]
     decisions: [D-024, D-025, D-027]
+  - concepts: [amount, measure]
+    decisions: [D-005, D-036]

@@ -1,0 +1,32 @@
+format: 1
+id: G-101
+date: 2026-10-28
+question: What changes in the gates to close the gaps an independent review of the plugin's sections flag found?
+decision: >-
+  The site read the flag through a spec's plugin with a silent default to
+  numbered; it now reads it from the lock's plugin, which throws for a spec
+  with none, and a test holds the labels to the flag in both directions, on
+  synthetic IDs of either shape and on AdCOM's and OpenProposal's builds. In
+  a numbered text, a heading with no number of its own is cited by its
+  parent's number and its heading, as `§ 5.4, under "Creative inspection
+  and previews"`, where the site showed the internal ID; this changes
+  OpenProposal's D-032 page. The lint takes the flag itself, required, in
+  place of an optional boolean that defaulted to numbered, so extraction's
+  gate changes. The SDK emitter takes the whole schema names a lock's
+  plugin and profile give, in place of the flag alone, so the SDK gate
+  changes, and the profile's part of those names is schemaIdsOf. G-098 said
+  extraction fails where a heading disagrees with the flag; it fails where
+  the plugin's reading of a heading disagrees, and the site's labels are
+  decided in src/site/data.ts, which src/site/sources.ts follows. The test
+  suite holds 479 tests, and MIN_TESTS is 479.
+rationale: >-
+  A default becomes a required value, and a label that named an internal
+  ID names its section; one test is added and no check is relaxed.
+  Schemas, SDK trees, and feedback are byte-identical.
+accepts:
+  - { gate: comparison, fingerprint: 34f98301e12a216d65c520b6ca40daba7c404dc07f1409884aaaca82a7377d06 }
+  - { gate: extraction, fingerprint: 6eab954f8c7627f82b987567eef44bf5cf8e7d4885198f978e08f275e57d2340 }
+  - { gate: guard, fingerprint: 42ebbddb23eae73e0885284f2288de000a3dd2b7bf38c5712ef470132b052cad }
+  - { gate: npm-test, fingerprint: fa0b8a0324228f1dc1670e4d9f53997203593eee4ca4a48ca3a23d29f07778c0 }
+  - { gate: sdk-generate, fingerprint: 9d8b687966e64c553d58773c2509a674805794f8cef9b11d3680e73a177ded95 }
+  - { gate: site-builds, fingerprint: 9454846826d35c0b5a1d26bfb738a0dab3243aee63afde8f00bd02c781645e9f }

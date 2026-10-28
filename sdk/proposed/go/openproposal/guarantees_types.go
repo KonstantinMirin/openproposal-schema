@@ -35,7 +35,7 @@ type CommittedMetricsEntry struct {
 	// Metric is the `metric` member.
 	Metric *Metric `json:"metric,omitempty"`
 	// Value is the `value` member.
-	Value *Fraction `json:"value,omitempty"`
+	Value *Measure `json:"value,omitempty"`
 }
 
 // ValidateValue implements Value.
@@ -45,6 +45,7 @@ func (CommittedMetricsEntry) ValidateValue(v any, at string, errs *Errors) {
 		return
 	}
 	checkClosed(m, at, errs, "basis", "metric", "value")
+	checkRequiredWith(m, at, errs, "value", "metric")
 	if x, ok := m["basis"]; ok {
 		validateAs[MeasurementBasis](x, member(at, "basis"), errs)
 	}
@@ -52,7 +53,17 @@ func (CommittedMetricsEntry) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[Metric](x, member(at, "metric"), errs)
 	}
 	if x, ok := m["value"]; ok {
-		validateAs[Fraction](x, member(at, "value"), errs)
+		validateAs[Measure](x, member(at, "value"), errs)
+	}
+	if x, ok := m["metric"]; ok && jsonEqual(x, "viewable_rate") {
+		if x, ok := m["value"]; ok {
+			validateAs[Fraction](x, member(at, "value"), errs)
+		}
+	}
+	if x, ok := m["metric"]; ok && jsonEqual(x, "completion_rate") {
+		if x, ok := m["value"]; ok {
+			validateAs[Fraction](x, member(at, "value"), errs)
+		}
 	}
 }
 

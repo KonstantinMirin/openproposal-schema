@@ -10,7 +10,7 @@ from pydantic import AfterValidator, BeforeValidator, Field, Strict
 from typing_extensions import TypeAliasType
 
 from . import _runtime as rt
-from .kernel import Duration, ExternalId, Fraction, NamespacedTerm, Selectable, Text, Uuid
+from .kernel import Duration, ExternalId, Fraction, Measure, NamespacedTerm, Selectable, Text, Uuid
 
 MeasurementBasis = TypeAliasType("MeasurementBasis", NamespacedTerm)
 """The `MeasurementBasis` vocabulary: no core terms are listed yet, so every term is namespaced (`NamespacedTerm`)."""
@@ -32,9 +32,11 @@ class Metrics:
 class CommittedMetricsEntry(rt.Closed):
     """The `CommittedMetricsEntry` object of the `guarantees` module."""
 
+    __shape__: ClassVar[rt.Shape] = rt.Shape(requires=(("value", ("metric",)),), conditions=(("metric", "viewable_rate", (), (("value", Fraction),)), ("metric", "completion_rate", (), (("value", Fraction),))))
+
     basis: Optional[MeasurementBasis] = None
     metric: Optional[Metric] = None
-    value: Optional[Fraction] = None
+    value: Optional[Measure] = None
 
 
 ReportingDeliveryMechanism = TypeAliasType("ReportingDeliveryMechanism", NamespacedTerm)

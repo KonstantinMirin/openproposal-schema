@@ -188,6 +188,17 @@ primitives:
       invalid: [-1, 2.5, "3", 9007199254740992]
     showcase: [250000, 500000]
 
+  - name: Measure
+    description: What a metric that isn't a rate measures, a number never negative and not always whole, such as 1,200,000 audience impacts for DOOH or a modelled audience of 14.2 impacts per play.
+    type: number
+    concept: measure
+    constraints:
+      minimum: 0
+    vectors:
+      valid: [0, 1200000, 14.2]
+      invalid: [-1, -0.5, "1200000"]
+    showcase: [1200000, 500000]
+
   # Time
 
   - name: Timestamp

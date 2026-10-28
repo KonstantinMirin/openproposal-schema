@@ -15,7 +15,7 @@ import type { Layout } from "../src/layouts.ts";
 import { checkMapping, type DecisionRecord, type MappingFile } from "../src/mapping.ts";
 import { resolveModel, type ModelDoc } from "../src/model.ts";
 import { emitSdk } from "../src/sdk-emit.ts";
-import { checkProfile, loadProfile, schemaNamesOf } from "../src/profile.ts";
+import { checkProfile, loadProfile, schemaIdsOf } from "../src/profile.ts";
 import { findKeywords } from "../src/sentences.ts";
 import { FINDING_KINDS } from "../src/lint.ts";
 import { PLUGINS, specOf } from "../src/specs/index.ts";
@@ -45,6 +45,7 @@ const WIDGETS: SpecPlugin = {
       const m = /^(\d+(?:\.\d+)*)\.?\s+(.+)$/.exec(text);
       return m ? { kind: "section", number: m[1]!, title: m[2]!, part: "body" } : { kind: "section", number: null, title: text, part: current.part };
     },
+    sections: "numbered",
     keywords: findKeywords,
   },
 };
@@ -128,7 +129,7 @@ function widgetModel(): ModelDoc {
 
 test("a fixture spec with one table layout maps and emits", () => {
   const model = widgetModel();
-  const emitted = emitSchemas(model, "schemas", schemaNamesOf(loadProfile(DIR)));
+  const emitted = emitSchemas(model, "schemas", { ...schemaIdsOf(loadProfile(DIR)), sections: WIDGETS.text.sections });
   assert.deepEqual(emitted.problems, []);
   const file = emitted.files.find((f) => f.path === "modules/widgets/1/widgets.json");
   assert.ok(file, emitted.files.map((f) => f.path).join(", "));
@@ -143,7 +144,7 @@ test("a fixture spec with one table layout maps and emits", () => {
 
 test("the fixture spec's SDKs and schemas carry its own names, and none of OpenProposal's", () => {
   const profile = loadProfile(DIR);
-  const emitted = emitSdk(widgetModel(), "sdk/widgets", "schemas", profile.names);
+  const emitted = emitSdk(widgetModel(), "sdk/widgets", "schemas", profile.names, { ...schemaIdsOf(profile), sections: WIDGETS.text.sections });
   assert.deepEqual(emitted.problems, []);
   const paths = emitted.files.map((f) => f.path);
   for (const p of ["python/widgets/__init__.py", "python/widgets/_runtime.py", "python/widgets/widgets.py", "go/widgets/types.go", "go/widgets/runtime.go", "go/go.mod", "ts/package.json", "ts/src/index.ts"]) assert.ok(paths.includes(p), `${p} among ${paths.join(", ")}`);
@@ -156,7 +157,7 @@ test("the fixture spec's SDKs and schemas carry its own names, and none of OpenP
   assert.equal(JSON.parse(text("ts/package.json")).name, "widgets-types");
   assert.match(text("ts/src/index.ts"), /The Widget Catalog types of/);
   for (const f of emitted.files) assert.doesNotMatch(f.text, /openproposal/i, `${f.path} names OpenProposal`);
-  const schemas = emitSchemas(widgetModel(), "schemas", schemaNamesOf(profile));
+  const schemas = emitSchemas(widgetModel(), "schemas", { ...schemaIdsOf(profile), sections: WIDGETS.text.sections });
   for (const f of schemas.files) {
     assert.ok(String(f.schema.$id).startsWith("https://widgets.example.invalid/schemas/"), String(f.schema.$id));
     assert.doesNotMatch(f.text, /openproposal/i, f.path);
@@ -170,4 +171,21 @@ test("the registry builds the OpenProposal plugin from its profile, and refuses 
   assert.deepEqual(op.profile.documents?.map((d) => d.document), ["Proposal", "LineItem"]);
   assert.equal(op.plugin?.id, "openproposal");
   assert.throws(() => specOf(DIR), /names the plugin "widgets", and src\/specs\/ holds adcom, openproposal/);
+});
+
+test("a plugin states how its text identifies sections, and every heading it reads agrees", () => {
+  // The widgets plugin numbers its sections; one that calls them anchored while reading numbers fails, as one that calls them numbered while giving its own IDs does.
+  assert.throws(() => extract(TEXT, INPUT, { ...WIDGETS.text, sections: "anchored" }), /the plugin says the text's sections are anchored, and it reads the number 1 from the heading "1\. Widgets"/);
+  const anchoredLike = { ...WIDGETS.text, sectionOf: ((h, current) => { const head = WIDGETS.text.sectionOf(h, current); return head.kind === "section" ? { ...head, number: null, id: `list_${head.title.toLowerCase()}` } : head; }) as typeof WIDGETS.text.sectionOf };
+  assert.throws(() => extract(TEXT, INPUT, anchoredLike), /the plugin says the text's sections are numbered, and it gives the heading "1\. Widgets" the ID "list_widgets" of its own/);
+  const anchored = extract(TEXT, INPUT, { ...anchoredLike, sections: "anchored" });
+  assert.deepEqual(anchored.sections.map((s) => [s.id, s.number]), [["front", null], ["list_widgets", null], ["list_widget", null]]);
+});
+
+test("a module's description cites numbered sections by number, and names an anchored text's module by what it holds, by the flag alone", () => {
+  const model = widgetModel();
+  const names = schemaIdsOf(loadProfile(DIR));
+  const description = (sections: "numbered" | "anchored") => emitSchemas(model, "schemas", { ...names, sections }).files.find((f) => f.path === "modules/widgets/1/widgets.json")!.schema.description;
+  assert.equal(description("numbered"), "The Widget Catalog `widgets` module: the vocabularies, objects, unions, and constructor copies of § 1 and § 1.1.");
+  assert.match(String(description("anchored")), /module: its 1 object\.$/);
 });

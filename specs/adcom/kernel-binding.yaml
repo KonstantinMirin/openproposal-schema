@@ -22,6 +22,7 @@ primitives:
   - { name: PercentChange, absent: true }
   - { name: Fraction, absent: true }
   - { name: Count, absent: true }
+  - { name: Measure, absent: true }
   - { name: Timestamp, absent: true }
   - { name: Duration, absent: true }
   - { name: TimeOfDay, absent: true }
@@ -58,3 +59,4 @@ homonyms: []
 bases: []
 shared_structures:
   - { concepts: [external-id, text], absent: true }
+  - { concepts: [amount, measure], absent: true }

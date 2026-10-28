@@ -179,6 +179,9 @@ class Extractor {
       return;
     }
     const { number, title, part } = head;
+    // The plugin states how its sections are identified, and every heading it reads agrees: a numbered text's section takes its number, or its slug under its parent; an anchored text's takes no number.
+    if (this.front.sections === "anchored" && number !== null) throw new ExtractError(`the plugin says the text's sections are anchored, and it reads the number ${number} from the heading "${text}"`, at);
+    if (this.front.sections === "numbered" && head.id !== undefined) throw new ExtractError(`the plugin says the text's sections are numbered, and it gives the heading "${text}" the ID "${head.id}" of its own`, at);
     while (this.stack.length > 0 && this.stack[this.stack.length - 1]!.depth >= node.depth) this.stack.pop();
     const parent = this.stack[this.stack.length - 1] ?? null;
     const id = head.id ?? number ?? `${parent?.id ?? "front"}/${anchor}`;

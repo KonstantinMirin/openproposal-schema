@@ -276,15 +276,15 @@
  *     feedback in the specification owners' terms (record-wording): no
  *     document or record of this repository and no type name the
  *     specification never writes.
- * 18a. Drift (src/drift.ts), for a spec with a drift/ folder, AdCOM's:
- *     drift/sources.yaml validates; each artifact's snapshot holds its whole
+ * 18a. Enum drift (src/enum-drift.ts), for a spec with an `enum-drift/` folder, AdCOM's:
+ *     enum-drift/sources.yaml validates; each artifact's snapshot holds its whole
  *     folder, which hashes to the pinned git tree, and its license at the
  *     pinned blob, and nothing else, and a reachable clone has the commit
  *     and both SHAs; every list of the registry is paired once with each
  *     artifact's enum or none, and every enum with one list; every line in
  *     an enum, and every line that names one, reads. Two runs of
- *     `npm run drift` in separate processes write the in-process bytes, the
- *     committed report equals them, and every file git tracks under drift/
+ *     `npm run enum-drift` in separate processes write the in-process bytes, the
+ *     committed report equals them, and every file git tracks under enum-drift/
  *     is the sources file, a pinned snapshot file, or one the report writes.
  * 18b. The public site (src/site/build.ts), once after every spec: one site
  *     for the specs specs/site.yaml lists, each under its path, and the
@@ -374,8 +374,8 @@ import { appendOnly, fixturesExist, guard, loadGateDecisions, selfTests } from "
 import { exceptionsFileOf } from "../gates/input.ts";
 import * as V from "../gates/variant.ts";
 import * as Site from "../gates/site.ts";
-import * as Drift from "../gates/drift.ts";
-import { allSnapshotFiles, DRIFT_DIR, DRIFT_FILES, DRIFT_SOURCES, driftFiles, loadDriftSources } from "../src/drift.ts";
+import * as EnumDrift from "../gates/enum-drift.ts";
+import { allSnapshotFiles, ENUM_DRIFT_DIR, ENUM_DRIFT_FILES, ENUM_DRIFT_SOURCES, enumDriftFiles, loadEnumDriftSources } from "../src/enum-drift.ts";
 import { buildSite, exportTree } from "../src/site/build.ts";
 import { loadSiteConfig } from "../src/site/config.ts";
 import { resolveBuild, variantNames, type Build } from "../src/builds.ts";
@@ -398,7 +398,7 @@ let PLUGIN!: SpecPlugin;
 let NAMES!: SpecNames;
 
 /** What the spec's schema files are named by. */
-const specSchemaNames = (): SchemaNames => ({ base: NAMES.schema_base, short: NAMES.short });
+const specSchemaNames = (): SchemaNames => ({ base: NAMES.schema_base, short: NAMES.short, sections: PLUGIN.text.sections });
 
 /** Every check a rule of the spec's locks may have: the kernel's, the constructors', and the plugin's. */
 const ruleChecks = () => checksOf(PLUGIN.ruleChecks);
@@ -804,11 +804,11 @@ async function checkSdkGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[],
   const checked = new Set<string>();
   for (const [lock, doc] of models) {
     const dir = sdkDirOf(lock.ir_dir, undefined);
-    if (!(await gate(S.sdkGenerate, { model: doc, dir, schemaDir: schemaDirOf(lock.ir_dir), names: NAMES }, lock))) {
+    if (!(await gate(S.sdkGenerate, { model: doc, dir, schemaDir: schemaDirOf(lock.ir_dir), names: NAMES, schemaNames: specSchemaNames() }, lock))) {
       complete = false;
       continue;
     }
-    const emitted = emitSdk(doc, dir, schemaDirOf(lock.ir_dir), NAMES);
+    const emitted = emitSdk(doc, dir, schemaDirOf(lock.ir_dir), NAMES, specSchemaNames());
     for (const f of emitted.files) expected.add(posix.join(dir, f.path));
     const schemas = emitSchemas(doc, schemaDirOf(lock.ir_dir), specSchemaNames());
     const schemaNames = schemas.files.flatMap((f) => (isPlainMap(f.schema.$defs) ? Object.keys(f.schema.$defs) : [String(f.schema.title)])).sort();
@@ -1005,37 +1005,37 @@ async function checkComparisonGates(locks: SpecLock[], loaded: Loaded | null, mo
 }
 
 /**
- * The drift report's gates: its sources' pins and pairs against the model of
- * the lock the sources file names, two runs of `npm run drift`, the
- * committed report, and every tracked file under drift/.
+ * The enum drift report's gates: its sources' pins and pairs against the model of
+ * the lock the sources file names, two runs of `npm run enum-drift`, the
+ * committed report, and every tracked file under enum-drift/.
  */
-async function checkDriftGates(models: Map<SpecLock, ModelDoc>): Promise<void> {
+async function checkEnumDriftGates(models: Map<SpecLock, ModelDoc>): Promise<void> {
   let sources;
   try {
-    sources = loadDriftSources(SPEC);
+    sources = loadEnumDriftSources(SPEC);
   } catch (e) {
-    record(`${posix.basename(SPEC)}: drift sources`, false, (e as Error).message);
+    record(`${posix.basename(SPEC)}: enum drift sources`, false, (e as Error).message);
     return;
   }
   const entry = [...models].find(([l]) => l.name === sources.lock);
   if (!entry) {
-    skipped(Drift.driftSources, `the model of the lock "${sources.lock}" the drift sources name didn't resolve`);
+    skipped(EnumDrift.enumDriftSources, `the model of the lock "${sources.lock}" the enum drift sources name didn't resolve`);
     return;
   }
   const [lock, model] = entry;
   const files = allSnapshotFiles(SPEC, sources);
-  if (!(await gate(Drift.driftSources, { sources, files, ir: committedIr(lock), model }))) return;
-  const { files: report, problems } = await driftFiles(SPEC, sources, files);
+  if (!(await gate(EnumDrift.enumDriftSources, { sources, files, ir: committedIr(lock), model }))) return;
+  const { files: report, problems } = await enumDriftFiles(SPEC, sources, files);
   if (problems.length > 0) {
-    record(`${posix.basename(SPEC)}: drift report`, false, problems.join("; "));
+    record(`${posix.basename(SPEC)}: enum drift report`, false, problems.join("; "));
     return;
   }
   const want = new Map([...report].map(([f, t]) => [f, Buffer.from(t)]));
-  await gate(Drift.driftDeterministic, { label: "drift", want, runs: reportRuns("drift", "src/cli/drift.ts", [...want.keys()]), from: "drift report" });
-  await gate(Drift.driftCommitted, { dir: DRIFT_DIR, want, committed: reportTree(DRIFT_DIR, [...want.keys()]), regenerate: "npm run drift" });
+  await gate(EnumDrift.enumDriftDeterministic, { label: "enum-drift", want, runs: reportRuns("enum-drift", "src/cli/enum-drift.ts", [...want.keys()]), from: "enum drift report" });
+  await gate(EnumDrift.enumDriftCommitted, { dir: ENUM_DRIFT_DIR, want, committed: reportTree(ENUM_DRIFT_DIR, [...want.keys()]), regenerate: "npm run enum-drift" });
   // The snapshot's files are each source's folder, which hashes to its pinned tree, and its license.
-  const pinned = [DRIFT_SOURCES, ...sources.sources.flatMap((s) => [...(files.get(s.id) ?? new Map()).keys()].filter((p) => p === s.license.path || p.startsWith(`${s.folder}/`)).map((p) => posix.join(DRIFT_DIR, "snapshots", s.id, p)))];
-  await gate(Drift.driftTracked, { dir: DRIFT_DIR, tracked: gitTracked(DRIFT_DIR, SPEC), expected: [...pinned, ...Object.values(DRIFT_FILES).map((f) => posix.join(DRIFT_DIR, f))], remedy: "remove it, pin it in drift/sources.yaml, or write it with: npm run drift" });
+  const pinned = [ENUM_DRIFT_SOURCES, ...sources.sources.flatMap((s) => [...(files.get(s.id) ?? new Map()).keys()].filter((p) => p === s.license.path || p.startsWith(`${s.folder}/`)).map((p) => posix.join(ENUM_DRIFT_DIR, "snapshots", s.id, p)))];
+  await gate(EnumDrift.enumDriftTracked, { dir: ENUM_DRIFT_DIR, tracked: gitTracked(ENUM_DRIFT_DIR, SPEC), expected: [...pinned, ...Object.values(ENUM_DRIFT_FILES).map((f) => posix.join(ENUM_DRIFT_DIR, f))], remedy: "remove it, pin it in enum-drift/sources.yaml, or write it with: npm run enum-drift" });
 }
 
 /** Two runs of a report CLI on the spec, each the files it wrote by name. */
@@ -1125,7 +1125,7 @@ function expectedVariantFiles(variants: VariantBuilds[]): VariantFiles {
       files.rules.push(posix.join(b.dirOf(rulesDirOf(b.lock.ir_dir)), RULES_FILE));
       files.typeExamples.push(posix.join(b.dirOf(typeExamplesDirOf(b.lock.ir_dir)), TYPE_EXAMPLES_FILE));
       const sdkDir = sdkDirOf(b.lock.ir_dir, b.variant);
-      for (const f of emitSdk(b.model, sdkDir, schemaDir, NAMES).files) files.sdk.push(posix.join(sdkDir, f.path));
+      for (const f of emitSdk(b.model, sdkDir, schemaDir, NAMES, specSchemaNames()).files) files.sdk.push(posix.join(sdkDir, f.path));
     }
   }
   return files;
@@ -1202,8 +1202,8 @@ async function checkVariantOutputGates(variants: VariantBuilds[], vectors: Vecto
       }
       // SDK types.
       const sdkDir = sdkDirOf(lock.ir_dir, b.variant);
-      if (!(await gate(S.sdkGenerate, { model: b.model, dir: sdkDir, schemaDir, names: NAMES }, at))) continue;
-      const sdk = emitSdk(b.model, sdkDir, schemaDir, NAMES);
+      if (!(await gate(S.sdkGenerate, { model: b.model, dir: sdkDir, schemaDir, names: NAMES, schemaNames: specSchemaNames() }, at))) continue;
+      const sdk = emitSdk(b.model, sdkDir, schemaDir, NAMES, specSchemaNames());
       const schemaNames = emitted.files.flatMap((f) => (isPlainMap(f.schema.$defs) ? Object.keys(f.schema.$defs) : [String(f.schema.title)])).sort();
       await gate(S.sdkNames, { schemaNames, emitted: sdk.sdk.emitted, templates: [...sdk.sdk.templates.keys()] }, at);
       const sdkWant = new Map(sdk.files.map((f) => [f.path, Buffer.from(f.text)]));
@@ -1358,8 +1358,8 @@ async function checkSpec(): Promise<Kernel | null> {
       await checkExampleGates(models, locks, loaded);
       await checkReleaseGates(models, rules, locks, loaded);
       const feedback = await checkComparisonGates(locks, loaded, model, vectors);
-      // A registry with a drift/ folder compares its lists with other artifacts' enums.
-      if (existsSync(join(SPEC, DRIFT_DIR))) await checkDriftGates(models);
+      // A registry with an `enum-drift/` folder compares its lists with other artifacts' enums.
+      if (existsSync(join(SPEC, ENUM_DRIFT_DIR))) await checkEnumDriftGates(models);
       // A spec with no feedback target has no report yet, which optional-outputs checks; its records are held to its owners' terms by the record-wording gate.
       if (profile.feedback) {
         if (feedback) await checkFeedbackGates(feedback);

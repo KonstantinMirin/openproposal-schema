@@ -3,7 +3,10 @@ import assert from "node:assert/strict";
 import { loadLock } from "../src/lock.ts";
 import { materialize } from "../src/fetch.ts";
 import { lint } from "../src/lint.ts";
-import { FIELD_HEADER, SPEC, extractText, lineItems } from "./helpers.ts";
+import { FIELD_HEADER, OP, SPEC, extractText, lineItems } from "./helpers.ts";
+
+/** OpenProposal's lint: its appendices, and its numbered sections. */
+const OP_LINT = { appendices: true, sections: OP.text.sections };
 
 /** Applies one exact text replacement, failing if the original text is absent. */
 function corrupt(text: string, from: string, to: string): string {
@@ -15,7 +18,7 @@ test("Appendix A and B checks find each kind of drift in a corrupted copy of mai
   const lock = loadLock(`${SPEC}/spec-input/spec-lock.yaml`);
   let text = (await materialize(lock)).bytes.toString("utf8");
   assert.deepEqual(
-    lint(extractText(text)).filter((f) => f.kind.startsWith("appendix_")),
+    lint(extractText(text), undefined, OP_LINT).filter((f) => f.kind.startsWith("appendix_")),
     [],
     "the pinned main spec has consistent appendices",
   );
@@ -23,7 +26,7 @@ test("Appendix A and B checks find each kind of drift in a corrupted copy of mai
   text = corrupt(text, "| `version` | 4.1 Identity and lifecycle | Integer | derived |", "| `version` | 4.1 Identity and lifecycle | Number | seller-set |");
   text = corrupt(text, "| immutable | 6 |", "| immutable | 5 |");
   text = corrupt(text, "Of 71 fields,", "Of 70 fields,");
-  const ids = lint(extractText(text))
+  const ids = lint(extractText(text), undefined, OP_LINT)
     .filter((f) => f.kind.startsWith("appendix_"))
     .map((f) => f.id);
   assert.deepEqual(ids, [
@@ -49,7 +52,7 @@ test("duplicate value sets, unresolved identifiers, and missing structure are re
       "A seller MUST honour `ghost_field`. Each line item MUST be self-contained.",
     ].join("\n"),
   );
-  const ids = lint(extractText(md)).map((f) => f.id);
+  const ids = lint(extractText(md), undefined, OP_LINT).map((f) => f.id);
   for (const id of [
     "value_set_duplicate:a | b",
     "unresolved_identifier:ghost_field",
@@ -78,7 +81,7 @@ test("the line item's clock names no identifier the lint can't resolve, in #123'
       ].join("\n"),
     );
   const unresolved = (md: string) =>
-    lint(extractText(md))
+    lint(extractText(md), undefined, OP_LINT)
       // The excerpt has no § 3.2, which defines `allowed[]`.
       .filter((f) => f.kind === "unresolved_identifier" && f.id !== "unresolved_identifier:allowed[]")
       .map((f) => f.id)
@@ -106,7 +109,7 @@ test("a row's one value beside prose resolves where the row writes it and as its
       "A seller MAY write `viewer_local`, `manual`, or `auto`. When `time_zone = viewer_local`, the seller MUST read the viewer's clock.",
     ].join("\n"),
   );
-  const ids = lint(extractText(md))
+  const ids = lint(extractText(md), undefined, OP_LINT)
     .filter((f) => f.kind === "unresolved_identifier" || f.kind === "expression_value_unknown")
     .map((f) => f.id)
     .sort();
@@ -126,7 +129,7 @@ test("fixtures of an independent review: a typo that a row's one value or an uns
       "A seller MUST honour `sellr_id`. When `staus:published`, a seller MUST honour `status:archived`.",
     ].join("\n"),
   );
-  const ids = lint(extractText(md))
+  const ids = lint(extractText(md), undefined, OP_LINT)
     .filter((f) => f.kind === "unresolved_identifier" || f.kind === "expression_value_unknown")
     .map((f) => f.id)
     .sort();
@@ -136,7 +139,7 @@ test("fixtures of an independent review: a typo that a row's one value or an uns
 test("the unstated-presence check counts the fields of every owner the rows have, not only OpenProposal's", () => {
   const ir = extractText(lineItems(`${FIELD_HEADER}\n| \`id\` | String | immutable | The ID. |\n| \`name\` | String | seller-set | REQUIRED. The name. |`));
   const deal = { ...ir, fields: ir.fields.map((f) => ({ ...f, owner: "deal_terms" })) };
-  const f = lint(deal).find((x) => x.kind === "presence_unstated");
+  const f = lint(deal, undefined, OP_LINT).find((x) => x.kind === "presence_unstated");
   assert.equal(f?.id, "presence_unstated:deal_terms");
   assert.equal(f?.message, "1 of 2 deal terms fields don't say whether they're REQUIRED or OPTIONAL.");
 });

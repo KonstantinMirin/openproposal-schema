@@ -2,6 +2,40 @@
   "$defs": {
     "CommittedMetricsEntry": {
       "additionalProperties": false,
+      "dependentRequired": {
+        "value": [
+          "metric"
+        ]
+      },
+      "else": {
+        "if": {
+          "properties": {
+            "metric": {
+              "const": "completion_rate"
+            }
+          },
+          "required": [
+            "metric"
+          ]
+        },
+        "then": {
+          "properties": {
+            "value": {
+              "$ref": "../../../kernel/1/kernel.json#/$defs/Fraction"
+            }
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "metric": {
+            "const": "viewable_rate"
+          }
+        },
+        "required": [
+          "metric"
+        ]
+      },
       "properties": {
         "basis": {
           "$ref": "#/$defs/MeasurementBasis"
@@ -10,7 +44,14 @@
           "$ref": "#/$defs/Metric"
         },
         "value": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Fraction"
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Measure"
+        }
+      },
+      "then": {
+        "properties": {
+          "value": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Fraction"
+          }
         }
       },
       "type": "object"

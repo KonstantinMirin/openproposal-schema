@@ -99,11 +99,14 @@ domains:
         meaning: A relative change to a price in percent, from −100 up.
         type: PercentChange
   - name: quantity
-    description: Whole numbers of things, which add up.
+    description: Numbers of things, which add up, never negative.
     concepts:
       - name: count
         meaning: A whole number of things, never negative, such as impressions, reachable units, options, or a proposal's revisions, which its `version` counts and every reference to the proposal repeats.
         type: Count
+      - name: measure
+        meaning: What a metric that isn't a rate measures, never negative and not always whole, such as audience impacts or a modelled audience a seller commits to; a rate metric's value is a fraction instead.
+        type: Measure
   - name: time
     description: Time has four concepts. A point in time and a span need no clock. A daypart window is calendar time, read on the line item's clock, which the time zone names. A frequency cap's period is a term of a vocabulary, `FrequencyCapPeriod`, not a span; it is a calendar period on that clock, such as a day from midnight to midnight, or the whole flight, which runs between two points in time (D-044).
     concepts:
@@ -180,3 +183,10 @@ shared_structures:
       or a code comes from, a registry, a list, a publisher, or the
       specification's own field tables, doesn't change how it is processed,
       so it is the field's description, not a type of its own.
+  - concepts: [amount, measure]
+    reason: >-
+      Each is a number that is never negative, and a receiver processes each
+      one differently. It reads an amount as money in the currency beside it,
+      and adds or compares it only with amounts in that currency; it reads a
+      measure in what its metric counts, such as audience impacts, never
+      as money, and compares it only with measures of the same metric.

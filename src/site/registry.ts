@@ -16,6 +16,7 @@ import { lockNames, named } from "./config.ts";
 import { buildOf, type SiteInputs } from "./data.ts";
 import { esc, inline, page } from "./html.ts";
 import { mapLink } from "./pages.ts";
+import { renderQuote } from "./quote.ts";
 
 /** One list of the registry, as the page shows it. */
 export interface RegistryList {
@@ -108,6 +109,9 @@ export function registryLists(reg: SiteInputs, others: readonly SiteInputs[]): R
   return out.sort((a, b) => a.title.localeCompare(b.title, "en"));
 }
 
+/** The most characters of a citing line's visible text the page shows. */
+const CITE_LINE_MAX = 160;
+
 /** The registry's page, `registry.html` under its spec's path. */
 export function registryPage(reg: SiteInputs, others: readonly SiteInputs[]): string {
   const b = reg.brand;
@@ -121,7 +125,8 @@ export function registryPage(reg: SiteInputs, others: readonly SiteInputs[]): st
         .map((c) => {
           const o = others.find((x) => x.brand.spec === c.spec)!;
           const vocab = c.vocabularies.map((v) => `<a href="../${c.spec}/${mapLink("", v, c.lock, "as-written")}"><code>${esc(v)}</code></a>`).join(", ");
-          const lines = c.lines.map((x) => `<li>${x.href ? `<a href="${esc(x.href)}">${esc(x.at)}</a>` : esc(x.at)}: ${esc(x.text.length > 160 ? `${x.text.slice(0, 157)}…` : x.text)}</li>`).join("");
+          // Each line reads as GitHub shows it, cut on the text a reader sees; a relative link opens where the line is published.
+          const lines = c.lines.map((x) => `<li>${x.href ? `<a href="${esc(x.href)}">${esc(x.at)}</a>` : esc(x.at)}: ${renderQuote(x.text, { base: x.href?.replace(/[?#].*$/, "") ?? null, max: CITE_LINE_MAX }).html}</li>`).join("");
           return `<li><strong>${esc(c.name)}</strong>, ${esc(lockNames(o.brand, c.lock).where)}${vocab ? `: its vocabulary ${vocab}` : ""}${lines ? `<ul class="cite-lines">${lines}</ul>` : ""}</li>`;
         })
         .join("");

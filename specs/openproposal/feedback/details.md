@@ -106,10 +106,10 @@ How a value such as a timestamp, a domain, a hash, a URL, or a rate is written.
 - **Rests on:** § 5.5: `daypart`
 - **Only on:** `main`
 
-#### 5. Is a rate metric such as `viewable_rate`, `completion_rate`, or `match_rate_expected` a fraction from 0 to 1 or a percentage?
+#### 5. Is a committed metric's value a rate or a quantity, and is a rate such as `viewable_rate`, `completion_rate`, or `match_rate_expected` a fraction from 0 to 1 or a percentage?
 
-- **What to change:** State that rate metrics and `match_rate_expected` are fractions from 0 to 1, for example 0.7 for 70 %.
-- **What the schemas do until then:** A number from 0 to 1, so 70 % is 0.7.
+- **What to change:** State, for each metric, whether its value is a rate or a quantity. A rate, such as `viewable_rate`, `completion_rate`, or `match_rate_expected`, is a fraction from 0 to 1, for example 0.7 for 70 %; a quantity, such as audience impacts for DOOH, is a number that is never negative and need not be whole. Also state that an entry with a `value` gives its `metric`.
+- **What the schemas do until then:** A rate is a number from 0 to 1, so 70 % is 0.7; any other committed metric, such as audience impacts for DOOH, is a number that is never negative.
 - **Rests on:** § 5.3: `buyer_supplied`; § 5.7: `committed_metrics[]`
 
 #### 6. Which URL schemes may a URL field carry?

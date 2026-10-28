@@ -4326,7 +4326,7 @@
           "status": "proposed"
         },
         {
-          "feedback": "State that rate metrics and `match_rate_expected` are fractions from 0 to 1, for example 0.7 for 70 %.",
+          "feedback": "State, for each metric, whether its value is a rate or a quantity. A rate, such as `viewable_rate`, `completion_rate`, or `match_rate_expected`, is a fraction from 0 to 1, for example 0.7 for 70 %; a quantity, such as audience impacts for DOOH, is a number that is never negative and need not be whole. Also state that an entry with a `value` gives its `metric`.",
           "id": "D-005",
           "kind": "gap",
           "locks": [
@@ -4334,8 +4334,8 @@
             "with-open-prs"
           ],
           "number": 5,
-          "question": "Is a rate metric such as `viewable_rate`, `completion_rate`, or `match_rate_expected` a fraction from 0 to 1 or a percentage?",
-          "reading": "A number from 0 to 1, so 70 % is 0.7.",
+          "question": "Is a committed metric's value a rate or a quantity, and is a rate such as `viewable_rate`, `completion_rate`, or `match_rate_expected` a fraction from 0 to 1 or a percentage?",
+          "reading": "A rate is a number from 0 to 1, so 70 % is 0.7; any other committed metric, such as audience impacts for DOOH, is a number that is never negative.",
           "rests_on": [
             "field:5.3:buyer_supplied",
             "field:5.7:committed_metrics[]"

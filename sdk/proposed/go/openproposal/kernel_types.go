@@ -228,6 +228,18 @@ func (Fraction) ValidateValue(v any, at string, errs *Errors) {
 	checkMaximum(r, "1", false, at, errs)
 }
 
+// Measure: What a metric that isn't a rate measures, a number never negative and not always whole, such as 1,200,000 audience impacts for DOOH or a modelled audience of 14.2 impacts per play.
+type Measure float64
+
+// ValidateValue implements Value.
+func (Measure) ValidateValue(v any, at string, errs *Errors) {
+	r, ok := numberValue(v, at, errs)
+	if !ok {
+		return
+	}
+	checkMinimum(r, "0", false, at, errs)
+}
+
 // NamespacedTerm: A term outside a vocabulary's core list, written `<domain>:<term>`, where the domain is the definer's identity domain, such as `examplepub.example:podcast_host_read`.
 type NamespacedTerm string
 

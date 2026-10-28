@@ -1,0 +1,35 @@
+format: 1
+id: G-099
+date: 2026-10-28
+question: What changes in the site gate to close the gaps an independent review of the quote renderer found?
+decision: >-
+  The site check failed a quote only on a whole Markdown link, so the
+  registry's old citing lines, cut inside the URL, passed it. The renderer
+  (src/site/quote.ts) now writes every `](` of the text it shows as
+  `]&#40;`, so the check fails any `](` in a quote's text, cut or whole,
+  link or image, and a code span's or an escaped bracket's `](` passes;
+  a type map's source whose quote is a plain string, not rendered, fails
+  too. The fixtures now use the registry's old cut line, an image on a
+  decision page, a link in a type map's data, and an unrendered quote. The
+  renderer resolves a link before it checks its scheme, so `java&#9;script:`
+  and a tab are no link; resolves a path from the root in the base's
+  repository; shows an image inside a link as text, and one with no alt
+  text by its URL; keeps a block's markers as the source writes them, a
+  closing `##`, a setext underline, and a code fence included; drops an
+  escaped pipe's backslash in a table cell's code span, as GFM does; and
+  cuts a long quote at a space, or drops a run with none after the text
+  shown. A record's Markdown link on a decision page is a link to an
+  http(s) URL and its text elsewhere. A test renders every element's quote
+  and every line of both specs' texts, 13,915 in all, and checks each
+  keeps its source's words, none added or dropped. G-096 said only 11 of
+  AdCOM's quotes change; in fact no quote AdCOM's pages show writes a link,
+  so only its tooltips and the registry's 7 citing lines changed, and its
+  "never inside a link" meant never inside the URL. The test suite holds
+  476 tests, and MIN_TESTS is 476.
+rationale: >-
+  The check now fails what it passed before, and every new fixture is a
+  case it missed; nothing is relaxed. OpenProposal's pages change in one
+  place, D-008's record link, which now reads as its text.
+accepts:
+  - { gate: npm-test, fingerprint: 79fc76158dc3ac19309f0e2650a171246450d889da452bd252a7f7ee6d147862 }
+  - { gate: site-builds, fingerprint: 3eba23985ea140da87c6484ee7fddd9841abdf2430a733dacf460dc989661dda }

@@ -39,7 +39,7 @@ entries:
       open: false
       members:
         metric: { type: { kind: named, name: Metric }, presence: optional }
-        value: { type: { kind: named, name: Fraction }, presence: optional }
+        value: { type: { kind: named, name: Measure }, presence: optional }
         basis: { type: { kind: named, name: MeasurementBasis }, presence: optional }
   - ir: rule:5.7:4994173c
     digest: 49df828c767ca4a88396c5d0d566a026506a90ae23eec522d12849b159e6aff6

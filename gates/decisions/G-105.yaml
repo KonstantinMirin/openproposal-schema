@@ -1,0 +1,25 @@
+format: 1
+id: G-105
+date: 2026-10-28
+question: What changes in the site gate to close the gaps an independent review of the root link found?
+decision: >-
+  The root-link rule matched only one spelling of the link and resolved its
+  path its own way. It now reads every link whose text is "All
+  specifications", whatever its attributes, and resolves each with the
+  resolver the other links use, which drops a query and a fragment and
+  reads a path from the root; a spec's page must have exactly one, in its
+  site nav, to the root's index.html. The rule now runs on the pages of the
+  specs' folders, each first path segment whose folder has an index page,
+  in place of any page under a folder, and fails a root page that carries
+  the link. Three fixtures join it: a second link, a link moved out of the
+  nav, and a root page with the link. A test now holds AdCOM's pages to one
+  link at their depth too, which G-102 claimed for every page while its
+  test built OpenProposal's alone. The check's comment names the rule, and
+  its message reads "one link" for one.
+rationale: >-
+  The rule fails what it passed before, a duplicate with other attributes
+  and a link outside the nav, and passes nothing it failed on the built
+  site; nothing is relaxed. No page changes.
+accepts:
+  - { gate: npm-test, fingerprint: 3b82b92c37e9537ae3528e0652007fe57160d09f520b9c42d7476212d12bc5e0 }
+  - { gate: site-builds, fingerprint: 9afe71f8ba9bdf49d7c9cd5670888dc8715a2438baf0ed654ae6ba82014acc60 }

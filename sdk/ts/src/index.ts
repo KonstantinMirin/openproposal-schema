@@ -6,7 +6,7 @@
  * constructor as a generic type and a function that builds its schema.
  */
 import type { z } from "zod";
-import { Amount, BareTerm, CalendarDate, CatalogRef, CatalogRefOr, CatalogReference, Count, CurrencyCode, DayName, DaypartWindow, Domain, Duration, ExternalId, FormatId, Fraction, Identifier, NamespacedTerm, Party, PercentChange, PriceAdjustment, PriceDelta, Range, Selectable, SelectableOrValue, Settable, SettableOrValue, Text, TimeOfDay, Timestamp, Url } from "./kernel.js";
+import { Amount, BareTerm, CalendarDate, CatalogRef, CatalogRefOr, CatalogReference, Count, CurrencyCode, DayName, DaypartWindow, Domain, Duration, ExternalId, FormatId, Fraction, Identifier, Measure, NamespacedTerm, Party, PercentChange, PriceAdjustment, PriceDelta, Range, Selectable, SelectableOrValue, Settable, SettableOrValue, Text, TimeOfDay, Timestamp, Url } from "./kernel.js";
 import { ActivationRoute, ActivationRouteSelection, AudiencesOption, AudiencesOptionOrCatalogRef, AudiencesSelection, BuyerSupplied, SuppressionList } from "./audience.js";
 import { Availability, AvailabilityType, CancellationPolicyOption, CancellationPolicySelection, Commitment, CommitmentBasis, CommitmentBounds, CostMethod, CreativePolicy, ExclusivityOption, ExclusivitySelection, HoldScope, HoldState, HoldStatus, PricingEntry } from "./commercial.js";
 import { Approval, AssetsEntry, CreativeDelivery, CreativeDeliveryMethod, FormatsSelection, MaterialsDue, ProductionOption, ProductionSelection, Specs, ThirdPartyTags } from "./creative.js";
@@ -49,7 +49,7 @@ export const LOCK = "main";
 export const VARIANT = "as-written";
 
 /** The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it. */
-export const SCHEMA_RELEASE = "6614dd9756b44316c9b43cd65ba4122743d683ad8b08649794cd4b0a744b86dd";
+export const SCHEMA_RELEASE = "d1fb2d22266e15e2384156622b8563ffbcc296ab8739b355730d96c909243138";
 
 /** A constructor's schema function, applied to its arguments' schemas. */
 export type Template = (...args: z.ZodType[]) => z.ZodType;
@@ -124,6 +124,7 @@ export const TYPES: Readonly<Record<string, z.ZodType>> = {
   LineItemSummaryPropertiesSelection: LineItemSummaryPropertiesSelection,
   MaterialsDue: MaterialsDue,
   MaxRange: MaxRange,
+  Measure: Measure,
   MeasurementSourceOption: MeasurementSourceOption,
   MeasurementSourceSelection: MeasurementSourceSelection,
   Metric: Metric,

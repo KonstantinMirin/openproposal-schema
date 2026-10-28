@@ -1,0 +1,25 @@
+format: 1
+id: G-096
+date: 2026-10-28
+question: What changes in the site gate when every quote of a specification renders its inline Markdown?
+decision: >-
+  The site renders each quote of a specification through one renderer
+  (src/site/quote.ts): a link is a link, a code span is code, bold and
+  italics are marked, a table row reads as its cells, and anything else,
+  HTML included, shows as the text it is. It does so on the registry's
+  citing lines, which it cuts on the visible text and never inside a
+  link, on the decision pages, in the type map's data, and in the worked
+  examples. The site check gains one rule: no block quote, citing line,
+  or type-map quote shows a Markdown link or image as text, with two
+  fixtures, one on a page and one in a type map's data. The tooltip of a
+  quote reads its plain text, without backticks. The test suite holds 472
+  tests, and MIN_TESTS is 472.
+rationale: >-
+  The site check gains a rule and loses none; nothing is relaxed. The
+  quote's words are the source's: the renderer adds no word and drops
+  none, and a unit test holds it to that. OpenProposal's quotes render as
+  before, apart from their tooltips; only AdCOM's 11 quotes that write a
+  link, and the registry's citing lines, change.
+accepts:
+  - { gate: npm-test, fingerprint: e2dabca273fd6a2576a8d8dfc3cc0889218c2eb054bedc8ee995d3036936c3e5 }
+  - { gate: site-builds, fingerprint: d69befc2f8acb919319f96d71ce5a69218a4733f422b8385708c9f02a69edc0f }

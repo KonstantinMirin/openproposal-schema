@@ -13,7 +13,7 @@ from pydantic import TypeAdapter
 
 from . import _runtime as rt
 from ._runtime import Mode, dump, dump_json, is_format
-from .kernel import Amount, BareTerm, CalendarDate, CatalogRef, CatalogRefOr, CatalogReference, Count, CurrencyCode, DayName, DayNames, DaypartWindow, Domain, Duration, ExternalId, FormatId, Fraction, Identifier, NamespacedTerm, Parties, Party, PercentChange, PriceAdjustment, PriceDelta, Range, Selectable, SelectableOrValue, Settable, SettableOrValue, Text, TimeOfDay, Timestamp, Url
+from .kernel import Amount, BareTerm, CalendarDate, CatalogRef, CatalogRefOr, CatalogReference, Count, CurrencyCode, DayName, DayNames, DaypartWindow, Domain, Duration, ExternalId, FormatId, Fraction, Identifier, Measure, NamespacedTerm, Parties, Party, PercentChange, PriceAdjustment, PriceDelta, Range, Selectable, SelectableOrValue, Settable, SettableOrValue, Text, TimeOfDay, Timestamp, Url
 from .audience import ActivationRoute, ActivationRouteSelection, ActivationRoutes, AudiencesOption, AudiencesOptionOrCatalogRef, AudiencesSelection, BuyerSupplied, SuppressionList
 from .commercial import Availability, AvailabilityType, AvailabilityTypes, CancellationPolicyOption, CancellationPolicySelection, Commitment, CommitmentBases, CommitmentBasis, CommitmentBounds, CostMethod, CostMethods, CreativePolicy, ExclusivityOption, ExclusivitySelection, HoldScope, HoldScopes, HoldState, HoldStates, HoldStatus, PricingEntry
 from .creative import Approval, AssetsEntry, CreativeDelivery, CreativeDeliveryMethod, CreativeDeliveryMethods, FormatsSelection, MaterialsDue, ProductionOption, ProductionSelection, Specs, ThirdPartyTags
@@ -40,7 +40,7 @@ LOCK: Final = "main"
 VARIANT: Final = "as-written"
 """The build: `as-written`, the specification as its text and examples write it, or `proposed`, with the changes we propose."""
 
-SCHEMA_RELEASE: Final = "6614dd9756b44316c9b43cd65ba4122743d683ad8b08649794cd4b0a744b86dd"
+SCHEMA_RELEASE: Final = "d1fb2d22266e15e2384156622b8563ffbcc296ab8739b355730d96c909243138"
 """The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it."""
 
 TYPES: dict[str, Any] = {
@@ -112,6 +112,7 @@ TYPES: dict[str, Any] = {
     "LineItemSummaryPropertiesSelection": LineItemSummaryPropertiesSelection,
     "MaterialsDue": MaterialsDue,
     "MaxRange": MaxRange,
+    "Measure": Measure,
     "MeasurementSourceOption": MeasurementSourceOption,
     "MeasurementSourceSelection": MeasurementSourceSelection,
     "Metric": Metric,
@@ -277,6 +278,7 @@ __all__ = [
     "LineItemSummaryPropertiesSelection",
     "MaterialsDue",
     "MaxRange",
+    "Measure",
     "MeasurementSourceOption",
     "MeasurementSourceSelection",
     "Metric",

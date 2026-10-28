@@ -6,7 +6,7 @@
  * constructor as a generic type and a function that builds its schema.
  */
 import type { z } from "zod";
-import { Amount, CatalogRef, CatalogRefOr, CatalogReference, Count, CurrencyCode, DayName, DaypartWindow, Digest, Domain, Duration, ExternalId, FormatId, Fraction, NamespacedTerm, Party, PercentChange, PriceAdjustment, PriceDelta, Range, Selectable, SelectableOrValue, Settable, SettableOrValue, Text, TimeOfDay, TimeZone, Timestamp, Url, Uuid, VendorCode } from "./kernel.js";
+import { Amount, CatalogRef, CatalogRefOr, CatalogReference, Count, CurrencyCode, DayName, DaypartWindow, Digest, Domain, Duration, ExternalId, FormatId, Fraction, Measure, NamespacedTerm, Party, PercentChange, PriceAdjustment, PriceDelta, Range, Selectable, SelectableOrValue, Settable, SettableOrValue, Text, TimeOfDay, TimeZone, Timestamp, Url, Uuid, VendorCode } from "./kernel.js";
 import { ActivationRoute, ActivationRouteSelection, AudiencesOption, AudiencesOptionOrCatalogRef, AudiencesSelection, BuyerSupplied, Provenance, SuppressionList } from "./audience.js";
 import { Availability, AvailabilityBasis, AvailabilityType, AvailabilityUnit, CancellationPolicyOption, CancellationPolicySelection, Commitment, CommitmentBasis, CommitmentBounds, CostMethod, CreativePolicy, ExclusivityOption, ExclusivitySelection, HoldScope, HoldState, HoldStatus, MinCommitmentEntry, PricingEntry, Requires } from "./commercial.js";
 import { Approval, AssetApprovalStatus, AssetsEntry, CreativeDelivery, CreativeDeliveryMethod, CreativeDeliveryProtocol, FormatsSelection, MaterialsDue, ProductionOption, ProductionSelection, Specs, ThirdPartyTags } from "./creative.js";
@@ -51,7 +51,7 @@ export const LOCK = "with-open-prs";
 export const VARIANT = "proposed";
 
 /** The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it. */
-export const SCHEMA_RELEASE = "ab7c2cf7a0bbba59d0a24306138df3dc8f039f8bd3bb9cb7e63c4c008a9507f8";
+export const SCHEMA_RELEASE = "72b7bdc5b65e3a21f8973ba1ca6c6e288a1741ac135c266f565823b6ab07e0b4";
 
 /** A constructor's schema function, applied to its arguments' schemas. */
 export type Template = (...args: z.ZodType[]) => z.ZodType;
@@ -145,6 +145,7 @@ export const TYPES: Readonly<Record<string, z.ZodType>> = {
   Manifest: Manifest,
   MaterialsDue: MaterialsDue,
   MaxRange: MaxRange,
+  Measure: Measure,
   MeasurementBasis: MeasurementBasis,
   MeasurementSourceOption: MeasurementSourceOption,
   MeasurementSourceSelection: MeasurementSourceSelection,

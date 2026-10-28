@@ -93,6 +93,10 @@ Identifier = TypeAliasType("Identifier", Annotated[str, Strict()])
 """The identity of a record a party mints, such as a proposal or a line item, written as any string, as the specification types it. The text states no form, so a receiver compares two identities by exact string equality."""
 
 
+Measure = TypeAliasType("Measure", Annotated[float, Strict(), Field(ge=0)])
+"""What a metric that isn't a rate measures, a number never negative and not always whole, such as 1,200,000 audience impacts for DOOH or a modelled audience of 14.2 impacts per play."""
+
+
 NamespacedTerm = TypeAliasType("NamespacedTerm", Annotated[str, Strict(), Field(pattern="^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]([a-z0-9-]{0,61}[a-z0-9])?:[A-Za-z0-9]+(_[A-Za-z0-9]+)*$")])
 """A term outside a vocabulary's core list, written `<domain>:<term>`, where the domain is the definer's identity domain, such as `examplepub.example:podcast_host_read`."""
 

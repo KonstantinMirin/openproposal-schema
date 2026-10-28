@@ -101,6 +101,10 @@ IntegerFlag = TypeAliasType("IntegerFlag", Annotated[int, BeforeValidator(rt.int
 """A yes or no, written as the integer `0` (no) or `1` (yes), as AdCOM 1.0 and OpenRTB 2.6 write the flag of the same name."""
 
 
+Measure = TypeAliasType("Measure", Annotated[float, Strict(), Field(ge=0)])
+"""What a metric that isn't a rate measures, a number never negative and not always whole, such as 1,200,000 audience impacts for DOOH or a modelled audience of 14.2 impacts per play."""
+
+
 NamespacedTerm = TypeAliasType("NamespacedTerm", Annotated[str, Strict(), Field(pattern="^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]([a-z0-9-]{0,61}[a-z0-9])?:[A-Za-z0-9]+(_[A-Za-z0-9]+)*$")])
 """A term outside a vocabulary's core list, written `<domain>:<term>`, where the domain is the definer's identity domain, such as `examplepub.example:podcast_host_read`."""
 

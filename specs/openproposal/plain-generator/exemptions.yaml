@@ -15,14 +15,18 @@ exemptions:
       requires, such as `currency` when `basis` is `spend`, is optional in
       the class and its absence passes, and a member whose type a condition
       narrows, such as `amount`, a count when `basis` is `units`, keeps its
-      wider type. A part's `then: false`, such as a daypart window's, which
-      rejects a `start` of `24:00`, goes with it, so that window passes.
+      wider type, as a committed metric's `value` keeps its measure's type
+      for `viewable_rate`, where the condition narrows it to a fraction. A
+      part's `then: false`, such as a daypart window's, which rejects a
+      `start` of `24:00`, goes with it, so that window passes.
     cases:
       - { label: "corpus DaypartWindow#/then mutant", kind: verdict }
       - { label: "corpus Commitment#/then/required/currency mutant", kind: verdict }
       - { label: "corpus Commitment#/else/then/properties/amount/$ref mutant", kind: verdict }
       - { label: "corpus MinCommitmentEntry#/then/required/currency mutant", kind: verdict }
       - { label: "corpus MinCommitmentEntry#/else/then/properties/amount/$ref mutant", kind: verdict }
+      - { label: "corpus CommittedMetricsEntry#/then/properties/value/$ref mutant", kind: verdict }
+      - { label: "corpus CommittedMetricsEntry#/else/then/properties/value/$ref mutant", kind: verdict }
       - { label: "corpus Proposal#/then/required/brief_ref mutant", kind: verdict }
       - { label: "corpus LineItem#/then/required/terms_ref mutant", kind: verdict }
   - id: PG-2
@@ -107,8 +111,9 @@ exemptions:
     reason: >-
       The generator drops `dependentRequired`, so a money member without the
       `currency` it requires beside it passes, and so does an amount without
-      the `basis` that says what it counts, and a daypart without the
-      `time_zone` that reads it.
+      the `basis` that says what it counts, a committed metric's value without
+      the `metric` that types it, and a daypart without the `time_zone` that
+      reads it.
     cases:
       - { label: "corpus LineItem#/dependentRequired/daypart/time_zone mutant", kind: verdict }
       - { label: "corpus PricingEntry#/dependentRequired/agreed_rate/currency mutant", kind: verdict }
@@ -116,6 +121,7 @@ exemptions:
       - { label: "corpus PricingEntry#/dependentRequired/gross_rate/currency mutant", kind: verdict }
       - { label: "corpus PricingEntry#/dependentRequired/seller_rate/currency mutant", kind: verdict }
       - { label: "corpus MinCommitmentEntry#/dependentRequired/amount/basis mutant", kind: verdict }
+      - { label: "corpus CommittedMetricsEntry#/dependentRequired/value/metric mutant", kind: verdict }
   - id: PG-10
     reason: >-
       For `format: uuid`, the generator writes Python's `UUID`, which Pydantic

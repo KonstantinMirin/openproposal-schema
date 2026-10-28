@@ -1,0 +1,40 @@
+format: 1
+id: G-104
+date: 2026-10-28
+question: What changes in the gates to close the gaps an independent review of the committed-metric fix found?
+decision: >-
+  A basis with a concept for its other terms could drop a sibling's
+  requirement without a word: where a listed term's concept requires a
+  sibling, as money requires its currency, the model now fails, since the
+  basis can't make that sibling conditional on the term; a test holds it,
+  and the existing guard for an others' concept that requires a sibling
+  gets its test too. The model also fails a basis that names every term of
+  a closed vocabulary beside a concept for the others, which no term
+  reaches, and the domains check a basis that names no term beside it,
+  each with a test. The kernel test's Budget twin asserts exactly the pairs
+  it fails, Amount's and, under a concept of its own, Measure's. D-005 now
+  records that an entry with a `value` gives its `metric`, as D-036 does for
+  an amount and its basis, and asks the text to state it; says that a DOOH
+  metric the text doesn't name, such as audience impacts, is a namespaced
+  term, so a bare name still fails on its metric, which a test holds; that
+  a rate a vendor names that way can't be bounded as a rate; and that a
+  quantity need not be whole, in place of "count". D-010 compares its
+  fraction with D-005's rates. G-103 also changed what it didn't say: the
+  domains schema lets a basis with `others` name one term, which the
+  domains check guards in place of `minProperties: 2`; the corpus gains
+  `Measure`'s cases; feedback.json changes with details.md; and every tree,
+  not only the as-written one, rejected the line item. The test suite holds
+  483 tests, and MIN_TESTS is 483.
+rationale: >-
+  The model and the domains check gain three checks, and the kernel test is
+  exact again; nothing is relaxed. feedback/details.md and feedback.json
+  change in D-005's entry alone; comment.md doesn't change.
+accepts:
+  - { gate: comparison, fingerprint: cd9a0784c9a7071479919e325e65022309e2659814c01416b80358e63921a74d }
+  - { gate: domains-check, fingerprint: 2e06a4428c4c58420f59c8d38772af684502d8ea969d61893f3ba64e7db95ee2 }
+  - { gate: duplication-kernel, fingerprint: 7a4e8c27a9c3679e69e3d9d39a4248f72b6f8dd76abefa66f741428dfb92d310 }
+  - { gate: duplication-model, fingerprint: ae34046dcc78f873ab50bec35451f3cff54317cabd2948e4465d44afd310d169 }
+  - { gate: model-resolves, fingerprint: 62a915262723e17c98af6043d30d11dad24c049134b6b8b45c020685878804c3 }
+  - { gate: npm-test, fingerprint: 383e4966a17f68c1bda160c961c6b46e4d7053d5e4791c71443c31c748882384 }
+  - { gate: site-builds, fingerprint: a0f919a6fbdbb84709fc5c0b6ee2fcc6cc1fa5a2b64f325f429ea4034c895405 }
+  - { gate: variant-diff, fingerprint: 04c42f7d9d66f8317e2ed11ebcf2882eaed5ba568da69d97160994be53d09f94 }

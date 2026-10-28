@@ -231,3 +231,28 @@ test("a basis whose type isn't one of its terms' concepts, or that no object rea
   const unread = propertyProblems(LOCKS[0]!.model, "main", domains((d) => d.bases.push({ vocabulary: "HoldScope", member: "amount", terms: { proposal: "amount", line_item: "count" }, decision: "D-036" })), DECISIONS);
   assert.ok(unread.some((p) => /basis "HoldScope": no object holds it beside "amount" on lock "main"/.test(p)), unread.join("\n"));
 });
+
+test("a basis that reads every other term as one concept narrows its member only for the terms it names, and holds that concept as the member's type", () => {
+  const metric = (edit: (b: Domains["bases"][number]) => void) => domains((d) => edit(d.bases.find((b) => b.vocabulary === "Metric")!));
+  // The member's own type must be the concept every other term gives it.
+  const wrong = resolveModel({ ir: LOCKS[0]!.ir, lock: "main", mappings: MAPPINGS, decisions: DECISIONS, kernel: { ...KERNEL, domains: metric((b) => (b.others = "count")) }, constructors: CONSTRUCTORS });
+  assert.ok(wrong.problems.some((p) => /"CommittedMetricsEntry": property "value": its basis "metric" reads it as fraction for "viewable_rate", fraction for "completion_rate", and count for every other term, and its type is the concept of every other term's/.test(p)), wrong.problems.join("\n"));
+  // A term the vocabulary doesn't hold fails, as a term that gives the others' concept and a basis that narrows nothing do.
+  const unknown = resolveModel({ ir: LOCKS[0]!.ir, lock: "main", mappings: MAPPINGS, decisions: DECISIONS, kernel: { ...KERNEL, domains: metric((b) => (b.terms = { ...b.terms, match_rate: "fraction" })) }, constructors: CONSTRUCTORS });
+  assert.ok(unknown.problems.some((p) => /its basis "metric" names "match_rate", which the vocabulary "Metric" doesn't hold on lock "main"/.test(p)), unknown.problems.join("\n"));
+  assert.match(checkDomains(metric((b) => (b.terms = { ...b.terms, completion_rate: "measure" })), TYPES, DECISIONS).join("\n"), /basis "Metric": a term reads "value" as "measure", the concept every other term gives it/);
+  assert.match(checkDomains(domains((d) => (d.bases[0]!.terms = { spend: "amount" })), TYPES, DECISIONS).join("\n"), /basis "CommitmentBasis": names one term and no concept for the others/);
+  assert.match(checkDomains(metric((b) => (b.others = "nothing")), TYPES, DECISIONS).join("\n"), /every other term reads "value" as "nothing", which is no concept/);
+  assert.match(checkDomains(metric((b) => (b.terms = {})), TYPES, DECISIONS).join("\n"), /basis "Metric": names no term, so nothing narrows "value" from "measure"/);
+});
+
+test("a basis with a concept for its other terms fails where it can't state a sibling a concept requires, or where no term reaches the other terms' concept", () => {
+  const resolve = (edit: (d: Domains) => void) => resolveModel({ ir: LOCKS[0]!.ir, lock: "main", mappings: MAPPINGS, decisions: DECISIONS, kernel: { ...KERNEL, domains: domains(edit) }, constructors: CONSTRUCTORS }).problems.join("\n");
+  const commitment = (d: Domains) => d.bases.find((b) => b.vocabulary === "CommitmentBasis")!;
+  // A listed term whose concept requires a sibling: money for a rate would need its currency only while the metric is that rate.
+  assert.match(resolve((d) => (d.bases.find((b) => b.vocabulary === "Metric")!.terms = { viewable_rate: "amount", completion_rate: "fraction" })), /its basis "metric" reads it, for "viewable_rate", as a concept that requires a sibling/);
+  // The others' concept requires a sibling, which no one term can make conditional.
+  assert.match(resolve((d) => Object.assign(commitment(d), { terms: { units: "count" }, others: "amount" })), /reads it as amount for every other term, and amount requires its "currency"/);
+  // A closed vocabulary named whole leaves no term for the others' concept.
+  assert.match(resolve((d) => Object.assign(commitment(d), { terms: { spend: "count", units: "count" }, others: "amount" })), /names every term of the closed vocabulary "CommitmentBasis", so no term reads it as amount/);
+});

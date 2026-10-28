@@ -1,11 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { join } from "node:path";
-import { allSnapshotFiles, blobSha, checkDriftSnapshots, compareDrift, driftFiles, loadDriftSources, readFiles, readGoEnums, readProtoEnums, treeSha, type DriftSources } from "../src/drift.ts";
+import { allSnapshotFiles, blobSha, checkEnumDriftSnapshots, compareEnumDrift, enumDriftFiles, loadEnumDriftSources, readFiles, readGoEnums, readProtoEnums, treeSha, type EnumDriftSources } from "../src/enum-drift.ts";
 import { specRoot } from "../src/repo.ts";
 
 const ADCOM = specRoot("adcom");
-const SOURCES = loadDriftSources(ADCOM);
+const SOURCES = loadEnumDriftSources(ADCOM);
 const FILES = allSnapshotFiles(ADCOM, SOURCES);
 
 async function build() {
@@ -56,14 +56,14 @@ test("every snapshot holds its whole folder at the pinned tree and its license a
   }
   // Prebid's folder holds the objects' files, its tests, a README, and test data; the reader reads its 94 Go files that aren't tests.
   assert.equal(readFiles(SOURCES.sources[1]!, FILES.get("prebid-openrtb")!).length, 94);
-  assert.deepEqual(checkDriftSnapshots(SOURCES, FILES, "/nonexistent").problems, []);
+  assert.deepEqual(checkEnumDriftSnapshots(SOURCES, FILES, "/nonexistent").problems, []);
 });
 
 test("a reachable clone must have the commit and the pinned tree and license", async () => {
   const { mkdtempSync, mkdirSync, writeFileSync } = await import("node:fs");
   const { tmpdir } = await import("node:os");
   const { spawnSync } = await import("node:child_process");
-  const dir = mkdtempSync(join(tmpdir(), "drift-clone-"));
+  const dir = mkdtempSync(join(tmpdir(), "enum-drift-clone-"));
   const sh = (...args: string[]) => spawnSync("git", ["-C", dir, ...args], { encoding: "utf8" }).stdout.trim();
   sh("init", "-q");
   mkdirSync(join(dir, "enums"));
@@ -74,21 +74,21 @@ test("a reachable clone must have the commit and the pinned tree and license", a
   const commit = sh("rev-parse", "HEAD");
   const files = new Map([["s", new Map([["enums/e.proto", Buffer.from("enum A {\n  ONE = 1;\n}\n")], ["LICENSE", Buffer.from("License.\n")]])]]);
   const source = { id: "s", title: "S", upstream: "https://github.com/example/s", commit, clone: dir, reader: "proto" as const, folder: "enums", tree: sh("rev-parse", "HEAD:enums"), license: { path: "LICENSE", blob: sh("rev-parse", "HEAD:LICENSE") } };
-  const sources = (x: Partial<typeof source>): DriftSources => ({ format: 1, lock: "main", sources: [{ ...source, ...x }], lists: [], file: "sources.yaml" });
+  const sources = (x: Partial<typeof source>): EnumDriftSources => ({ format: 1, lock: "main", sources: [{ ...source, ...x }], lists: [], file: "sources.yaml" });
   assert.equal(treeSha(files.get("s")!, "enums"), source.tree, "the tree hash is git's");
-  const ok = checkDriftSnapshots(sources({}), files, "/");
+  const ok = checkEnumDriftSnapshots(sources({}), files, "/");
   assert.deepEqual(ok.problems, []);
   assert.match(ok.notes[0]!, /checked against its pins and the clone/);
-  assert.match(checkDriftSnapshots(sources({ commit: "0".repeat(40) }), files, "/").problems.join(), /has no commit 0000000000000000000000000000000000000000/);
+  assert.match(checkEnumDriftSnapshots(sources({ commit: "0".repeat(40) }), files, "/").problems.join(), /has no commit 0000000000000000000000000000000000000000/);
   // A snapshot that agrees with its pins and a clone that doesn't: the clone's tree is another.
   const other = new Map([["s", new Map([["enums/e.proto", Buffer.from("enum A {\n  TWO = 2;\n}\n")], ["LICENSE", Buffer.from("License.\n")]])]]);
   const tree = treeSha(other.get("s")!, "enums");
-  assert.match(checkDriftSnapshots(sources({ tree }), other, "/").problems.join(), new RegExp(`enums at ${commit.slice(0, 7)} in .* is tree ${source.tree}, not the pinned ${tree}`));
+  assert.match(checkEnumDriftSnapshots(sources({ tree }), other, "/").problems.join(), new RegExp(`enums at ${commit.slice(0, 7)} in .* is tree ${source.tree}, not the pinned ${tree}`));
 });
 
-test("the drift report reproduces the survey: adcom-proto misses 37 codes in 9 lists and has no enum for 6, and Prebid's types miss 29 codes in 7 lists", async () => {
+test("the enum drift report reproduces the survey: adcom-proto misses 37 codes in 9 lists and has no enum for 6, and Prebid's types miss 29 codes in 7 lists", async () => {
   const b = await build();
-  const { doc, problems } = compareDrift({ sources: SOURCES, ir: b.ir, model: b.model, files: FILES });
+  const { doc, problems } = compareEnumDrift({ sources: SOURCES, ir: b.ir, model: b.model, files: FILES });
   assert.deepEqual(problems, []);
   const t = doc.totals;
   assert.deepEqual([t["adcom-proto"]!.missing, t["adcom-proto"]!.listsMissing, t["adcom-proto"]!.noEnum], [37, 9, 6]);
@@ -117,7 +117,7 @@ test("an enum value the list doesn't hold is extra unless a vendor range or a >0
   patch("adcom1/device_type.go", (t) => t.replace(/\n\)/, "\n\tDeviceNine DeviceType = 9\n)"));
   patch("adcom1/api_framework.go", (t) => t.replace(/\n\)/, "\n\tAPIVendor APIFramework = 501\n)"));
   patch("adcom1/start_delay.go", (t) => t.replace(/\n\)/, "\n\tStartThirty StartDelay = 30\n)"));
-  const { doc } = compareDrift({ sources: SOURCES, ir: b.ir, model: b.model, files });
+  const { doc } = compareEnumDrift({ sources: SOURCES, ir: b.ir, model: b.model, files });
   const at = (list: string) => doc.lists.find((l) => l.list === list)!.drift.find((d) => d.source === "prebid-openrtb")!;
   assert.deepEqual(at("list_devicetypes").extra.map((x) => x.value), [9]);
   assert.deepEqual(at("list_apiframeworks").extra, []);
@@ -126,14 +126,23 @@ test("an enum value the list doesn't hold is extra unless a vendor range or a >0
 
 test("the sources must pair every list once and every enum once", async () => {
   const b = await build();
-  const run = (s: DriftSources) => compareDrift({ sources: s, ir: b.ir, model: b.model, files: FILES }).problems;
+  const run = (s: EnumDriftSources) => compareEnumDrift({ sources: s, ir: b.ir, model: b.model, files: FILES }).problems;
   assert.ok(run({ ...SOURCES, lists: [...SOURCES.lists, { list: "list_nothing", enums: { "adcom-proto": null, "prebid-openrtb": null } }] }).some((p) => p.includes("names the list list_nothing, which the registry doesn't hold")));
   assert.ok(run({ ...SOURCES, lists: SOURCES.lists.map((l) => (l.list === "list_devicetypes" ? { ...l, enums: { "adcom-proto": "DeviceType" } } : l)) }).some((p) => p.includes("list_devicetypes says nothing of prebid-openrtb")));
 });
 
 test("the committed report is what the sources and the registry give", async () => {
   const { readFileSync } = await import("node:fs");
-  const { files, problems } = await driftFiles(ADCOM);
+  const { files, problems } = await enumDriftFiles(ADCOM);
   assert.deepEqual(problems, []);
-  for (const [name, text] of files) assert.equal(readFileSync(join(ADCOM, "drift", name), "utf8"), text, name);
+  for (const [name, text] of files) assert.equal(readFileSync(join(ADCOM, "enum-drift", name), "utf8"), text, name);
+});
+
+test("git keeps every snapshot file byte for byte, so its pinned tree and blob hashes hold on every checkout", async () => {
+  const { spawnSync } = await import("node:child_process");
+  const sources = loadEnumDriftSources(ADCOM);
+  const paths = sources.sources.flatMap((s) => [...allSnapshotFiles(ADCOM, sources).get(s.id)!.keys()].map((p) => join("enum-drift", "snapshots", s.id, p)));
+  assert.ok(paths.length > 90, `${paths.length} snapshot files`);
+  const out = spawnSync("git", ["check-attr", "text", "--", ...paths], { cwd: ADCOM, encoding: "utf8" }).stdout.trim().split("\n");
+  assert.deepEqual(out.filter((l) => !l.endsWith(": text: unset")), []);
 });

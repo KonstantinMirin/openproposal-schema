@@ -92,6 +92,7 @@ func init() {
 	Types["LineItemSummaryPropertiesSelection"] = TypeOf[LineItemSummaryPropertiesSelection]()
 	Types["MaterialsDue"] = TypeOf[MaterialsDue]()
 	Types["MaxRange"] = TypeOf[MaxRange]()
+	Types["Measure"] = TypeOf[Measure]()
 	Types["MeasurementSourceOption"] = TypeOf[MeasurementSourceOption]()
 	Types["MeasurementSourceSelection"] = TypeOf[MeasurementSourceSelection]()
 	Types["Metric"] = TypeOf[Metric]()

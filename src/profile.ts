@@ -101,7 +101,7 @@ export const STAGE_ENTRIES: Readonly<Record<Stage, readonly string[]>> = {
   input: ["spec.yaml", "spec-input", "build"],
   extract: ["ir"],
   model: ["mapping", "decisions", "kernel-binding.yaml"],
-  outputs: ["vectors", "schemas", "rules", "corpus", "type-examples", "comparison", "feedback", "variants", "examples", "releases", "roundtrip", "field-examples", "plain-generator", "drift"],
+  outputs: ["vectors", "schemas", "rules", "corpus", "type-examples", "comparison", "feedback", "variants", "examples", "releases", "roundtrip", "field-examples", "plain-generator", "enum-drift"],
 };
 
 /** A spec's SDK packages. Throws for a spec with no SDK types, whose profile names none. */
@@ -210,5 +210,5 @@ export function checkProfile(i: ProfileCheckInput): string[] {
   return problems;
 }
 
-/** What a spec's schema files are named by: its `$id` base and its name in prose (src/emit.ts). */
-export const schemaNamesOf = (p: SpecProfile): { base: string; short: string } => ({ base: p.names.schema_base, short: p.names.short });
+/** The part of what a spec's schema files are named by that its profile gives: its `$id` base and its name in prose; its plugin gives the rest (`schemaNamesOfSpec`). */
+export const schemaIdsOf = (p: SpecProfile): { base: string; short: string } => ({ base: p.names.schema_base, short: p.names.short });

@@ -2,7 +2,8 @@
 
 /** The OpenProposal `guarantees` module's types. */
 import { z } from "zod";
-import { Duration, ExternalId, Fraction, NamespacedTerm, Selectable, Text, Uuid } from "./kernel.js";
+import * as rt from "./runtime.js";
+import { Duration, ExternalId, Fraction, Measure, NamespacedTerm, Selectable, Text, Uuid } from "./kernel.js";
 
 /** The `MeasurementBasis` vocabulary: no core terms are listed yet, so every term is namespaced (`NamespacedTerm`). */
 export type MeasurementBasis = NamespacedTerm;
@@ -22,13 +23,13 @@ export const Metrics = {
 export interface CommittedMetricsEntry {
   basis?: MeasurementBasis;
   metric?: Metric;
-  value?: Fraction;
+  value?: Measure;
 }
 export const CommittedMetricsEntry: z.ZodType<CommittedMetricsEntry> = z.strictObject({
   basis: MeasurementBasis.optional(),
   metric: Metric.optional(),
-  value: Fraction.optional(),
-});
+  value: Measure.optional(),
+}).check(rt.requires("value", ["metric"]), rt.condition("metric", "viewable_rate", [], { value: Fraction }), rt.condition("metric", "completion_rate", [], { value: Fraction }));
 
 /** The `ReportingDeliveryMechanism` vocabulary: no core terms are listed yet, so every term is namespaced (`NamespacedTerm`). */
 export type ReportingDeliveryMechanism = NamespacedTerm;

@@ -31,7 +31,7 @@ function counts(inputs: SiteInputs) {
 /** A spec source as a list item: its label, a link to each run of its lines, and its quote, shown on hover and when expanded. */
 export function sourceItem(s: SourceInfo, lockLabel?: string): string {
   const links = s.links.map((l) => `<a href="${esc(l.href)}">${esc(l.text)}</a>`).join(", ");
-  return `<li class="src"><details><summary title="${esc(s.quote)}"><span class="src-label">${inline(s.label, "")}</span>${lockLabel ? ` <span class="tag">${esc(lockLabel)}</span>` : ""}${links ? ` <span class="src-links">${links}</span>` : ""}</summary><blockquote>${inline(s.quote, "")}</blockquote>${s.note ? `<p class="note">${esc(s.note)}</p>` : ""}</details></li>`;
+  return `<li class="src"><details><summary title="${esc(s.quote.text)}"><span class="src-label">${inline(s.label, "")}</span>${lockLabel ? ` <span class="tag">${esc(lockLabel)}</span>` : ""}${links ? ` <span class="src-links">${links}</span>` : ""}</summary><blockquote>${s.quote.html}</blockquote>${s.note ? `<p class="note">${esc(s.note)}</p>` : ""}</details></li>`;
 }
 
 /** The switches' markup, which the pages' scripts wire up. */

@@ -875,8 +875,27 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
       const own = value.type.kind === "named" ? concepts.get(value.type.name)?.concept : undefined;
       const terms = Object.entries(basis.terms);
       const at = terms.filter(([, c]) => c === own?.name).map(([term]) => term);
-      if (own === undefined || at.length !== 1) {
-        problems.push(`${where}: its basis "${k}" reads it as ${terms.map(([term, c]) => `${c} for "${term}"`).join(", ")}, and its type is the concept of exactly one term's`);
+      // The member's own type is the concept every unlisted term gives it, or else the concept of exactly one listed term.
+      const others = basis.others;
+      if (own === undefined || (others === undefined ? at.length !== 1 : own.name !== others)) {
+        problems.push(`${where}: its basis "${k}" reads it as ${terms.map(([term, c]) => `${c} for "${term}"`).join(", ")}${others !== undefined ? `, and ${others} for every other term` : ""}, and its type is ${others !== undefined ? `the concept of every other term's` : "the concept of exactly one term's"}`);
+        continue;
+      }
+      const vocabulary = types.get((p.type as { name: string }).name);
+      const unknown = vocabulary?.kind === "vocabulary" ? terms.filter(([term]) => !vocabulary.terms.some((x) => String(x.value) === term)).map(([term]) => term) : [];
+      if (unknown.length > 0) {
+        problems.push(`${where}: its basis "${k}" names ${unknown.map((x) => `"${x}"`).join(", ")}, which the vocabulary "${vocabulary!.name}" doesn't hold on lock "${lock}"`);
+        continue;
+      }
+      // The concept of the other terms is reached only by a term the basis doesn't name, which a closed vocabulary that it names whole has none of.
+      if (others !== undefined && vocabulary?.kind === "vocabulary" && !vocabulary.open && vocabulary.terms.every((x) => String(x.value) in basis.terms)) {
+        problems.push(`${where}: its basis "${k}" names every term of the closed vocabulary "${vocabulary.name}", so no term reads it as ${others}; leave out \`others\`, and type it as one term's concept`);
+        continue;
+      }
+      // A listed term's concept that requires a sibling would need the sibling required while the basis holds that term, which the basis with others can't state.
+      const needy = others === undefined ? [] : terms.filter(([, c]) => conceptTypes.get(c)?.requires !== undefined).map(([term]) => term);
+      if (needy.length > 0) {
+        problems.push(`${where}: its basis "${k}" reads it, for ${needy.map((x) => `"${x}"`).join(", ")}, as a concept that requires a sibling, which a basis with a concept for its other terms can't make conditional`);
         continue;
       }
       read.add(basis.member);
@@ -887,6 +906,10 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
       if (p.presence !== "required" && value.presence !== "required") dependent[basis.member] = [...(dependent[basis.member] ?? []), k];
       const sibling = own.requires ? t.properties[own.requires.member] : undefined;
       if (!own.requires || !sibling) continue;
+      if (others !== undefined) {
+        problems.push(`${where}: its basis "${k}" reads it as ${own.name} for every other term, and ${own.name} requires its "${own.requires.member}", which no one term can make conditional`);
+        continue;
+      }
       const condition = `REQUIRED when \`${k} = ${at[0]}\``;
       if (sibling.presence === "conditional" && sibling.condition !== condition) {
         problems.push(`${where}: its basis reads it as ${own.name} when "${k}" is "${at[0]}", so its "${own.requires.member}" is ${condition}, but the specification states "${sibling.condition ?? ""}"`);
