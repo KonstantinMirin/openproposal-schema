@@ -1,0 +1,7 @@
+# A known-bad kernel binding for the kernel-load gate: it binds a primitive the
+# kernel doesn't define.
+format: 1
+spec: undefined
+primitives:
+  - name: NoSuchType
+    decision: D-001

@@ -1,0 +1,50 @@
+format: 1
+id: G-082
+date: 2026-10-27
+question: What changes in the gates when the site becomes one site for every specification, each under its own path, with no downloads?
+decision: >-
+  The site gate builds one site for the specs specs/site.yaml lists, once
+  after every spec's gates instead of inside OpenProposal's, with each
+  spec's pages under its path and a root page that lists the specs. Its
+  check runs on the whole site: a link into a spec's type map is read by
+  that spec's own router, filled with its locks and variants, and checked
+  against that spec's data; and a link into the public repository must name
+  a tracked path under sdk/ or specs/, the folders the export publishes
+  whole, since the site now links the repository in place of downloads.
+  Every existing fixture keeps its check on OpenProposal's pages at their
+  new paths, and five fixtures are new: a repository link outside those
+  folders, a repository link to a path the tree doesn't hold, a root page
+  link to a spec page the site lacks, a root page link into a spec's type
+  map at a type its build lacks, and a spec's type map with no router. The
+  spec profile's site settings lose the publisher, repository, deploy
+  target, and archive name, which the site's settings now give, and gain
+  each lock's label, phrase, and aliases; the extraction, fidelity, rule,
+  example, type-example, comparison, feedback, round-trip, and profile
+  gates reach the profile's types, so their fingerprints change with no
+  change to what they check. The test suite holds 433 tests, and MIN_TESTS
+  is 433.
+rationale: >-
+  No check is removed or relaxed: each one now covers every spec's pages,
+  and the repository links add one. OpenProposal's committed outputs don't
+  change, and its pages on the site keep their bytes apart from the
+  intended changes: the files page replaces the downloads and their
+  archives, the navigation and footer name it Files, the landing page's
+  button and How it's built name the files instead of the downloads, the
+  type map wraps a long word instead of widening the page, and its note on
+  an open vocabulary names the vendor codes a list reserves.
+accepts:
+  - { gate: comparison, fingerprint: 9eea56488b35a9a83178b1675a39d8e591b99e7a82d947ed64c3fb5e697a1dc6 }
+  - { gate: examples-validate, fingerprint: 85b9e5b178a51be6b4ba510dafc89f60d82e8294039f362ce0e101dd7f6d538a }
+  - { gate: extraction, fingerprint: e4d8dcf7be1c0700ac606796e598800b0aa41b7a4869f74e356c9a862d15545a }
+  - { gate: feedback, fingerprint: 1082705b2aec0385894c0a37096116aa9bae0ba689659bb37313e52e324617e3 }
+  - { gate: fidelity, fingerprint: 4e0f5a4b2283056fc58ac3ff3a4be3e3122c5b1a1b0773316bac63b92d41bbe2 }
+  - { gate: field-examples, fingerprint: 28fb8383f37f3c3447f9b2211d355f78208076ccbfcb70f6091cfdfd4d45c379 }
+  - { gate: guard, fingerprint: a30249c41e915a48ea1dbac8c16c7386c67c9b99813e5da2deede313804f3a3a }
+  - { gate: npm-test, fingerprint: 0c58d919fbbbb22c116398f06e36b4b99824173c20363f071d0871fc4bd63c20 }
+  - { gate: round-trip, fingerprint: 3198ee879594e7130991cd7f673882e737e7aebd4f3670bba991c427b671c6fe }
+  - { gate: rule-checks, fingerprint: 07b5f0fc927ff77d3ef49dad6a5becb5df9eb21cb9ef98559f2ed3b8e7b356c8 }
+  - { gate: site-builds, fingerprint: a81d0422c788a6f45c10a722b828dbb37131ef8cff5ef53bfd7f9f44e1b60606 }
+  - { gate: spec-profile, fingerprint: 1ceb7a1b82c1e5f0648dc8946ebfde33147ce04093204ad2016a10be6455aa07 }
+  - { gate: type-examples-generate, fingerprint: cf0034db8087fc83f3c1c508b84c7a709cc67099e7e84225654390ab858f0a90 }
+  - { gate: type-examples-valid, fingerprint: b37be3886ac480917ad0b1a4e5f7bc9087ef520b0860cfab340a6526ab29122c }
+  - { gate: variant-examples, fingerprint: 9c7c9652375a1b6b9ac12723cc9b5bb7983d470c4cabb6283c04e9950003464d }

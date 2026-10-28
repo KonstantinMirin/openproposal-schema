@@ -1,10 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { join } from "node:path";
-import { checkExemptions, checkExemptionsFile, loadExemptions, pinnedPlainGenerator, plainDivergences, plainModuleOf, plainTarget, type ExemptionsFile } from "../src/plain-parity.ts";
+import { checkExemptions, checkExemptionsFile, EXEMPTIONS_FILE, type ExemptionsFile, loadExemptions, pinnedPlainGenerator, plainDivergences, plainModuleOf, plainTarget } from "../src/plain-parity.ts";
 import type { ModelDoc } from "../src/model.ts";
 import type { SdkCase } from "../src/sdk-parity.ts";
-import { ROOT } from "./helpers.ts";
+import { ROOT, SPEC } from "./helpers.ts";
 
 const file = (exemptions: ExemptionsFile["exemptions"], generator = "datamodel-code-generator 0.86.0"): ExemptionsFile => ({ format: 1, generator, exemptions, file: "x.yaml" });
 
@@ -59,7 +59,7 @@ test("the exemptions file must be written for the pinned generator, with each ID
 });
 
 test("the committed exemptions file is schema-valid and written for the pinned generator", () => {
-  const ex = loadExemptions(ROOT);
+  const ex = loadExemptions(join(SPEC, EXEMPTIONS_FILE));
   assert.deepEqual(checkExemptionsFile(ex, pinnedPlainGenerator(ROOT), ["main", "with-open-prs"]), []);
-  assert.equal(ex.file, join(ROOT, "plain-generator", "exemptions.yaml"));
+  assert.equal(ex.file, join(SPEC, "plain-generator", "exemptions.yaml"));
 });

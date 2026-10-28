@@ -1,0 +1,35 @@
+format: 1
+id: G-095
+date: 2026-10-28
+question: What changes in the gates to close the gaps an independent review of AdCOM's drift report found?
+decision: >-
+  G-093's drift-sources gate checked that no other file of a folder defines
+  an enum only where a clone was reachable, which CI never has, so a
+  dropped file passed there. Each source now pins its folder's git tree
+  SHA, and its snapshot holds the whole folder, so the folder must hash to
+  the pin, and the reader reads every file of it, with no clone; a snapshot
+  that holds anything else fails. The fixture G-093 named for the clone
+  check never reached it; the fixtures now cover a changed file, a file
+  left out, a file outside the folder, and a changed license, and a test
+  builds a clone to cover its checks. Every file of the folder is now a
+  snapshot file, so drift-tracked's fixture adds one outside the folder. The
+  readers fail on a line that names
+  an enum in a form they don't read, a message's block opened and closed on
+  one line, a Go const or type declaration in another form, and read a
+  value after a block comment on its line, a const block with a comment on
+  its opening line, and a comment line that continues a value's trailing
+  comment in its column. A Go name states no version, so the version check
+  reads only a protocol buffer value's name. The sources schema refuses a
+  clone path with `..`, and the loader a source named twice. The site gate
+  changes with the landing page's wording. The test suite holds 465 tests,
+  and MIN_TESTS is 465.
+rationale: >-
+  The gate now checks without a clone what it checked only with one, and
+  the readers fail on what they read silently before; nothing is relaxed.
+  The report's numbers don't change. OpenProposal's outputs don't change.
+accepts:
+  - { gate: drift-sources, fingerprint: c7ef476cc2908aa640cd971f2a18f7631ac8a31ce6040698bdcfb31f82d03e5d }
+  - { gate: guard, fingerprint: 99f9ba3b6267614e4e44a3cbfbb78d26fde0575b4955b1b89aa5ad6cf37cf09d }
+  - { gate: npm-test, fingerprint: 59458314cfa85cad7bb57829ac39bc8e5206c78016d83b084de912a56b5e1722 }
+  - { gate: site-builds, fingerprint: 0722b31833aee02752880482be049c6013518b803e89300c3b45e7ba0f0095d1 }
+  - { gate: drift-tracked, fingerprint: 2518f2a7961d09ce83a788346fb6e5c680d9aef3870f29d180f28b56771e1d2a }

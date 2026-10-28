@@ -152,6 +152,7 @@ const HEADER = [
 function render(m: MappingFile): string {
   const lines = [...HEADER, "format: 1", `module: ${m.module}`, `sections: ${flow(m.sections)}`];
   if (m.depends && m.depends.length > 0) lines.push(`depends: ${flow(m.depends)}`);
+  if (m.deferred) lines.push(`deferred: { decision: ${m.deferred.decision} }`);
   if (m.types && m.types.length > 0) {
     lines.push("types:");
     for (const d of m.types) lines.push(...item(d as unknown as Record<string, unknown>, ["name", "kind", "ir", "locks", "source", "open", "terms", "any_of", "includes", "members"]));

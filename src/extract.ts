@@ -3,19 +3,16 @@ import type { Blockquote, Code, Heading, List, Node, RootContent, Table as MdTab
 import { collapse, lineAt, parseMarkdown, plain, render, tokenize, type Token } from "./markdown.ts";
 import { ExtractError } from "./errors.ts";
 import { sha256 } from "./canonical.ts";
-import { parseTypeExpr, type TypeExpr } from "./grammar/type-expr.ts";
 import { IDENTIFIER_PATH, parsePath, type FieldPath } from "./grammar/path.ts";
 import { matchBrace, parseInlineObject, type ObjectForm } from "./grammar/inline-object.ts";
 import { parsePresence, resolveWith, type Presence } from "./grammar/required.ts";
-import { findKeywords, LEVEL_ORDER, splitSentences } from "./sentences.ts";
+import { LEVEL_ORDER, splitSentences } from "./sentences.ts";
 import { matchLayout, type Layout, type RenderedHeader } from "./layouts.ts";
+import { GENERIC_ROWS, type ExtractContext, type Hosted, type TextFrontEnd } from "./specs/plugin.ts";
+import { closesTable, opensTable, readHtmlTable } from "./html-table.ts";
 import type {
-  AppendixARow,
-  AppendixBRow,
   CodeSpan,
   Column,
-  Distribution,
-  Field,
   InputRecord,
   IrObjectForm,
   Loc,
@@ -26,34 +23,18 @@ import type {
   Text,
 } from "./ir-types.ts";
 
-/** The mutability markers a field row may carry. A row with any other marker fails extraction. */
-export const MARKERS = [
-  "immutable",
-  "seller-set",
-  "selectable",
-  "settable",
-  "supplied",
-  "requestable",
-  "derived",
-  "mixed",
-] as const;
-
-const OWNERS: Record<string, Field["owner"]> = { "4": "proposal", "5": "line_item" };
-
-interface Hosted {
-  value_lists: string[];
-  inline_objects: string[];
-  statements: string[];
-}
-
 interface PhrasingOptions {
   statements: boolean;
   structures: boolean;
 }
 
-/** Extracts the intermediate representation from the specification text. Deterministic: the output depends only on `text` and `input`. */
-export function extract(text: string, input: InputRecord): SpecIR {
-  return new Extractor(text, input).run();
+/**
+ * Extracts the intermediate representation from a specification's text,
+ * with the readers its plugin gives (`front`). Deterministic: the output
+ * depends only on `text`, `input`, and the readers.
+ */
+export function extract(text: string, input: InputRecord, front: TextFrontEnd): SpecIR {
+  return new Extractor(text, input, front).run();
 }
 
 class Extractor {
@@ -64,12 +45,14 @@ class Extractor {
   private section: Section;
   private stack: Section[] = [];
   private label: { label: string; identifier: string | null } | null = null;
-  private distribution: Token[][] = [];
   private rowsSeen = 0;
+  /** What the plugin's readers see of the extraction. */
+  private readonly ctx: ExtractContext;
 
   constructor(
     private readonly text: string,
     input: InputRecord,
+    private readonly front: TextFrontEnd,
   ) {
     this.section = {
       id: "front",
@@ -103,11 +86,39 @@ class Extractor {
       appendix_a: null,
       appendix_b: null,
     };
+    const self = this;
+    this.ctx = {
+      ir: this.ir,
+      get section() {
+        return self.section;
+      },
+      claim: (id, at, what) => this.claim(id, at, what),
+      slice: (node) => this.slice(node),
+      cellText: (cell) => this.cellText(cell),
+      nameCell: (cell, at) => this.nameCell(cell, at),
+      phrasing: (host, origin, tokens, loc, opts) => this.phrasing(host, origin, tokens, loc, opts),
+    };
   }
 
   run(): SpecIR {
     const tree = parseMarkdown(this.text);
-    for (const node of tree.children) this.block(node);
+    const nodes = tree.children;
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i]!;
+      // An HTML table is one table, though a blank line inside it splits it into several HTML blocks.
+      if (node.type === "html" && opensTable(node.value)) {
+        let j = i;
+        while (!closesTable((nodes[j] as { value?: string }).value ?? "")) {
+          const next = nodes[j + 1];
+          if (!next || next.type !== "html") throw new ExtractError("an HTML table with no </table>", line(node));
+          j++;
+        }
+        this.table(readHtmlTable(this.text, node.position!.start.offset!, nodes[j]!.position!.end.offset!));
+        i = j;
+        continue;
+      }
+      this.block(node);
+    }
     this.finalize();
     return this.ir;
   }
@@ -155,30 +166,22 @@ class Extractor {
     const text = plain(tokenize(node.children));
     const anchor = this.slugger.slug(text);
     const at = line(node);
-    if (node.depth === 1) {
+    // The anchor a heading writes for itself, as `<a name="list_devicetypes"></a>`, which links name.
+    const names = node.children.flatMap((c) => (c.type === "html" ? [...c.value.matchAll(/<a\s[^>]*\bname\s*=\s*"([^"]+)"/gi)].map((m) => m[1]!) : []));
+    if (names.length > 1) throw new ExtractError(`a heading with ${names.length} anchors: ${names.join(", ")}`, at);
+    const head = this.front.sectionOf({ text, depth: node.depth, anchor, name: names[0] ?? null }, this.section);
+    if (head.kind === "title") {
       const front = this.ir.sections[0]!;
-      Object.assign(front, { title: text, heading: text, depth: 1, anchor, line: at });
+      Object.assign(front, { title: text, heading: text, depth: node.depth, anchor, line: at });
       this.section = front;
       this.stack = [front];
       this.label = null;
       return;
     }
-    let number: string | null = null;
-    let title = text;
-    let m: RegExpExecArray | null;
-    if ((m = /^(\d+(?:\.\d+)*)\.?\s+(.+)$/.exec(text))) {
-      number = m[1]!;
-      title = m[2]!;
-    } else if ((m = /^Appendix ([A-Z])\b\s*[—–-]?\s*(.*)$/.exec(text))) {
-      number = m[1]!;
-      title = m[2]!;
-    }
-    let part = this.section.part;
-    if (number !== null && /^[A-Z]$/.test(number)) part = "appendix";
-    else if (number !== null && part === "front" && node.depth === 2) part = "body";
+    const { number, title, part } = head;
     while (this.stack.length > 0 && this.stack[this.stack.length - 1]!.depth >= node.depth) this.stack.pop();
     const parent = this.stack[this.stack.length - 1] ?? null;
-    const id = number ?? `${parent?.id ?? "front"}/${anchor}`;
+    const id = head.id ?? number ?? `${parent?.id ?? "front"}/${anchor}`;
     this.claim(id, at, "section");
     const section: Section = { id, number, title, heading: text, depth: node.depth, anchor, part, parent: parent?.id ?? null, line: at };
     this.ir.sections.push(section);
@@ -200,7 +203,7 @@ class Extractor {
       const firstCode = tokens.find((t) => t.kind === "code");
       this.label = { label: plain(lead).replace(/[.:]$/, ""), identifier: firstCode?.value ?? null };
     }
-    if (this.section.parent === "B" && this.section.title === "What the distribution says") this.distribution.push(tokens);
+    this.front.onParagraph?.(tokens, this.ctx);
     const host = `block:${this.section.id}:${this.next(`block:${this.section.id}`)}`;
     this.phrasing(host, "prose", tokens, { section: this.section.id, line: at });
   }
@@ -227,7 +230,7 @@ class Extractor {
       const toks = tokenize(cell.children);
       return { text: render(toks), code: toks.length === 1 && toks[0]!.kind === "code" ? toks[0]!.value : null };
     });
-    const layout = matchLayout(header);
+    const layout = matchLayout(this.front.layouts, header);
     if (!layout) {
       throw new ExtractError(`unknown table layout "| ${header.map((h) => h.text).join(" | ")} |" in § ${this.section.id}`, at);
     }
@@ -254,9 +257,8 @@ class Extractor {
       }
       const loc: Loc = { section: this.section.id, line: rowLine, table: id, row: i + 1 };
       const digest = sha256(collapse(this.slice(row)));
-      switch (layout.kind) {
-        case "field":
-          return this.fieldRow(row, loc, digest);
+      const kind = this.front.rowKind(layout);
+      switch (kind) {
         case "key":
           return this.keyRow(row, layout, table, header, loc, digest);
         case "definition":
@@ -265,10 +267,9 @@ class Extractor {
           return this.markerRow(row, loc, digest);
         case "concept":
           return this.conceptRow(row, header, loc, digest);
-        case "appendix_a":
-          return this.appendixARow(row, table, loc, digest);
-        case "appendix_b":
-          return this.appendixBRow(row, table, loc, digest);
+        default:
+          if (GENERIC_ROWS.includes(kind) || !this.front.readRow) throw new ExtractError(`no reader for the row kind "${kind}" of layout "${layout.id}"`, rowLine);
+          return this.front.readRow(kind, { row, cells: row.children, layout, table, header, loc, digest }, this.ctx);
       }
     });
     this.label = null;
@@ -281,6 +282,8 @@ class Extractor {
     const headerCode = header[0]!.code;
     if (headerCode !== null) return { via: "header", label: headerCode, identifier: headerCode, ...base };
     const s = this.section;
+    const object = layout.kind === "key" ? (this.front.objectOf?.(s) ?? null) : null;
+    if (object !== null) return { via: "object", label: s.heading, identifier: object, ...base };
     if (s.number !== null && /^[a-z_][a-z0-9_]*$/.test(s.title)) {
       return { via: "heading", label: s.heading, identifier: s.title, ...base };
     }
@@ -288,38 +291,11 @@ class Extractor {
     return { via: "section", label: s.heading, identifier: null, ...base };
   }
 
-  private fieldRow(row: TableRow, loc: Loc, digest: string): void {
-    const [nameC, typeC, markerC, descC] = row.children as [TableCell, TableCell, TableCell, TableCell];
-    const names = this.nameCell(nameC, loc.line);
-    const owner = OWNERS[this.section.id.split(/[./]/)[0]!];
-    if (!owner) throw new ExtractError(`no owner object for a field in § ${this.section.id}`, loc.line);
-    const id = `field:${this.section.id}:${names.map((n) => n.path).join(",")}`;
-    this.claim(id, loc.line, "field");
-    const typeRaw = plain(tokenize(typeC.children));
-    const marker = plain(tokenize(markerC.children));
-    if (!(MARKERS as readonly string[]).includes(marker)) {
-      throw new ExtractError(`unknown mutability marker "${marker}"`, loc.line);
-    }
-    const descTokens = tokenize(descC.children);
-    const hosted = this.phrasing(`${id}#description`, "table_cell", descTokens, loc);
-    this.ir.fields.push({
-      id,
-      owner,
-      names,
-      name_cell: this.slice(nameC).trim(),
-      type: { raw: typeRaw, parsed: parseTypeExpr(typeRaw, loc.line) },
-      marker,
-      description: this.cellText(descC),
-      presence: this.descriptionPresence(descTokens),
-      ...hosted,
-      digest,
-      loc,
-    });
-  }
-
   private keyRow(row: TableRow, layout: Layout, table: Table, header: RenderedHeader[], loc: Loc, digest: string): void {
     const cells = row.children;
-    const key = parsePath(this.singleCode(cells[0]!, loc.line, "key"), loc.line);
+    // A key cell is one code span, or, for a layout that also takes text, as AdCOM's attribute tables write a few, one identifier written plainly.
+    const plainKey = layout.key === "code-or-text" ? render(tokenize(cells[0]!.children)) : "";
+    const key = parsePath(layout.key === "code-or-text" && IDENTIFIER_PATH.test(plainKey) ? plainKey : this.singleCode(cells[0]!, loc.line, "key"), loc.line);
     const parent = table.parent?.identifier;
     const id = `key:${this.section.id}:${parent ? parent + "." : ""}${key.path}`;
     this.claim(id, loc.line, "key");
@@ -330,20 +306,27 @@ class Extractor {
     if (ri >= 0) {
       const toks = tokenize(cells[ri]!.children);
       const raw = render(toks);
-      required = { raw, parsed: resolveWith(parsePresence(raw, MARKERS, loc.line), null, raw, loc.line) };
+      required = { raw, parsed: resolveWith(parsePresence(raw, this.front.markers ?? [], loc.line), null, raw, loc.line) };
       merge(hosted, this.phrasing(`${id}#required`, "table_cell", toks, loc, { statements: false, structures: false }));
     }
-    const mi = col("Meaning");
+    const mi = col(layout.meaning ?? "Meaning");
+    if (mi < 0) throw new ExtractError(`layout "${layout.id}" has no "${layout.meaning ?? "Meaning"}" column`, loc.line);
     const meaning = cells[mi]!;
     merge(hosted, this.phrasing(`${id}#meaning`, "table_cell", tokenize(meaning.children), loc));
+    // A layout that names a type column, as AdCOM's `Attribute | Type | Definition`, keeps the row's type cell as written.
+    const ti = layout.type !== undefined ? col(layout.type) : -1;
+    if (layout.type !== undefined && ti < 0) throw new ExtractError(`layout "${layout.id}" has no "${layout.type}" column`, loc.line);
+    const type = ti >= 0 ? { type: this.cellText(cells[ti]!) } : {};
     let mapping: (Text & { column: string }) | null = null;
-    if (layout.header.length > 3 && cells[3]) mapping = { column: header[3]!.text, ...this.cellText(cells[3]) };
-    this.ir.keys.push({ id, layout: layout.id, key, required, meaning: this.cellText(meaning), mapping, ...hosted, digest, loc });
+    if (layout.type === undefined && layout.header.length > 3 && cells[3]) mapping = { column: header[3]!.text, ...this.cellText(cells[3]) };
+    this.ir.keys.push({ id, layout: layout.id, key, required, meaning: this.cellText(meaning), ...type, mapping, ...hosted, digest, loc });
   }
 
   private definitionRow(row: TableRow, layout: Layout, table: Table, header: RenderedHeader[], loc: Loc, digest: string): void {
     const cells = row.children;
-    const value = this.singleCode(cells[0]!, loc.line, "value");
+    // A value cell is one code span, or, for a layout whose values are written as text, as AdCOM's list codes, its text.
+    const value = layout.value === "text" ? render(tokenize(cells[0]!.children)) : this.singleCode(cells[0]!, loc.line, "value");
+    if (value === "") throw new ExtractError("an empty value cell", loc.line);
     const subject = table.parent?.identifier ?? null;
     const id = `def:${this.section.id}:${subject ? subject + "." : ""}${value}`;
     this.claim(id, loc.line, "definition");
@@ -378,77 +361,6 @@ class Extractor {
     this.ir.concepts.push({ id, columns, ...hosted, digest, loc });
   }
 
-  private appendixARow(row: TableRow, table: Table, loc: Loc, digest: string): void {
-    const [nameC, sectionC, typeC, markerC] = row.children as [TableCell, TableCell, TableCell, TableCell];
-    const names = this.nameCell(nameC, loc.line);
-    const sectionCell = plain(tokenize(sectionC.children));
-    const typeRaw = plain(tokenize(typeC.children));
-    let parsed: TypeExpr | null = null;
-    try {
-      parsed = parseTypeExpr(typeRaw, loc.line);
-    } catch {
-      parsed = null; // Appendix A is a claim to check; stage 2 reports a type it can't parse.
-    }
-    const id = `appendix-a:${loc.row}`;
-    this.claim(id, loc.line, "Appendix A row");
-    const rowRecord: AppendixARow = {
-      id,
-      names,
-      name_cell: this.slice(nameC).trim(),
-      section_cell: sectionCell,
-      section_number: /^(\d+(?:\.\d+)*)\s/.exec(sectionCell)?.[1] ?? null,
-      type: { raw: typeRaw, parsed },
-      marker: plain(tokenize(markerC.children)),
-      digest,
-      loc,
-    };
-    this.ir.appendix_a ??= { section: this.section.id, table: table.id, rows: [] };
-    this.ir.appendix_a.rows.push(rowRecord);
-  }
-
-  private appendixBRow(row: TableRow, table: Table, loc: Loc, digest: string): void {
-    const [markerC, countC, meaningC, fieldsC] = row.children as [TableCell, TableCell, TableCell, TableCell];
-    const marker = plain(tokenize(markerC.children));
-    const countCell = plain(tokenize(countC.children));
-    const id = `appendix-b:${marker}`;
-    this.claim(id, loc.line, "Appendix B row");
-    const rowRecord: AppendixBRow = {
-      id,
-      marker,
-      count: /^\d+$/.test(countCell) ? Number(countCell) : null,
-      count_cell: countCell,
-      meaning: render(tokenize(meaningC.children)),
-      fields: this.appendixBFields(tokenize(fieldsC.children), loc.line),
-      digest,
-      loc,
-    };
-    this.ir.appendix_b ??= { section: this.section.id, table: table.id, rows: [], distribution: null };
-    this.ir.appendix_b.rows.push(rowRecord);
-  }
-
-  /** Parses "`a`, `b` · `c`, `d` (proposal)" into field labels. */
-  private appendixBFields(tokens: Token[], at: number): AppendixBRow["fields"] {
-    const out: AppendixBRow["fields"] = [];
-    let names: string[] = [];
-    const close = (owner: string | null) => {
-      if (names.length === 0) throw new ExtractError("Appendix B field list has an empty entry", at);
-      out.push({ label: names.map((n) => "`" + n + "`").join(" · ") + (owner ? ` (${owner})` : ""), names, owner });
-      names = [];
-    };
-    for (const t of tokens) {
-      if (t.kind === "code") {
-        names.push(t.value);
-        continue;
-      }
-      const m = /^\s*(?:\(([^()]*)\))?\s*([,·])?\s*$/.exec(t.value);
-      if (!m) throw new ExtractError(`unparsed Appendix B field list text "${t.value}"`, at);
-      if (m[2] === "·") continue;
-      if (m[2] === "," || m[1] !== undefined) close(m[1] ?? null);
-    }
-    if (names.length > 0) close(null);
-    return out;
-  }
-
   // ----- Cells -----
 
   /** Parses a Field cell: one code span, or several joined by `·`. */
@@ -479,16 +391,6 @@ class Extractor {
     return { markdown: this.slice(cell).trim(), text: render(tokenize(cell.children)) };
   }
 
-  private descriptionPresence(tokens: Token[]): Presence | null {
-    const sentences = splitSentences(tokens);
-    for (const [i, s] of sentences.entries()) {
-      if (/^(REQUIRED|RECOMMENDED|OPTIONAL)\b/.test(s.text)) {
-        return resolveWith(parsePresence(s.text, MARKERS, s.line), i > 0 ? sentences[i - 1]!.codes : null, s.text, s.line);
-      }
-    }
-    return null;
-  }
-
   // ----- Inline content -----
 
   /** Extracts inline objects, value lists, identifier lists, statements, and code spans from one block or cell. */
@@ -498,7 +400,7 @@ class Extractor {
     if (this.section.part === "appendix") return out;
     const consumed = new Set<number>();
     if (o.structures) {
-      this.inlineObjects(host, origin, tokens, loc, consumed, out);
+      if (this.front.inlineObjects !== false) this.inlineObjects(host, origin, tokens, loc, consumed, out);
       this.valueLists(host, origin, tokens, loc, consumed, out);
       this.identifierLists(host, tokens, loc);
     }
@@ -581,74 +483,32 @@ class Extractor {
     };
   }
 
-  /** Finds runs of code spans separated by `|`, as in "`a` \| `b` (default) \| `c`". */
+  /** Reads each value list the plugin finds in the tokens (`TextFrontEnd.readValueList`). */
   private valueLists(host: string, origin: "table_cell" | "prose", tokens: Token[], loc: Loc, consumed: Set<number>, out: Hosted): void {
     let n = 0;
     for (let i = 0; i < tokens.length; i++) {
+      const r = this.front.readValueList?.(tokens, i, consumed) ?? null;
+      if (r === null) continue;
+      for (const k of r.taken) consumed.add(k);
       const t = tokens[i]!;
-      if (t.kind !== "code" || consumed.has(i)) continue;
-      const items = [{ value: t.value, annotation: null as string | null }];
-      let j = i;
-      for (;;) {
-        const sep = tokens[j + 1];
-        const next = tokens[j + 2];
-        if (!sep || sep.kind !== "text" || !next || next.kind !== "code" || consumed.has(j + 2)) break;
-        const m = /^\s*(?:\(([^()]*)\))?\s*\|\s*$/.exec(sep.value);
-        if (!m) break;
-        if (m[1] !== undefined) items[items.length - 1]!.annotation = collapse(m[1]);
-        items.push({ value: next.value, annotation: null });
-        j += 2;
-      }
-      if (items.length < 2) continue;
-      let contextAfter: string | null = null;
-      const after = tokens[j + 1];
-      if (after?.kind === "text") {
-        let rest = after.value;
-        const m = /^\s*\(([^()]*)\)/.exec(rest);
-        if (m) {
-          items[items.length - 1]!.annotation = collapse(m[1]!);
-          rest = rest.slice(m[0].length);
-        }
-        contextAfter = clauseAfter(rest);
-      }
-      const before = tokens[i - 1];
-      const subjectToken = tokens[i - 2];
-      const subject =
-        before?.kind === "text" && /^\s*from\s*$/.test(before.value) && subjectToken?.kind === "code"
-          ? { identifier: subjectToken.value, relation: "from" as const }
-          : null;
-      for (let k = i; k <= j; k += 2) consumed.add(k);
       const id = `${host}/values:${++n}`;
       this.claim(id, t.line, "value list");
-      this.ir.value_lists.push({ id, host, origin, subject, items, context_after: contextAfter, loc: { ...loc, line: t.line } });
+      this.ir.value_lists.push({ id, host, origin, subject: r.subject, items: r.items, context_after: r.context_after, loc: { ...loc, line: t.line } });
       out.value_lists.push(id);
-      i = j;
+      i = r.end;
     }
   }
 
-  /** Finds runs of three or more items joined by `·`, such as the Summary Representation key list. */
+  /** Reads each identifier list the plugin finds in the tokens (`TextFrontEnd.readIdentifierList`). */
   private identifierLists(host: string, tokens: Token[], loc: Loc): void {
     let n = 0;
     for (let i = 0; i < tokens.length; i++) {
-      const t = tokens[i]!;
-      if (t.kind !== "code") continue;
-      const items = [{ text: t.value, code: true }];
-      let j = i;
-      for (;;) {
-        const sep = tokens[j + 1];
-        const next = tokens[j + 2];
-        if (!sep || sep.kind !== "text" || !next || next.kind !== "code") break;
-        const embedded = /^\s*·\s*([^·`]+?)\s*·\s*$/.exec(sep.value);
-        if (embedded) items.push({ text: collapse(embedded[1]!), code: false });
-        else if (!/^\s*·\s*$/.test(sep.value)) break;
-        items.push({ text: next.value, code: true });
-        j += 2;
-      }
-      if (items.length < 3) continue;
+      const r = this.front.readIdentifierList?.(tokens, i) ?? null;
+      if (r === null) continue;
       const id = `${host}/identifiers:${++n}`;
-      this.claim(id, t.line, "identifier list");
-      this.ir.identifier_lists.push({ id, host, items, loc: { ...loc, line: t.line } });
-      i = j;
+      this.claim(id, tokens[i]!.line, "identifier list");
+      this.ir.identifier_lists.push({ id, host, items: r.items, loc: { ...loc, line: tokens[i]!.line } });
+      i = r.end;
     }
   }
 
@@ -664,7 +524,7 @@ class Extractor {
       return id;
     };
     for (const s of splitSentences(tokens)) {
-      const keywords = findKeywords(s.prose);
+      const keywords = this.front.keywords(s.prose);
       const identifiers: string[] = [];
       for (const c of s.codes) {
         const cls = classifyCode(c);
@@ -678,8 +538,8 @@ class Extractor {
         this.ir.sentences.push({ id, host, part: this.section.part === "front" ? "front" : "body", text: s.text, identifiers, loc: { ...loc, line: s.line } });
         continue;
       }
-      // The conventions paragraph names the keywords; it states no requirement.
-      if (/RFC 2119/.test(s.prose) && keywords.length >= 5) continue;
+      // A conventions paragraph names the keywords; it states no requirement.
+      if (this.front.statesConventions?.(s.prose, keywords)) continue;
       const id = uniqueId(`rule:${this.section.id}:${sha256(s.text).slice(0, 8)}`);
       this.claim(id, s.line, "statement");
       this.ir.statements.push({
@@ -710,7 +570,7 @@ class Extractor {
     if (typed !== this.rowsSeen) throw new ExtractError(`parsed ${typed} of ${this.rowsSeen} table rows`);
 
     for (const table of this.ir.tables) if (table.parent?.identifier) this.resolveParent(table);
-    if (this.ir.appendix_b) this.ir.appendix_b.distribution = this.parseDistribution();
+    this.front.finalize?.(this.ctx);
     this.ir.counts = this.counts();
   }
 
@@ -731,31 +591,6 @@ class Extractor {
     const objects = this.ir.inline_objects.filter((o) => hasMember(o.form));
     const object = objects.find((o) => sameTop(o.loc.section)) ?? objects[0];
     if (object) parent.member_of = object.id;
-  }
-
-  private parseDistribution(): Distribution | null {
-    if (this.distribution.length === 0) return null;
-    const text = collapse(this.distribution.map((t) => plain(t)).join(" "));
-    const a =
-      /Of (\d+) fields, (\d+) are touched by the buyer — (\d+) selectable, (\d+) settable, (\d+) supplied and (\d+) requestable\. The remaining (\d+) are/.exec(
-        text,
-      );
-    const b = /Only the (\d+) requestable fields require a round trip\. Everything else the buyer touches — (\d+) fields —/.exec(text);
-    if (!a || !b) return null;
-    const n = (s: string | undefined) => Number(s);
-    const section = this.ir.sections.find((s) => s.parent === "B" && s.title === "What the distribution says")!;
-    return {
-      total: n(a[1]),
-      buyer: n(a[2]),
-      selectable: n(a[3]),
-      settable: n(a[4]),
-      supplied: n(a[5]),
-      requestable: n(a[6]),
-      remaining: n(a[7]),
-      round_trip: n(b[1]),
-      up_front: n(b[2]),
-      loc: { section: section.id, line: this.distribution[0]![0]!.line },
-    };
   }
 
   private counts(): SpecIR["counts"] {
@@ -863,7 +698,7 @@ function clauseBefore(text: string): string | null {
 }
 
 /** The clause after a position: text up to the next `.`, `;` or `,` break, or null. */
-function clauseAfter(text: string): string | null {
+export function clauseAfter(text: string): string | null {
   const out = collapse(text.split(/[.;,](?:\s|$)/)[0] ?? "");
   return out === "" ? null : out;
 }

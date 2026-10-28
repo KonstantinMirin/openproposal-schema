@@ -7,6 +7,7 @@ import { dirname, join } from "node:path";
 import { gitBlobSha, gitTreeSha } from "../src/canonical.ts";
 import { checkSnapshot, materialize, materializeExamples, writeSnapshot } from "../src/fetch.ts";
 import { loadLock } from "../src/lock.ts";
+import { SPEC as SPEC_DIR } from "./helpers.ts";
 
 const SPEC = "# Spec\n\nText.\n";
 const EXAMPLES: Record<string, string> = { "examples/a.yaml": "a: 1\n", "examples/b.json": "{}\n" };
@@ -104,9 +105,8 @@ test("snapshot: the writer refuses a clone whose examples tree isn't the lock's 
 });
 
 test("snapshot: the committed locks' snapshots check clean", () => {
-  const root = new URL("..", import.meta.url).pathname;
   for (const file of ["spec-lock.yaml", "with-open-prs.lock.yaml"]) {
-    const r = checkSnapshot(loadLock(join(root, "spec-input", file)));
+    const r = checkSnapshot(loadLock(join(SPEC_DIR, "spec-input", file)));
     assert.deepEqual(r.problems, [], file);
   }
 });

@@ -1,4 +1,4 @@
-/* OpenProposal 3.0 JSON Schema: the site's one stylesheet. Light and dark themes,
+/* The site's one stylesheet, which every spec's pages share. Light and dark themes,
    following the system unless the reader picks one, which html[data-theme] holds.
    Nothing scrolls inside the page: no rule sets overflow to auto or scroll, or caps
    a height, and long lines wrap. The site check (src/site/build.ts) fails on either. */
@@ -171,6 +171,12 @@ ul.notes { font-size: .88rem; color: var(--muted); }
 .dl-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 @media (max-width: 860px) { .dl-grid { grid-template-columns: minmax(0, 1fr); } }
 .dl h2 { margin-top: .2em; font-size: 1.2rem; }
+/* The site's root: the case for executable specifications, then a card per spec. */
+.hero-in > p:not(.eyebrow):not(.lede):not(.actions) { max-width: 70ch; }
+ul.spec-cards { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); gap: 16px; }
+.spec-card h2 { margin: .1em 0 .2em; font-size: 1.35rem; }
+.stats-line { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); }
+.stats-line b { color: var(--ink); }
 ul.files { list-style: none; padding: 0; }
 ul.files li { padding: 5px 0; border-bottom: 1px solid var(--line); }
 ul.tree-files { font-size: .85rem; overflow-wrap: anywhere; }
@@ -255,6 +261,8 @@ a.t:hover { border-bottom-style: solid; }
 .terms { color: var(--muted); font-size: .74rem; font-family: var(--mono); overflow-wrap: anywhere; }
 .desc { color: var(--muted); font-size: .78rem; flex-basis: 100%; padding-left: 22px; margin-top: -1px; }
 .kindtag { display: inline-block; font: 600 .7rem/1.6 var(--sans); color: var(--panel); background: var(--c); border-radius: 4px; padding: 0 6px; margin-left: 8px; vertical-align: .3em; }
+/* A long word, such as a URL in a description, wraps instead of widening the page. */
+.detail { overflow-wrap: anywhere; min-width: 0; }
 .detail h2 { font-family: var(--mono); font-size: 1.15rem; }
 .detail .meta { color: var(--muted); font-size: .82rem; margin: -4px 0 10px; }
 .detail h4 { margin: 16px 0 5px; font-size: .86rem; }

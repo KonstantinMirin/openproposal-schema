@@ -1,0 +1,464 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/specs/spec.schema.json",
+  "title": "Spec profile",
+  "description": "One per specification: specs/<id>/spec.yaml. It names the specification, says how its schemas are produced, and gives the data the pipeline reads for it. A specification read from its text names the plugin under src/specs/<plugin>/ that holds its readers: its table layouts, its type and presence grammar, its value-list forms, and its section numbering. A schema set imported as published, with no text to extract, names no plugin.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "id",
+    "title",
+    "upstream",
+    "front_end",
+    "names"
+  ],
+  "properties": {
+    "format": {
+      "const": 1
+    },
+    "id": {
+      "description": "Equals the folder's name under specs/.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "title": {
+      "description": "The specification's name and version, as its owners write them.",
+      "type": "string",
+      "minLength": 3
+    },
+    "upstream": {
+      "description": "The specification's repository.",
+      "type": "string",
+      "pattern": "^https://"
+    },
+    "front_end": {
+      "description": "How the pipeline reads the specification: `text`, extracted from the specification's text into the IR by its plugin, then mapped and emitted; or `schemas`, a published schema set read as it is, with no IR.",
+      "enum": [
+        "text",
+        "schemas"
+      ]
+    },
+    "plugin": {
+      "description": "The plugin under src/specs/ that reads the specification's text.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "documents": {
+      "description": "The documents the specification's field rows describe: each row's owner, found by the top-level section the row sits in, and the document it names, the owner in PascalCase.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "owner",
+          "document",
+          "section"
+        ],
+        "properties": {
+          "owner": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "document": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Za-z0-9]*$"
+          },
+          "section": {
+            "description": "The top-level section number whose field rows the owner has.",
+            "type": "string",
+            "pattern": "^[0-9]+$"
+          }
+        }
+      }
+    },
+    "statements": {
+      "description": "Which sentences are statements with a level: `uppercase`, a sentence with an RFC 2119 keyword in capitals, as the specification's conventions say; or `any-case`, a sentence with a keyword in any case, for a specification that states no convention and writes its keywords in either case, as a decision records.",
+      "enum": [
+        "uppercase",
+        "any-case"
+      ]
+    },
+    "features": {
+      "description": "The parts of the pipeline the specification uses beyond its tables, rows, and statements. Each is off unless the profile turns it on, and the plugin must agree.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "markers": {
+          "description": "Field rows carry a mutability marker, defined by a marker table.",
+          "type": "boolean"
+        },
+        "appendices": {
+          "description": "Appendices restate the field rows, which the round trip checks.",
+          "type": "boolean"
+        },
+        "profiles": {
+          "description": "The specification defines summary profiles of a document.",
+          "type": "boolean"
+        }
+      }
+    },
+    "through": {
+      "description": "The last stage of the pipeline the spec has reached, for a spec still being added: `input`, its locks and snapshots; `extract`, its IR and findings; or `model`, its mapping, decisions, kernel binding, and model. CI runs its gates through that stage, and the spec's folder may hold no file of a later stage, and none that no stage writes. Left out, the spec has every stage, and every gate runs on it.",
+      "enum": [
+        "input",
+        "extract",
+        "model"
+      ]
+    },
+    "names": {
+      "description": "The names the outputs carry: the specification's name in prose, the base of every schema's `$id`, and the SDK packages.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "short",
+        "edition",
+        "release",
+        "schema_base"
+      ],
+      "properties": {
+        "short": {
+          "description": "The specification's name in prose, as in \"the OpenProposal specification\".",
+          "type": "string",
+          "minLength": 2
+        },
+        "edition": {
+          "description": "The version people name it by, as in \"OpenProposal 3.0\".",
+          "type": "string",
+          "minLength": 1
+        },
+        "release": {
+          "description": "The draft or release of the text the default lock pins, as in \"OpenProposal 3.0 draft 1\".",
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_base": {
+          "description": "The base of every schema's `$id`; the site serves each schema at its `$id`.",
+          "type": "string",
+          "pattern": "^https://[^\\s]+/$"
+        },
+        "sdk": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "python",
+            "go",
+            "ts"
+          ],
+          "properties": {
+            "python": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "package",
+                "mode_key",
+                "entry_points"
+              ],
+              "properties": {
+                "package": {
+                  "description": "The Python package, which is also each tree's folder under `python/`.",
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$"
+                },
+                "mode_key": {
+                  "description": "The validation context's key that sets the receive mode.",
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$"
+                },
+                "entry_points": {
+                  "description": "The entry-point group extensions register under.",
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_.]*$"
+                }
+              }
+            },
+            "go": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "module",
+                "package"
+              ],
+              "properties": {
+                "module": {
+                  "description": "The repository's Go module path, which each tree's module path continues with its folder.",
+                  "type": "string",
+                  "pattern": "^[a-z0-9.-]+(/[A-Za-z0-9._-]+)+$"
+                },
+                "package": {
+                  "description": "The Go package, which also prefixes every error the runtime returns.",
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9]*$"
+                }
+              }
+            },
+            "ts": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "package"
+              ],
+              "properties": {
+                "package": {
+                  "description": "The npm package name.",
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9-]*$"
+                }
+              }
+            }
+          },
+          "description": "The SDK packages, for a spec whose types the SDK emitters write; a spec without them has no SDK types."
+        }
+      }
+    },
+    "site": {
+      "description": "The spec's pages on the public site (specs/site.yaml gives the site's host, publisher, and repository).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "default_type"
+      ],
+      "properties": {
+        "default_type": {
+          "description": "The type the type map opens at.",
+          "type": "string",
+          "pattern": "^[A-Z][A-Za-z0-9]*$"
+        },
+        "example": {
+          "description": "The field the How it's built page follows through each step, and the build its links open, for a spec whose page follows one.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "document",
+            "field",
+            "element",
+            "lock",
+            "variant"
+          ],
+          "properties": {
+            "document": {
+              "type": "string",
+              "pattern": "^[A-Z][A-Za-z0-9]*$"
+            },
+            "field": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]*$"
+            },
+            "element": {
+              "description": "The field row's IR element.",
+              "type": "string",
+              "minLength": 3
+            },
+            "lock": {
+              "type": "string"
+            },
+            "variant": {
+              "enum": [
+                "as-written",
+                "proposals"
+              ]
+            }
+          }
+        },
+        "locks": {
+          "description": "How the pages name each lock, by its name: a label for its switch, a short form for a table, the phrase that places a type or a record on it, and other names the type map's address may give it. A lock the map doesn't list is named by its name.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "label",
+              "short",
+              "where"
+            ],
+            "properties": {
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "short": {
+                "type": "string",
+                "minLength": 1
+              },
+              "where": {
+                "description": "The phrase, as in \"cited on main\" or \"cited with the open PRs\".",
+                "type": "string",
+                "minLength": 2
+              },
+              "aliases": {
+                "description": "Other names an address may give the lock, beside its name and its label's and short form's slugs.",
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9-]*$"
+                }
+              }
+            }
+          }
+        },
+        "registry": {
+          "description": "Whether the spec's vocabularies are a registry of code lists that other specs cite, as AdCOM's lists are; the site then gives it a page of every list and the specs that cite it.",
+          "type": "boolean"
+        }
+      }
+    },
+    "feedback": {
+      "description": "The implementation feedback's target and its content: the issue the comment follows up on, the pull requests that are ours, and the groups and rows the report is laid out in.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "issue",
+        "gist",
+        "prs",
+        "headline",
+        "groups",
+        "rules",
+        "kinds",
+        "suggestion"
+      ],
+      "properties": {
+        "issue": {
+          "description": "The issue the comment follows up on.",
+          "type": "string",
+          "pattern": "^https://github\\.com/[^/\\s]+/[^/\\s]+/issues/[0-9]+$"
+        },
+        "gist": {
+          "description": "The supporting page the comment links.",
+          "type": "string",
+          "pattern": "^https://"
+        },
+        "prs": {
+          "description": "The upstream pull requests we posted ourselves, which the inputs name as ours.",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "headline": {
+          "description": "The supporting page's title.",
+          "type": "string",
+          "minLength": 12
+        },
+        "groups": {
+          "description": "The groups of decisions, in the order the pipeline cites them.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "title",
+              "asks"
+            ],
+            "properties": {
+              "id": {
+                "enum": [
+                  "formats",
+                  "options",
+                  "types",
+                  "statements",
+                  "readings"
+                ]
+              },
+              "title": {
+                "type": "string"
+              },
+              "asks": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "rules": {
+          "description": "The authoring rules the issue proposes, and the rows for the findings they don't cover, each with what it asks above its findings.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "title"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+$"
+              },
+              "title": {
+                "type": "string"
+              },
+              "intro": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "kinds": {
+          "description": "Each lint kind's row; the profile gate holds the table to every kind.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "suggestion": {
+          "description": "A suggestion to the working group that no decision makes; a `{D-…}` stands for that decision's number.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "title",
+            "lead",
+            "items"
+          ],
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "lead": {
+              "type": "string"
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "if": {
+    "properties": {
+      "front_end": {
+        "const": "text"
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "plugin": true,
+      "statements": true
+    },
+    "required": [
+      "plugin",
+      "statements"
+    ]
+  },
+  "else": {
+    "propertyNames": {
+      "not": {
+        "enum": [
+          "plugin",
+          "documents",
+          "statements",
+          "features"
+        ]
+      }
+    }
+  }
+}

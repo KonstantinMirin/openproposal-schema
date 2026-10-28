@@ -1,0 +1,187 @@
+format: 1
+id: D-006
+status: proposed
+kind: gap
+author: agent
+question: "What do the JSON examples in AdCOM's Appendix C become?"
+covers:
+  - ir: code:requestcontext:1
+    digest: 2fb399758d0e5decbe6b15709801fc13699c81ade55384d69b4036a6e43c222b
+    quote: |-
+      {
+         "openrtb": {
+            "ver": "3.0",
+            "domainspec": "adcom",
+            "domainver": "1.0",
+            "request": {
+               ...
+               "context": {
+                  "regs": {
+                     "gdpr": 0,
+                     "coppa": 0
+                  },
+                  "restrictions": {
+                     "bcat": [ "IAB24", "IAB25", "IAB26" ],
+                     "cattax": 1,
+                     "badv": [ "ford.com", "buick.com" ]
+                  },
+                  "site": {
+                     "id": "1234",
+                     "name": "Awesome Example Site",
+                     "domain": "examplesitedomain.com",
+                     "mobile": 1,
+                     "amp": 0,
+                     "pub": {
+                        "id": "9876",
+                        "name": "Example Publisher, Inc.",
+                        "domain": "examplepubdomain.com"
+                     }
+                  },
+                  "user": {
+                     "id": "a0af45c77890045deec100acb8443baff57c",
+                     "buyeruid": "fcd4282456238256034abcdef220d9aa5892",
+                  },
+                  "device": {
+                     "type": 4,
+                     "ifa": "8846d6fa10008bceaaf322908dfcb221",
+                     "ip": "1.2.3.4",
+                     "ua": "...user agent string...",
+                     "make": "Apple",
+                     "model": "iPhone",
+                     "hwv": "6s",
+                     "os": 13,
+                     "osv": "11.4.1",
+                     "mccmnc": "310-005",
+                     "geo": {
+                        "type": 1,
+                        "lat": 42.3601,
+                        "lon": 71.0581,
+                        "country": "USA",
+                        "utcoffset": -300
+                     }
+                  }
+               }
+               ...
+            }
+         }
+      }
+  - ir: code:itemspecs:1
+    digest: f8de3c5f8ccb85803e1b25019f6969fbd830ae193f32dffa5eacb772e93769ef
+    quote: |-
+      {
+         "openrtb": {
+            "ver": "3.0",
+            "domainspec": "adcom",
+            "domainver": "1.0",
+            "request": {
+               ...
+               "item": [
+                  {
+                     ...
+                     "spec": {
+                        "placement": {
+                           "tagid": "plc-ftr-123abc",
+                           "secure": 1,
+                           "display": {
+                              "ctype": [ 2, 3 ],
+                              "ampren": 0,
+                              "instl": 0,
+                              "displayfmt": [
+                                 {
+                                    "w": 320,
+                                    "h": 50
+                                 },
+                                 {
+                                    "w": 320,
+                                    "h": 250
+                                 }
+                              ],
+                              "event": [
+                                 {
+                                    "type": 1,
+                                    "method": [ 1 ]
+                                 }
+                              ]
+                           }
+                        }
+                     }
+                     ...
+                  }
+               ]
+               ...
+            }
+         }
+      }
+  - ir: code:mediaresponse:1
+    digest: b45c59f8d6d59879a9db05ec2bac9505933cf5da4c0a761a1456c610a2a41e52
+    quote: |-
+      {
+         "openrtb": {
+            "ver": "3.0",
+            "domainspec": "adcom",
+            "domainver": "1.0",
+            "response": {
+               ...
+               "seatbid": [
+                  {
+                     ...
+                     "bid": [
+                        {
+                           ...
+                           "media": {
+                              "ad": {
+                                 "id": "d0bcb39723af87c2bb00942afee5710e",
+                                 "adomain": [ "ford.com" ],
+                                 "secure": 1,
+                                 "display": {
+                                    "mime": "image/jpeg",
+                                    "ctype": 3,
+                                    "w": 320,
+                                    "h": 50,
+                                    "banner": {
+                                       "img": "https://somebuyer.com/creative",
+                                       "link": {
+                                          "url": "https://somebuyer.com/click",
+                                          "urlfb": "https://somebuyer.com"
+                                       }
+                                    },
+                                    "event": [
+                                       {
+                                          "type": 1,
+                                          "method": 1,
+                                          "url": "https://somebuyer.com/pixel"
+                                       }
+                                    ]
+                                 }
+                              }
+                           }
+                           ...
+                        }
+                     ]
+                  }
+               ]
+            }
+         }
+      }
+options:
+  - id: informative
+    summary: >-
+      Informative until AdCOM's objects are mapped: they show objects, and
+      none parses as JSON.
+  - id: validate
+    summary: >-
+      Validate them against the objects' schemas now.
+chosen: informative
+rationale: >-
+  The three examples show an OpenRTB 3.0 request and response with AdCOM
+  objects in them. They hold placeholders such as `...` and `"...user agent
+  string..."`, and the request has a trailing comma, so none parses as JSON,
+  and the objects they show have no schema until the objects phase. They
+  name no list code a vocabulary must accept that the lists don't already
+  give.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L4697"
+feedback: >-
+  Make each example valid JSON: replace the placeholders with values, and
+  remove the trailing comma after `buyeruid`. Give each one a complete
+  payload that implementations can use as a test fixture.

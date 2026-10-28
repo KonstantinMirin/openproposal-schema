@@ -1,6 +1,7 @@
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { parseArgs } from "node:util";
+import { allLocks, cliSpec } from "../builds.ts";
 import { loadConstructors } from "../constructors.ts";
 import { checkCorpus, CORPUS_FILE, corpusDirOf, generateCorpus, renderCorpus } from "../corpus.ts";
 import { emitSchemas, schemaDirOf } from "../emit.ts";
@@ -9,7 +10,9 @@ import { loadKernel } from "../kernel.ts";
 import { loadLock, type SpecLock } from "../lock.ts";
 import { loadDecisions, loadMappings } from "../mapping.ts";
 import { resolveModel } from "../model.ts";
-import { emitRules, loadVectors } from "../rules.ts";
+import { emitRules, loadVectors, VECTORS_DIR } from "../rules.ts";
+import { REPO_ROOT } from "../repo.ts";
+import { schemaNamesOfLock } from "../specs/index.ts";
 
 /**
  * Usage: corpus [--lock <file>] [--out <dir>]
@@ -25,41 +28,39 @@ import { emitRules, loadVectors } from "../rules.ts";
  * constraint has no isolating case.
  */
 function main(): number {
-  const { values } = parseArgs({ options: { lock: { type: "string" }, out: { type: "string" } } });
-  const root = new URL("../..", import.meta.url).pathname.replace(/\/$/, "");
+  const { values } = parseArgs({ options: { spec: { type: "string" }, lock: { type: "string" }, out: { type: "string" } } });
+  const root = REPO_ROOT;
+  const specDir = cliSpec(values);
   if (values.out !== undefined && values.lock === undefined) throw new Error("--out needs --lock");
   const locks: SpecLock[] =
     values.lock !== undefined
       ? [loadLock(resolve(values.lock))]
-      : readdirSync(join(root, "spec-input"))
-          .filter((f) => f === "spec-lock.yaml" || f.endsWith(".lock.yaml"))
-          .sort()
-          .map((f) => loadLock(join(root, "spec-input", f)));
-  const mappings = loadMappings(root, join(root, "mapping"));
-  const decisions = loadDecisions(root, join(root, "decisions"));
-  const kernel = loadKernel(root);
-  const constructors = loadConstructors(root);
-  const vectors = loadVectors(root);
+      : allLocks(specDir);
+  const mappings = loadMappings(join(specDir, "mapping"));
+  const decisions = loadDecisions(join(specDir, "decisions"));
+  const kernel = loadKernel(root, specDir);
+  const constructors = loadConstructors(root, specDir);
+  const vectors = loadVectors(join(specDir, VECTORS_DIR));
   const oracle = pinnedOracle(root);
 
   let failed = false;
   for (const lock of locks) {
-    const ir = JSON.parse(readFileSync(join(root, lock.ir_dir, "spec-ir.json"), "utf8"));
+    const ir = JSON.parse(readFileSync(join(specDir, lock.ir_dir, "spec-ir.json"), "utf8"));
     const { model, problems } = resolveModel({ ir, lock: lock.name, mappings, decisions, kernel, constructors });
     if (problems.length > 0) {
       for (const p of problems) console.error(`error: ${lock.name}: model: ${p}`);
       failed = true;
       continue;
     }
-    const irDir = relative(root, join(root, lock.ir_dir));
+    const irDir = relative(specDir, join(specDir, lock.ir_dir));
     const schemaDir = schemaDirOf(irDir);
-    const emitted = emitSchemas(model, schemaDir);
+    const emitted = emitSchemas(model, schemaDir, schemaNamesOfLock(lock));
     if (emitted.problems.length > 0) {
       for (const p of emitted.problems) console.error(`error: ${lock.name}: schemas: ${p}`);
       failed = true;
       continue;
     }
-    const rules = emitRules({ model, ir, lock: lock.name, vectors, decisions, schemaDir, conditionsLeft: emitted.conditions.left });
+    const rules = emitRules({ model, ir, lock: lock.name, vectors, decisions, schemaDir, conditionsLeft: emitted.conditions.left, schemaBase: schemaNamesOfLock(lock).base });
     if (rules.problems.length > 0) {
       for (const p of rules.problems) console.error(`error: ${lock.name}: rules: ${p}`);
       failed = true;
@@ -72,7 +73,7 @@ function main(): number {
       failed = true;
       continue;
     }
-    const out = values.out !== undefined ? resolve(values.out) : join(root, corpusDirOf(irDir));
+    const out = values.out !== undefined ? resolve(values.out) : join(specDir, corpusDirOf(irDir));
     mkdirSync(out, { recursive: true });
     writeFileSync(join(out, CORPUS_FILE), renderCorpus(r.doc));
     const shown = out.startsWith(`${root}/`) ? out.slice(root.length + 1) : out;

@@ -4,6 +4,7 @@ import { parse } from "yaml";
 import { citeText, elementDigest, indexElements, type Element } from "./elements.ts";
 import type { SpecIR } from "./ir-types.ts";
 import { compileSchema } from "./pipeline.ts";
+import { REPO_ROOT } from "./repo.ts";
 
 /** A property's type, as `mapping/mapping.schema.json` defines it. */
 export type TypeRef =
@@ -61,6 +62,12 @@ export interface Declaration {
   list?: { name: string; codes?: Record<string, string> };
   /** What a vocabulary's terms mean where no row says. */
   description?: string;
+  /** For a vocabulary of the specification's own codes: the codes it reserves for vendors, from `from` up, and their row's label. */
+  vendor?: { from: number; label: string };
+  /** For a vocabulary whose terms its definition rows give: each term takes its row's text as its label. */
+  labeled?: boolean;
+  /** For an open vocabulary: the kernel primitive its extension terms are, where a decision gives one. */
+  extension?: string;
   any_of?: TypeRef[];
 }
 
@@ -71,6 +78,8 @@ export interface MappingFile {
   sections: string[];
   /** The other modules its types may reference; the kernel needs no listing (type rules § 3). */
   depends?: string[];
+  /** A module the mapping leaves for a later phase, with the decision that says why: every element in its sections is informative. */
+  deferred?: { decision: string };
   types?: Declaration[];
   entries: MappingEntry[];
   /** The file the entries came from, for messages. */
@@ -133,11 +142,11 @@ function readYamlDir(dir: string): { file: string; stem: string; doc: unknown }[
 
 /**
  * Loads `<dir>/*.yaml` as mapping files and validates each against the
- * mapping schema in `root`. A file's `module` must equal its name. Throws on
- * the first invalid file.
+ * mapping schema. A file's `module` must equal its name. Throws on the first
+ * invalid file.
  */
-export function loadMappings(root: string, dir: string): MappingFile[] {
-  const validate = compileSchema(join(root, MAPPING_SCHEMA));
+export function loadMappings(dir: string): MappingFile[] {
+  const validate = compileSchema(join(REPO_ROOT, MAPPING_SCHEMA));
   return readYamlDir(dir).map(({ file, stem, doc }) => {
     const errors = validate(doc);
     if (errors.length > 0) throw new Error(`${file}: not a valid mapping file: ${errors.join("; ")}`);
@@ -149,11 +158,11 @@ export function loadMappings(root: string, dir: string): MappingFile[] {
 
 /**
  * Loads `<dir>/*.yaml` as decision records and validates each against the
- * decision schema in `root`. A record's `id` must equal its file name.
- * Throws on the first invalid file.
+ * decision schema. A record's `id` must equal its file name. Throws on the
+ * first invalid file.
  */
-export function loadDecisions(root: string, dir: string): DecisionRecord[] {
-  const validate = compileSchema(join(root, DECISION_SCHEMA));
+export function loadDecisions(dir: string): DecisionRecord[] {
+  const validate = compileSchema(join(REPO_ROOT, DECISION_SCHEMA));
   return readYamlDir(dir).map(({ file, stem, doc }) => {
     const errors = validate(doc);
     if (errors.length > 0) throw new Error(`${file}: not a valid decision record: ${errors.join("; ")}`);
@@ -283,6 +292,14 @@ export function checkMapping(ir: SpecIR, lock: string, mappings: MappingFile[], 
 
   const mapped = new Map<string, string>();
   for (const m of mappings) {
+    // A module left for a later phase cites the decision that defers it, which covers an element of its sections.
+    if (m.deferred) {
+      const d = byId.get(m.deferred.decision);
+      const where = `${m.file}: deferred`;
+      if (!d) problems.push(`${where}: cites decision "${m.deferred.decision}", which doesn't exist`);
+      else if (d.status === "superseded") problems.push(`${where}: cites "${d.id}", which is superseded by "${d.superseded_by}"`);
+      else if (!d.covers.some((c) => inScope(c.locks, lock) && m.sections.includes(elements.get(c.ir)?.element.loc.section ?? ""))) problems.push(`${where}: cites "${d.id}", which covers no element of the module's sections on lock "${lock}"`);
+    }
     for (const entry of m.entries) {
       if (!inScope(entry.locks, lock)) continue;
       const where = `${m.file}: entry "${entry.ir}"`;

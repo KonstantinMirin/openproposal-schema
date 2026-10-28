@@ -579,7 +579,8 @@
             "heading",
             "label",
             "header",
-            "section"
+            "section",
+            "object"
           ]
         },
         "label": {
@@ -811,6 +812,10 @@
           ]
         },
         "meaning": {
+          "$ref": "#/$defs/text"
+        },
+        "type": {
+          "description": "The type cell as written, where the layout has a type column.",
           "$ref": "#/$defs/text"
         },
         "mapping": {

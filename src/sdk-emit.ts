@@ -11,6 +11,7 @@ import { allConstants, buildSdkModel, provenanceOf, type SdkFile, type SdkModel 
 import { emitGo } from "./sdk-go.ts";
 import { emitPython } from "./sdk-python.ts";
 import { emitTypeScript } from "./sdk-ts.ts";
+import type { SpecNames } from "./profile.ts";
 
 /** The language directories a lock's SDK directory holds. */
 export const SDK_ROOTS = ["ts", "python", "go"] as const;
@@ -26,21 +27,22 @@ export interface EmittedSdk {
  * Emits one build's SDKs. `sdkDir` is the build's SDK directory, such as
  * `sdk`, which the Go module path names, and `schemaDir` its schema
  * directory, such as `schemas/as-written`, whose tree's digest each SDK
- * states as the schema release its types match.
+ * states as the schema release its types match. `names` are the spec's
+ * (its profile's `names`): its packages, and its name in the doc comments.
  */
-export function emitSdk(model: ModelDoc, sdkDir: string, schemaDir: string): EmittedSdk {
-  const { sdk, problems } = buildSdkModel(model);
+export function emitSdk(model: ModelDoc, sdkDir: string, schemaDir: string, names: SpecNames): EmittedSdk {
+  const { sdk, problems } = buildSdkModel(model, names.short);
   if (problems.length > 0) return { sdk, files: [], problems };
-  const schemas = emitSchemas(model, schemaDir);
+  const schemas = emitSchemas(model, schemaDir, { base: names.schema_base, short: names.short });
   if (schemas.problems.length > 0) return { sdk, files: [], problems: schemas.problems.map((p) => `schemas: ${p}`) };
   const prov = provenanceOf(sdk, treeDigest(schemas.files));
   const named = allConstants(sdk);
   if (named.problems.length > 0) return { sdk, files: [], problems: named.problems.map((p) => `constants: ${p}`) };
   const files: SdkFile[] = [];
   const langs: [string, { files: SdkFile[]; problems: string[] }][] = [
-    ["ts", emitTypeScript(sdk, prov)],
-    ["python", emitPython(sdk, prov)],
-    ["go", emitGo(sdk, sdkDir, prov)],
+    ["ts", emitTypeScript(sdk, prov, names)],
+    ["python", emitPython(sdk, prov, names)],
+    ["go", emitGo(sdk, sdkDir, prov, names)],
   ];
   for (const [dir, out] of langs) {
     problems.push(...out.problems);

@@ -2,11 +2,11 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { checkCorpus, generateCorpus, oracleLabels, type CorpusDoc, type CorpusInput } from "../src/corpus.ts";
-import { checkEmitted, emitSchemas, type EmittedFile } from "../src/emit.ts";
+import { checkEmitted, emitSchemas, type EmittedFile, type SchemaNames } from "../src/emit.ts";
 import { pinnedOracle } from "../src/engines.ts";
 import { spawnInstanceOracle } from "../src/examples.ts";
 import type { ModelDoc } from "../src/model.ts";
-import { checkProblems, ordersOf } from "../src/rule-checks.ts";
+import { checkProblems, ordersOf, type Check } from "../src/rule-checks.ts";
 import { checkRuleVectors, emitRules, loadVectors, type RulesDoc, type RulesInput } from "../src/rules.ts";
 import { loadFieldExamples, type FieldExample } from "../src/field-examples.ts";
 import { checkFieldExamples, checkTypeExamples, generateTypeExamples, type TypeExamplesDoc, type TypeExamplesInput } from "../src/type-examples.ts";
@@ -30,11 +30,11 @@ const withAmount = (s: Record<string, unknown>, extra: Record<string, unknown>) 
 
 // Schemas -----------------------------------------------------------------------
 
-export const schemasEmit = defineGate<{ model: ModelDoc; dir: string }>({
+export const schemasEmit = defineGate<{ model: ModelDoc; dir: string; names: SchemaNames }>({
   id: "schemas-emit",
   title: "schemas emit from the model",
   check: (i) => {
-    const e = emitSchemas(i.model, i.dir);
+    const e = emitSchemas(i.model, i.dir, i.names);
     const c = e.conditions;
     return { problems: e.problems, note: `${e.files.length} files; ${c.expressed.length} conditions as if / then, ${c.left.length} left to the rules${c.left.length > 0 ? `: ${c.left.join("; ")}` : ""}` };
   },
@@ -66,11 +66,11 @@ export const schemasCommitted = defineGate<CommittedTreeInput>({
   ],
 });
 
-export const schemasConventions = defineGate<{ files: EmittedFile[]; model: ModelDoc; dir: string }>({
+export const schemasConventions = defineGate<{ files: EmittedFile[]; model: ModelDoc; dir: string; base: string }>({
   id: "schemas-conventions",
   title: "schemas: standard 2020-12 keywords only, nothing beside a $ref, references resolve, unions as type rules § 8 allows",
   code: ["src/emit.ts#checkEmitted"],
-  check: (i) => ({ problems: checkEmitted(i.files, i.model, i.dir) }),
+  check: (i) => ({ problems: checkEmitted(i.files, i.model, i.dir, i.base) }),
   fixtures: [
     { name: "an x- keyword", mutate: (i) => ({ ...i, files: withFile(i.files, KERNEL_FILE, (s) => withAmount(s, { "x-unit": "money" })) }), expect: '"x-unit" is no standard JSON Schema 2020-12 keyword' },
     { name: "an allOf", mutate: (i) => ({ ...i, files: withFile(i.files, KERNEL_FILE, (s) => withAmount(s, { allOf: [{ minimum: 0 }] })) }), expect: '"allOf"' },
@@ -106,12 +106,12 @@ export const schemasTracked = defineGate<TrackedInput>({
 
 // Rules --------------------------------------------------------------------------
 
-export const vectorsLoad = defineGate<{ dir?: string }>({
+export const vectorsLoad = defineGate<{ dir: string }>({
   id: "vectors-load",
   title: "vectors: schema-valid",
   code: ["src/rules.ts#loadVectors"],
   check: (i) => {
-    const v = loadVectors(ROOT, i.dir);
+    const v = loadVectors(i.dir);
     return { problems: [], note: `${v.length} files, ${v.reduce((n, f) => n + f.rules.length, 0)} rule entries` };
   },
   fixtures: [{ name: "an entry with no vectors", mutate: () => ({ dir: join(ROOT, "gates/data/vectors-load") }), expect: "not a valid vectors file" }],
@@ -149,12 +149,13 @@ export const ruleVectors = defineGate<{ doc: RulesDoc; model: ModelDoc; files: E
   ],
 });
 
-export const ruleChecks = defineGate<{ doc: RulesDoc; model: ModelDoc; codes: ReadonlyMap<string, ReadonlySet<string | number>> }>({
+export const ruleChecks = defineGate<{ doc: RulesDoc; model: ModelDoc; codes: ReadonlyMap<string, ReadonlySet<string | number>>; ruleChecks: Readonly<Record<string, Check>> }>({
   id: "rule-checks",
   title: "rule checks: every rule one payload decides has a check, which gives each of the rule's vectors its verdict, and reads the pinned list its rule rests on",
-  code: ["src/rule-checks.ts#checkProblems"],
+  // The checks are the kernel's (src/rule-checks.ts) and each spec plugin's, which reach the check through its input.
+  code: ["src/rule-checks.ts#checkProblems", "src/rule-checks.ts#CHECKS", "src/specs/index.ts#PLUGINS"],
   check: (i) => {
-    const r = checkProblems(i.doc, ordersOf(i.model.types), i.codes);
+    const r = checkProblems(i.doc, ordersOf(i.model.types), i.codes, i.ruleChecks);
     const why = new Map<string, number>();
     for (const u of r.unchecked) why.set(u.why, (why.get(u.why) ?? 0) + 1);
     return { problems: r.problems, note: `${r.checked.length} rules checked on one payload; not checked: ${[...why].map(([w, n]) => `${n} about ${w}`).join(", ")}` };
@@ -303,7 +304,7 @@ const withCodes = (codes: ReadonlyMap<string, ReadonlySet<string | number>>, lis
 export const typeExamplesGenerate = defineGate<TypeExamplesInput>({
   id: "type-examples-generate",
   title: "type examples generate: every named type has a minimal and a full example, with the specification's values where they hold, each valid against its schema and breaking no rule one payload decides",
-  code: ["src/type-examples.ts#generateTypeExamples"],
+  code: ["src/type-examples.ts#generateTypeExamples", "src/rule-checks.ts#CHECKS", "src/specs/index.ts#PLUGINS"],
   check: (i) => {
     const r = generateTypeExamples(i);
     const entries = Object.values(r.doc.types);
@@ -315,12 +316,12 @@ export const typeExamplesGenerate = defineGate<TypeExamplesInput>({
   ],
 });
 
-export const fieldExamplesLoad = defineGate<{ file?: string }>({
+export const fieldExamplesLoad = defineGate<{ file: string }>({
   id: "field-examples-load",
   title: "field examples: the per-field example values file schema-valid",
   code: ["src/field-examples.ts#loadFieldExamples"],
   check: (i) => {
-    const f = loadFieldExamples(ROOT, i.file);
+    const f = loadFieldExamples(i.file);
     return { problems: [], note: `${f.fields.length} entries` };
   },
   fixtures: [{ name: "an entry with three values", mutate: () => ({ file: join(ROOT, "gates/data/field-examples-load/field-examples.yaml") }), expect: "not a valid field examples file" }],
@@ -334,7 +335,7 @@ const withFieldValues = (i: TypeExamplesInput, member: string, change: (e: Field
 export const fieldExamples = defineGate<TypeExamplesInput>({
   id: "field-examples",
   title: "field examples: each per-field value names a member that exists, holds against the member's schema and the rules in its type's full example, and is no value the specification's examples give",
-  code: ["src/type-examples.ts#checkFieldExamples"],
+  code: ["src/type-examples.ts#checkFieldExamples", "src/rule-checks.ts#CHECKS", "src/specs/index.ts#PLUGINS"],
   check: (i) => {
     const r = checkFieldExamples(i);
     return { problems: r.problems, note: `${r.entries} entries, at ${r.locations} members` };
@@ -386,7 +387,7 @@ const withExample = (doc: TypeExamplesDoc, name: string, change: (x: TypeExample
 export const typeExamplesValid = defineGate<TypeExamplesCheckInput>({
   id: "type-examples-valid",
   title: "committed type examples: one entry per named type, each example valid against its schema and breaking no rule one payload decides",
-  code: ["src/type-examples.ts#checkTypeExamples"],
+  code: ["src/type-examples.ts#checkTypeExamples", "src/rule-checks.ts#CHECKS", "src/specs/index.ts#PLUGINS"],
   check: (i) => ({ problems: checkTypeExamples(i.doc, i), note: `${Object.keys(i.doc.types).length} types` }),
   fixtures: [
     { name: "a full example whose basis is no term", mutate: (i) => ({ ...i, doc: withExample(i.doc, "Commitment", (x) => ({ ...x, full: { ...(x.full as object), basis: "barter" } })) }), expect: "Commitment: the full example fails the schema: /basis" },

@@ -1,0 +1,52 @@
+format: 1
+id: G-094
+date: 2026-10-28
+question: What changes in the gates to close the gaps an independent review of AdCOM's schemas, release, and pages found?
+decision: >-
+  G-092 let a spec skip its SDK and feedback gates on its profile alone, and
+  recorded a passing line in their place; that relaxed them, since removing
+  `names.sdk` or `feedback` from OpenProposal's profile, which no gate
+  decision guards, would have passed with sdk/ and the committed report
+  unchecked. G-092's rationale that nothing was relaxed was wrong. A new
+  gate, optional-outputs, now decides the skip: it fails the default spec,
+  which owns sdk/, with no SDK packages, and a spec with no feedback target
+  whose feedback/ git tracks, and three fixtures cover both. Where it fails,
+  the SDK gates run as before. The fidelity oracle's list reader also probes
+  the first code missing between two codes a list names, and 500 for a list
+  that reserves no vendor range; a row value it can't read now fails the
+  gate instead of dropping out, and a list with no codes gets no vector at
+  infinity. Three fixtures cover a vocabulary that accepts a code inside a
+  gap, one that took a vendor range its list doesn't reserve, and a row the
+  reader can't read. G-092 also named src/specs/index.ts as the file that
+  changed; the file is src/specs/adcom/index.ts, which PLUGINS reaches, and
+  through it the list reader, so the gates that read the plugins change
+  again here. The site labels a list's row by the list's heading, as "List:
+  Start Delay Modes, the row of `>0`", where it wrote a broken label; the
+  registry page reads citations by the longest title after "List:", keeps
+  a line whose next line cites the same list, says AdCOM's text remains the
+  reference, and shows a list's extension; and the registry fixture names
+  the route alone. The test suite holds 464 tests, and MIN_TESTS is 464.
+rationale: >-
+  Each change catches more, and the skip that relaxed two gates now needs a
+  gate that fails where the skipped gates would have had something to
+  check. OpenProposal's schemas, rules, corpus, type examples, SDK types,
+  release manifests, comparison, feedback, and site pages are byte for byte
+  as before.
+accepts:
+  - { gate: comparison, fingerprint: 10be08cb9920849b71350a5392afc2a25f955865427494542ff60f863b946ee8 }
+  - { gate: examples-validate, fingerprint: da2f01ccefd4996bbf34dfecc5eeb7ba610c35d68b9ae63f52da24928b30b050 }
+  - { gate: extraction, fingerprint: 8aa52595ce33fe6e47e38dceed6d17ace408b663f7de463a919440bb504b0383 }
+  - { gate: feedback, fingerprint: 77950ea59504c3f128108de968fce76930ed6c029c9399d995fbd29fff7d1745 }
+  - { gate: fidelity, fingerprint: 0da659a85fef9760457e94298115ba72824f39369ae065026f035055d03ebeec }
+  - { gate: field-examples, fingerprint: be71402f9e44194d53a11d7d41ca237ccbfda9cfcae748e5f63e7d2db24fa1c8 }
+  - { gate: guard, fingerprint: 6a52a60d7a51e00183a642b19f9b5b37f46e43cff538ae3a0472c9cdc11cc413 }
+  - { gate: npm-test, fingerprint: fac377f5e148bf9922c242efae7647a76468316a33b99de1a1722a861f4d8362 }
+  - { gate: optional-outputs, fingerprint: 2a7040962cb5444ff1f062fc65c1cdebc49650b876493d592b94b65401dd0b78 }
+  - { gate: record-wording, fingerprint: 6a555df290c45dd763776dd0e75cd4e3a3ed1070afb156ae15799451145c6548 }
+  - { gate: round-trip, fingerprint: c3821b25e443da97ae71d0d99d73414034c6abb893fc1b38950b5018bfe8c6e5 }
+  - { gate: rule-checks, fingerprint: 2a4b2b0a5251fbcfe4654045fc646bcc36dd7eac9e6a07dd33121f0a175d3a6f }
+  - { gate: site-builds, fingerprint: eae65fe4695a57156cb9c25f3e2788b9746465b0d9e89076f5cf33a1e2423a39 }
+  - { gate: spec-profile, fingerprint: 99baa2c5d1d4b24976dc951bcc72b73e5077d3c0b046354ef380a7dc2042add9 }
+  - { gate: type-examples-generate, fingerprint: 50413d24dabb52ceda135e52e738f8051c62b94178d07e1a2bc0c3b3fedcbeac }
+  - { gate: type-examples-valid, fingerprint: 0c8fbaba0f307d5be91ef9280368179b0d84b006eaad4201132428a1c382707b }
+  - { gate: variant-examples, fingerprint: 1802a425244afdee0710ee115fd53eec90a0b1d8f495bb2c083c5c502b472e81 }

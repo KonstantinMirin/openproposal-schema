@@ -1,0 +1,157 @@
+format: 1
+id: G-083
+date: 2026-10-27
+question: What changes in the gates when a second spec, AdCOM, joins with only its locks, and when the gates of every spec run in one CI run?
+decision: >-
+  A spec's profile may say, in `through`, the last pipeline stage a spec
+  still being added has reached: its input, its IR, or its model. CI runs
+  the spec's gates through that stage and records one line that says the
+  later stages don't run on it yet; a spec that has reached only its input
+  is checked by its snapshot and spec-input gates. The spec-profile gate
+  now runs on every spec at every stage, and fails a spec that holds a file
+  of a stage after the one it names, so no file exists that its gates would
+  skip; two fixtures cover it. A profile may leave out the SDK packages, for
+  a spec with no SDK types, and the SDK emitters fail on such a spec's
+  model instead of writing packages with no names. Each gate's inputs are
+  kept per spec, so a fixture changes the input of the spec it was written
+  for, OpenProposal's unless it names another, where the first spec in
+  folder order is now AdCOM. The fixture type gains its spec, so every
+  gate's fingerprint changes with no change to its check. The site gate's
+  fixture for a spec's name in the site's code accepts any spec's name,
+  since the first profile's name is now AdCOM's. AdCOM is locked at main
+  26c59ba and at the tag AdCOM1.0-202607 (d67a6a8), both required, each
+  with its snapshot. The test suite holds 434 tests, and MIN_TESTS is 434.
+rationale: >-
+  No check is removed or relaxed. A spec added in stages is checked as far
+  as it goes, and the profile gate holds it to the files of those stages,
+  so nothing it holds goes unchecked. Running OpenProposal's fixtures on
+  OpenProposal's inputs keeps each fixture testing what it was written to
+  test now that two specs feed the same gates. OpenProposal's outputs and
+  pages don't change.
+accepts:
+  - { gate: committed-files, fingerprint: 7a7bfd454dca9e262646d469bb0cd5e3de416c96d6bf5b9fcd21bef8c10d1ac2 }
+  - { gate: comparison, fingerprint: 720d8b7c79f1d33452e5fe6ec94a3ca610bf423d23bb88815581e8cc0244133a }
+  - { gate: comparison-committed, fingerprint: 01c256e180e36cc82fbab96e9f2f5b67c75b617266304ce394da3fc01a802b35 }
+  - { gate: comparison-deterministic, fingerprint: eaa64a921e62dddc1fcb9dff30bfcb31ef31c2ae0d80eb28bd09523135974eea }
+  - { gate: comparison-tracked, fingerprint: caebff80306bb611a1e1a98f3424d108d47745f15f93a6e485134e73f944111c }
+  - { gate: constructor-sources, fingerprint: 02ad6751ce84a68223a08cd7a8954e44a1a144b33f7bc4cba62a0aec9de2d5e6 }
+  - { gate: constructors-applied, fingerprint: 9b913cd4878ff176a492d726a965893c7770f902af5e757ec6d85be2bf32609a }
+  - { gate: constructors-check, fingerprint: fce5d003a44c101b08bed0286bec86f5033561e31d40a1dd4eb2ed8033a59379 }
+  - { gate: constructors-load, fingerprint: dd8985a90080d0091a92d4a3cd9547d285dfb46034e6c3cd1f20b2abe7d6e560 }
+  - { gate: convention-beside-reference, fingerprint: b54b169f400c9f270fee0ffc98acfa7ce9a88062cec88a314a49e396f7b28f02 }
+  - { gate: convention-inline, fingerprint: cfc772b4922adb3b7f0b201b172c1bfa8b1e4a6dc9114c6ecd003e3ed45d178a }
+  - { gate: convention-keywords, fingerprint: 113f56ad59daee33cd6bdc11b9e499144536e1db1f69b1482b26b2c257b26e8e }
+  - { gate: convention-layers, fingerprint: 45a9d70ec1f8ec2581096e9f05588c5b10608e68e6c141bc6c88986bbaf73100 }
+  - { gate: convention-lists, fingerprint: 7c05c7956907e1ee23929728a02a8a99fa9aa02b21aa30223a1c0619a1bcc7b0 }
+  - { gate: convention-modules, fingerprint: edaa5d57e729ef0872a5341c18e673cd7449b1d94edf1c90ae73e32eafd917ec }
+  - { gate: convention-unions, fingerprint: 400071f5104e654d5225353018800ce23452f65e441648fca072da0195f50f4f }
+  - { gate: corpus-committed, fingerprint: fbab7a4768286d03a754d15aa888f8b024cf633dcbc0e2c966049ee0b48cf0de }
+  - { gate: corpus-deterministic, fingerprint: 525368bc032f46e2f0f3209a7a01fff10631f9c7d4346480e0e30d2a3b57a907 }
+  - { gate: corpus-generates, fingerprint: 64ea2affa8791b8799d8e7d4da6229c81f934663f92970a77fcb30da2daaa5bb }
+  - { gate: corpus-isolation, fingerprint: 5f18b46e54e5fe654681418a261abc86b297c8aff795795678b538595b082f60 }
+  - { gate: corpus-labels, fingerprint: 057fa5d94e0e8e80b0c5ed170b19be7e0f1d71c0a3c05500e914c87e15ebf505 }
+  - { gate: corpus-oracle-pin, fingerprint: 86706eb7bbc8fb6dc5732842d0753de7dbb582c968f7a3a242251de61ba5db7b }
+  - { gate: corpus-tracked, fingerprint: 62b12c9e0835d7bfbcdfdbad8b9680cb6c3de7913268b65cf32ebf1332139c79 }
+  - { gate: decisions-append-only, fingerprint: df00e7e3f486c2cde92626813c8b495383ceb1ffbe7667b8d7c9fd5b5b85a63a }
+  - { gate: differences-load, fingerprint: 625039ad34803cf06e94f6a6df4e3f2a0be9a99e9c6937ffbb72569b4c048216 }
+  - { gate: differences-locks, fingerprint: 4f0ab2afd0a3ba05bce0ebaa3204f238d9c02e2b33312b809306c80378fcc246 }
+  - { gate: domain-sources, fingerprint: ffa012b396777ec0b543961e4670744532c0e8c6264d0c86ba81b408fa3d7406 }
+  - { gate: domains-check, fingerprint: ccd1cdbbd47e5be10d400b0483ac57b4cafc9dbf53e9e31263504c1487d17312 }
+  - { gate: domains-homonyms, fingerprint: 4d22db2c06e8d86cafa123d179351f4e76057bd19d8b17209636806fcf2b189d }
+  - { gate: domains-properties, fingerprint: d63bf291a3684fdef3aa0695af316af769607edc5c3ea98743373388eea2fff6 }
+  - { gate: domains-used, fingerprint: e0f70d887e8bc871ad432e3d38f917f677886e0057d145521ec3dc2e22a83b70 }
+  - { gate: duplication-kernel, fingerprint: e51929b7daf47d44f65911e3250e5a511ce10541823faec37139fcdb4134074d }
+  - { gate: duplication-model, fingerprint: 95e9ef8cca1b9ba3a7e34c09df4c2f4e4129f81bc74f9a91f5caadcd24a11065 }
+  - { gate: examples-listing, fingerprint: e030aab6475c2cb2008e9f5d105b2e2cd4adf2fe33cffd88815c1c3f5792e9ff }
+  - { gate: examples-oracle, fingerprint: 28717661bdf17dc374970ebee18d4a555c5310ff751cf8db5997ae830e7f8492 }
+  - { gate: examples-validate, fingerprint: c578b77cc59a97c68a09d6667f90224bec3e01125eb6c072c93ff1c2b06311b5 }
+  - { gate: extraction, fingerprint: 2bb302b410e8faa20f3370f24b5758eb6db583da3f0cd80fd3525a5e41827fce }
+  - { gate: feedback, fingerprint: b71ecb2025944974bd06121bdcc70d941633d07cb62b0e68e50d92576877cd82 }
+  - { gate: feedback-committed, fingerprint: bf56000652954d915861e455ad656a6452dddbb083b8a3f21c57ea6c656beefb }
+  - { gate: feedback-deterministic, fingerprint: ddd8d630a0ae84346ce1822544ec4d110a4117f511bce89b8fc7b7e3aa58c981 }
+  - { gate: feedback-tracked, fingerprint: 81bfe1c1daa26524f3c67a3cac1f645cdd5de86928a54579a364f7caaf8d6fa4 }
+  - { gate: fidelity, fingerprint: ccb35910e0157f1e148aaa4ee5fc89f0c8be9c24344d6901ec8dbd4aa51149b8 }
+  - { gate: field-examples, fingerprint: 6e2603e8681bf4b15d4aaaec9e3a5604a3c394bd14187518cf2a85bcc213249e }
+  - { gate: field-examples-load, fingerprint: bbe99cedfba8f17d926c17e11fa7ad7b6958cd58ddcb07dc50a7324c9246e76a }
+  - { gate: findings-load, fingerprint: 95308df6ae3084b884b0f81fb165003a32e288f101c9f9b979eb84a87f45a867 }
+  - { gate: findings-locks, fingerprint: 3f17e69116562cf0475a0162f4090fff9e366eca0bcdb6c746c59817994f233b }
+  - { gate: fixtures-exist, fingerprint: be08c76c9057d0aa37acbd28edce0dc996320d696af655d4e1ef91bcb32d1e91 }
+  - { gate: frozen-oracle, fingerprint: 32d6c8946f2cb38a9199eb05d196d516b7bba01b2698fac55254f0a722e2997c }
+  - { gate: frozen-releases, fingerprint: 042ad69f06fdc750a805d07f78191a33f44b921e4eba388907e38ffe5bc82155 }
+  - { gate: frozen-reviewed, fingerprint: 81cfe9420af227f7ad0d188a95f1ef1f4a7c6309930826c4d7386f9460ed32b8 }
+  - { gate: guard, fingerprint: 832695ff13c0e177e814fbf164a53d00bf5b7a5400cce9f0fcc527c947a0364c }
+  - { gate: ir-committed, fingerprint: a18d51b8ba86fea0dfc82d4fbfea1169135d92e57f088fccbca8578e921d5620 }
+  - { gate: ir-deterministic, fingerprint: cf72bc8f3eda6236ab316441ae589b95704c87aaf4b07c4a505043760e39eed5 }
+  - { gate: kernel-check, fingerprint: fc8a22c365d17199df05d6c9a3a6419743a966e3fae33a4ad9df7a0e4937e0a2 }
+  - { gate: kernel-engines, fingerprint: 5929b839fa7fb5fe3b9d02a7ece4a2a6fc8dc3a5be187e6085b51dabcc158a35 }
+  - { gate: kernel-load, fingerprint: 92191330c7b8e2547ac1532b72b950f7d3d97191a2ee29e1ace25e1a9af00174 }
+  - { gate: kernel-sources, fingerprint: fe945877eac2f7f3e756d482372456b43b6582dbc0289e953c9a5a5209e6e7fb }
+  - { gate: layout-tracked, fingerprint: 1a775e326bf99d9288af77d20654b219dee9ea6a707df3f12c89966b4997b107 }
+  - { gate: map-drift, fingerprint: e09523e535bf9665e76bc7a886eea2073012270a10b3a15e3123fb530ce2eddf }
+  - { gate: mapping-bijection, fingerprint: 324798a178c1fcbe14e91e54671ed538ec994a23bf970194e15a5f7c35b8c691 }
+  - { gate: mapping-constructors, fingerprint: f768f8e7cc1a02ca1b5211d9a8c87b3200c937524d2eb2c397e30b650e5a6d19 }
+  - { gate: mapping-current, fingerprint: b55718413428ffaf9714685009e15a8526f20ca548c4523e75447e3360ddb2ae }
+  - { gate: mapping-load, fingerprint: de8027fd33517e587139f6a507da73ddb8d1774cc55aaadc50ca7f886bb52e80 }
+  - { gate: mapping-location, fingerprint: 22b7bebb5b9c406e0d79feae71529deb8f42a289f22130591eeee25a48357031 }
+  - { gate: mapping-names, fingerprint: 8b594eb2a5034e04d719145e8dbd6da278988e0bb648624fd44de0dc79026a2e }
+  - { gate: mapping-rules, fingerprint: 264fdce009e32c4525df65b998552e57bda9476d5f89ca8e228ac1bbc4b551a1 }
+  - { gate: mapping-sources, fingerprint: a97b9f7e2277d7d50797d82d3e148f26b939d7baa81d6ec96679332951b2cd51 }
+  - { gate: model-deterministic, fingerprint: b411b0e5a18a2bd1f0a231aac16c78e52f9160b4665ba9019285b3bb85190edc }
+  - { gate: model-resolves, fingerprint: f99e4fc63223a654a19d8670ba73cb72ae66f3d34d5f0f3ed15ecbec8c1b802b }
+  - { gate: modules-depends, fingerprint: b6a4967a587eb5d3bb4a292209de0f2b508102721f34e5e8887488cb76c7aa84 }
+  - { gate: nesting, fingerprint: 6256bf250dd2f3421fa70a91ad44b692a90977c5a31b7f54818689df987e5726 }
+  - { gate: npm-test, fingerprint: 6ec428af5f38de2b17d85c3ca2783fc4c87819511b35674c3c1489c2f62f091b }
+  - { gate: plain-exemptions-file, fingerprint: 9b635955c04f4aca78a00210838773231ca200b9b3b1b4108642791a2592a7ff }
+  - { gate: plain-generates, fingerprint: d84234eaad89836c3d7c16f446264b9500d4df7c3c914017dd1582978c8a284c }
+  - { gate: plain-parity, fingerprint: 15472e217b2344f2717395ecb9f6f11150edce7d39f4e432acb0c8e9357e0b5c }
+  - { gate: plain-stale, fingerprint: f962095c76b6775350fe2f44f51529059062c71bbe984e09e2ed04b296d91af6 }
+  - { gate: release-breaking, fingerprint: c249bf84513c224017e6b106abf31763d88591c9fe1032cd0ff4912dc8095999 }
+  - { gate: release-breaking-corpus, fingerprint: ef0ac9abaeb47c7ced0f5f09c69575d5638ef5f95040ea5fbdac72d43e675329 }
+  - { gate: release-builds, fingerprint: 829dab4014c2604a46ca12322e10bce0a30d68453330f02d91ee762c43d63e59 }
+  - { gate: release-committed, fingerprint: f53b70732ce32f61b8d1360f3c54501290c409bcbdd2a0c5223f6946e42b5169 }
+  - { gate: release-deterministic, fingerprint: f891a398cff704d6c8b4bcb5145090f0d1393f30a643742ea9f540c4ccd5d410 }
+  - { gate: release-digests, fingerprint: 3b1c542b47de4b1c250fb6693021b612e95990cf20967d0411dbfc31405ec8d6 }
+  - { gate: release-oracle, fingerprint: f2b217e0d227f1c2e2e0119528c2bba6edee1faa9e744dc5a4e0023994e5965f }
+  - { gate: releases-tracked, fingerprint: d2b53f7d321a5b2c409ae066d7822f0430da3d6e4477f6f19ddb89c482548861 }
+  - { gate: round-trip, fingerprint: 481eaa992f93ea63c7eeb916cbb4fb14b109c070e9101f7cdfa2fe0fba427794 }
+  - { gate: rule-checks, fingerprint: 57720b730fcc8587d1cc6cc7fcc3011f400adab96b8004f42153eb163de0e8ca }
+  - { gate: rule-vectors, fingerprint: 784f58a809e701deba72b504eb4ee52d75b8646d64618209e863b07eafe34d31 }
+  - { gate: rules-committed, fingerprint: 67e401c5c4036ae438f0927e03048c95e2107659b2810d69d715bb1e555f5804 }
+  - { gate: rules-deterministic, fingerprint: 876eff941afe74779cd8338177530c8b84607ae6311b19afb0388c4921c3fe52 }
+  - { gate: rules-emit, fingerprint: 93b46850fd061a074799e83ede1e926c049cff3b802118426a9e7750f2703820 }
+  - { gate: rules-tracked, fingerprint: 3bb23d472b59fbee65bcb9d048b2966c3418ace98412faaeffc7c784985f05e4 }
+  - { gate: schemas-ajv, fingerprint: d876a7e24f6979b599fbdf556c002b020f5138581455a5bc50f28c2e3a2aafc9 }
+  - { gate: schemas-committed, fingerprint: 2192f776f5e995ed32acd12994c43b84cba41983086860d2e9589764e7d5955b }
+  - { gate: schemas-conventions, fingerprint: 0bd35edf4bffdff067fa21f2415e1e029fcc081ab7a917b7438ecb4cb8c968ba }
+  - { gate: schemas-deterministic, fingerprint: dbe0882dfb6c9c0a4ed26304e4cacf537e7daf1f3f37052dd389d7d32d4df50e }
+  - { gate: schemas-emit, fingerprint: 53c805ec387b55763cd2aecc2214576ede3448215b2b72c870d2e441110d2bad }
+  - { gate: schemas-oracle, fingerprint: 0df42f8cb8ab9d921e471e0296f37c2151db9a5dd70675dcbef053fe4d2e9cef }
+  - { gate: schemas-tracked, fingerprint: a0d3cdd88ab73bfdf1e20b2983e20d895c6b72e260599175e4553a745d43ae5d }
+  - { gate: sdk-committed, fingerprint: 7fe335540e1d0b84a0171b7984a8d43abb173ca7d39b969e341916b0f0c0a6db }
+  - { gate: sdk-deterministic, fingerprint: bc208f3f6c9a7db5752ddc304b93238e4c9da6618edc9d7dea7506c88dba251e }
+  - { gate: sdk-generate, fingerprint: 17f16c2f7c99369f74e44552b591f83f5eae031852fb96e82ea3f117313d0c5a }
+  - { gate: sdk-go, fingerprint: c0988f0e102680cf3a01c626b01b669c14c4fa9815a770680976ffffb0db9063 }
+  - { gate: sdk-names, fingerprint: 56a41ca8813290837f64ec28761af374c92efa165b22735dfc4a758b75cb5d4e }
+  - { gate: sdk-parity, fingerprint: f6b94b7b1acdcd87de6c5645d0bec2fb1441144bec14b554f77a799e1ca9774f }
+  - { gate: sdk-tracked, fingerprint: 8b93f84fa99a13fac59a4f16bcbb0cabe371ae4eb52620be188c74456aceae07 }
+  - { gate: sdk-typecheck, fingerprint: 526a731fd3f428c170138f9af201c5b8dc18228a42f5f2f568a66d97cedafa8c }
+  - { gate: self-tests, fingerprint: 80fd29830525e449e2820f1b0994f7d94ceb1d46a69a62ca0abe9884ab674982 }
+  - { gate: site-builds, fingerprint: 033c5c114a5b51f7abf49fbf900eca2487c55467ac9c198064d87e09a387c367 }
+  - { gate: site-deterministic, fingerprint: a66e4a910b89f0e86cacc2fa8682c9c5d213ca5467973d00dfdc3e8405be2b10 }
+  - { gate: snapshot, fingerprint: 5038cb2f05f51af4856ddbf86fc8347075682ad177243a4feb2c9dff80d741b3 }
+  - { gate: spec-input, fingerprint: 7e40da9c688bdd7d7d8cfa55d8e9a01b6ad96475d28af175334b5ef9948d0b3d }
+  - { gate: spec-profile, fingerprint: e05ad3e1f77fe5e5a41cb45387837ed98923d49956abfdd4871eb00bb1e5e3a1 }
+  - { gate: toolchain, fingerprint: bd0c369c4b597a227df5450c6a7e04b6fba973d34e3e96646a74996bf8f1fc3b }
+  - { gate: type-examples-committed, fingerprint: 2cc697a38ef3693b8e50f18511a14c0d24ee60cd6a59ea91cdbf5d48395971b7 }
+  - { gate: type-examples-deterministic, fingerprint: 0d646187aab721e0f20cce7a7e350d99b50b471d99598fb456e37794abdf4b8a }
+  - { gate: type-examples-generate, fingerprint: 56e34f98c9843445df54d40b623daa322971833015686ff381a26a70d83f5438 }
+  - { gate: type-examples-tracked, fingerprint: e611f6d76279a247a0b568572179c413fcaedeb829518ba98b0d2ad6a09d51cb }
+  - { gate: type-examples-valid, fingerprint: 568c2215b74af257977ca921cec80f25efa0d52310c6d949695d32ff739140a1 }
+  - { gate: typecheck, fingerprint: d18126d26273f882e4ff97e395860a69eb543e4e11d3252268482bee495d93f2 }
+  - { gate: untracked, fingerprint: 290f2c2c6ef5189673f15ff93eeff72441034d7b00053e92cfa8b87062fa8c3b }
+  - { gate: variant-check, fingerprint: a12f762aedc1083d39aa8e5c12099b7dadf2194772ee181ff05f7c0fd8fbee63 }
+  - { gate: variant-diff, fingerprint: 8d605e14627b9d7508ab39e236b332767068cda2ddadfca031ddbc55084b9b5b }
+  - { gate: variant-examples, fingerprint: 02bb68bf4302de1f8507800a116461897067942173de7a944bd5bd892feb99db }
+  - { gate: variant-load, fingerprint: 585d59b0eaf9a3c2089cde5b567e4c39459f60e9a68182deb992181f8d9fe463 }
+  - { gate: vectors-load, fingerprint: 489095ed5ab618e0630d2082dcd4640e0a7bccd5695f450d683897a077b6f1f5 }
+  - { gate: workflow, fingerprint: 63954cb204e9062901c0d10c6dabcfe161c01c95f854c5f35ae43ed42d6cdf10 }

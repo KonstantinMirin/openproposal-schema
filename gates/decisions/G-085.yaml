@@ -1,0 +1,59 @@
+format: 1
+id: G-085
+date: 2026-10-27
+question: What changes in the gates when the extractor reads AdCOM's HTML tables, its anchored headings, and its inline HTML?
+decision: >-
+  The extractor reads a table written in HTML into the same table node a
+  pipe table gives, with each row's and cell's source bytes kept, so the
+  layouts, rows, digests, and quotes work as they do for Markdown; a table
+  that a blank line splits into several HTML blocks is read whole. It knows
+  the tags a table and its cells use and fails on any other, and it reads a
+  stray closing tag, a cell with no row before it, and a cell that leaves
+  its bold open as a browser does. Inline HTML in prose and headings, an
+  anchor, a line break, a code span, bold, or italics, reads as Markdown
+  would write it, and any other tag fails. A heading's own anchor may be its
+  section's ID. A layout may say that its value or key cells are text, which
+  column means and which types a key, and an object its heading names is a
+  name its table defines; a plugin may turn off inline objects and section
+  numbers, give its own lint checks, and read RFC 2119 keywords in any case,
+  which the profile states. The lint checks appendices only where the
+  profile turns them on, and section numbers only where the text numbers its
+  headings. Two lint kinds join: a section anchor that misspells or misses
+  its pattern, and a list with no codes. Two extraction fixtures fail on an
+  unknown tag in an HTML table cell and on an HTML table with no end. AdCOM
+  reaches its extraction stage on both locks. The test suite holds 441
+  tests, and MIN_TESTS is 441.
+rationale: >-
+  Every check stays, and the extraction gate adds two fixtures. OpenProposal
+  writes no HTML, so its IR and findings regenerate to their bytes; its
+  profile places the two new lint kinds in the feedback's "other" row, and
+  the extraction report lists them with zero findings.
+accepts:
+  - { gate: committed-files, fingerprint: f9b696d4a57b38c9a5e5c0dbbf4cb34e6922c2bde8a8164b9fc8867d97a08339 }
+  - { gate: comparison, fingerprint: 12b9f43da65d7a5f9a9ab9c15beda0112bd375274433f1a6525bdf22a97f122d }
+  - { gate: constructor-sources, fingerprint: 12413f32d62a4027962abb44a7cae83f7df7c2d66e668d230d8e72d88ba7d2a6 }
+  - { gate: domain-sources, fingerprint: 2d07a9948fb2a6a96c87e686bc9f460f9b5f56a3dc0bb93fef0ce4586472d42d }
+  - { gate: examples-validate, fingerprint: ab1524025638ed9468f41cef323c295442c5ffc332dc7cbb1e4c5185a02804a0 }
+  - { gate: extraction, fingerprint: 3d358d61c7e3d5f85401662ebb8dd6ccd60be561fe551ef9697abb002831dc78 }
+  - { gate: feedback, fingerprint: 0f163638526f68e84bf1e389d6110b6f22b4afa5c0cd069b4b946187f1318fef }
+  - { gate: fidelity, fingerprint: 28911fca4f7b47c724b389356c952299c64a1ccfd9f9d1f913fefd6067c19aa8 }
+  - { gate: field-examples, fingerprint: 2c521de664ddc769632953146a2ba11ee32776fec03e989237cced46b1a94112 }
+  - { gate: kernel-sources, fingerprint: 5643e4688781e290d1a5c32ffd11ea4ed308ce5960ca7c28ee67fc214e28ab65 }
+  - { gate: map-drift, fingerprint: 6dcfab8002873db836f859f31385a1c5ff8221594a47c55f9f29c02afb951726 }
+  - { gate: mapping-bijection, fingerprint: 6ad6fe4063a8f85910355f7be9519f0eb03afc7504fb6a42e04102c5067208c3 }
+  - { gate: mapping-current, fingerprint: 1ab55901fc6622a14f52e099bf616b1598b37436f48c47779c5416bc5ca75637 }
+  - { gate: mapping-location, fingerprint: bca6d6f36a42604d6c923bbcdd62ecfeeb60d0235ca04174f3f98eb1b8cb1224 }
+  - { gate: mapping-names, fingerprint: b0183f2badb34b199f4cb1d9a51fdc47c198c90df7523cb66b457bdbf5368361 }
+  - { gate: mapping-rules, fingerprint: 2f948363c73a524a1d1a6ea535ff9b9fcf17cd04634692b18d02c8f946838ccf }
+  - { gate: mapping-sources, fingerprint: 17db2935f166ab52c33da214f5ef3559e0578e967662aa272f30c0a1f755de5a }
+  - { gate: model-resolves, fingerprint: 6694e6ff1612f220fc52cb2a7046388909db316baec05fca69af533bf33c5694 }
+  - { gate: npm-test, fingerprint: a66bb29f949f92c2a11dc199a0f1b92a985d02c875d4b92d76026e40b65aa519 }
+  - { gate: round-trip, fingerprint: 67ca61fd2774acd9ae2ecc68a8685f21fb963e7d222395903ea396a1e9a6ca11 }
+  - { gate: rule-checks, fingerprint: f35f83f59a4f1a1a21ec46e8df7c9ec9167677d3d0cfe0e62a62cf60508c060d }
+  - { gate: rules-emit, fingerprint: 4e60cc11c756a08464cc08017574d8cb2fe55d8af42b6ddb74672b0dcb6a4be0 }
+  - { gate: site-builds, fingerprint: ffdf4c71ff6653bfcddbb747e46f44809560c9741be6e864559c9149047d9848 }
+  - { gate: spec-profile, fingerprint: 924bea712027ee84d8cadb2e76cf9c87384b139b948ab417896963d3e99d199b }
+  - { gate: type-examples-generate, fingerprint: 5505f09288e0e0447cf84810d95daf0733c74c0ed409ae89356be6fa80345440 }
+  - { gate: type-examples-valid, fingerprint: 48d2aa912cf9657af9ca738d285d72f4b597110b2f68dd1cc96cfa2b82521199 }
+  - { gate: variant-diff, fingerprint: 633b43ac8ca843228c0aa115e0a5f0b9fd669999f3de87c86056cbdc89d34186 }
+  - { gate: variant-examples, fingerprint: dda8a5973e2914495c8536b64e90c7327b7dffad3d57829b2e440b65222cc0ce }

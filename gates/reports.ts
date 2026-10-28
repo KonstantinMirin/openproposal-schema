@@ -2,12 +2,26 @@
 import { buildLock, DEFAULT_LOCK_FILE, type BuildInput } from "../src/compare.ts";
 import { readFileSync } from "node:fs";
 import { join, relative } from "node:path";
-import { allDecisions, buildFeedback, checkFeedback, checkLineLinks, foldedCodeSpans, renderDetails, type FeedbackInput } from "../src/feedback.ts";
+import { allDecisions, buildFeedback, checkFeedback, checkLineLinks, feedbackOf, foldedCodeSpans, recordCitations, renderDetails, type FeedbackInput } from "../src/feedback.ts";
+import type { DecisionRecord } from "../src/mapping.ts";
 import { snapshotOf } from "../src/fetch.ts";
-import type { SpecLock } from "../src/lock.ts";
+import { repoRoot, type SpecLock } from "../src/lock.ts";
 import type { MappingFile } from "../src/mapping.ts";
 import { committedTreeCurrent, flipFirst, onlyGenerated, sameTreeRuns, type CommittedTreeInput, type TrackedInput, type TreeRunsInput } from "./common.ts";
 import { defineGate, ROOT } from "./harness.ts";
+
+export const recordWording = defineGate<{ decisions: DecisionRecord[]; names: Set<string> }>({
+  id: "record-wording",
+  title: "decision records: each question, chosen answer, and feedback is in the specification owners' terms, citing no document or record of this repository and no type the specification never writes",
+  code: ["src/feedback.ts#recordCitations", "src/feedback.ts#internalTypeNames", "src/feedback.ts#internalTypeName", "src/feedback.ts#INTERNAL"],
+  check: (i) => ({ problems: recordCitations(i.decisions, i.names), note: `${i.decisions.length} records` }),
+  fixtures: [
+    { name: "a feedback that cites a decision ID", mutate: (i) => ({ ...i, decisions: i.decisions.map((d, n) => (n === 0 ? { ...d, feedback: `${d.feedback ?? ""} See D-001.` } : d)) }), expect: 'cites "D-001", which the specification\'s owners don\'t have' },
+    { name: "a question that names a type of the model", mutate: (i) => ({ ...i, names: new Set([...i.names, "WidgetSet"]), decisions: i.decisions.map((d, n) => (n === 0 ? { ...d, question: `${d.question} Is it a \`WidgetSet\`?` } : d)) }), expect: 'names the type "WidgetSet"' },
+    { name: "a chosen answer that names this repository's process", mutate: (i) => ({ ...i, decisions: i.decisions.map((d, n) => (n === 0 ? { ...d, options: d.options.map((o) => (o.id === d.chosen ? { ...o, summary: "As this record quotes, the objects phase decides." } : o)) } : d)) }), expect: "its summary of the chosen option cites" },
+    { name: "a feedback that names a document of this repository", mutate: (i) => ({ ...i, decisions: i.decisions.map((d, n) => (n === 0 ? { ...d, feedback: "As the type rules say." } : d)) }), expect: 'cites "type rules"' },
+  ],
+});
 
 export const comparison = defineGate<{ locks: SpecLock[]; input: BuildInput }>({
   id: "comparison",
@@ -66,13 +80,14 @@ export const feedback = defineGate<FeedbackInput>({
   code: ["src/feedback.ts#buildFeedback", "src/feedback.ts#checkFeedback", "src/feedback.ts#foldedCodeSpans", "src/feedback.ts#checkLineLinks", "src/feedback.ts#renderDetails", "src/fetch.ts#snapshotOf"],
   check: (i) => {
     const { doc, problems } = buildFeedback(i);
-    problems.push(...checkFeedback(doc, i.builds));
+    const fb = feedbackOf(repoRoot(i.builds[0]!.lock));
+    problems.push(...checkFeedback(doc, i.builds, fb));
     // The sources of the text the report shows: the decision records, the recorded findings, and the round-trip differences.
     for (const file of [...new Set([...i.decisions.map((d) => d.file), i.recordedFindings.file, i.recordedDifferences.file])]) problems.push(...foldedCodeSpans(relative(ROOT, file), readFileSync(file, "utf8")));
     // Each lint finding on the default lock links its lines in the specification its blob pins, which the snapshot holds.
     const base = i.builds[0]!.lock;
     const snapshot = snapshotOf(base);
-    const lines = snapshot === null ? null : checkLineLinks(doc, renderDetails(doc), readFileSync(join(ROOT, snapshot, base.path), "utf8"));
+    const lines = snapshot === null ? null : checkLineLinks(doc, renderDetails(doc, fb), readFileSync(join(repoRoot(base), snapshot, base.path), "utf8"));
     if (lines === null) problems.push(`${base.name} lists no snapshot, so the lint tables' line links can't be checked`);
     else problems.push(...lines.problems.map((p) => `details.md line links: ${p}`));
     const decisions = allDecisions(doc);

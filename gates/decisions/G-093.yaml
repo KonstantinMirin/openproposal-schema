@@ -1,0 +1,39 @@
+format: 1
+id: G-093
+date: 2026-10-28
+question: What gates hold AdCOM's drift report, which compares its lists with adcom-proto's and Prebid's enums?
+decision: >-
+  Four new gates run on a spec with a drift/ folder, AdCOM's. drift-sources
+  checks that each artifact's snapshot file is its pinned blob; that a
+  reachable clone has the commit, every pinned blob, and no other file of
+  the pinned folder that defines an enum; that every list of the registry
+  is paired once with each artifact's enum or none, and every enum with one
+  list; and that every line of an enum reads, with seven fixtures.
+  drift-deterministic, drift-committed, and drift-tracked hold the report to
+  two runs of `npm run drift` in separate processes, to the committed
+  files, and every tracked file under drift/ to the sources file, a pinned
+  snapshot file, or a file the report writes. Its fingerprint covers
+  `drift/sources.schema.json`. `drift` joins the outputs stage's folders
+  (spec-profile), the folders no file may be untracked in (untracked), and
+  the root's format folders (layout-tracked). The site gate changes because
+  AdCOM's landing page reads the committed report, and because its registry
+  fixture now names the citing type-map link by its route alone, which
+  writes no relative path that the export's scan reads as a local one. The
+  guard changes with
+  scripts/ci.ts. The test suite holds 462 tests, and MIN_TESTS is 462.
+rationale: >-
+  The report is new and every gate on it is new; nothing existing is
+  relaxed. The pairs of lists and enums are reviewed input, and the gates
+  fail any list or enum they leave out. OpenProposal has no drift/ folder,
+  so its gates and outputs don't change.
+accepts:
+  - { gate: drift-committed, fingerprint: 2eb742619b55362a1246316813ef79d4a62f986ae3f772d8cbdde398710c2346 }
+  - { gate: drift-deterministic, fingerprint: 127167544659455cdc943b5fc32d2953f933972fa303a726705076c842661e1f }
+  - { gate: drift-sources, fingerprint: 94465027f77d56a24c5a428b0329380869d3241f9b65174c43e5eae9875f8b16 }
+  - { gate: drift-tracked, fingerprint: 671abe9d923a3184123a9274c4b007eeadc5dc1c13acb44495b983006d7643a9 }
+  - { gate: guard, fingerprint: 29855277de93aaf57b04d4b7618dc39d9b17aca7abad7498dca6b0c01627b27b }
+  - { gate: layout-tracked, fingerprint: 3b9761f27ca0e57e2919df45f0da9ed735fc8cc6b2160279659ec86ca743ca14 }
+  - { gate: npm-test, fingerprint: 5d27a98963f908be69bb5cf9b064fb37ad027f2f918e87bf6183999ecb827fac }
+  - { gate: site-builds, fingerprint: ccb29eea798ce1d1470dcebab393deb2f1082243362e3717bc7ef3e8a975ddc6 }
+  - { gate: spec-profile, fingerprint: 306b36a6a3b9929a36e28a53695603bfeb52b5542b0335af75ad7bcc615036d9 }
+  - { gate: untracked, fingerprint: 50f96e6f14ca898327784f3d657d21ea0d4e46ffdc3bb77493f6b97277c41a17 }

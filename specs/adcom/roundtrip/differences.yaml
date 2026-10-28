@@ -1,0 +1,17 @@
+# The cells where the list tables rendered from AdCOM's model differ from the
+# specification's. `npm run render` prints every difference; each one here
+# cites the decision record that makes the model differ there. The round-trip
+# gate in `npm run ci` fails on a difference not recorded here, on a recorded
+# one whose text changed, and on one that no longer occurs.
+format: 1
+differences:
+  - table: table:list_startdelaymodes:1
+    row: "def:list_startdelaymodes:>0"
+    column: "*"
+    spec: ">0 | Mid-Roll (value indicates start delay in second)"
+    model: ""
+    decision: D-004
+    reason: >-
+      The row stands for every positive number of seconds, not one code, so
+      the vocabulary holds no term for it: it takes a media offset in seconds
+      as its extension, and its description carries the row's meaning.

@@ -23,6 +23,7 @@ import type { ModelDoc, ModelProperty, ModelType } from "./model.ts";
 import { compileSchema } from "./pipeline.ts";
 import type { Vector, VectorFile } from "./rules.ts";
 import { checkUndecided, type Failure, type FindingsFile, type Undecided } from "./examples.ts";
+import { REPO_ROOT } from "./repo.ts";
 
 export const VARIANTS_DIR = "variants";
 export const AS_WRITTEN = "as-written";
@@ -99,15 +100,15 @@ export interface Variant {
   file: string;
 }
 
-/** Loads `variants/<name>.yaml` and validates it against its schema, which takes a primitive from the kernel's. Throws if it is invalid. */
-export function loadVariant(root: string, name = AS_WRITTEN): Variant {
-  return loadVariantFile(root, join(root, VARIANTS_DIR, `${name}.yaml`), name);
+/** Loads a spec's `variants/<name>.yaml` and validates it against its schema, which takes a primitive from the kernel's. Throws if it is invalid. */
+export function loadVariant(spec: string, name = AS_WRITTEN): Variant {
+  return loadVariantFile(join(spec, VARIANTS_DIR, `${name}.yaml`), name);
 }
 
 /** Loads a variant file, which must be valid against the variant schema and named `name`. */
-export function loadVariantFile(root: string, file: string, name: string): Variant {
+export function loadVariantFile(file: string, name: string): Variant {
   const doc = readYaml(file);
-  const errors = compileSchema(join(root, VARIANT_SCHEMA), [join(root, KERNEL_SCHEMA)])(doc);
+  const errors = compileSchema(join(REPO_ROOT, VARIANT_SCHEMA), [join(REPO_ROOT, KERNEL_SCHEMA)])(doc);
   if (errors.length > 0) throw new Error(`${file}: not a valid variant file: ${errors.join("; ")}`);
   const v = { ...(doc as Omit<Variant, "file">), file };
   if (v.name !== name) throw new Error(`${file}: "name" is "${v.name}"; it must equal the file name "${name}"`);

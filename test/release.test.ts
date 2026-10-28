@@ -10,7 +10,7 @@ import type { SpecIR } from "../src/ir-types.ts";
 import { loadKernel } from "../src/kernel.ts";
 import { decisionsOf, loadDecisions, loadMappings } from "../src/mapping.ts";
 import { resolveModel, type ModelDoc, type ModelType } from "../src/model.ts";
-import { emitRules, loadVectors, type Rule, type RulesDoc } from "../src/rules.ts";
+import { emitRules, loadVectors, type Rule, type RulesDoc, VECTORS_DIR } from "../src/rules.ts";
 import { generateCorpus, type CorpusDoc } from "../src/corpus.ts";
 import {
   buildRelease,
@@ -33,20 +33,20 @@ import {
   validateRelease,
   type Change,
 } from "../src/release.ts";
-import { ROOT } from "./helpers.ts";
+import { OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT);
-const CONSTRUCTORS = loadConstructors(ROOT);
-const MAPPINGS = loadMappings(ROOT, join(ROOT, "mapping"));
-const DECISIONS = loadDecisions(ROOT, join(ROOT, "decisions"));
-const IR = JSON.parse(readFileSync(join(ROOT, "ir", "spec-ir.json"), "utf8")) as SpecIR;
+const KERNEL = loadKernel(ROOT, SPEC);
+const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const MAPPINGS = loadMappings(join(SPEC, "mapping"));
+const DECISIONS = loadDecisions(join(SPEC, "decisions"));
+const IR = JSON.parse(readFileSync(join(SPEC, "ir", "spec-ir.json"), "utf8")) as SpecIR;
 const MAIN = resolveModel({ ir: IR, lock: "main", mappings: MAPPINGS, decisions: DECISIONS, kernel: KERNEL, constructors: CONSTRUCTORS }).model;
-const emit = (m: ModelDoc) => emitSchemas(m, "schemas").files;
+const emit = (m: ModelDoc) => emitSchemas(m, "schemas", OP_SCHEMA).files;
 const FILES = emit(MAIN);
-const VECTORS = loadVectors(ROOT);
+const VECTORS = loadVectors(join(SPEC, VECTORS_DIR));
 const rulesOf = (m: ModelDoc): RulesDoc => {
-  const emitted = emitSchemas(m, "schemas");
-  const r = emitRules({ model: m, ir: IR, lock: "main", vectors: VECTORS, decisions: DECISIONS, schemaDir: "schemas", conditionsLeft: emitted.conditions.left });
+  const emitted = emitSchemas(m, "schemas", OP_SCHEMA);
+  const r = emitRules({ model: m, ir: IR, lock: "main", vectors: VECTORS, decisions: DECISIONS, schemaDir: "schemas", conditionsLeft: emitted.conditions.left, schemaBase: OP_SCHEMA.base });
   assert.deepEqual(r.problems, []);
   return r.doc;
 };
@@ -91,7 +91,7 @@ test("the first release is 1.0.0 for every file, and each digest is the JCS SHA-
   assert.equal(doc.model, sha256(jcs(MAIN)));
   assert.equal(doc.rules, sha256(jcs(RULES)));
   assert.equal(doc.digest, sha256(jcs(Object.fromEntries(FILES.map((f) => [f.path, f.schema])))));
-  assert.deepEqual(validateRelease(ROOT, doc), []);
+  assert.deepEqual(validateRelease(doc), []);
   assert.equal(renderRelease(buildRelease({ model: MAIN, files: emit(MAIN), rules: RULES, previous: null }).doc), renderRelease(doc), "deterministic");
 });
 
@@ -268,7 +268,7 @@ test("the version follows from the last frozen release: minor for additive, patc
   assert.equal(minor.doc.previous, "1.0.0");
   const moved = Object.entries(minor.doc.files).filter(([, e]) => e.version === "1.1.0").map(([p]) => p);
   assert.deepEqual(moved, ["modules/settlement/1/settlement.json"]);
-  assert.deepEqual(validateRelease(ROOT, minor.doc), []);
+  assert.deepEqual(validateRelease(minor.doc), []);
 
   const prose = changed((t) => {
     props(t.get("LineItem")).serving_mode!.description = "Edited.";

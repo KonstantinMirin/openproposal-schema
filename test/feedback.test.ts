@@ -4,34 +4,34 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { buildLock, type LockBuild } from "../src/compare.ts";
 import { loadConstructors } from "../src/constructors.ts";
-import { loadFindings } from "../src/examples.ts";
-import { allDecisions, placeCounts, buildFeedback, checkFeedback, checkLineLinks, compareSections, DETAILS_LINK, foldedCodeSpans, messageInTerms, proseParts, groupDecisions, INTERNAL, internalCitations, internalTypeName, internalTypeNames, renderComment, renderDetails, renderFeedback, restsOn, RULE_OF_KIND, type FeedbackInput } from "../src/feedback.ts";
+import { FINDINGS_FILE, loadFindings } from "../src/examples.ts";
+import { allDecisions, placeCounts, buildFeedback, checkFeedback, checkLineLinks, compareSections, DETAILS_LINK, foldedCodeSpans, messageInTerms, proseParts, groupDecisions, INTERNAL, internalCitations, internalTypeName, internalTypeNames, renderComment, renderDetails, renderFeedback, restsOn, type FeedbackInput } from "../src/feedback.ts";
 import { loadKernel } from "../src/kernel.ts";
 import { FINDING_KINDS } from "../src/lint.ts";
 import { loadLock } from "../src/lock.ts";
 import { loadDecisions, loadMappings } from "../src/mapping.ts";
-import { loadDifferences } from "../src/render.ts";
-import { loadVectors } from "../src/rules.ts";
-import { ROOT } from "./helpers.ts";
+import { DIFFERENCES_FILE, loadDifferences } from "../src/render.ts";
+import { loadVectors, VECTORS_DIR } from "../src/rules.ts";
+import { OP_FEEDBACK, ROOT, SPEC } from "./helpers.ts";
 
 const INPUT = {
-  root: ROOT,
-  mappings: loadMappings(ROOT, join(ROOT, "mapping")),
-  decisions: loadDecisions(ROOT, join(ROOT, "decisions")),
-  kernel: loadKernel(ROOT),
-  constructors: loadConstructors(ROOT),
-  vectors: loadVectors(ROOT),
+  root: SPEC,
+  mappings: loadMappings(join(SPEC, "mapping")),
+  decisions: loadDecisions(join(SPEC, "decisions")),
+  kernel: loadKernel(ROOT, SPEC),
+  constructors: loadConstructors(ROOT, SPEC),
+  vectors: loadVectors(join(SPEC, VECTORS_DIR)),
 };
 
 async function build(file: string): Promise<LockBuild> {
-  const r = await buildLock(loadLock(join(ROOT, "spec-input", file)), INPUT);
+  const r = await buildLock(loadLock(join(SPEC, "spec-input", file)), INPUT);
   assert.deepEqual(r.problems, []);
   return r.build!;
 }
 
 async function input(): Promise<FeedbackInput> {
   const builds = [await build("spec-lock.yaml"), await build("with-open-prs.lock.yaml")];
-  return { ...INPUT, builds, recordedFindings: loadFindings(ROOT), recordedDifferences: loadDifferences(ROOT) };
+  return { ...INPUT, builds, recordedFindings: loadFindings(join(SPEC, FINDINGS_FILE)), recordedDifferences: loadDifferences(join(SPEC, DIFFERENCES_FILE)) };
 }
 
 test("sections sort as the specification numbers them", () => {
@@ -46,7 +46,7 @@ test("the elements a decision rests on read by section", () => {
 });
 
 test("every lint kind has a row", () => {
-  for (const k of FINDING_KINDS) assert.ok(RULE_OF_KIND[k] !== undefined, k);
+  for (const k of FINDING_KINDS) assert.ok(OP_FEEDBACK.kinds[k] !== undefined, k);
 });
 
 test("a decision's group is the first stage that cites it", () => {
@@ -65,7 +65,7 @@ test("the report places every record and finding, and renders from its JSON form
   const inp = await input();
   const { doc, problems } = buildFeedback(inp);
   assert.deepEqual(problems, []);
-  assert.deepEqual(checkFeedback(doc, inp.builds), []);
+  assert.deepEqual(checkFeedback(doc, inp.builds, OP_FEEDBACK), []);
   const decisions = doc.groups.flatMap((g) => g.decisions);
   assert.equal(decisions.find((d) => d.id === "D-022")?.locks.join(), "with-open-prs", "the geo decision applies only with the PRs");
   assert.equal(decisions.find((d) => d.id === "D-023")?.feedback, undefined, "a decision that asks nothing stays listed");
@@ -82,7 +82,7 @@ test("the report places every record and finding, and renders from its JSON form
   // A report that lost a finding fails the check.
   const lossy = structuredClone(doc);
   lossy.findings[0]!.findings.pop();
-  assert.ok(checkFeedback(lossy, inp.builds).some((p) => p.includes("isn't listed")));
+  assert.ok(checkFeedback(lossy, inp.builds, OP_FEEDBACK).some((p) => p.includes("isn't listed")));
   // The renderings are functions of the document.
   assert.equal(renderFeedback(doc), renderFeedback(buildFeedback(inp).doc));
   const comment = renderComment(doc);
@@ -92,7 +92,7 @@ test("the report places every record and finding, and renders from its JSON form
   assert.match(comment, /Inputs: `main` at `44dfaaf`, and `main` with the 14 open PRs merged, including our #119, #120, and #123, at `[0-9a-f]{7}`\./, "the inputs name the PRs, ours among them");
   // Decisions are numbered 1 to N in reading order, and the text names them by number, never by ID.
   assert.deepEqual(decisions.map((d) => d.number), decisions.map((_, i) => i + 1));
-  const details = renderDetails(doc);
+  const details = renderDetails(doc, OP_FEEDBACK);
   const n = decisions.find((d) => d.id === "D-016")!.number;
   assert.match(details, new RegExp(`\n#### ${n}\\. What does an object field hold`));
   assert.doesNotMatch(details.replace(/^<!--.*-->\n/, ""), /\bD-\d+\b/, "the details name no decision by its ID");
@@ -101,13 +101,13 @@ test("the report places every record and finding, and renders from its JSON form
 test("a decision ID or a repository document in the text for the working group is a problem", async () => {
   const inp = await input();
   const { doc } = buildFeedback(inp);
-  assert.deepEqual(internalCitations(doc), []);
+  assert.deepEqual(internalCitations(doc, OP_FEEDBACK), []);
   const cited = structuredClone(doc);
   cited.findings.find((r) => r.findings.length > 0)!.findings[0]!.messages[0]!.message = "As D-7 reads it.";
-  assert.ok(checkFeedback(cited, inp.builds).some((p) => p.startsWith("details.md line ") && p.includes('cites "D-7"')), "a short decision ID is caught too");
+  assert.ok(checkFeedback(cited, inp.builds, OP_FEEDBACK).some((p) => p.startsWith("details.md line ") && p.includes('cites "D-7"')), "a short decision ID is caught too");
   const command = structuredClone(doc);
   command.groups[0]!.decisions[0]!.reading = "Run npm run map first.";
-  assert.ok(internalCitations(command).some((p) => p.includes('cites "npm run"')));
+  assert.ok(internalCitations(command, OP_FEEDBACK).some((p) => p.includes('cites "npm run"')));
 });
 
 test("a model type name the specification never writes is internal in the text for the working group, and one the specification writes isn't", async () => {
@@ -124,7 +124,7 @@ test("a model type name the specification never writes is internal in the text f
   const { doc } = buildFeedback(inp);
   const named = structuredClone(doc);
   named.groups[0]!.decisions[0]!.reading = "Each is a `DaypartWindow`.";
-  assert.ok(internalCitations(named, names).some((p) => p.includes('names the type "DaypartWindow"')));
+  assert.ok(internalCitations(named, OP_FEEDBACK, names).some((p) => p.includes('names the type "DaypartWindow"')));
 });
 
 test("a repository path, a record or task ID, or the pipeline's own terms read as internal, and the specification's own terms don't", () => {
@@ -172,7 +172,7 @@ test("the report keeps the points the text leaves open apart from the changes we
   // An option with a readable ID and an unlisted term has two causes, and each decision lists it.
   const both = doc.examples.find((x) => x.paths.includes("/audiences/available/1"))!;
   assert.deepEqual(both.decisions, ["D-037", "D-041"]);
-  const details = renderDetails(doc);
+  const details = renderDetails(doc, OP_FEEDBACK);
   for (const id of both.decisions) {
     const n = allDecisions(doc).find((d) => d.id === id)!.number;
     const section = details.slice(details.indexOf(`#### ${n}. `), details.indexOf("\n####", details.indexOf(`#### ${n}. `) + 1));
@@ -200,7 +200,7 @@ test("the report keeps the points the text leaves open apart from the changes we
   // A report that files a change we propose with the open points fails the check.
   const misfiled = structuredClone(doc);
   misfiled.groups[0]!.decisions.push(misfiled.departures.shift()!);
-  assert.ok(checkFeedback(misfiled, inp.builds).some((p) => /is a departure, listed with the decisions the text leaves open/.test(p)));
+  assert.ok(checkFeedback(misfiled, inp.builds, OP_FEEDBACK).some((p) => /is a departure, listed with the decisions the text leaves open/.test(p)));
 });
 
 test("each union is one row across the locks, and a summary's union shows its projected form and its § 2.1 rows", async () => {
@@ -212,14 +212,14 @@ test("each union is one row across the locks, and a summary's union shows its pr
   const summary = doc.unions.find((u) => u.name === "LineItemSummaryPropertiesOptionOrCatalogRef")!;
   assert.deepEqual(summary.forms, [{ locks: ["main", "with-open-prs"], forms: ["a reference that stands in for an inline value", "an object of `{ name }`"] }]);
   assert.ok(summary.sources.some((x) => x.startsWith("block:2.1:")), "the summary's union rests on § 2.1's list");
-  const rows = renderDetails(doc).split("\n").filter((l) => l.includes("§ 5.2: `properties`"));
+  const rows = renderDetails(doc, OP_FEEDBACK).split("\n").filter((l) => l.includes("§ 5.2: `properties`"));
   assert.equal(new Set(rows).size, rows.length, "no repeated row");
 });
 
 test("an example's places are listed once under each decision, and the findings at one place in one table give one reason", async () => {
   const inp = await input();
   const { doc } = buildFeedback(inp);
-  const details = renderDetails(doc);
+  const details = renderDetails(doc, OP_FEEDBACK);
   // Each example once, and each place in it once, though the display example's measurement source option is invalid and breaks a rule there.
   for (const line of details.split("\n").filter((l) => l.startsWith("- **Examples that"))) {
     const examples = line.split("; ").map((x) => /`([^`]+\.(?:yaml|json))`|§ [\d.]+ code block/.exec(x)?.[0]);
@@ -234,13 +234,13 @@ test("an example's places are listed once under each decision, and the findings 
   assert.equal(row.split("The example follows the text").length - 1, 1, "the row gives its reason once");
   const split = structuredClone(doc);
   split.examples.find((x) => x.paths.includes("/reporting/included/0") && x.kind === "rule")!.reason += " Another reason.";
-  assert.ok(checkFeedback(split, inp.builds).some((p) => p.includes("give different reasons in one table")));
+  assert.ok(checkFeedback(split, inp.builds, OP_FEEDBACK).some((p) => p.includes("give different reasons in one table")));
 });
 
 test("a lint finding's places split by lock, and each MUST statement that names no field says how it is checked, not which authoring rule removes it", async () => {
   const inp = await input();
   const { doc } = buildFeedback(inp);
-  const details = renderDetails(doc);
+  const details = renderDetails(doc, OP_FEEDBACK);
   // `viewable_rate` is named in § 5.2.2 only with the open PRs.
   assert.ok(details.includes("| `viewable_rate` resolves to no table row, key, or table-declared value. | § 5.7, § 8; with the open PRs, also § 5.2.2 |"));
   // A MUST statement is a rule with test vectors, the schemas, or an obligation on a party, as the model places it.
@@ -273,8 +273,8 @@ test("a code span that a YAML line break folds holds a space no one wrote, so th
   assert.deepEqual(foldedCodeSpans("x.yaml", "reason: >-\n  a \\` and `b`\n  c\n"), []);
   // The working group's text, as the committed records write it, has none.
   for (const d of INPUT.decisions) assert.deepEqual(foldedCodeSpans(d.id, readFileSync(d.file, "utf8")), []);
-  assert.deepEqual(foldedCodeSpans("findings", readFileSync(loadFindings(ROOT).file, "utf8")), []);
-  assert.doesNotMatch(readFileSync(join(ROOT, "feedback", "details.md"), "utf8"), /smb-decision- makers|cfo-finance- leaders/);
+  assert.deepEqual(foldedCodeSpans("findings", readFileSync(loadFindings(join(SPEC, FINDINGS_FILE)).file, "utf8")), []);
+  assert.doesNotMatch(readFileSync(join(SPEC, "feedback", "details.md"), "utf8"), /smb-decision- makers|cfo-finance- leaders/);
 });
 
 test("a structure proposed from a row's prose says only what the row says, and asks what the row leaves open", () => {
@@ -292,7 +292,7 @@ test("a record writes a list as paragraphs that start with a dash, and the detai
   assert.deepEqual(proseParts("- one\n- two\nmore of two"), { lead: "", items: ["one", "two more of two"] });
   assert.deepEqual(proseParts("One  sentence,\nno list."), { lead: "One sentence, no list.", items: [] });
   const { doc } = buildFeedback(await input());
-  const details = renderDetails(doc);
+  const details = renderDetails(doc, OP_FEEDBACK);
   assert.ok(details.includes("- **What to change:** Give each selectable and settable field its option type:\n  - The `formats` row namespaces a format ID by channel"));
   assert.ok(details.includes("- **What to change:**\n  - Name the key of each manifest entry"), "a list with no lead starts under its label");
   assert.ok(details.includes("- **Examples that follow the text:**\n  - § 5.6.3 code block, only with the open PRs, at"), "a change we propose lists each example as an item");
@@ -305,7 +305,7 @@ test("a record writes a list as paragraphs that start with a dash, and the detai
 
 test("the inputs name the day the PRs were open, each PR's head in merge order, and what the merge changed beside them", async () => {
   const { doc } = buildFeedback(await input());
-  const details = renderDetails(doc);
+  const details = renderDetails(doc, OP_FEEDBACK);
   const pr = (n: number) => `[#${n}](https://github.com/IABTechLab/OpenProposal/pull/${n})`;
   assert.ok(details.includes(`The open PRs are the 14 open on 2026-10-26: ${pr(17)}, ${pr(18)}, ${pr(70)} to ${pr(76)}, ${pr(117)} to ${pr(120)}, and ${pr(123)}. Ours are #119, #120, and #123.`));
   // Each edit INTEGRATION-r4.md records outside a conflict hunk, merges 12, 13, and 14, in merge order.
@@ -319,8 +319,8 @@ test("the inputs name the day the PRs were open, each PR's head in merge order, 
 test("each lint finding on main links its lines at the locked commit, and the link check fails a link that doesn't open there", async () => {
   const inp = await input();
   const { doc } = buildFeedback(inp);
-  const spec = readFileSync(join(ROOT, "spec-input/snapshots/main/spec/openproposal-3.0.md"), "utf8");
-  const details = renderDetails(doc);
+  const spec = readFileSync(join(SPEC, "spec-input/snapshots/main/spec/openproposal-3.0.md"), "utf8");
+  const details = renderDetails(doc, OP_FEEDBACK);
   const ok = checkLineLinks(doc, details, spec);
   assert.deepEqual(ok.problems, []);
   assert.equal(ok.unplaced, 2, "the two presence counts are about whole tables, with no line");

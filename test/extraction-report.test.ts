@@ -3,12 +3,12 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { EXTRACTION_REPORT, renderExtractionReport, reportBlocks, reportLocks } from "../src/extraction-report.ts";
-import { ROOT } from "./helpers.ts";
+import { ROOT, SPEC } from "./helpers.ts";
 
 const TEXT = readFileSync(join(ROOT, EXTRACTION_REPORT), "utf8");
 
 test("the extraction report's numbers are what the committed IR and findings give, so none goes stale", () => {
-  const locks = reportLocks(ROOT);
+  const locks = reportLocks(SPEC);
   assert.equal(renderExtractionReport(TEXT, reportBlocks(locks)), TEXT, "run: npm run extraction-report");
   // The counts a review found stale with the open PRs, read from the IR they come from.
   const golden = JSON.parse(readFileSync(join(ROOT, "test", "golden", "with-open-prs", "counts.json"), "utf8"));

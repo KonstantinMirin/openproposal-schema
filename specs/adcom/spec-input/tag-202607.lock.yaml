@@ -1,0 +1,19 @@
+# The second required input: AdCOM's last tag, AdCOM1.0-202607, a week before
+# `main`. The two differ only inside the Content object's table: the tag still
+# carries the renamed attributes that `main` reverted, orders three rows
+# differently, and writes `int` where `main` writes `integer`. Their lists are
+# the same. `tag` names the tag, which CI checks still names `commit` wherever
+# a clone is reachable. The snapshot holds the specification at `commit`;
+# `npm run fetch -- --lock specs/adcom/spec-input/tag-202607.lock.yaml
+# --snapshot` writes it.
+name: tag-202607
+tag: AdCOM1.0-202607
+upstream: https://github.com/InteractiveAdvertisingBureau/AdCOM
+commit: d67a6a8dedc883e0655e239d97116a91df6052ed
+path: AdCOM v1.0 FINAL.md
+blob: ec21cf8425559495261d2b9c4084ddd3d26c4802
+ir_dir: ir/tag-202607
+required: true
+sources:
+  - git: ../../vendor/AdCOM
+  - snapshot: spec-input/snapshots/tag-202607

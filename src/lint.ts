@@ -32,6 +32,8 @@ export const FINDING_KINDS = [
   "key_required_is_marker",
   "presence_unstated",
   "unnumbered_heading",
+  "section_anchor_irregular",
+  "list_without_codes",
 ] as const;
 export type FindingKind = (typeof FINDING_KINDS)[number];
 
@@ -55,23 +57,34 @@ interface Definer {
   table: boolean;
 }
 
-const OWNER_LABEL: Record<Field["owner"], string> = { proposal: "proposal", line_item: "line item" };
+/** A field owner in prose: its words, as `line_item` is "line item". */
+const ownerLabel = (owner: string): string => owner.replaceAll("_", " ");
 const BUYER_MARKERS = ["selectable", "settable", "supplied", "requestable"];
 
 /** Runs every stage 2 check over the IR. Deterministic: findings are sorted by kind, then id. */
-export function lint(ir: SpecIR): Finding[] {
+/** What the lint checks beyond what every text has: the appendices, where the profile turns them on, and section numbers, where the text numbers its headings. */
+export interface LintOptions {
+  appendices?: boolean;
+  numbered?: boolean;
+}
+
+export function lint(ir: SpecIR, own?: (ir: SpecIR) => Omit<Finding, "disposition">[], opts: LintOptions = {}): Finding[] {
   const out: Finding[] = [];
   const add = (f: Omit<Finding, "disposition">) => out.push({ ...f, disposition: null });
+  // The specification's own checks, which its plugin gives.
+  for (const f of own?.(ir) ?? []) add(f);
   const universe = buildUniverse(ir);
 
-  appendixA(ir, add);
-  appendixB(ir, add);
+  if (opts.appendices !== false) {
+    appendixA(ir, add);
+    appendixB(ir, add);
+  }
   duplicates(ir, add);
   valueSets(ir, add);
   identifiers(ir, universe, add);
   structure(ir, add);
   musts(ir, universe, add);
-  markersAndPresence(ir, add);
+  markersAndPresence(ir, add, opts.numbered !== false);
 
   const seen = new Set<string>();
   for (const f of out) {
@@ -169,7 +182,7 @@ function appendixB(ir: SpecIR, add: Add): void {
   for (const f of ir.fields) labelCount.set(label(f), (labelCount.get(label(f)) ?? 0) + 1);
   const expected = new Map<string, string[]>();
   for (const f of ir.fields) {
-    const l = labelCount.get(label(f))! > 1 ? `${label(f)} (${OWNER_LABEL[f.owner]})` : label(f);
+    const l = labelCount.get(label(f))! > 1 ? `${label(f)} (${ownerLabel(f.owner)})` : label(f);
     expected.set(f.marker, [...(expected.get(f.marker) ?? []), l]);
   }
   for (const [marker, fields] of expected) {
@@ -380,8 +393,11 @@ function buildUniverse(ir: SpecIR): Universe {
   for (const k of ir.keys) {
     const last = k.key.segments.at(-1)!;
     put(names, last.name, { kind: "key", id: k.id, written: k.key.path, table: true });
-    const parent = ir.tables.find((t) => t.id === k.loc.table)!.parent?.identifier;
+    const p = ir.tables.find((t) => t.id === k.loc.table)!.parent;
+    const parent = p?.identifier;
     if (parent) put(paths, `${parent}.${k.key.path}`, { kind: "key", id: k.id, written: `${parent}.${k.key.path}`, table: true });
+    // An object a heading names, as AdCOM's `Object: Ad`, is a name its table defines.
+    if (parent && p.via === "object") put(names, parent, { kind: "field_parent", id: k.id, written: parent, table: true });
   }
   for (const o of ir.inline_objects) {
     const table = inTable(o.host);
@@ -588,7 +604,7 @@ function musts(ir: SpecIR, u: Universe, add: Add): void {
   }
 }
 
-function markersAndPresence(ir: SpecIR, add: Add): void {
+function markersAndPresence(ir: SpecIR, add: Add, numbered: boolean): void {
   const defined = new Set(ir.markers.map((m) => m.marker));
   const undefinedUses = new Map<string, Field[]>();
   for (const f of ir.fields) if (!defined.has(f.marker)) undefinedUses.set(f.marker, [...(undefinedUses.get(f.marker) ?? []), f]);
@@ -625,20 +641,22 @@ function markersAndPresence(ir: SpecIR, add: Add): void {
       details: { required: k.required.raw },
     });
   }
-  for (const owner of ["proposal", "line_item"] as const) {
+  // Each owner the field rows have, in the order their first rows come.
+  for (const owner of [...new Set(ir.fields.map((f) => f.owner))]) {
     const fields = ir.fields.filter((f) => f.owner === owner);
     const unstated = fields.filter((f) => f.presence === null);
     if (unstated.length === 0) continue;
     add({
       id: `presence_unstated:${owner}`,
       kind: "presence_unstated",
-      message: `${unstated.length} of ${fields.length} ${OWNER_LABEL[owner]} fields don't say whether they're REQUIRED or OPTIONAL.`,
+      message: `${unstated.length} of ${fields.length} ${ownerLabel(owner)} fields don't say whether they're REQUIRED or OPTIONAL.`,
       subjects: unstated.map((f) => f.id),
       locs: [],
       details: { stated: fields.filter((f) => f.presence !== null).map((f) => f.id) },
     });
   }
-  for (const s of ir.sections) {
+  // A text that numbers its headings cites an unnumbered one by its parent's number; a text that numbers none, as AdCOM, cites each by its anchor.
+  if (numbered) for (const s of ir.sections) {
     if (s.part !== "body" || s.number !== null) continue;
     const tables = ir.tables.filter((t) => t.section === s.id).length;
     const statements = ir.statements.filter((st) => st.loc.section === s.id).length;

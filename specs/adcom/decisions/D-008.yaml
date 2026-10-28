@@ -1,0 +1,79 @@
+format: 1
+id: D-008
+status: proposed
+kind: gap
+author: agent
+question: "AdCOM says most lists \"can also be extended to include vendor-specific codes typically starting at 500\". Which lists take vendors' codes, and from which code?"
+covers:
+  - ir: rule:adcomprinciples:a7957fc4
+    digest: ba334f9840c2a3294e2c6b2194eefcff31bf787aa0675236765b46a709482e83
+    quote: All AdCOM objects may be extended as needed for vendor-specific applications.
+  - ir: def:list_agenttypes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    quote: "`500+` | Vendor-specific codes."
+  - ir: def:list_apiframeworks:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    quote: "`500+` | Vendor-specific codes."
+  - ir: def:list_auditstatuscodes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    quote: "`500+` | Vendor-specific codes."
+  - ir: def:list_categorytaxonomies:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    quote: "`500+` | Vendor-specific codes."
+  - ir: def:list_clicktypes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    quote: "`500+` | Vendor-specific codes."
+  - ir: def:list_creativeattributes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    quote: "`500+` | Vendor-specific codes."
+  - ir: def:list_displaycontexttypes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    quote: "`500+` | Vendor-specific codes."
+  - ir: def:list_displayplacementtypes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    quote: "`500+` | Vendor-specific codes."
+  - ir: def:list_eventtrackingmethods:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    quote: "`500+` | Vendor-specific codes."
+  - ir: def:list_eventtypes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    quote: "`500+` | Vendor-specific codes."
+  - ir: def:list_feedtypes:500+
+    digest: d4eae783fdc122f5961bd22663fe05ae4ce4aaf0397d605c6fb2dc22eba5b9d9
+    quote: "`500+` | MISC | Vendor-specific codes."
+  - ir: def:list_idmatchmethod:500+
+    digest: b2cabc93ca4ef2665268803e442bc9696f2ac233420d11852f9416ac5b3538b2
+    quote: "`500+` | Vendor Specific"
+  - ir: def:list_nativedataassettypes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    quote: "`500+` | Vendor-specific codes."
+  - ir: def:list_nativeimageassettypes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    quote: "`500+` | Vendor-specific codes."
+  - ir: def:list_operatingsystems:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    quote: "`500+` | Vendor-specific codes."
+options:
+  - id: where-500-row
+    summary: >-
+      Only a list whose table has a `500+` row takes vendors' codes, from
+      500 up; each such vocabulary is open to a vendor's code, an integer of
+      at least 500.
+  - id: every-list
+    summary: >-
+      Every list takes vendors' codes from 500 up, as "typically" suggests.
+chosen: where-500-row
+rationale: >-
+  "Typically" and "when indicated" leave the set of lists open, and a `500+`
+  row is the only place a list indicates it. Fifteen lists have one; the
+  other 27 say nothing, and some of them, such as Device Types, are codes a
+  receiver acts on, where an unknown vendor code is a new device type no one
+  agreed on. Reading the rows keeps every open vocabulary to what its own
+  table says.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L187"
+feedback: >-
+  Write a `500+` row on every list that reserves vendors' codes, and say in
+  the principle that a list without one reserves none. Today "typically
+  starting at 500" leaves a reader to guess for the 27 lists that have no
+  such row.

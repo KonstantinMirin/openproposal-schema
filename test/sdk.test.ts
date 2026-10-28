@@ -11,15 +11,15 @@ import { applicationExpr, buildSdkModel, sdkDirOf } from "../src/sdk.ts";
 import { emitSdk } from "../src/sdk-emit.ts";
 import { compareRun, jsonEqual, runGo, runPython, runTypeScript, sdkCases, type SdkCase } from "../src/sdk-parity.ts";
 import type { CorpusDoc } from "../src/corpus.ts";
-import { ROOT } from "./helpers.ts";
+import { OP_NAMES, ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT);
-const CONSTRUCTORS = loadConstructors(ROOT);
-const MAPPINGS = loadMappings(ROOT, join(ROOT, "mapping"));
-const DECISIONS = loadDecisions(ROOT, join(ROOT, "decisions"));
+const KERNEL = loadKernel(ROOT, SPEC);
+const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const MAPPINGS = loadMappings(join(SPEC, "mapping"));
+const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 
 function modelOf(lock: string, irDir: string): ModelDoc {
-  const ir = JSON.parse(readFileSync(join(ROOT, irDir, "spec-ir.json"), "utf8")) as SpecIR;
+  const ir = JSON.parse(readFileSync(join(SPEC, irDir, "spec-ir.json"), "utf8")) as SpecIR;
   return resolveModel({ ir, lock, mappings: MAPPINGS, decisions: DECISIONS, kernel: KERNEL, constructors: CONSTRUCTORS }).model;
 }
 const MAIN = modelOf("main", "ir");
@@ -35,7 +35,7 @@ test("the SDK directory follows the IR directory, with the as-written build as t
 
 test("both locks' SDKs generate with no problem, and every schema type is declared once", () => {
   for (const [model, dir, schemaDir] of [[MAIN, "sdk/proposed", "schemas"], [PRS, "sdk/proposed/with-open-prs", "schemas/with-open-prs"]] as const) {
-    const out = emitSdk(model, dir, schemaDir);
+    const out = emitSdk(model, dir, schemaDir, OP_NAMES);
     assert.deepEqual(out.problems, []);
     const emitted = model.types.filter((t) => t.kind !== "constructor" && !(t.kind === "vocabulary" && t.attribute !== undefined)).map((t) => t.name);
     assert.deepEqual(out.sdk.emitted, [...emitted].sort());
@@ -45,7 +45,7 @@ test("both locks' SDKs generate with no problem, and every schema type is declar
 });
 
 test("a property is typed by its template applied to its arguments, and its copy is an alias", () => {
-  const { sdk } = buildSdkModel(MAIN);
+  const { sdk } = buildSdkModel(MAIN, OP_NAMES.short);
   const lineItem = sdk.types.get("LineItem");
   assert.ok(lineItem?.kind === "object");
   const formats = lineItem.shape.properties.find((p) => p.name === "formats");
@@ -60,17 +60,17 @@ test("a property is typed by its template applied to its arguments, and its copy
 
 test("the SDKs don't depend on the order of the model's types", () => {
   const reversed: ModelDoc = { ...MAIN, types: [...MAIN.types].reverse() };
-  const a = emitSdk(MAIN, "sdk/proposed", "schemas").files;
-  const b = emitSdk(reversed, "sdk/proposed", "schemas").files;
+  const a = emitSdk(MAIN, "sdk/proposed", "schemas", OP_NAMES).files;
+  const b = emitSdk(reversed, "sdk/proposed", "schemas", OP_NAMES).files;
   assert.deepEqual(b, a);
 });
 
 test("a keyword the SDK emitters don't know fails the build, so no constraint is dropped", () => {
   const types = MAIN.types.map((t) => (t.kind === "primitive" && t.name === "Amount" ? { ...t, schema: { ...t.schema, multipleOf: 0.01 } } : t));
-  const { problems } = buildSdkModel({ ...MAIN, types });
+  const { problems } = buildSdkModel({ ...MAIN, types }, OP_NAMES.short);
   assert.ok(problems.some((p) => p.includes('"multipleOf"')), problems.join("; "));
   const formats = MAIN.types.map((t) => (t.kind === "primitive" && t.name === "Url" ? { ...t, schema: { ...t.schema, format: "iri" } } : t));
-  assert.ok(buildSdkModel({ ...MAIN, types: formats }).problems.some((p) => p.includes('"iri"')));
+  assert.ok(buildSdkModel({ ...MAIN, types: formats }, OP_NAMES.short).problems.some((p) => p.includes('"iri"')));
 });
 
 test("a vector's application becomes the fallback template when it supplies the bare value", () => {
@@ -141,7 +141,7 @@ test("the TypeScript, Python, and Go runtimes read the formats alike", async () 
   const runs = [
     ["TypeScript", await runTypeScript(join(dir, "ts"), cases)],
     ["Python", runPython(ROOT, join(dir, "python"), cases)],
-    ["Go", runGo(join(dir, "go"), "sdk/proposed", join(ROOT, "build", "test", "sdk-go-formats"), cases)],
+    ["Go", runGo(join(dir, "go"), join(ROOT, "build", "test", "sdk-go-formats"), cases)],
   ] as const;
   for (const [language, run] of runs) assert.deepEqual(compareRun(language, cases, run).problems, []);
 });
@@ -171,7 +171,7 @@ test("the TypeScript, Python, and Go runtimes take an integral float as an integ
     const runs = [
       ["TypeScript", await runTypeScript(join(sdk, "ts"), cases)],
       ["Python", runPython(ROOT, join(sdk, "python"), cases)],
-      ["Go", runGo(join(sdk, "go"), dir, join(ROOT, "build", "test", "sdk-go-integral"), cases)],
+      ["Go", runGo(join(sdk, "go"), join(ROOT, "build", "test", "sdk-go-integral"), cases)],
     ] as const;
     for (const [language, run] of runs) {
       assert.deepEqual(compareRun(language, cases, run).problems, [], `${language} on ${dir}`);
@@ -183,7 +183,7 @@ test("the TypeScript, Python, and Go runtimes take an integral float as an integ
 });
 
 test("the parity cases send each integer primitive's vectors and each integer term as integral floats", () => {
-  const corpus = JSON.parse(readFileSync(join(ROOT, "corpus", "with-open-prs", "cases.json"), "utf8")) as CorpusDoc;
+  const corpus = JSON.parse(readFileSync(join(SPEC, "corpus", "with-open-prs", "cases.json"), "utf8")) as CorpusDoc;
   const raw = sdkCases(PRS, corpus, KERNEL, CONSTRUCTORS).filter((c) => c.json !== undefined);
   const has = (name: string, json: string, valid: boolean) => raw.some((c) => c.target.k === "ref" && c.target.name === name && c.json === json && c.valid === valid);
   assert.ok(has("Count", "1500000.0", true));

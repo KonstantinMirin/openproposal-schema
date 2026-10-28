@@ -47,7 +47,7 @@ import { join, posix } from "node:path";
 import { Ajv2020 } from "ajv/dist/2020.js";
 import { installFormats } from "./formats.ts";
 import { canonicalJson } from "./canonical.ts";
-import { nestedIf, schemaIdOf, type EmittedFile } from "./emit.ts";
+import { baseOf, type EmittedFile, nestedIf, schemaIdOf } from "./emit.ts";
 import type { InstanceOracle } from "./examples.ts";
 import type { Kernel } from "./kernel.ts";
 import type { TypeRef } from "./mapping.ts";
@@ -266,7 +266,7 @@ export class Validators {
   private readonly relaxed = new Map<string, (v: unknown) => boolean>();
   readonly byId: Map<string, Schema>;
 
-  constructor(files: EmittedFile[]) {
+  constructor(private readonly files: EmittedFile[]) {
     this.strict = new Ajv2020({ strict: true, strictRequired: false, allErrors: false });
     this.lax = new Ajv2020({ strict: false, allErrors: false, validateSchema: false });
     installFormats(this.strict);
@@ -277,6 +277,11 @@ export class Validators {
     }
     this.byId = new Map(files.map((f) => [String(f.schema.$id), f.schema]));
   }
+  /** The base of the tree's `$id`s, for a type's `$id` (`schemaIdOf`). */
+  baseOf(dir: string): string | null {
+    return baseOf(this.files, dir);
+  }
+
 
   /** Whether the schema with this `$id` and fragment accepts the value; throws if no file holds it. */
   valid(schema: string, value: unknown): boolean {
@@ -345,7 +350,7 @@ export function partSeeds(model: ModelDoc, v: Validators, schemaDir: string): Ma
     if (rules.length === 0) continue;
     const seed = rules[0]!.valid.find((x) => rules.every((r) => r.valid.some((y) => canonicalJson(y) === canonicalJson(x))));
     if (!isMap(seed)) throw new Error(`no valid vector of every rule of the part "${t.name}" is an object to start from`);
-    const id = schemaIdOf(t, schemaDir);
+    const id = schemaIdOf(t, schemaDir, v.baseOf(schemaDir));
     if (id !== null) seeds.set(v.node(id).node, seed);
   }
   return seeds;
@@ -358,8 +363,9 @@ export function partSeeds(model: ModelDoc, v: Validators, schemaDir: string): Ma
  * to a constraint, and what `minProperties` and a condition's `then` need.
  */
 export function baselines(model: ModelDoc, v: Validators, kernel: Kernel, schemaDir: string): Baselines {
+  const base = v.baseOf(schemaDir);
   const typeAt = new Map(model.types.flatMap((t) => {
-    const id = schemaIdOf(t, schemaDir);
+    const id = schemaIdOf(t, schemaDir, base);
     return id === null ? [] : [[id, t] as const];
   }));
   const vectors = new Map(kernel.primitives.map((p) => [p.name, p.vectors.valid]));
@@ -574,8 +580,9 @@ export function generateCorpus(input: CorpusInput): { doc: CorpusDoc; problems: 
   const { model, files, rules, kernel, schemaDir } = input;
   const problems: string[] = [];
   const v = new Validators(files);
+  const base = baseOf(files, schemaDir);
   const types = model.types.flatMap((t) => {
-    const id = schemaIdOf(t, schemaDir);
+    const id = schemaIdOf(t, schemaDir, base);
     return id === null ? [] : [{ type: t, id }];
   });
   const typeAt = new Map(types.map((x) => [x.id, x.type]));
@@ -811,8 +818,9 @@ export function checkCorpus(doc: CorpusDoc, files: EmittedFile[], model: ModelDo
   const v = new Validators(files);
   const want = new Map<string, { found: Found; type: string; schema: string }>();
   const wantImplied = new Map<string, string>();
+  const base = baseOf(files, schemaDir);
   for (const t of model.types) {
-    const id = schemaIdOf(t, schemaDir);
+    const id = schemaIdOf(t, schemaDir, base);
     if (id === null) continue;
     const walked = constraintsOf(v.node(id).node);
     for (const f of walked.found) want.set(caseId(t.name, f), { found: f, type: t.name, schema: id });

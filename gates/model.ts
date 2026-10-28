@@ -151,7 +151,7 @@ export const lists = defineGate<ConventionInput>({
   id: "convention-lists",
   title: "lists: each value list defined once, and only the open vocabularies with no core terms that a decision lists set aside",
   code: ["src/conventions.ts#checkConventions"],
-  exemptions: ["decisions/*.yaml#sets_aside"],
+  exemptions: ["specs/*/decisions/*.yaml#sets_aside"],
   check: convention("lists"),
   fixtures: [
     {
@@ -177,7 +177,7 @@ export const duplicationModel = defineGate<{ model: ModelDoc; kernel: Kernel; co
   id: "duplication-model",
   title: "duplication over the model: no undeclared structural twins among its named types",
   code: ["src/duplication.ts#checkDuplication", "src/conventions.ts#modelStructures", "src/conventions.ts#unstatedVocabularies", "src/domains.ts#sharedStructures"],
-  exemptions: ["kernel/domains.yaml#shared_structures", "decisions/*.yaml#sets_aside"],
+  exemptions: ["kernel/domains.yaml#shared_structures", "specs/*/kernel-binding.yaml#shared_structures", "specs/*/decisions/*.yaml#sets_aside"],
   check: (i) => {
     const vocabularies = unstatedVocabularies(i.model, i.decisions);
     const structures = modelStructures(i.model, i.kernel, i.constructors, vocabularies.names);
@@ -242,7 +242,7 @@ export const domainsProperties = defineGate<PropertyInput>({
   id: "domains-properties",
   title: "domains: every scalar property resolves to a concept, none is typed by the bare term grammar or a component, and every money value has its currency or a decision that asks for it",
   code: ["src/domains.ts#propertyProblems"],
-  exemptions: ["kernel/domains.yaml#lacking"],
+  exemptions: ["specs/*/kernel-binding.yaml#lacking"],
   check: (i) => ({ problems: propertyProblems(i.model, i.lock, i.domains, i.decisions) }),
   fixtures: [
     { name: "currency deleted from Commitment", mutate: (i) => ({ ...i, model: withType(i.model, "Commitment", (t) => withoutProperty(t, "currency")) }), expect: 'object "Commitment": property "amount": carries a value of the concept "amount" with no sibling "currency"' },
@@ -277,7 +277,7 @@ export const homonyms = defineGate<{ models: ModelDoc[]; domains: Domains }>({
   id: "domains-homonyms",
   title: "domains: every recurring member name resolves to one concept, or is a homonym a decision explains",
   code: ["src/domains.ts#homonymProblems"],
-  exemptions: ["kernel/domains.yaml#homonyms"],
+  exemptions: ["specs/*/kernel-binding.yaml#homonyms"],
   check: (i) => ({ problems: homonymProblems(i.models, i.domains), note: `${i.domains.homonyms.length} homonyms` }),
   fixtures: [{ name: "a listed homonym removed", mutate: (i) => ({ ...i, domains: { ...i.domains, homonyms: i.domains.homonyms.filter((h) => h.member !== "basis") } }), expect: 'the member name "basis" resolves to' }],
 });

@@ -17,7 +17,7 @@
  *
  * The `1` is the major version, which goes in the path and the `$id`; minor
  * versions and digests live only in the release manifest. Each file's `$id`
- * is its path under `SCHEMA_BASE`, and every `$ref` between files is
+ * is its path under the spec's base (`SchemaNames`), and every `$ref` between files is
  * relative, so the tree resolves the same at any base.
  *
  * Only standard 2020-12 keywords occur (type rules § 2). A vocabulary is an
@@ -43,7 +43,26 @@ import { extensionOf, type ModelDoc, type ModelProperty, type ModelType } from "
 
 export const DIALECT = "https://json-schema.org/draft/2020-12/schema";
 /** The base of every emitted `$id`: the public site, which serves each schema file at the path its `$id` names (`npm run site`). */
-export const SCHEMA_BASE = "https://openproposal.noetis.dev/";
+/**
+ * What a spec's schemas are named by, from its profile's `names`
+ * (src/profile.ts): the base of every `$id`, under which each file sits at
+ * its path, and the specification's name, which each file's description
+ * gives.
+ */
+export interface SchemaNames {
+  base: string;
+  short: string;
+}
+
+/** The base of a schema tree's `$id`s, from any of its files: the file's `$id` without the tree's directory and the file's path. Null for an empty tree. */
+export function baseOf(files: readonly EmittedFile[], dir: string): string | null {
+  const f = files[0];
+  if (!f || typeof f.schema.$id !== "string") return null;
+  const tail = posix.join(dir, f.path);
+  const id = f.schema.$id;
+  if (!id.endsWith(tail)) throw new Error(`${f.path}: the $id ${id} doesn't end in its path ${tail}`);
+  return id.slice(0, -tail.length);
+}
 /** The major version of every kernel, module, and document path; the release manifest moves one. */
 export const MAJOR = 1;
 /** The directories a lock's schema tree holds. */
@@ -103,11 +122,12 @@ export function locationOf(t: ModelType): Location | null {
  * The `$id` of the schema a named type is emitted as, with the fragment that
  * points at it, such as `…/schemas/modules/commercial/1/commercial.json#/$defs/HoldStatus`,
  * or null when the schema leaves the type out. `dir` is the lock's schema
- * directory, as `emitSchemas` takes it.
+ * directory, as `emitSchemas` takes it, and `base` the base of its `$id`s
+ * (`SchemaNames.base`, or `baseOf` the tree's files); with no base, null.
  */
-export function schemaIdOf(t: ModelType, dir: string): string | null {
+export function schemaIdOf(t: ModelType, dir: string, base: string | null): string | null {
   const l = locationOf(t);
-  return l ? `${SCHEMA_BASE}${posix.join(dir, l.file)}${l.fragment}` : null;
+  return l && base !== null ? `${base}${posix.join(dir, l.file)}${l.fragment}` : null;
 }
 
 /** The templates the model holds, for applying them; the emitter reads nothing but the model. */
@@ -307,7 +327,7 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
           ...(t.description ? [t.description.replace(/\.$/, "")] : []),
           ...(t.list ? [`The codes of ${t.list.standard} ${t.list.name} (${t.list.url})`] : []),
           ...t.terms.filter((x) => x.annotation !== undefined).map((x) => `\`${x.value}\`: ${x.annotation}`),
-          ...(t.list?.vendor ? [`from ${t.list.vendor.from} up: ${t.list.vendor.label}`] : []),
+          ...((t.vendor ?? t.list?.vendor) ? [`from ${(t.vendor ?? t.list?.vendor)!.from} up: ${(t.vendor ?? t.list?.vendor)!.label}`] : []),
         ];
         // An open vocabulary whose core terms the specification doesn't list accepts namespaced terms only (D-041).
         if (t.open && values.length === 0) return { description: "No core terms are listed yet, so every term is namespaced.", $ref: "#/$defs/NamespacedTerm" };
@@ -348,7 +368,7 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
  * each `$id` includes. Returns the files sorted by path, the conditions, and
  * the problems; a problem means the files aren't to be written.
  */
-export function emitSchemas(model: ModelDoc, dir: string): Emitted {
+export function emitSchemas(model: ModelDoc, dir: string, names: SchemaNames): Emitted {
   const localOf = localSchemas(model);
   const problems: string[] = [...localOf.problems];
   const conditions = localOf.conditions;
@@ -406,20 +426,33 @@ export function emitSchemas(model: ModelDoc, dir: string): Emitted {
   const modules = new Map(model.modules.map((m) => [m.name, m]));
   const files: EmittedFile[] = [];
   const add = (path: string, schema: Record<string, unknown>) => files.push({ path, schema, text: canonicalJson(schema) });
-  const head = (path: string, title: string, description: string) => ({ $schema: DIALECT, $id: `${SCHEMA_BASE}${posix.join(dir, path)}`, title, description });
+  const head = (path: string, title: string, description: string) => ({ $schema: DIALECT, $id: `${names.base}${posix.join(dir, path)}`, title, description });
   for (const [file, d] of defs) {
     const module = file.startsWith("kernel/") ? KERNEL_MODULE : file.split("/")[1]!;
-    const sections = sectionList(modules.get(module)?.sections ?? []);
+    const ids = modules.get(module)?.sections ?? [];
     const kinds = new Set(Object.keys(d).map((n) => types.get(n)?.kind));
-    const kernelHolds = ["the primitives", "the value objects and the parts that constructor copies share", ...(kinds.has("vocabulary") ? ["the kernel vocabularies"] : [])];
+    // A text whose sections carry anchors, not numbers, as AdCOM's, names a module by what it holds.
+    const anchored = model.modules.some((m) => m.sections.some((s) => !/^(front|[0-9A-Z][0-9.]*)(\/|$)/.test(s)));
+    const sections = anchored ? "" : sectionList(ids);
+    const kernelHolds = anchored
+      ? ["the primitives", ...(kinds.has("part") ? ["the parts that constructor copies share"] : []), ...(kinds.has("vocabulary") ? ["the kernel vocabularies"] : [])]
+      : ["the primitives", "the value objects and the parts that constructor copies share", ...(kinds.has("vocabulary") ? ["the kernel vocabularies"] : [])];
+    const count = (kind: string, one: string, many: string) => {
+      const n = Object.keys(d).filter((x) => types.get(x)?.kind === kind).length;
+      return n === 0 ? [] : [`${n} ${n === 1 ? one : many}`];
+    };
+    const holds = [...count("vocabulary", "vocabulary", "vocabularies"), ...count("object", "object", "objects"), ...count("union", "union", "unions"), ...count("copy", "constructor copy", "constructor copies")];
+    const series = (xs: string[]) => (xs.length > 2 ? `${xs.slice(0, -1).join(", ")}, and ${xs.at(-1)}` : xs.join(" and "));
     const description =
       module === KERNEL_MODULE
-        ? `The OpenProposal kernel: ${kernelHolds.length > 2 ? `${kernelHolds.slice(0, -1).join(", ")}, and ${kernelHolds.at(-1)}` : kernelHolds.join(" and ")}${sections ? `, from ${sections}` : ""}.`
-        : `The OpenProposal \`${module}\` module: the vocabularies, objects, unions, and constructor copies${sections ? ` of ${sections}` : ""}.`;
+        ? `The ${names.short} kernel: ${series(kernelHolds)}${sections ? `, from ${sections}` : ""}.`
+        : anchored
+          ? `The ${names.short} \`${module}\` module: its ${series(holds)}.`
+          : `The ${names.short} \`${module}\` module: the vocabularies, objects, unions, and constructor copies${sections ? ` of ${sections}` : ""}.`;
     add(file, { ...head(file, module, description), $defs: d });
   }
   for (const [file, { type, schema }] of roots) {
-    const description = type.kind === "profile" ? `The OpenProposal \`${type.name}\` profile: the fields of the \`${type.document}\` document that the specification lists for it.` : `The OpenProposal \`${type.name}\` document.`;
+    const description = type.kind === "profile" ? `The ${names.short} \`${type.name}\` profile: the fields of the \`${type.document}\` document that the specification lists for it.` : `The ${names.short} \`${type.name}\` document.`;
     add(file, { ...head(file, type.name, description), ...schema });
   }
   files.sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
@@ -457,7 +490,7 @@ function sectionList(ids: string[]): string {
  * type whose model kind allows it: an open vocabulary, a union, or a copy
  * whose template or fallback is a union.
  */
-export function checkEmitted(files: EmittedFile[], model: ModelDoc, dir: string): string[] {
+export function checkEmitted(files: EmittedFile[], model: ModelDoc, dir: string, base: string): string[] {
   const problems: string[] = [];
   const byPath = new Map(files.map((f) => [f.path, f.schema]));
   const types = new Map(model.types.map((t) => [t.name, t]));
@@ -468,7 +501,7 @@ export function checkEmitted(files: EmittedFile[], model: ModelDoc, dir: string)
   for (const f of files) {
     const s = f.schema;
     if (s.$schema !== DIALECT) problems.push(`${f.path}: "$schema" is ${JSON.stringify(s.$schema)}, not ${DIALECT}`);
-    const id = `${SCHEMA_BASE}${posix.join(dir, f.path)}`;
+    const id = `${base}${posix.join(dir, f.path)}`;
     if (s.$id !== id) problems.push(`${f.path}: "$id" is ${JSON.stringify(s.$id)}, not its path ${id}`);
     for (const k of ["title", "description"]) if (typeof s[k] !== "string" || s[k] === "") problems.push(`${f.path}: no "${k}"`);
     if (f.text !== canonicalJson(s)) problems.push(`${f.path}: the bytes aren't the schema's canonical JSON`);

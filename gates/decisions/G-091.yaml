@@ -1,0 +1,28 @@
+format: 1
+id: G-091
+date: 2026-10-27
+question: What changes in the gates to close the gaps an independent review of AdCOM's decision records found?
+decision: >-
+  The record-wording gate's fingerprint now covers the patterns it applies,
+  so a change to what it catches needs a gate decision. Its patterns also
+  catch this repository's process words, "objects phase" and "this record",
+  in a record's text for the owners. An object a heading names, as AdCOM's
+  `Object: Content`, and every key path a table writes count as names the
+  text writes, so a record may name `Content.cattax`. A fixture covers a
+  chosen answer that names the process, and the type-name fixture names a
+  type of its own. G-089 said the gate runs on every spec on every run: it
+  runs on each spec that has reached its model, since it reads the model's
+  type names; and it said the mapping cites six of AdCOM's records, where it
+  cites five. AdCOM's records correct their facts: VAST 4.4's codes exist on
+  AdCOM's develop branch, the DOOH venue fix, the open option of the
+  extension principle, the dates of the protocol buffer definitions, the
+  attributes that differ, and the deprecated taxonomies' warning. The test
+  suite holds 452 tests, and MIN_TESTS is 452.
+rationale: >-
+  The gate catches more and its fingerprint covers what it applies; nothing
+  is relaxed. OpenProposal's records still pass, and its outputs don't
+  change.
+accepts:
+  - { gate: feedback, fingerprint: 9a35fe1b4a91c9e726d727f67e98a17c04d2c225c59754ba3064f634d928a701 }
+  - { gate: npm-test, fingerprint: 5b754e844d9cd973852f1983443773bdaea23be32c752dc55fdfd09ffff849e8 }
+  - { gate: record-wording, fingerprint: b5caa0a8b416cd47014e75ec5323698eb3de8b9e216f263e2077c6d8df26fa76 }

@@ -56,7 +56,7 @@ export interface ModelProperty {
 
 /** The primitive an open vocabulary's extension terms are: a vendor's code where its list reserves codes for vendors, a namespaced term otherwise (type rules § 6). */
 export const VENDOR_CODE = "VendorCode";
-export const extensionOf = (t: { list?: { vendor?: unknown } }): string => (t.list?.vendor !== undefined ? VENDOR_CODE : "NamespacedTerm");
+export const extensionOf = (t: { list?: { vendor?: unknown }; vendor?: unknown; extension?: string }): string => t.extension ?? ((t.vendor ?? t.list?.vendor) !== undefined ? VENDOR_CODE : "NamespacedTerm");
 
 export interface ModelTerm {
   /** The term as the specification spells it; a decimal integer is a JSON integer (type rules § 6). */
@@ -91,6 +91,12 @@ export type ModelType = Base &
         terms: ModelTerm[];
         /** The code list of another standard whose codes the terms are (type rules § 6), with the codes it reserves for vendors. */
         list?: { name: string; standard: string; url: string; vendor?: { from: number; label: string } };
+        /** For the specification's own code list: the codes it reserves for vendors, from `from` up, with their row's label. */
+        vendor?: { from: number; label: string };
+        /** The kernel primitive an open vocabulary's extension terms are, where a decision gives one other than a vendor's code or a namespaced term. */
+        extension?: string;
+        /** A list of the specification's own, whose terms take their rows' text as labels: each code means what its label says. */
+        labeled?: true;
         /** What the terms mean where no row says, from the declaration. */
         description?: string;
         /**
@@ -302,7 +308,8 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
         ...base(c.name, "constructor", KERNEL_MODULE, c.sources.spec.map((s) => s.ir), c.fallback ? [c.fallback.decision] : []),
         kind: "constructor",
         description: c.description,
-        parameters: c.parameters,
+        // What an option carries is written in its type's field order, wherever the kernel and the spec's binding give each field.
+        parameters: c.parameters.map((p) => (p.carries ? { ...p, carries: { member: p.carries.member, decision: p.carries.decision, ...(p.carries.departure !== undefined ? { departure: p.carries.departure } : {}), description: p.carries.description } } : p)),
         naming: c.naming,
         shell: c.shell,
         ...(c.fallback ? { fallback: c.fallback } : {}),
@@ -334,6 +341,8 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
       }),
     );
 
+  // The vocabularies whose terms take their definition rows' text as their labels.
+  const labeled = new Set<string>();
   // Declarations: the types no single element defines.
   for (const { decl, file } of declarations) {
     const where = `${file.file}: type "${decl.name}"`;
@@ -358,7 +367,14 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
         if (list && (decl.open ?? false) !== (list.vendor !== undefined)) problems.push(`${where}: is ${decl.open ? "open" : "closed"}, but ${list.standard} ${list.name} ${list.vendor ? "reserves codes for vendors" : "reserves no codes for vendors"}; a vocabulary that cites a list is open exactly when the list reserves vendor codes (type rules § 6)`);
         const vendorCode = kernel.primitives.find((p) => p.name === VENDOR_CODE);
         if (list?.vendor && vendorCode?.constraints.minimum !== list.vendor.from) problems.push(`${where}: ${list.standard} ${list.name} reserves vendor codes from ${list.vendor.from}, but ${VENDOR_CODE} starts at ${vendorCode?.constraints.minimum ?? "no minimum"}`);
-        define({ ...b, kind: "vocabulary", open: decl.open ?? false, terms, ...(list ? { list: { name: list.name, standard: list.standard, url: list.url, ...(list.vendor ? { vendor: list.vendor } : {}) } } : {}), ...(decl.description ? { description: decl.description } : {}) }, where);
+        // The specification's own list: its vendor range, or the extension a decision gives, makes it open, and nothing else does.
+        if (decl.vendor && list) problems.push(`${where}: gives both a list and its own vendor range; a list's vendor range is the list's`);
+        if (decl.vendor && vendorCode?.constraints.minimum !== decl.vendor.from) problems.push(`${where}: reserves vendor codes from ${decl.vendor.from}, but ${VENDOR_CODE} starts at ${vendorCode?.constraints.minimum ?? "no minimum"}`);
+        if (decl.vendor && decl.extension) problems.push(`${where}: gives both a vendor range and an extension, which can't both be its extension terms`);
+        if ((decl.vendor !== undefined || decl.extension !== undefined) && !decl.open) problems.push(`${where}: has ${decl.vendor ? "a vendor range" : "an extension"}, so it is open`);
+        if (decl.extension !== undefined && !kernel.primitives.some((p) => p.name === decl.extension)) problems.push(`${where}: its extension "${decl.extension}" is no kernel primitive`);
+        if (decl.labeled) labeled.add(decl.name);
+        define({ ...b, kind: "vocabulary", open: decl.open ?? false, terms, ...(list ? { list: { name: list.name, standard: list.standard, url: list.url, ...(list.vendor ? { vendor: list.vendor } : {}) } } : {}), ...(decl.vendor ? { vendor: decl.vendor } : {}), ...(decl.extension ? { extension: decl.extension } : {}), ...(decl.labeled ? { labeled: true as const } : {}), ...(decl.description ? { description: decl.description } : {}) }, where);
         break;
       }
       case "union":
@@ -451,7 +467,11 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
         const value = e?.kind === "marker" ? e.element.marker : e?.kind === "definition" ? e.element.value : null;
         if (!t || t.kind !== "vocabulary") problems.push(`${where}: "${as.vocabulary}" is no vocabulary in the model on lock "${lock}"`);
         else if (value === null) problems.push(`${where}: a ${e?.kind ?? "missing"} element writes no term; a term is a marker or a definition row`);
-        else t.terms.push({ value, sources: [id] });
+        // A term of a labeled vocabulary takes its definition row's text as its label, as a code list's code does.
+        else {
+          const label = labeled.has(t.name) && e?.kind === "definition" ? e.element.columns.map((c) => c.text).filter((x) => x !== "").join(": ") : "";
+          t.terms.push({ value, ...(label !== "" ? { annotation: label } : {}), sources: [id] });
+        }
         break;
       }
       case "same":

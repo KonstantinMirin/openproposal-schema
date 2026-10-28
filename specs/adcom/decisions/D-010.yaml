@@ -1,0 +1,39 @@
+format: 1
+id: D-010
+status: proposed
+kind: gap
+author: agent
+question: "List: Event Types numbers the events one apart from OpenRTB Native 1.2, which keeps impression at 1. Which numbering does the vocabulary take?"
+covers:
+  - ir: def:list_eventtypes:1
+    digest: 46ad57f99f20c21771e5aa16b3a688d928678dfd1e0b4c8868b6efc6e19f0e26
+    quote: "`1` | loaded: Delivered as a part of the creative markup. Creative may be pre-cached or pre-loaded; prior to initial rendering."
+  - ir: def:list_eventtypes:2
+    digest: f8542c364c3ea58b98ff42a1267723eacb1248f25589d1e1c0ee3bc806f3108f
+    quote: "`2` | impression: Ad impression per IAB/MRC Ad Impression Measurement Guidelines."
+  - ir: def:list_eventtypes:3
+    digest: 83f8104df4712259ff85613c6df6bba0bd3eb52cb6f0863ed40a9405f80177bb
+    quote: "`3` | viewable-mrc50: Visible impression using MRC definition of 50% in view for 1 second."
+options:
+  - id: adcom
+    summary: >-
+      AdCOM's numbering, as its table writes it: 1 loaded, 2 impression, 3
+      viewable-mrc50.
+  - id: native
+    summary: >-
+      Native 1.2's numbering: 1 impression, 2 viewable-mrc50.
+chosen: adcom
+rationale: >-
+  The registry is AdCOM's lists as AdCOM writes them, so the vocabulary
+  takes AdCOM's codes. Native 1.2 is another standard with its own table; a
+  bridge between OpenRTB 2.x native and AdCOM-based native must map the
+  codes, and the record names the difference so that the bridge's authors
+  see it.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/Native-Ads/blob/5b9afa2eb731ca05250dcf97f171fece5dc45053/OpenRTB-Native-Ads-Specification-Final-1.2.md#L1993"
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L3629"
+feedback: >-
+  Add a note to Event Types that its codes differ from Native 1.2's
+  `eventtrackers.event` codes by one, and say which numbering an OpenRTB 2.6
+  native request uses. Today a bridge that copies the integer fires a
+  viewability tracker on an impression.

@@ -1,0 +1,78 @@
+format: 1
+id: G-079
+date: 2026-10-27
+question: What changes in the gates when the kernel files keep only the definitions, and each spec's kernel binding gives what rests on its text?
+decision: >-
+  kernel/primitives.yaml, constructors.yaml, and domains.yaml keep each
+  type's definition, constraints, vectors, showcase values, and the
+  standards and design sections it rests on. What rests on OpenProposal's
+  text moves, line for line, to specs/openproposal/kernel-binding.yaml,
+  valid against kernel/binding.schema.json (src/binding.ts): each spec
+  source with its digest and quote, each decision and decision_locks, each
+  type's locks, each rule's spec sources and decisions, the fallbacks'
+  statements and decisions, the member an option carries, each concept's
+  requires.member, requires.decision, and lacking elements, and the
+  homonyms, the bases, and the shared structures' decisions. The loaders
+  merge the binding into the definitions and validate the result against
+  the kernel's own schemas, so each spec gets one kernel and every kernel
+  gate runs on the spec's. The load fails when a kernel file holds a key a
+  binding gives, when a binding gives a definition, or when it names an
+  item the kernel lacks; kernel-load has a fixture for each. kernel-sources
+  has a fixture whose binding cites an element of another spec, the widgets
+  fixture's, and fails. The exemptions of the homonym, money, and shared
+  structure gates read the bindings too, and an exemption member that names
+  no value now fails the fingerprint. The model writes what an option
+  carries in its type's field order, so the merge's key order reaches no
+  output. Five tests cover the binding; the suite holds 425 tests, and
+  MIN_TESTS is 425.
+rationale: >-
+  No OpenProposal output changes: the merged kernel equals the kernel at
+  the previous commit, value for value, and every committed output and the
+  site build are what they were. No gate is weaker: each kernel gate checks
+  the same merged kernel, the kernel's schemas validate the same documents,
+  the exemptions read the same entries from their new file, and the load
+  refuses three mistakes it couldn't make before. The fingerprints change
+  because the loaders, the exemption paths, and the harness changed.
+accepts:
+  - { gate: comparison, fingerprint: 4a54ef5e12b8708e20d0cf241b53d15799efeee3d22146d86249ee559fb2678e }
+  - { gate: constructor-sources, fingerprint: 44c14959bfd74efe2fbb8dc31297d39f8444ea17b1551b3b2bdfe4b23a97ef69 }
+  - { gate: constructors-applied, fingerprint: 68ff555e31e318c2c300e295ef8e3171321631c3c97b03b857a1625811030054 }
+  - { gate: constructors-check, fingerprint: 1383e6e96a043cc6a7177f23f0ce12aff83059ddb8eb81d77d1aa6996c15ac15 }
+  - { gate: constructors-load, fingerprint: 6d054ef1ba7fba2caa1cc55842e95e04e351fbf9cb454ca29b28da74e3fa9bad }
+  - { gate: convention-beside-reference, fingerprint: bc7c6a297e25823a7c3ef56b1fe330073e1eb2ad614b7ba69cd270c2bc1ff3a5 }
+  - { gate: convention-inline, fingerprint: b0947a7c7c8d0439b9006a1472d6e6796b58506ff6d09542cb46fb7b41614ebf }
+  - { gate: convention-keywords, fingerprint: 493e8495e1a5fc55f70c99d53fab0f8c0b8c6f0a46022534355d49f2149cc7ab }
+  - { gate: convention-layers, fingerprint: 03a907a454141a09857dfd33f930ac977b77f642c2644d133e0b449261b8d8d3 }
+  - { gate: convention-lists, fingerprint: f9795b7e82b07b53153812ccdf30a9132fa6a778fd21028c371c067221833f94 }
+  - { gate: convention-modules, fingerprint: dea06adff2fa456ca323c2b923ec21d68068853288db7e6cd4953516de72569d }
+  - { gate: convention-unions, fingerprint: d9dbb952fb273205ed1a6fa5940d2ccaa990330e1c636c547a4d4be38719c77a }
+  - { gate: corpus-generates, fingerprint: 59052f03c0b1fd4a0a22a2c18d4d496d2c55db230845f8260ddf67206b33a99a }
+  - { gate: domain-sources, fingerprint: 6a6026fa9e9325942470059d3d54983a4c5bb0fc480dbd9d441f97e1642caa9a }
+  - { gate: domains-check, fingerprint: 6e145ed688be8145e32a9b08b1d12b589afa6a533db9815d01e9fb7bc281cc8e }
+  - { gate: domains-homonyms, fingerprint: 879df18021a84f6b6ebaebe6e843b63cae80890f149cc19b63aac2547c8acebf }
+  - { gate: domains-properties, fingerprint: 443462b4a9acb56f5f1abf4b2ad3cfd5697f17a497130d19fcfa764832c87311 }
+  - { gate: duplication-kernel, fingerprint: 786d862063149ecf1aadb0b7d26cf541ee5dd2c765724e232ea17f8f2a2933e3 }
+  - { gate: duplication-model, fingerprint: fd2b8c916743f496693a08b40da58b6d69fc3171100d073e23324e2ae5643f15 }
+  - { gate: feedback, fingerprint: 46c43e4543237fb9476b1b46e8cfefeb06a16b868c10d941a89d17d6aff24ecf }
+  - { gate: fidelity, fingerprint: a25c790b5e381a213a7222b76522b0e73cb423ec5bbd01c294494f16c72bf105 }
+  - { gate: field-examples, fingerprint: c481b66181749928dc433540ecccc27db640a2a8d562c9939f3ec8b01704d007 }
+  - { gate: guard, fingerprint: cdec43bd46efcfb678d64c2c1ce7787431d1d45a8f9196b1dd6afa556b4b5db2 }
+  - { gate: kernel-check, fingerprint: 88a30ca85652cba463c9223a6111f355e41daaa10624eca44912aae18fdf8ed1 }
+  - { gate: kernel-engines, fingerprint: 8674f30027bcb5e6af3875f63bdfd71cd98cf37c0b4ce17ff82d23c2e9f01a98 }
+  - { gate: kernel-load, fingerprint: 8eea27e8f6c13f4f3badb9b46527e5c154a679f41b48791791a7481b82cacbf4 }
+  - { gate: kernel-sources, fingerprint: 89f65db8484c2dedd70325dc52dd1e8107acd9826c04beb4e1ae258419f2b239 }
+  - { gate: map-drift, fingerprint: 95ee3ad7577c6c31fefb6e6fa6c257a0ae8870232e5fe20952578f0079618627 }
+  - { gate: mapping-bijection, fingerprint: be71ad44b19125d186bf8567646c9c93f7e40a61784207522af980c42113f8f3 }
+  - { gate: mapping-constructors, fingerprint: b962a6490646b41b10bc99189405a91574dd81bd802d3f64142b93ae96de3163 }
+  - { gate: mapping-location, fingerprint: 4dd294d6be64390dfea637fb10ce1a22681e16a74fb154b6515936a3a992e30b }
+  - { gate: mapping-rules, fingerprint: 9e6900860fbc7e8ee016a22dc13586bbf319a409d3bc4bf6871ddca31e46105e }
+  - { gate: model-resolves, fingerprint: ebf32944b0338332b495fec6350c9b1cd21a3e8bd087b1349c4a1443bb2ceccd }
+  - { gate: nesting, fingerprint: ae7c31ce020cfb8c81dc46f9b0ec691b4e99527e816e89571e7ab40eb893a97d }
+  - { gate: npm-test, fingerprint: 78fdd9a49c786444cd0775b6ca902e1cdef066680714090f59746bb7d12bcf43 }
+  - { gate: schemas-emit, fingerprint: e401832c67e835eaadc40aeff026f5df8ecb3f1a94b240511997e057d225048b }
+  - { gate: sdk-generate, fingerprint: 4d0ea83617f29ca0326f88e9e10f2c0624e3f0fc9acab1778b85ae4d846bbd2a }
+  - { gate: site-builds, fingerprint: a4416186d6dc977b20f95ef7eccfa369a0d96adcca3f0c00a606e0bdb5a359e9 }
+  - { gate: type-examples-generate, fingerprint: 318d58d771b5f4cdc5bf47e67d52c7d54ce9897d68b4a8d0167f341557f1ba1f }
+  - { gate: type-examples-valid, fingerprint: 36d40818439e66426254a404c8230c180e47cabd38e3b90b5bb04266224580d6 }
+  - { gate: variant-check, fingerprint: c9d6d93f517fbeec491f2133eab3734ebb220efd49c556d0bd3d035886195dba }
+  - { gate: variant-diff, fingerprint: 7a168d871d54bd2cedd623a88ab948f2fa2d97d00abe9cd18399b62abb5ef1e0 }

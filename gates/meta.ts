@@ -169,6 +169,12 @@ export const guard = defineGate<{ fingerprints: [string, string][]; records: Gat
     { name: "strict: false in the TypeScript configuration", mutate: (i) => ({ ...i, fingerprints: i.recompute({ "tsconfig.json": edit('"strict": true', '"strict": false') }, ["typecheck"]) }), expect: "typecheck: its code, fixtures, data, or exemptions changed" },
     { name: "a test glob that matches nothing", mutate: (i) => ({ ...i, fingerprints: i.recompute({ "package.json": edit("test/**/*.test.ts", "test/**/*.no-such.test.ts") }, ["npm-test"]) }), expect: "npm-test: its code, fixtures, data, or exemptions changed" },
     { name: "a test file deleted", mutate: (i) => ({ ...i, fingerprints: i.recompute({ "test/fidelity.test.ts": null }, ["npm-test"]) }), expect: "npm-test: its code, fixtures, data, or exemptions changed" },
+    // A spec plugin's readers reach their gates through the gates' inputs; each gate reads every plugin, so weakening one changes it.
+    { name: "a spec plugin's rule check that finds nothing", mutate: (i) => ({ ...i, fingerprints: i.recompute({ "src/specs/openproposal/rule-checks.ts": edit('"rule:2.2:06ccee9f": (v, ctx) => {', '"rule:2.2:06ccee9f": (v, ctx) => {\n    if (v !== undefined) return [];') }, ["rule-checks"]) }), expect: "rule-checks: its code, fixtures, data, or exemptions changed" },
+    { name: "a spec plugin's fidelity reader that skips every example", mutate: (i) => ({ ...i, fingerprints: i.recompute({ "src/specs/openproposal/fidelity-readers.ts": edit("const PLACEHOLDER = /<[^<>\\s]+>/;", "const PLACEHOLDER = /./;") }, ["fidelity"]) }), expect: "fidelity: its code, fixtures, data, or exemptions changed" },
+    { name: "a spec plugin's round-trip notation that counts fewer buyer markers", mutate: (i) => ({ ...i, fingerprints: i.recompute({ "src/specs/openproposal/render.ts": edit('"supplied", "requestable"] as const;', '"supplied"] as const;') }, ["round-trip"]) }), expect: "round-trip: its code, fixtures, data, or exemptions changed" },
+    // A spec's exemption files sit in its folder, under specs/<spec>/; the fingerprint reads every spec's.
+    { name: "an entry added to a spec's exception registry", mutate: (i) => ({ ...i, fingerprints: i.recompute({ "specs/openproposal/ir/exceptions.yaml": edit("# Exception registry", "# The exception registry") }, ["extraction"]) }), expect: "extraction: its code, fixtures, data, or exemptions changed" },
   ],
 });
 

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
@@ -27,13 +27,13 @@ import { checkDuplication } from "../src/duplication.ts";
 import type { SpecIR } from "../src/ir-types.ts";
 import { assertingAjv, kernelStructures, loadKernel } from "../src/kernel.ts";
 import { inScope, loadDecisions, loadMappings, type MappingFile, type TypeRef } from "../src/mapping.ts";
-import { ROOT } from "./helpers.ts";
+import { ROOT, SPEC } from "./helpers.ts";
 
-const MODEL: Model = { kernel: loadKernel(ROOT), constructors: loadConstructors(ROOT) };
-const DECISIONS = loadDecisions(ROOT, join(ROOT, "decisions"));
+const MODEL: Model = { kernel: loadKernel(ROOT, SPEC), constructors: loadConstructors(ROOT, SPEC) };
+const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 const LOCKS: [string, SpecIR][] = [
-  ["main", JSON.parse(readFileSync(join(ROOT, "ir", "spec-ir.json"), "utf8")) as SpecIR],
-  ["with-open-prs", JSON.parse(readFileSync(join(ROOT, "ir", "with-open-prs", "spec-ir.json"), "utf8")) as SpecIR],
+  ["main", JSON.parse(readFileSync(join(SPEC, "ir", "spec-ir.json"), "utf8")) as SpecIR],
+  ["with-open-prs", JSON.parse(readFileSync(join(SPEC, "ir", "with-open-prs", "spec-ir.json"), "utf8")) as SpecIR],
 ];
 
 const named = (name: string): TypeRef => ({ kind: "named", name });
@@ -66,6 +66,17 @@ function mapping(types: [string, TypeRef][]): MappingFile {
 }
 
 const sound = (m: Model) => checkConstructors(ROOT, m, DECISIONS);
+
+/** A copy of OpenProposal's folder for its kernel binding alone, with the binding's text changed. */
+function specWith(change: (binding: string) => string): string {
+  const text = readFileSync(join(SPEC, "kernel-binding.yaml"), "utf8");
+  const changed = change(text);
+  assert.notEqual(changed, text);
+  const dir = join(mkdtempSync(join(tmpdir(), "op-binding-")), "openproposal");
+  mkdirSync(dir);
+  writeFileSync(join(dir, "kernel-binding.yaml"), changed);
+  return dir;
+}
 
 test("the model defines the six constructors, their two parts, and the kernel's value object, each once", () => {
   assert.deepEqual(MODEL.constructors.constructors.map((c) => c.name).sort(), ["CatalogRefOr", "List", "Map", "Range", "Selectable", "Settable"]);
@@ -356,12 +367,13 @@ test("the constructors schema rejects a shell keyword outside the allowed set, a
     assert.notEqual(edited, raw);
     const dir = mkdtempSync(join(tmpdir(), "op-constructors-"));
     writeFileSync(join(dir, "constructors.yaml"), edited);
-    assert.throws(() => loadConstructors(ROOT, join(dir, "constructors.yaml")), pattern);
+    assert.throws(() => loadConstructors(ROOT, SPEC, join(dir, "constructors.yaml")), pattern);
   };
   rejects(raw.replace("        max_select: { $model: { kind: named, name: Count } }", "        max_select: { $model: { kind: named, name: Count }, minimum: 1 }"), /not a valid constructors file/);
   rejects(raw.replace("      required: [available, included]\n", "      required: [available, included]\n      allOf: [{ required: [available] }]\n"), /not a valid constructors file/);
   rejects(raw.replace("      items: { $model: { kind: parameter, name: T } }", "      items: { $model: { kind: parameter, name: T } }\n      x-op-generic: List"), /not a valid constructors file/);
-  rejects(raw.replace("      suffix: OrValue\n      statement: rule:3.1:f8b0c287\n      decision: D-008\n", "      suffix: OrValue\n      statement: rule:3.1:f8b0c287\n"), /not a valid constructors file/);
+  // A fallback's decision is the spec's: with none in the binding, the constructor isn't valid.
+  assert.throws(() => loadConstructors(ROOT, specWith((b) => b.replace("      statement: rule:3.1:f8b0c287\n      decision: D-008\n", "      statement: rule:3.1:f8b0c287\n"))), /not a valid constructors file/);
 });
 
 test("a fallback cites an existing decision", () => {
@@ -380,10 +392,7 @@ test("a part cites each decision behind it, and each must exist", () => {
   assert.deepEqual(part.decisions, [{ decision: "D-004", locks: ["main"] }, { decision: "D-038", locks: ["main"] }, { decision: "D-045" }]);
   part.decisions = [{ decision: "D-004" }, { decision: "D-999" }];
   assert.match(sound(m).join("\n"), /DaypartWindow: cites decision "D-999", which doesn't exist/);
-  const raw = readFileSync(join(ROOT, "kernel", "constructors.yaml"), "utf8");
-  const dir = mkdtempSync(join(tmpdir(), "op-constructors-"));
-  writeFileSync(join(dir, "constructors.yaml"), raw.replace("      - { decision: D-045 }\n", "    decision: D-045\n"));
-  assert.throws(() => loadConstructors(ROOT, join(dir, "constructors.yaml")), /not a valid constructors file/, "a part lists its decisions");
+  assert.throws(() => loadConstructors(ROOT, specWith((b) => b.replace("      - { decision: D-045 }\n", "    decision: D-045\n"))), /not a valid constructors file/, "a part lists its decisions");
 });
 
 test("a part bounds a list slot only, and only with minItems and uniqueItems, so the bounds sit on the list itself", () => {
@@ -393,7 +402,7 @@ test("a part bounds a list slot only, and only with minItems and uniqueItems, so
   const load = (text: string) => {
     const dir = mkdtempSync(join(tmpdir(), "op-constructors-"));
     writeFileSync(join(dir, "constructors.yaml"), text);
-    return () => loadConstructors(ROOT, join(dir, "constructors.yaml"));
+    return () => loadConstructors(ROOT, SPEC, join(dir, "constructors.yaml"));
   };
   assert.throws(load(raw.replace("        start: { $model: { kind: named, name: TimeOfDay } }\n", "        start: { $model: { kind: named, name: TimeOfDay }, minItems: 1 }\n")), /not a valid constructors file/, "a bound beside a slot that holds no list");
   assert.throws(load(raw.replace(days, days.replace("uniqueItems: true", "maxItems: 7"))), /not a valid constructors file/, "a list keyword other than the two bounds");
@@ -404,7 +413,7 @@ test("a part bounds a list slot only, and only with minItems and uniqueItems, so
 });
 
 test("every constructor is applied on some lock, Map inside Selectable's pricing, or a decision keeps it", () => {
-  const mappings = loadMappings(ROOT, join(ROOT, "mapping"));
+  const mappings = loadMappings(join(SPEC, "mapping"));
   assert.deepEqual(checkApplied(MODEL, mappings, DECISIONS), []);
   // On main, no entry applies Map; Selectable's shell does.
   const main = mappings.map((m) => ({ ...m, entries: m.entries.filter((e) => inScope(e.locks, "main")), types: (m.types ?? []).filter((d) => inScope(d.locks, "main")) }));

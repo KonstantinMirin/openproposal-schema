@@ -87,9 +87,9 @@ export function onlyGenerated(i: TrackedInput): Result {
   return { problems: stray.length === 0 ? [] : [`${stray.slice(0, 20).join("; ")}; ${i.remedy}`], note: `${expected.size} files` };
 }
 
-/** The files git tracks under a path. Throws when git fails. */
-export function gitTracked(path: string): string[] {
-  const r = spawnSync("git", ["ls-files", path], { cwd: ROOT, encoding: "utf8" });
+/** The files git tracks under a path, by path from `cwd`, the repository's root or a spec's folder. Throws when git fails. */
+export function gitTracked(path: string, cwd = ROOT): string[] {
+  const r = spawnSync("git", ["ls-files", path], { cwd, encoding: "utf8" });
   if (r.status !== 0) throw new Error(`git ls-files ${path} failed: ${r.stderr}`);
   return r.stdout.split("\n").filter((p) => p !== "");
 }

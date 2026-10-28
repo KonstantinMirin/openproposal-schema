@@ -33,10 +33,17 @@ export interface SourceInfo {
 const code = (s: string) => `\`${s}\``;
 const ordinal = (n: string) => (n === "1" ? "" : ` ${n}`);
 
-/** The section's name as a reader cites it: `§ 5.10`, the front matter, or an appendix. */
-function sectionLabel(section: string): string {
+/**
+ * The section's name as a reader cites it: `§ 5.10`, the front matter, or an
+ * appendix. A section whose ID is the anchor its heading writes, as
+ * `list_devicetypes`, is cited by its heading, as "List: Device Types",
+ * where `titleOf` knows it.
+ */
+function sectionLabel(section: string, titleOf?: (section: string) => string | undefined): string {
   if (section === "front") return "The front matter";
-  return `§ ${section}`;
+  const numbered = /^[0-9A-Z][0-9.]*(\/|$)/.test(section);
+  const title = numbered ? undefined : titleOf?.(section);
+  return title !== undefined ? title : `§ ${section}`;
 }
 
 /** What a fragment of an ID names, such as `#description/object:1` for "'s description: the inline object". */
@@ -54,21 +61,22 @@ function fragmentLabel(fragment: string): string {
 }
 
 /** A readable label for an IR element's ID, such as "§ 5.6.1, the `commitment.flight_start` key row". */
-export function elementLabel(id: string): string {
+export function elementLabel(id: string, titleOf?: (section: string) => string | undefined): string {
   const [kind, section, ...restParts] = id.split(":");
   const rest = restParts.join(":");
   if (kind === "appendix-a") return `Appendix A, row ${section}`;
   if (kind === "appendix-b") return `Appendix B, the ${code(section!)} row`;
   const [head, fragment] = rest.split("#");
-  const where = sectionLabel(section!);
+  const where = sectionLabel(section!, titleOf);
   switch (kind) {
     case "field":
       return `${where}, the ${head!.split(",").map(code).join(" and ")} row${fragment ? fragmentLabel(fragment) : ""}`;
     case "key":
       return `${where}, the ${code(head!)} key row${fragment ? fragmentLabel(fragment) : ""}`;
     case "def": {
+      // A value of a field, as `def:5.4:channel.display`; a code of a list, which names no field, as `def:list_devicetypes:3`.
       const dot = head!.lastIndexOf(".");
-      return `${where}, the definition of ${code(head!.slice(dot + 1))} for ${code(head!.slice(0, dot))}`;
+      return dot < 0 ? `${where}, the row of ${code(head!)}` : `${where}, the definition of ${code(head!.slice(dot + 1))} for ${code(head!.slice(0, dot))}`;
     }
     case "marker":
       return `${where}, the ${code(head!)} marker row`;
@@ -101,9 +109,9 @@ export function elementLines(e: Element): [number, number] {
 const range = (a: number, b: number) => (a === b ? `L${a}` : `L${a}-L${b}`);
 
 /** An element's label, quote, lines, and links on a lock. */
-export function sourceInfo(lock: SpecLock, provenance: ProvenanceDoc | null, id: string, e: Element): SourceInfo {
+export function sourceInfo(lock: SpecLock, provenance: ProvenanceDoc | null, id: string, e: Element, titleOf?: (section: string) => string | undefined): SourceInfo {
   const lines = elementLines(e);
-  const base = { label: elementLabel(id), quote: citeText(e), lines };
+  const base = { label: elementLabel(id, titleOf), quote: citeText(e), lines };
   if (lock.merge_order === null) {
     const href = permalink(lock, lines[0]).replace(/#L\d+$/, `#${range(lines[0], lines[1])}`);
     return { ...base, links: [{ href, text: `${range(lines[0], lines[1])} at ${lock.commit.slice(0, 7)}` }] };

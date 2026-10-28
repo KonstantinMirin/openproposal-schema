@@ -4,14 +4,14 @@ This report covers the deterministic extractor (stage 1) and the spec lint (stag
 
 | Lock | Input | Spec blob | Output |
 | :--- | :--- | :--- | :--- |
-| `main` (default) | upstream `main` at `44dfaaf` | `69409583` | [`ir/`](../ir/) |
-| `with-open-prs` (optional) | integration tip `292bb51`: `main` plus the 14 open PRs, including #119, #120, and #123 | `fdb303f0` | [`ir/with-open-prs/`](../ir/with-open-prs/) |
+| `main` (default) | upstream `main` at `44dfaaf` | `69409583` | [`ir/`](../specs/openproposal/ir/) |
+| `with-open-prs` (optional) | integration tip `292bb51`: `main` plus the 14 open PRs, including #119, #120, and #123 | `fdb303f0` | [`ir/with-open-prs/`](../specs/openproposal/ir/with-open-prs/) |
 
 ## How it works
 
 - **Input.** `npm run fetch` materializes a lock's spec into `build/spec/<lock>/` and verifies its git blob SHA. Sources are tried in order: a local clone, then the lock's snapshot under `spec-input/snapshots/`, then the raw GitHub URL. The `with-open-prs` integration branch exists only in a local clone, so CI regenerates its IR from the snapshot.
 - **Stage 1.** `src/extract.ts` parses the spec with `remark-parse` and `remark-gfm`, and reads cells, code spans, and positions from the mdast tree. It classifies each table by its header signature against [`src/layouts.ts`](../src/layouts.ts). It fails on an unknown layout, a layout outside its allowed sections, a row with the wrong number of cells, an unknown marker, an unparsed type expression, an unparsed inline object, a duplicate ID, or a row that yields no typed record.
-- **Stage 2.** `src/lint.ts` runs over the IR only. Its findings go to `findings.json`, and [`ir/exceptions.yaml`](../ir/exceptions.yaml) gives some of them a fixed verdict. A stale exception fails the build; an open finding doesn't.
+- **Stage 2.** `src/lint.ts` runs over the IR only. Its findings go to `findings.json`, and [`ir/exceptions.yaml`](../specs/openproposal/ir/exceptions.yaml) gives some of them a fixed verdict. A stale exception fails the build; an open finding doesn't.
 - **IDs.** Element IDs come from the structure, such as `field:5.6:pricing[].cost_method`, `key:5.6.1:commitment.basis`, and `def:5.1.1:channel.dooh`. Statement IDs are `rule:<section>:<sha8 of the sentence>`, and a prose sentence with no RFC 2119 keyword that names an identifier gets `sentence:<section>:<sha8>`, so both survive renumbering. Every row carries a SHA-256 digest for stage 3's staleness check.
 - **Gates.** `npm run ci` typechecks, extracts twice in separate processes and byte-compares, checks that the committed IR is current, validates against [`ir/spec-ir.schema.json`](../ir/spec-ir.schema.json), sweeps `ir/` for untracked files, and runs `npm test`. The tests include golden snapshots under [`test/golden/`](../test/golden/). The appendix tests also run the checks against a deliberately corrupted copy of `main`.
 
@@ -85,6 +85,8 @@ Each cell shows open findings, plus findings with a verdict in brackets.
 | `key_required_is_marker` | 1 | 1 |
 | `presence_unstated` | 2 | 2 |
 | `unnumbered_heading` | 0 | 1 |
+| `section_anchor_irregular` | 0 | 0 |
+| `list_without_codes` | 0 | 0 |
 | **Total** | **46 (+4)** | **73 (+27)** |
 
 The appendices agree with the body on both locks. That's expected: `tools/regen_appendices.py` reproduces `main` byte for byte, and the integration build regenerated the appendices after every merge.
@@ -127,7 +129,7 @@ The extractor records what the text says and decides nothing. These are left to 
 
 ## Difference between the locks
 
-This section covers stages 1 and 2. [`comparison/with-open-prs.md`](../comparison/with-open-prs.md), which `npm run compare` generates, covers the whole pipeline: the schema changes, decisions, and findings the open PRs bring.
+This section covers stages 1 and 2. [`comparison/with-open-prs.md`](../specs/openproposal/comparison/with-open-prs.md), which `npm run compare` generates, covers the whole pipeline: the schema changes, decisions, and findings the open PRs bring.
 
 <!-- generated:lock-additions -->
 The open PRs add 9 fields, 17 keys, 3 table layouts, 8 value lists, 10 inline objects, and 47 RFC 2119 sentences.

@@ -1,0 +1,1713 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: lists
+sections: [ enumerations, list_agenttypes, list_apiframeworks, list_auditstatuscodes, list_autorefreshtriggers, list_categorytaxonomies, list_clicktypes, list_companiontypes, list_connectiontypes, list_contentcontexts, list_creativeattributes, list_creativesubtypesaudiovideo, list_creativesubtypesdisplay, list_deliverymethods, list_devicetypes, list_displaycontexttypes, list_displayplacementtypes, list_doohmultipliermeasurementmourcetypes, list_doohvenuetaxonomies, list_doohvenuetypes, list_eventtrackingmethods, list_eventtypes, list_expandabledirections, list_feedtypes, list_idmatchmethod, list_iplocationservices, list_linearitymodes, list_locationtypes, list_mediaratings, list_nativedataassettypes, list_nativeimageassettypes, list_operatingsystems, list_placementpositions, list_placementsubtypesvideo, list_plcmtsubtypesvideo, list_playbackcessationmodes, list_playbackmethods, list_poddedupe, list_podsequence, list_productionqualities, list_sizeunits, list_slotpositioninpod, list_startdelaymodes, user-agent_source, list_volumenormalizationmodes ]
+types:
+  - name: AgentType
+    kind: vocabulary
+    ir: def:list_agenttypes:1
+    source: { rule: list-vocabulary }
+    open: true
+    vendor: { from: 500, label: Vendor-specific codes. }
+    labeled: true
+    description: "The codes of List: Agent Types, each with its row's text."
+  - name: ApiFramework
+    kind: vocabulary
+    ir: def:list_apiframeworks:1
+    source: { rule: list-vocabulary }
+    open: true
+    vendor: { from: 500, label: Vendor-specific codes. }
+    labeled: true
+    description: "The codes of List: API Frameworks, each with its row's text."
+  - name: AuditStatusCode
+    kind: vocabulary
+    ir: def:list_auditstatuscodes:1
+    source: { rule: list-vocabulary }
+    open: true
+    vendor: { from: 500, label: Vendor-specific codes. }
+    labeled: true
+    description: "The codes of List: Audit Status Codes, each with its row's text."
+  - name: AutoRefreshTrigger
+    kind: vocabulary
+    ir: def:list_autorefreshtriggers:0
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Auto Refresh Triggers, each with its row's text."
+  - name: CategoryTaxonomy
+    kind: vocabulary
+    ir: def:list_categorytaxonomies:1
+    source: { rule: list-vocabulary }
+    open: true
+    vendor: { from: 500, label: Vendor-specific codes. }
+    labeled: true
+    description: "The codes of List: Category Taxonomies, each with its row's text."
+  - name: ClickType
+    kind: vocabulary
+    ir: def:list_clicktypes:0
+    source: { rule: list-vocabulary }
+    open: true
+    vendor: { from: 500, label: Vendor-specific codes. }
+    labeled: true
+    description: "The codes of List: Click Types, each with its row's text."
+  - name: CompanionType
+    kind: vocabulary
+    ir: def:list_companiontypes:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Companion Types, each with its row's text."
+  - name: ConnectionType
+    kind: vocabulary
+    ir: def:list_connectiontypes:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Connection Types, each with its row's text."
+  - name: ContentContext
+    kind: vocabulary
+    ir: def:list_contentcontexts:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Content Contexts, each with its row's text."
+  - name: CreativeAttribute
+    kind: vocabulary
+    ir: def:list_creativeattributes:1
+    source: { rule: list-vocabulary }
+    open: true
+    vendor: { from: 500, label: Vendor-specific codes. }
+    labeled: true
+    description: "The codes of List: Creative Attributes, each with its row's text."
+  - name: CreativeSubtypeAudioVideo
+    kind: vocabulary
+    ir: def:list_creativesubtypesaudiovideo:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Creative Subtypes - Audio/Video, each with its row's text."
+  - name: CreativeSubtypeDisplay
+    kind: vocabulary
+    ir: def:list_creativesubtypesdisplay:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Creative Subtypes - Display, each with its row's text."
+  - name: DeliveryMethod
+    kind: vocabulary
+    ir: def:list_deliverymethods:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Delivery Methods, each with its row's text."
+  - name: DeviceType
+    kind: vocabulary
+    ir: def:list_devicetypes:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Device Types, each with its row's text."
+  - name: DisplayContextType
+    kind: vocabulary
+    ir: def:list_displaycontexttypes:10
+    source: { rule: list-vocabulary }
+    open: true
+    vendor: { from: 500, label: Vendor-specific codes. }
+    labeled: true
+    description: "The codes of List: Display Context Types, each with its row's text."
+  - name: DisplayPlacementType
+    kind: vocabulary
+    ir: def:list_displayplacementtypes:1
+    source: { rule: list-vocabulary }
+    open: true
+    vendor: { from: 500, label: Vendor-specific codes. }
+    labeled: true
+    description: "The codes of List: Display Placement Types, each with its row's text."
+  - name: DoohMultiplierMeasurementSourceType
+    kind: vocabulary
+    ir: def:list_doohmultipliermeasurementmourcetypes:0
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: DOOH Multiplier Measurement Source Types, each with its row's text."
+  - name: DoohVenueTaxonomy
+    kind: vocabulary
+    ir: def:list_doohvenuetaxonomies:0
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: DOOH Venue Taxonomies, each with its row's text."
+  - name: EventTrackingMethod
+    kind: vocabulary
+    ir: def:list_eventtrackingmethods:1
+    source: { rule: list-vocabulary }
+    open: true
+    vendor: { from: 500, label: Vendor-specific codes. }
+    labeled: true
+    description: "The codes of List: Event Tracking Methods, each with its row's text."
+  - name: EventType
+    kind: vocabulary
+    ir: def:list_eventtypes:1
+    source: { rule: list-vocabulary }
+    open: true
+    vendor: { from: 500, label: Vendor-specific codes. }
+    labeled: true
+    description: "The codes of List: Event Types, each with its row's text."
+  - name: ExpandableDirection
+    kind: vocabulary
+    ir: def:list_expandabledirections:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Expandable Directions, each with its row's text."
+  - name: FeedType
+    kind: vocabulary
+    ir: def:list_feedtypes:1
+    source: { rule: list-vocabulary }
+    open: true
+    vendor: { from: 500, label: "MISC: Vendor-specific codes." }
+    labeled: true
+    description: "The codes of List: Feed Types, each with its row's text."
+  - name: IdMatchMethod
+    kind: vocabulary
+    ir: def:list_idmatchmethod:0
+    source: { rule: list-vocabulary }
+    open: true
+    vendor: { from: 500, label: Vendor Specific }
+    labeled: true
+    description: "The codes of List: ID Match Methods, each with its row's text."
+  - name: IpLocationService
+    kind: vocabulary
+    ir: def:list_iplocationservices:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: IP Location Services, each with its row's text."
+  - name: LinearityMode
+    kind: vocabulary
+    ir: def:list_linearitymodes:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Linearity Modes, each with its row's text."
+  - name: LocationType
+    kind: vocabulary
+    ir: def:list_locationtypes:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Location Types, each with its row's text."
+  - name: MediaRating
+    kind: vocabulary
+    ir: def:list_mediaratings:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Media Ratings, each with its row's text."
+  - name: NativeDataAssetType
+    kind: vocabulary
+    ir: def:list_nativedataassettypes:1
+    source: { rule: list-vocabulary }
+    open: true
+    vendor: { from: 500, label: Vendor-specific codes. }
+    labeled: true
+    description: "The codes of List: Native Data Asset Types, each with its row's text."
+  - name: NativeImageAssetType
+    kind: vocabulary
+    ir: def:list_nativeimageassettypes:1
+    source: { rule: list-vocabulary }
+    open: true
+    vendor: { from: 500, label: Vendor-specific codes. }
+    labeled: true
+    description: "The codes of List: Native Image Asset Types, each with its row's text."
+  - name: OperatingSystem
+    kind: vocabulary
+    ir: def:list_operatingsystems:0
+    source: { rule: list-vocabulary }
+    open: true
+    vendor: { from: 500, label: Vendor-specific codes. }
+    labeled: true
+    description: "The codes of List: Operating Systems, each with its row's text."
+  - name: PlacementPosition
+    kind: vocabulary
+    ir: def:list_placementpositions:0
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Placement Positions, each with its row's text."
+  - name: PlcmtSubtypeVideo
+    kind: vocabulary
+    ir: def:list_plcmtsubtypesvideo:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Plcmt Subtypes - Video, each with its row's text."
+  - name: PlaybackCessationMode
+    kind: vocabulary
+    ir: def:list_playbackcessationmodes:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Playback Cessation Modes, each with its row's text."
+  - name: PlaybackMethod
+    kind: vocabulary
+    ir: def:list_playbackmethods:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Playback Methods, each with its row's text."
+  - name: PodDeduplicationSetting
+    kind: vocabulary
+    ir: def:list_poddedupe:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Pod Deduplication Settings, each with its row's text."
+  - name: PodSequence
+    kind: vocabulary
+    ir: def:list_podsequence:-1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Pod Sequence, each with its row's text."
+  - name: ProductionQuality
+    kind: vocabulary
+    ir: def:list_productionqualities:0
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Production Qualities, each with its row's text."
+  - name: SizeUnit
+    kind: vocabulary
+    ir: def:list_sizeunits:1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Size Units, each with its row's text."
+  - name: SlotPositionInPod
+    kind: vocabulary
+    ir: def:list_slotpositioninpod:-1
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Slot Position in Pod, each with its row's text."
+  - name: StartDelayMode
+    kind: vocabulary
+    ir: def:list_startdelaymodes:>0
+    source: { decision: D-004 }
+    open: true
+    labeled: true
+    extension: MediaOffset
+    description: "The codes of List: Start Delay Modes, each with its row's text, or, for a mid-roll at a given second, the delay in seconds, which the row `>0` stands for."
+  - name: UserAgentSource
+    kind: vocabulary
+    ir: def:user-agent_source:0
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: User-Agent Source, each with its row's text."
+  - name: VolumeNormalizationMode
+    kind: vocabulary
+    ir: def:list_volumenormalizationmodes:0
+    source: { rule: list-vocabulary }
+    open: false
+    labeled: true
+    description: "The codes of List: Volume Normalization Modes, each with its row's text."
+entries:
+  - ir: def:list_agenttypes:1
+    digest: 2323f62752a991504ca02729f56975bb8afc85cbc0bb776bcf29cb8be5b047ce
+    source: { rule: list-code }
+    as: { role: term, vocabulary: AgentType }
+  - ir: def:list_agenttypes:2
+    digest: 2578b1fcd86d1dffaccfe30558721716e9285b7227e81a4c865b80d6a1c08067
+    source: { rule: list-code }
+    as: { role: term, vocabulary: AgentType }
+  - ir: def:list_agenttypes:3
+    digest: 4759f82f507937eeabd3bed4393a2159cb7ca22d2a7d63d256c847481a1b2a94
+    source: { rule: list-code }
+    as: { role: term, vocabulary: AgentType }
+  - ir: def:list_agenttypes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    source: { rule: vendor-range }
+    as: { role: schema, in: AgentType }
+  - ir: rule:list_apiframeworks:b27e9d77
+    digest: 63bf0ce57c8601f50ad14e4a2f6a5fae4c193ddbb51cb1c7b1237158e59dd6f9
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_apiframeworks:1
+    digest: e6edeb9af37e68366b8daea0269a8c94c279d232f8498e912cb663838a331dee
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ApiFramework }
+  - ir: def:list_apiframeworks:2
+    digest: 205f4509da5942e3f028b7c26f794e8a8728b0173913d96b3c05a5f055231617
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ApiFramework }
+  - ir: def:list_apiframeworks:3
+    digest: 8f0ffaf5764b12f3b70bb663d6851cbe663d77564f7893bfb6ac86bd0ac88e98
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ApiFramework }
+  - ir: def:list_apiframeworks:4
+    digest: a416ec08647df3f9d68bc315bc3b8acf330527989f3cee1a1e87f022a10a89c7
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ApiFramework }
+  - ir: def:list_apiframeworks:5
+    digest: 42c6a5dc36400f8e8aaafbe8f9049e0cc112709b56ea9404abc8c140e1e5169b
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ApiFramework }
+  - ir: def:list_apiframeworks:6
+    digest: 0fabe1abbd11fbe213716c116c6e060a24f767de2aad6945eb9c4e5bbbd3a144
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ApiFramework }
+  - ir: def:list_apiframeworks:7
+    digest: ee688bdba5cb1eac1864260e21a1c280c74a46bb0e59025752c5a1f2c0ae0c72
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ApiFramework }
+  - ir: def:list_apiframeworks:8
+    digest: b6ec9f2c2bda0d6aecebc9cbe84c4399e3dfcf9d6323730ae54abfe4abdb3133
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ApiFramework }
+  - ir: def:list_apiframeworks:9
+    digest: a59a5f37959292a5589a6a5ac01cfa6c2ca4a66de950e392607d46981c78ff14
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ApiFramework }
+  - ir: def:list_apiframeworks:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    source: { rule: vendor-range }
+    as: { role: schema, in: ApiFramework }
+  - ir: sentence:list_auditstatuscodes:8ef13253
+    digest: 9f802966d4ad4b49ebb123640750e5662a79d96c8ece2cc25cbd5d04dae7347c
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: def:list_auditstatuscodes:1
+    digest: d6ff0e443eb5038391cc4aa9dbd8353c25edcc7ae9ba7f2af40cfdd3fb7fdfd5
+    source: { rule: list-code }
+    as: { role: term, vocabulary: AuditStatusCode }
+  - ir: rule:list_auditstatuscodes:57c59aad
+    digest: 1600c42a9ca5c1b7e11573059655055af640bf9377d7872e0492ae2fbc860556
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_auditstatuscodes:2
+    digest: 7786fa071c0e53133c181d7809067ddedcb6dab04eea21041cd6355fad567941
+    source: { rule: list-code }
+    as: { role: term, vocabulary: AuditStatusCode }
+  - ir: rule:list_auditstatuscodes:7d68f80d
+    digest: 151765ddb0a05d608371d47d3079d9608f3297b81263c4c4953f124dbebcfb2e
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: rule:list_auditstatuscodes:82ca9603
+    digest: caed990878eca21fe74359206cc8f253505f7e95a6825ea6fa5792d1dae63dd2
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_auditstatuscodes:3
+    digest: 4d565d62a4046592ef0a6783f124e22ed2751548b9434b031c012178d6e627c1
+    source: { rule: list-code }
+    as: { role: term, vocabulary: AuditStatusCode }
+  - ir: rule:list_auditstatuscodes:a018ec9a
+    digest: 5c63adb4d4456b118b131f88de0366d6908f0ea96cf13f39b4355e0220955061
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_auditstatuscodes:4
+    digest: 66aaff03b969b94dd58c655e519ce236f00fafb1ecf90406b515a91ad0ad14a9
+    source: { rule: list-code }
+    as: { role: term, vocabulary: AuditStatusCode }
+  - ir: def:list_auditstatuscodes:5
+    digest: dc868d81773457cf50de976d25dcd6289b9572be5443fb55316c6719640e62f4
+    source: { rule: list-code }
+    as: { role: term, vocabulary: AuditStatusCode }
+  - ir: rule:list_auditstatuscodes:c4f176d6
+    digest: 447410945cf0df57c0da43ce9b549bdd69495c69040e28f5c1eb8ca5db173e1f
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_auditstatuscodes:6
+    digest: aaf0144c1815f03532e4aea8691fdad0d491deccc5915ac4d4d676e3f8eabdb7
+    source: { rule: list-code }
+    as: { role: term, vocabulary: AuditStatusCode }
+  - ir: def:list_auditstatuscodes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    source: { rule: vendor-range }
+    as: { role: schema, in: AuditStatusCode }
+  - ir: def:list_autorefreshtriggers:0
+    digest: 4231c75751da56b3db1e897a1b4ce16edc80769456f2d3d83623b85049dd85b7
+    source: { rule: list-code }
+    as: { role: term, vocabulary: AutoRefreshTrigger }
+  - ir: def:list_autorefreshtriggers:1
+    digest: c744f1a5e693270aa980da2eb0de5269946092ec133d789b4051523e27be2fe0
+    source: { rule: list-code }
+    as: { role: term, vocabulary: AutoRefreshTrigger }
+  - ir: def:list_autorefreshtriggers:2
+    digest: be8ce3779d6452ceab9423df764d79a50546dfa856c12459e484c3a36544e88f
+    source: { rule: list-code }
+    as: { role: term, vocabulary: AutoRefreshTrigger }
+  - ir: def:list_autorefreshtriggers:3
+    digest: 33ec55e10f6a52b2dc6bb6459cb4e072ab56afcfe997fb36614fd584f0b2e90e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: AutoRefreshTrigger }
+  - ir: def:list_categorytaxonomies:1
+    digest: 92880a789bb6693cbc38773c7069b77cd224fac85c63f4e84273acb001aacb13
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CategoryTaxonomy }
+  - ir: def:list_categorytaxonomies:2
+    digest: a2bf4459dc264451aa3f9d4ac94104951dff9c0875433f5b51e8edd64c74be69
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CategoryTaxonomy }
+  - ir: def:list_categorytaxonomies:3
+    digest: 8f4bf8dfc69568562aea9aa5453344f212717dee0329647a1d253853ff7df2bf
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CategoryTaxonomy }
+  - ir: def:list_categorytaxonomies:4
+    digest: 8ffc25aa2ce22c78ff44d6f91170e78f52bc66bc11bc08e4e7acf4920b06657a
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CategoryTaxonomy }
+  - ir: def:list_categorytaxonomies:5
+    digest: bf54454173fba5ea17df042278e2ccfb200073c7f69648beb2c49936923663a8
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CategoryTaxonomy }
+  - ir: def:list_categorytaxonomies:6
+    digest: 24aa8ead363054f371c83cacea5976ea0828b8e176fab545075f0a8c35035c8c
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CategoryTaxonomy }
+  - ir: def:list_categorytaxonomies:7
+    digest: 714748474654c551c9c157a962b58baf82eec3e1fd303565056bec797aab888e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CategoryTaxonomy }
+  - ir: def:list_categorytaxonomies:8
+    digest: b2a4b883c8595a2d1f3e3b2900ae18230a73679de6112b81bcd722f359f544b5
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CategoryTaxonomy }
+  - ir: def:list_categorytaxonomies:9
+    digest: 66075feae0d5d7913ccdcd0761b2371ed9b3a5f645ba12b849cf0f9e7488d9e2
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CategoryTaxonomy }
+  - ir: def:list_categorytaxonomies:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    source: { rule: vendor-range }
+    as: { role: schema, in: CategoryTaxonomy }
+  - ir: def:list_clicktypes:0
+    digest: fa5894497c2f9a28408b169805df43472d172350778efb8e668bfe199e429f3e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ClickType }
+  - ir: def:list_clicktypes:1
+    digest: 5add1b21d8c1cccb71654d67beb959b21c159a41e8ec57d56281a512216884c6
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ClickType }
+  - ir: def:list_clicktypes:2
+    digest: f45d52df23f2f6eeeb5a236f52bd6bf2697c5bfbc0f9ec7674bd7b4a537720c0
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ClickType }
+  - ir: def:list_clicktypes:3
+    digest: 92c9f0a40a85db3773b35727fef424b2563668348ab9e04bd77869df6a064864
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ClickType }
+  - ir: def:list_clicktypes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    source: { rule: vendor-range }
+    as: { role: schema, in: ClickType }
+  - ir: def:list_companiontypes:1
+    digest: 724813d4c5bfb48e7528e964162e945fb8428f9d1944c9a1f2728b4f8475443c
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CompanionType }
+  - ir: def:list_companiontypes:2
+    digest: 0c3bc606066b1e7d3935a65094541860b47d5daf381f0b8711ede906316f48d6
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CompanionType }
+  - ir: def:list_companiontypes:3
+    digest: 21b8940c6a96b94fe2422c3f39b13cfc144fe858fe2b3e6159906c926f904e1e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CompanionType }
+  - ir: def:list_connectiontypes:1
+    digest: 4c2e2461eac2cf85cb27468f6d1b15340463dfdb4b9151f4585474ea91c70513
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ConnectionType }
+  - ir: def:list_connectiontypes:2
+    digest: c0c6ce3b32abca60097e885869564d408aba4e1890b64907276797136a4a1d42
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ConnectionType }
+  - ir: def:list_connectiontypes:3
+    digest: 080856f9e82e436e7c1d6e9aa6e78b1e174652ff929445540650193b86256c5d
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ConnectionType }
+  - ir: def:list_connectiontypes:4
+    digest: b8f1b784b38ff3ac72fe3033335f15265a9cdcc1703fd4f2f22b0c3938166419
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ConnectionType }
+  - ir: def:list_connectiontypes:5
+    digest: d2a7b512d28d235aca7799b9aa27ff310fd481b76dce14f12ea65777e1988ba9
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ConnectionType }
+  - ir: def:list_connectiontypes:6
+    digest: a28d6c8c25fd56837904973cfc14646b7aa0213c75c16410a2f05c11675a4484
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ConnectionType }
+  - ir: def:list_connectiontypes:7
+    digest: 012f263277fa8bceed13bd14eb2a2e383301644b0d21592c820bd6923a77db4a
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ConnectionType }
+  - ir: rule:list_contentcontexts:2049d051
+    digest: d803c748ceb5ddea0851cbf694ccf4297f602a1ff1a2840d174e7ee8191e4567
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_contentcontexts:1
+    digest: 804fca71b56ebbbbdc29df31acbbade2ec89e7f01dbaa3754a3299c878852a60
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ContentContext }
+  - ir: def:list_contentcontexts:2
+    digest: 84bc66ee7dee455378efe4303f30a40312d22d46de5dcbea48622fc88d9de372
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ContentContext }
+  - ir: def:list_contentcontexts:3
+    digest: c0763ab0a25c94cd3ce3b0777a225c6c5bfb4a5e3d1264b23a9e701cb6ec0c89
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ContentContext }
+  - ir: def:list_contentcontexts:4
+    digest: 2fc027c25261db7a0d3d86471496dae57dc5a0c3ef7feb9848c12412b047bd5b
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ContentContext }
+  - ir: def:list_contentcontexts:5
+    digest: 8f1959d24f5a7790644538d1ffe2257ec4e44560c4bc963c68517f31fc04be98
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ContentContext }
+  - ir: def:list_contentcontexts:6
+    digest: 9f5e07510ef33acc5db87216fe3fa749657c937f79fea70d5fa1ed811aa09272
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ContentContext }
+  - ir: def:list_contentcontexts:7
+    digest: c3a1224878cd5dcabf86283a5ab6a99870b433242e972de4992397f14640f474
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ContentContext }
+  - ir: def:list_creativeattributes:1
+    digest: ddd3e668d29709488eabfbf9649ffa781e1a70f9de21d00e78bb48d6db1ef85d
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:2
+    digest: cf4e9d32d8a2113719a8e3c03bd83d4ff1d01dc6cfb4dff07cf7fc25e7ce3640
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:3
+    digest: 1fdb73c9ba7ac4f47dd775f79ff4bdf3927b80bf82ca9a6a35bbc29c8312dd2a
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:4
+    digest: ef991f4ce879272c8501970a9becb6164c457f093192d8bc75e7eb016d845113
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:5
+    digest: 5c4a8dda4203c00ff03318ec5fcf9086999518f298c9106447465297c89ced11
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:6
+    digest: b23c5a2bfb9e709cac36102b48d393321f333abfdbbffbfd4000b94173668d68
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:7
+    digest: d7bd8afc2e5fd30fcf45729ebac94db84e273043c96d496e8d8ea10dd5d9f5e9
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:8
+    digest: f7e647353de0dcc81839e74da408c4c537298709f6726a07ec890eadd41265ff
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:9
+    digest: c003a7e24e5c3750a9dc874b0871d71e1c574b1a4bb0594318d833d4941a89f6
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:10
+    digest: 4a8d97753380014578856e65fa63e88266cc83b79b02a3cf2c579512089a0165
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:11
+    digest: 435288361c3c0d61399e4df12a76e812943f1dc1ae86cd5ddd37fa808d15f0f7
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:12
+    digest: b64218fdcdb964f28f001342a7d676c464bec6d38569ecb20ae364bb9265d706
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:13
+    digest: 21c2ddae6e5690b08824d6483e9c04c78d3d5b3164e45402bed0520747764572
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:14
+    digest: 6e893be5083baa796c01049055ca34f7ea0245291d4be036ef4b7ec9107c1ef4
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:15
+    digest: 42de981ff69907e91fa3df05c69d96c74510b25bda7eebebf1f37adbfc942a26
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:16
+    digest: e5bf82cac38f37735c51b5309de55a852be5cf4aadb7cf4d081f7a6fe5d4aad9
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:17
+    digest: b309132dd0c604dcef263ae0de0118af39536b3ed733296a4b5274f0ac72a0b5
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:18
+    digest: 47ac68a6b6abeca026174aba3af18b0fc8958ff0f7319cf15dae1ce20ba2bbac
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:19
+    digest: 94662ec003c5618d61ec2fcc55dc5bd9d4e5728a16f03c0ca8c517b3a23b8151
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:20
+    digest: f1821baa62d8ece7a1c9f8944ff0d60f12fcb1b53bc92b7b5e5b77e4280d5ed2
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:21
+    digest: 32b4213329748c3ab2fdd38a2dfb57ffb9603d000a050425f6b7ea6b3d31d69a
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:22
+    digest: b40cf45612a08167fd4beaed10dbffac7b22b07c55eb902e90a4bc9d8cef292c
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:23
+    digest: 93b97b9fa18a828bd9a9a7e8dac76301b83a9f7f93b3dab0814a45eb9addf317
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeAttribute }
+  - ir: def:list_creativeattributes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    source: { rule: vendor-range }
+    as: { role: schema, in: CreativeAttribute }
+  - ir: def:list_creativesubtypesaudiovideo:1
+    digest: 6e5cda39d26850e6f96381f412caa8c7ce2d257fe50d22810523a90b04f2d2cc
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeAudioVideo }
+  - ir: def:list_creativesubtypesaudiovideo:2
+    digest: 7f4a69502ce30bb15ebe7c44711d86bf710c85be09a8a8127841f00d3d03fc82
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeAudioVideo }
+  - ir: def:list_creativesubtypesaudiovideo:3
+    digest: 5ea5f80bfb7e5a5d4939feeb371c0da24592862d688902cc916f33ee9b2f1d7e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeAudioVideo }
+  - ir: def:list_creativesubtypesaudiovideo:4
+    digest: 69746d13452072b67612eb7cc57679eae40bd3bdd71b1d0fc23bf272a2b25f12
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeAudioVideo }
+  - ir: def:list_creativesubtypesaudiovideo:5
+    digest: 744ea5a45ad8c1fa17bb7c5c9223d3cbf0c6adabc712057e04c1a6b400f2bbe4
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeAudioVideo }
+  - ir: def:list_creativesubtypesaudiovideo:6
+    digest: 1037ce8ab28a1fdf3bc3f049db74b3122e4893c765a402f0aaeba2504bf89d27
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeAudioVideo }
+  - ir: def:list_creativesubtypesaudiovideo:7
+    digest: 52f9ed2171b72597bebb534036a83ff88ec4e7b9c0fab88ec91c9efcc1e3af7a
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeAudioVideo }
+  - ir: def:list_creativesubtypesaudiovideo:8
+    digest: aa3b90d4fe9a1ee34c9405c27a938914998050a655a41a301f89f4560cf9ae7b
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeAudioVideo }
+  - ir: def:list_creativesubtypesaudiovideo:9
+    digest: 6161b7722ee98dcc68ab285c596a7147bba31a3620d02ed76049d5f458bbaaab
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeAudioVideo }
+  - ir: def:list_creativesubtypesaudiovideo:10
+    digest: 6bf94c1e12c21a8a9d20856bb89481aed3bb9ee97ab07aa6278bc7b1a8772714
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeAudioVideo }
+  - ir: def:list_creativesubtypesaudiovideo:11
+    digest: bed2d07f18cfd5f02aa99992311b4bc193a687043bb0d37c5d488acc76aa3da6
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeAudioVideo }
+  - ir: def:list_creativesubtypesaudiovideo:12
+    digest: 4fd539a54ebf8800b7b8e91f19cd33b41cf30f46000fd8d1e910efe8357732d1
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeAudioVideo }
+  - ir: def:list_creativesubtypesaudiovideo:13
+    digest: 9d2ac3752f646754e6c65f57de5be5dbf01b42261ea77e2467ae4e818f0bdf7a
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeAudioVideo }
+  - ir: def:list_creativesubtypesaudiovideo:14
+    digest: 2ada1d6730165b17d0c1d8505bfbaaccc16e1a40d68e7f7fa05282f4376b8090
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeAudioVideo }
+  - ir: def:list_creativesubtypesaudiovideo:15
+    digest: c3e2e30507e6f90f281e619aae19c1c8eb3e365f6a62afd22dde12ac9e99f1ad
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeAudioVideo }
+  - ir: def:list_creativesubtypesaudiovideo:16
+    digest: cea9a5fdffc83bd0c91e4d719ecba5749ae2cd296422a9a22adeeb977c83f1e3
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeAudioVideo }
+  - ir: def:list_creativesubtypesdisplay:1
+    digest: c47bcc387153ccb71c4b3d91c9bc164f52ef513e4beff86e60ca7f5fce04d4a3
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeDisplay }
+  - ir: def:list_creativesubtypesdisplay:2
+    digest: 9abb4805581b86e3d7d450dfdd76be51d054c7ab88c98e4736c398165b3c2efe
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeDisplay }
+  - ir: def:list_creativesubtypesdisplay:3
+    digest: 3cdc842f807549bd9f1e97c0ec5eb635396658ba4e7689afb803e75c8db4b4cc
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeDisplay }
+  - ir: def:list_creativesubtypesdisplay:4
+    digest: 664860b94b023b770ac4b76b63625fe1e23a5518c90623d10f5fba2175c3d335
+    source: { rule: list-code }
+    as: { role: term, vocabulary: CreativeSubtypeDisplay }
+  - ir: def:list_deliverymethods:1
+    digest: 1c3c03207b488bdd8ef9a4445914f9119f1f71e87005e65de40c8b8eb950bc98
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DeliveryMethod }
+  - ir: def:list_deliverymethods:2
+    digest: 434e8c0f13214ed00f2f0cb25ea138b9ca2357fbbfd1ff8d42ecc999f9b2b462
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DeliveryMethod }
+  - ir: def:list_deliverymethods:3
+    digest: a16d631efe3bc636b144f46c6139a26fe8d0b716f76436f0b08e8945c1040fd5
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DeliveryMethod }
+  - ir: def:list_devicetypes:1
+    digest: a5bed246b41c59a039391963d54e31a6c12d9021ea742d114bf1d10451990a6a
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DeviceType }
+  - ir: def:list_devicetypes:2
+    digest: 59bb19099bfbd25c5b6b05e8b3f664fd275b90224fad4d70f323c2db4a0e5da7
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DeviceType }
+  - ir: def:list_devicetypes:3
+    digest: 3263e9d33977c01ee1c4209782b35d2c93364d54fa588ecf61167c8def677da4
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DeviceType }
+  - ir: def:list_devicetypes:4
+    digest: d2b71ef79e356b87d2666e0373fd32ded798026222537eafd711fb89e40c0a50
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DeviceType }
+  - ir: def:list_devicetypes:5
+    digest: 28392cf281d9767531c3cbeccbc78e3c74328914ba578c55131baed3e94c5d87
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DeviceType }
+  - ir: def:list_devicetypes:6
+    digest: 019317a1d7e923b554e863cb88c7a4086b98b7882d2e46a3d5eef37654758061
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DeviceType }
+  - ir: def:list_devicetypes:7
+    digest: 8951663aee9eea21f6471fcb86622d382099c7bf6490497af541849d50cadb81
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DeviceType }
+  - ir: def:list_devicetypes:8
+    digest: 65a6b12faf744b4dac9e157f39d0e2ab4999c884b0eca228ba8196d3cc6f03fa
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DeviceType }
+  - ir: rule:list_displaycontexttypes:27ae2909
+    digest: 519073e9adf912c0c84af0c87b9a4cf931647c1bf50874ab02d07f3f2549ab69
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: rule:list_displaycontexttypes:e3e141e2
+    digest: f943cba732808bbc687bc7b6aa3f09f1eb531f85c70f17054725bb235d34380d
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_displaycontexttypes:10
+    digest: 73ab8fb09c1e62113b6c0e9db505210471fd2bf4a581ea5f11a2efcad56436f9
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DisplayContextType }
+  - ir: def:list_displaycontexttypes:11
+    digest: ac50caf937e95539b1c3c84c4e108838c4a6df818acc3189bb27dac100f0b395
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DisplayContextType }
+  - ir: def:list_displaycontexttypes:12
+    digest: d75e7b492aa640fe3164d3723ef99c9f516a4e5615d26b38638bb82c80da08b5
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DisplayContextType }
+  - ir: def:list_displaycontexttypes:13
+    digest: ea35ae0d7d491b274178a66f81768d1db70b3eca796aaff464492db5ba4b0915
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DisplayContextType }
+  - ir: def:list_displaycontexttypes:14
+    digest: 7d58ae49b4baed993020636610f01fbc3537041fc6f31c99092a737a4441ad7d
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DisplayContextType }
+  - ir: def:list_displaycontexttypes:15
+    digest: 7144fbfdf3f4c00b9a0a944c3b65cd29d63bf3a3e76914f10e5b568d4ba217da
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DisplayContextType }
+  - ir: def:list_displaycontexttypes:20
+    digest: fc6252dd09edf1577248bb01005ec6576216358d361029b612e611c524789de1
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DisplayContextType }
+  - ir: def:list_displaycontexttypes:21
+    digest: b6abb0a13a10df99ce9a4fc2c945c73ecc6ab2afce70eeaf31d89ea8b8a4c256
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DisplayContextType }
+  - ir: def:list_displaycontexttypes:22
+    digest: 551b3b153136e7df7fb9eff936b8b23aec1d5cc2a93feb5b4f24a00e6524830e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DisplayContextType }
+  - ir: def:list_displaycontexttypes:30
+    digest: ddf4cf13698ec20ed40ea7832da5dba2660952f48ff9b6047471427729f884ad
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DisplayContextType }
+  - ir: def:list_displaycontexttypes:31
+    digest: 51b1ad40e44e047fe9af88b1e45b867679d3179046da5ed3c5fa20be8bc32a59
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DisplayContextType }
+  - ir: def:list_displaycontexttypes:32
+    digest: 88fbdfafd991e77743656fde7301495b48c84abb79c17a5163a4d4ebdf066e6a
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DisplayContextType }
+  - ir: rule:list_displaycontexttypes:7960d519
+    digest: 3e8c916afe8322f9f40c4e0ba36dc939bfd565d53021d0e84c54cf05c206727e
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_displaycontexttypes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    source: { rule: vendor-range }
+    as: { role: schema, in: DisplayContextType }
+  - ir: rule:list_displayplacementtypes:05dc096f
+    digest: 181ecb4c4cb57251b591eb58bee04270bca47a44da3bed092a1b90280d055789
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_displayplacementtypes:1
+    digest: 1cf74fe267518d354751ac693beba5c07be274d3c633cad30c0b9471d3601af1
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DisplayPlacementType }
+  - ir: def:list_displayplacementtypes:2
+    digest: 96c362673f5b4fb82c170b75e5076469882c9c88802f3433722b28f0eb96eabf
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DisplayPlacementType }
+  - ir: def:list_displayplacementtypes:3
+    digest: b1c6402765c47e7cdbb7aa8d7d4fea8691cf38612c551340bc71f8b5c01dab5e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DisplayPlacementType }
+  - ir: def:list_displayplacementtypes:4
+    digest: 2e9966d88368cf0e263a068deb764215203a4130c9f2c9d3847e19252d2fc933
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DisplayPlacementType }
+  - ir: def:list_displayplacementtypes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    source: { rule: vendor-range }
+    as: { role: schema, in: DisplayPlacementType }
+  - ir: def:list_doohmultipliermeasurementmourcetypes:0
+    digest: 323cc88067d3cb91983c207526b3c6472f5ab8e90de48f88b5176591ddcf4327
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DoohMultiplierMeasurementSourceType }
+  - ir: def:list_doohmultipliermeasurementmourcetypes:1
+    digest: e31f3b690d158c96614376d97581e776467c4d68027951b41a706933ea01fc89
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DoohMultiplierMeasurementSourceType }
+  - ir: def:list_doohmultipliermeasurementmourcetypes:2
+    digest: 4a91c247b107cd1e4291dff21b0d599243fa30b7ec9c77ff7413b6c547b5bf3c
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DoohMultiplierMeasurementSourceType }
+  - ir: def:list_doohmultipliermeasurementmourcetypes:3
+    digest: 12113be818e1326c030bd4385d5b77c7ab2585e86038f65422495e516e27fb90
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DoohMultiplierMeasurementSourceType }
+  - ir: rule:list_doohvenuetaxonomies:6b7249d0
+    digest: 7eb2660d4c98a703d504e15e65a90555ee4c92e1f25e34692e95bdc309c90182
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_doohvenuetaxonomies:0
+    digest: 0a4aaa62f5dc890366d10a653cc6493f5fa36929e7fd78acb979c088ff40a313
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DoohVenueTaxonomy }
+  - ir: def:list_doohvenuetaxonomies:1
+    digest: f446956e7a8a2ea18a91d0fb0dc8503e166c6529dfb7f16fd0b05c4cf11a0358
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DoohVenueTaxonomy }
+  - ir: def:list_doohvenuetaxonomies:2
+    digest: 7b9391760459f328f842492970f1722abba8e45f90465943f34b8bdf646d8721
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DoohVenueTaxonomy }
+  - ir: def:list_doohvenuetaxonomies:3
+    digest: deb30a8853e342fb05dd9166971fdc65ab60cbd2385917ff3c9b19ab58416b64
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DoohVenueTaxonomy }
+  - ir: def:list_doohvenuetaxonomies:4
+    digest: 6fe600b53230f427bf4edc362cc6e53347fb62a0126df1ee96054a3bdd975339
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DoohVenueTaxonomy }
+  - ir: def:list_doohvenuetaxonomies:5
+    digest: 297b175fd2143d51e478ed8a117f3b8ddbc4e67a00e08f22c82150a27fc920b9
+    source: { rule: list-code }
+    as: { role: term, vocabulary: DoohVenueTaxonomy }
+  - ir: rule:list_eventtrackingmethods:c66f557e
+    digest: 0f0213563c3b977588adbdaad9b6a0abce05b31be025a3064bbc1596965a9e34
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_eventtrackingmethods:1
+    digest: 880052dbb79497a68a0efa8959a9dbe63e7ae37b3b91a4caef5c1a6dff38af7e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: EventTrackingMethod }
+  - ir: def:list_eventtrackingmethods:2
+    digest: 37906e0cd3111d00f3f6c08ccd6ad3876c2cd8b0122d29c829bd323b4c22f6ce
+    source: { rule: list-code }
+    as: { role: term, vocabulary: EventTrackingMethod }
+  - ir: def:list_eventtrackingmethods:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    source: { rule: vendor-range }
+    as: { role: schema, in: EventTrackingMethod }
+  - ir: rule:list_eventtypes:8da0afd9
+    digest: b9859b405fe9523a762a15b95a00975a82ad3d60d9b2992d8cf7cf895f4e2eec
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_eventtypes:1
+    digest: 46ad57f99f20c21771e5aa16b3a688d928678dfd1e0b4c8868b6efc6e19f0e26
+    source: { rule: list-code }
+    as: { role: term, vocabulary: EventType }
+  - ir: rule:list_eventtypes:001e0b15
+    digest: 720832dec206825684f345d16dacc08189eddf277f188377d8f781252eef9691
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_eventtypes:2
+    digest: f8542c364c3ea58b98ff42a1267723eacb1248f25589d1e1c0ee3bc806f3108f
+    source: { rule: list-code }
+    as: { role: term, vocabulary: EventType }
+  - ir: def:list_eventtypes:3
+    digest: 83f8104df4712259ff85613c6df6bba0bd3eb52cb6f0863ed40a9405f80177bb
+    source: { rule: list-code }
+    as: { role: term, vocabulary: EventType }
+  - ir: def:list_eventtypes:4
+    digest: d6200218c8e4a8f0c89a235718e7acad4fc871764cc19179f54a6c1e216ca68e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: EventType }
+  - ir: def:list_eventtypes:5
+    digest: 23dfa11e27e3461e298dcd2cae7a923da5c753b86513bd7082a74c0fdbea4b17
+    source: { rule: list-code }
+    as: { role: term, vocabulary: EventType }
+  - ir: def:list_eventtypes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    source: { rule: vendor-range }
+    as: { role: schema, in: EventType }
+  - ir: rule:list_expandabledirections:f0d57e80
+    digest: e64cea736bcd2f0b54dddfb4c33b986f52419bf3baf801d314ac3ffc93522250
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_expandabledirections:1
+    digest: 4b6779eebc1c86acbe57f7a89298565ab7fe0a3d770260ce35c0f93b21d8774f
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ExpandableDirection }
+  - ir: def:list_expandabledirections:2
+    digest: e594f3eb6e2080389e482f9afe2eceb0e8680f7426523d5c481c1a3508c6eb3e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ExpandableDirection }
+  - ir: def:list_expandabledirections:3
+    digest: 292d54a8ba80ac078fdb182e28a080533f0708584baf5d92b58c8158e4ff9417
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ExpandableDirection }
+  - ir: def:list_expandabledirections:4
+    digest: 8ba25f4c6b3884ef3fc7958e771c9fab88d23ad5d663335db8a213fbe0d6d051
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ExpandableDirection }
+  - ir: def:list_expandabledirections:5
+    digest: c60c6a7026a0560a32efc3ccfbbf2ffc0c83248bc8565347588b63877e323f54
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ExpandableDirection }
+  - ir: def:list_expandabledirections:6
+    digest: ecd69548dd7a2dad3a35ccee806b96db671dbc4c2cb03de988024d7c378c3b1c
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ExpandableDirection }
+  - ir: def:list_feedtypes:1
+    digest: 38e83fe726ea77b3dec36e7a0526e421b362719d1dbfd59d45b090ffc49c5c0b
+    source: { rule: list-code }
+    as: { role: term, vocabulary: FeedType }
+  - ir: def:list_feedtypes:2
+    digest: 458608022e38ba1a2a4c203a11e487c70a69bc47114493d2453dcc7eadca9c36
+    source: { rule: list-code }
+    as: { role: term, vocabulary: FeedType }
+  - ir: def:list_feedtypes:3
+    digest: 74bd793443583a3d3782623ed2154f946d8266c0fb4d7265132019073d2698cd
+    source: { rule: list-code }
+    as: { role: term, vocabulary: FeedType }
+  - ir: def:list_feedtypes:4
+    digest: cf9e6b9c927dd9edd9ca053e109813e88d721bcc0e6f92ac5cce125428ad3d9a
+    source: { rule: list-code }
+    as: { role: term, vocabulary: FeedType }
+  - ir: def:list_feedtypes:5
+    digest: 7d75bafae96599392d1923f7f03cf4b33d79b731d9c4dfde05968b39e090b686
+    source: { rule: list-code }
+    as: { role: term, vocabulary: FeedType }
+  - ir: def:list_feedtypes:6
+    digest: 628e75f6e52f843c86df83fbf8b36b39d9448295a771590d42f8bc66ae73ff26
+    source: { rule: list-code }
+    as: { role: term, vocabulary: FeedType }
+  - ir: def:list_feedtypes:7
+    digest: 1d18977fd846262158b08ece783e526ec318ce03f3efaa7f1d92e87e91453baf
+    source: { rule: list-code }
+    as: { role: term, vocabulary: FeedType }
+  - ir: def:list_feedtypes:500+
+    digest: d4eae783fdc122f5961bd22663fe05ae4ce4aaf0397d605c6fb2dc22eba5b9d9
+    source: { rule: vendor-range }
+    as: { role: schema, in: FeedType }
+  - ir: rule:list_idmatchmethod:dc80fa6f
+    digest: 00b9ab9af8c7a2368c4e5d0f08ea8e185f5673a628571ab3245a20679d0502da
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_idmatchmethod:0
+    digest: fd417d56dc819c5cc638c5db2761960071c8d73b004d7eac6751d6cc88760a66
+    source: { rule: list-code }
+    as: { role: term, vocabulary: IdMatchMethod }
+  - ir: def:list_idmatchmethod:1
+    digest: 41bc49c0e835b65ba2033b99783ebd208ef5c7627960420aa334fef7b68c22b0
+    source: { rule: list-code }
+    as: { role: term, vocabulary: IdMatchMethod }
+  - ir: def:list_idmatchmethod:2
+    digest: b6b794ac4ac4d388bc3a38d7b908a30b099c96483e653c377aacc1d3b230e0a2
+    source: { rule: list-code }
+    as: { role: term, vocabulary: IdMatchMethod }
+  - ir: def:list_idmatchmethod:3
+    digest: 697f46bc18ebfed29898d79bcf6cf7223a2a3b07a47c06b42d89558a8249df01
+    source: { rule: list-code }
+    as: { role: term, vocabulary: IdMatchMethod }
+  - ir: def:list_idmatchmethod:4
+    digest: 5578c3a58357de330382d1ca9b5698266b95ce7485b00a321d742c54eff2f8b9
+    source: { rule: list-code }
+    as: { role: term, vocabulary: IdMatchMethod }
+  - ir: def:list_idmatchmethod:5
+    digest: 7f760276e8eecc3e3c857a9f363aef9727a14327b0883d9649dbae7273b9593b
+    source: { rule: list-code }
+    as: { role: term, vocabulary: IdMatchMethod }
+  - ir: def:list_idmatchmethod:500+
+    digest: b2cabc93ca4ef2665268803e442bc9696f2ac233420d11852f9416ac5b3538b2
+    source: { rule: vendor-range }
+    as: { role: schema, in: IdMatchMethod }
+  - ir: def:list_iplocationservices:1
+    digest: 89807968ba73e78775b60b92fdf9107543a4cc9986cb9b5f0870dd9bb36c7c9e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: IpLocationService }
+  - ir: def:list_iplocationservices:2
+    digest: eccd73b85a3c1c40359e41334f2feb76b36f31bbe72709be54cfb734af84dfd2
+    source: { rule: list-code }
+    as: { role: term, vocabulary: IpLocationService }
+  - ir: def:list_iplocationservices:3
+    digest: 798dc2211fa851960da7490d049cf31014115235435d9edc6722d18aecfbaf99
+    source: { rule: list-code }
+    as: { role: term, vocabulary: IpLocationService }
+  - ir: def:list_iplocationservices:4
+    digest: 2674e0ed7fd1ccae6a91c53486030813af5c3a08e63a797bcb5a1edee7ef9285
+    source: { rule: list-code }
+    as: { role: term, vocabulary: IpLocationService }
+  - ir: def:list_iplocationservices:511
+    digest: 6e9991c29fae1c07c2044011451a7047276646325f9995849ff50145c2d0da46
+    source: { rule: list-code }
+    as: { role: term, vocabulary: IpLocationService }
+  - ir: def:list_iplocationservices:512
+    digest: ec5fd9e06ec7dd1203b1069b3a9bcbc67e1b368e2a9fcbc83eac2af680b11c4f
+    source: { rule: list-code }
+    as: { role: term, vocabulary: IpLocationService }
+  - ir: rule:list_linearitymodes:cc53650a
+    digest: ba1f5573ff702709733984d1ec928e7179efcca144032cf05879ba8ac6cc60ce
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_linearitymodes:1
+    digest: 621e324a6157c3258bf9838ba51541e5aa781aa4bdf4e941c15b85eb97e32c72
+    source: { rule: list-code }
+    as: { role: term, vocabulary: LinearityMode }
+  - ir: def:list_linearitymodes:2
+    digest: 584888fbe395b2ea78d8112a6557bde00949cf29ff51be15fa8e6fa984d1f6fc
+    source: { rule: list-code }
+    as: { role: term, vocabulary: LinearityMode }
+  - ir: def:list_locationtypes:1
+    digest: 45ccc160a2669689398a687611da928d79295cc5f42ed9aaa7bcc17a2d656135
+    source: { rule: list-code }
+    as: { role: term, vocabulary: LocationType }
+  - ir: def:list_locationtypes:2
+    digest: f70b68e985c29d7958d444f6bc9f8091bee4b53b6aab050d4660c1e3472a2477
+    source: { rule: list-code }
+    as: { role: term, vocabulary: LocationType }
+  - ir: def:list_locationtypes:3
+    digest: 8ccfe739c3566c892217c70c02aec5cf2dd2d96e75766bc6c680dff235019c3d
+    source: { rule: list-code }
+    as: { role: term, vocabulary: LocationType }
+  - ir: def:list_mediaratings:1
+    digest: dcbe6d24fdd69988ae20cb01fc41ce79f00344cc9d4b45df33ddaa26365c0428
+    source: { rule: list-code }
+    as: { role: term, vocabulary: MediaRating }
+  - ir: def:list_mediaratings:2
+    digest: d74bd5976bf7642aef04795e55ab039f985c54b7678da53d8d417340fcae0600
+    source: { rule: list-code }
+    as: { role: term, vocabulary: MediaRating }
+  - ir: def:list_mediaratings:3
+    digest: 9262fb9ec0b61d8ca283f1fb67500d1774f6565efe2e89619157390cf2d275e4
+    source: { rule: list-code }
+    as: { role: term, vocabulary: MediaRating }
+  - ir: rule:list_nativedataassettypes:9bbf9137
+    digest: df0e3fc29e214769080e632b16b5c39c6ec043daaaed93bff942ed96ab76a396
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_nativedataassettypes:1
+    digest: bdd54861a539b967e032475fa4bbbba2db7e9458a2ced35b1484dca7781046f5
+    source: { rule: list-code }
+    as: { role: term, vocabulary: NativeDataAssetType }
+  - ir: rule:list_nativedataassettypes:3552f36e
+    digest: 4c286f219caed0350fd8755a86ae34a3b21a39f887948990213e46286af0946f
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: rule:list_nativedataassettypes:e8a5a609
+    digest: 9fa222429ffab498fc473d0205381635882d5fc31839ab70aa5034d47ca5d5c1
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_nativedataassettypes:2
+    digest: c58448f9fa75e0b42cc50de848a5ae05c4f1b5d495c5abded9ebfffeea3ef350
+    source: { rule: list-code }
+    as: { role: term, vocabulary: NativeDataAssetType }
+  - ir: rule:list_nativedataassettypes:114aae9c
+    digest: fe77a935f7fcd3179a7d40b8fd1166fe72862333f1897a737367dbe31f5f2266
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: rule:list_nativedataassettypes:bb0b47a8
+    digest: 6d7d557305b2200358613fd29d9f5fb61cba08c9aa946a6ff217bd7acf5a3d86
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_nativedataassettypes:3
+    digest: a75cf62bacef9ecc07c6a9c2fbd4139e4ed64415b49452e9240ec1257954a4f4
+    source: { rule: list-code }
+    as: { role: term, vocabulary: NativeDataAssetType }
+  - ir: rule:list_nativedataassettypes:44395a42
+    digest: 0c96098dbfb2b1f9441dad2f5706ebf7a3571091c211b6f1dc6d2aeb2c3a958f
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_nativedataassettypes:4
+    digest: 4b6b50a67e589f790831d6efc519012a1221feb599c085ec3c2a209d7beb00d4
+    source: { rule: list-code }
+    as: { role: term, vocabulary: NativeDataAssetType }
+  - ir: def:list_nativedataassettypes:5
+    digest: 2bc4cf4e5aa90eb0b2c71f97b206add18eabf88aceb1030c38422e9d57fd263d
+    source: { rule: list-code }
+    as: { role: term, vocabulary: NativeDataAssetType }
+  - ir: def:list_nativedataassettypes:6
+    digest: 8af399cee0063bba4c8f1e8200eb4bff0064dfa7aefd477976aa49b8aeb08ad7
+    source: { rule: list-code }
+    as: { role: term, vocabulary: NativeDataAssetType }
+  - ir: rule:list_nativedataassettypes:4f75b55b
+    digest: eecc89afa4b8efa3a6a4d15733008a16046f2c5e5fd42f6ed20d04ad3f994570
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_nativedataassettypes:7
+    digest: 0f5bd3d11d620978efd1e5d3314f3ae6b5467f24f097f0c4714507e1bd5ddb7d
+    source: { rule: list-code }
+    as: { role: term, vocabulary: NativeDataAssetType }
+  - ir: rule:list_nativedataassettypes:43574e02
+    digest: 088340a99a8901fe7f08b43cf997e3836d8ca0c8884968f770d4524614ee061a
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_nativedataassettypes:8
+    digest: ff2a8e845632e6524e883fc47838bcf981c9d0f444d1b44713b4998081c9b7db
+    source: { rule: list-code }
+    as: { role: term, vocabulary: NativeDataAssetType }
+  - ir: def:list_nativedataassettypes:9
+    digest: 0e3ea07e076b370066ef38fa32ce892fe996acd0be984bf1a3336e6ea943c566
+    source: { rule: list-code }
+    as: { role: term, vocabulary: NativeDataAssetType }
+  - ir: def:list_nativedataassettypes:10
+    digest: fdb44eb5539835b180e19257d60ffdf3d6bad81e37e009c92a5bd2b9f8075798
+    source: { rule: list-code }
+    as: { role: term, vocabulary: NativeDataAssetType }
+  - ir: def:list_nativedataassettypes:11
+    digest: 60e7655db130c6e8678164c1bb445aeee93d803db14b7e7974e34e3fbf34465f
+    source: { rule: list-code }
+    as: { role: term, vocabulary: NativeDataAssetType }
+  - ir: def:list_nativedataassettypes:12
+    digest: 0f29ca9a45beb1b3cec6f751590032c5aef0e88fdf4e04f0225ae23b5e60cca4
+    source: { rule: list-code }
+    as: { role: term, vocabulary: NativeDataAssetType }
+  - ir: rule:list_nativedataassettypes:644fc88e
+    digest: 08fb8352f8fdc0bb76b07ec04ab6ec6cf2ababefc50ac32e4ddb4a975edc7ae9
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_nativedataassettypes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    source: { rule: vendor-range }
+    as: { role: schema, in: NativeDataAssetType }
+  - ir: rule:list_nativeimageassettypes:c4ff3485
+    digest: 062711a7dcf21a1890f08f2a809d4a7d2fbb9bd7a7bcb06ee27b979c307068bd
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_nativeimageassettypes:1
+    digest: f4ee3955f74acfd745a6a8769ca1a19865001519a5fbade48370c20182fca07f
+    source: { rule: list-code }
+    as: { role: term, vocabulary: NativeImageAssetType }
+  - ir: def:list_nativeimageassettypes:3
+    digest: 21bfd24ba9926cebb0191ecc47b087c9a3bfea402c1c4d58382a9c53582a284a
+    source: { rule: list-code }
+    as: { role: term, vocabulary: NativeImageAssetType }
+  - ir: rule:list_nativeimageassettypes:9e397c9f
+    digest: a6c8cbe70a0f3f10867d4acd8aa9819af784a93c234da3ed19648c5c8a3d572a
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_nativeimageassettypes:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    source: { rule: vendor-range }
+    as: { role: schema, in: NativeImageAssetType }
+  - ir: def:list_operatingsystems:0
+    digest: dd422ea7d2ed3367761e48bcee5338b5fc13e44fb9a17b7a8bf14ceca276b535
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:1
+    digest: a39cd57a9b29d5d32a88f15eb2d48d9f23787e47b7eaa47307ef3509076c5f37
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:2
+    digest: d8bf83810a0092ffdb0300c8694786455764892f74b7231e4350e2795953a68c
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:3
+    digest: 67c92cc773139a8a26c2f15683774a81a7c61971f3b57d33921eb094bfe8589e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:4
+    digest: d1532b0b88e027e45b22288977a01f643ee8e0be83b2984b59a1358744e3689c
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:5
+    digest: 351a7879cc1aa64718e3dd4740211238faeb069066dfaa2fef9924965c429b18
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:6
+    digest: 35b10c7d575e9eabf38ab6a5186ffa1b213c1277aad5f66cd8a19539fc31ff0b
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:7
+    digest: de926163668fc328c816abd694d0ebf1b0a1b13ae46bf4b1ccfeb23d5301f17d
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:8
+    digest: 469f6d9826fa0e1764e42c15557c8cfbdcd7e621c8a40e9c218cc559eab1407b
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:9
+    digest: e30d3667501357e39bd0bf11b3524c64a06d9ee40c86c80748219a0598796d1c
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:10
+    digest: 27e94ee09a91edca74093599186b21e01a51d889344bd68833f3f0e74144ecda
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:11
+    digest: bd15fa355900666662844cd6ba061c9a40e460230ff81e2224f9f9dc98d0c0a1
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:12
+    digest: 939fdd99bad80be41ec0e2ac3e33ddc6ee8ba862281aa28ab1795dd0d2cb115a
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:13
+    digest: 1cfd89cecaff6c8e382bc9af535b2b19698fb83b55cb08240c7fbcb9c4e7ef8c
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:14
+    digest: cc36c0a61752a8dd00b5a4d6723fa659fe37d2be9c566475b7270aa72fe3a56d
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:15
+    digest: 681da8f499f90d2f759c45f531c2b34264ddc712c56d55e5f73147b317d82761
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:16
+    digest: ed973f72113dccfb6704432728849dbb44aa6c147c7dca54da45d8875f320c6e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:17
+    digest: 01c87461e84edd5dc0557f3e72d2154978d98af09f54cd678a0d81227055c894
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:18
+    digest: 9af047dc6903f29145857dc0091f6858be9942a8137a3ee9911a6226ceb2bd5e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:19
+    digest: 4b7cbc1c1591217eb8813945dea4de599ff68489a129e5737d4b2959554e7892
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:20
+    digest: cd5dd0cba9a060960844122390b6e8c2b04a7e8d74a692a16976dbac0dcc1d18
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:21
+    digest: 1454df574055e48f01be964c315f3a9200ee385af81834b309421d604fda5913
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:22
+    digest: 857e11497859484c0b2ecaee3fcb6dc2743caefd7d675976e7602c902c9c5a70
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:23
+    digest: 8b520f2e3bc625eb362115579c00e43d2e10f4ca3d15f90589429aa68253189c
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:24
+    digest: 0ddc54b58b9e3a615a8358b60997d75062305fc26989646eec953d502e8abc0d
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:25
+    digest: df01b771c82d1fdc753b007eff18c92e1680ddd39661ade8d4d42bb2c775d35f
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:26
+    digest: d7e2576a2da8238f38ad8eeb9afd78d916b5ae352a94a78c785a4706a482bcef
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:27
+    digest: 5bee5dec48d30b7c77339ce3d6e43399462084574162ae0c21d16844f31195ea
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:28
+    digest: 679f04d892f48d102a2ba50a9fce51d71a06fb09515e37c693fed0aaa9d87f04
+    source: { rule: list-code }
+    as: { role: term, vocabulary: OperatingSystem }
+  - ir: def:list_operatingsystems:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    source: { rule: vendor-range }
+    as: { role: schema, in: OperatingSystem }
+  - ir: def:list_placementpositions:0
+    digest: 323cc88067d3cb91983c207526b3c6472f5ab8e90de48f88b5176591ddcf4327
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:1
+    digest: 49e7651e06dd93a80a9683fccf6be3b306859bb58073cb6e0df01cf493036cc9
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:2
+    digest: b7eb4131b765b6643ac0c10ed4aab734e23c6ba4ef8a52cef09483e7ebcd2c43
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:3
+    digest: 56426037d9b5c9eefcde97c64638d1644834fd5f367c96b0eb8f1f1c31cfd0fb
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:4
+    digest: dad9a6a7292b5eb73e8673ea4129934e5db4fe635cfe49577161f3b5ac20152e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:5
+    digest: c66f654057e0d912460a0684a5a4ab7ca80cdf410802f61c7cb361581b955974
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:6
+    digest: 1fb08b346fa9019bcd0dc79e1d362ab0c07960946d044e7509028f5157650d39
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:7
+    digest: c52b22b6451ce7deb062999d051b4cd5ef1ef1ef339dddce34d72770a7cf0831
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:8
+    digest: d2f7b0ea17842d1f7eb73b1e46898b85d039fb0f7346a67fbd358d27c6643c31
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:9
+    digest: 40c5601b71121db94f381519963a016d5ad6f81c11fe75980a3958f9af9860ec
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:10
+    digest: 28d95aa6f8fe2cb833d1477aa49d35c17dc34d272fcf45e1671533ef4c07d6f2
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:11
+    digest: c8da873f5425f2cf297074b38d1da00b6b9747159df405f4429f61ef206783e3
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:12
+    digest: 7743aa63a7071fa928444f5b5768d069e385820efdbf9d1d48b999ab2a6bdf9c
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:13
+    digest: 925a6315c32d970084072c4960585e2b1dedacb501d57e6e8200d2a9cdca8f50
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:14
+    digest: 21151bc7e017d22b7ec9a949825fc3f8c4668663d10e93d437bd2e34a0badcbd
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:15
+    digest: 4788d9e024b74bf7a0d27bc191842e0c2e466812f0bde82bf2eb96a61172ec2f
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:16
+    digest: 05d730b0f032dcf6e33d78e86cef522d1ba8824b46ed75d8a9e22fc209e2c072
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: def:list_placementpositions:17
+    digest: 4995ff088d1b706f85a9812dd187c0f6a8d9384c47b60a997dd4476b647490a6
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlacementPosition }
+  - ir: sentence:list_plcmtsubtypesvideo:c7364e2a
+    digest: bd92c613360ed50b6b88e10ae4414a235f0d0fef3c9df16d5a65cc747977053f
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: def:list_plcmtsubtypesvideo:1
+    digest: 65d707558b0a7432226bc30c3a8a084c8710582cc483dcd0de7f216da6382777
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlcmtSubtypeVideo }
+  - ir: rule:list_plcmtsubtypesvideo:0f70c771
+    digest: da7690e8123c5c2c0c19d6f56e42e0789039ad87a91f8938df97be71a4d4e9b7
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: rule:list_plcmtsubtypesvideo:27db857f
+    digest: 8941501eff3772cc3c390a1cf26de155d0c57302a61cf072cd77023b8aa80c3b
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: rule:list_plcmtsubtypesvideo:d4ca96c8
+    digest: 6a8c56d1d769579f53b8a0f51f1c28819286f78eaa166f12b8136021a164c5e2
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: rule:list_plcmtsubtypesvideo:fc7d32c9
+    digest: b5eb177ad4417488f367eb0fea7736565ccc48616b1881f2bc42aee5aeed9d82
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_plcmtsubtypesvideo:2
+    digest: 7bd9092aa538843742a589033658349ae4d8a183b2555905f08e6f20c942aec0
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlcmtSubtypeVideo }
+  - ir: rule:list_plcmtsubtypesvideo:3b4b9094
+    digest: 793fbaf6e4a1b50ee8438f5941a6d7d3d6c0cbfbe09e9d3b7800c217b957e06e
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: rule:list_plcmtsubtypesvideo:ca67e0ed
+    digest: ba54c70c9359abd928fe2269996a444db3263a72ff67e969fa69a73813189d13
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_plcmtsubtypesvideo:3
+    digest: 59ca871faa0581d815ea4d1ededb137d25f144378fbc63921fedbe40b561be8d
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlcmtSubtypeVideo }
+  - ir: rule:list_plcmtsubtypesvideo:49c6be74
+    digest: 8ebcacb6443bf4ad9875f56a3a1edb206e67b2b387997a1603ab525e0594636f
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_plcmtsubtypesvideo:4
+    digest: 4057ea16b1caf7b2d9049ae21217d21c711e2710fac6b18a6e414b58e9b74821
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlcmtSubtypeVideo }
+  - ir: def:list_plcmtsubtypesvideo:5
+    digest: ea92162c6389c8195667303c0c778b533f0bddd42ac037f24d6cb521ec21ff87
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlcmtSubtypeVideo }
+  - ir: rule:list_plcmtsubtypesvideo:0f70c771-2
+    digest: d5a608d08066a0e336d99280f6f7de35ee36e3547efbd4010dc7d99a713dde2d
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: rule:list_plcmtsubtypesvideo:1fe030ab
+    digest: 9bf06480a5dd55c92d82d6c8f4f5350791a9ecf162986c9ac2da8d232ebdada3
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_plcmtsubtypesvideo:6
+    digest: 991539999b319bc4c34b2f6c8b0209c2fbd0fad512ab4af13fc47aa206da16ec
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlcmtSubtypeVideo }
+  - ir: def:list_plcmtsubtypesvideo:7
+    digest: 1916eaf4da0d97442e3d5a3eb5e08a1c6beb515ea3e7fccdddd3b60da44eb5e4
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlcmtSubtypeVideo }
+  - ir: rule:list_plcmtsubtypesvideo:07af47b1
+    digest: 513ec16ec85270bb3a323af4a232f54061ef914b20e49ef78e9380c943c858bd
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: rule:list_plcmtsubtypesvideo:c971f206
+    digest: 499bb6d073bb405b0019778038fac54878f9516244eb1978560a44bc74940e79
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_plcmtsubtypesvideo:8
+    digest: 9b05420fdba125532c9a54c9ccb756198ca35f41a2e780ad71451197de1ac6f3
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlcmtSubtypeVideo }
+  - ir: rule:list_plcmtsubtypesvideo:0a29f7c1
+    digest: 1d3d4e7fa9f7a29ca8582795ed0f18e468b6a6c813914aa4cac559cad3687864
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: rule:list_plcmtsubtypesvideo:c971f206-2
+    digest: c143165624b5903bf3d8a3e50eaca2514ef4e8f78815748c7cf9b8eba7869485
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_plcmtsubtypesvideo:9
+    digest: 2ba747143516d55b9bc8c0993755e78da0115901bee24ef47fb220a55d3caeb1
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlcmtSubtypeVideo }
+  - ir: rule:list_plcmtsubtypesvideo:7808909a
+    digest: 02d56350c2bc7ebeef668fe559896d63e7419e066effb17f9c0e319e9997de73
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: rule:list_plcmtsubtypesvideo:c971f206-3
+    digest: 0b073d44ee4840b7d7cfb74a1991249c5971c53d4c9331bd84055f6218e10477
+    source: { decision: D-005 }
+    as: { role: informative }
+  - ir: def:list_playbackcessationmodes:1
+    digest: ea187921e13fcb30ff0f126202c3c5f9223a9a55c296bcc5a87d0d6b0d2fd5a6
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlaybackCessationMode }
+  - ir: def:list_playbackcessationmodes:2
+    digest: a1d48ad00b12869c100f31ce021da4004d2c89eb494ae2a67952cb83c43b93ac
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlaybackCessationMode }
+  - ir: def:list_playbackcessationmodes:3
+    digest: 0e9953ee45b8b8eb18cbd777c8503dd9d64067512626e639ec8b1d8cb35b7b78
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlaybackCessationMode }
+  - ir: def:list_playbackmethods:1
+    digest: e9bffcb505edad849ce580d8c2968b6fce9351455def9d23d5320c43d385ce11
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlaybackMethod }
+  - ir: def:list_playbackmethods:2
+    digest: 13e2c919b365cb7dbd8e13e8ac909cffd91802bf4cd6f2ae8e28645923b6d248
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlaybackMethod }
+  - ir: def:list_playbackmethods:3
+    digest: e66e769f20b59cc15b2cfedf7d7c4e211a72ca45efc577d190cb1b04c84667f7
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlaybackMethod }
+  - ir: def:list_playbackmethods:4
+    digest: e01b8c8069612c4893e433fcbd936b255914d6eee1919f948febb7ae845c3b1e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlaybackMethod }
+  - ir: def:list_playbackmethods:5
+    digest: 41d43f2edf5812daff99809221bc5d7cbca95e84ad4cc02fe09b5f444a6e9d64
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlaybackMethod }
+  - ir: def:list_playbackmethods:6
+    digest: 2852b601f07001bdbc8db852fc59610e2695e5f2e1b0fafe9e9712566d059f6a
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlaybackMethod }
+  - ir: def:list_playbackmethods:7
+    digest: 279906a7ecf1a66a9de6079b1617652568d1fbfaafc2c0a44431bc6acb6d8ecf
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlaybackMethod }
+  - ir: def:list_playbackmethods:8
+    digest: 2c1531accdf22cd0c8e583b185e0532ff936cf662024ef0fe09fdcf32eeac74c
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlaybackMethod }
+  - ir: def:list_playbackmethods:9
+    digest: f34ce6c039a5c5285f17cb7fe57953ba60a65bb0fd890fdc627e5c2ed068d1e1
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlaybackMethod }
+  - ir: def:list_playbackmethods:10
+    digest: a7dab409d78d2c6f215b8965587df542ce8498a5ae62a2b13d07deebe0058b4a
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlaybackMethod }
+  - ir: def:list_playbackmethods:11
+    digest: bb227f8430ce0d9ba359d292e2e427dddb15a5bbdf3d67c40e80f486c0ecc13b
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PlaybackMethod }
+  - ir: def:list_poddedupe:1
+    digest: ca8ae341046c0c168646bc33f81fa6cf99e0ae9dad4cbd59211df6c5753aec82
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PodDeduplicationSetting }
+  - ir: def:list_poddedupe:2
+    digest: 2ccc62e1328f24b6d73a78ff47823ccdf256985f8d705cb2ed8d5a60a3904e7e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PodDeduplicationSetting }
+  - ir: def:list_poddedupe:3
+    digest: 2208c1f4998717b5aebc19be2d0cfd1b55bf93a1b09357856c7372ef08d3090e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PodDeduplicationSetting }
+  - ir: def:list_poddedupe:4
+    digest: e3bfebbc53134991db8d1e73d30629ce85535fafcbbcc91030c3335af1ea09e5
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PodDeduplicationSetting }
+  - ir: def:list_poddedupe:5
+    digest: 4eb0347257036f6f99e9f6c8d6bf23ace07ecbe2c7c9649a8a09309a5efec21f
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PodDeduplicationSetting }
+  - ir: def:list_podsequence:-1
+    digest: da6182d569809fa230f4afd03d93bb127d1beccfa863d742da5383605ba608b9
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PodSequence }
+  - ir: def:list_podsequence:0
+    digest: 9c9b8e54eedcfbacb6fe02277d3ea15c2a309401e78a08470b1e71a11c9e4749
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PodSequence }
+  - ir: def:list_podsequence:1
+    digest: 074dda0227fbfbb3995aa9e5863f563d9bfcda01827fc6ce71157a3d85596edc
+    source: { rule: list-code }
+    as: { role: term, vocabulary: PodSequence }
+  - ir: def:list_productionqualities:0
+    digest: 323cc88067d3cb91983c207526b3c6472f5ab8e90de48f88b5176591ddcf4327
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ProductionQuality }
+  - ir: def:list_productionqualities:1
+    digest: 31ff7d1f180e14c37e285125cd04cb8a7dabd57e407a2e7e641f1e1790905d82
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ProductionQuality }
+  - ir: def:list_productionqualities:2
+    digest: 38f86516ee62b0bb9f2161dcc9083cdd71aa4be8f27b2a315bcd51b10affb5f5
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ProductionQuality }
+  - ir: def:list_productionqualities:3
+    digest: 6cb8f281d2c7c24563197ded8f65cf4f453de67753a1e7805e49e2f163beafc7
+    source: { rule: list-code }
+    as: { role: term, vocabulary: ProductionQuality }
+  - ir: def:list_sizeunits:1
+    digest: 71fa417eb05b25a4be25f227792645858829bd225ed051dbfc665f6d96d3fcdf
+    source: { rule: list-code }
+    as: { role: term, vocabulary: SizeUnit }
+  - ir: def:list_sizeunits:2
+    digest: 6d5350ffcb1555b755ed1aee0f3ab7c67b8dc97eb78096563d9fabb40f455960
+    source: { rule: list-code }
+    as: { role: term, vocabulary: SizeUnit }
+  - ir: def:list_sizeunits:3
+    digest: 1f40a0ff8e2f48ff62b0c4def07054ebe3ca56315cd8e3d5961b3d8daa32abac
+    source: { rule: list-code }
+    as: { role: term, vocabulary: SizeUnit }
+  - ir: def:list_slotpositioninpod:-1
+    digest: 30a6131d26d5c0002d8aae91bfa646dd1b2d151a6dd66e2421e273939ec02ee6
+    source: { rule: list-code }
+    as: { role: term, vocabulary: SlotPositionInPod }
+  - ir: def:list_slotpositioninpod:0
+    digest: fbbcab1cef29655766f59c6be6436cf2f6c3fee10135579ef420d3131d7f220a
+    source: { rule: list-code }
+    as: { role: term, vocabulary: SlotPositionInPod }
+  - ir: def:list_slotpositioninpod:1
+    digest: ea1da441be4846b625b2a2f59ce31f52ba69867500fa6b210daab65ae46aaa71
+    source: { rule: list-code }
+    as: { role: term, vocabulary: SlotPositionInPod }
+  - ir: def:list_slotpositioninpod:2
+    digest: 616b8926b3d11413e680003348716fa3dd1c045e0219e66e7eae374368477826
+    source: { rule: list-code }
+    as: { role: term, vocabulary: SlotPositionInPod }
+  - ir: def:list_startdelaymodes:>0
+    digest: 3cf746d64d32c97c88eef1627b66fad208ae9392eb1ec0cd9cb63ef209daa7b4
+    source: { decision: D-004 }
+    as: { role: schema, in: StartDelayMode }
+  - ir: def:list_startdelaymodes:0
+    digest: e670782d4a60fa0cd06acc29b99f61ce9d69865f3c965f0665733decbd8b7375
+    source: { decision: D-004 }
+    as: { role: term, vocabulary: StartDelayMode }
+  - ir: def:list_startdelaymodes:-1
+    digest: 2d87b5335e9f2ac209549f460f2222a4982e6eddae2121e7de7685dd4790dafb
+    source: { decision: D-004 }
+    as: { role: term, vocabulary: StartDelayMode }
+  - ir: def:list_startdelaymodes:-2
+    digest: 9c18dea3eea6216c45bb91e58875df2ecf75384729b92be04bb633cd8ee551d4
+    source: { decision: D-004 }
+    as: { role: term, vocabulary: StartDelayMode }
+  - ir: def:user-agent_source:0
+    digest: 891323fe8c1284ee6f857b80ef30fadb82387e6452853304b41255c8de855c10
+    source: { rule: list-code }
+    as: { role: term, vocabulary: UserAgentSource }
+  - ir: def:user-agent_source:1
+    digest: 07233269b8134d2e8ac8efdba18fcc6e4974cbe18d5e51e01ea54f575a83f98e
+    source: { rule: list-code }
+    as: { role: term, vocabulary: UserAgentSource }
+  - ir: def:user-agent_source:2
+    digest: c1e2efa1cd3731488c5390ca24d3a2a522f4d5207215c7ef133e9c324e871791
+    source: { rule: list-code }
+    as: { role: term, vocabulary: UserAgentSource }
+  - ir: def:user-agent_source:3
+    digest: 7a99914b2a50ee2f7b3b27e92a3a04d9edbf4f3cd65033ebe8553ca357c5ffa8
+    source: { rule: list-code }
+    as: { role: term, vocabulary: UserAgentSource }
+  - ir: def:list_volumenormalizationmodes:0
+    digest: 50e537fa29ecfdcc2931246a906fffa6ca94282e6cfda3ecc723aaac6b96daed
+    source: { rule: list-code }
+    as: { role: term, vocabulary: VolumeNormalizationMode }
+  - ir: def:list_volumenormalizationmodes:1
+    digest: c9ffb2c7b8adba5a682d84c8bc2e495d16ff32faeb05189042658bc9b6d61538
+    source: { rule: list-code }
+    as: { role: term, vocabulary: VolumeNormalizationMode }
+  - ir: def:list_volumenormalizationmodes:2
+    digest: 1aedbb16a132253c72e8da8af1512e5eb883229341caf2bb2e6845d497117eaf
+    source: { rule: list-code }
+    as: { role: term, vocabulary: VolumeNormalizationMode }
+  - ir: def:list_volumenormalizationmodes:3
+    digest: 6a50910dc18b39a1f66fc0bd74154e051b279de551a185365bb3ada54b43b201
+    source: { rule: list-code }
+    as: { role: term, vocabulary: VolumeNormalizationMode }
+  - ir: def:list_volumenormalizationmodes:4
+    digest: d50a6277460fd10677efb06d165b916eea84fe7367e430d27ade85b91d2261ce
+    source: { rule: list-code }
+    as: { role: term, vocabulary: VolumeNormalizationMode }

@@ -1,7 +1,7 @@
 """Report the Python SDK's verdicts on the conformance cases.
 
 The SDK parity gate (scripts/ci.ts) runs this with the path of a lock's
-generated `python/` directory, sends {"cases": [{"target", "json"}]} on
+generated `python/` directory and the name of the package it holds, sends {"cases": [{"target", "json"}]} on
 stdin, and reads {"engine", "verdicts": [<bool>], "dumps": [<value>],
 "errors": [<str or null>]} from stdout. A case's target is the type its
 value is an instance of: a named type (`{"k": "ref", "name"}`), or a
@@ -14,6 +14,7 @@ write what Pydantic's `dump_python(mode="json", exclude_unset=True)` writes.
 Run it with the interpreter of the venv that tools/sdk/requirements.txt pins.
 """
 
+import importlib
 import json
 import sys
 from importlib.metadata import version
@@ -22,7 +23,7 @@ from typing import Annotated, Any
 
 def main() -> None:
     sys.path.insert(0, sys.argv[1])
-    import openproposal as op
+    op = importlib.import_module(sys.argv[2])
     from pydantic import Strict, TypeAdapter, ValidationError
 
     def type_of(e: dict[str, Any]) -> Any:

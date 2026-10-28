@@ -1,15 +1,18 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
+import { allLocks, cliSpec } from "../builds.ts";
 import { stringify } from "yaml";
 import { loadConstructors } from "../constructors.ts";
 import { emitSchemas, schemaDirOf } from "../emit.ts";
 import { codesOf } from "../rule-checks.ts";
-import { checkExamples, checkFindings, checkUndecided, loadFindings, lockExamples } from "../examples.ts";
+import { checkExamples, checkFindings, checkUndecided, FINDINGS_FILE, loadFindings, lockExamples } from "../examples.ts";
 import { loadKernel } from "../kernel.ts";
 import { loadLock, type SpecLock } from "../lock.ts";
 import { loadDecisions, loadMappings } from "../mapping.ts";
 import { resolveModel } from "../model.ts";
+import { REPO_ROOT } from "../repo.ts";
+import { ruleChecksOf, schemaNamesOfLock } from "../specs/index.ts";
 
 /**
  * Usage: examples [--lock <file>]
@@ -22,24 +25,22 @@ import { resolveModel } from "../model.ts";
  * longer occurs, or the lock's list of examples is wrong.
  */
 async function main(): Promise<number> {
-  const { values } = parseArgs({ options: { lock: { type: "string" } } });
-  const root = new URL("../..", import.meta.url).pathname.replace(/\/$/, "");
+  const { values } = parseArgs({ options: { spec: { type: "string" }, lock: { type: "string" } } });
+  const root = REPO_ROOT;
+  const specDir = cliSpec(values);
   const locks: SpecLock[] =
     values.lock !== undefined
       ? [loadLock(resolve(values.lock))]
-      : readdirSync(join(root, "spec-input"))
-          .filter((f) => f === "spec-lock.yaml" || f.endsWith(".lock.yaml"))
-          .sort()
-          .map((f) => loadLock(join(root, "spec-input", f)));
-  const mappings = loadMappings(root, join(root, "mapping"));
-  const decisions = loadDecisions(root, join(root, "decisions"));
-  const kernel = loadKernel(root);
-  const constructors = loadConstructors(root);
-  const recorded = loadFindings(root);
+      : allLocks(specDir);
+  const mappings = loadMappings(join(specDir, "mapping"));
+  const decisions = loadDecisions(join(specDir, "decisions"));
+  const kernel = loadKernel(root, specDir);
+  const constructors = loadConstructors(root, specDir);
+  const recorded = loadFindings(join(specDir, FINDINGS_FILE));
 
   let failed = false;
   for (const lock of locks) {
-    const ir = JSON.parse(readFileSync(join(root, lock.ir_dir, "spec-ir.json"), "utf8"));
+    const ir = JSON.parse(readFileSync(join(specDir, lock.ir_dir, "spec-ir.json"), "utf8"));
     const { model, problems } = resolveModel({ ir, lock: lock.name, mappings, decisions, kernel, constructors });
     if (problems.length > 0) {
       for (const p of problems) console.error(`error: ${lock.name}: model: ${p}`);
@@ -47,7 +48,7 @@ async function main(): Promise<number> {
       continue;
     }
     const schemaDir = schemaDirOf(lock.ir_dir);
-    const emitted = emitSchemas(model, schemaDir);
+    const emitted = emitSchemas(model, schemaDir, schemaNamesOfLock(lock));
     let got;
     try {
       got = await lockExamples(lock, model);
@@ -56,7 +57,7 @@ async function main(): Promise<number> {
       if (lock.required) failed = true;
       continue;
     }
-    const r = checkExamples({ model, files: emitted.files, schemaDir, examples: got.examples, values: got.values, codes: codesOf(kernel.lists ?? { lists: [] }) });
+    const r = checkExamples({ model, files: emitted.files, schemaDir, examples: got.examples, values: got.values, codes: codesOf(kernel.lists ?? { lists: [] }), ruleChecks: ruleChecksOf(lock) });
     console.log(`${lock.name}: ${got.examples.length} examples via ${got.via}; ${r.failures.length} failure${r.failures.length === 1 ? "" : "s"}`);
     if (r.failures.length > 0) {
       const shown = r.failures.map((f) => ({ example: f.example, path: f.path, kind: f.kind, ...(f.rule ? { rule: f.rule, severity: f.severity } : {}), value: f.value, message: f.message, elements: f.elements }));

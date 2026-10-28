@@ -12,14 +12,13 @@
       "const": 1
     },
     "constructors": {
+      "description": "The templates. A spec whose text uses none, as AdCOM's lists, binds each one absent, so its kernel holds none.",
       "type": "array",
-      "minItems": 1,
       "items": { "$ref": "#/$defs/constructor" }
     },
     "parts": {
       "description": "The named types that a shell references and that don't depend on a parameter, apart from primitives (type rules § 7). They are in the constructor layer, so they reference only primitives, and every copy shares them.",
       "type": "array",
-      "minItems": 1,
       "items": { "$ref": "#/$defs/part" }
     }
   },

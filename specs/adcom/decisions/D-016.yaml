@@ -1,0 +1,59 @@
+format: 1
+id: D-016
+status: proposed
+kind: gap
+author: agent
+question: "\"1.0\" covers nearly eight years of changes, the tags are named three ways, and the last tag isn't `main`. Which revision of AdCOM does the registry rest on?"
+covers:
+  - ir: concept:appendixb_changelog:1
+    digest: 01210ced55f3748ff8e5194cde1e6220fff09b251fabfc0b28709020e6f4cb26
+    quote: 1.0 | March 2022 | Updates to support OpenRTB 2.6 release and keep 2.x/AdCOM in sync Added Pod Bidding features, rqddurs, poddur, podid, podseq, mincmppersec, slotinpod to AudioPlacement and VideoPlacement objects. Added Device.langb and Content.langb to support IETF BCP 47 Fixed eids typo so that it is an object array instead of object Added network and channel objects Deprecated yob and gender Added kwarray as preferred format to keywords Added new playback method, continuousplayback Added device type ooh Added new lists to support pod bidding; Ad Sequence and Pod Sequence Added new list to support User-Agent Source Added UserAgent and BrandVersion objects to support User Agent Client Hints
+  - ir: concept:appendixb_changelog:2
+    digest: d028688b49627355510fa64e67a464fb0f95c5e434466bee0bae1be9d0540161
+    quote: '1.0 | August 2021 | Added expdir to VideoPlacement: Support for indicating permitted expansion direction for video ads. Added overlaydir to VideoPlacement and AudioPlacement: Support for indicating permitted expansion direction for video and audio ads overlays. SIMID 1.1: SIMID 1.1 has been added to the API frameworks list. Expansion directions: "Resize/Minimize (make smaller)" has been added to the list of expanding directions. Definition of linearity: In the linearity modes list and the `linear` field in the VideoPlacement object, text has been revised to clarify that linearity corresponds to expected VAST response and is not an indication of in-stream vs out-stream. Category taxonomies list updated: The category taxonomies list was updated with the latest IAB taxonomies. The description of the list was expanded to note that it includes taxonomies for describing content, ads, and audiences. Old versions of taxonomies have been marked deprecated. <>'
+  - ir: concept:appendixb_changelog:3
+    digest: be00a902269db7fe6ef3d247d0b9451630b67e1c407f9f368eb0a55fe32e1b21
+    quote: "1.0 | June 2020 | Added extended IDs object: Support for passing of multiple IDs of varying types."
+  - ir: concept:appendixb_changelog:4
+    digest: a0b37f789f5e59b490c0178714b90c597aedb35c18eeebaa7243475d5a000187
+    quote: "1.0 | February 2020 | Regulatory guidance: A section has been added to call attention to the expectation that implementers comply with applicable laws or regulations. Fields and objects which may be impacted have had text added."
+  - ir: concept:appendixb_changelog:5
+    digest: 8d84f1b2a331647554523ae73ea3d5d7ba006df2dcd12926d54be7e56cba7673
+    quote: "1.0 | November 2019 | Added VAST 4.2 and SIMID 1.0: API frameworks and video/audio subtypes lists have been updated to include VAST 4.2 and SIMID 1.0. Versioning policy: Elaborated on the versioning of this specification."
+  - ir: concept:appendixb_changelog:6
+    digest: 819b71f9523812f4d48f6e3e1cde35307a29359fd615e0264623b22e641af951
+    quote: 1.0 | November 2018 | Initial release.
+options:
+  - id: main-and-tag
+    summary: >-
+      `main` at a pinned commit by default, and the last tag as a second
+      input; every release names its commit, and a comparison of the two
+      shows how they differ.
+  - id: tag-only
+    summary: >-
+      The last tag alone.
+  - id: main-only
+    summary: >-
+      `main` alone.
+chosen: main-and-tag
+rationale: >-
+  The last change log entry and the document date are March 2022, while the
+  text has changed many times since, and nothing in the text names a
+  release. `main` is what GitHub shows and what other specifications link,
+  and the last tag is the last revision AdCOM itself marked. Building both,
+  and naming the commit in every release, makes the choice visible instead
+  of silent. Their lists are the same; they differ only in the `Content`
+  object's table, whose renamed attributes the tag still carries and `main`
+  reverted, with three rows in another order and `int` where `main` writes
+  `integer`. AdCOM's `develop` branch holds further list changes that
+  neither carries.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L4598"
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L4865"
+  - "https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/1debba8001f40eb14597102dec3205afddf811d4/2.6.md#L694"
+feedback: >-
+  Name every release one way, as `1.0-YYYYMM`, tag every change to a list,
+  and keep the change log current, so that an implementation can say which
+  revision of the lists it holds. Today `domainver: "1.0"` can't tell a
+  receiver which codes the sender knows, and OpenRTB 2.6 links `plcmt` to
+  the `develop` branch, which no release names.

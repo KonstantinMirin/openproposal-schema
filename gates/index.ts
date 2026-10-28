@@ -3,6 +3,7 @@
  * name, which its fingerprint reads. A gate defined anywhere else isn't one.
  */
 import * as checks from "./checks.ts";
+import * as drift from "./drift.ts";
 import * as fidelity from "./fidelity.ts";
 import type { Gate } from "./harness.ts";
 import * as input from "./input.ts";
@@ -30,6 +31,7 @@ const MODULES: Record<string, Record<string, unknown>> = {
   "gates/release.ts": release,
   "gates/reports.ts": reports,
   "gates/fidelity.ts": fidelity,
+  "gates/drift.ts": drift,
   "gates/variant.ts": variant,
   "gates/site.ts": site,
   "gates/meta.ts": meta,

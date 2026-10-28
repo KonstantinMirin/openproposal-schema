@@ -5,6 +5,8 @@
 (function () {
   "use strict";
   var VARIANTS = { "as-written": "As written", proposals: "With our proposals" };
+  // How the pages name each lock, from the spec's profile: its label, and the phrase that places a type on it.
+  var LOCK_NAMES = __SPEC_LOCK_LABELS__;
   var DEFAULT = window.MapRoute.DEFAULT;
   var hashOf = window.MapRoute.hashOf;
   var KINDS = { primitive: "Primitive", constructor: "Constructor", part: "Part", vocabulary: "Vocabulary", copy: "Copy", object: "Object", union: "Union", document: "Document", profile: "Profile" };
@@ -137,7 +139,8 @@
     var counts = Object.create(null);
     B.types.forEach(function (t) { counts[t.kind] = (counts[t.kind] || 0) + 1; });
     $("#legend").innerHTML = Object.keys(KINDS).map(function (k) { return '<span class="' + kindClass(k) + '">' + KINDS[k] + " (" + (counts[k] || 0) + ")</span>"; }).join("");
-    $("#addedkey").hidden = state.lock === "main";
+    var added = $("#addedkey");
+    if (added) added.hidden = state.lock === DEFAULT.lock;
   }
   function highlight() {
     var sel = state.type, host = $("#layers"), down = closure(sel, deps), up = closure(sel, users), d1 = new Set(deps.get(sel)), u1 = new Set(users.get(sel));
@@ -318,7 +321,12 @@
   function decisionHtml(id) {
     var d = B.decisions[id];
     if (!d) return '<a href="decisions/' + id + '.html">' + esc(id) + "</a>";
-    return '<li><a href="decisions/' + id + '.html">' + esc(id) + "</a> " + (d.kind === "gap" ? '<span class="tag gap">Gap</span>' : '<span class="tag prop">Proposal</span>') + " " + code(d.question) + (d.number ? ' <span class="note">decision ' + d.number + " on the supporting page of #121</span>" : "") + "</li>";
+    return '<li><a href="decisions/' + id + '.html">' + esc(id) + "</a> " + (d.kind === "gap" ? '<span class="tag gap">Gap</span>' : '<span class="tag prop">Proposal</span>') + " " + code(d.question) + (d.number ? ' <span class="note">decision ' + d.number + " on the supporting page of __SPEC_ISSUE__</span>" : "") + "</li>";
+  }
+  // What an open vocabulary takes beyond its terms: a vendor's code where its list reserves codes for vendors, and else a namespaced term.
+  function openNote(t) {
+    var vendor = t.vendor || (t.list && t.list.vendor);
+    return vendor ? "Open: a vendor-specific code, " + vendor.from + " or more, is also accepted." : "Open: a namespaced term <code>&lt;domain&gt;:&lt;term&gt;</code> is also accepted.";
   }
   function refHref(ref) {
     var m = /#\/\$defs\/([A-Za-z0-9]+)$/.exec(ref);
@@ -350,7 +358,7 @@
       var cs = B.types.filter(function (x) { return x.kind === "copy" && x.of.constructor === t.name; });
       if (cs.length) h += "<h4>Copies (" + cs.length + ')</h4><div class="chips">' + cs.map(function (x) { return chip(x.name); }).join("") + "</div>";
     }
-    if (t.kind === "vocabulary") h += "<h4>Terms (" + t.terms.length + ")" + (t.open ? ", open" : "") + '</h4><p class="terms">' + esc(t.terms.map(function (x) { return x.value; }).join(" | ")) + "</p>" + (t.open ? '<p class="note">Open: a namespaced term <code>&lt;domain&gt;:&lt;term&gt;</code> is also accepted.</p>' : "") + (t.attribute === "marker" ? '<p class="note">A mutability marker: the rules use it, and the schema never carries it.</p>' : "");
+    if (t.kind === "vocabulary") h += "<h4>Terms (" + t.terms.length + ")" + (t.open ? ", open" : "") + '</h4><p class="terms">' + esc(t.terms.map(function (x) { return x.value; }).join(" | ")) + "</p>" + (t.open ? '<p class="note">' + openNote(t) + "</p>" : "") + (t.attribute === "marker" ? '<p class="note">A mutability marker: the rules use it, and the schema never carries it.</p>' : "");
     if (t.kind === "profile") h += '<h4>Projected from</h4><div class="chips">' + chip(t.document) + '</div><h4>Paths</h4><p class="terms">' + esc(t.paths.join(", ")) + "</p>";
     var d = deps.get(sel), u = users.get(sel);
     h += "<h4>Built from (" + d.length + ")</h4>" + (d.length ? '<div class="chips">' + d.map(chip).join("") + "</div>" : '<p class="note">Nothing: a base type.</p>');
@@ -377,7 +385,7 @@
       }
       var p = document.createElement("p");
       p.className = "note";
-      p.innerHTML = 'In <a href="' + esc(em.file) + '"><code>' + esc(em.file) + "</code></a>, served at its <code>$id</code>. Each <code>$ref</code> opens the type it names.";
+      p.innerHTML = 'In <a href="' + esc(em.file) + '"><code>' + esc(em.file) + "</code></a>, on this site. Each <code>$ref</code> opens the type it names.";
       host.appendChild(p);
       var box = document.createElement("div");
       host.appendChild(box);
@@ -410,7 +418,8 @@
   }
   function info() {
     var b = B.input;
-    $("#buildinfo").textContent = (state.lock === "main" ? "main at " + b.commit.slice(0, 7) : "main at " + (b.base || "").slice(0, 7) + " with " + b.prs.length + " open PRs") + " · " + VARIANTS[state.variant] + " · " + B.types.length + " types";
+    // A lock that merges open PRs names its base by the default lock's label.
+    $("#buildinfo").textContent = (b.prs.length === 0 ? LOCK_NAMES[state.lock].label + " at " + b.commit.slice(0, 7) : LOCK_NAMES[DEFAULT.lock].label + " at " + (b.base || "").slice(0, 7) + " with " + b.prs.length + " open PRs") + " · " + VARIANTS[state.variant] + " · " + B.types.length + " types";
     document.querySelectorAll(".switches button[data-lock]").forEach(function (x) { x.setAttribute("aria-pressed", String(x.getAttribute("data-lock") === state.lock)); });
     document.querySelectorAll(".switches button[data-variant]").forEach(function (x) { x.setAttribute("aria-pressed", String(x.getAttribute("data-variant") === state.variant)); });
   }
@@ -438,7 +447,7 @@
         var lower = s.type.toLowerCase();
         var near = B.types.find(function (x) { return x.name.toLowerCase() === lower; });
         if (near) changes.push(s.type + " reads as " + near.name);
-        else changes.push("there is no type " + s.type + " " + (s.lock === "main" ? "on main" : "with the open PRs") + ", " + VARIANTS[s.variant].toLowerCase() + ", so the map opens at " + DEFAULT.type);
+        else changes.push("there is no type " + s.type + " " + LOCK_NAMES[s.lock].where + ", " + VARIANTS[s.variant].toLowerCase() + ", so the map opens at " + DEFAULT.type);
         s = Object.assign({}, s, { type: near ? near.name : DEFAULT.type, open: near ? s.open : [] });
       }
       var msg = rewritten(changes);
@@ -452,7 +461,7 @@
       highlight();
       renderTree();
       renderDetail();
-      document.title = s.type + " · Type map · OpenProposal 3.0 JSON Schema";
+      document.title = s.type + " · Type map · __SPEC_NAME__ JSON Schema";
     }).catch(function (e) {
       setNotice("The map's data didn't load: " + e.message + ". Serve the site over HTTP, not from a file.");
     });

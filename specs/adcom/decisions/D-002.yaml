@@ -1,0 +1,65 @@
+format: 1
+id: D-002
+status: proposed
+kind: gap
+author: agent
+question: "What name does the vocabulary of each AdCOM list take, when a list has a title and an anchor but no name a schema or an SDK can use?"
+covers:
+  - ir: def:list_apiframeworks:1
+    digest: e6edeb9af37e68366b8daea0269a8c94c279d232f8498e912cb663838a331dee
+    quote: "`1` | VPAID 1.0"
+  - ir: def:list_plcmtsubtypesvideo:1
+    digest: 65d707558b0a7432226bc30c3a8a084c8710582cc483dcd0de7f216da6382777
+    quote: "`1` | Instream: Pre-roll, mid-roll, and post-roll ads that are played before, during or after the streaming video content that the consumer has requested. Instream video must be set to “sound on” by default at player start, or have explicitly clear user intent to watch the video content. While there may be other content surrounding the player, the video content must be the focus of the user’s visit. It should remain the primary content on the page and the only video player in-view capable of audio when playing. If the player converts to floating/sticky subsequent ad calls should accurately convey the updated player size."
+  - ir: def:list_creativesubtypesaudiovideo:1
+    digest: 6e5cda39d26850e6f96381f412caa8c7ce2d257fe50d22810523a90b04f2d2cc
+    quote: "`1` | VAST 1.0"
+  - ir: def:list_slotpositioninpod:-1
+    digest: 30a6131d26d5c0002d8aae91bfa646dd1b2d151a6dd66e2421e273939ec02ee6
+    quote: "`-1` | Last ad in the pod"
+  - ir: def:user-agent_source:0
+    digest: 891323fe8c1284ee6f857b80ef30fadb82387e6452853304b41255c8de855c10
+    quote: "`0` | Unspecified/unknown"
+  - ir: def:list_idmatchmethod:0
+    digest: fd417d56dc819c5cc638c5db2761960071c8d73b004d7eac6751d6cc88760a66
+    quote: "`0` | Unknown"
+options:
+  - id: singular-pascal
+    summary: >-
+      The words of the list's title after "List:", joined, each capitalized
+      and the rest of it in lowercase, so an acronym reads as a word, with
+      the head noun, the last word before a " - " qualifier or else the last
+      word, in the singular: API Frameworks gives Api and Framework joined,
+      Plcmt Subtypes - Video gives Plcmt, Subtype, and Video, and Slot
+      Position in Pod keeps In before Pod.
+  - id: anchor
+    summary: >-
+      The list's anchor, such as `list_apiframeworks`, which links already
+      use.
+  - id: plural-pascal
+    summary: >-
+      The title in PascalCase as written, plural, such as `ApiFrameworks`.
+chosen: singular-pascal
+rationale: >-
+  A vocabulary names the type of one value, so its name is singular, as the
+  type rules name every type; a list's title names the whole list, so it is
+  plural. The anchors can't serve: one misspells its title
+  (`list_doohmultipliermeasurementmourcetypes`), one lacks the prefix
+  (`user-agent_source`), one is singular where its title is plural
+  (`list_idmatchmethod`), and one shortens it (`list_poddedupe`). Writing an
+  acronym as a word, `Api` and `Dooh`, keeps the word boundaries of a name
+  such as `DoohVenueTaxonomy` readable. The rule that derives the names
+  applies this reading to every list, so each name follows from its title
+  alone.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L3523"
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L3744"
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L4490"
+feedback: >-
+  Give each list a short machine name beside its title, and use it in the
+  list's anchor, so every implementation and every tool names a list the
+  same way. Today the anchors are the only stable names, and four of them
+  don't follow the pattern the others do:
+  `list_doohmultipliermeasurementmourcetypes` misspells "source",
+  `user-agent_source` has no `list_` prefix, `list_idmatchmethod` is
+  singular, and `list_poddedupe` shortens its title.

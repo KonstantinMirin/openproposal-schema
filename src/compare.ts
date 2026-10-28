@@ -45,6 +45,7 @@ import type { FindingsDoc } from "./pipeline.ts";
 import { citedDecisions, diffFiles, diffModels, diffRules, type Change } from "./release.ts";
 import { roundTrip, type Difference, type DifferencesFile } from "./render.ts";
 import { emitRules, type RulesDoc, type VectorFile } from "./rules.ts";
+import { notationOf, ruleChecksOf, schemaNamesOfLock } from "./specs/index.ts";
 
 /** Where the reports live: `comparison/<lock>.json` and `comparison/<lock>.md`. */
 export const COMPARISON_DIR = "comparison";
@@ -88,11 +89,11 @@ export async function buildLock(lock: SpecLock, input: BuildInput): Promise<{ bu
   if (resolved.problems.length > 0) return { build: null, problems: resolved.problems.map((p) => `model: ${p}`) };
   const model = resolved.model;
   const schemaDir = schemaDirOf(lock.ir_dir);
-  const emitted = emitSchemas(model, schemaDir);
+  const emitted = emitSchemas(model, schemaDir, schemaNamesOfLock(lock));
   if (emitted.problems.length > 0) return { build: null, problems: emitted.problems.map((p) => `schemas: ${p}`) };
-  const rules = emitRules({ model, ir, lock: lock.name, vectors, decisions, schemaDir, conditionsLeft: emitted.conditions.left });
+  const rules = emitRules({ model, ir, lock: lock.name, vectors, decisions, schemaDir, conditionsLeft: emitted.conditions.left, schemaBase: schemaNamesOfLock(lock).base });
   if (rules.problems.length > 0) return { build: null, problems: rules.problems.map((p) => `rules: ${p}`) };
-  const rt = roundTrip(model, ir);
+  const rt = roundTrip(model, ir, notationOf(lock));
   if (rt.problems.length > 0) return { build: null, problems: rt.problems.map((p) => `round trip: ${p}`) };
   let got;
   try {
@@ -100,7 +101,7 @@ export async function buildLock(lock: SpecLock, input: BuildInput): Promise<{ bu
   } catch (e) {
     return { build: null, problems: [`examples: ${(e as Error).message.split("\n")[0]}`] };
   }
-  const ex = checkExamples({ model, files: emitted.files, schemaDir, examples: got.examples, values: got.values, codes: codesOf(input.kernel.lists ?? { lists: [] }) });
+  const ex = checkExamples({ model, files: emitted.files, schemaDir, examples: got.examples, values: got.values, codes: codesOf(input.kernel.lists ?? { lists: [] }), ruleChecks: ruleChecksOf(lock) });
   const exProblems = [...got.listing, ...ex.problems];
   if (exProblems.length > 0) return { build: null, problems: exProblems.map((p) => `examples: ${p}`) };
   return {

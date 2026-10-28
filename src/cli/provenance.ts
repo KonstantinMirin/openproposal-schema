@@ -1,6 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { allLocks } from "../builds.ts";
+import { parseArgs } from "node:util";
+import { allLocks, cliSpec } from "../builds.ts";
 import { computeProvenance, PROVENANCE_DIR, renderProvenance } from "../provenance.ts";
 
 /**
@@ -13,7 +14,8 @@ import { computeProvenance, PROVENANCE_DIR, renderProvenance } from "../provenan
  * (src/provenance.ts). The site links a line of such a lock by it.
  */
 function main(): number {
-  const root = new URL("../..", import.meta.url).pathname.replace(/\/$/, "");
+  const { values } = parseArgs({ options: { spec: { type: "string" } } });
+  const root = cliSpec(values);
   for (const lock of allLocks(root)) {
     if (lock.merge_order === null) continue;
     const clone = lock.sources.flatMap((s) => ("git" in s ? [resolve(root, s.git)] : []))[0];

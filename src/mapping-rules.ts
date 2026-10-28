@@ -28,6 +28,8 @@ export interface RuleContext {
   entries: Map<string, MappingEntry>;
   /** The module that owns a section, from the mapping files' `sections`. */
   moduleOf: (section: string) => string | undefined;
+  /** Whether the module that owns a section is one the mapping leaves for a later phase (`deferred` in its file). */
+  deferred: (section: string) => boolean;
 }
 
 /** The module whose sections define the kernel's own types: § 2.2 and § 3. */
@@ -50,8 +52,15 @@ export interface DeclarationRule {
 const named = (name: string): TypeRef => ({ kind: "named", name });
 const list = (t: TypeRef): TypeRef => ({ kind: "apply", constructor: "List", arguments: { T: t } });
 
-/** The two documents, by the `owner` the extractor gives a field row. */
-export const DOCUMENTS: Record<Field["owner"], string> = { proposal: "Proposal", line_item: "LineItem" };
+/**
+ * The document a field row's owner names: the owner in PascalCase, so
+ * `line_item` is `LineItem`, as the spec profile's `documents` list them
+ * (the spec-profile gate holds each to it).
+ */
+export const documentOf = (owner: string): string => pascalField(owner);
+
+/** The owners of a lock's field rows, in the order their first rows come. */
+export const ownersOf = (ir: SpecIR): string[] => [...new Set(ir.fields.map((f) => f.owner))];
 
 /** A field's or key's presence as the specification states it (type rules § 4): REQUIRED, a condition, or optional. */
 export function presenceOf(row: Field | Key): Presence {
@@ -68,7 +77,7 @@ export function presenceOf(row: Field | Key): Presence {
  */
 export function objectOfField(f: Field): string | null {
   const segments = f.names[0]!.segments;
-  if (segments.length === 1) return DOCUMENTS[f.owner];
+  if (segments.length === 1) return documentOf(f.owner);
   if (segments.length === 2 && segments[0]!.array) return `${pascalField(segments[0]!.name)}Entry`;
   return null;
 }
@@ -141,11 +150,76 @@ const words = (name: string) => name.replace(/([a-z0-9])([A-Z])/g, "$1 $2").toLo
 /** The documents on the lock: the field rows' owners, and every document a mapping entry defines, such as the § 2.3 manifest. */
 function documentsOf(ctx: RuleContext): string[] {
   const defined = [...ctx.entries.values()].flatMap((x) => (x.as.role === "type" && x.as.layer === "document" ? [x.as.name] : []));
-  return [...new Set([...Object.values(DOCUMENTS), ...defined])].sort();
+  return [...new Set([...ownersOf(ctx.ir).map(documentOf), ...defined])].sort();
+}
+
+/** A code a list row writes: a decimal integer, as AdCOM's `3` or `-1`. */
+const LIST_CODE = /^-?(0|[1-9][0-9]*)$/;
+/** A list row that reserves codes for vendors, as AdCOM's `500+`. */
+const VENDOR_ROW = /^([1-9][0-9]*)\+$/;
+
+/**
+ * A table of codes a section's heading alone names, as AdCOM's `List: Device
+ * Types`: a table of value definitions that names no field, key, or member,
+ * whose every row is a code or a vendor range, under a heading of the form
+ * `<label>: <name>`. Returns its rows, or null.
+ */
+function listTable(ir: SpecIR, table: Table | undefined): { title: string; rows: SpecIR["definitions"] } | null {
+  if (!table || table.parent?.via !== "section") return null;
+  const rows = ir.definitions.filter((d) => d.loc.table === table.id);
+  if (rows.length === 0 || !rows.every((d) => LIST_CODE.test(d.value) || VENDOR_ROW.test(d.value))) return null;
+  const title = /^[A-Z][A-Za-z ]*:\s*(\S.*)$/.exec(ir.sections.find((s) => s.id === table.section)?.title ?? "")?.[1];
+  return title ? { title, rows } : null;
+}
+
+/** A word in the singular, by English's regular plurals. */
+const singular = (w: string) => (/ies$/i.test(w) ? `${w.slice(0, -3)}y` : /(ss|x|ch|sh|us)es$/i.test(w) ? w.slice(0, -2) : /[^su]s$/i.test(w) ? w.slice(0, -1) : w);
+
+/**
+ * The vocabulary a list's name gives (type rules § 6): its words in
+ * PascalCase, each written as a word, so an acronym's capitals become one,
+ * with the head noun, the last word before a ` - ` qualifier or else the last
+ * word, in the singular. `Device Types` gives `DeviceType`, `API Frameworks`
+ * `ApiFramework`, and `Plcmt Subtypes - Video` `PlcmtSubtypeVideo`.
+ */
+export function vocabularyOfList(title: string): string {
+  const [head, ...qualifiers] = title.split(/\s+-\s+/);
+  const words = (s: string) => s.split(/[^A-Za-z0-9]+/).filter(Boolean);
+  const hw = words(head!);
+  if (hw.length > 0 && !/\b(in|of|for)\b/i.test(head!)) hw[hw.length - 1] = singular(hw[hw.length - 1]!);
+  else {
+    // "Slot Position in Pod": the head noun is the word before the preposition.
+    const at = hw.findIndex((w) => /^(in|of|for)$/i.test(w));
+    if (at > 0) hw[at - 1] = singular(hw[at - 1]!);
+  }
+  return [...hw, ...qualifiers.flatMap(words)].map((w) => w[0]!.toUpperCase() + w.slice(1).toLowerCase()).join("");
 }
 
 /** The entry rules, tried in order; the first that applies derives the entry. */
 export const ENTRY_RULES: EntryRule[] = [
+  {
+    id: "deferred-module",
+    says: "An element in a section of a module the mapping leaves for a later phase, as AdCOM's objects, is informative until that phase maps it; the module's file cites the decision that defers it.",
+    derive: (e, ctx) => (ctx.deferred(e.element.loc.section) ? { role: "informative" } : null),
+  },
+  {
+    id: "list-code",
+    says: "A code row of a list that a section's heading alone names, as AdCOM's `List: Device Types`, defines one term of the list's vocabulary, the code.",
+    derive: (e, ctx) => {
+      if (e.kind !== "definition" || !LIST_CODE.test(e.element.value)) return null;
+      const list = listTable(ctx.ir, tableOf(ctx.ir, e.element));
+      return list ? { role: "term", vocabulary: vocabularyOfList(list.title) } : null;
+    },
+  },
+  {
+    id: "vendor-range",
+    says: "A list row that reserves codes for vendors, as AdCOM's `500+`, is the vendor branch of the list's vocabulary, which its schema expresses.",
+    derive: (e, ctx) => {
+      if (e.kind !== "definition" || !VENDOR_ROW.test(e.element.value)) return null;
+      const list = listTable(ctx.ir, tableOf(ctx.ir, e.element));
+      return list ? { role: "schema", in: vocabularyOfList(list.title) } : null;
+    },
+  },
   {
     id: "appendix-row",
     says: "An Appendix A or B row is generated from the model, and the round trip checks it.",
@@ -320,13 +394,36 @@ export const ENTRY_RULES: EntryRule[] = [
 /** The declaration rules: types that the IR's structure implies, with no single element that defines them. */
 export const DECLARATION_RULES: DeclarationRule[] = [
   {
+    id: "list-vocabulary",
+    says: "A list that a section's heading alone names, as AdCOM's `List: Device Types`, is a vocabulary named after the list, declared at its first row, whose terms take their rows' text as labels; a `500+` row makes it open to vendors' codes from 500 up.",
+    derive: (ctx) =>
+      ctx.ir.tables.flatMap((t) => {
+        if (ctx.deferred(t.section)) return [];
+        const list = listTable(ctx.ir, t);
+        if (!list) return [];
+        const vendor = list.rows.map((d) => ({ d, m: VENDOR_ROW.exec(d.value) })).find((x) => x.m !== null);
+        return [
+          {
+            name: vocabularyOfList(list.title),
+            kind: "vocabulary" as const,
+            ir: list.rows[0]!.id,
+            source: { rule: "list-vocabulary" },
+            open: vendor !== undefined,
+            ...(vendor ? { vendor: { from: Number(vendor.m![1]), label: vendor.d.columns.map((c) => c.text).filter((x) => x !== "").join(": ") } } : {}),
+            labeled: true,
+            description: `The codes of ${ctx.ir.sections.find((s) => s.id === t.section)!.title}, each with its row's text.`,
+          },
+        ];
+      }),
+  },
+  {
     id: "document-owner",
-    says: "The owners of the field rows are the documents `Proposal` and `LineItem`, each declared at its first field row.",
+    says: "The owners of the field rows are the documents, such as `Proposal` and `LineItem`, each declared at its first field row.",
     derive: (ctx) => {
       const out: Declaration[] = [];
-      for (const owner of ["proposal", "line_item"] as const) {
-        const first = ctx.ir.fields.find((f) => f.owner === owner);
-        if (first) out.push({ name: DOCUMENTS[owner], kind: "document", ir: first.id, source: { rule: "document-owner" } });
+      for (const owner of ownersOf(ctx.ir)) {
+        const first = ctx.ir.fields.find((f) => f.owner === owner)!;
+        out.push({ name: documentOf(owner), kind: "document", ir: first.id, source: { rule: "document-owner" } });
       }
       return out;
     },
@@ -336,6 +433,8 @@ export const DECLARATION_RULES: DeclarationRule[] = [
     says: "A key table that names a field or member describes a closed object, named after it and declared at the table's first row.",
     derive: (ctx) =>
       ctx.ir.tables.flatMap((t) => {
+        // A module the mapping leaves for a later phase declares nothing yet.
+        if (ctx.deferred(t.section)) return [];
         const first = ctx.ir.keys.find((k) => k.loc.table === t.id);
         const name = first ? objectOfKey(ctx.ir, first) : null;
         return first && name ? [{ name, kind: "object" as const, ir: first.id, source: { rule: "key-table-object" }, open: false }] : [];

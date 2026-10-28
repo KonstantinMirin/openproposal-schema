@@ -1,0 +1,316 @@
+{
+  "counts": {
+    "by_kind": {
+      "list_without_codes": 2,
+      "must_without_field": 4,
+      "section_anchor_irregular": 6,
+      "unresolved_identifier": 3
+    },
+    "by_verdict": {
+      "open": 15
+    },
+    "open": 15,
+    "total": 15
+  },
+  "findings": [
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:device.sua",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2414,
+          "section": "object_useragent"
+        },
+        {
+          "line": 2414,
+          "section": "object_useragent"
+        }
+      ],
+      "message": "`device.sua` resolves to no table row, key, or table-declared value; no table defines `device`.",
+      "subjects": [
+        "block:object_useragent:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:device.ua",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2414,
+          "section": "object_useragent"
+        },
+        {
+          "line": 2414,
+          "section": "object_useragent"
+        }
+      ],
+      "message": "`device.ua` resolves to no table row, key, or table-declared value; no table defines `device`.",
+      "subjects": [
+        "block:object_useragent:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:plcmt",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 4205,
+          "section": "list_plcmtsubtypesvideo"
+        }
+      ],
+      "message": "`plcmt` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:list_plcmtsubtypesvideo:1"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:object_assetformat:194a18e3",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1147,
+          "section": "object_assetformat"
+        }
+      ],
+      "message": "A MUST statement in § object_assetformat names no field or key: \"Along with its own attributes, exactly one of the asset subtype objects must be included.\"",
+      "subjects": [
+        "rule:object_assetformat:194a18e3"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:object_assetformat:1bc0e4a5",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1147,
+          "section": "object_assetformat"
+        }
+      ],
+      "message": "A MUST statement in § object_assetformat names no field or key: \"All others must be omitted.\"",
+      "subjects": [
+        "rule:object_assetformat:1bc0e4a5"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:object_user:37e78377",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 2183,
+          "section": "object_user"
+        }
+      ],
+      "message": "A MUST statement in § object_user names no field or key: \"However, this user ID must be stable long enough to serve reasonably as the basis for frequency capping and retargeting.\"",
+      "subjects": [
+        "rule:object_user:37e78377"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:object_videoasset:aa0a74c1",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 628,
+          "section": "object_videoasset"
+        }
+      ],
+      "message": "A MUST statement in § object_videoasset names no field or key: \"Video markup (e.g., VAST) must be either included or referenced.\"",
+      "subjects": [
+        "rule:object_videoasset:aa0a74c1"
+      ]
+    },
+    {
+      "details": {
+        "anchor": "list_doohmultipliermeasurementmourcetypes",
+        "expected": "list_doohmultipliermeasurementsourcetypes",
+        "reason": "spelling"
+      },
+      "disposition": null,
+      "id": "section_anchor_irregular:list_doohmultipliermeasurementmourcetypes",
+      "kind": "section_anchor_irregular",
+      "locs": [
+        {
+          "line": 3523,
+          "section": "list_doohmultipliermeasurementmourcetypes"
+        }
+      ],
+      "message": "List: DOOH Multiplier Measurement Source Types writes the anchor \"list_doohmultipliermeasurementmourcetypes\", a letter or two off its title, where the pattern of the others gives \"list_doohmultipliermeasurementsourcetypes\"",
+      "subjects": [
+        "list_doohmultipliermeasurementmourcetypes"
+      ]
+    },
+    {
+      "details": {
+        "anchor": "list_idmatchmethod",
+        "expected": "list_idmatchmethods",
+        "reason": "spelling"
+      },
+      "disposition": null,
+      "id": "section_anchor_irregular:list_idmatchmethod",
+      "kind": "section_anchor_irregular",
+      "locs": [
+        {
+          "line": 3744,
+          "section": "list_idmatchmethod"
+        }
+      ],
+      "message": "List: ID Match Methods writes the anchor \"list_idmatchmethod\", a letter or two off its title, where the pattern of the others gives \"list_idmatchmethods\"",
+      "subjects": [
+        "list_idmatchmethod"
+      ]
+    },
+    {
+      "details": {
+        "anchor": "list_poddedupe",
+        "expected": "list_poddeduplicationsettings",
+        "reason": "abbreviation"
+      },
+      "disposition": null,
+      "id": "section_anchor_irregular:list_poddedupe",
+      "kind": "section_anchor_irregular",
+      "locs": [
+        {
+          "line": 4329,
+          "section": "list_poddedupe"
+        }
+      ],
+      "message": "List: Pod Deduplication Settings writes the anchor \"list_poddedupe\", which shortens its title, where the pattern of the others gives \"list_poddeduplicationsettings\"",
+      "subjects": [
+        "list_poddedupe"
+      ]
+    },
+    {
+      "details": {
+        "anchor": "object_eid_uids",
+        "expected": "object_extendedidentifieruids",
+        "reason": "abbreviation"
+      },
+      "disposition": null,
+      "id": "section_anchor_irregular:object_eid_uids",
+      "kind": "section_anchor_irregular",
+      "locs": [
+        {
+          "line": 2693,
+          "section": "object_eid_uids"
+        }
+      ],
+      "message": "Object: Extended Identifier UIDs writes the anchor \"object_eid_uids\", which shortens its title, where the pattern of the others gives \"object_extendedidentifieruids\"",
+      "subjects": [
+        "object_eid_uids"
+      ]
+    },
+    {
+      "details": {
+        "anchor": "object_eids",
+        "expected": "object_extendedidentifiers",
+        "reason": "abbreviation"
+      },
+      "disposition": null,
+      "id": "section_anchor_irregular:object_eids",
+      "kind": "section_anchor_irregular",
+      "locs": [
+        {
+          "line": 2649,
+          "section": "object_eids"
+        }
+      ],
+      "message": "Object: Extended Identifiers writes the anchor \"object_eids\", which shortens its title, where the pattern of the others gives \"object_extendedidentifiers\"",
+      "subjects": [
+        "object_eids"
+      ]
+    },
+    {
+      "details": {
+        "anchor": "user-agent_source",
+        "expected": "list_useragentsource",
+        "reason": "prefix"
+      },
+      "disposition": null,
+      "id": "section_anchor_irregular:user-agent_source",
+      "kind": "section_anchor_irregular",
+      "locs": [
+        {
+          "line": 4490,
+          "section": "user-agent_source"
+        }
+      ],
+      "message": "List: User-Agent Source writes the anchor \"user-agent_source\", with no \"list_\" prefix, where the pattern of the others gives \"list_useragentsource\"",
+      "subjects": [
+        "user-agent_source"
+      ]
+    },
+    {
+      "details": {
+        "title": "DOOH Venue Types"
+      },
+      "disposition": null,
+      "id": "list_without_codes:list_doohvenuetypes",
+      "kind": "list_without_codes",
+      "locs": [
+        {
+          "line": 3591,
+          "section": "list_doohvenuetypes"
+        }
+      ],
+      "message": "List: DOOH Venue Types (deprecated) lists no codes: the section holds no table",
+      "subjects": [
+        "list_doohvenuetypes"
+      ]
+    },
+    {
+      "details": {
+        "title": "Placement Subtypes - Video"
+      },
+      "disposition": null,
+      "id": "list_without_codes:list_placementsubtypesvideo",
+      "kind": "list_without_codes",
+      "locs": [
+        {
+          "line": 4201,
+          "section": "list_placementsubtypesvideo"
+        }
+      ],
+      "message": "List: Placement Subtypes - Video lists no codes: the section holds no table",
+      "subjects": [
+        "list_placementsubtypesvideo"
+      ]
+    }
+  ],
+  "input": {
+    "blob": "aca75af65c4261239d907bfd73705555874c85b1",
+    "commit": "26c59ba1b235cd8d938c9877409e506f1b8d3f0c",
+    "name": "main"
+  },
+  "ir_version": 1
+}

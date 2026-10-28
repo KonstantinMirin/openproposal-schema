@@ -34,7 +34,7 @@ import { installFormats } from "./formats.ts";
 import { isScalar, parseDocument, visit } from "yaml";
 import { canonicalJson } from "./canonical.ts";
 import type { EmittedFile } from "./emit.ts";
-import { schemaIdOf } from "./emit.ts";
+import { baseOf, schemaIdOf } from "./emit.ts";
 import { ORACLE_REQUIREMENTS, pinnedOracle } from "./engines.ts";
 import { materializeExamples } from "./fetch.ts";
 import type { SpecLock } from "./lock.ts";
@@ -42,9 +42,10 @@ import { inScope, readYaml, type DecisionRecord } from "./mapping.ts";
 import { exampleFilesOf } from "./mapping-rules.ts";
 import type { ModelDoc, ModelType } from "./model.ts";
 import { compileSchema } from "./pipeline.ts";
-import { CHECKS, checkedTypes, ordersOf, type Order } from "./rule-checks.ts";
+import { checkedTypes, ordersOf, type Check, type Order } from "./rule-checks.ts";
 import { severityOf } from "./rules.ts";
 import { spawnWithInput } from "./spawn.ts";
+import { REPO_ROOT } from "./repo.ts";
 
 /** One example the model lists: a file, or a code block of the specification. */
 export interface ModelExample {
@@ -205,11 +206,11 @@ export interface CheckedRule {
  * its owner. A kernel or constructor rule is a MUST; a statement's level
  * gives the rest theirs, as the rules file does.
  */
-export function checksByType(model: ModelDoc): Map<string, CheckedRule[]> {
+export function checksByType(model: ModelDoc, ruleChecks: Readonly<Record<string, Check>>): Map<string, CheckedRule[]> {
   const checksOn = new Map<string, CheckedRule[]>();
   const ruleList = [...model.kernel_rules.map((r) => ({ id: r.id, owner: r.owner, sources: r.sources, severity: "error" as const })), ...model.rules.map((r) => ({ id: r.ir, owner: r.owner, sources: [r.ir], severity: severityOf(r.level) }))];
   for (const r of ruleList) {
-    if (!CHECKS[r.id]) continue;
+    if (!ruleChecks[r.id]) continue;
     for (const t of checkedTypes(model, r.owner)) checksOn.set(t, [...(checksOn.get(t) ?? []), { id: r.id, sources: r.sources, severity: r.severity }]);
   }
   return checksOn;
@@ -239,12 +240,12 @@ export interface InstanceCheck {
  * rule one payload decides on each value of the type it reads, found by the
  * same walk. Returns a function of a schema reference and a value.
  */
-export function instanceChecker(model: ModelDoc, files: EmittedFile[], schemaDir: string, codes: ReadonlyMap<string, ReadonlySet<string | number>>): (ref: string, value: unknown) => InstanceCheck {
+export function instanceChecker(model: ModelDoc, files: EmittedFile[], schemaDir: string, codes: ReadonlyMap<string, ReadonlySet<string | number>>, ruleChecks: Readonly<Record<string, Check>>): (ref: string, value: unknown) => InstanceCheck {
   const ajv = new Ajv2020({ strict: true, strictRequired: false, allErrors: true });
   installFormats(ajv);
   for (const f of files) ajv.addSchema(f.schema);
   const walker = new Walker(model, files, schemaDir, ajv);
-  const checksOn = checksByType(model);
+  const checksOn = checksByType(model, ruleChecks);
   const orderOf = copyOrders(model);
   return (ref, value) => {
     const validate = walker.validator(ref);
@@ -256,7 +257,7 @@ export function instanceChecker(model: ModelDoc, files: EmittedFile[], schemaDir
       for (const i of walker.walk(ref, value, "", null, null).instances) {
         const bounds = orderOf(i.type);
         for (const r of checksOn.get(i.type) ?? []) {
-          const result = CHECKS[r.id]!(valueAt(value, i.path), { context: {}, part: false, codes, ...(bounds ? { order: bounds } : {}) });
+          const result = ruleChecks[r.id]!(valueAt(value, i.path), { context: {}, part: false, codes, ...(bounds ? { order: bounds } : {}) });
           if (result === null) undecided.push({ path: i.path, rule: r.id });
           for (const v of result ?? []) violations.push({ path: i.path + v.path, rule: r.id, message: v.message });
         }
@@ -266,7 +267,16 @@ export function instanceChecker(model: ModelDoc, files: EmittedFile[], schemaDir
   };
 }
 
-export function checkExamples(input: { model: ModelDoc; files: EmittedFile[]; schemaDir: string; examples: ModelExample[]; values: Map<string, Loaded>; codes: ReadonlyMap<string, ReadonlySet<string | number>> }): {
+export function checkExamples(input: {
+  model: ModelDoc;
+  files: EmittedFile[];
+  schemaDir: string;
+  examples: ModelExample[];
+  values: Map<string, Loaded>;
+  codes: ReadonlyMap<string, ReadonlySet<string | number>>;
+  /** Every check a rule of the lock may have: the kernel's, the constructors', and the spec's (`checksOf`). */
+  ruleChecks: Readonly<Record<string, Check>>;
+}): {
   failures: Failure[];
   cases: ExampleCase[];
   problems: string[];
@@ -287,7 +297,7 @@ export function checkExamples(input: { model: ModelDoc; files: EmittedFile[]; sc
   }
   const walker = new Walker(model, files, schemaDir, ajv);
   const types = new Map(model.types.map((t) => [t.name, t]));
-  const checksOn = checksByType(model);
+  const checksOn = checksByType(model, input.ruleChecks);
   const orderOf = copyOrders(model);
   for (const ex of input.examples) {
     const loaded = input.values.get(ex.id);
@@ -300,7 +310,7 @@ export function checkExamples(input: { model: ModelDoc; files: EmittedFile[]; sc
       continue;
     }
     const doc = types.get(ex.object);
-    const docId = doc ? schemaIdOf(doc, schemaDir) : null;
+    const docId = doc ? schemaIdOf(doc, schemaDir, baseOf(files, schemaDir)) : null;
     if (!doc || !docId) {
       problems.push(`${ex.id}: the schema emits no document "${ex.object}"`);
       continue;
@@ -350,7 +360,7 @@ export function checkExamples(input: { model: ModelDoc; files: EmittedFile[]; sc
       for (const i of walk.instances) {
         const bounds = orderOf(i.type);
         for (const r of checksOn.get(i.type) ?? []) {
-          const result = CHECKS[r.id]!(valueAt(t.value, i.path.slice(t.at.length)), { context: {}, part: false, codes: input.codes, ...(bounds ? { order: bounds } : {}) });
+          const result = input.ruleChecks[r.id]!(valueAt(t.value, i.path.slice(t.at.length)), { context: {}, part: false, codes: input.codes, ...(bounds ? { order: bounds } : {}) });
           checks.ran++;
           if (result === null) checks.undecided.push({ example: ex.id, path: i.path, rule: r.id, elements: [...r.sources].sort() });
           for (const v of result ?? []) {
@@ -365,7 +375,7 @@ export function checkExamples(input: { model: ModelDoc; files: EmittedFile[]; sc
     // A code block shows part of a document, so the document's rules read the fields it holds, and leave undecided what turns on a field it leaves out.
     if (ex.part && isMap(loaded.value)) {
       for (const r of checksOn.get(ex.object) ?? []) {
-        const result = CHECKS[r.id]!(loaded.value, { context: {}, part: true, codes: input.codes });
+        const result = input.ruleChecks[r.id]!(loaded.value, { context: {}, part: true, codes: input.codes });
         checks.ran++;
         if (result === null) checks.undecided.push({ example: ex.id, path: "", rule: r.id, elements: [...new Set([ex.ir, ...r.sources])].sort() });
         for (const v of result ?? []) {
@@ -402,9 +412,10 @@ class Walker {
     private readonly ajv: InstanceType<typeof Ajv2020>,
   ) {
     for (const f of files) this.schemas.set(String(f.schema.$id), f.schema);
+    const base = baseOf(files, schemaDir);
     for (const t of model.types) {
       this.byName.set(t.name, t);
-      const id = schemaIdOf(t, schemaDir);
+      const id = schemaIdOf(t, schemaDir, base);
       if (id) this.typeAt.set(id.includes("#") ? id : `${id}#`, t);
     }
   }
@@ -582,10 +593,10 @@ export interface FindingsFile {
 export const FINDINGS_FILE = join("examples", "findings.yaml");
 const FINDINGS_SCHEMA = join("examples", "findings.schema.json");
 
-/** Loads and validates the recorded findings. */
-export function loadFindings(root: string, file = join(root, FINDINGS_FILE)): FindingsFile {
+/** Loads and validates recorded findings, a spec's `examples/findings.yaml` (`FINDINGS_FILE` in its folder). */
+export function loadFindings(file: string): FindingsFile {
   const doc = readYaml(file);
-  const errors = compileSchema(join(root, FINDINGS_SCHEMA))(doc);
+  const errors = compileSchema(join(REPO_ROOT, FINDINGS_SCHEMA))(doc);
   if (errors.length > 0) throw new Error(`${file}: not a valid findings file: ${errors.join("; ")}`);
   return { ...(doc as Omit<FindingsFile, "file">), file };
 }

@@ -46,8 +46,8 @@ export interface Table {
 }
 
 export interface ParentRef {
-  /** How the parent was found: the section heading, a bold paragraph label, the header, or only the section. */
-  via: "heading" | "label" | "header" | "section";
+  /** How the parent was found: the section heading, a bold paragraph label, the header, only the section, or the object the plugin says the section describes, as AdCOM's `Object: Ad`. */
+  via: "heading" | "label" | "header" | "section" | "object";
   label: string;
   identifier: string | null;
   /** The field row the identifier names, if one does. */
@@ -64,7 +64,8 @@ interface Hosted {
 
 export interface Field extends Hosted {
   id: string;
-  owner: "proposal" | "line_item";
+  /** The document the row describes, by the top-level section it sits in, as the profile's `documents` give it. */
+  owner: string;
   names: FieldPath[];
   name_cell: string;
   type: { raw: string; parsed: TypeExpr };
@@ -82,6 +83,8 @@ export interface Key extends Hosted {
   key: FieldPath;
   required: { raw: string; parsed: Presence } | null;
   meaning: Text;
+  /** The type cell as written, where the layout has a type column, as AdCOM's attribute tables do. */
+  type?: Text;
   /** The external-standard mapping column, where the table has one. */
   mapping: (Text & { column: string }) | null;
   digest: string;

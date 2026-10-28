@@ -15,6 +15,12 @@
  *    installs with `npm ci --ignore-scripts`, runs every `setup:*` script,
  *    sets GATE_BASE and fetches it, and ends with this script, at those
  *    versions; no step or job carries an `if` or a `continue-on-error`.
+ * Each spec has its folder under `specs/`, and its locks under
+ * `specs/<spec>/spec-input/`. Sections 2 to 18 run for each spec in turn,
+ * reading its locks, records, and generated files from its folder; the
+ * paths below are relative to it, apart from `sdk/`, `kernel/`, `tools/`,
+ * and `gates/`, which sit at the repository's root.
+ *
  * 2. For each lock: its snapshot holds the locked specification and every
  *    file under `examples/` at the commit, each blob and the directory's
  *    tree SHA as the lock pins them, and a reachable clone agrees, so CI
@@ -127,7 +133,7 @@
  *     source by a rule's vectors entry. The schema of each rule's
  *     vector type accepts every payload, so the rule alone decides each
  *     vector. Every rule one payload decides has a deterministic check
- *     (src/rule-checks.ts) that gives each of its vectors its verdict, or
+ *     (src/rule-checks.ts, or the spec's plugin for its own rules) that gives each of its vectors its verdict, or
  *     rests on a list the repository doesn't pin; the examples gate runs the
  *     checks over the examples. Two runs of `npm run rules` in separate processes write the
  *     same bytes as the in-process emitter, and the committed `rules.json`
@@ -185,6 +191,10 @@
  *     numbered exemption in `plain-generator/exemptions.yaml`, which must be
  *     schema-valid and written for the pinned version. A listed case that
  *     no longer diverges, or that no lock it applies to runs, fails.
+ *     A spec whose profile names no SDK packages, as AdCOM's until its
+ *     emitter phase, has no SDK types, so none of section 13's gates runs
+ *     on it, provided optional-outputs passes: the default spec, which owns
+ *     sdk/, must name its packages.
  * 14. Round trip, per lock: the field, key, marker, and value-definition
  *     tables and Appendix A and B, rendered from the model, equal the tables
  *     the lock's IR records, cell by cell after normalizing whitespace,
@@ -258,16 +268,39 @@
  *     comment and details cites a document of this repository or a decision
  *     ID. Two runs of `npm run feedback` in separate processes
  *     write the in-process bytes, the committed files equal them, and every
- *     file git tracks under `feedback/` is one the report writes.
- * 18a. The public site (src/site/build.ts): it builds, every internal link
- *     and resource names a file of the site and every type-map link a type
- *     of the build it opens, no page runs inline script or style or loads
- *     another origin's resource, and no text names an internal ID or
+ *     file git tracks under `feedback/` is one the report writes. A spec
+ *     whose profile names no feedback target has no report yet, and
+ *     optional-outputs fails where git tracks any file under its
+ *     `feedback/`. Every spec's decision records, whatever their
+ *     status but superseded, keep each question, chosen answer, and
+ *     feedback in the specification owners' terms (record-wording): no
+ *     document or record of this repository and no type name the
+ *     specification never writes.
+ * 18a. Drift (src/drift.ts), for a spec with a drift/ folder, AdCOM's:
+ *     drift/sources.yaml validates; each artifact's snapshot holds its whole
+ *     folder, which hashes to the pinned git tree, and its license at the
+ *     pinned blob, and nothing else, and a reachable clone has the commit
+ *     and both SHAs; every list of the registry is paired once with each
+ *     artifact's enum or none, and every enum with one list; every line in
+ *     an enum, and every line that names one, reads. Two runs of
+ *     `npm run drift` in separate processes write the in-process bytes, the
+ *     committed report equals them, and every file git tracks under drift/
+ *     is the sources file, a pinned snapshot file, or one the report writes.
+ * 18b. The public site (src/site/build.ts), once after every spec: one site
+ *     for the specs specs/site.yaml lists, each under its path, and the
+ *     root's page that lists them. It builds, every internal link and
+ *     resource names a file of the site and every type-map link a type of
+ *     the build it opens, every link into the public repository names a
+ *     path its export publishes (a registry spec's page of its code lists
+ *     included, whose links name the citing specs' types and lines), no
+ *     page runs inline script or style or loads another origin's
+ *     resource, and no text names an internal ID or
  *     a local path; two runs of `npm run site` in separate processes write
  *     the in-process bytes. The site isn't committed: `site/` is ignored.
- * 19. No untracked files under spec-input/, ir/, mapping/, decisions/,
- *     kernel/, schemas/, vectors/, rules/, corpus/, type-examples/, sdk/, plain-generator/,
- *     roundtrip/, examples/, releases/, comparison/, feedback/, or gates/.
+ * 19. No untracked files under specs/, the root's kernel/, sdk/, gates/,
+ *     src/, scripts/, test/, tools/, and the format schemas' folders, or the
+ *     single-spec layout's spec-input/, schemas/, rules/, corpus/,
+ *     type-examples/, comparison/, and feedback/ (gates/setup.ts).
  * 20. The test suite, including the golden snapshots, as `npm test` runs
  *     package.json's test script, with at least the tests it holds.
  * 21. The gates themselves (gates/harness.ts): every gate fails on each of
@@ -291,32 +324,37 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync
 import { join, posix, relative } from "node:path";
 import { loadExceptions } from "../src/exceptions.ts";
 import { materialize } from "../src/fetch.ts";
-import { loadLock, type SpecLock } from "../src/lock.ts";
+import { loadLock, repoRoot, type SpecLock } from "../src/lock.ts";
+import { DEFAULT_SPEC, lockFiles, specNames, specRoot } from "../src/repo.ts";
 import { loadConstructors, type Model } from "../src/constructors.ts";
 import { kernelTypes, type KernelType } from "../src/domains.ts";
 import { loadKernel, type Kernel } from "../src/kernel.ts";
 import { loadLists } from "../src/lists.ts";
-import { codesOf } from "../src/rule-checks.ts";
+import { checksOf, codesOf } from "../src/rule-checks.ts";
+import { specOf } from "../src/specs/index.ts";
+import type { SpecPlugin } from "../src/specs/plugin.ts";
+import { reaches, stageOf, type SpecNames, type Stage } from "../src/profile.ts";
 import { loadDecisions, loadMappings, inScope, type DecisionRecord, type MappingFile } from "../src/mapping.ts";
 import { renderModel, resolveModel, type ModelDoc } from "../src/model.ts";
-import { emitSchemas, schemaDirOf, SCHEMA_ROOTS } from "../src/emit.ts";
-import { emitRules, loadVectors, renderRules, RULES_FILE, rulesDirOf, type RulesDoc, type VectorFile } from "../src/rules.ts";
+import { emitSchemas, schemaDirOf, SCHEMA_ROOTS, type SchemaNames } from "../src/emit.ts";
+import { emitRules, loadVectors, renderRules, RULES_FILE, rulesDirOf, type RulesDoc, type VectorFile, VECTORS_DIR } from "../src/rules.ts";
 import type { FindingsDoc } from "../src/pipeline.ts";
-import { loadDifferences, type DifferencesFile } from "../src/render.ts";
-import { checkExamples, loadFindings, lockExamples, type FindingsFile } from "../src/examples.ts";
+import { FINDING_KINDS } from "../src/lint.ts";
+import { DIFFERENCES_FILE, type DifferencesFile, loadDifferences } from "../src/render.ts";
+import { checkExamples, FINDINGS_FILE, type FindingsFile, loadFindings, lockExamples } from "../src/examples.ts";
 import { buildRelease, FROZEN_MODEL, FROZEN_RULES, FROZEN_SCHEMAS, loadFrozen, RELEASE_FILE, RELEASE_SCHEMA, RELEASES_DIR, renderRelease, type Frozen, type OracleCheck, type ReleaseDoc } from "../src/release.ts";
 import { canonicalJson } from "../src/canonical.ts";
 import { CORPUS_FILE, corpusDirOf, generateCorpus, renderCorpus, type CorpusDoc } from "../src/corpus.ts";
-import { loadFieldExamples } from "../src/field-examples.ts";
+import { FIELD_EXAMPLES_FILE, loadFieldExamples } from "../src/field-examples.ts";
 import { generateTypeExamples, renderTypeExamples, TYPE_EXAMPLES_DIR, TYPE_EXAMPLES_FILE, typeExamplesDirOf, type TypeExamplesDoc } from "../src/type-examples.ts";
 import { loadOracleGaps, pinnedOracle } from "../src/engines.ts";
 import { sdkDirOf } from "../src/sdk.ts";
 import { emitSdk, SDK_ROOTS } from "../src/sdk-emit.ts";
 import { runGo, runPython, runTypeScript, sdkCases, type SdkCase, type SdkRun } from "../src/sdk-parity.ts";
-import { loadExemptions, pinnedPlainGenerator, plainTarget, type ExemptionsFile } from "../src/plain-parity.ts";
+import { EXEMPTIONS_FILE, type ExemptionsFile, loadExemptions, pinnedPlainGenerator, plainTarget } from "../src/plain-parity.ts";
 import { trackedGoMods } from "../src/toolchain.ts";
 import { buildLock, COMPARISON_DIR, compareLocks, DEFAULT_LOCK_FILE, renderComparison, renderComparisonMarkdown, type LockBuild } from "../src/compare.ts";
-import { buildFeedback, FEEDBACK_DIR, FEEDBACK_FILES, renderComment, renderDetails, renderFeedback, type FeedbackInput } from "../src/feedback.ts";
+import { buildFeedback, feedbackOf, FEEDBACK_DIR, FEEDBACK_FILES, internalTypeNames, renderComment, renderDetails, renderFeedback, type FeedbackInput } from "../src/feedback.ts";
 import { gitTracked } from "../gates/common.ts";
 import { fingerprint, overlay, runCheck, runFixture, ROOT, type FixtureRun, type Gate } from "../gates/harness.ts";
 import { REGISTRY } from "../gates/index.ts";
@@ -333,30 +371,66 @@ import * as P from "../gates/reports.ts";
 import { fidelity, loadExpected } from "../gates/fidelity.ts";
 import { readingsOf } from "../src/fidelity.ts";
 import { appendOnly, fixturesExist, guard, loadGateDecisions, selfTests } from "../gates/meta.ts";
-import { exceptionsFile } from "../gates/input.ts";
+import { exceptionsFileOf } from "../gates/input.ts";
 import * as V from "../gates/variant.ts";
 import * as Site from "../gates/site.ts";
-import { buildSite } from "../src/site/build.ts";
+import * as Drift from "../gates/drift.ts";
+import { allSnapshotFiles, DRIFT_DIR, DRIFT_FILES, DRIFT_SOURCES, driftFiles, loadDriftSources } from "../src/drift.ts";
+import { buildSite, exportTree } from "../src/site/build.ts";
+import { loadSiteConfig } from "../src/site/config.ts";
 import { resolveBuild, variantNames, type Build } from "../src/builds.ts";
 import { loadVariant, type Variant } from "../src/variant.ts";
 import { variantReportFiles } from "../src/variant-report.ts";
 
 const isPlainMap = (v: unknown): v is Record<string, unknown> => v !== null && typeof v === "object" && !Array.isArray(v);
+
+/**
+ * The folder of the spec the gates check now, `specs/<spec>/`: its locks,
+ * records, and generated files are read from it, as the paths a lock names
+ * are relative to it. `main` sets it for each spec in turn.
+ */
+let SPEC = "";
+
+/** The plugin of the spec the gates check now, which reads its text: its rule checks, its fidelity readers, and its round-trip notation. */
+let PLUGIN!: SpecPlugin;
+
+/** The names the spec's outputs carry, from its profile: its packages, its `$id` base, and its name in prose. */
+let NAMES!: SpecNames;
+
+/** What the spec's schema files are named by. */
+const specSchemaNames = (): SchemaNames => ({ base: NAMES.schema_base, short: NAMES.short });
+
+/** Every check a rule of the spec's locks may have: the kernel's, the constructors', and the plugin's. */
+const ruleChecks = () => checksOf(PLUGIN.ruleChecks);
 const results: { gate: string; ok: boolean; note: string }[] = [];
 const record = (gate: string, ok: boolean, note = "") => {
   results.push({ gate, ok, note });
   console.log(`${ok ? "PASS" : "FAIL"}  ${gate}${note ? `  (${note})` : ""}`);
 };
 
-/** Each gate's inputs, by lock ("" for a gate across the locks), for its fixtures. */
-const captured = new Map<string, Map<string, unknown>>();
+/** Each gate's inputs, by spec and then by lock ("" for a gate across the locks or the specs), for its fixtures. */
+const captured = new Map<string, Map<string, Map<string, unknown>>>();
 const capture = <I>(g: Gate<I>, input: I, lock?: SpecLock) => {
-  const m = captured.get(g.id) ?? new Map<string, unknown>();
+  const bySpec = captured.get(g.id) ?? new Map<string, Map<string, unknown>>();
+  const spec = SPEC === "" ? "" : posix.basename(SPEC);
+  const m = bySpec.get(spec) ?? new Map<string, unknown>();
   if (!m.has(lock?.name ?? "")) m.set(lock?.name ?? "", input);
-  captured.set(g.id, m);
+  bySpec.set(spec, m);
+  captured.set(g.id, bySpec);
 };
+/** The input a fixture changes: of the spec it names, else OpenProposal's, else the first spec's that ran the gate; of the lock it names, else that spec's first. */
+function fixtureInput<I>(bySpec: Map<string, Map<string, unknown>>, f: { spec?: string; lock?: string }): I | undefined {
+  const m = bySpec.get(f.spec ?? DEFAULT_SPEC) ?? (f.spec === undefined ? bySpec.values().next().value : undefined);
+  if (!m) return undefined;
+  return (f.lock !== undefined ? m.get(f.lock) : m.values().next().value) as I | undefined;
+}
 const titleOf = <I>(g: Gate<I>, input?: I) => (typeof g.title === "function" ? (input === undefined ? g.id : g.title(input)) : g.title);
-const label = (lock: SpecLock | undefined, title: string) => `${lock ? `${lock.name}: ` : ""}${title}`;
+/** A gate's line: the spec's folder, where more than one spec runs, and the lock's name, before the gate's title. */
+const label = (lock: SpecLock | undefined, title: string) => {
+  const spec = SPEC !== "" && specNames(ROOT).length > 1 ? posix.basename(SPEC) : "";
+  const where = [spec, lock?.name].filter(Boolean).join("/");
+  return `${where ? `${where}: ` : ""}${title}`;
+};
 
 /** Runs a gate on its input, records its line, and keeps the input for the gate's fixtures. */
 async function gate<I>(g: Gate<I>, input: I, lock?: SpecLock): Promise<boolean> {
@@ -375,7 +449,8 @@ function run(cmd: string, args: string[]): { ok: boolean; output: string } {
 }
 
 const bin = (name: string) => join(ROOT, "node_modules", ".bin", name);
-const read = (p: string) => (existsSync(join(ROOT, p)) ? readFileSync(join(ROOT, p)) : null);
+/** A file of the spec's folder, by path from it, or null when it is missing. */
+const read = (p: string) => (existsSync(join(SPEC, p)) ? readFileSync(join(SPEC, p)) : null);
 /** Runs a CLI twice into fresh build directories, and returns what each run wrote to `file` there. */
 function twoRuns(lock: SpecLock | null, name: string, cli: string, file: string, extra: string[] = []): (Buffer | null)[] {
   return [1, 2].map((n) => {
@@ -386,11 +461,21 @@ function twoRuns(lock: SpecLock | null, name: string, cli: string, file: string,
   });
 }
 
-const committedIr = (lock: SpecLock) => JSON.parse(readFileSync(join(ROOT, lock.ir_dir, "spec-ir.json"), "utf8"));
+const committedIr = (lock: SpecLock) => JSON.parse(readFileSync(join(repoRoot(lock), lock.ir_dir, "spec-ir.json"), "utf8"));
 
-async function checkLock(lock: SpecLock): Promise<void> {
+async function checkLock(lock: SpecLock, through: Stage): Promise<void> {
   await gate(I.snapshot, { lock }, lock);
-  const committed = { lock, ir: committedIr(lock), findings: JSON.parse(readFileSync(join(ROOT, lock.ir_dir, "findings.json"), "utf8")) as FindingsDoc, exceptions: loadExceptions(exceptionsFile) };
+  // A spec that has reached only its input has no IR yet: its snapshot and its specification's bytes are what there is to check.
+  if (!reaches(through, "extract")) {
+    try {
+      await materialize(lock);
+    } catch {
+      // The spec-input gate reports why no source yields the bytes.
+    }
+    await gate(I.specInput, { lock }, lock);
+    return;
+  }
+  const committed = { lock, ir: committedIr(lock), findings: JSON.parse(readFileSync(join(repoRoot(lock), lock.ir_dir, "findings.json"), "utf8")) as FindingsDoc, exceptions: loadExceptions(exceptionsFileOf(repoRoot(lock))) };
   await gate(I.committedFiles, committed, lock);
   let bytes: Buffer;
   try {
@@ -404,7 +489,7 @@ async function checkLock(lock: SpecLock): Promise<void> {
     return;
   }
   await gate(I.specInput, { lock }, lock);
-  await gate(I.extraction, { lock, bytes, exceptions: loadExceptions(exceptionsFile) }, lock);
+  await gate(I.extraction, { lock, bytes, exceptions: loadExceptions(exceptionsFileOf(repoRoot(lock))) }, lock);
   const outs = [1, 2].map((n) => join(ROOT, "build", "ci", lock.name, `run${n}`));
   for (const dir of outs) {
     rmSync(dir, { recursive: true, force: true });
@@ -423,17 +508,26 @@ interface Loaded {
   decisions: DecisionRecord[];
 }
 
-async function checkMappingAndDecisions(locks: SpecLock[]): Promise<Loaded | null> {
-  const ok = await gate(M.mappingLoad, { mappingDir: join(ROOT, "mapping"), decisionsDir: join(ROOT, "decisions") });
+/** What the spec-profile gate reads of the spec's folder: its top-level entries, which show the stages it has reached. */
+const folderEntries = () => readdirSync(SPEC).sort();
+
+async function checkMappingAndDecisions(locks: SpecLock[], through: Stage): Promise<Loaded | null> {
+  // A spec still being added is checked through the stage its profile names, and holds no file of a later one.
+  if (!reaches(through, "model")) {
+    await gate(I.specProfile, { profile: specOf(SPEC).profile, text: PLUGIN.text, roles: [], findingKinds: FINDING_KINDS, locks: locks.length, entries: folderEntries() });
+    return null;
+  }
+  const ok = await gate(M.mappingLoad, { mappingDir: join(SPEC, "mapping"), decisionsDir: join(SPEC, "decisions") });
   if (!ok) return null;
-  const loaded = { mappings: loadMappings(ROOT, join(ROOT, "mapping")), decisions: loadDecisions(ROOT, join(ROOT, "decisions")) };
+  const loaded = { mappings: loadMappings(join(SPEC, "mapping")), decisions: loadDecisions(join(SPEC, "decisions")) };
+  await gate(I.specProfile, { profile: specOf(SPEC).profile, text: PLUGIN.text, roles: [...new Set(loaded.mappings.flatMap((m) => m.entries.map((e) => e.as.role)))].sort(), findingKinds: FINDING_KINDS, locks: locks.length, entries: folderEntries() });
   for (const lock of locks) await gate(M.mappingCurrent, { ir: committedIr(lock), lock: lock.name, ...loaded }, lock);
   return loaded;
 }
 
 async function checkKernelGates(locks: SpecLock[], loaded: Loaded | null): Promise<Kernel | null> {
-  if (!(await gate(K.kernelLoad, {}))) return null;
-  const kernel = loadKernel(ROOT);
+  if (!(await gate(K.kernelLoad, { spec: SPEC }))) return null;
+  const kernel = loadKernel(ROOT, SPEC);
   if (loaded) await gate(K.kernelCheck, { kernel, decisions: loaded.decisions });
   else skipped(K.kernelCheck, "the decision records didn't load");
   await gate(K.kernelEngines, { kernel, gaps: loadOracleGaps(ROOT) });
@@ -442,8 +536,8 @@ async function checkKernelGates(locks: SpecLock[], loaded: Loaded | null): Promi
 }
 
 async function checkConstructorGates(locks: SpecLock[], kernel: Kernel, loaded: Loaded | null): Promise<Model | null> {
-  if (!(await gate(K.constructorsLoad, {}))) return null;
-  const model: Model = { kernel, constructors: loadConstructors(ROOT) };
+  if (!(await gate(K.constructorsLoad, { spec: SPEC }))) return null;
+  const model: Model = { kernel, constructors: loadConstructors(ROOT, SPEC) };
   if (loaded) await gate(K.constructorsCheck, { model, decisions: loaded.decisions });
   else skipped(K.constructorsCheck, "the decision records didn't load");
   for (const lock of locks) await gate(K.constructorSources, { ir: committedIr(lock), lock: lock.name, constructors: model.constructors }, lock);
@@ -479,7 +573,7 @@ async function checkCoverageGates(locks: SpecLock[], model: Model, loaded: Loade
     await gate(M.mappingNames, sources, lock);
   }
   const lockIrs = locks.map((l) => ({ name: l.name, ir: committedIr(l) }));
-  const texts = new Map(readdirSync(join(ROOT, "mapping")).filter((f) => f.endsWith(".yaml")).map((f) => [join(ROOT, "mapping", f), readFileSync(join(ROOT, "mapping", f), "utf8")]));
+  const texts = new Map(readdirSync(join(SPEC, "mapping")).filter((f) => f.endsWith(".yaml")).map((f) => [join(SPEC, "mapping", f), readFileSync(join(SPEC, "mapping", f), "utf8")]));
   await gate(M.mapDrift, { locks: lockIrs, mappings: loaded.mappings, kernel: model.kernel, constructors: model.constructors, texts });
 }
 
@@ -512,17 +606,17 @@ async function checkModelGates(locks: SpecLock[], model: Model, loaded: Loaded |
   return resolved;
 }
 
-/** Every file under a directory's trees, by path in the tree; Python's bytecode caches, which git ignores, aren't part of it. */
-function tree(dir: string, roots: readonly string[]): Map<string, Buffer> {
+/** Every file under a directory's trees, by path in the tree, the directory by path from `base`; Python's bytecode caches, which git ignores, aren't part of it. */
+function tree(base: string, dir: string, roots: readonly string[]): Map<string, Buffer> {
   const out = new Map<string, Buffer>();
   const walk = (rel: string) => {
-    const abs = join(ROOT, dir, rel);
+    const abs = join(base, dir, rel);
     if (!existsSync(abs)) return;
     for (const e of readdirSync(abs, { withFileTypes: true })) {
       if (e.name === "__pycache__") continue;
       const p = rel === "" ? e.name : `${rel}/${e.name}`;
       if (e.isDirectory()) walk(p);
-      else out.set(p, readFileSync(join(ROOT, dir, p)));
+      else out.set(p, readFileSync(join(base, dir, p)));
     }
   };
   for (const d of roots) walk(d);
@@ -534,7 +628,7 @@ function twoTreeRuns(lock: SpecLock, name: string, cli: string, roots: readonly 
     const out = join(ROOT, "build", "ci", lock.name, `${name}-run${n}`);
     rmSync(out, { recursive: true, force: true });
     run(bin("tsx"), [cli, "--lock", lock.file, "--out", out, ...extra]);
-    return tree(relative(ROOT, out), roots);
+    return tree(ROOT, relative(ROOT, out), roots);
   });
 }
 
@@ -543,29 +637,29 @@ async function checkSchemaGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock
   let complete = models.size === locks.length;
   for (const [lock, model] of models) {
     const dir = schemaDirOf(lock.ir_dir);
-    if (!(await gate(O.schemasEmit, { model, dir }, lock))) {
+    if (!(await gate(O.schemasEmit, { model, dir, names: specSchemaNames() }, lock))) {
       complete = false;
       continue;
     }
-    const emitted = emitSchemas(model, dir);
+    const emitted = emitSchemas(model, dir, specSchemaNames());
     for (const f of emitted.files) expected.add(posix.join(dir, f.path));
     // The release manifest sits at the root of the tree; the release gates check it.
     expected.add(posix.join(dir, RELEASE_FILE));
     const want = new Map(emitted.files.map((f) => [f.path, Buffer.from(f.text)]));
     await gate(O.schemasDeterministic, { label: "schemas", want, runs: twoTreeRuns(lock, "schemas", "src/cli/emit.ts", SCHEMA_ROOTS), from: "emitter" }, lock);
-    await gate(O.schemasCommitted, { dir, want, committed: tree(dir, SCHEMA_ROOTS), regenerate: "npm run emit" }, lock);
-    await gate(O.schemasConventions, { files: emitted.files, model, dir }, lock);
+    await gate(O.schemasCommitted, { dir, want, committed: tree(SPEC, dir, SCHEMA_ROOTS), regenerate: "npm run emit" }, lock);
+    await gate(O.schemasConventions, { files: emitted.files, model, dir, base: NAMES.schema_base }, lock);
     await gate(O.schemasAjv, { files: emitted.files }, lock);
     await gate(O.schemasOracle, { files: emitted.files }, lock);
   }
   if (!complete) return;
-  await gate(O.schemasTracked, { dir: "schemas", tracked: gitTracked("schemas"), expected: [...expected], remedy: "remove it, or emit it from the model" });
+  await gate(O.schemasTracked, { dir: "schemas", tracked: gitTracked("schemas", SPEC), expected: [...expected], remedy: "remove it, or emit it from the model" });
 }
 
 async function checkRuleGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[], loaded: Loaded | null, variantFiles: VariantFiles): Promise<{ vectors: VectorFile[]; rules: Map<string, RulesDoc> }> {
   const emittedRules = new Map<string, RulesDoc>();
-  if (!(await gate(O.vectorsLoad, {}))) return { vectors: [], rules: emittedRules };
-  const vectors = loadVectors(ROOT);
+  if (!(await gate(O.vectorsLoad, { dir: join(SPEC, VECTORS_DIR) }))) return { vectors: [], rules: emittedRules };
+  const vectors = loadVectors(join(SPEC, VECTORS_DIR));
   if (!loaded) {
     skipped(O.rulesEmit, "the decision records didn't load");
     return { vectors, rules: emittedRules };
@@ -575,8 +669,8 @@ async function checkRuleGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[]
   for (const [lock, model] of models) {
     const ir = committedIr(lock);
     const schemaDir = schemaDirOf(lock.ir_dir);
-    const emitted = emitSchemas(model, schemaDir);
-    const input = { model, ir, lock: lock.name, vectors, decisions: loaded.decisions, schemaDir, conditionsLeft: emitted.conditions.left };
+    const emitted = emitSchemas(model, schemaDir, specSchemaNames());
+    const input = { model, ir, lock: lock.name, vectors, decisions: loaded.decisions, schemaDir, conditionsLeft: emitted.conditions.left, schemaBase: NAMES.schema_base };
     if (!(await gate(O.rulesEmit, input, lock)) || emitted.problems.length > 0) {
       complete = false;
       continue;
@@ -584,14 +678,14 @@ async function checkRuleGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[]
     const doc = emitRules(input).doc;
     emittedRules.set(lock.name, doc);
     await gate(O.ruleVectors, { doc, model, files: emitted.files, schemaDir }, lock);
-    await gate(O.ruleChecks, { doc, model, codes: codesOf(loadLists(ROOT)) }, lock);
+    await gate(O.ruleChecks, { doc, model, codes: codesOf(loadLists(ROOT)), ruleChecks: ruleChecks() }, lock);
     const file = posix.join(rulesDirOf(lock.ir_dir), RULES_FILE);
     expected.add(file);
     const want = Buffer.from(renderRules(doc));
     await gate(O.rulesDeterministic, { label: RULES_FILE, want, runs: twoRuns(lock, "rules", "src/cli/rules.ts", RULES_FILE), from: "emitter" }, lock);
     await gate(O.rulesCommitted, { file, want, committed: read(file), regenerate: "npm run rules" }, lock);
   }
-  if (complete) await gate(O.rulesTracked, { dir: "rules", tracked: gitTracked("rules"), expected: [...expected], remedy: "remove it, or emit it from the model" });
+  if (complete) await gate(O.rulesTracked, { dir: "rules", tracked: gitTracked("rules", SPEC), expected: [...expected], remedy: "remove it, or emit it from the model" });
   return { vectors, rules: emittedRules };
 }
 
@@ -608,7 +702,7 @@ async function checkFidelityGates(models: Map<SpecLock, ModelDoc>, rulesOf: Map<
       skipped(fidelity, "the rules didn't emit", lock);
       continue;
     }
-    await gate(fidelity, { ir: committedIr(lock), lock: lock.name, model, files: emitSchemas(model, schemaDir).files, kernel, rules, decisions: loaded.decisions, readings: readingsOf(loaded.mappings, lock.name), schemaDir, expected }, lock);
+    await gate(fidelity, { ir: committedIr(lock), lock: lock.name, model, files: emitSchemas(model, schemaDir, specSchemaNames()).files, kernel, rules, decisions: loaded.decisions, readings: readingsOf(loaded.mappings, lock.name), schemaDir, expected, readers: PLUGIN.fidelity!, names: specSchemaNames() }, lock);
   }
 }
 
@@ -619,7 +713,7 @@ async function checkCorpusGates(models: Map<SpecLock, ModelDoc>, rulesOf: Map<st
   const pinned = pinnedOracle(ROOT);
   for (const [lock, model] of models) {
     const schemaDir = schemaDirOf(lock.ir_dir);
-    const emitted = emitSchemas(model, schemaDir);
+    const emitted = emitSchemas(model, schemaDir, specSchemaNames());
     const rules = rulesOf.get(lock.name);
     if (emitted.problems.length > 0 || rules === undefined) {
       skipped(O.corpusGenerates, "the schemas or the rules didn't emit", lock);
@@ -643,24 +737,24 @@ async function checkCorpusGates(models: Map<SpecLock, ModelDoc>, rulesOf: Map<st
     await gate(O.corpusIsolation, { doc: committed, files: emitted.files, model, rules, schemaDir }, lock);
     await gate(O.corpusLabels, { files: emitted.files, doc: committed, pinned }, lock);
   }
-  if (complete) await gate(O.corpusTracked, { dir: "corpus", tracked: gitTracked("corpus"), expected: [...expected], remedy: "remove it, or generate it" });
+  if (complete) await gate(O.corpusTracked, { dir: "corpus", tracked: gitTracked("corpus", SPEC), expected: [...expected], remedy: "remove it, or generate it" });
 }
 
 async function checkTypeExampleGates(models: Map<SpecLock, ModelDoc>, kernel: Kernel, locks: SpecLock[], variantFiles: VariantFiles): Promise<void> {
   const expected = new Set<string>(variantFiles.typeExamples);
   let complete = models.size === locks.length;
   const codes = codesOf(loadLists(ROOT));
-  if (!(await gate(O.fieldExamplesLoad, {}))) {
+  if (!(await gate(O.fieldExamplesLoad, { file: join(SPEC, FIELD_EXAMPLES_FILE) }))) {
     for (const lock of models.keys()) {
       skipped(O.typeExamplesGenerate, "the per-field example values didn't load", lock);
       skipped(O.fieldExamples, "the per-field example values didn't load", lock);
     }
     return;
   }
-  const fields = loadFieldExamples(ROOT).fields;
+  const fields = loadFieldExamples(join(SPEC, FIELD_EXAMPLES_FILE)).fields;
   for (const [lock, model] of models) {
     const schemaDir = schemaDirOf(lock.ir_dir);
-    const emitted = emitSchemas(model, schemaDir);
+    const emitted = emitSchemas(model, schemaDir, specSchemaNames());
     if (emitted.problems.length > 0) {
       skipped(O.typeExamplesGenerate, "the schemas didn't emit", lock);
       skipped(O.fieldExamples, "the schemas didn't emit", lock);
@@ -676,7 +770,7 @@ async function checkTypeExampleGates(models: Map<SpecLock, ModelDoc>, kernel: Ke
       complete = false;
       continue;
     }
-    const input = { model, files: emitted.files, kernel, schemaDir, codes, spec, fields };
+    const input = { model, files: emitted.files, kernel, schemaDir, codes, ruleChecks: ruleChecks(), spec, fields };
     await gate(O.fieldExamples, input, lock);
     if (!(await gate(O.typeExamplesGenerate, input, lock))) {
       complete = false;
@@ -690,9 +784,9 @@ async function checkTypeExampleGates(models: Map<SpecLock, ModelDoc>, kernel: Ke
     const committedBytes = read(file);
     await gate(O.typeExamplesCommitted, { file, want, committed: committedBytes, regenerate: "npm run type-examples" }, lock);
     if (committedBytes === null) continue;
-    await gate(O.typeExamplesValid, { doc: JSON.parse(committedBytes.toString("utf8")) as TypeExamplesDoc, model, files: emitted.files, schemaDir, codes }, lock);
+    await gate(O.typeExamplesValid, { doc: JSON.parse(committedBytes.toString("utf8")) as TypeExamplesDoc, model, files: emitted.files, schemaDir, codes, ruleChecks: ruleChecks() }, lock);
   }
-  if (complete) await gate(O.typeExamplesTracked, { dir: TYPE_EXAMPLES_DIR, tracked: gitTracked(TYPE_EXAMPLES_DIR), expected: [...expected], remedy: "remove it, or generate it" });
+  if (complete) await gate(O.typeExamplesTracked, { dir: TYPE_EXAMPLES_DIR, tracked: gitTracked(TYPE_EXAMPLES_DIR, SPEC), expected: [...expected], remedy: "remove it, or generate it" });
 }
 
 async function checkSdkGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[], model: Model, variantFiles: VariantFiles): Promise<void> {
@@ -700,7 +794,7 @@ async function checkSdkGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[],
   let complete = models.size === locks.length;
   let exemptions: ExemptionsFile | null = null;
   try {
-    exemptions = loadExemptions(ROOT);
+    exemptions = loadExemptions(join(SPEC, EXEMPTIONS_FILE));
     await gate(S.plainExemptionsFile, { exemptions, pinned: pinnedPlainGenerator(ROOT), locks: locks.map((l) => l.name) });
   } catch (e) {
     record(titleOf(S.plainExemptionsFile), false, (e as Error).message);
@@ -710,30 +804,30 @@ async function checkSdkGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[],
   const checked = new Set<string>();
   for (const [lock, doc] of models) {
     const dir = sdkDirOf(lock.ir_dir, undefined);
-    if (!(await gate(S.sdkGenerate, { model: doc, dir, schemaDir: schemaDirOf(lock.ir_dir) }, lock))) {
+    if (!(await gate(S.sdkGenerate, { model: doc, dir, schemaDir: schemaDirOf(lock.ir_dir), names: NAMES }, lock))) {
       complete = false;
       continue;
     }
-    const emitted = emitSdk(doc, dir, schemaDirOf(lock.ir_dir));
+    const emitted = emitSdk(doc, dir, schemaDirOf(lock.ir_dir), NAMES);
     for (const f of emitted.files) expected.add(posix.join(dir, f.path));
-    const schemas = emitSchemas(doc, schemaDirOf(lock.ir_dir));
+    const schemas = emitSchemas(doc, schemaDirOf(lock.ir_dir), specSchemaNames());
     const schemaNames = schemas.files.flatMap((f) => (isPlainMap(f.schema.$defs) ? Object.keys(f.schema.$defs) : [String(f.schema.title)])).sort();
     await gate(S.sdkNames, { schemaNames, emitted: emitted.sdk.emitted, templates: [...emitted.sdk.templates.keys()] }, lock);
     const want = new Map(emitted.files.map((f) => [f.path, Buffer.from(f.text)]));
     await gate(S.sdkDeterministic, { label: "SDK types", want, runs: twoTreeRuns(lock, "sdk", "src/cli/sdk.ts", SDK_ROOTS), from: "emitters" }, lock);
-    if (!(await gate(S.sdkCommitted, { dir, want, committed: tree(dir, SDK_ROOTS), regenerate: "npm run sdk" }, lock))) continue;
+    if (!(await gate(S.sdkCommitted, { dir, want, committed: tree(ROOT, dir, SDK_ROOTS), regenerate: "npm run sdk" }, lock))) continue;
     await gate(S.sdkTypecheck, { project: posix.join(dir, "ts", "tsconfig.json") }, lock);
     await gate(S.sdkGo, { dir: posix.join(dir, "go") }, lock);
     const corpusFile = posix.join(corpusDirOf(lock.ir_dir), CORPUS_FILE);
-    if (!existsSync(join(ROOT, corpusFile))) {
+    if (!existsSync(join(SPEC, corpusFile))) {
       skipped(S.sdkParity, `no committed corpus at ${corpusFile}; generate it with: npm run corpus`, lock);
       continue;
     }
-    const cases: SdkCase[] = sdkCases(doc, JSON.parse(readFileSync(join(ROOT, corpusFile), "utf8")) as CorpusDoc, model.kernel, model.constructors);
+    const cases: SdkCase[] = sdkCases(doc, JSON.parse(readFileSync(join(SPEC, corpusFile), "utf8")) as CorpusDoc, model.kernel, model.constructors);
     const legs: [string, () => Promise<SdkRun> | SdkRun][] = [
       ["TypeScript", () => runTypeScript(join(ROOT, dir, "ts"), cases)],
       ["Python", () => runPython(ROOT, join(ROOT, dir, "python"), cases)],
-      ["Go", () => runGo(join(ROOT, dir, "go"), dir, join(ROOT, "build", "ci", lock.name, "sdk-go-verdicts"), cases)],
+      ["Go", () => runGo(join(ROOT, dir, "go"), join(ROOT, "build", "ci", lock.name, "sdk-go-verdicts"), cases)],
     ];
     for (const [language, leg] of legs) {
       let r: SdkRun;
@@ -756,7 +850,7 @@ async function checkSdkGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[],
 
 /** Type rules § 10 on one lock: the plain generator's classes, generated from each published schema file alone. */
 async function checkPlainGates(lock: SpecLock, model: ModelDoc, cases: SdkCase[], exemptions: ExemptionsFile, absent: Map<string, number>, checked: Set<string>): Promise<void> {
-  const schemaDir = join(ROOT, schemaDirOf(lock.ir_dir));
+  const schemaDir = join(SPEC, schemaDirOf(lock.ir_dir));
   const out = join(ROOT, "build", "ci", lock.name, "plain-python");
   if (!(await gate(S.plainGenerates, { schemaDir, out }, lock))) return;
   const { runPlain, checkExemptions, plainDivergences } = await import("../src/plain-parity.ts");
@@ -776,19 +870,19 @@ async function checkPlainGates(lock: SpecLock, model: ModelDoc, cases: SdkCase[]
 }
 
 async function checkRoundTripGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[], loaded: Loaded | null): Promise<void> {
-  if (!(await gate(C.differencesLoad, {}))) return;
-  const recorded: DifferencesFile = loadDifferences(ROOT);
+  if (!(await gate(C.differencesLoad, { file: join(SPEC, DIFFERENCES_FILE) }))) return;
+  const recorded: DifferencesFile = loadDifferences(join(SPEC, DIFFERENCES_FILE));
   await gate(C.differencesLocks, { recorded, locks: locks.map((l) => l.name) });
   if (!loaded) {
     skipped(C.roundTripGate, "the decision records didn't load");
     return;
   }
-  for (const [lock, model] of models) await gate(C.roundTripGate, { model, ir: committedIr(lock), recorded, lock: lock.name, decisions: loaded.decisions }, lock);
+  for (const [lock, model] of models) await gate(C.roundTripGate, { model, ir: committedIr(lock), recorded, lock: lock.name, decisions: loaded.decisions, notation: PLUGIN.roundTrip! }, lock);
 }
 
 async function checkExampleGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[], loaded: Loaded | null): Promise<void> {
-  if (!(await gate(C.findingsLoad, {}))) return;
-  const recorded: FindingsFile = loadFindings(ROOT);
+  if (!(await gate(C.findingsLoad, { file: join(SPEC, FINDINGS_FILE) }))) return;
+  const recorded: FindingsFile = loadFindings(join(SPEC, FINDINGS_FILE));
   await gate(C.findingsLocks, { recorded, locks: locks.map((l) => l.name) });
   if (!loaded) {
     skipped(C.examplesValidate, "the decision records didn't load");
@@ -805,26 +899,26 @@ async function checkExampleGates(models: Map<SpecLock, ModelDoc>, locks: SpecLoc
     }
     await gate(C.examplesListing, { lock, model }, lock);
     const schemaDir = schemaDirOf(lock.ir_dir);
-    const emitted = emitSchemas(model, schemaDir);
-    const input = { model, files: emitted.files, schemaDir, examples: got.examples, values: got.values, codes: codesOf(loadLists(ROOT)), recorded, lock: lock.name, decisions: loaded.decisions };
+    const emitted = emitSchemas(model, schemaDir, specSchemaNames());
+    const input = { model, files: emitted.files, schemaDir, examples: got.examples, values: got.values, codes: codesOf(loadLists(ROOT)), ruleChecks: ruleChecks(), recorded, lock: lock.name, decisions: loaded.decisions };
     await gate(C.examplesValidate, input, lock);
     await gate(C.examplesOracle, { files: emitted.files, cases: checkExamples(input).cases }, lock);
   }
 }
 
 async function checkReleaseGates(models: Map<SpecLock, ModelDoc>, rulesOf: Map<string, RulesDoc>, locks: SpecLock[], loaded: Loaded | null): Promise<void> {
-  await gate(R.frozenReleases, { root: ROOT, locks: locks.map((l) => l.name) });
+  await gate(R.frozenReleases, { root: SPEC, locks: locks.map((l) => l.name) });
   const frozen: [string, Frozen[]][] = [];
   for (const lock of locks) {
     try {
-      frozen.push([lock.name, loadFrozen(ROOT, lock.name)]);
+      frozen.push([lock.name, loadFrozen(SPEC, lock.name)]);
     } catch {
       // The frozen-releases gate above reports a release that doesn't load.
     }
   }
   const oracleChecks: OracleCheck[] = frozen.flatMap(([l, list]) =>
     list.map((f) => {
-      const at = posix.join(RELEASES_DIR, l, f.release.release);
+      const at = posix.join(relative(ROOT, SPEC), RELEASES_DIR, l, f.release.release);
       return { release: posix.join(at, RELEASE_FILE), schemas: posix.join(at, FROZEN_SCHEMAS), model: posix.join(at, FROZEN_MODEL), rules: posix.join(at, FROZEN_RULES) };
     }),
   );
@@ -836,7 +930,7 @@ async function checkReleaseGates(models: Map<SpecLock, ModelDoc>, rulesOf: Map<s
   const current: OracleCheck[] = [];
   for (const [lock, model] of models) {
     const dir = schemaDirOf(lock.ir_dir);
-    const emitted = emitSchemas(model, dir);
+    const emitted = emitSchemas(model, dir, specSchemaNames());
     if (emitted.problems.length > 0) continue;
     const rules = rulesOf.get(lock.name);
     if (rules === undefined) {
@@ -848,7 +942,7 @@ async function checkReleaseGates(models: Map<SpecLock, ModelDoc>, rulesOf: Map<s
     await gate(R.releaseBuilds, input, lock);
     await gate(R.breaking, input, lock);
     // With no release frozen yet, the committed corpus stands in for the last release's.
-    const old = previous?.corpus ?? (JSON.parse(readFileSync(join(ROOT, corpusDirOf(lock.ir_dir), CORPUS_FILE), "utf8")) as CorpusDoc);
+    const old = previous?.corpus ?? (JSON.parse(readFileSync(join(SPEC, corpusDirOf(lock.ir_dir), CORPUS_FILE), "utf8")) as CorpusDoc);
     await gate(R.breakingCorpus, { old, files: emitted.files, rules, of: previous ? `the corpus of ${previous.release.release}` : "the committed corpus, with no release frozen yet," }, lock);
     const doc = buildRelease(input).doc;
     const want = Buffer.from(renderRelease(doc));
@@ -857,11 +951,13 @@ async function checkReleaseGates(models: Map<SpecLock, ModelDoc>, rulesOf: Map<s
     await gate(R.releaseCommitted, { file, want, committed: read(file), regenerate: "npm run release" }, lock);
     const committedDoc = read(file);
     if (committedDoc === null) continue;
-    await gate(R.releaseDigests, { doc: JSON.parse(committedDoc.toString("utf8")) as ReleaseDoc, files: tree(dir, SCHEMA_ROOTS), model, rules }, lock);
+    await gate(R.releaseDigests, { doc: JSON.parse(committedDoc.toString("utf8")) as ReleaseDoc, files: tree(SPEC, dir, SCHEMA_ROOTS), model, rules }, lock);
     const modelFile = posix.join("build", "ci", lock.name, "release-model.json");
     mkdirSync(join(ROOT, "build", "ci", lock.name), { recursive: true });
     writeFileSync(join(ROOT, modelFile), canonicalJson(model));
-    const check = { release: file, schemas: dir, model: modelFile, rules: posix.join(rulesDirOf(lock.ir_dir), RULES_FILE) };
+    // The oracle reads each file by its path from the repository's root.
+    const inSpec = (p: string) => posix.join(relative(ROOT, SPEC), p);
+    const check = { release: inSpec(file), schemas: inSpec(dir), model: modelFile, rules: inSpec(posix.join(rulesDirOf(lock.ir_dir), RULES_FILE)) };
     current.push(check);
     await gate(R.releaseOracle, { checks: [check] }, lock);
   }
@@ -871,7 +967,8 @@ async function checkReleaseGates(models: Map<SpecLock, ModelDoc>, rulesOf: Map<s
     capture(R.frozenOracle, { checks: current });
     record(titleOf(R.frozenOracle), true, "none frozen yet");
   }
-  await gate(R.releasesTracked, { tracked: gitTracked(RELEASES_DIR), schema: RELEASE_SCHEMA });
+  // The root's releases/ holds the format schema, and each spec's releases/ its frozen releases.
+  await gate(R.releasesTracked, { tracked: [...gitTracked(RELEASES_DIR), ...gitTracked(RELEASES_DIR, SPEC)], schema: RELEASE_SCHEMA });
 }
 
 /** What the feedback gates read: the inputs and every lock's build, the default lock's first. */
@@ -882,7 +979,7 @@ async function checkComparisonGates(locks: SpecLock[], loaded: Loaded | null, mo
     skipped(P.comparison, "the decision records didn't load");
     return null;
   }
-  const input = { root: ROOT, mappings: loaded.mappings, decisions: loaded.decisions, kernel: model.kernel, constructors: model.constructors, vectors };
+  const input = { root: SPEC, mappings: loaded.mappings, decisions: loaded.decisions, kernel: model.kernel, constructors: model.constructors, vectors };
   if (!(await gate(P.comparison, { locks, input }))) return null;
   const builds: { file: string; build: LockBuild }[] = [];
   for (const lock of locks) {
@@ -891,8 +988,8 @@ async function checkComparisonGates(locks: SpecLock[], loaded: Loaded | null, mo
   }
   const base = builds.find((b) => b.file === DEFAULT_LOCK_FILE)!.build;
   const others = builds.filter((b) => b.file !== DEFAULT_LOCK_FILE);
-  const recordedFindings = loadFindings(ROOT);
-  const recordedDifferences = loadDifferences(ROOT);
+  const recordedFindings = loadFindings(join(SPEC, FINDINGS_FILE));
+  const recordedDifferences = loadDifferences(join(SPEC, DIFFERENCES_FILE));
   const want = new Map<string, Buffer>();
   for (const { build } of others) {
     const doc = compareLocks({ base, lock: build, decisions: input.decisions, recordedFindings, recordedDifferences });
@@ -903,20 +1000,54 @@ async function checkComparisonGates(locks: SpecLock[], loaded: Loaded | null, mo
   for (const [name, text] of variants.files) want.set(name, Buffer.from(text));
   await gate(P.comparisonDeterministic, { label: "comparison", want, runs: reportRuns("compare", "src/cli/compare.ts", [...want.keys()]), from: "comparison" });
   await gate(P.comparisonCommitted, { dir: COMPARISON_DIR, want, committed: reportTree(COMPARISON_DIR, [...want.keys()]), regenerate: "npm run compare" });
-  await gate(P.comparisonTracked, { dir: COMPARISON_DIR, tracked: gitTracked(COMPARISON_DIR), expected: [...want.keys()].map((f) => posix.join(COMPARISON_DIR, f)), remedy: "remove it, or write it with: npm run compare" });
+  await gate(P.comparisonTracked, { dir: COMPARISON_DIR, tracked: gitTracked(COMPARISON_DIR, SPEC), expected: [...want.keys()].map((f) => posix.join(COMPARISON_DIR, f)), remedy: "remove it, or write it with: npm run compare" });
   return { ...input, builds: [base, ...others.map((o) => o.build)], recordedFindings, recordedDifferences };
 }
 
-/** Two runs of a report CLI, each the files it wrote by name. */
+/**
+ * The drift report's gates: its sources' pins and pairs against the model of
+ * the lock the sources file names, two runs of `npm run drift`, the
+ * committed report, and every tracked file under drift/.
+ */
+async function checkDriftGates(models: Map<SpecLock, ModelDoc>): Promise<void> {
+  let sources;
+  try {
+    sources = loadDriftSources(SPEC);
+  } catch (e) {
+    record(`${posix.basename(SPEC)}: drift sources`, false, (e as Error).message);
+    return;
+  }
+  const entry = [...models].find(([l]) => l.name === sources.lock);
+  if (!entry) {
+    skipped(Drift.driftSources, `the model of the lock "${sources.lock}" the drift sources name didn't resolve`);
+    return;
+  }
+  const [lock, model] = entry;
+  const files = allSnapshotFiles(SPEC, sources);
+  if (!(await gate(Drift.driftSources, { sources, files, ir: committedIr(lock), model }))) return;
+  const { files: report, problems } = await driftFiles(SPEC, sources, files);
+  if (problems.length > 0) {
+    record(`${posix.basename(SPEC)}: drift report`, false, problems.join("; "));
+    return;
+  }
+  const want = new Map([...report].map(([f, t]) => [f, Buffer.from(t)]));
+  await gate(Drift.driftDeterministic, { label: "drift", want, runs: reportRuns("drift", "src/cli/drift.ts", [...want.keys()]), from: "drift report" });
+  await gate(Drift.driftCommitted, { dir: DRIFT_DIR, want, committed: reportTree(DRIFT_DIR, [...want.keys()]), regenerate: "npm run drift" });
+  // The snapshot's files are each source's folder, which hashes to its pinned tree, and its license.
+  const pinned = [DRIFT_SOURCES, ...sources.sources.flatMap((s) => [...(files.get(s.id) ?? new Map()).keys()].filter((p) => p === s.license.path || p.startsWith(`${s.folder}/`)).map((p) => posix.join(DRIFT_DIR, "snapshots", s.id, p)))];
+  await gate(Drift.driftTracked, { dir: DRIFT_DIR, tracked: gitTracked(DRIFT_DIR, SPEC), expected: [...pinned, ...Object.values(DRIFT_FILES).map((f) => posix.join(DRIFT_DIR, f))], remedy: "remove it, pin it in drift/sources.yaml, or write it with: npm run drift" });
+}
+
+/** Two runs of a report CLI on the spec, each the files it wrote by name. */
 function reportRuns(name: string, cli: string, files: string[]): Map<string, Buffer>[] {
   return [1, 2].map((n) => {
     const out = join(ROOT, "build", "ci", `${name}-run${n}`);
     rmSync(out, { recursive: true, force: true });
-    run(bin("tsx"), [cli, "--out", out]);
+    run(bin("tsx"), [cli, "--spec", posix.basename(SPEC), "--out", out]);
     return new Map(files.flatMap((f) => (existsSync(join(out, f)) ? [[f, readFileSync(join(out, f))] as const] : [])));
   });
 }
-const reportTree = (dir: string, files: string[]) => new Map(files.flatMap((f) => (existsSync(join(ROOT, dir, f)) ? [[f, readFileSync(join(ROOT, dir, f))] as const] : [])));
+const reportTree = (dir: string, files: string[]) => new Map(files.flatMap((f) => (existsSync(join(SPEC, dir, f)) ? [[f, readFileSync(join(SPEC, dir, f))] as const] : [])));
 
 async function checkFeedbackGates(ctx: FeedbackContext): Promise<void> {
   if (!(await gate(P.feedback, ctx))) return;
@@ -924,11 +1055,11 @@ async function checkFeedbackGates(ctx: FeedbackContext): Promise<void> {
   const want = new Map<string, Buffer>([
     [FEEDBACK_FILES.data, Buffer.from(renderFeedback(doc))],
     [FEEDBACK_FILES.comment, Buffer.from(renderComment(doc))],
-    [FEEDBACK_FILES.details, Buffer.from(renderDetails(doc))],
+    [FEEDBACK_FILES.details, Buffer.from(renderDetails(doc, feedbackOf(SPEC)))],
   ]);
   await gate(P.feedbackDeterministic, { label: "feedback", want, runs: reportRuns("feedback", "src/cli/feedback.ts", [...want.keys()]), from: "report" });
   await gate(P.feedbackCommitted, { dir: FEEDBACK_DIR, want, committed: reportTree(FEEDBACK_DIR, [...want.keys()]), regenerate: "npm run feedback" });
-  await gate(P.feedbackTracked, { dir: FEEDBACK_DIR, tracked: gitTracked(FEEDBACK_DIR), expected: [...want.keys()].map((f) => posix.join(FEEDBACK_DIR, f)), remedy: "remove it, or write it with: npm run feedback" });
+  await gate(P.feedbackTracked, { dir: FEEDBACK_DIR, tracked: gitTracked(FEEDBACK_DIR, SPEC), expected: [...want.keys()].map((f) => posix.join(FEEDBACK_DIR, f)), remedy: "remove it, or write it with: npm run feedback" });
 }
 
 /** One variant (src/variant.ts) and its build on each lock whose model resolves and differs only where a switch says. */
@@ -956,14 +1087,14 @@ const asBuild = (b: Build): SpecLock => ({ ...b.lock, name: b.label });
  */
 async function checkVariantModelGates(locks: SpecLock[], model: Model, loaded: Loaded | null, proposed: Map<SpecLock, ModelDoc>): Promise<VariantBuilds[]> {
   const out: VariantBuilds[] = [];
-  for (const name of variantNames(ROOT)) {
-    const file = join(ROOT, "variants", `${name}.yaml`);
+  for (const name of variantNames(SPEC)) {
+    const file = join(SPEC, "variants", `${name}.yaml`);
     if (!(await gate(V.variantLoad, { file, name }))) continue;
     if (!loaded) {
       skipped(V.variantCheck, "the decision records didn't load");
       continue;
     }
-    const variant = loadVariant(ROOT, name);
+    const variant = loadVariant(SPEC, name);
     await gate(V.variantCheck, { variant, decisions: loaded.decisions, kernel: model.kernel, mappings: loaded.mappings });
     const own: Kernel = { ...model.kernel, primitives: variant.primitives, file: variant.file };
     // The engines gate reads the oracle's listed gaps against the whole kernel, so the variant's primitives join the kernel's.
@@ -976,7 +1107,7 @@ async function checkVariantModelGates(locks: SpecLock[], model: Model, loaded: L
         skipped(V.variantDiff, "the proposed model didn't resolve", lock);
         continue;
       }
-      const b = resolveBuild({ lock, root: ROOT, mappings: loaded.mappings, decisions: loaded.decisions, kernel: model.kernel, constructors: model.constructors, variant });
+      const b = resolveBuild({ lock, root: SPEC, mappings: loaded.mappings, decisions: loaded.decisions, kernel: model.kernel, constructors: model.constructors, variant });
       const ok = await gate(V.variantDiff, { variant, proposed: p, written: b.model, decisions: loaded.decisions, lock: lock.name, problems: b.problems }, asBuild(b));
       if (ok) builds.set(lock, b);
     }
@@ -990,11 +1121,11 @@ function expectedVariantFiles(variants: VariantBuilds[]): VariantFiles {
   for (const { builds } of variants) {
     for (const b of builds.values()) {
       const schemaDir = b.dirOf(schemaDirOf(b.lock.ir_dir));
-      for (const f of emitSchemas(b.model, schemaDir).files) files.schemas.push(posix.join(schemaDir, f.path));
+      for (const f of emitSchemas(b.model, schemaDir, specSchemaNames()).files) files.schemas.push(posix.join(schemaDir, f.path));
       files.rules.push(posix.join(b.dirOf(rulesDirOf(b.lock.ir_dir)), RULES_FILE));
       files.typeExamples.push(posix.join(b.dirOf(typeExamplesDirOf(b.lock.ir_dir)), TYPE_EXAMPLES_FILE));
       const sdkDir = sdkDirOf(b.lock.ir_dir, b.variant);
-      for (const f of emitSdk(b.model, sdkDir, schemaDir).files) files.sdk.push(posix.join(sdkDir, f.path));
+      for (const f of emitSdk(b.model, sdkDir, schemaDir, NAMES).files) files.sdk.push(posix.join(sdkDir, f.path));
     }
   }
   return files;
@@ -1014,9 +1145,9 @@ function expectedVariantFiles(variants: VariantBuilds[]): VariantFiles {
  * switches' own, with the oracle agreeing.
  */
 async function checkVariantOutputGates(variants: VariantBuilds[], vectors: VectorFile[], loaded: Loaded, model: Model): Promise<void> {
-  const recorded = loadFindings(ROOT);
+  const recorded = loadFindings(join(SPEC, FINDINGS_FILE));
   const codes = codesOf(loadLists(ROOT));
-  const fields = loadFieldExamples(ROOT).fields;
+  const fields = loadFieldExamples(join(SPEC, FIELD_EXAMPLES_FILE)).fields;
   const pinned = pinnedOracle(ROOT);
   const gaps = loaded.decisions.filter((d) => d.kind !== "departure");
   for (const { variant, builds } of variants) {
@@ -1026,27 +1157,27 @@ async function checkVariantOutputGates(variants: VariantBuilds[], vectors: Vecto
       const tag = `-${variant.name}`;
       // Schemas.
       const schemaDir = b.dirOf(schemaDirOf(lock.ir_dir));
-      if (!(await gate(O.schemasEmit, { model: b.model, dir: schemaDir }, at))) continue;
-      const emitted = emitSchemas(b.model, schemaDir);
+      if (!(await gate(O.schemasEmit, { model: b.model, dir: schemaDir, names: specSchemaNames() }, at))) continue;
+      const emitted = emitSchemas(b.model, schemaDir, specSchemaNames());
       const want = new Map(emitted.files.map((f) => [f.path, Buffer.from(f.text)]));
       await gate(O.schemasDeterministic, { label: "schemas", want, runs: twoTreeRuns(lock, `schemas${tag}`, "src/cli/emit.ts", SCHEMA_ROOTS, extra), from: "emitter" }, at);
-      await gate(O.schemasCommitted, { dir: schemaDir, want, committed: tree(schemaDir, SCHEMA_ROOTS), regenerate: "npm run emit" }, at);
-      await gate(O.schemasConventions, { files: emitted.files, model: b.model, dir: schemaDir }, at);
+      await gate(O.schemasCommitted, { dir: schemaDir, want, committed: tree(SPEC, schemaDir, SCHEMA_ROOTS), regenerate: "npm run emit" }, at);
+      await gate(O.schemasConventions, { files: emitted.files, model: b.model, dir: schemaDir, base: NAMES.schema_base }, at);
       await gate(O.schemasAjv, { files: emitted.files }, at);
       await gate(O.schemasOracle, { files: emitted.files }, at);
       // Rules.
       const converted = b.vectors(vectors);
-      const input = { model: b.model, ir: b.ir, lock: lock.name, vectors: converted.vectors, decisions: loaded.decisions, schemaDir, conditionsLeft: emitted.conditions.left };
+      const input = { model: b.model, ir: b.ir, lock: lock.name, vectors: converted.vectors, decisions: loaded.decisions, schemaDir, conditionsLeft: emitted.conditions.left, schemaBase: NAMES.schema_base };
       if (!(await gate(O.rulesEmit, input, at))) continue;
       const rules = emitRules(input).doc;
       await gate(O.ruleVectors, { doc: rules, model: b.model, files: emitted.files, schemaDir }, at);
-      await gate(O.ruleChecks, { doc: rules, model: b.model, codes }, at);
+      await gate(O.ruleChecks, { doc: rules, model: b.model, codes, ruleChecks: ruleChecks() }, at);
       const rulesFile = posix.join(b.dirOf(rulesDirOf(lock.ir_dir)), RULES_FILE);
       const rulesWant = Buffer.from(renderRules(rules));
       await gate(O.rulesDeterministic, { label: RULES_FILE, want: rulesWant, runs: twoRuns(lock, `rules${tag}`, "src/cli/rules.ts", RULES_FILE, extra), from: "emitter" }, at);
       await gate(O.rulesCommitted, { file: rulesFile, want: rulesWant, committed: read(rulesFile), regenerate: "npm run rules" }, at);
       // Fidelity, with no departure in force: the variant states what the text states.
-      await gate(fidelity, { ir: b.ir, lock: lock.name, model: b.model, files: emitted.files, kernel: b.kernel, rules, decisions: gaps, readings: readingsOf(b.mappings, lock.name), schemaDir, expected: loadExpected() }, at);
+      await gate(fidelity, { ir: b.ir, lock: lock.name, model: b.model, files: emitted.files, kernel: b.kernel, rules, decisions: gaps, readings: readingsOf(b.mappings, lock.name), schemaDir, expected: loadExpected(), readers: PLUGIN.fidelity!, names: specSchemaNames() }, at);
       // Examples.
       let spec;
       try {
@@ -1055,11 +1186,11 @@ async function checkVariantOutputGates(variants: VariantBuilds[], vectors: Vecto
         skipped(V.variantExamples, `no source yields the specification's examples (${(e as Error).message.split("\n")[0]})`, at);
         continue;
       }
-      const exInput = { model: b.model, files: emitted.files, schemaDir, examples: spec.examples, values: spec.values, codes, variant, recorded, lock: lock.name, decisions: loaded.decisions };
+      const exInput = { model: b.model, files: emitted.files, schemaDir, examples: spec.examples, values: spec.values, codes, ruleChecks: ruleChecks(), variant, recorded, lock: lock.name, decisions: loaded.decisions };
       await gate(V.variantExamples, exInput, at);
       await gate(C.examplesOracle, { files: emitted.files, cases: checkExamples(exInput).cases }, at);
       // Type examples.
-      const teInput = { model: b.model, files: emitted.files, kernel: b.kernel, schemaDir, codes, spec, fields };
+      const teInput = { model: b.model, files: emitted.files, kernel: b.kernel, schemaDir, codes, ruleChecks: ruleChecks(), spec, fields };
       if (await gate(O.typeExamplesGenerate, teInput, at)) {
         const doc = generateTypeExamples(teInput).doc;
         const file = posix.join(b.dirOf(typeExamplesDirOf(lock.ir_dir)), TYPE_EXAMPLES_FILE);
@@ -1067,17 +1198,17 @@ async function checkVariantOutputGates(variants: VariantBuilds[], vectors: Vecto
         await gate(O.typeExamplesDeterministic, { label: TYPE_EXAMPLES_FILE, want: teWant, runs: twoRuns(lock, `type-examples${tag}`, "src/cli/type-examples.ts", TYPE_EXAMPLES_FILE, extra), from: "generator" }, at);
         const committed = read(file);
         await gate(O.typeExamplesCommitted, { file, want: teWant, committed, regenerate: "npm run type-examples" }, at);
-        if (committed !== null) await gate(O.typeExamplesValid, { doc: JSON.parse(committed.toString("utf8")) as TypeExamplesDoc, model: b.model, files: emitted.files, schemaDir, codes }, at);
+        if (committed !== null) await gate(O.typeExamplesValid, { doc: JSON.parse(committed.toString("utf8")) as TypeExamplesDoc, model: b.model, files: emitted.files, schemaDir, codes, ruleChecks: ruleChecks() }, at);
       }
       // SDK types.
       const sdkDir = sdkDirOf(lock.ir_dir, b.variant);
-      if (!(await gate(S.sdkGenerate, { model: b.model, dir: sdkDir, schemaDir }, at))) continue;
-      const sdk = emitSdk(b.model, sdkDir, schemaDir);
+      if (!(await gate(S.sdkGenerate, { model: b.model, dir: sdkDir, schemaDir, names: NAMES }, at))) continue;
+      const sdk = emitSdk(b.model, sdkDir, schemaDir, NAMES);
       const schemaNames = emitted.files.flatMap((f) => (isPlainMap(f.schema.$defs) ? Object.keys(f.schema.$defs) : [String(f.schema.title)])).sort();
       await gate(S.sdkNames, { schemaNames, emitted: sdk.sdk.emitted, templates: [...sdk.sdk.templates.keys()] }, at);
       const sdkWant = new Map(sdk.files.map((f) => [f.path, Buffer.from(f.text)]));
       await gate(S.sdkDeterministic, { label: "SDK types", want: sdkWant, runs: twoTreeRuns(lock, `sdk${tag}`, "src/cli/sdk.ts", SDK_ROOTS, extra), from: "emitters" }, at);
-      if (!(await gate(S.sdkCommitted, { dir: sdkDir, want: sdkWant, committed: tree(sdkDir, SDK_ROOTS), regenerate: "npm run sdk" }, at))) continue;
+      if (!(await gate(S.sdkCommitted, { dir: sdkDir, want: sdkWant, committed: tree(ROOT, sdkDir, SDK_ROOTS), regenerate: "npm run sdk" }, at))) continue;
       await gate(S.sdkTypecheck, { project: posix.join(sdkDir, "ts", "tsconfig.json") }, at);
       await gate(S.sdkGo, { dir: posix.join(sdkDir, "go") }, at);
       const corpusInput = { model: b.model, files: emitted.files, rules, kernel: b.kernel, schemaDir, oracle: pinned };
@@ -1087,7 +1218,7 @@ async function checkVariantOutputGates(variants: VariantBuilds[], vectors: Vecto
       const legs: [string, () => Promise<SdkRun> | SdkRun][] = [
         ["TypeScript", () => runTypeScript(join(ROOT, sdkDir, "ts"), cases)],
         ["Python", () => runPython(ROOT, join(ROOT, sdkDir, "python"), cases)],
-        ["Go", () => runGo(join(ROOT, sdkDir, "go"), sdkDir, join(ROOT, "build", "ci", lock.name, `sdk-go-verdicts${tag}`), cases)],
+        ["Go", () => runGo(join(ROOT, sdkDir, "go"), join(ROOT, "build", "ci", lock.name, `sdk-go-verdicts${tag}`), cases)],
       ];
       for (const [language, leg] of legs) {
         let r: SdkRun;
@@ -1103,16 +1234,22 @@ async function checkVariantOutputGates(variants: VariantBuilds[], vectors: Vecto
   }
 }
 
-/** The public site: it builds with no problem its own check finds, and two builds in separate processes write its bytes. */
+/** The public site, every spec's pages and the root's: it builds with no problem its own check finds, and two builds in separate processes write its bytes. */
 async function checkSiteGates(): Promise<void> {
   let site;
+  let exported;
   try {
-    site = buildSite(ROOT);
+    const config = loadSiteConfig();
+    exported = { repo: config.repo, tree: exportTree() };
+    site = buildSite(undefined, config, exported.tree);
   } catch (e) {
     record(titleOf(Site.siteBuilds), false, (e as Error).message);
     return;
   }
-  await gate(Site.siteBuilds, { files: site.files, problems: site.problems });
+  // The site's own code, every file under src/site/, and the name each spec's profile gives.
+  const sources = new Map(gitTracked("src/site").map((p) => [p, readFileSync(join(ROOT, p), "utf8")] as const));
+  const names = specNames(ROOT).map((n) => specOf(specRoot(n, ROOT)).profile.names.short);
+  await gate(Site.siteBuilds, { files: site.files, problems: site.problems, sources, names, exported });
   const runs = [1, 2].map((n) => {
     const out = join(ROOT, "build", "ci", `site-run${n}`);
     rmSync(out, { recursive: true, force: true });
@@ -1146,8 +1283,8 @@ async function checkTheGates(kernel: Kernel | null): Promise<void> {
     const inputs = captured.get(g.id);
     if (!inputs) continue;
     for (const f of g.fixtures) {
-      const input = f.lock !== undefined ? inputs.get(f.lock) : inputs.values().next().value;
-      runs.push(input === undefined ? { gate: g.id, fixture: f.name, failed: false, matched: false, problems: [`no input on lock "${f.lock}"`] } : await runFixture(g, input, f));
+      const input = fixtureInput(inputs, f);
+      runs.push(input === undefined ? { gate: g.id, fixture: f.name, failed: false, matched: false, problems: [`no input${f.spec ? ` of the spec "${f.spec}"` : ""}${f.lock ? ` on lock "${f.lock}"` : ""}`] } : await runFixture(g, input, f));
     }
   }
   let records;
@@ -1179,17 +1316,16 @@ async function checkTheGates(kernel: Kernel | null): Promise<void> {
   await gate(selfTests, { runs });
 }
 
-async function main(): Promise<void> {
-  await gate(G.typecheck, { args: ["--noEmit"] });
-  await gate(G.toolchain, { root: ROOT, pkg: G.packageJson() });
-  await gate(G.workflow, { workflow: readFileSync(join(ROOT, ".github", "workflows", "ci.yml"), "utf8"), pkg: G.packageJson(), goMods: trackedGoMods(ROOT) });
-
-  const locks = readdirSync(join(ROOT, "spec-input"))
-    .filter((f) => f === "spec-lock.yaml" || f.endsWith(".lock.yaml"))
-    .sort()
-    .map((f) => loadLock(join(ROOT, "spec-input", f)));
-  for (const lock of locks) await checkLock(lock);
-  const loaded = await checkMappingAndDecisions(locks);
+/** Every gate on one spec, `SPEC`, and its locks; the kernel, when it loads, for the guard's concepts. */
+async function checkSpec(): Promise<Kernel | null> {
+  const locks = lockFiles(SPEC).map(loadLock);
+  const through = stageOf(specOf(SPEC).profile);
+  for (const lock of locks) await checkLock(lock, through);
+  const loaded = await checkMappingAndDecisions(locks, through);
+  if (!reaches(through, "model")) {
+    record(`${posix.basename(SPEC)}: pipeline stage`, true, `the profile says the spec has reached "${through}", so the gates of later stages don't run on it yet, and the spec-profile gate holds it to no file of a later stage`);
+    return null;
+  }
   const kernel = await checkKernelGates(locks, loaded);
   if (kernel) {
     const model = await checkConstructorGates(locks, kernel, loaded);
@@ -1198,6 +1334,13 @@ async function main(): Promise<void> {
     if (model) {
       await checkCoverageGates(locks, model, loaded);
       const models = await checkModelGates(locks, model, loaded);
+      // The records' text for the specification's owners, before any report renders it.
+      if (loaded && models.size === locks.length) await gate(P.recordWording, { decisions: loaded.decisions, names: internalTypeNames([...models].map(([l, m]) => ({ model: m, ir: committedIr(l) }))) });
+      else skipped(P.recordWording, "the models didn't resolve on every lock");
+      if (!reaches(through, "outputs")) {
+        record(`${posix.basename(SPEC)}: pipeline stage`, true, `the profile says the spec has reached "${through}", so the gates of its outputs don't run on it yet, and the spec-profile gate holds it to no output file`);
+        return kernel;
+      }
       const variants = await checkVariantModelGates(locks, model, loaded, models);
       const variantFiles = expectedVariantFiles(variants);
       await checkSchemaGates(models, locks, variantFiles);
@@ -1205,18 +1348,61 @@ async function main(): Promise<void> {
       await checkFidelityGates(models, rules, kernel, loaded);
       await checkCorpusGates(models, rules, kernel, locks);
       await checkTypeExampleGates(models, kernel, locks, variantFiles);
-      await checkSdkGates(models, locks, model, variantFiles);
+      // A spec whose profile names no SDK packages or no feedback target has no SDK types or report to check, unless it has, or owns, such outputs (optional-outputs).
+      const profile = specOf(SPEC).profile;
+      const optional = { spec: posix.basename(SPEC), ownsSdkTree: posix.basename(SPEC) === DEFAULT_SPEC, sdk: NAMES.sdk !== undefined, feedback: profile.feedback !== undefined, trackedFeedback: gitTracked(FEEDBACK_DIR, SPEC) };
+      const optionalOk = await gate(I.optionalOutputs, optional);
+      if (NAMES.sdk || !optionalOk) await checkSdkGates(models, locks, model, variantFiles);
       if (loaded) await checkVariantOutputGates(variants, vectors, loaded, model);
       await checkRoundTripGates(models, locks, loaded);
       await checkExampleGates(models, locks, loaded);
       await checkReleaseGates(models, rules, locks, loaded);
       const feedback = await checkComparisonGates(locks, loaded, model, vectors);
-      if (feedback) await checkFeedbackGates(feedback);
-      else skipped(P.feedback, "the lock comparison's pipeline didn't run clean, so the report has no input");
-      await checkSiteGates();
+      // A registry with a drift/ folder compares its lists with other artifacts' enums.
+      if (existsSync(join(SPEC, DRIFT_DIR))) await checkDriftGates(models);
+      // A spec with no feedback target has no report yet, which optional-outputs checks; its records are held to its owners' terms by the record-wording gate.
+      if (profile.feedback) {
+        if (feedback) await checkFeedbackGates(feedback);
+        else skipped(P.feedback, "the lock comparison's pipeline didn't run clean, so the report has no input");
+      }
     }
   }
+  return kernel;
+}
 
+async function main(): Promise<void> {
+  await gate(G.typecheck, { args: ["--noEmit"] });
+  await gate(G.toolchain, { root: ROOT, pkg: G.packageJson() });
+  await gate(G.workflow, { workflow: readFileSync(join(ROOT, ".github", "workflows", "ci.yml"), "utf8"), pkg: G.packageJson(), goMods: trackedGoMods(ROOT) });
+
+  // Each spec under specs/ with its locks under specs/<spec>/spec-input/.
+  const specs = specNames(ROOT);
+  if (specs.length === 0) record("specs", false, "specs/ holds no spec folder, so no lock was checked");
+  let kernel: Kernel | null = null;
+  for (const name of specs) {
+    SPEC = specRoot(name, ROOT);
+    let spec;
+    try {
+      spec = specOf(SPEC);
+    } catch (e) {
+      record(`${name}: ${titleOf(I.specProfile)}`, false, (e as Error).message);
+      continue;
+    }
+    if (spec.plugin === null) {
+      // A schema set imported as published has no locks to extract; its profile is all there is to check here.
+      await gate(I.specProfile, { profile: spec.profile, text: null, roles: [], findingKinds: FINDING_KINDS, locks: existsSync(join(SPEC, "spec-input")) ? lockFiles(SPEC).length : 0, entries: folderEntries() });
+      continue;
+    }
+    PLUGIN = spec.plugin;
+    NAMES = spec.profile.names;
+    kernel = (await checkSpec()) ?? kernel;
+  }
+  SPEC = "";
+
+  // One site for every spec, once each spec's outputs are checked.
+  await checkSiteGates();
+
+  await gate(G.layoutTracked, { tracked: gitTracked(".").filter((p) => [...G.MOVED_DIRS, ...G.FORMAT_DIRS].includes(p.split("/")[0]!)) });
   const untracked = run("git", ["ls-files", "--others", "--exclude-standard", ...G.TRACKED_DIRS]);
   await gate(G.untracked, { untracked: untracked.ok ? untracked.output.split("\n").filter((p) => p !== "") : [untracked.output] });
   await gate(G.npmTest, { script: G.packageJson().scripts?.test ?? "", extra: [] });

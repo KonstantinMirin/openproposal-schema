@@ -32,6 +32,7 @@ import { compileSchema } from "./pipeline.ts";
 import type { Expr } from "./sdk.ts";
 import { jsonEqual, jsonOf, type SdkCase, type SdkRun } from "./sdk-parity.ts";
 import { spawnWithInput } from "./spawn.ts";
+import { REPO_ROOT } from "./repo.ts";
 
 export const PLAIN_REQUIREMENTS = "tools/plaingen/requirements.in";
 export const EXEMPTIONS_FILE = "plain-generator/exemptions.yaml";
@@ -192,9 +193,10 @@ export interface ExemptionsFile {
   file: string;
 }
 
-export function loadExemptions(root: string, file = join(root, EXEMPTIONS_FILE)): ExemptionsFile {
+/** Loads and validates plain-generator exemptions, a spec's `plain-generator/exemptions.yaml` (`EXEMPTIONS_FILE` in its folder). */
+export function loadExemptions(file: string): ExemptionsFile {
   const doc = readYaml(file);
-  const errors = compileSchema(join(root, EXEMPTIONS_SCHEMA))(doc);
+  const errors = compileSchema(join(REPO_ROOT, EXEMPTIONS_SCHEMA))(doc);
   if (errors.length > 0) throw new Error(`${file}: not a valid exemptions file: ${errors.join("; ")}`);
   return { ...(doc as Omit<ExemptionsFile, "file">), file };
 }

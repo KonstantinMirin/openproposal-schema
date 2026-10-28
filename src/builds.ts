@@ -7,33 +7,45 @@
  * proposed one, or the variant `--variant` names. `--variant proposed`
  * names the proposed build.
  */
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { loadConstructors, type Constructors } from "./constructors.ts";
 import type { SpecIR } from "./ir-types.ts";
 import { loadKernel, type Kernel } from "./kernel.ts";
-import { loadLock, type SpecLock } from "./lock.ts";
+import { loadLock, repoRoot, type SpecLock } from "./lock.ts";
 import { loadDecisions, loadMappings, type DecisionRecord, type MappingFile } from "./mapping.ts";
 import { resolveModel, type ModelDoc } from "./model.ts";
 import type { VectorFile } from "./rules.ts";
+import { lockFiles, REPO_ROOT, specRoot } from "./repo.ts";
 import { applyVariant, loadVariant, VARIANTS_DIR, variantDir, type Variant } from "./variant.ts";
 
 export const PROPOSED = "proposed";
 
-/** The names of the variants under `variants/`, sorted. */
-export function variantNames(root: string): string[] {
-  return readdirSync(join(root, VARIANTS_DIR))
+/** The names of the variants under a spec's `variants/`, sorted; none for a spec that proposes no change, which has no such folder. */
+export function variantNames(spec: string): string[] {
+  if (!existsSync(join(spec, VARIANTS_DIR))) return [];
+  return readdirSync(join(spec, VARIANTS_DIR))
     .filter((f) => f.endsWith(".yaml"))
     .map((f) => f.slice(0, -".yaml".length))
     .sort();
 }
 
-/** Every lock under `spec-input/`, the default lock first. */
-export function allLocks(root: string): SpecLock[] {
-  return readdirSync(join(root, "spec-input"))
-    .filter((f) => f === "spec-lock.yaml" || f.endsWith(".lock.yaml"))
-    .sort()
-    .map((f) => loadLock(join(root, "spec-input", f)));
+/** Every lock under a spec's `spec-input/`, the default lock first. */
+export function allLocks(spec: string): SpecLock[] {
+  return lockFiles(spec).map(loadLock);
+}
+
+/**
+ * The spec folder a CLI works on: the folder of the lock `--lock` names, or
+ * of the spec `--spec` names, or the default spec's when it is given
+ * neither. Throws when the two name different specs.
+ */
+export function cliSpec(values: { lock?: string; spec?: string }): string {
+  const named = values.spec !== undefined ? specRoot(values.spec) : null;
+  if (values.lock === undefined) return named ?? specRoot();
+  const of = repoRoot(loadLock(resolve(values.lock)));
+  if (named !== null && named !== of) throw new Error(`--lock names a lock of ${relative(REPO_ROOT, of)}, and --spec names ${relative(REPO_ROOT, named)}`);
+  return of;
 }
 
 export interface Build {
@@ -58,7 +70,7 @@ export interface Build {
   vectors: (vectors: VectorFile[]) => { vectors: VectorFile[]; problems: string[] };
 }
 
-/** Resolves one lock's build, in the schemas we propose or in a variant. */
+/** Resolves one lock's build, in the schemas we propose or in a variant. `root` is the lock's spec folder. */
 export function resolveBuild(input: { lock: SpecLock; root: string; mappings: MappingFile[]; decisions: DecisionRecord[]; kernel: Kernel; constructors: Constructors; variant?: Variant; ir?: SpecIR }): Build {
   const { lock, root, decisions } = input;
   const ir = input.ir ?? (JSON.parse(readFileSync(join(root, lock.ir_dir, "spec-ir.json"), "utf8")) as SpecIR);
@@ -90,20 +102,21 @@ export function resolveBuild(input: { lock: SpecLock; root: string; mappings: Ma
   };
 }
 
-/** The builds a CLI's `--lock`, `--variant`, and `--out` select. Throws on `--out` without `--lock`, and on an unknown variant. */
-export function cliBuilds(root: string, values: { lock?: string; out?: string; variant?: string }): Build[] {
+/** The builds a CLI's `--spec`, `--lock`, `--variant`, and `--out` select. Throws on `--out` without `--lock`, and on an unknown variant. */
+export function cliBuilds(values: { spec?: string; lock?: string; out?: string; variant?: string }): Build[] {
   if (values.out !== undefined && values.lock === undefined) throw new Error("--out needs --lock");
+  const root = cliSpec(values);
   const locks = values.lock !== undefined ? [loadLock(resolve(values.lock))] : allLocks(root);
   const names = variantNames(root);
   if (values.variant !== undefined && values.variant !== PROPOSED && !names.includes(values.variant)) throw new Error(`--variant names "${values.variant}", which is neither "${PROPOSED}" nor one of ${names.join(", ")}`);
   const chosen = values.variant !== undefined ? [values.variant] : values.out !== undefined ? [PROPOSED] : [PROPOSED, ...names];
-  const mappings = loadMappings(root, join(root, "mapping"));
-  const decisions = loadDecisions(root, join(root, "decisions"));
-  const kernel = loadKernel(root);
-  const constructors = loadConstructors(root);
+  const mappings = loadMappings(join(root, "mapping"));
+  const decisions = loadDecisions(join(root, "decisions"));
+  const kernel = loadKernel(REPO_ROOT, root);
+  const constructors = loadConstructors(REPO_ROOT, root);
   const variants = new Map(chosen.filter((n) => n !== PROPOSED).map((n) => [n, loadVariant(root, n)]));
   return locks.flatMap((lock) => chosen.map((n) => resolveBuild({ lock, root, mappings, decisions, kernel, constructors, ...(n === PROPOSED ? {} : { variant: variants.get(n)! }) })));
 }
 
-/** The `--lock`, `--out`, and `--variant` options every generating CLI takes. */
-export const BUILD_OPTIONS = { lock: { type: "string" }, out: { type: "string" }, variant: { type: "string" } } as const;
+/** The `--spec`, `--lock`, `--out`, and `--variant` options every generating CLI takes. */
+export const BUILD_OPTIONS = { spec: { type: "string" }, lock: { type: "string" }, out: { type: "string" }, variant: { type: "string" } } as const;

@@ -1,0 +1,94 @@
+format: 1
+id: G-088
+date: 2026-10-27
+question: What changes in the gates when AdCOM's lists become a registry of vocabularies and its objects wait for a later phase?
+decision: >-
+  Four mapping rules join. `deferred-module` maps every element of a module
+  whose file says it is deferred, citing the decision that defers it, as
+  informative, and the mapping gate fails when that decision doesn't exist
+  or covers no element of the module's sections. `list-vocabulary` declares
+  a vocabulary for each table of codes a section's heading alone names,
+  named after the list's title in PascalCase with its head noun in the
+  singular, labeled by its rows, and open to vendors' codes from the first
+  number of a `500+` row; `list-code` maps each code row to its term and
+  `vendor-range` each `500+` row to the vocabulary's schema. The key-table
+  rule declares nothing in a deferred module. A vocabulary declaration may
+  give its own vendor range, label its terms by their rows, and name a
+  kernel primitive as its extension; the model fails when one of them is
+  given to a closed vocabulary, or a vendor range together with an
+  extension or a cited list. A labeled list's structure includes its
+  labels, and it is a list of its own, as a cited list is, so two of
+  AdCOM's lists with the same codes aren't twins. A spec's kernel binding
+  may mark a kernel item absent, which leaves the spec's kernel, so a
+  spec's kernel gates run on the types its text uses; a constructor list
+  may then be empty. In a registry of lists with no document, the
+  vocabularies are what the domain gate's reach starts from. The oracle's
+  listed gaps are checked with each spec whose kernel has their primitive.
+  A new kernel primitive, MediaOffset, with its concept in a new media
+  domain, holds a start delay in seconds; OpenProposal's binding marks both
+  absent. AdCOM reaches its model stage, and the test suite holds 448
+  tests; MIN_TESTS is 448.
+rationale: >-
+  Every gate keeps its check on OpenProposal, whose outputs don't change,
+  and now runs on AdCOM's mapping and model too. The two refinements, labels
+  in a labeled list's structure and the registry's reach, apply only to a
+  list of a specification's own and a model with no document, which
+  OpenProposal has none of.
+accepts:
+  - { gate: comparison, fingerprint: 83ea9f94a826ab1682a73eb9b34f4e5edf7424c5d7f2c49609e5fc92a2388186 }
+  - { gate: constructors-applied, fingerprint: b392bfd57dbc4911ba9d3ea641c087efdfa7fe95502235391c4ad9021d6bf333 }
+  - { gate: constructors-load, fingerprint: 430d1b2f8004cc0e7a4229a345d937dd2cd042844225f8733444605d4d13e4c5 }
+  - { gate: convention-beside-reference, fingerprint: ba6479aae4ba228f7dc2b3ef71979bb734e37f452bad7502488bada99a6096a9 }
+  - { gate: convention-inline, fingerprint: 7e30f111eeddee3049720a19cd5273a1f9f4a93acc3651adad94ce0fb3c063c9 }
+  - { gate: convention-keywords, fingerprint: d2a812fcd7ef375e688275ad3bc0b99adf3a9405e15e4655d75fe5f8f001a13e }
+  - { gate: convention-layers, fingerprint: 61b918087bdd9bbbf36d181d92eb7ce687351dfd38882dc1c7ede20866537f77 }
+  - { gate: convention-lists, fingerprint: dd78e1f937d99ffd214cb7555905e49b9ceb897ac4003c163af5aa61a1f6ddba }
+  - { gate: convention-modules, fingerprint: a344c5eb2cb3a200b7c12d24b330cf861512056f87ab23b1383a27d67d7bfc9b }
+  - { gate: convention-unions, fingerprint: b5522a3d22199842278f1db2d9f5d1eff0b32d58b8a03a8cac725575361c0910 }
+  - { gate: corpus-generates, fingerprint: 9ae5cfd2279fc894ecadc6b2f4b10150228246742a1c2bdcefc93e02fc7d474a }
+  - { gate: corpus-isolation, fingerprint: 0135fc179a641e0448f020d9a6675f0e785c8b0ca6e6ad6af66f5fa14790b09f }
+  - { gate: domains-homonyms, fingerprint: 870614072270a02f884cc604515f17d5c0ca94cc42ccfbe7e107f665f9d7754d }
+  - { gate: domains-properties, fingerprint: 5c9e5e840a576dbf15eab8a3839c4eab879d4731672071e08d9b768e7fbd80c3 }
+  - { gate: domains-used, fingerprint: 1991f7a7fa107dbadc64861d737b581371aa7c5e9ad88dd7f56513dc6f85d71e }
+  - { gate: duplication-kernel, fingerprint: 6ae2b16c421ff1d3c0de50031391a6f626c0eef9591866b8d40cc2d7c0946478 }
+  - { gate: duplication-model, fingerprint: 34d6275aac51c8b0c59f387ae24008a9f797ebb20becbcc132bc88aa4d325c86 }
+  - { gate: examples-listing, fingerprint: 8821325b9c47eb761f5743d70d959fe68b909cef228d3e5493e6fb2c6c886b41 }
+  - { gate: examples-validate, fingerprint: c02da064ae2b427901d936c6f36591066c3718bc9bc7df4a59f8e542638cf390 }
+  - { gate: extraction, fingerprint: 30a6e9adff536176071cf666b65d85fc43f38fd1ec289a7474991709e7cf2f53 }
+  - { gate: feedback, fingerprint: 85d6558f908535c94783e1ddb3891ea44d5f4a49aa02627f673f16f3bd67ba87 }
+  - { gate: fidelity, fingerprint: 67666b23f3affb394a16ace932a7e4ccf332a7cfd3df1301ce7e5aca5841d183 }
+  - { gate: field-examples, fingerprint: 56e0426b8ee006341b45d86069c194a3d93734af9b23636740ecec76c7beddf8 }
+  - { gate: frozen-releases, fingerprint: 5fc030fcbc6b51d97d474f546e10e0ca89884873ebb8e13d01b0d030bad0388c }
+  - { gate: frozen-reviewed, fingerprint: 9010037f917d68fb479363bc98377d7293f2f95cf5b9ebd86567b34eff4766bb }
+  - { gate: kernel-engines, fingerprint: 70d4bbf2e37decdb7f838ad5ad6536bbbd2fad1f7b6333cd116f32c8122d565a }
+  - { gate: kernel-load, fingerprint: 5af81b5f6f0b8a7304d8d272c8c0adbeea66229b8b80dedd02f9e08f2dc4b94b }
+  - { gate: map-drift, fingerprint: 98cfaea7bd53862848ccadcc864a25f18680c4029515681374cfffc1aacfd06d }
+  - { gate: mapping-bijection, fingerprint: 655bf7073b1e741616c029edbdc71185154148c12c56d9923fad8453881bc0a4 }
+  - { gate: mapping-constructors, fingerprint: eb194a08c79fcdc567cdcda670e92a516c13858ebe0e9e2a0c345ffa20215a46 }
+  - { gate: mapping-current, fingerprint: 6ee07cad1111909f930227eb02b2791f5ef85dd0130223625238d4da4f293e07 }
+  - { gate: mapping-load, fingerprint: 1f488e7943dfd6a5373b482590421e285279690fbb83dccb7d6ef58b912596ff }
+  - { gate: mapping-location, fingerprint: 06a3d31b379fcdd7be8a3e89d739c29cb9c7fd1225dff4f9d6c196db57f2be93 }
+  - { gate: mapping-names, fingerprint: 6d87473dd6fc47a241b04fdfb073d5fbc6e45b15b209ba5ed382c01d4660eb12 }
+  - { gate: mapping-rules, fingerprint: fa971a248bb62301bf2e4df543471d212040ee0d4d3f8226b8ac7f0e3d6aaea3 }
+  - { gate: mapping-sources, fingerprint: cf8571161a0bfb07aaa733a5a979c4349ae509d496b46ada1c1e7892992ac759 }
+  - { gate: model-resolves, fingerprint: 7f00cba4fe5a1b04fdbd75da0c1874c03699bedd0f62322e3b8f7a442cc2b903 }
+  - { gate: modules-depends, fingerprint: 3b6dd04e1d9efb2d7f1e501e5a729e5ef5f511eeb3923240b851557a423150cb }
+  - { gate: nesting, fingerprint: 67dc992277abf2d2a16ccd2e369957403e656f45916926e5276152b726d7e21b }
+  - { gate: npm-test, fingerprint: 9d62b3d358190a18bee4739d720f9eefb0c3774aa65476200cf8844ffe22735c }
+  - { gate: release-breaking, fingerprint: ed42b0d74051bbcc87fb39017dbbae23954cca504564af50ed9eda3eca866ffc }
+  - { gate: release-builds, fingerprint: cae5cb35a5abb478ce3f41d7fed31c4788fea2868236fc86a94fab35a0a16894 }
+  - { gate: release-digests, fingerprint: b1c50453904a9bfd004f070a6da7ff9af45d523ac8e5b144d83962ec2a389800 }
+  - { gate: round-trip, fingerprint: bc52ceab574ecfb02c0b39b4860d9d2d9e61b931e94948870626ef07039fa05c }
+  - { gate: rule-checks, fingerprint: 50bf232412e11891b5e7b0da18ce313b6c203851b5726855a5e71cb93ff08a1e }
+  - { gate: rule-vectors, fingerprint: 891882d03bc7b52db75014ac9e6417129ef1a373f90815e828b447b0d96a04b2 }
+  - { gate: rules-emit, fingerprint: 4a7ad7cd5e622d494a1086e4a391415f095944e837cb1a8b26d38d5f2bc3570b }
+  - { gate: schemas-conventions, fingerprint: 24623f46fdeaddc2c54d1372e9d12c5f89190e8f0a4efc1ce9f37eeea59931a2 }
+  - { gate: schemas-emit, fingerprint: a27966b86b0f955b90d9e7000e5e90d51fa4f7ef82bfa00b8d13004509f58bab }
+  - { gate: sdk-generate, fingerprint: 96dfdbb4df4f9650972b01728d62780023cb1c42da4a6a251df6177774c3264b }
+  - { gate: site-builds, fingerprint: 9d346cecf367492ea44d5c8eab299bd8fa674780f5a1be75848c38cee52a4bcd }
+  - { gate: spec-profile, fingerprint: 7a4306759344226429e29978866991e37f6482957e1a19d07db073cca92a9d2b }
+  - { gate: type-examples-generate, fingerprint: 3faf8bba15ae844917a3e74dc453ddfc2b17eb2ce8fc5fe88b878d14269cdcc2 }
+  - { gate: type-examples-valid, fingerprint: 9ee9c63dc2b746cdceba515545c66a196b5af910938c7cc7d042a792f94e7e36 }
+  - { gate: variant-check, fingerprint: 98dfb87aaf91d17f5832807468f30b46aeaa2976d7570413485809c906b39f75 }
+  - { gate: variant-diff, fingerprint: 8a317c7087fdefc7aed4819f1c60ab10591ca4ab2798b4c0be97863500246915 }
+  - { gate: variant-examples, fingerprint: 4aaca3a640da864f1beee14a21ae9eac4ecbbd583cffe9b520a106efc291cdf0 }

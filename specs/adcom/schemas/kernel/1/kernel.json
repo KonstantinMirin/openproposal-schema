@@ -1,0 +1,19 @@
+{
+  "$defs": {
+    "MediaOffset": {
+      "description": "A point within a piece of media, in whole seconds from its start and never negative, such as the second of a video at which a mid-roll ad starts.",
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "VendorCode": {
+      "description": "A code that an AdCOM 1.0 list reserves for vendors, 500 or more, as List API Frameworks reserves \"500+ Vendor-specific codes\". It extends a vocabulary of the list's codes.",
+      "minimum": 500,
+      "type": "integer"
+    }
+  },
+  "$id": "https://adtechspec.noetis.dev/adcom/schemas/kernel/1/kernel.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The AdCOM kernel: the primitives.",
+  "title": "kernel"
+}

@@ -1,12 +1,15 @@
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { parseArgs } from "node:util";
+import { allLocks, cliSpec } from "../builds.ts";
 import { loadConstructors } from "../constructors.ts";
 import { loadKernel } from "../kernel.ts";
 import { loadLock, type SpecLock } from "../lock.ts";
 import { loadDecisions, loadMappings } from "../mapping.ts";
 import { resolveModel } from "../model.ts";
-import { checkDifferences, loadDifferences, renderMarkdown, roundTrip } from "../render.ts";
+import { checkDifferences, DIFFERENCES_FILE, loadDifferences, renderMarkdown, roundTrip } from "../render.ts";
+import { REPO_ROOT } from "../repo.ts";
+import { notationOf } from "../specs/index.ts";
 
 /**
  * Usage: render [--lock <file>] [--out <dir>]
@@ -23,35 +26,34 @@ import { checkDifferences, loadDifferences, renderMarkdown, roundTrip } from "..
  * records.
  */
 function main(): number {
-  const { values } = parseArgs({ options: { lock: { type: "string" }, out: { type: "string" } } });
-  const root = new URL("../..", import.meta.url).pathname.replace(/\/$/, "");
+  const { values } = parseArgs({ options: { spec: { type: "string" }, lock: { type: "string" }, out: { type: "string" } } });
+  const root = REPO_ROOT;
+  const specDir = cliSpec(values);
   if (values.out !== undefined && values.lock === undefined) throw new Error("--out needs --lock");
   const locks: SpecLock[] =
     values.lock !== undefined
       ? [loadLock(resolve(values.lock))]
-      : readdirSync(join(root, "spec-input"))
-          .filter((f) => f === "spec-lock.yaml" || f.endsWith(".lock.yaml"))
-          .sort()
-          .map((f) => loadLock(join(root, "spec-input", f)));
-  const mappings = loadMappings(root, join(root, "mapping"));
-  const decisions = loadDecisions(root, join(root, "decisions"));
-  const kernel = loadKernel(root);
-  const constructors = loadConstructors(root);
-  const recorded = loadDifferences(root);
+      : allLocks(specDir);
+  const mappings = loadMappings(join(specDir, "mapping"));
+  const decisions = loadDecisions(join(specDir, "decisions"));
+  const kernel = loadKernel(root, specDir);
+  const constructors = loadConstructors(root, specDir);
+  const recorded = loadDifferences(join(specDir, DIFFERENCES_FILE));
 
   let failed = false;
   for (const lock of locks) {
-    const ir = JSON.parse(readFileSync(join(root, lock.ir_dir, "spec-ir.json"), "utf8"));
+    const ir = JSON.parse(readFileSync(join(specDir, lock.ir_dir, "spec-ir.json"), "utf8"));
     const { model, problems } = resolveModel({ ir, lock: lock.name, mappings, decisions, kernel, constructors });
     if (problems.length > 0) {
       for (const p of problems) console.error(`error: ${lock.name}: model: ${p}`);
       failed = true;
       continue;
     }
-    const rt = roundTrip(model, ir);
-    const out = values.out !== undefined ? resolve(values.out) : join(root, "build", relative(join(root, "ir"), join(root, lock.ir_dir)));
+    const notation = notationOf(lock);
+    const rt = roundTrip(model, ir, notation);
+    const out = values.out !== undefined ? resolve(values.out) : join(root, "build", relative(join(specDir, "ir"), join(specDir, lock.ir_dir)));
     mkdirSync(out, { recursive: true });
-    writeFileSync(join(out, "tables.md"), renderMarkdown(rt, lock.name));
+    writeFileSync(join(out, "tables.md"), renderMarkdown(rt, lock.name, notation));
     const rows = rt.model.reduce((n, t) => n + t.rows.length, 0);
     const shown = out.startsWith(`${root}/`) ? out.slice(root.length + 1) : out;
     console.log(`${lock.name}: ${rt.model.length} tables, ${rows} rows in ${shown}/tables.md; ${rt.differences.length} difference${rt.differences.length === 1 ? "" : "s"} from the specification`);

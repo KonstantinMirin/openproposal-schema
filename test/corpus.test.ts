@@ -10,14 +10,14 @@ import type { SpecIR } from "../src/ir-types.ts";
 import { loadKernel } from "../src/kernel.ts";
 import { loadDecisions, loadMappings } from "../src/mapping.ts";
 import { resolveModel, type ModelDoc } from "../src/model.ts";
-import { emitRules, loadVectors, type RulesDoc } from "../src/rules.ts";
-import { ROOT } from "./helpers.ts";
+import { emitRules, loadVectors, type RulesDoc, VECTORS_DIR } from "../src/rules.ts";
+import { OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT);
-const CONSTRUCTORS = loadConstructors(ROOT);
-const MAPPINGS = loadMappings(ROOT, join(ROOT, "mapping"));
-const DECISIONS = loadDecisions(ROOT, join(ROOT, "decisions"));
-const VECTORS = loadVectors(ROOT);
+const KERNEL = loadKernel(ROOT, SPEC);
+const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const MAPPINGS = loadMappings(join(SPEC, "mapping"));
+const DECISIONS = loadDecisions(join(SPEC, "decisions"));
+const VECTORS = loadVectors(join(SPEC, VECTORS_DIR));
 const ORACLE = "4.26.0";
 
 interface Lock {
@@ -30,10 +30,10 @@ interface Lock {
 }
 
 function lockOf(lock: string, irDir: string, schemaDir: string): Lock {
-  const ir = JSON.parse(readFileSync(join(ROOT, irDir, "spec-ir.json"), "utf8")) as SpecIR;
+  const ir = JSON.parse(readFileSync(join(SPEC, irDir, "spec-ir.json"), "utf8")) as SpecIR;
   const model = resolveModel({ ir, lock, mappings: MAPPINGS, decisions: DECISIONS, kernel: KERNEL, constructors: CONSTRUCTORS }).model;
-  const emitted = emitSchemas(model, schemaDir);
-  const rules = emitRules({ model, ir, lock, vectors: VECTORS, decisions: DECISIONS, schemaDir, conditionsLeft: emitted.conditions.left }).doc;
+  const emitted = emitSchemas(model, schemaDir, OP_SCHEMA);
+  const rules = emitRules({ model, ir, lock, vectors: VECTORS, decisions: DECISIONS, schemaDir, conditionsLeft: emitted.conditions.left, schemaBase: OP_SCHEMA.base }).doc;
   return { lock, irDir, schemaDir, model, files: emitted.files, rules };
 }
 const MAIN = lockOf("main", "ir", "schemas");
@@ -48,7 +48,7 @@ test("each lock's corpus generates with no problem, passes the isolation check, 
     assert.deepEqual(r.problems, [], `${l.lock}: ${r.problems.join("\n")}`);
     assert.deepEqual(checkCorpus(r.doc, l.files, l.model, l.rules, l.schemaDir), [], l.lock);
     assert.ok(r.doc.constraints.length > 0 && r.doc.rules.length === l.rules.rules.length, l.lock);
-    assert.equal(readFileSync(join(ROOT, corpusDirOf(l.irDir), "cases.json"), "utf8"), renderCorpus(r.doc), l.lock);
+    assert.equal(readFileSync(join(SPEC, corpusDirOf(l.irDir), "cases.json"), "utf8"), renderCorpus(r.doc), l.lock);
   }
 });
 
@@ -144,7 +144,7 @@ test("the old corpus check passes on its own release and fails on a narrowed sch
 
 test("a part's baseline holds its rules: every daypart window a baseline holds ends after it starts", () => {
   for (const file of ["corpus/cases.json", "corpus/with-open-prs/cases.json"]) {
-    const doc = JSON.parse(readFileSync(join(ROOT, file), "utf8")) as { constraints: { id: string; baseline?: unknown }[] };
+    const doc = JSON.parse(readFileSync(join(SPEC, file), "utf8")) as { constraints: { id: string; baseline?: unknown }[] };
     let windows = 0;
     const walk = (v: unknown, id: string): void => {
       if (Array.isArray(v)) return v.forEach((x) => walk(x, id));

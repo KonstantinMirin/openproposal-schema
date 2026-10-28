@@ -6,6 +6,8 @@ import type { SpecIR } from "./ir-types.ts";
 import { assertingAjv, decisionCheck, designCheck, primitiveStructure, type DesignSource, type Kernel, type Primitive } from "./kernel.ts";
 import { checkCovers, inScope, readYaml, type Cover, type DecisionRecord, type MappingFile, type Members, type TypeRef } from "./mapping.ts";
 import { compileSchema } from "./pipeline.ts";
+import { REPO_ROOT } from "./repo.ts";
+import { bound, loadBinding } from "./binding.ts";
 
 /** What an argument may be (`kernel/constructors.schema.json`, `parameter.accepts`). */
 export type Accepts = "any" | "named" | "string" | "ordered" | "unordered" | "closed";
@@ -92,18 +94,28 @@ export interface Constructors {
   parts: Part[];
   /** The file the constructors came from, for messages. */
   file: string;
+  /** The spec's kernel binding the spec sources and decisions came from (src/binding.ts); none for the definitions alone. */
+  binding?: string;
 }
 
 export const CONSTRUCTORS_FILE = join("kernel", "constructors.yaml");
 const CONSTRUCTORS_SCHEMA = join("kernel", "constructors.schema.json");
 
-/** Loads `kernel/constructors.yaml` from `root` and validates it against its schema. Throws if it is invalid. */
-export function loadConstructors(root: string, file = join(root, CONSTRUCTORS_FILE)): Constructors {
-  const doc = readYaml(file);
-  const refs = [join(root, "mapping", "mapping.schema.json"), join(root, "kernel", "kernel.schema.json")];
-  const errors = compileSchema(join(root, CONSTRUCTORS_SCHEMA), refs)(doc);
-  if (errors.length > 0) throw new Error(`${file}: not a valid constructors file: ${errors.join("; ")}`);
-  return { ...(doc as Omit<Constructors, "file">), file };
+/**
+ * Loads `kernel/constructors.yaml` from `root`, with a spec's kernel binding
+ * merged in (`spec`, the spec's folder; null for the definitions alone), and
+ * validates it against its schema. Throws if it is invalid.
+ */
+export function loadConstructors(root: string, spec: string | null, file = join(root, CONSTRUCTORS_FILE)): Constructors {
+  const binding = spec === null ? null : loadBinding(spec);
+  const raw = readYaml(file) as { constructors?: unknown[]; parts?: unknown[] };
+  const doc = bound("constructors", file, raw, binding);
+  const refs = [join(REPO_ROOT, "mapping", "mapping.schema.json"), join(REPO_ROOT, "kernel", "kernel.schema.json")];
+  const errors = compileSchema(join(REPO_ROOT, CONSTRUCTORS_SCHEMA), refs)(doc);
+  // The kernel file defines templates and parts; a spec's binding may leave them all out of its kernel, the file never.
+  if (!Array.isArray(raw.constructors) || raw.constructors.length === 0 || !Array.isArray(raw.parts) || raw.parts.length === 0) errors.push("the kernel file defines no constructor or no part; it holds at least one of each, and a spec's binding leaves out the ones its text never uses");
+  if (errors.length > 0) throw new Error(`${file}${binding ? ` with ${binding.file}` : ""}: not a valid constructors file: ${errors.join("; ")}`);
+  return { ...(doc as Omit<Constructors, "file" | "binding">), file, ...(binding ? { binding: binding.file } : {}) };
 }
 
 /** The kernel and the constructors: every named type a template may reference. */
@@ -676,7 +688,7 @@ export function checkConstructorSources(ir: SpecIR, lock: string, c: Constructor
   const problems: string[] = [];
   const elements = indexElements(ir);
   for (const x of [...c.constructors, ...c.parts]) {
-    const where = `${c.file}: ${x.name}`;
+    const where = `${c.binding ?? c.file}: ${x.name}`;
     checkCovers(where, x.sources.spec, elements, lock, problems);
     if (!x.sources.spec.some((s) => inScope(s.locks, lock))) problems.push(`${where}: cites no spec row on lock "${lock}"`);
     for (const r of ("rules" in x ? x.rules : undefined) ?? []) checkCovers(`${where}: rule "${r.id}"`, r.source.spec ?? [], elements, lock, problems);

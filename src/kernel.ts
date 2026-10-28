@@ -11,6 +11,8 @@ import { loadDomains, type Domains } from "./domains.ts";
 import { checkListCopies } from "./list-copies.ts";
 import { loadLists, type Lists } from "./lists.ts";
 import { CHECKS, codesOf } from "./rule-checks.ts";
+import { REPO_ROOT } from "./repo.ts";
+import { bound, loadBinding } from "./binding.ts";
 
 /** The constraint keywords a primitive may carry, as `kernel/kernel.schema.json` defines them. */
 export interface Constraints {
@@ -62,6 +64,8 @@ export interface Kernel {
   primitives: Primitive[];
   /** The file the primitives came from, for messages. */
   file: string;
+  /** The spec's kernel binding the spec sources, decisions, and locks came from (src/binding.ts); none for the definitions alone. */
+  binding?: string;
   /** The value domains, `kernel/domains.yaml`, which every primitive and part declares a concept of. */
   domains?: Domains;
   /** The code lists other standards keep, `kernel/lists.yaml`, which a vocabulary may take its terms from. */
@@ -72,15 +76,19 @@ export const KERNEL_FILE = join("kernel", "primitives.yaml");
 const KERNEL_SCHEMA = join("kernel", "kernel.schema.json");
 
 /**
- * Loads `kernel/primitives.yaml` from `root` and validates it against the
- * kernel schema, with the value domains of `kernel/domains.yaml` beside it.
- * Throws if either is invalid.
+ * Loads `kernel/primitives.yaml` from `root`, with the value domains of
+ * `kernel/domains.yaml` beside it, each with a spec's kernel binding merged
+ * in (`spec`, the spec's folder; null for the definitions alone), and
+ * validates each against its schema. Throws if either is invalid, if a
+ * kernel file holds what rests on a spec, or if the binding gives a
+ * definition.
  */
-export function loadKernel(root: string, file = join(root, KERNEL_FILE)): Kernel {
-  const doc = readYaml(file);
-  const errors = compileSchema(join(root, KERNEL_SCHEMA))(doc);
-  if (errors.length > 0) throw new Error(`${file}: not a valid kernel file: ${errors.join("; ")}`);
-  return { ...(doc as Omit<Kernel, "file" | "domains" | "lists">), file, domains: loadDomains(root), lists: loadLists(root) };
+export function loadKernel(root: string, spec: string | null, file = join(root, KERNEL_FILE)): Kernel {
+  const binding = spec === null ? null : loadBinding(spec);
+  const doc = bound("primitives", file, readYaml(file), binding);
+  const errors = compileSchema(join(REPO_ROOT, KERNEL_SCHEMA))(doc);
+  if (errors.length > 0) throw new Error(`${file}${binding ? ` with ${binding.file}` : ""}: not a valid kernel file: ${errors.join("; ")}`);
+  return { ...(doc as Omit<Kernel, "file" | "binding" | "domains" | "lists">), file, ...(binding ? { binding: binding.file } : {}), domains: loadDomains(root, binding), lists: loadLists(root) };
 }
 
 /** Whether a primitive is published on a lock: every lock, unless it lists `locks`. */
@@ -318,8 +326,10 @@ export function checkKernelSources(ir: SpecIR, lock: string, kernel: Kernel): st
   const problems: string[] = [];
   const elements = indexElements(ir);
   for (const p of kernel.primitives) {
-    checkCovers(`${kernel.file}: ${p.name}`, p.sources.spec ?? [], elements, lock, problems);
-    for (const r of p.rules ?? []) checkCovers(`${kernel.file}: ${p.name}: rule "${r.id}"`, r.source.spec ?? [], elements, lock, problems);
+    // A spec source is the binding's, which the message names.
+    const at = kernel.binding ?? kernel.file;
+    checkCovers(`${at}: ${p.name}`, p.sources.spec ?? [], elements, lock, problems);
+    for (const r of p.rules ?? []) checkCovers(`${at}: ${p.name}: rule "${r.id}"`, r.source.spec ?? [], elements, lock, problems);
   }
   return problems;
 }

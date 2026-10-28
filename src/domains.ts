@@ -30,6 +30,8 @@ import { checkCovers, inScope, readYaml, type Cover, type DecisionRecord, type T
 import type { ModelDoc, ModelProperty, ModelType } from "./model.ts";
 import type { SharedStructures } from "./duplication.ts";
 import { compileSchema } from "./pipeline.ts";
+import { REPO_ROOT } from "./repo.ts";
+import { bound, type KernelBinding } from "./binding.ts";
 
 export interface Standard {
   name: string;
@@ -63,6 +65,8 @@ export interface Domains {
   bases: Basis[];
   /** The file the domains came from, for messages. */
   file: string;
+  /** The spec's kernel binding the spec sources, decisions, and member names came from (src/binding.ts); none for the definitions alone. */
+  binding?: string;
 }
 
 export interface SharedStructure {
@@ -85,12 +89,12 @@ const DOMAINS_SCHEMA = join("kernel", "domains.schema.json");
 /** The type a two-valued flag is: the inline boolean, which no kernel file defines. */
 export const BOOLEAN = "boolean";
 
-/** Loads `kernel/domains.yaml` from `root` and validates it against its schema. Throws if it is invalid. */
-export function loadDomains(root: string, file = join(root, DOMAINS_FILE)): Domains {
-  const doc = readYaml(file);
-  const errors = compileSchema(join(root, DOMAINS_SCHEMA), [join(root, "kernel", "kernel.schema.json")])(doc);
-  if (errors.length > 0) throw new Error(`${file}: not a valid domains file: ${errors.join("; ")}`);
-  return { ...(doc as Omit<Domains, "file">), file };
+/** Loads `kernel/domains.yaml` from `root`, with a spec's kernel binding merged in, and validates it against its schema. Throws if it is invalid. */
+export function loadDomains(root: string, binding: KernelBinding | null, file = join(root, DOMAINS_FILE)): Domains {
+  const doc = bound("domains", file, readYaml(file), binding);
+  const errors = compileSchema(join(REPO_ROOT, DOMAINS_SCHEMA), [join(REPO_ROOT, "kernel", "kernel.schema.json")])(doc);
+  if (errors.length > 0) throw new Error(`${file}${binding ? ` with ${binding.file}` : ""}: not a valid domains file: ${errors.join("; ")}`);
+  return { ...(doc as Omit<Domains, "file" | "binding">), file, ...(binding ? { binding: binding.file } : {}) };
 }
 
 /** The shared-structure sets, as the duplication gate reads them. */
@@ -233,7 +237,7 @@ export function checkDomainSources(ir: SpecIR, lock: string, d: Domains, kernel:
   const byName = new Map(kernel.map((k) => [k.name, k]));
   for (const domain of d.domains) {
     for (const c of domain.concepts) {
-      const where = `${d.file}: concept "${c.name}"`;
+      const where = `${d.binding ?? d.file}: concept "${c.name}"`;
       checkCovers(where, c.sources.spec ?? [], elements, lock, problems);
       const k = byName.get(c.type);
       const published = c.type === BOOLEAN || (k !== undefined && (k.locks === undefined || k.locks.includes(lock)));
@@ -261,15 +265,15 @@ function reachable(model: ModelDoc, roots: string[]): Set<string> {
 
 /**
  * Every primitive and part one lock's model publishes is reached from a
- * document or a profile, and cites a specification element in scope on the
- * lock or a standard. A kernel type no payload can hold isn't published.
+ * document or a profile, or, in a registry of lists with no document, as
+ * AdCOM's, from a vocabulary, which is a payload's value of its own; and it
+ * cites a specification element in scope on the lock or a standard. A kernel
+ * type no payload can hold isn't published.
  */
 export function useProblems(model: ModelDoc, lock: string, kernel: KernelType[]): string[] {
   const problems: string[] = [];
-  const reached = reachable(
-    model,
-    model.types.filter((t) => t.layer === 5).map((t) => t.name),
-  );
+  const documents = model.types.filter((t) => t.layer === 5).map((t) => t.name);
+  const reached = reachable(model, documents.length > 0 ? documents : model.types.filter((t) => t.kind === "vocabulary").map((t) => t.name));
   const byName = new Map(kernel.map((k) => [k.name, k]));
   for (const t of model.types) {
     if (t.kind !== "primitive" && t.kind !== "part") continue;

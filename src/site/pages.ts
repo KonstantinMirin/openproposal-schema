@@ -1,22 +1,21 @@
 /**
- * The site's pages: the landing page, the type map's shell, the example
- * payloads, the decision records with their index, the downloads, and the
- * not-found page. Every text is public: it names no internal document or
+ * A spec's pages on the site that every spec shares: the type map's shell,
+ * the example payloads, the decision records with their index, and the
+ * files. Each spec's landing and How it's built pages are its site copy
+ * (src/site/copy.ts). Every text is public: it names no internal document or
  * local path, and writes as the publisher, an IAB Tech Lab member.
  */
 import { readFileSync } from "node:fs";
-import { join, posix } from "node:path";
+import { join, posix, relative, sep } from "node:path";
 import type { SpecLock } from "../lock.ts";
 import { TYPE_EXAMPLES_FILE, typeExamplesDirOf } from "../type-examples.ts";
 import type { DecisionRecord } from "../mapping.ts";
-import { GIST_URL, ISSUE_URL, PUBLIC_REPO_URL, PUBLISHER } from "./config.ts";
-import { decisionNumbers, shapedBy, sourceInfos, SITE_LOCKS, SITE_VARIANTS, type SiteInputs, type VariantSlug } from "./data.ts";
+import { lockNames, named, type SiteBrand } from "./config.ts";
+import { buildOf, decisionNumbers, proposalsSlug, shapedBy, sourceInfos, type SiteInputs, type VariantSlug } from "./data.ts";
 import { baseOf, esc, inline, page, prose } from "./html.ts";
 import type { SourceInfo } from "./sources.ts";
+import { REPO_ROOT } from "../repo.ts";
 
-const short = (sha: string) => sha.slice(0, 7);
-const commitUrl = (lock: SpecLock, sha: string) => `${lock.upstream}/commit/${sha}`;
-const prUrl = (lock: SpecLock, pr: number) => `${lock.upstream}/pull/${pr}`;
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
 /** A link into the type map, at a type, on a lock, in a variant, in a view, with the composition's members `open` expanded. */
@@ -35,97 +34,33 @@ export function sourceItem(s: SourceInfo, lockLabel?: string): string {
   return `<li class="src"><details><summary title="${esc(s.quote)}"><span class="src-label">${inline(s.label, "")}</span>${lockLabel ? ` <span class="tag">${esc(lockLabel)}</span>` : ""}${links ? ` <span class="src-links">${links}</span>` : ""}</summary><blockquote>${inline(s.quote, "")}</blockquote>${s.note ? `<p class="note">${esc(s.note)}</p>` : ""}</details></li>`;
 }
 
-export function landingPage(inputs: SiteInputs): string {
-  const { gaps, departures, total } = counts(inputs);
-  const [main, prs] = [inputs.locks.find((l) => l.merge_order === null)!, inputs.locks.find((l) => l.merge_order !== null)];
-  const report = inputs.report;
-  const ex = (lock: string) => report.locks.find((l) => l.name === lock)!.examples;
-  const heads = (prs?.merge_order ?? []) as { pr: number; head: string }[];
-  const numbers = decisionNumbers(inputs.feedback);
-  const switches = report.switches
-    .map((s) => {
-      const n = numbers.get(s.decision)?.number;
-      return `<tr><td data-label="Record"><a href="decisions/${s.decision}.html">${s.decision}</a>${n ? `<span class="sub">decision ${n}</span>` : ""}</td><td data-label="Question">${inline(s.question, "")}</td><td data-label="As written">${inline(s.written, "")}</td><td data-label="With our proposals">${inline(s.proposed, "")}</td></tr>`;
-    })
-    .join("\n");
-  const edits = prs ? prs.edits.map((e) => `<li>${inline(e, "")}</li>`).join("") : "";
-  const body = `
-<section class="hero">
-  <div class="hero-in">
-    <p class="eyebrow">Unofficial · Not an IAB Tech Lab artifact</p>
-    <h1>OpenProposal&nbsp;3.0, generated as JSON&nbsp;Schema</h1>
-    <p class="lede">An unofficial JSON Schema for OpenProposal 3.0 draft 1, generated from the specification text by ${PUBLISHER}, an IAB Tech Lab member. The specification remains the reference: where this site and the text differ, the text wins.</p>
-    <p class="actions"><a class="button primary" href="map.html">Open the type map</a><a class="button" href="how-it-is-built.html">How it's built</a><a class="button" href="downloads.html">Download the schemas</a><a class="button" href="decisions/index.html">Read the decisions</a></p>
-  </div>
-</section>
-
-<section class="band">
-  <div class="wrap">
-    <h2>What generating it took</h2>
-    <p>The schema files are generated. A pipeline reads the specification's markdown and, through a mapping of every field, row, and statement to a type, generates the JSON Schema 2020-12 files, the rules that JSON Schema can't express, and TypeScript, Python, and Go types. The mapping and the ${total} decisions are recorded by hand, each with the specification lines it rests on. <a href="how-it-is-built.html">How it's built</a> explains each step. Generating a schema means settling every point a schema needs, and the text doesn't settle all of them. It took ${total} recorded decisions:</p>
-    <div class="stats">
-      <div class="stat gap"><span class="num">${gaps}</span><span class="what">open points filled</span><span class="why">Where the text leaves a point open, a decision fills it. We call these gaps, and both variants fill them the same way.</span></div>
-      <div class="stat prop"><span class="num">${departures}</span><span class="what">changes we propose</span><span class="why">Where the text or its examples settle a point, and we would write it differently. You can switch these off.</span></div>
-      <div class="stat ex"><span class="num">${ex("main").variant.places}<span class="vs">/</span>${ex("main").proposed.places}</span><span class="what">places the examples fail on main</span><span class="why">The specification's own examples fail in ${plural(ex("main").variant.places, "distinct place")} as written, and in ${ex("main").proposed.places} with our proposals, which they predate.${prs ? ` With the open PRs, in ${ex(prs.name).variant.places} and ${ex(prs.name).proposed.places}.` : ""}</span></div>
-    </div>
-    <p>We describe each decision, and what we ask the specification to state, in our implementation feedback on <a href="${ISSUE_URL}">IABTechLab/OpenProposal#121</a> and its <a href="${GIST_URL}">supporting page</a>. Each decision also has its own page here.</p>
-  </div>
-</section>
-
-<section class="wrap two">
-  <div>
-    <h2>How to read the two switches</h2>
-    <p>The type map, the examples, and the downloads each have two switches. Together they pick one of four builds of the schemas.</p>
-    <div class="switch-card">
-      <h3><span class="seg-mock"><span class="on">main</span><span>With the open PRs</span></span> Input</h3>
-      <p><strong>main</strong> is the specification on its <code>main</code> branch at commit <a href="${commitUrl(main, main.commit)}"><code>${short(main.commit)}</code></a>.</p>
-      ${prs ? `<p><strong>With the open PRs</strong> is <code>main</code> with the ${heads.length} pull requests that were open on ${esc(prs.heads_on ?? "")} merged in, each at its head that day. We merged them ourselves, so the result exists on no branch upstream.</p>` : ""}
-    </div>
-    <div class="switch-card">
-      <h3><span class="seg-mock"><span class="on">As written</span><span>With our proposals</span></span> Variant</h3>
-      <p><strong>As written</strong> switches our ${departures} proposals off. Each field they change takes the form the text or its examples write, such as any string for an ID and the integers <code>0</code> and <code>1</code> for AdCOM's flags.</p>
-      <p><strong>With our proposals</strong> switches them on. In both variants, the ${gaps} open points stay filled by their decisions, since the text gives nothing to fall back to.</p>
-    </div>
-  </div>
-  <div>
-    <h2>What a decision record is</h2>
-    <p>A decision record is a judgment we recorded wherever the specification leaves a point open, or where we propose a change. Each record has:</p>
-    <ul class="ticks">
-      <li>the question it answers, and the options we weighed;</li>
-      <li>the answer we chose, and why;</li>
-      <li>the specification lines it rests on, quoted and pinned, so the record goes stale when those lines change;</li>
-      <li>what we ask the specification to state, so that the next revision needs no such record.</li>
-    </ul>
-    <p>The type map links every type to the records that shape it, and every record to the lines it quotes.</p>
-    <h2>Inputs</h2>
-    <p>Specification: <a href="${main.upstream}">${esc(main.upstream.replace("https://github.com/", ""))}</a>, <code>${esc(main.path)}</code>.</p>
-    ${prs ? `<p class="note">The open PRs, in the order we merged them, each with its head:</p><ul class="heads">${heads.map((h) => `<li><a href="${prUrl(prs, h.pr)}">#${h.pr}</a> <a href="${commitUrl(prs, h.head)}"><code>${short(h.head)}</code></a></li>`).join("")}</ul>${edits ? `<p class="note">Beside resolving conflicts, the merge made these edits:</p><ul class="note">${edits}</ul>` : ""}` : ""}
-  </div>
-</section>
-
-<section class="band">
-  <div class="wrap">
-    <h2>The ${departures} changes we propose</h2>
-    <p>Each row is one proposal, and what the as-written variant takes instead.</p>
-    <div class="scroll"><table class="props">
-      <thead><tr><th>Record</th><th>Question</th><th>As written</th><th>With our proposals</th></tr></thead>
-      <tbody>${switches}</tbody>
-    </table></div>
-    <p>The examples fail less as written because they follow the text: on <code>main</code>, they fail in ${plural(ex("main").variant.places, "distinct place")} as written against ${ex("main").proposed.places}${prs ? `, and with the open PRs, in ${ex(prs.name).variant.places} against ${ex(prs.name).proposed.places}` : ""}. What still fails as written is where the examples disagree with the text, and the option names that the text gives no member for.</p>
-  </div>
-</section>
-`;
-  return page({ path: "index.html", title: "OpenProposal 3.0 JSON Schema, unofficial", description: `An unofficial JSON Schema for OpenProposal 3.0 draft 1, generated from the specification text by ${PUBLISHER}, an IAB Tech Lab member.`, section: "home", body });
-}
-
 /** The switches' markup, which the pages' scripts wire up. */
-export function switches(kind: "map" | "examples"): string {
-  const locks = Object.entries(SITE_LOCKS).map(([k, v]) => `<button type="button" data-lock="${k}" aria-pressed="false">${esc(v.label)}</button>`).join("");
-  const variants = SITE_VARIANTS.map((v) => `<button type="button" data-variant="${v.slug}" aria-pressed="false">${esc(v.label)}</button>`).join("");
-  return `<div class="switches" data-for="${kind}"><div class="seg" role="group" aria-label="Input">${locks}</div><div class="seg" role="group" aria-label="Variant">${variants}</div></div>`;
+export function switches(kind: "map" | "examples", inputs: Pick<SiteInputs, "brand" | "locks" | "variants">): string {
+  const locks = inputs.locks.map((l) => `<button type="button" data-lock="${l.name}" aria-pressed="false">${esc(lockNames(inputs.brand, l.name).label)}</button>`).join("");
+  const variants = inputs.variants.map((v) => `<button type="button" data-variant="${v.slug}" aria-pressed="false">${esc(v.label)}</button>`).join("");
+  // A spec that proposes no change has one variant, the text as written, so it has no variant switch.
+  return `<div class="switches" data-for="${kind}"><div class="seg" role="group" aria-label="Input">${locks}</div>${inputs.variants.length > 1 ? `<div class="seg" role="group" aria-label="Variant">${variants}</div>` : ""}</div>`;
 }
 
-export function mapPage(): string {
+/** The type map's legend for a spec whose site copy gives none: a line for each layer its default build holds. */
+function defaultLegend(inputs: SiteInputs): { explain: string; added: string } {
+  const b = inputs.brand;
+  const layers = new Set(buildOf(inputs, inputs.locks[0]!.name, "as-written").model.types.map((t) => t.layer));
+  const lines: [number, string][] = [
+    [1, "<p><b>1 Primitives.</b> One type per concept, grouped by value domain.</p>"],
+    [2, "<p><b>2 Constructors and parts.</b> Templates and the parts their copies share. Only the model holds a template; the schema holds its copies.</p>"],
+    [3, "<p><b>3 Vocabularies.</b> Value lists. An open one also takes the codes or terms its list reserves for extensions.</p>"],
+    [4, "<p><b>4 Objects and unions.</b> The structures built from the layers below.</p>"],
+    [5, `<p><b>5 Documents and profiles.</b> ${b.documents.length > 0 ? `${b.documents.map((d) => `<code>${d}</code>`).join(", ")}.` : "What a payload is."}</p>`],
+  ];
+  const other = inputs.locks.slice(1).map((l) => lockNames(b, l.name).where);
+  return { explain: lines.filter(([n]) => layers.has(n)).map(([, l]) => l).join("\n    "), added: other.length > 0 ? `dot: added ${other.join(" or ")}` : "" };
+}
+
+/** The type map's shell, with the spec's own legend where its site copy gives one. */
+export function mapPage(inputs: SiteInputs, own?: { explain: string; added: string }): string {
+  const b = inputs.brand;
+  const legend = own ?? defaultLegend(inputs);
   const body = `
 <div class="map-head">
   <div>
@@ -133,7 +68,7 @@ export function mapPage(): string {
     <p class="sub">How the generated types compose, from primitives up to the documents. Select a type to see what it's built from, what uses it, the lines of the specification it rests on, and its schema or an example payload.</p>
   </div>
   <div class="map-controls">
-    ${switches("map")}
+    ${switches("map", inputs)}
     <input type="search" id="q" placeholder="Find a type, then press Enter" aria-label="Find a type">
     <span class="note" id="buildinfo"></span>
   </div>
@@ -142,23 +77,18 @@ export function mapPage(): string {
 <noscript><p class="notice">The type map needs JavaScript. The <a href="downloads.html">schema files</a> and the <a href="decisions/index.html">decision records</a> read without it.</p></noscript>
 <section class="card legend-card">
   <div class="explain">
-    <p><b>1 Primitives.</b> One type per concept, grouped by value domain.</p>
-    <p><b>2 Constructors and parts.</b> Templates such as <code>Selectable&lt;T&gt;</code>. Only the model holds them; the schema holds their copies.</p>
-    <p><b>Copies</b> (dashed) are a template applied to arguments, written out as a plain schema.</p>
-    <p><b>3 Vocabularies.</b> Value lists. An open one also takes a namespaced term.</p>
-    <p><b>4 Objects and unions.</b> The structures built from the layers below.</p>
-    <p><b>5 Documents and profiles.</b> <code>Proposal</code>, <code>LineItem</code>, and the summaries projected from them.</p>
+    ${legend.explain}
   </div>
   <div class="legend" id="legend"></div>
 </section>
 <section class="card"><div class="layers" id="layers"><svg class="edges" id="edges" aria-hidden="true"></svg></div>
-  <div class="legend"><span class="k-dep">ring: built from</span><span class="k-use">ring: used by</span><span class="k-added" id="addedkey">dot: added by the open PRs</span><span class="k-changed">bar: changed by a proposal</span></div>
+  <div class="legend"><span class="k-dep">ring: built from</span><span class="k-use">ring: used by</span>${legend.added ? `<span class="k-added" id="addedkey">${legend.added}</span>` : ""}${inputs.variants.length > 1 ? `<span class="k-changed">bar: changed by a proposal</span>` : ""}</div>
 </section>
 <div class="lower">
   <section class="card tree" aria-labelledby="treeh"><h2 id="treeh">Composition</h2><p class="note">Expand a member to drill down to the primitives. ↻ marks a type already on the path.</p><div id="tree"></div></section>
   <section class="card detail" id="detail" aria-live="polite"></section>
 </div>`;
-  return page({ path: "map.html", title: "Type map · OpenProposal 3.0 JSON Schema", description: "How the generated OpenProposal 3.0 types compose, with their schemas, example payloads, and the specification lines they rest on.", section: "map", body, scripts: ["assets/route.js", "assets/jsontree.js", "assets/map.js"], bodyClass: "wide" });
+  return page({ path: "map.html", title: `Type map · ${named(b)} JSON Schema`, description: `How the generated ${named(b)} types compose, with their schemas, example payloads, and the specification lines they rest on.`, section: "map", body, scripts: ["assets/route.js", "assets/jsontree.js", "assets/map.js"], bodyClass: "wide", brand: b });
 }
 
 /** A JSON value as nested, collapsible markup, open to `depth` levels, for a page that reads without a script. */
@@ -172,11 +102,26 @@ function jsonHtml(v: unknown, depth: number, open: number): string {
 }
 
 export function examplesPage(inputs: SiteInputs): string {
+  const b = inputs.brand;
   const sections: string[] = [];
+  // A spec with no documents, such as a registry of code lists, shows an example of each type of its top layer.
+  const top = (lock: SpecLock, slug: VariantSlug) => {
+    const types = buildOf(inputs, lock.name, slug).model.types;
+    const layer = Math.max(...types.map((x) => x.layer));
+    return types.filter((x) => x.layer === layer).map((x) => x.name).sort();
+  };
   for (const lock of inputs.locks) {
-    for (const v of SITE_VARIANTS) {
-      const te = JSON.parse(readExamples(inputs, lock, v.slug)) as { types: Record<string, { full: unknown; notes?: { path: string; holds: string; reason: string }[]; illustrative?: { path: string; note: string }[] }> };
-      const blocks = ["Proposal", "LineItem"]
+    for (const v of inputs.variants) {
+      const te = JSON.parse(readExamples(inputs, lock, v.slug)) as { types: Record<string, { minimal?: unknown; full: unknown; notes?: { path: string; holds: string; reason: string }[]; illustrative?: { path: string; note: string }[] }> };
+      if (b.documents.length === 0) {
+        const rows = top(lock, v.slug)
+          .filter((name) => te.types[name])
+          .map((name) => `<tr><td data-label="Type"><a href="${mapLink("", name, lock.name, v.slug, "example")}"><code>${esc(name)}</code></a></td><td data-label="Example"><code>${esc(JSON.stringify(te.types[name]!.full))}</code></td></tr>`)
+          .join("");
+        sections.push(`<section class="build" data-lock="${lock.name}" data-variant="${v.slug}"><h2>${esc(lockNames(b, lock.name).label)} · ${esc(v.label)}</h2><table><thead><tr><th>Type</th><th>Example value</th></tr></thead><tbody>${rows}</tbody></table></section>`);
+        continue;
+      }
+      const blocks = b.documents
         .map((name) => {
           const x = te.types[name];
           if (!x) return "";
@@ -187,17 +132,18 @@ export function examplesPage(inputs: SiteInputs): string {
 ${notes ? `<p class="note">Where the example holds less than every member:</p><ul class="notes">${notes}</ul>` : ""}${ill ? `<p class="note">Illustrative values, ours and not the specification's:</p><ul class="notes">${ill}</ul>` : ""}</article>`;
         })
         .join("\n");
-      sections.push(`<section class="build" data-lock="${lock.name}" data-variant="${v.slug}"><h2>${esc(SITE_LOCKS[lock.name]!.label)} · ${esc(v.label)}</h2>${blocks}</section>`);
+      sections.push(`<section class="build" data-lock="${lock.name}" data-variant="${v.slug}"><h2>${esc(lockNames(b, lock.name).label)} · ${esc(v.label)}</h2>${blocks}</section>`);
     }
   }
   const body = `
 <div class="wrap">
   <h1>Example payloads</h1>
-  <p class="sub">One realistic <code>Proposal</code> and one <code>LineItem</code> for each build. Each value is the first one the specification's own examples give at that field, where the build's schema accepts it, and else an illustrative value of ours. Every payload is valid against its schema, and breaks no rule that one payload decides.</p>
-  ${switches("examples")}
+  <p class="sub">${b.documents.length > 0 ? `One realistic ${b.documents.map((d) => `<code>${d}</code>`).join(" and one ")} for each build. Each value is the first one the specification's own examples give at that field, where the build's schema accepts it, and else an illustrative value of ours. Every payload is valid against its schema, and breaks no rule that one payload decides.` : "An example value of each type for each build, valid against its schema. Open a type in the type map for its minimal and its full example."}</p>
+  ${switches("examples", inputs)}
   ${sections.join("\n")}
 </div>`;
-  return page({ path: "examples.html", title: "Example payloads · OpenProposal 3.0 JSON Schema", description: "Example OpenProposal 3.0 Proposal and LineItem payloads, as written and with our proposals.", section: "examples", body, scripts: ["assets/route.js", "assets/examples.js"] });
+  const what = b.documents.length > 0 ? `${b.documents.join(" and ")} payloads` : "values";
+  return page({ path: "examples.html", title: `Example payloads · ${named(b)} JSON Schema`, description: `Example ${named(b)} ${what}, ${inputs.variants.length > 1 ? "as written and with our proposals" : "as written"}.`, section: "examples", body, scripts: ["assets/route.js", "assets/examples.js"], brand: b });
 }
 
 function readExamples(inputs: SiteInputs, lock: SpecLock, slug: VariantSlug): string {
@@ -205,11 +151,20 @@ function readExamples(inputs: SiteInputs, lock: SpecLock, slug: VariantSlug): st
   return readFileSync(join(inputs.root, posix.join(b.dirOf(typeExamplesDirOf(lock.ir_dir)), TYPE_EXAMPLES_FILE)), "utf8");
 }
 
-/** The decisions in the order the supporting page of #121 lists them, by its groups. */
+/** The decisions in the order the feedback's supporting page lists them, by its groups. */
 export function decisionGroups(inputs: SiteInputs): { title: string; asks?: string; decisions: DecisionRecord[] }[] {
   const byId = new Map(inputs.decisions.map((d) => [d.id, d]));
+  const proposals = { title: "Changes we propose", asks: "Where the text or its examples settle a point, and we propose to write it differently" };
+  // A spec with no feedback yet lists its gaps, then its proposals, each in ID order.
+  if (!inputs.feedback) {
+    const live = inputs.decisions.filter((d) => d.status !== "superseded");
+    return [
+      { title: "Points the text leaves open", asks: "Where the text leaves a point open, and a decision fills it", decisions: live.filter((d) => d.kind === "gap") },
+      { ...proposals, decisions: live.filter((d) => d.kind === "departure") },
+    ].filter((g) => g.decisions.length > 0);
+  }
   const groups: { title: string; asks?: string; decisions: DecisionRecord[] }[] = inputs.feedback.groups.map((g) => ({ title: g.title, asks: g.asks, decisions: g.decisions.map((d) => byId.get(d.id)!) }));
-  groups.push({ title: "Changes we propose", asks: "Where the text or its examples settle a point, and we propose to write it differently", decisions: inputs.feedback.departures.map((d) => byId.get(d.id)!) });
+  groups.push({ ...proposals, decisions: inputs.feedback.departures.map((d) => byId.get(d.id)!) });
   const listed = new Set(groups.flatMap((g) => g.decisions.map((d) => d.id)));
   const rest = inputs.decisions.filter((d) => !listed.has(d.id));
   if (rest.length > 0) groups.push({ title: "Not in the supporting page", decisions: rest });
@@ -219,6 +174,7 @@ export function decisionGroups(inputs: SiteInputs): { title: string; asks?: stri
 const kindTag = (d: DecisionRecord) => (d.kind === "gap" ? `<span class="tag gap">Gap</span>` : `<span class="tag prop">Proposal</span>`);
 
 export function decisionsIndex(inputs: SiteInputs): string {
+  const b = inputs.brand;
   const numbers = decisionNumbers(inputs.feedback);
   const { gaps, departures } = counts(inputs);
   const groups = decisionGroups(inputs)
@@ -234,47 +190,49 @@ export function decisionsIndex(inputs: SiteInputs): string {
     .join("\n");
   const body = `<div class="wrap narrow">
 <h1>Decision records</h1>
-<p class="sub">Generating the schemas took ${gaps + departures} recorded decisions: ${gaps} gaps, where the text leaves a point open, and ${departures} proposals, where we propose a change to what the text or its examples settle. They are grouped and numbered as on the <a href="${GIST_URL}">supporting page</a> of <a href="${ISSUE_URL}">issue #121</a>.</p>
+<p class="sub">Generating the schemas took ${gaps + departures} recorded decisions: ${gaps} gaps, where the text leaves a point open, and ${departures > 0 ? `${departures} proposals, where we propose a change to what the text or its examples settle` : "no proposal: we propose no change to what the text settles"}. ${b.feedback ? `They are grouped and numbered as on the <a href="${b.feedback.gist}">supporting page</a> of <a href="${b.feedback.issue}">issue #${b.feedback.issueNumber}</a>.` : "Our implementation feedback to the specification's owners will number them; until then they are listed by kind."}</p>
 ${groups}
 </div>`;
-  return page({ path: "decisions/index.html", title: "Decision records · OpenProposal 3.0 JSON Schema", description: `The ${gaps + departures} decisions that generating the OpenProposal 3.0 schemas took.`, section: "decisions", body });
+  return page({ path: "decisions/index.html", title: `Decision records · ${named(b)} JSON Schema`, description: `The ${gaps + departures} decisions that generating the ${named(b)} schemas took.`, section: "decisions", body, brand: b });
 }
 
 export function decisionPage(inputs: SiteInputs, d: DecisionRecord): string {
+  const b = inputs.brand;
   const path = `decisions/${d.id}.html`;
   const base = baseOf(path);
   const numbers = decisionNumbers(inputs.feedback);
   const n = numbers.get(d.id);
-  const item = [...inputs.feedback.groups.flatMap((g) => g.decisions), ...inputs.feedback.departures].find((x) => x.id === d.id);
+  const item = inputs.feedback ? [...inputs.feedback.groups.flatMap((g) => g.decisions), ...inputs.feedback.departures].find((x) => x.id === d.id) : undefined;
   const locks = inputs.locks.filter((l) => item?.locks.includes(l.name) ?? d.covers.some((c) => c.locks === undefined || c.locks.includes(l.name)));
-  const options = d.options.map((o) => `<li class="${o.id === d.chosen ? "chosen" : ""}"><code>${esc(o.id)}</code>${o.id === d.chosen ? ` <span class="tag">Chosen</span>` : ""}${d.kind === "departure" && inputs.variant.switches.some((s) => s.decision === d.id && s.option === o.id) ? ` <span class="tag aw">As written</span>` : ""}<p>${inline(o.summary, base)}</p></li>`).join("");
+  const options = d.options.map((o) => `<li class="${o.id === d.chosen ? "chosen" : ""}"><code>${esc(o.id)}</code>${o.id === d.chosen ? ` <span class="tag">Chosen</span>` : ""}${d.kind === "departure" && inputs.variant?.switches.some((s) => s.decision === d.id && s.option === o.id) ? ` <span class="tag aw">As written</span>` : ""}<p>${inline(o.summary, base)}</p></li>`).join("");
   // The lines it rests on, on each lock that has them.
   const sources = inputs.locks
     .map((lock) => {
       const ids = d.covers.filter((c) => c.locks === undefined || c.locks.includes(lock.name)).map((c) => c.ir);
       const infos = sourceInfos(inputs, lock, ids);
       const items = ids.filter((id) => infos[id]).map((id) => sourceItem(infos[id]!));
-      return items.length > 0 ? `<h3>${esc(SITE_LOCKS[lock.name]!.label)}</h3><ul class="sources">${items.join("")}</ul>` : "";
+      return items.length > 0 ? `<h3>${esc(lockNames(b, lock.name).label)}</h3><ul class="sources">${items.join("")}</ul>` : "";
     })
     .join("");
-  const examples = inputs.feedback.examples.filter((x) => x.decisions.includes(d.id));
+  const examples = (inputs.feedback?.examples ?? []).filter((x) => x.decisions.includes(d.id));
   const exRows = examples
-    .map((x) => `<tr><td data-label="Example"><code>${esc(x.example)}</code></td><td data-label="Where">${x.paths.map((p) => `<code>${esc(p)}</code>`).join("<br>")}</td><td data-label="Why">${inline(x.reason, base)}</td><td data-label="Input">${x.locks.map((l) => esc(SITE_LOCKS[l]?.short ?? l)).join(", ")}</td></tr>`)
+    .map((x) => `<tr><td data-label="Example"><code>${esc(x.example)}</code></td><td data-label="Where">${x.paths.map((p) => `<code>${esc(p)}</code>`).join("<br>")}</td><td data-label="Why">${inline(x.reason, base)}</td><td data-label="Input">${x.locks.map((l) => esc(lockNames(b, l).short)).join(", ")}</td></tr>`)
     .join("");
   const shaped = locks
     .map((lock) => {
       const s = shapedBy(inputs, lock, d.id);
-      const links = [...s.types.map((t) => `<a href="${mapLink(base, t, lock.name, "proposals")}"><code>${esc(t)}</code></a>`), ...s.members.map((m) => `<a href="${mapLink(base, m.split(".")[0]!, lock.name, "proposals")}"><code>${esc(m)}</code></a>`)];
-      return links.length > 0 ? `<p><strong>${esc(SITE_LOCKS[lock.name]!.label)}:</strong> ${links.join(", ")}</p>` : "";
+      const slug = proposalsSlug(inputs);
+      const links = [...s.types.map((t) => `<a href="${mapLink(base, t, lock.name, slug)}"><code>${esc(t)}</code></a>`), ...s.members.map((m) => `<a href="${mapLink(base, m.split(".")[0]!, lock.name, slug)}"><code>${esc(m)}</code></a>`)];
+      return links.length > 0 ? `<p><strong>${esc(lockNames(b, lock.name).label)}:</strong> ${links.join(", ")}</p>` : "";
     })
     .join("");
-  const sw = inputs.variant.switches.find((s) => s.decision === d.id);
-  const repo = PUBLIC_REPO_URL ? `<p class="note"><a href="${PUBLIC_REPO_URL}/blob/main/decisions/${d.id}.yaml">The record's YAML file</a></p>` : "";
+  const sw = inputs.variant?.switches.find((s) => s.decision === d.id);
+  const repo = b.repo ? `<p class="note"><a href="${b.repo}/blob/main/${relative(REPO_ROOT, d.file).split(sep).join("/")}">The record's YAML file</a></p>` : "";
   const chosen = d.options.find((o) => o.id === d.chosen);
   const body = `<div class="wrap narrow decision">
 <p class="crumbs"><a href="index.html">Decision records</a> · ${n ? `${esc(n.group)}` : ""}</p>
 <h1><span class="id">${d.id}</span> ${inline(d.question, base)}</h1>
-<p class="meta">${kindTag(d)} ${n ? `Decision ${n.number} on the <a href="${GIST_URL}">supporting page of #121</a>.` : ""} ${locks.length > 0 ? `Cited ${locks.map((l) => (l.merge_order === null ? "on main" : "with the open PRs")).join(" and ")}.` : ""}</p>
+<p class="meta">${kindTag(d)} ${n && b.feedback ? `Decision ${n.number} on the <a href="${b.feedback.gist}">supporting page of #${b.feedback.issueNumber}</a>.` : ""} ${locks.length > 0 ? `Cited ${locks.map((l) => lockNames(b, l.name).where).join(" and ")}.` : ""}</p>
 <section><h2>${d.kind === "gap" ? "What the schemas do" : "What we propose"}</h2>${chosen ? `<p class="answer">${inline(chosen.summary, base)}</p>` : ""}</section>
 ${sw ? `<section><h2>As written</h2><p>${inline(sw.reads, base)}</p><p class="note">The as-written variant takes the option <code>${esc(sw.option)}</code>. Switch the type map to <em>As written</em> to see it.</p></section>` : ""}
 <section><h2>Options</h2><ul class="options">${options}</ul></section>
@@ -285,41 +243,52 @@ ${examples.length > 0 ? `<section><h2>${d.kind === "gap" ? "Examples that disagr
 ${shaped ? `<section><h2>What it shapes</h2>${shaped}</section>` : ""}
 ${repo}
 </div>`;
-  return page({ path, title: `${d.id}: ${d.question.slice(0, 80)} · OpenProposal 3.0 JSON Schema`, description: d.question, section: "decisions", body });
+  return page({ path, title: `${d.id}: ${d.question.slice(0, 80)} · ${named(b)} JSON Schema`, description: d.question, section: "decisions", body, brand: b });
 }
 
-export interface DownloadSet {
+/** One build's files in the public repository, which the files page links in place of downloads. */
+export interface FileSet {
   lock: string;
   variant: VariantSlug;
-  files: { label: string; path: string; bytes: number; what: string }[];
+  /** The build's folders and files, by path from the spec's folder: its schema tree, its rules, and its type examples. */
+  schemaDir: string;
+  rules: string;
+  examples: string;
+  /** Each schema file of the build, by its path on the site. */
   schemas: string[];
-  /** The build's SDK tree in the repository, such as `sdk` for the default tree or `sdk/proposed` for an opt-in one. */
-  sdkDir: string;
-  /** Whether the build's SDK tree is the default one. */
-  sdkDefault: boolean;
+  /** The build's SDK tree, by path from the repository's root, and whether it is the default tree; null for a spec with no SDK types. */
+  sdk: { dir: string; default: boolean } | null;
 }
 
-export function downloadsPage(sets: DownloadSet[]): string {
-  const kb = (n: number) => (n < 1024 ? `${n} B` : `${Math.round(n / 1024)} KB`);
+/** A link into the public repository at a path from its root, or the path alone when the site names no repository. */
+export const repoLink = (b: Pick<SiteBrand, "repo">, kind: "tree" | "blob", path: string, label: string): string =>
+  b.repo ? `<a href="${b.repo}/${kind}/main/${path}">${label}</a>` : `${label} (<code>${esc(path)}</code>)`;
+
+/**
+ * The files page: where each build's schema files, rules, example payloads,
+ * and SDK types are in the public repository, and the schema files this
+ * site serves at their paths. The site offers no downloads of its own.
+ */
+export function filesPage(inputs: SiteInputs, sets: FileSet[]): string {
+  const b = inputs.brand;
+  const at = (path: string) => posix.join("specs", b.spec, path);
   const cards = sets
-    .map(
-      (s) => `<section class="card dl"><h2>${esc(SITE_LOCKS[s.lock]!.label)} · ${esc(SITE_VARIANTS.find((v) => v.slug === s.variant)!.label)}</h2>
-<ul class="files">${s.files.map((f) => `<li><a href="${f.path}" download>${esc(f.label)}</a> <span class="note">${kb(f.bytes)} · ${esc(f.what)}</span></li>`).join("")}</ul>
-<p class="note">In the repository, these types are ${s.sdkDefault ? "the default SDK tree" : "an opt-in SDK tree"}, <code>${esc(s.sdkDir)}/</code>.</p>
-<details><summary>Browse the ${s.schemas.length} schema files</summary><ul class="tree-files">${s.schemas.map((p) => `<li><a href="${p}"><code>${esc(p)}</code></a></li>`).join("")}</ul></details></section>`,
-    )
+    .map((s) => {
+      const variant = inputs.variants.find((v) => v.slug === s.variant)!;
+      const sdk = s.sdk
+        ? `<h3>SDK types <span class="tag">Secondary</span></h3><p class="note">The schemas are the product. These types are generated from the same model, as ${s.sdk.default ? "the default SDK tree" : "an opt-in SDK tree"}, <code>${esc(s.sdk.dir)}/</code>, until a dedicated emitter replaces them.</p><ul class="files">${[["TypeScript", "ts", "Zod 4"], ["Python", "python", "Pydantic 2"], ["Go", "go", "the standard library only"]].map(([label, lang, what]) => `<li>${repoLink(b, "tree", posix.join(s.sdk!.dir, lang!), `${label} types`)} <span class="note">${what}</span></li>`).join("")}</ul>`
+        : "";
+      return `<section class="card dl"><h2>${esc(lockNames(b, s.lock).label)} · ${esc(variant.label)}</h2>
+<ul class="files"><li>${repoLink(b, "tree", at(s.schemaDir), "JSON Schema files")} <span class="note">${s.schemas.length} files, JSON Schema 2020-12${sets.some((o) => o.schemaDir.startsWith(`${s.schemaDir}/`)) ? ", in a folder that also holds the other builds' folders" : ""}</span></li><li>${repoLink(b, "blob", at(s.rules), "Rules")} <span class="note">the rules JSON Schema can't express, with test vectors</span></li><li>${repoLink(b, "blob", at(s.examples), "Example payloads")} <span class="note">an example of every named type</span></li></ul>
+${sdk}
+<details><summary>Browse the ${s.schemas.length} schema files on this site</summary><ul class="tree-files">${s.schemas.map((p) => `<li><a href="${p}"><code>${esc(p)}</code></a></li>`).join("")}</ul></details></section>`;
+    })
     .join("\n");
+  const builds = inputs.variants.length > 1 ? "Each build's" : "Each input's";
   const body = `<div class="wrap">
-<h1>Downloads</h1>
-<p class="sub">Each build's JSON Schema 2020-12 files, its rules with their test vectors, and its generated TypeScript (Zod), Python (Pydantic), and Go types. Each schema file is served at the URL its <code>$id</code> names, so a validator can resolve every <code>$ref</code> from this site.</p>
-<p class="sub">The as-written build's types are the default SDK tree, <code>sdk/</code>, since they are the closest to what a consumer of the specification writes. The types with our proposals are an opt-in tree, <code>sdk/proposed/</code>, and each lock's open-PRs build is under <code>with-open-prs/</code> in either tree.</p>
+<h1>Files</h1>
+<p class="sub">${builds} JSON Schema 2020-12 files, its rules with their test vectors, and its example payloads are in the public repository${b.repo ? `, under ${repoLink(b, "tree", posix.join("specs", b.spec), `<code>specs/${esc(b.spec)}/</code>`)}` : ""}. This site serves each schema file under the spec's path, and every <code>$ref</code> is relative. ${b.schemaBase === `${b.siteUrl}${b.spec}/` ? "Each file's <code>$id</code> is its URL on this site, so a validator resolves every <code>$ref</code> from here." : `Each file's <code>$id</code> still names it under <code>${esc(b.schemaBase)}</code>; the <code>$id</code>s move to this site's paths before the first frozen release.`}</p>
 <div class="dl-grid">${cards}</div>
 </div>`;
-  return page({ path: "downloads.html", title: "Downloads · OpenProposal 3.0 JSON Schema", description: "The generated OpenProposal 3.0 JSON Schema files, rules, and TypeScript, Python, and Go types.", section: "downloads", body });
-}
-
-export function notFoundPage(): string {
-  const body = `<div class="wrap narrow"><h1>Page not found</h1><p>This address names no page of the site. Start from the <a href="/index.html">overview</a>, or open the <a href="/map.html">type map</a>.</p></div>`;
-  // The server sends this page for any missing path, so its links start at the root.
-  return page({ path: "404.html", title: "Page not found · OpenProposal 3.0 JSON Schema", description: "Page not found.", section: "none", body, base: "/" });
+  return page({ path: "downloads.html", title: `Files · ${named(b)} JSON Schema`, description: `Where the generated ${named(b)} JSON Schema files, rules, and example payloads are.`, section: "downloads", body, brand: b });
 }

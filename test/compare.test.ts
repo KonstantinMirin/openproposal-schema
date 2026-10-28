@@ -3,26 +3,26 @@ import assert from "node:assert/strict";
 import { join } from "node:path";
 import { buildLock, compareLocks, renderComparison, renderComparisonMarkdown, type LockBuild } from "../src/compare.ts";
 import { loadConstructors } from "../src/constructors.ts";
-import { loadFindings } from "../src/examples.ts";
+import { FINDINGS_FILE, loadFindings } from "../src/examples.ts";
 import { loadKernel } from "../src/kernel.ts";
 import { loadLock } from "../src/lock.ts";
 import { loadDecisions, loadMappings } from "../src/mapping.ts";
-import { loadDifferences } from "../src/render.ts";
-import { loadVectors } from "../src/rules.ts";
-import { ROOT } from "./helpers.ts";
+import { DIFFERENCES_FILE, loadDifferences } from "../src/render.ts";
+import { loadVectors, VECTORS_DIR } from "../src/rules.ts";
+import { ROOT, SPEC } from "./helpers.ts";
 
 const INPUT = {
-  root: ROOT,
-  mappings: loadMappings(ROOT, join(ROOT, "mapping")),
-  decisions: loadDecisions(ROOT, join(ROOT, "decisions")),
-  kernel: loadKernel(ROOT),
-  constructors: loadConstructors(ROOT),
-  vectors: loadVectors(ROOT),
+  root: SPEC,
+  mappings: loadMappings(join(SPEC, "mapping")),
+  decisions: loadDecisions(join(SPEC, "decisions")),
+  kernel: loadKernel(ROOT, SPEC),
+  constructors: loadConstructors(ROOT, SPEC),
+  vectors: loadVectors(join(SPEC, VECTORS_DIR)),
 };
-const RECORDED = { recordedFindings: loadFindings(ROOT), recordedDifferences: loadDifferences(ROOT) };
+const RECORDED = { recordedFindings: loadFindings(join(SPEC, FINDINGS_FILE)), recordedDifferences: loadDifferences(join(SPEC, DIFFERENCES_FILE)) };
 
 async function build(file: string): Promise<LockBuild> {
-  const r = await buildLock(loadLock(join(ROOT, "spec-input", file)), INPUT);
+  const r = await buildLock(loadLock(join(SPEC, "spec-input", file)), INPUT);
   assert.deepEqual(r.problems, []);
   return r.build!;
 }

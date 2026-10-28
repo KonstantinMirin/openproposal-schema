@@ -1,0 +1,38 @@
+format: 1
+id: D-011
+status: proposed
+kind: gap
+author: agent
+question: "List: Creative Subtypes - Audio/Video ends at VAST 4.3 Wrapper, 16, while VAST 4.4 is published. Is there a code for VAST 4.4?"
+covers:
+  - ir: def:list_creativesubtypesaudiovideo:15
+    digest: c3e2e30507e6f90f281e619aae19c1c8eb3e365f6a62afd22dde12ac9e99f1ad
+    quote: "`15` | VAST 4.3"
+  - ir: def:list_creativesubtypesaudiovideo:16
+    digest: cea9a5fdffc83bd0c91e4d719ecba5749ae2cd296422a9a22adeeb977c83f1e3
+    quote: "`16` | VAST 4.3 Wrapper"
+options:
+  - id: no-code
+    summary: >-
+      No: the vocabulary holds the 16 codes the list names, and no code is
+      invented.
+  - id: next-code
+    summary: >-
+      Add 17 and 18 for VAST 4.4 and its wrapper.
+chosen: no-code
+rationale: >-
+  A code is AdCOM's to assign, and the registry holds the codes of its
+  pinned `main`. AdCOM's `develop` branch has since assigned 17 to VAST 4.4
+  and 18 to VAST 4.4 Wrapper, with SIMID 1.2 as API Framework 10, but no tag
+  or `main` carries them yet, so a sender writing 17 today cites a code no
+  release holds. The registry takes them when they reach `main` or a tag.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L3321"
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/commit/42f35cf"
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/commit/43aabb3"
+  - "https://github.com/InteractiveAdvertisingBureau/VAST/blob/99d5d5132084be83ce4ea893143d240cdaca33c5/vast_4.4.xsd#L81"
+feedback: >-
+  Merge `develop`, which assigns VAST 4.4 and VAST 4.4 Wrapper the codes 17
+  and 18 and SIMID 1.2 the API Framework code 10, to `main` and tag the
+  result, so that a placement can say it accepts them under a release
+  implementers can name.

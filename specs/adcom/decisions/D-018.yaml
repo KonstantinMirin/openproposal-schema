@@ -1,0 +1,40 @@
+format: 1
+id: D-018
+status: proposed
+kind: gap
+author: agent
+question: "Some definitions start with a name, in bold, as \"**loaded:** Delivered as …\", or in plain text with a colon. What is the code's label?"
+covers:
+  - ir: def:list_eventtypes:1
+    digest: 46ad57f99f20c21771e5aa16b3a688d928678dfd1e0b4c8868b6efc6e19f0e26
+    quote: "`1` | loaded: Delivered as a part of the creative markup. Creative may be pre-cached or pre-loaded; prior to initial rendering."
+  - ir: def:list_plcmtsubtypesvideo:5
+    digest: ea92162c6389c8195667303c0c778b533f0bddd42ac037f24d6cb521ec21ff87
+    quote: "`5` | Pause: An ad present in streaming video content that the consumer has requested. While there may be other content surrounding the player, the video content must be the focus of the user’s visit. It should remain the primary content on the page and the only video player in-view."
+  - ir: def:list_feedtypes:1
+    digest: 38e83fe726ea77b3dec36e7a0526e421b362719d1dbfd59d45b090ffc49c5c0b
+    quote: "`1` | AOD | Music streaming service"
+  - ir: def:list_idmatchmethod:1
+    digest: 41bc49c0e835b65ba2033b99783ebd208ef5c7627960420aa334fef7b68c22b0
+    quote: "`1` | No Match | No matching has occurred. The associated ID came directly from a 3rd-party cookie or OS-provided resettable device ID for advertising (IFA)."
+options:
+  - id: whole-definition
+    summary: >-
+      The whole row: the name, where a column gives it, and the definition,
+      as written.
+  - id: name-only
+    summary: >-
+      The leading name alone, such as `loaded` or Pause.
+chosen: whole-definition
+rationale: >-
+  Most lists have no name column, and a definition's leading name is written
+  two ways: in bold, or in plain text with a colon. Cutting the label at a
+  colon would mangle the definitions that only use one in a sentence.
+  Keeping the whole row is faithful and needs no reading; Feed Types and ID
+  Match Methods, which do have a name column, keep it first.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L3629"
+feedback: >-
+  Give every list a short name column, as Feed Types and ID Match Methods
+  have, so that each code has a name an implementation can use as a
+  constant, beside its definition.

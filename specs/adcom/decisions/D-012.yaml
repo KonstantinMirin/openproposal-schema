@@ -1,0 +1,43 @@
+format: 1
+id: D-012
+status: proposed
+kind: gap
+author: agent
+question: "The `init` and `lastmod` timestamps are integer milliseconds since the epoch in AdCOM, and ISO 8601 strings in the protocol buffer definitions IAB Tech Lab hosts. Which does the schema follow?"
+covers:
+  - ir: key:object_ad:Ad.init
+    digest: 10848abff390e3678c5b540d0374e1e94fdbc6ced1e75fa7742ded3c6c1929ef
+    quote: "`init` | Timestamp of the original instantiation of this ad (i.e., this object or any of its children) in Unix format (i.e., milliseconds since the epoch)."
+  - ir: key:object_ad:Ad.lastmod
+    digest: e6440c92c82d87c6dc58c981867a36bc21b5ff5724c1d9b1515e655fd3ace100
+    quote: "`lastmod` | Timestamp of most recent modification to this ad (i.e., this object or any of its children other than the `Audit` object) in Unix format (i.e., milliseconds since the epoch)."
+  - ir: key:object_audit:Audit.init
+    digest: 90bf50c81f1fb0681f0b74c54573c14eb308ddb7132c7d00c820422ed5d9806e
+    quote: "`init` | Timestamp of the original instantiation of this object in Unix format (i.e., milliseconds since the epoch)."
+  - ir: key:object_audit:Audit.lastmod
+    digest: f180d0ea7677636e9d7d5f93d53e8f29e42113e4148ba8a57f04ed1ac2f9f37c
+    quote: "`lastmod` | Timestamp of most recent modification to this object in Unix format (i.e., milliseconds since the epoch)."
+options:
+  - id: defer
+    summary: >-
+      Until AdCOM's objects are mapped, the schemas say nothing about these
+      attributes; when they are, they follow the text, integer milliseconds.
+  - id: proto
+    summary: >-
+      Follow the protocol buffer definitions' strings.
+chosen: defer
+rationale: >-
+  The text is the normative artifact, and it writes "integer … Unix format
+  (i.e., milliseconds since the epoch)". The protocol buffer definitions
+  were written three months after the text changed to integers, kept the
+  earlier strings, and were never regenerated. The objects aren't mapped
+  yet, so the schema says nothing about these attributes until the objects
+  phase, which types them as the text writes them.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L284"
+  - "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/media/media.proto#L62"
+feedback: >-
+  Regenerate the protocol buffer definitions from the specification, so that
+  `init` and `lastmod` are integer milliseconds in both, or say which
+  artifact a receiver follows. Today the two IAB-hosted artifacts encode one
+  field two incompatible ways.

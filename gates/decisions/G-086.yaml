@@ -1,0 +1,33 @@
+format: 1
+id: G-086
+date: 2026-10-27
+question: What changes in the gates to close the gaps an independent review of AdCOM's locks and the pipeline stages found?
+decision: >-
+  The spec-profile gate holds a spec's folder to an allowlist: the entries
+  of the stages the spec has reached, and none other, so a file that no
+  stage writes fails instead of sitting where no gate reads it; a fixture
+  covers it. Rule vectors move to the outputs stage, since only the rule
+  gates read them. A lock may name the upstream tag that names its commit,
+  and the snapshot gate fails, wherever a clone is reachable, when the tag
+  names another commit or none; a test builds a clone, moves its tag, and
+  checks both. The site gate's fixture for a spec's name in the site's code
+  writes OpenProposal's name and expects it again, as it did before the
+  second spec joined. Each gate's line names its spec where more than one
+  runs. The test suite holds 442 tests, and MIN_TESTS is 442.
+rationale: >-
+  Each change adds a check or restores one: the allowlist replaces a
+  denylist that let an unknown entry pass, and the tag check catches a tag
+  that moves. Nothing is relaxed, and no output changes.
+accepts:
+  - { gate: committed-files, fingerprint: 7f736bba93cf8229c3fbfd096b74ba5d9003c04e3fbae51355d491b5168749da }
+  - { gate: comparison, fingerprint: f2a7c68e9a3a68208f6c228ab072616aa735eeca54223a6cc48cf76a273efb6a }
+  - { gate: examples-listing, fingerprint: afd1c0a8c748d3e340fd275b60fa6af399d8897e447ff9b41657a297beb869b9 }
+  - { gate: extraction, fingerprint: 04bf481fe8dd0cf7089d1e4fc904b493a84eb8c1db4332100b1dd19de51c9da9 }
+  - { gate: feedback, fingerprint: 32b4581c650adb0806d7e197796db8f573478eb7783811c6bb18d75e238a08f7 }
+  - { gate: guard, fingerprint: 7c280a40c09df95d22d7d19c8206cb3e241555e4bf66cc6893dd3f378573640b }
+  - { gate: npm-test, fingerprint: 861301d44cc5fabc93c435a8903326dea49f59d8fc30d0e9c73ed0f4fea9beff }
+  - { gate: site-builds, fingerprint: df472ea560ba8db07d82f27589522dc967fe908b7fe7f5e55f737bd312580927 }
+  - { gate: snapshot, fingerprint: 3f947e832bafd56bcaf36124b82bce35b23a526c7b5db42b3629230671d49b03 }
+  - { gate: spec-input, fingerprint: ea697f82aa3acf77e1a576e04211debcc548e4f499ae0e2cbcc127043de66cf5 }
+  - { gate: spec-profile, fingerprint: 9257f0d9b01bc15d6f9acf632daaad3508c6242cd53d46b37ae637f080f82442 }
+  - { gate: variant-diff, fingerprint: 921d7535eaccc80b44fc1ab56de1a0dd7915c132db3267d36506ff36b3a30a6c }

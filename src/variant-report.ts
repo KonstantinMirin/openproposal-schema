@@ -15,6 +15,7 @@ import type { DecisionRecord } from "./mapping.ts";
 import { codesOf } from "./rule-checks.ts";
 import { emitRules } from "./rules.ts";
 import { checkVariantDiff, checkVariantExamples, loadVariant, type Variant, type VariantDifference, type VariantExampleCounts } from "./variant.ts";
+import { ruleChecksOf, schemaNamesOfLock } from "./specs/index.ts";
 
 /** One lock's build under a variant: its failures, its differences from the proposed build, and the problems of either. */
 export interface VariantLockBuild {
@@ -32,12 +33,12 @@ export async function buildVariantLock(base: LockBuild, variant: Variant, input:
   if (b.problems.length > 0) return { lock, counts: empty, differences: [], problems: b.problems.map((p) => `model: ${p}`) };
   const diff = checkVariantDiff(variant, base.model, b.model, input.decisions, lock.name);
   const schemaDir = b.dirOf(schemaDirOf(lock.ir_dir));
-  const emitted = emitSchemas(b.model, schemaDir);
+  const emitted = emitSchemas(b.model, schemaDir, schemaNamesOfLock(lock));
   if (emitted.problems.length > 0) return { lock, counts: empty, differences: [], problems: emitted.problems.map((p) => `schemas: ${p}`) };
   const converted = b.vectors(input.vectors);
-  const rules = emitRules({ model: b.model, ir: b.ir, lock: lock.name, vectors: converted.vectors, decisions: input.decisions, schemaDir, conditionsLeft: emitted.conditions.left });
+  const rules = emitRules({ model: b.model, ir: b.ir, lock: lock.name, vectors: converted.vectors, decisions: input.decisions, schemaDir, conditionsLeft: emitted.conditions.left, schemaBase: schemaNamesOfLock(lock).base });
   const got = await lockExamples(lock, b.model);
-  const ex = checkExamples({ model: b.model, files: emitted.files, schemaDir, examples: got.examples, values: got.values, codes: codesOf(b.kernel.lists ?? { lists: [] }) });
+  const ex = checkExamples({ model: b.model, files: emitted.files, schemaDir, examples: got.examples, values: got.values, codes: codesOf(b.kernel.lists ?? { lists: [] }), ruleChecks: ruleChecksOf(lock) });
   const checked = checkVariantExamples(ex.failures, ex.checks.undecided, variant, recorded, lock.name, input.decisions);
   return {
     lock,

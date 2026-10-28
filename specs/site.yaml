@@ -1,0 +1,42 @@
+# The public site (src/site/), one site for every specification under specs/,
+# valid against specs/site.schema.json. Each spec's pages sit under /<spec>/,
+# and the root lists the specs. The schemas' $ids move to this host in a later
+# phase; until then each spec's schemas keep the $id base its profile gives.
+format: 1
+url: "https://adtechspec.noetis.dev/"
+name: Ad tech specifications
+title: Ad tech specifications as JSON Schema
+# The root page's opening paragraphs.
+lead:
+  - >-
+    In the era of agentic development, every standard needs an executable
+    specification, not only prose that agents and implementers have to
+    interpret. This work tries to fill that gap. It adds nothing to the
+    official specifications: it is a pipeline that reads each specification's
+    text and produces a faithful JSON Schema implementation of it. Those
+    schemas are, or should be, the foundation of each standard's SDKs.
+  - >-
+    Where a text leaves a point open, a recorded decision fills it, the same
+    way in every variant, and goes back to the specification's owners as
+    feedback. Where we would change what a text settles, the change is a
+    separate variant that you switch on. The default, as written, proposes
+    no change. The site is unofficial and isn't an IAB Tech Lab artifact.
+  - >-
+    It covers OpenProposal, a specification that agents use directly, and the
+    shared standards it rests on: AdCOM's code lists now, and the Deals API
+    next.
+publisher: Postindustria
+# The public repository of this tooling. The site links its folders in place of
+# downloads, and each decision page links its record's YAML file there. The
+# paths exist there only once the private tree is exported to it, so the site
+# deploys only after an export, and the site gate checks every link against the
+# tree the export publishes.
+repo: "https://github.com/KonstantinMirin/openproposal-schema"
+# Where the deploy command, which is printed and never run, copies the site.
+deploy:
+  host: hetzner2
+  path: /srv/www/adtechspec
+# The specs the root lists, in this order; each needs a folder under specs/.
+specs:
+  - openproposal
+  - adcom

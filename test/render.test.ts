@@ -7,15 +7,19 @@ import type { SpecIR } from "../src/ir-types.ts";
 import { loadKernel } from "../src/kernel.ts";
 import { loadDecisions, loadMappings } from "../src/mapping.ts";
 import { resolveModel, type ModelDoc, type ModelType } from "../src/model.ts";
-import { checkDifferences, loadDifferences, normalize, roundTrip, specTables, type Difference, type DifferencesFile } from "../src/render.ts";
-import { ROOT } from "./helpers.ts";
+import { checkDifferences, type Difference, DIFFERENCES_FILE, type DifferencesFile, loadDifferences, normalize, roundTrip as roundTripWith } from "../src/render.ts";
+import { ROUND_TRIP, specTables } from "../src/specs/openproposal/render.ts";
+import type { SpecIR as IR } from "../src/ir-types.ts";
+import { ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT);
-const CONSTRUCTORS = loadConstructors(ROOT);
-const MAPPINGS = loadMappings(ROOT, join(ROOT, "mapping"));
-const DECISIONS = loadDecisions(ROOT, join(ROOT, "decisions"));
-const RECORDED = loadDifferences(ROOT);
-const irOf = (dir: string) => JSON.parse(readFileSync(join(ROOT, dir, "spec-ir.json"), "utf8")) as SpecIR;
+const roundTrip = (model: ModelDoc, ir: IR) => roundTripWith(model, ir, ROUND_TRIP);
+
+const KERNEL = loadKernel(ROOT, SPEC);
+const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const MAPPINGS = loadMappings(join(SPEC, "mapping"));
+const DECISIONS = loadDecisions(join(SPEC, "decisions"));
+const RECORDED = loadDifferences(join(SPEC, DIFFERENCES_FILE));
+const irOf = (dir: string) => JSON.parse(readFileSync(join(SPEC, dir, "spec-ir.json"), "utf8")) as SpecIR;
 const LOCKS: [string, SpecIR][] = [
   ["main", irOf("ir")],
   ["with-open-prs", irOf(join("ir", "with-open-prs"))],

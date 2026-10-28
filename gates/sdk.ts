@@ -8,12 +8,13 @@ import { compareRun, type SdkCase, type SdkRun } from "../src/sdk-parity.ts";
 import { committedTreeCurrent, flipFirst, onlyGenerated, runTool, sameTreeRuns, type CommittedTreeInput, type TrackedInput, type TreeRunsInput } from "./common.ts";
 import { defineGate, ROOT } from "./harness.ts";
 import { withType } from "./model.ts";
+import type { SpecNames } from "../src/profile.ts";
 
 export const plainExemptionsFile = defineGate<{ exemptions: ExemptionsFile; pinned: string; locks: string[] }>({
   id: "plain-exemptions-file",
   title: "plain generator: exemptions file schema-valid and consistent",
   code: ["src/plain-parity.ts#checkExemptionsFile"],
-  exemptions: [EXEMPTIONS_FILE],
+  exemptions: [`specs/*/${EXEMPTIONS_FILE}`],
   check: (i) => ({ problems: checkExemptionsFile(i.exemptions, i.pinned, i.locks), note: `${i.exemptions.exemptions.length} exemptions, checked against datamodel-code-generator ${i.pinned}` }),
   fixtures: [
     { name: "written for another generator version", mutate: (i) => ({ ...i, exemptions: { ...i.exemptions, generator: "datamodel-code-generator 0.1.0" } }), expect: "written for datamodel-code-generator 0.1.0" },
@@ -21,11 +22,11 @@ export const plainExemptionsFile = defineGate<{ exemptions: ExemptionsFile; pinn
   ],
 });
 
-export const sdkGenerate = defineGate<{ model: ModelDoc; dir: string; schemaDir: string }>({
+export const sdkGenerate = defineGate<{ model: ModelDoc; dir: string; schemaDir: string; names: SpecNames }>({
   id: "sdk-generate",
   title: "SDK types generate from the model",
   check: (i) => {
-    const e = emitSdk(i.model, i.dir, i.schemaDir);
+    const e = emitSdk(i.model, i.dir, i.schemaDir, i.names);
     return { problems: e.problems, note: `${e.files.length} files: ${e.sdk.emitted.length} named types and ${e.sdk.templates.size} generic templates in each of TypeScript, Python, and Go` };
   },
   fixtures: [
@@ -138,7 +139,7 @@ export const plainParity = defineGate<{ lock: string; cases: SdkCase[]; ran: str
   id: "plain-parity",
   title: "plain generator parity: its classes reach the reference verdict on every case with a concrete type and encode each accepted value back unchanged, or the divergence is a numbered exemption",
   code: ["src/plain-parity.ts#plainDivergences", "src/plain-parity.ts#checkExemptions"],
-  exemptions: [EXEMPTIONS_FILE],
+  exemptions: [`specs/*/${EXEMPTIONS_FILE}`],
   check: (i) => {
     const divergences = plainDivergences(i.cases, i.run);
     const r = checkExemptions(divergences, new Set(i.ran), i.exemptions, i.lock);

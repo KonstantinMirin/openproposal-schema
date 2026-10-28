@@ -1,0 +1,51 @@
+format: 1
+id: D-014
+status: proposed
+kind: gap
+author: agent
+question: "Four lists serve only OpenRTB 2.6, and `Dooh.venue` refers to List: DOOH Venue Types, whose table AdCOM removed. What does the registry hold for them?"
+covers:
+  - ir: key:object_dooh:Dooh.venue
+    digest: 299c1c33f2a9a4eb78fc87e4fb99c9f4300fe8b3236141cdc98f89b0da10d363
+    quote: "`venue` | The type of out-of-home venue. Refer to List: DOOH Venue TypesList: DOOH Venue Types."
+  - ir: def:list_autorefreshtriggers:0
+    digest: 4231c75751da56b3db1e897a1b4ce16edc80769456f2d3d83623b85049dd85b7
+    quote: "`0` | UNKNOWN"
+  - ir: def:list_doohmultipliermeasurementmourcetypes:0
+    digest: 323cc88067d3cb91983c207526b3c6472f5ab8e90de48f88b5176591ddcf4327
+    quote: "`0` | Unknown"
+  - ir: def:list_doohvenuetaxonomies:0
+    digest: 0a4aaa62f5dc890366d10a653cc6493f5fa36929e7fd78acb979c088ff40a313
+    quote: "`0` | AdCom DOOH Venue Types (deprecated)"
+  - ir: def:list_poddedupe:1
+    digest: ca8ae341046c0c168646bc33f81fa6cf99e0ae9dad4cbd59211df6c5753aec82
+    quote: "`1` | Deduplicated on adomain"
+options:
+  - id: as-written
+    summary: >-
+      The four lists are vocabularies like the others, since they are
+      AdCOM's lists; the removed list has no codes, so it becomes no
+      vocabulary, and the schemas say nothing about `Dooh.venue` until
+      AdCOM's objects are mapped.
+  - id: restore
+    summary: >-
+      Restore DOOH Venue Types from an earlier commit.
+chosen: as-written
+rationale: >-
+  A list no AdCOM object refers to is still a list AdCOM publishes, and
+  OpenRTB 2.6 refers to it, so the registry holds it. DOOH Venue Types now
+  holds only a deprecation note, so there are no codes to hold, and
+  restoring them from history would publish a list the current text
+  withdrew. The attribute that still names it is an object row, which the
+  objects phase maps.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L1964"
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L3591"
+  - "https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/1debba8001f40eb14597102dec3205afddf811d4/2.6.md#L1217"
+feedback: >-
+  Either restore List: DOOH Venue Types, or add a venue-taxonomy attribute
+  to `Dooh` that refers to List: DOOH Venue Taxonomies and make `venue` a
+  venue type from that taxonomy, as OpenRTB 2.6's `venuetype` and
+  `venuetypetax` do. Today a reader of AdCOM alone can't look up a value of
+  `Dooh.venue`. The deprecation note also cites "AdCOM 1.1", a version that
+  doesn't exist.

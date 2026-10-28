@@ -1,8 +1,9 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { basename, join, posix, resolve } from "node:path";
+import { basename, join, posix, relative, resolve } from "node:path";
 import { gitBlobSha, gitTreeSha } from "./canonical.ts";
 import { repoRoot, sourceLabel, type SpecLock } from "./lock.ts";
+import { REPO_ROOT } from "./repo.ts";
 
 export interface Materialized {
   file: string;
@@ -156,9 +157,9 @@ export function snapshotOf(lock: SpecLock): string | null {
  */
 export function checkSnapshot(lock: SpecLock): { problems: string[]; note: string } {
   const dir = snapshotOf(lock);
-  if (dir === null) return { problems: [`${basename(lock.file)} lists no snapshot source; write one with: npm run fetch -- --lock spec-input/${basename(lock.file)} --snapshot`], note: "" };
+  if (dir === null) return { problems: [`${basename(lock.file)} lists no snapshot source; write one with: npm run fetch -- --lock ${relative(REPO_ROOT, lock.file)} --snapshot`], note: "" };
   const root = repoRoot(lock);
-  if (!existsSync(join(root, dir))) return { problems: [`no snapshot at ${dir}; write it with: npm run fetch -- --lock spec-input/${basename(lock.file)} --snapshot`], note: "" };
+  if (!existsSync(join(root, dir))) return { problems: [`no snapshot at ${dir}; write it with: npm run fetch -- --lock ${relative(REPO_ROOT, lock.file)} --snapshot`], note: "" };
   const problems: string[] = [];
   const walk = (rel: string): string[] =>
     readdirSync(join(root, dir, rel), { withFileTypes: true }).flatMap((e) => {
@@ -192,6 +193,11 @@ export function checkSnapshot(lock: SpecLock): { problems: string[]; note: strin
     try {
       const atCommit = listing.size > 0 || lock.examples_tree !== null ? gitTree(clone, lock.commit, "examples") : null;
       if (atCommit !== null && atCommit !== lock.examples_tree) problems.push(`examples/ at ${lock.commit.slice(0, 7)} in ${clones[0]} is tree ${atCommit}, not the locked ${lock.examples_tree}`);
+      // A tag can move; the lock's tag must still name its commit.
+      if (lock.tag !== null) {
+        const tagged = gitTagCommit(clone, lock.tag);
+        if (tagged !== lock.commit) problems.push(`the tag ${lock.tag} in ${clones[0]} names ${tagged ?? "no commit"}, not the locked ${lock.commit.slice(0, 7)}`);
+      }
       note = `checked against the lock's pins and the clone at ${clones[0]}`;
     } catch (e) {
       problems.push(`${clones[0]}: ${(e as Error).message.split("\n")[0]}`);
@@ -238,6 +244,15 @@ export function writeSnapshot(lock: SpecLock): { dir: string; files: number; via
     return { dir, files: files.size, via: `git ${source.git}` };
   }
   throw new Error(`no clone of lock "${lock.name}" is reachable, and only a clone can list examples/ at the commit:\n  ${errors.join("\n  ") || "the lock lists no clone"}`);
+}
+
+/** The commit a tag of a clone names, or null when the clone has no such tag. */
+function gitTagCommit(clone: string, tag: string): string | null {
+  try {
+    return execFileSync("git", ["-C", clone, "rev-parse", "--verify", "--quiet", `refs/tags/${tag}^{commit}`], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim() || null;
+  } catch {
+    return null;
+  }
 }
 
 /** The tree SHA of a directory of a clone at a commit. */

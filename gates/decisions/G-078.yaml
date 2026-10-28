@@ -1,0 +1,73 @@
+format: 1
+id: G-078
+date: 2026-10-27
+question: What changes in the gates when each specification gets a profile and a plugin, and OpenProposal's readers move into its plugin?
+decision: >-
+  Each spec folder holds a profile, spec.yaml, valid against
+  specs/spec.schema.json: its name, its front end (its text, or a published
+  schema set), the documents its field rows describe, its RFC 2119 policy,
+  and the features it turns on. A specification read from its text names a
+  plugin under src/specs/<plugin>/ (src/specs/plugin.ts), and the extractor
+  calls it through one interface: rowKind, readRow, readTypeCell,
+  readValueList, readIdentifierList, and sectionOf, with its markers and
+  keyword policy. OpenProposal's layouts, markers, owners, field and
+  appendix rows, type grammar, value-list and identifier-list forms, section
+  numbering, rule checks, fidelity readers, and round-trip notation move
+  into src/specs/openproposal/; the documents come from the profile, each
+  its owner in PascalCase. A new gate, spec-profile, holds each profile to
+  its plugin and its mapping: a feature it turns on is one the plugin reads
+  and the mapping uses, and one it leaves off is neither; each document is
+  named after its owner, with an owner and a section of its own; and the
+  plugin reads statements as the profile says. It has six fixtures. The
+  gates whose checks take a plugin's readers through their input, fidelity,
+  round-trip, rule-checks, examples-validate, variant-examples, and the
+  three type-example gates, name src/specs/index.ts#PLUGINS, and with it
+  every plugin's code, and the rule checks' gates name the kernel's checks,
+  src/rule-checks.ts#CHECKS, which they no longer reach through
+  checkProblems. Three guard fixtures weaken a plugin's rule check, its
+  fidelity reader, and its round-trip notation, and expect the gate that
+  reads each to change. Five tests run a fixture spec with one table layout
+  and no markers, appendices, or profiles through its own plugin: it
+  extracts, maps with every element covered, resolves, and emits a schema
+  that validates; the suite holds 420 tests, and MIN_TESTS is 420.
+rationale: >-
+  No OpenProposal output changes: the committed IR, mapping, schemas, rules,
+  corpora, type examples, SDKs, comparisons, and feedback are what they were,
+  and the site build is the one G-077 accepted. No gate is weaker. Every gate
+  reads the code it read before: a plugin's readers reach the gates through
+  their input now, so each of those gates names every plugin's code in its
+  fingerprint, and the guard fixtures show that weakening a reader changes
+  it. A plugin that gives no fidelity readers or round-trip notation fails
+  those gates rather than skipping them. The profile gate is new.
+accepts:
+  - { gate: committed-files, fingerprint: 8340783a40efdd347cfbf763a85a01cf234fc7e68658bb867b8da6b84e961ebb }
+  - { gate: comparison, fingerprint: af2adbe1d6737d4fdc85fe9fe55af731f7243d379f9cbea35911cb5986ffe217 }
+  - { gate: constructor-sources, fingerprint: ae447e346bad523fb29843d5b847d958459b697ec275df6d890d033afae2f516 }
+  - { gate: domain-sources, fingerprint: b5f2efd903f6423177e29f3f8f935b09a0ba91370fb980790d027362d8464dac }
+  - { gate: examples-validate, fingerprint: bac337184f26714fc6cabf030a50c58a0fbd0970eb362ba097ef7e1296278767 }
+  - { gate: extraction, fingerprint: 1777b4cd223fd68a4e422343005c7f5b219dc6f4cb476babec8fbf7bf166cff7 }
+  - { gate: feedback, fingerprint: 838551b0068a06d6c941c5df8a066603baa3e984ef9cae0b982156f2b7e75f6e }
+  - { gate: fidelity, fingerprint: fbec235600312c5afa6fc99d4c935b3482b40f967270f9240dba41df773f3c5a }
+  - { gate: field-examples, fingerprint: e88b3f21034d558ac198ae9fa5ad700985bec82b30ee0bede777739f3b05569b }
+  - { gate: guard, fingerprint: 5d3859f489150e74c3c159cdd78de48b9208782797e9d0fc591f52017a240a70 }
+  - { gate: kernel-check, fingerprint: 06516bd8cc9d7477bab7071f7f06aab1ca84139f940ce2c3d229bf791e93a2e9 }
+  - { gate: kernel-sources, fingerprint: d3eabf8d6851367e73e0953bd7cf6613d29f0fa9b571c01b32cf202facc5c6e0 }
+  - { gate: map-drift, fingerprint: 368cf5c3ef4dace0d28fc25af482d8b3dd6984586779e201fed2b515a2909655 }
+  - { gate: mapping-bijection, fingerprint: 10221e909b2b35ba9a88e7d1cd84a545d2369d0ad0dbbddba1a3ad0d9df50de7 }
+  - { gate: mapping-current, fingerprint: 7352a2daa664ab131ddbd4aff10b45e778df90c0627f3e1f85fd75baa0015bc3 }
+  - { gate: mapping-location, fingerprint: 41337721ef82069c8568dad3dfd4771a9a47c17a51156b7ace94608f9dfd6682 }
+  - { gate: mapping-names, fingerprint: 7e89cc6d3aacb7e18c0102d3fe82d09898fcbf5496c25ed4f45a2c946b52e1ea }
+  - { gate: mapping-rules, fingerprint: 6d944bf05bf63e0aaf054b83aff037d507997b24be0afae6284af1a5359f88db }
+  - { gate: mapping-sources, fingerprint: 6666ac3e923e7246bceb1e6e0d6d0e13e0f3db64b44cf7f827c2edfc6d105447 }
+  - { gate: model-resolves, fingerprint: a8f63bb5b7833d4ecdc28cebe460cc8528284603f8d7c3dbc309922c5b010a45 }
+  - { gate: npm-test, fingerprint: 926ecdd3491ea87c8a034a8e5745aa95ba4b3c090b2e308d589228fe70dcc496 }
+  - { gate: round-trip, fingerprint: 4b103d6216b250002335c4f3987b5617f513047f2cb5cc6151d0fe63609a09c4 }
+  - { gate: rule-checks, fingerprint: 2676afe261cc1833002fca50d3b6bfe1b1d99e4f44d683e6326c05ccbcd016ff }
+  - { gate: rules-emit, fingerprint: 74f569492810eafaceb3663082502111735daa17ed7bc503b3793a03de1b34d5 }
+  - { gate: site-builds, fingerprint: 0321283a36f05efdb691f48944557bee5bc58561c6ff51f3c9883717017f3f6b }
+  - { gate: spec-profile, fingerprint: cce2d37bf27cee776aed7c5c2a5ca97294408b1df4ae57b845d20b81a02f6dde }
+  - { gate: type-examples-generate, fingerprint: d34ba7fd0d507148c37b349df763ccd9b11f50e9122552e2e718e16be7570229 }
+  - { gate: type-examples-valid, fingerprint: 114ab35b9095e8524c8db5d8c23ead9d795cba1175fdbeaae0a98887aa5e4379 }
+  - { gate: variant-check, fingerprint: 7fa6ad4da8165e1c8da784efb24357f1377abb467eceae9bf65b7ef0aa444f8d }
+  - { gate: variant-diff, fingerprint: 467202e8e92e766f320508d9440d2ed386c18d0f0f2fec48d7b5389ea0d52660 }
+  - { gate: variant-examples, fingerprint: adbb1dac676af0288a15f59b4a216d2cc43a744cfbe912be105fc2eea4af4ce5 }

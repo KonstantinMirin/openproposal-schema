@@ -1,0 +1,37 @@
+format: 1
+id: G-090
+date: 2026-10-27
+question: What changes in the gates to close the gaps an independent review of AdCOM's mapping found?
+decision: >-
+  The kernel engines gate fails on an oracle gap that names a primitive the
+  kernel file doesn't define, which no spec's kernel would check, so a gap
+  can't go stale by naming a primitive no spec holds. The kernel file itself
+  must define at least one constructor and one part, though a spec's binding
+  may leave them all out of its kernel. Two labeled lists are one list only
+  when their codes and their labels both agree, instead of never, so a
+  labeled list can't escape the list gate by its flag. A list's head noun
+  takes English's -es plurals too. Tests cover the vocabulary declaration
+  checks, the labeled lists in the list and duplication gates, the gap
+  check, and the kernel file's constructors; the suite holds 451 tests, and
+  MIN_TESTS is 451. AdCOM's decision records on its keyword reading, its
+  naming, its deferred objects, its start delays, its list statements, and
+  its examples correct their facts.
+rationale: >-
+  Each change restores or tightens a check that the multi-spec kernel had
+  loosened, and no check is relaxed. OpenProposal's outputs don't change.
+accepts:
+  - { gate: constructors-load, fingerprint: 150415d4a3e3d62762ff55e4df835fa01772cceb389d19a1ce605fe9dcbf197b }
+  - { gate: convention-beside-reference, fingerprint: 5c4f9face6002d9c3aab8f40e89ebb3115a710e0575954c50caa9e726136d2f7 }
+  - { gate: convention-inline, fingerprint: f27fe8aed90ac2ae90324ebba79009ccc5488f1faedc86ea5af6021e5564be11 }
+  - { gate: convention-keywords, fingerprint: 90b227f96d12257cef8211751fd40634163a4694277b854a9b94e5fa0b9a60c1 }
+  - { gate: convention-layers, fingerprint: 934e04d935dcf752ae84db49fd4aa9e6bed8693b12153a9e4f0a56572131957b }
+  - { gate: convention-lists, fingerprint: dfab8071146ceb707c2a9937ad52e11ac56ba2a48e319010740183e5e9e73d7f }
+  - { gate: convention-modules, fingerprint: 324da3f7a3ee79b2c561a534562f910ae69114a1aa4f7ac441f9d79a8a935260 }
+  - { gate: convention-unions, fingerprint: d88aca19b336344d990b6726a0214a3d209ec529b3835b1e3221c720ceb204b3 }
+  - { gate: kernel-engines, fingerprint: 79fa1a0243a2ecf3cf76c48a590d149ca6370449dff251e2b3f6794b95f9cc07 }
+  - { gate: map-drift, fingerprint: b775620078f47871f15b3baa7d6a2bf71d08ceacf029f8e26d6dca25531476bc }
+  - { gate: mapping-bijection, fingerprint: 67c7e722668ac08458b04c913b307c3f0412497c2bb2b6c55b9136aaaf683348 }
+  - { gate: mapping-location, fingerprint: b27ab15158f9734389dec33bd86b398c5265aeb1650c3adb77112565b84bf401 }
+  - { gate: mapping-rules, fingerprint: 34bb6fe849f75eedfb02e0fd172132b24cd834964f438bea776afe2dfaa39d79 }
+  - { gate: npm-test, fingerprint: 4506440aae920f098efa3255fa1e5570cc3e9484ce243b16f0bddb514575b48b }
+  - { gate: site-builds, fingerprint: ef90a6a792c98f0ca00bf856798a8ec007f8d9c79f7b6fe32a1f8c651c766c8a }

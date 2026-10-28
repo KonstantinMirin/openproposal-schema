@@ -1,0 +1,56 @@
+format: 1
+id: G-080
+date: 2026-10-27
+question: What changes in the gates when the SDK names, the schema IDs' base, the site's copy, and the feedback's target come from the spec's profile?
+decision: >-
+  The profile gains names (the specification's name in prose, its edition
+  and release, the base of every schema's $id, and the Python, Go, and npm
+  packages), site (the publisher, the public repository, the deploy target,
+  and the downloads' name), and feedback (the issue, the supporting page,
+  our pull requests, the headline, the groups, the rows with their intros,
+  the lint-kind table, and the suggestion). The schema emitter, the SDK
+  emitters, the site, and the report read each from it; the parity
+  harnesses read the package from the generated tree. The $id base stays
+  https://openproposal.noetis.dev/. schemas-emit, schemas-conventions,
+  sdk-generate, and fidelity take the names through their input. The site
+  gate fails on a spec's name written into any file under src/site/, with a
+  fixture, and an asset names the spec by a token the build fills in. The
+  lint-kind table is the profile's data now, so the spec-profile gate holds
+  it to every lint kind, as the table's TypeScript type once did, with two
+  fixtures. Two tests build the widgets fixture's SDKs and schemas with its
+  own names and find none of OpenProposal's, and check the site's names;
+  the suite holds 427 tests, and MIN_TESTS is 427.
+rationale: >-
+  No OpenProposal output changes: every committed file regenerates to its
+  bytes, feedback/comment.md and details.md keep their SHA-256, and the site
+  build is the one G-077 accepted. No gate is weaker: each checks what it
+  checked, with the names it read from code now read from the profile; the
+  site gate and the profile gate check more than before. The fingerprints
+  change because the emitters, the site, the report, and their gates
+  changed.
+accepts:
+  - { gate: comparison, fingerprint: 17b2acb61bd350781a71f90e42c0fd0060a18b17b78b08ca467bdaeb056b3113 }
+  - { gate: corpus-generates, fingerprint: 53c844fe8d1e13ef0c48eef6152e28a5fd093aee437ae782ae9356f712f3aba7 }
+  - { gate: corpus-isolation, fingerprint: e95581b9cc8e52d6480a902836ae4d13e6dc9831e0db877877ee4dc0a1a9146a }
+  - { gate: examples-validate, fingerprint: 97d2c5b76093a15f45a5e8ceb076c0712bc0071860a44ac11cfd99c89b62eedb }
+  - { gate: extraction, fingerprint: ad8dca27c0aae59ff826b8e8a874a644de4cd43ceea6a737b07310ab6af39296 }
+  - { gate: feedback, fingerprint: e623e32624fd9048d7f8e57e868183331ad518ad19796f52cc247f9a4ae3d3b1 }
+  - { gate: fidelity, fingerprint: 3b728c04c147bad468b58a533fe5cf2128e18caf354ddf54ae161d568897980a }
+  - { gate: field-examples, fingerprint: 951b660862adacc1e3475029eb186fdf5149ebc46c038ba8225914cfa817b742 }
+  - { gate: guard, fingerprint: 80050f71dff1e3ac099c5714481f58c5412cf9a91af549767f6ec0c48c420a29 }
+  - { gate: npm-test, fingerprint: 5228f76a6b409f53184b434acaf83a7fb31e7f22e24552560b4d790431b7b226 }
+  - { gate: release-breaking, fingerprint: e7925e67573f4da1c6940bb197177258a2a96725702a74d3e7a4e8c1d42ed489 }
+  - { gate: release-breaking-corpus, fingerprint: e933ad13c4a386b57bde8acf270b2115d4034597acd18b6a87cc23ca6a838741 }
+  - { gate: release-builds, fingerprint: 953a1d0ad85aa754a7a683d99c9cd4d5efecdf78a7813d1e50ff2fbda30be05c }
+  - { gate: round-trip, fingerprint: 1d79fd2e937f2adbf19c02f69aeda0e7e89b4c5f72deb5d006690201b9d55df4 }
+  - { gate: rule-checks, fingerprint: 63ec2d81d6b4b66fce975208d4494bb9aed747d6963d250e0235a5ce1aaa39ed }
+  - { gate: rule-vectors, fingerprint: 3ea57ec61575027658831aa3cde51f7cfebaa2982637d1bc70bcce4fb982a17e }
+  - { gate: rules-emit, fingerprint: 67bcff25066575c1831d2aca90ddcd5b9ad1ef9491fe0eb76a96ec555a221517 }
+  - { gate: schemas-conventions, fingerprint: 3842eb056314bbeb9acc61d394a17636e010232dbc181e23a2886d1f17df983a }
+  - { gate: schemas-emit, fingerprint: 672b86cb1de0b958b95ba226700cf36ff3e4a383ff8eaa669569ed675f275d3a }
+  - { gate: sdk-generate, fingerprint: 130b42b6a916df5afc975aab87e65ca52739ad3c94d7aa0a9370117d83905d13 }
+  - { gate: site-builds, fingerprint: 247c82c0e188db19fbc0476a9ab9e1e50bfc26be9eb7cfad7bea61a17a36a2d0 }
+  - { gate: spec-profile, fingerprint: cec984ca295b6188476ba9715b4dfbb501ceb0e3239751f5a05ab87ef720c1a6 }
+  - { gate: type-examples-generate, fingerprint: 6d5f0be05063351302a586c87872a7ea6f5ef8eb80ffa6139fabaf077b8d46c1 }
+  - { gate: type-examples-valid, fingerprint: 6fafac846f0ceb47eafef40681ca32ae7e8138db0317f72b6664d47574c36938 }
+  - { gate: variant-examples, fingerprint: 9070be320d23dd5842259c16912350a91d8040e9ad0b98580bbfafacf1314cfe }

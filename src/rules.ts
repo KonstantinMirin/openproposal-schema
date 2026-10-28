@@ -29,11 +29,12 @@ import { Ajv2020 } from "ajv/dist/2020.js";
 import { installFormats } from "./formats.ts";
 import { canonicalJson } from "./canonical.ts";
 import { elementDigest, indexElements, type Element } from "./elements.ts";
-import { schemaIdOf, type EmittedFile } from "./emit.ts";
+import { baseOf, type EmittedFile, schemaIdOf } from "./emit.ts";
 import type { SpecIR } from "./ir-types.ts";
 import { inScope, readYaml, type DecisionRecord, type TypeRef } from "./mapping.ts";
 import { compileSchema } from "./pipeline.ts";
 import type { ModelDoc, ModelType } from "./model.ts";
+import { REPO_ROOT } from "./repo.ts";
 
 /** A payload, for a rule about one payload. */
 export interface PayloadVector {
@@ -118,11 +119,12 @@ const VECTORS_SCHEMA = join(VECTORS_DIR, "vectors.schema.json");
 export const RULES_FILE = "rules.json";
 
 /**
- * Loads `vectors/*.yaml` and validates each file against the vectors schema.
- * A file's `module` must equal its name. Throws on the first invalid file.
+ * Loads `<dir>/*.yaml`, a spec's `vectors/` (`VECTORS_DIR` in its folder),
+ * and validates each file against the vectors schema. A file's `module` must
+ * equal its name. Throws on the first invalid file.
  */
-export function loadVectors(root: string, dir = join(root, VECTORS_DIR)): VectorFile[] {
-  const validate = compileSchema(join(root, VECTORS_SCHEMA));
+export function loadVectors(dir: string): VectorFile[] {
+  const validate = compileSchema(join(REPO_ROOT, VECTORS_SCHEMA));
   if (!existsSync(dir)) return [];
   return readdirSync(dir)
     .filter((f) => f.endsWith(".yaml"))
@@ -182,6 +184,8 @@ export interface RulesInput {
   schemaDir: string;
   /** The conditional properties the schema leaves to the rules, as the schema emitter lists them: `<type>.<property>: <reason>`. */
   conditionsLeft: string[];
+  /** The base of the schema tree's `$id`s (`SchemaNames.base`), for each vector type's `$id`. */
+  schemaBase: string;
 }
 
 /**
@@ -197,7 +201,7 @@ export interface RulesInput {
  * whose row no rule lists as a source.
  */
 export function emitRules(input: RulesInput): { doc: RulesDoc; problems: string[] } {
-  const { model, ir, lock, vectors, decisions, schemaDir } = input;
+  const { model, ir, lock, vectors, decisions, schemaDir, schemaBase } = input;
   const problems: string[] = [];
   const elements = indexElements(ir);
   const types = new Map(model.types.map((t) => [t.name, t]));
@@ -324,7 +328,7 @@ export function emitRules(input: RulesInput): { doc: RulesDoc; problems: string[
       }
       const typeName = v.type ?? r.owner;
       const t = types.get(typeName);
-      const schema = t ? schemaIdOf(t, schemaDir) : null;
+      const schema = t ? schemaIdOf(t, schemaDir, schemaBase) : null;
       if (!t || schema === null) problems.push(`${where}: its vectors are instances of "${typeName}", which the schema doesn't emit on lock "${lock}"; name an emitted type with "type"`);
       const all = [...v.valid, ...v.invalid];
       if (markerNames.has(r.owner) && !all.every(isChange)) problems.push(`${where}: a marker rule is about two versions and the party that changed one into the other, so each of its vectors is a pair (type rules § 9)`);
@@ -366,7 +370,7 @@ export function emitRules(input: RulesInput): { doc: RulesDoc; problems: string[
     }
     const wrap = (xs: unknown[]): Vector[] => xs.map((value) => ({ value }));
     const copies = owner.kind === "constructor" ? model.types.filter((t) => t.kind === "copy" && t.of.constructor === owner.name).map((t) => t.name) : [owner.name];
-    const schema = owner.kind === "constructor" ? null : schemaIdOf(owner, schemaDir);
+    const schema = owner.kind === "constructor" ? null : schemaIdOf(owner, schemaDir, schemaBase);
     add(
       {
         id: k.id,
@@ -441,7 +445,7 @@ export function checkRuleVectors(doc: RulesDoc, model: ModelDoc, files: EmittedF
     const prop = owner && "properties" in owner ? owner.properties[p!] : undefined;
     if (!prop || prop.type.kind !== "named") return null;
     const named = types.get(prop.type.name);
-    return named ? schemaIdOf(named, schemaDir) : null;
+    return named ? schemaIdOf(named, schemaDir, baseOf(files, schemaDir)) : null;
   };
   for (const r of doc.rules) {
     const schema = r.vectors.schema;

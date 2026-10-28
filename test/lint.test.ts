@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { loadLock } from "../src/lock.ts";
 import { materialize } from "../src/fetch.ts";
 import { lint } from "../src/lint.ts";
-import { extractText, FIELD_HEADER, lineItems, ROOT } from "./helpers.ts";
+import { FIELD_HEADER, SPEC, extractText, lineItems } from "./helpers.ts";
 
 /** Applies one exact text replacement, failing if the original text is absent. */
 function corrupt(text: string, from: string, to: string): string {
@@ -12,7 +12,7 @@ function corrupt(text: string, from: string, to: string): string {
 }
 
 test("Appendix A and B checks find each kind of drift in a corrupted copy of main", async () => {
-  const lock = loadLock(`${ROOT}/spec-input/spec-lock.yaml`);
+  const lock = loadLock(`${SPEC}/spec-input/spec-lock.yaml`);
   let text = (await materialize(lock)).bytes.toString("utf8");
   assert.deepEqual(
     lint(extractText(text)).filter((f) => f.kind.startsWith("appendix_")),
@@ -131,4 +131,12 @@ test("fixtures of an independent review: a typo that a row's one value or an uns
     .map((f) => f.id)
     .sort();
   assert.deepEqual(ids, ["expression_value_unknown:status:archived", "unresolved_identifier:sellr_id", "unresolved_identifier:staus"]);
+});
+
+test("the unstated-presence check counts the fields of every owner the rows have, not only OpenProposal's", () => {
+  const ir = extractText(lineItems(`${FIELD_HEADER}\n| \`id\` | String | immutable | The ID. |\n| \`name\` | String | seller-set | REQUIRED. The name. |`));
+  const deal = { ...ir, fields: ir.fields.map((f) => ({ ...f, owner: "deal_terms" })) };
+  const f = lint(deal).find((x) => x.kind === "presence_unstated");
+  assert.equal(f?.id, "presence_unstated:deal_terms");
+  assert.equal(f?.message, "1 of 2 deal terms fields don't say whether they're REQUIRED or OPTIONAL.");
 });

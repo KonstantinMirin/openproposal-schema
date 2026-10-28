@@ -6,6 +6,8 @@ import { loadKernel } from "../kernel.ts";
 import { loadLock } from "../lock.ts";
 import { writeMappings, type LockIr } from "../map-writer.ts";
 import { loadMappings } from "../mapping.ts";
+import { cliSpec } from "../builds.ts";
+import { REPO_ROOT } from "../repo.ts";
 
 /**
  * Usage: map [--check]
@@ -16,16 +18,17 @@ import { loadMappings } from "../mapping.ts";
  * `--check`, it writes nothing and exits 1 if any file would change.
  */
 function main(): number {
-  const { values } = parseArgs({ options: { check: { type: "boolean", default: false } } });
-  const root = new URL("../..", import.meta.url).pathname.replace(/\/$/, "");
-  const locks: LockIr[] = readdirSync(join(root, "spec-input"))
+  const { values } = parseArgs({ options: { spec: { type: "string" }, check: { type: "boolean", default: false } } });
+  const root = REPO_ROOT;
+  const specDir = cliSpec(values);
+  const locks: LockIr[] = readdirSync(join(specDir, "spec-input"))
     .filter((f) => f === "spec-lock.yaml" || f.endsWith(".lock.yaml"))
     .sort()
     .map((f) => {
-      const lock = loadLock(join(root, "spec-input", f));
-      return { name: lock.name, ir: JSON.parse(readFileSync(join(root, lock.ir_dir, "spec-ir.json"), "utf8")) };
+      const lock = loadLock(join(specDir, "spec-input", f));
+      return { name: lock.name, ir: JSON.parse(readFileSync(join(specDir, lock.ir_dir, "spec-ir.json"), "utf8")) };
     });
-  const out = writeMappings(locks, loadMappings(root, join(root, "mapping")), loadKernel(root), loadConstructors(root));
+  const out = writeMappings(locks, loadMappings(join(specDir, "mapping")), loadKernel(root, specDir), loadConstructors(root, specDir));
   const changed = [...out].filter(([file, text]) => readFileSync(file, "utf8") !== text).map(([file]) => file);
   if (values.check) {
     for (const f of changed) console.error(`error: ${f.slice(root.length + 1)} is not what npm run map writes`);

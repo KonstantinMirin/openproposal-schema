@@ -19,6 +19,7 @@ import { schemaIdOf } from "./emit.ts";
 import { inScope, readYaml } from "./mapping.ts";
 import type { ModelDoc } from "./model.ts";
 import { compileSchema } from "./pipeline.ts";
+import { REPO_ROOT } from "./repo.ts";
 
 export interface FieldExample {
   /** The IR element the member's property rests on, one of its `sources` in the model. */
@@ -42,10 +43,10 @@ export interface FieldExamplesFile {
 export const FIELD_EXAMPLES_FILE = join("field-examples", "field-examples.yaml");
 const FIELD_EXAMPLES_SCHEMA = join("field-examples", "field-examples.schema.json");
 
-/** Loads and validates the per-field example values. */
-export function loadFieldExamples(root: string, file = join(root, FIELD_EXAMPLES_FILE)): FieldExamplesFile {
+/** Loads and validates per-field example values, a spec's `field-examples/field-examples.yaml` (`FIELD_EXAMPLES_FILE` in its folder). */
+export function loadFieldExamples(file: string): FieldExamplesFile {
   const doc = readYaml(file);
-  const errors = compileSchema(join(root, FIELD_EXAMPLES_SCHEMA))(doc);
+  const errors = compileSchema(join(REPO_ROOT, FIELD_EXAMPLES_SCHEMA))(doc);
   if (errors.length > 0) throw new Error(`${file}: not a valid field examples file: ${errors.join("; ")}`);
   return { ...(doc as Omit<FieldExamplesFile, "file">), file };
 }
@@ -68,7 +69,7 @@ export interface FieldLocation {
 const escape = (token: string) => token.replaceAll("~", "~0").replaceAll("/", "~1");
 
 /** The entries in scope on the lock, each with the locations of every property named `member` whose sources hold `ir`, in the model's type order. */
-export function fieldLocations(model: ModelDoc, schemaDir: string, fields: FieldExample[]): { entry: FieldExample; locations: FieldLocation[] }[] {
+export function fieldLocations(model: ModelDoc, schemaDir: string, base: string | null, fields: FieldExample[]): { entry: FieldExample; locations: FieldLocation[] }[] {
   return fields
     .filter((e) => inScope(e.locks, model.input.lock))
     .map((entry) => ({
@@ -76,7 +77,7 @@ export function fieldLocations(model: ModelDoc, schemaDir: string, fields: Field
       locations: model.types.flatMap((t) => {
         if (!("properties" in t)) return [];
         const p = t.properties[entry.member];
-        const id = schemaIdOf(t, schemaDir);
+        const id = schemaIdOf(t, schemaDir, base);
         if (!p || !p.sources.includes(entry.ir) || id === null) return [];
         const loc = id.includes("#") ? id : `${id}#`;
         return [{ at: `${loc}/properties/${escape(entry.member)}`, type: t.name, schema: id, ...(p.type.kind === "named" ? { named: p.type.name } : {}) }];

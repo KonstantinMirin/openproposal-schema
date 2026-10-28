@@ -11,15 +11,15 @@ import type { SpecIR } from "../src/ir-types.ts";
 import { loadKernel } from "../src/kernel.ts";
 import { loadDecisions, loadMappings } from "../src/mapping.ts";
 import { resolveModel, type ModelDoc, type ModelType } from "../src/model.ts";
-import { ROOT } from "./helpers.ts";
+import { OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT);
+const KERNEL = loadKernel(ROOT, SPEC);
 const DOMAINS = KERNEL.domains!;
-const CONSTRUCTORS = loadConstructors(ROOT);
-const MAPPINGS = loadMappings(ROOT, join(ROOT, "mapping"));
-const DECISIONS = loadDecisions(ROOT, join(ROOT, "decisions"));
+const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const MAPPINGS = loadMappings(join(SPEC, "mapping"));
+const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 const TYPES = kernelTypes(KERNEL.primitives, CONSTRUCTORS.parts, { kernel: KERNEL.file, constructors: CONSTRUCTORS.file });
-const ir = (dir: string) => JSON.parse(readFileSync(join(ROOT, dir, "spec-ir.json"), "utf8")) as SpecIR;
+const ir = (dir: string) => JSON.parse(readFileSync(join(SPEC, dir, "spec-ir.json"), "utf8")) as SpecIR;
 const LOCKS: { lock: string; ir: SpecIR; model: ModelDoc; dir: string }[] = [
   ["main", "ir", "schemas"],
   ["with-open-prs", join("ir", "with-open-prs"), "schemas/with-open-prs"],
@@ -73,7 +73,7 @@ test("a concept whose type declares another concept, and a kernel type no concep
 test("a concept the lock publishes cites an element in scope or a standard", () => {
   const bare = domains((d) => (concept(d, "text").sources = { spec: concept(d, "text").sources.spec!.map((c) => ({ ...c, locks: ["with-open-prs"] })) }));
   const [main, prs] = LOCKS.map((l) => checkDomainSources(l.ir, l.lock, bare, TYPES));
-  assert.deepEqual(main, [`${DOMAINS.file}: concept "text": cites no specification element on lock "main" and no standard`]);
+  assert.deepEqual(main, [`${DOMAINS.binding}: concept "text": cites no specification element on lock "main" and no standard`], "the spec sources are the binding's");
   assert.deepEqual(prs, []);
   const stale = domains((d) => (concept(d, "text").sources.spec![0]!.digest = "f".repeat(64)));
   assert.match(checkDomainSources(LOCKS[0]!.ir, "main", stale, TYPES)[0]!, /concept "text": stale digest for "field:4\.2:description"/);
@@ -161,14 +161,14 @@ test("money vectors: an amount without its currency is invalid, and a currency a
   for (const l of LOCKS) {
     const ajv = new Ajv2020({ strict: true, strictRequired: false, allErrors: true });
     installFormats(ajv);
-    for (const f of emitSchemas(l.model, l.dir).files) ajv.addSchema(f.schema);
+    for (const f of emitSchemas(l.model, l.dir, OP_SCHEMA).files) ajv.addSchema(f.schema);
     for (const t of l.model.types) {
       if (t.kind !== "object") continue;
       const money = Object.entries(t.properties).filter(([, p]) => p.type.kind === "named" && ["Amount", "PriceAdjustment"].includes(p.type.name));
       // An object whose basis reads its amount has its own vectors, below.
       if (money.length === 0 || !("currency" in t.properties) || money.some(([, p]) => p.cases !== undefined)) continue;
       objects++;
-      const validate = ajv.getSchema(schemaIdOf(t, l.dir)!)!;
+      const validate = ajv.getSchema(schemaIdOf(t, l.dir, OP_SCHEMA.base)!)!;
       // The members the object requires whatever its money says, from the committed examples' values.
       const base: Record<string, unknown> = {};
       for (const [k, p] of Object.entries(t.properties)) {
@@ -205,8 +205,8 @@ test("a basis types its amount: money with its currency for spend, a count with 
     const l = LOCKS.find((x) => x.lock === lock)!;
     const ajv = new Ajv2020({ strict: true, strictRequired: false, allErrors: true });
     installFormats(ajv);
-    for (const f of emitSchemas(l.model, l.dir).files) ajv.addSchema(f.schema);
-    const validate = ajv.getSchema(schemaIdOf(l.model.types.find((t) => t.name === object)!, l.dir)!)!;
+    for (const f of emitSchemas(l.model, l.dir, OP_SCHEMA).files) ajv.addSchema(f.schema);
+    const validate = ajv.getSchema(schemaIdOf(l.model.types.find((t) => t.name === object)!, l.dir, OP_SCHEMA.base)!)!;
     const where = `${lock}: ${object}`;
     assert.equal(validate({ ...base, basis: "spend", amount: 80000 }), false, `${where}: spend without currency`);
     assert.equal(validate({ ...base, basis: "spend", amount: 80000, currency: "USD" }), true, `${where}: spend with currency`);
@@ -219,8 +219,8 @@ test("a basis types its amount: money with its currency for spend, a count with 
   const prs = LOCKS[1]!;
   const ajv = new Ajv2020({ strict: true, strictRequired: false, allErrors: true });
   installFormats(ajv);
-  for (const f of emitSchemas(prs.model, prs.dir).files) ajv.addSchema(f.schema);
-  const threshold = ajv.getSchema(schemaIdOf(prs.model.types.find((t) => t.name === "MinCommitmentEntry")!, prs.dir)!)!;
+  for (const f of emitSchemas(prs.model, prs.dir, OP_SCHEMA).files) ajv.addSchema(f.schema);
+  const threshold = ajv.getSchema(schemaIdOf(prs.model.types.find((t) => t.name === "MinCommitmentEntry")!, prs.dir, OP_SCHEMA.base)!)!;
   assert.equal(threshold({ line_item_id: uuid, amount: 50000, currency: "USD" }), false);
   assert.equal(threshold({ line_item_id: uuid }), true);
 });

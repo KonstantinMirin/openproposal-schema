@@ -15,8 +15,8 @@ export const mappingLoad = defineGate<{ mappingDir: string; decisionsDir: string
   title: "mapping and decisions: schema-valid",
   code: ["src/mapping.ts#loadMappings", "src/mapping.ts#loadDecisions"],
   check: (i) => {
-    const m = loadMappings(ROOT, i.mappingDir);
-    const d = loadDecisions(ROOT, i.decisionsDir);
+    const m = loadMappings(i.mappingDir);
+    const d = loadDecisions(i.decisionsDir);
     return { problems: [], note: `${m.length} mapping files, ${m.reduce((n, f) => n + f.entries.length, 0)} entries, ${d.length} decision records` };
   },
   fixtures: [

@@ -1,0 +1,82 @@
+# The artifacts the drift report (src/drift.ts, `npm run drift`) compares
+# AdCOM's lists with, and which enum of each holds each list. Each source's
+# folder is read from its snapshot under drift/snapshots/<source>/, which
+# holds all of the folder and must hash to the pinned git tree, so no file
+# can be left out; a reachable clone must agree with every pin. A list's
+# enum is null where the artifact defines none for it. Every list of the
+# registry's text is named once, and every enum the files define is named for
+# one list, so the report leaves no list or enum out. The pairs are by meaning, not name: adcom-proto calls
+# List: IP Location Services `LocationService`, and Prebid calls List:
+# Creative Subtypes - Audio/Video `MediaCreativeSubtype`.
+format: 1
+# The registry lock whose lists the report reads.
+lock: main
+sources:
+  # IAB Tech Lab's protocol buffer definitions of AdCOM, its README titled
+  # "(WIP)"; enums.proto holds every enum adcom-proto defines, three of them
+  # nested in message Creative.
+  - id: adcom-proto
+    title: adcom-proto
+    upstream: https://github.com/IABTechLab/adcom-proto
+    commit: 921f85e685fed869344437378f4dea2be19b7b49
+    clone: vendor/adcom-proto
+    reader: proto
+    folder: proto/com/iabtechlab/adcom/v1/enums
+    tree: c46b47d117a0a572a18cd4418e54139b5f2363e6
+    license: { path: LICENSE, blob: 261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64 }
+  # Prebid's Go types of AdCOM, which Prebid Server uses; each list's type and
+  # constants are in a file of its own under adcom1/, among the objects'.
+  - id: prebid-openrtb
+    title: Prebid adcom1
+    upstream: https://github.com/prebid/openrtb
+    commit: 0d01af1cd27503d7edd0584fadb7e740ab83cc9c
+    clone: vendor/prebid-openrtb
+    reader: go
+    folder: adcom1
+    tree: 1591f1764b7f66df16c190d5b383927c6e376a3c
+    license: { path: LICENSE, blob: b7fa401fa4b79b208b1dbc4679b09b8f4691adbf }
+lists:
+  - { list: list_agenttypes, enums: { adcom-proto: AgentType, prebid-openrtb: AgentType } }
+  - { list: list_apiframeworks, enums: { adcom-proto: APIFramework, prebid-openrtb: APIFramework } }
+  - { list: list_auditstatuscodes, enums: { adcom-proto: AuditStatusCode, prebid-openrtb: AuditStatus } }
+  - { list: list_autorefreshtriggers, enums: { adcom-proto: null, prebid-openrtb: AutoRefreshTrigger } }
+  - { list: list_categorytaxonomies, enums: { adcom-proto: CategoryTaxonomy, prebid-openrtb: CategoryTaxonomy } }
+  - { list: list_clicktypes, enums: { adcom-proto: ClickType, prebid-openrtb: ClickType } }
+  - { list: list_companiontypes, enums: { adcom-proto: CompanionType, prebid-openrtb: CompanionType } }
+  - { list: list_connectiontypes, enums: { adcom-proto: ConnectionType, prebid-openrtb: ConnectionType } }
+  - { list: list_contentcontexts, enums: { adcom-proto: ContentContext, prebid-openrtb: ContentContext } }
+  - { list: list_creativeattributes, enums: { adcom-proto: Creative.Attribute, prebid-openrtb: CreativeAttribute } }
+  - { list: list_creativesubtypesaudiovideo, enums: { adcom-proto: Creative.AudioVideoType, prebid-openrtb: MediaCreativeSubtype } }
+  - { list: list_creativesubtypesdisplay, enums: { adcom-proto: Creative.DisplayType, prebid-openrtb: DisplayCreativeSubtype } }
+  - { list: list_deliverymethods, enums: { adcom-proto: DeliveryMethod, prebid-openrtb: DeliveryMethod } }
+  - { list: list_devicetypes, enums: { adcom-proto: DeviceType, prebid-openrtb: DeviceType } }
+  - { list: list_displaycontexttypes, enums: { adcom-proto: DisplayContextType, prebid-openrtb: DisplayContextType } }
+  - { list: list_displayplacementtypes, enums: { adcom-proto: DisplayPlacementType, prebid-openrtb: DisplayPlacementType } }
+  - { list: list_doohmultipliermeasurementmourcetypes, enums: { adcom-proto: null, prebid-openrtb: DOOHMultiplierMeasurementSourceType } }
+  - { list: list_doohvenuetaxonomies, enums: { adcom-proto: null, prebid-openrtb: DOOHVenueTaxonomy } }
+  - { list: list_doohvenuetypes, enums: { adcom-proto: DOOHVenueType, prebid-openrtb: DOOHVenueType } }
+  - { list: list_eventtrackingmethods, enums: { adcom-proto: EventTrackingMethod, prebid-openrtb: EventTrackingMethod } }
+  - { list: list_eventtypes, enums: { adcom-proto: EventType, prebid-openrtb: EventType } }
+  - { list: list_expandabledirections, enums: { adcom-proto: ExpandableDirection, prebid-openrtb: ExpandableDirection } }
+  - { list: list_feedtypes, enums: { adcom-proto: FeedType, prebid-openrtb: FeedType } }
+  - { list: list_idmatchmethod, enums: { adcom-proto: MatchMethod, prebid-openrtb: MatchMethod } }
+  - { list: list_iplocationservices, enums: { adcom-proto: LocationService, prebid-openrtb: IPLocationService } }
+  - { list: list_linearitymodes, enums: { adcom-proto: LinearityMode, prebid-openrtb: LinearityMode } }
+  - { list: list_locationtypes, enums: { adcom-proto: LocationType, prebid-openrtb: LocationType } }
+  - { list: list_mediaratings, enums: { adcom-proto: MediaRating, prebid-openrtb: MediaRating } }
+  - { list: list_nativedataassettypes, enums: { adcom-proto: NativeDataAssetType, prebid-openrtb: NativeDataAssetType } }
+  - { list: list_nativeimageassettypes, enums: { adcom-proto: NativeImageAssetType, prebid-openrtb: NativeImageAssetType } }
+  - { list: list_operatingsystems, enums: { adcom-proto: OperatingSystem, prebid-openrtb: OperatingSystem } }
+  - { list: list_placementpositions, enums: { adcom-proto: PlacementPosition, prebid-openrtb: PlacementPosition } }
+  - { list: list_placementsubtypesvideo, enums: { adcom-proto: VideoPlacementSubtype, prebid-openrtb: VideoPlacementSubtype } }
+  - { list: list_plcmtsubtypesvideo, enums: { adcom-proto: VideoPlcmtSubtype, prebid-openrtb: VideoPlcmtSubtype } }
+  - { list: list_playbackcessationmodes, enums: { adcom-proto: PlaybackCessationMode, prebid-openrtb: PlaybackCessationMode } }
+  - { list: list_playbackmethods, enums: { adcom-proto: PlaybackMethod, prebid-openrtb: PlaybackMethod } }
+  - { list: list_poddedupe, enums: { adcom-proto: null, prebid-openrtb: PodDedupe } }
+  - { list: list_podsequence, enums: { adcom-proto: null, prebid-openrtb: PodSequence } }
+  - { list: list_productionqualities, enums: { adcom-proto: ProductionQuality, prebid-openrtb: ProductionQuality } }
+  - { list: list_sizeunits, enums: { adcom-proto: SizeUnit, prebid-openrtb: SizeUnit } }
+  - { list: list_slotpositioninpod, enums: { adcom-proto: null, prebid-openrtb: SlotPositionInPod } }
+  - { list: list_startdelaymodes, enums: { adcom-proto: StartDelayMode, prebid-openrtb: StartDelay } }
+  - { list: user-agent_source, enums: { adcom-proto: UserAgentSource, prebid-openrtb: UserAgentSource } }
+  - { list: list_volumenormalizationmodes, enums: { adcom-proto: VolumeNormalizationMode, prebid-openrtb: VolumeNormalizationMode } }

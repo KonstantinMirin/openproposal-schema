@@ -5,6 +5,8 @@ import { BUILD_OPTIONS, cliBuilds } from "../builds.ts";
 import { schemaDirOf } from "../emit.ts";
 import { sdkDirOf } from "../sdk.ts";
 import { emitSdk, SDK_ROOTS } from "../sdk-emit.ts";
+import { REPO_ROOT } from "../repo.ts";
+import { profileOf } from "../specs/index.ts";
 
 /**
  * Usage: sdk [--lock <file>] [--variant <name>] [--out <dir>]
@@ -23,16 +25,16 @@ import { emitSdk, SDK_ROOTS } from "../sdk-emit.ts";
  */
 function main(): number {
   const { values } = parseArgs({ options: BUILD_OPTIONS });
-  const root = new URL("../..", import.meta.url).pathname.replace(/\/$/, "");
+  const root = REPO_ROOT;
   let failed = false;
-  for (const b of cliBuilds(root, values)) {
+  for (const b of cliBuilds(values)) {
     if (b.problems.length > 0) {
       for (const p of b.problems) console.error(`error: ${b.label}: model: ${p}`);
       failed = true;
       continue;
     }
     const dir = sdkDirOf(b.irDir, b.variant);
-    const emitted = emitSdk(b.model, dir, b.dirOf(schemaDirOf(b.irDir)));
+    const emitted = emitSdk(b.model, dir, b.dirOf(schemaDirOf(b.irDir)), profileOf(b.lock).names);
     if (emitted.problems.length > 0) {
       for (const p of emitted.problems) console.error(`error: ${b.label}: ${p}`);
       failed = true;

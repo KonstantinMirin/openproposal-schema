@@ -20,7 +20,7 @@ export interface SpecLock {
   commit: string;
   path: string;
   blob: string;
-  /** Directory, relative to the repository root, that receives the IR and findings. */
+  /** Directory, relative to the spec's folder (`repoRoot`), that receives the IR and findings. */
   ir_dir: string;
   /** When false, CI may skip regeneration if no source is reachable. */
   required: boolean;
@@ -35,6 +35,8 @@ export interface SpecLock {
   heads_on: string | null;
   /** What the integration changed outside the PRs, apart from resolving their conflicts, each as a clause for the working group, such as "added `x` to the example of #70"; empty when nothing. */
   edits: string[];
+  /** The upstream tag that names `commit`, for a lock on a release; null for one on a branch. CI checks that the tag still names the commit where a clone is reachable. */
+  tag: string | null;
   /** Absolute path of the lock file. */
   file: string;
 }
@@ -52,7 +54,7 @@ export function loadLock(file: string): SpecLock {
     if (typeof v !== "string" || v === "") return fail(`"${key}" must be a non-empty string`);
     return v;
   };
-  const known = new Set(["name", "upstream", "commit", "path", "blob", "ir_dir", "required", "sources", "base", "merge_order", "examples", "examples_tree", "heads_on", "edits"]);
+  const known = new Set(["name", "upstream", "commit", "path", "blob", "ir_dir", "required", "sources", "base", "merge_order", "examples", "examples_tree", "heads_on", "edits", "tag"]);
   for (const key of Object.keys(doc)) if (!known.has(key)) fail(`unknown key "${key}"`);
   const commit = str("commit");
   const blob = str("blob");
@@ -103,11 +105,16 @@ export function loadLock(file: string): SpecLock {
     examples_tree: examplesTree,
     heads_on: headsOn,
     edits: edits as string[],
+    tag: doc.tag === undefined ? null : str("tag"),
     file: abs,
   };
 }
 
-/** The repository root: the lock files live in `<root>/spec-input/`. */
+/**
+ * The root of the lock's specification: the folder whose `spec-input/` holds
+ * the lock, `specs/<spec>/` (src/repo.ts). Every path a lock names, and every
+ * spec input and output, is relative to it.
+ */
 export function repoRoot(lock: SpecLock): string {
   return dirname(dirname(lock.file));
 }

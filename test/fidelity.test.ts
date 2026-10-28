@@ -2,21 +2,23 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { checkFidelity, literal, readCondition, readConstraints, readingsOf, rightValues, violates, wrongValues, type FidelityInput, type SpecConstraint } from "../src/fidelity.ts";
+import { checkFidelity, readingsOf, violates as violatesWith, type FidelityInput, type SpecConstraint } from "../src/fidelity.ts";
+import { FIDELITY, literal, readCondition, readConstraints, rightValues, wrongValues } from "../src/specs/openproposal/fidelity-readers.ts";
 import { loadConstructors } from "../src/constructors.ts";
-import { emitSchemas, schemaDirOf } from "../src/emit.ts";
+import { emitSchemas, schemaDirOf, type SchemaNames } from "../src/emit.ts";
 import type { TypeExpr } from "../src/grammar/type-expr.ts";
 import type { SpecIR } from "../src/ir-types.ts";
 import { loadKernel } from "../src/kernel.ts";
 import { loadLock } from "../src/lock.ts";
 import { loadDecisions, loadMappings, type DecisionRecord } from "../src/mapping.ts";
 import { resolveModel } from "../src/model.ts";
-import { emitRules, loadVectors } from "../src/rules.ts";
+import { emitRules, loadVectors, VECTORS_DIR } from "../src/rules.ts";
 import { fidelity, loadExpected, type ExpectedFile } from "../gates/fidelity.ts";
-import { extractText, FIELD_HEADER, lineItems, ROOT } from "./helpers.ts";
+import { extractText, FIELD_HEADER, lineItems, OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
 
-const PRS = JSON.parse(readFileSync(join(ROOT, "ir", "with-open-prs", "spec-ir.json"), "utf8")) as SpecIR;
+const PRS = JSON.parse(readFileSync(join(SPEC, "ir", "with-open-prs", "spec-ir.json"), "utf8")) as SpecIR;
 const read = (ir: SpecIR) => readConstraints(ir);
+const violates = (c: SpecConstraint, payload: unknown) => violatesWith(c, payload, FIDELITY);
 const byId = (cs: SpecConstraint[], id: string) => cs.find((c) => c.id === id);
 
 test("literal reads booleans and decimal integers, and keeps every other value a string", () => {
@@ -66,7 +68,7 @@ test("a 'whichever of' list is a projection with each step optional, and a decis
   assert.ok(!withReading.constraints.some((c) => c.at.member.name === "name" && c.element === "block:2.1:3/identifiers:1"));
   assert.ok(!withReading.unread.some((u) => u.text === "property names"));
   assert.deepEqual(withReading.refused, []);
-  assert.deepEqual(readingsOf(loadMappings(ROOT, join(ROOT, "mapping")), "main"), [{ list: "block:2.1:3/identifiers:1", decision: "D-028", item: "property names", paths: ["properties.available[].name"] }]);
+  assert.deepEqual(readingsOf(loadMappings(join(SPEC, "mapping")), "main"), [{ list: "block:2.1:3/identifiers:1", decision: "D-028", item: "property names", paths: ["properties.available[].name"] }]);
 });
 
 test("a decision's reading that would widen a projection, or reads no prose item of its list, is refused and joins no projection", () => {
@@ -228,18 +230,18 @@ test("the schema's dependencies give time_zone the verdicts its row states", () 
 });
 
 // The real input of the gate on the open-PRs lock, built as `npm run ci` builds it.
-let built: (FidelityInput & { expected: ExpectedFile }) | undefined;
-function gateInput(): FidelityInput & { expected: ExpectedFile } {
+let built: (FidelityInput & { expected: ExpectedFile; names: SchemaNames }) | undefined;
+function gateInput(): FidelityInput & { expected: ExpectedFile; names: SchemaNames } {
   if (built) return built;
-  const lock = loadLock(join(ROOT, "spec-input", "with-open-prs.lock.yaml"));
-  const decisions = loadDecisions(ROOT, join(ROOT, "decisions"));
-  const kernel = loadKernel(ROOT);
-  const mappings = loadMappings(ROOT, join(ROOT, "mapping"));
-  const { model } = resolveModel({ ir: PRS, lock: lock.name, mappings, decisions, kernel, constructors: loadConstructors(ROOT) });
+  const lock = loadLock(join(SPEC, "spec-input", "with-open-prs.lock.yaml"));
+  const decisions = loadDecisions(join(SPEC, "decisions"));
+  const kernel = loadKernel(ROOT, SPEC);
+  const mappings = loadMappings(join(SPEC, "mapping"));
+  const { model } = resolveModel({ ir: PRS, lock: lock.name, mappings, decisions, kernel, constructors: loadConstructors(ROOT, SPEC) });
   const schemaDir = schemaDirOf(lock.ir_dir);
-  const emitted = emitSchemas(model, schemaDir);
-  const rules = emitRules({ model, ir: PRS, lock: lock.name, vectors: loadVectors(ROOT), decisions, schemaDir, conditionsLeft: emitted.conditions.left }).doc;
-  built = { ir: PRS, lock: lock.name, model, files: emitted.files, kernel, rules, decisions, readings: readingsOf(mappings, lock.name), schemaDir, expected: loadExpected() };
+  const emitted = emitSchemas(model, schemaDir, OP_SCHEMA);
+  const rules = emitRules({ model, ir: PRS, lock: lock.name, vectors: loadVectors(join(SPEC, VECTORS_DIR)), decisions, schemaDir, conditionsLeft: emitted.conditions.left, schemaBase: OP_SCHEMA.base }).doc;
+  built = { ir: PRS, lock: lock.name, model, files: emitted.files, kernel, rules, decisions, readings: readingsOf(mappings, lock.name), schemaDir, expected: loadExpected(), readers: FIDELITY, names: OP_SCHEMA };
   return built;
 }
 const D039_VALUES = "key:5.2.2:placement.reward#meaning/values:1";
@@ -265,7 +267,7 @@ test("no rule excuses a constraint by naming its element: only a listed rule on 
   assert.ok(i.rules.rules.some((r) => r.sources.includes(included)), "a rule names the element among its sources");
   const model = structuredClone(i.model);
   for (const t of model.types) if (t.kind === "copy" && t.of.constructor === "Selectable") t.schema = { ...t.schema, required: ["available"] };
-  const r = checkFidelity({ ...i, model, files: emitSchemas(model, i.schemaDir).files });
+  const r = checkFidelity({ ...i, model, files: emitSchemas(model, i.schemaDir, OP_SCHEMA).files });
   assert.ok(r.disagreements.filter((d) => d.element === included && d.form === "required").length >= 12);
   assert.deepEqual(r.ruled, []);
   // The plcmt condition: unlisted, it disagrees; listed with its rule, the rule carries it; listed with another rule, it disagrees still.
@@ -286,7 +288,7 @@ test("the expected file: an unlisted disagreement fails, a listed one whose deta
   const summary = model.types.find((t) => t.name === "LineItemSummary");
   assert.ok(summary && summary.kind === "profile");
   summary.properties.line_item_id!.presence = "optional";
-  const loose = { ...i, model, files: emitSchemas(model, i.schemaDir).files };
+  const loose = { ...i, model, files: emitSchemas(model, i.schemaDir, OP_SCHEMA).files };
   const constraint = "block:2.1:3/identifiers:1#contains@block:2.1:3/identifiers:1.line_item_id";
   const detail = '"line_item_id" absent is invalid, but the schema accepts it';
   const without = await fidelity.check(loose);
@@ -309,7 +311,7 @@ test("a conditional tests every other value its member's row lists, not only the
   const placement = model.types.find((t) => t.name === "Placement");
   assert.ok(placement && placement.kind === "object");
   placement.properties.plcmt!.presence = "required";
-  const r = checkFidelity({ ...i, model, files: emitSchemas(model, i.schemaDir).files });
+  const r = checkFidelity({ ...i, model, files: emitSchemas(model, i.schemaDir, OP_SCHEMA).files });
   const c = byId(read(PRS).constraints, "key:5.2.2:placement.plcmt#conditional@line_item.placement.plcmt")!;
   assert.ok(c.form === "conditional" && "when" in c);
   const rejected = r.disagreements.filter((d) => d.constraint === c.id && d.detail.includes("is valid, but the schema rejects it")).map((d) => /channel = "([^"]+)"/.exec(d.detail)?.[1]);
@@ -324,7 +326,7 @@ test("a closed vocabulary no closed value list reaches is counted unread, and on
 });
 
 test("a sentence that gives members the codes of named lists is read with the lists' codes, and unread without them", () => {
-  const lists = loadKernel(ROOT).lists;
+  const lists = loadKernel(ROOT, SPEC).lists;
   const sentence = PRS.sentences.find((s) => /take any code in List:/.test(s.text))!;
   const of = (cs: SpecConstraint[]) => cs.filter((c) => c.element === sentence.id && c.form === "values").map((c) => [c.at.member.name, "values" in c ? c.values : null, "open" in c ? c.open : null]);
   assert.deepEqual(of(readConstraints(PRS, lists).constraints).sort(), [
@@ -348,7 +350,7 @@ test("a row's namespaced options read as their examples, each valid, and each wi
 });
 
 test("a named list that reserves vendor codes lists each of them: 500 is an API framework, and 499 and 10 aren't", () => {
-  const lists = loadKernel(ROOT).lists;
+  const lists = loadKernel(ROOT, SPEC).lists;
   const sentence = PRS.sentences.find((s) => /take any code in List:/.test(s.text))!;
   const api = readConstraints(PRS, lists).constraints.find((c) => c.element === sentence.id && c.at.member.name === "api");
   assert.ok(api && api.form === "values");

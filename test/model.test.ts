@@ -7,15 +7,15 @@ import type { SpecIR } from "../src/ir-types.ts";
 import { loadKernel } from "../src/kernel.ts";
 import { loadDecisions, loadMappings, type MappingFile } from "../src/mapping.ts";
 import { renderModel, resolveModel, type ModelDoc, type ModelType } from "../src/model.ts";
-import { ROOT } from "./helpers.ts";
+import { ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT);
-const CONSTRUCTORS = loadConstructors(ROOT);
-const MAPPINGS = loadMappings(ROOT, join(ROOT, "mapping"));
-const DECISIONS = loadDecisions(ROOT, join(ROOT, "decisions"));
+const KERNEL = loadKernel(ROOT, SPEC);
+const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const MAPPINGS = loadMappings(join(SPEC, "mapping"));
+const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 const LOCKS: [string, SpecIR][] = [
-  ["main", JSON.parse(readFileSync(join(ROOT, "ir", "spec-ir.json"), "utf8")) as SpecIR],
-  ["with-open-prs", JSON.parse(readFileSync(join(ROOT, "ir", "with-open-prs", "spec-ir.json"), "utf8")) as SpecIR],
+  ["main", JSON.parse(readFileSync(join(SPEC, "ir", "spec-ir.json"), "utf8")) as SpecIR],
+  ["with-open-prs", JSON.parse(readFileSync(join(SPEC, "ir", "with-open-prs", "spec-ir.json"), "utf8")) as SpecIR],
 ];
 const PRS = LOCKS[1]![1];
 

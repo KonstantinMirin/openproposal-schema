@@ -1,0 +1,58 @@
+format: 1
+id: G-092
+date: 2026-10-27
+question: What changes in the gates when AdCOM's lists run through every output stage and AdCOM gets its pages on the site?
+decision: >-
+  AdCOM runs every stage now, not only through its model. The fidelity
+  oracle takes a spec's own code lists from its plugin's readers
+  (`readLists`): each list's codes are valid, its vendor range's first two
+  codes are valid and the code below it invalid, every positive number is
+  valid where a `>0` row stands, and a code no row names, a code written as
+  a string, and a fraction are invalid; three fixtures fail the gate on a
+  vocabulary that lost a code, gained one, or lost its vendor range. The
+  round trip renders AdCOM's list tables from its vocabularies through the
+  plugin's notation. A text whose sections carry anchors, not numbers,
+  describes each module by what it holds, so OpenProposal's descriptions
+  don't change. A line's permalink encodes each segment of the file's path,
+  since AdCOM's file name has spaces; OpenProposal's path has none, so its
+  links and feedback don't change. A spec with no `variants/` folder has no
+  variants. The profile's `site.registry` marks a spec whose vocabularies
+  are a registry other specs cite, and the site gives it a page of its
+  lists and the lines and vocabularies that cite each; a fixture fails the
+  site gate on a citation at a vocabulary the citing spec's build lacks. A
+  spec whose profile names no SDK packages, or no feedback target, has no
+  SDK types or report to check, and the run records a passing line saying
+  so in their place. The spec-profile gate's fingerprint now covers
+  `specs/spec.schema.json`, and the site gate's `specs/site.schema.json`, so
+  a change to either format needs a gate decision. The gates whose code
+  reads the profile or the plugins (src/profile.ts, src/specs/index.ts)
+  change with them; the guard changes with scripts/ci.ts. The test suite
+  holds 455 tests, and MIN_TESTS is 455.
+rationale: >-
+  The oracle and the round trip check AdCOM's lists, which they read
+  nothing of before, and the site gate covers the registry's links across
+  specs. The SDK and feedback gates check outputs that a spec with no SDK
+  packages or feedback target doesn't have; OpenProposal's profile names
+  both, so they run on it as before. Two format schemas join fingerprints.
+  Nothing is relaxed. OpenProposal's schemas, rules, corpus, type examples,
+  SDK types, release manifests, comparison, and feedback are byte for byte
+  as before.
+accepts:
+  - { gate: comparison, fingerprint: e942f34216368e8193f627043f9fcefdcef4f9d426a69fed55937ba695ce7b69 }
+  - { gate: examples-validate, fingerprint: ace49d1797bb97a6b33150fe7c4098cc0716618051dda79fadb4da1afc5c9cf7 }
+  - { gate: extraction, fingerprint: 7c6c2e8d6129d8e433b27624cbbc65f153f61360a4ce4e6573244b1cc38c22fd }
+  - { gate: feedback, fingerprint: e16a7b6e7d14da9a2d4e0a6234cc1275921c50908772f8c7803045d4012fada5 }
+  - { gate: fidelity, fingerprint: 751399b45aab4d4af285cd6960df2b938a485d19e7189f09299ea072640c285d }
+  - { gate: field-examples, fingerprint: a3bdc94900c049ce0405d183b9fcf608d952ee7974d7b67a37e4138c7a5cc63b }
+  - { gate: guard, fingerprint: add6ffa9ce9cc8c6c3765a3abbd3621a54a0b117c38ec9fd6149382626c78ba6 }
+  - { gate: npm-test, fingerprint: f5c52bdb38cd9eeb7faea5ead01049c08632794c193c0a1d6f364b8484b0c9f4 }
+  - { gate: record-wording, fingerprint: 797fd8894dd3209593e134b35fb85855ac05fc1e657e40fcfaa9f28fd5203913 }
+  - { gate: round-trip, fingerprint: 81a4b7159e00fe1809427eb9fd66561924293a2219eca0eb7facc0e9258ccfa6 }
+  - { gate: rule-checks, fingerprint: 7b486cf60c6660004799da78efc966295e8a7e73ab9bf4a549866748cf7fae28 }
+  - { gate: schemas-emit, fingerprint: 0822485f849e74ba2ebced7928b7fd882e108f2049184752cc7ebfe06525bc19 }
+  - { gate: sdk-generate, fingerprint: 9b39c2197ce62ff1249d75638f9a4955ecaa69a7829e862501ecdb7be1290e8a }
+  - { gate: site-builds, fingerprint: cbb8d3c4e9d178d1dcfead07ffa77e6d4a9005fdc425d1ab3004453ef34afc50 }
+  - { gate: spec-profile, fingerprint: 7f7b751c8a910eb472e17433d547b27eb36b673ef4f3858108a2813f52ec5488 }
+  - { gate: type-examples-generate, fingerprint: f12f736d8331ef398455933d82ce308f578709187a9f0558724de5d5ace13b30 }
+  - { gate: type-examples-valid, fingerprint: d7bca700d7dc6cb7ecf486fb8351a74ab4645d38445e22689af5ef71c8330666 }
+  - { gate: variant-examples, fingerprint: 2c1fbb1b0844a5e85d5bf41044f64db498fda987da55490462c1f3d9596d51d1 }

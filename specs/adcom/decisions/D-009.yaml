@@ -1,0 +1,37 @@
+format: 1
+id: D-009
+status: proposed
+kind: gap
+author: agent
+question: "List: IP Location Services gives standard codes 511 and 512 to 51Degrees, inside the range other lists reserve for vendors. Are they core terms?"
+covers:
+  - ir: def:list_iplocationservices:511
+    digest: 6e9991c29fae1c07c2044011451a7047276646325f9995849ff50145c2d0da46
+    quote: "`511` | 51Degrees (High Confidence)"
+  - ir: def:list_iplocationservices:512
+    digest: ec5fd9e06ec7dd1203b1069b3a9bcbc67e1b368e2a9fcbc83eac2af680b11c4f
+    quote: "`512` | 51Degrees (Medium Confidence)"
+  - ir: def:list_iplocationservices:1
+    digest: 89807968ba73e78775b60b92fdf9107543a4cc9986cb9b5f0870dd9bb36c7c9e
+    quote: "`1` | ip2location"
+options:
+  - id: core-terms
+    summary: >-
+      Core terms: 511 and 512 are codes the list names, and the list
+      reserves no vendor range, so its vocabulary is closed.
+  - id: vendor-codes
+    summary: >-
+      Vendors' codes, since they are at least 500.
+chosen: core-terms
+rationale: >-
+  The list writes no `500+` row, so it reserves no vendor range, and 511 and
+  512 are two of its codes like 1 to 4. Their place in the numbering is
+  surprising, since other lists reserve 500 and up for vendors, but the
+  table settles what they are.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L3815"
+feedback: >-
+  Number standard codes below 500, as every other list does, or say that IP
+  Location Services reserves no vendor range and that 511 and 512 are
+  standard codes. An exchange that already uses 511 or 512 as private codes
+  on another list's pattern now collides with a standard one.

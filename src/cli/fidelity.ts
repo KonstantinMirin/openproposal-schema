@@ -1,6 +1,7 @@
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
+import { allLocks, cliSpec } from "../builds.ts";
 import { canonicalJson } from "../canonical.ts";
 import { loadConstructors } from "../constructors.ts";
 import { emitSchemas, schemaDirOf } from "../emit.ts";
@@ -9,8 +10,10 @@ import { loadKernel } from "../kernel.ts";
 import { loadLock, type SpecLock } from "../lock.ts";
 import { loadDecisions, loadMappings } from "../mapping.ts";
 import { resolveModel } from "../model.ts";
-import { emitRules, loadVectors } from "../rules.ts";
+import { emitRules, loadVectors, VECTORS_DIR } from "../rules.ts";
 import { loadExpected, ruledOn } from "../../gates/fidelity.ts";
+import { REPO_ROOT } from "../repo.ts";
+import { fidelityOf, schemaNamesOfLock } from "../specs/index.ts";
 
 /**
  * Usage: fidelity [--lock <file>] [--out <dir>]
@@ -25,24 +28,22 @@ import { loadExpected, ruledOn } from "../../gates/fidelity.ts";
  * another lock). Exits 1 on a disagreement or a problem.
  */
 async function main(): Promise<number> {
-  const { values } = parseArgs({ options: { lock: { type: "string" }, out: { type: "string" } } });
-  const root = new URL("../..", import.meta.url).pathname.replace(/\/$/, "");
+  const { values } = parseArgs({ options: { spec: { type: "string" }, lock: { type: "string" }, out: { type: "string" } } });
+  const root = REPO_ROOT;
+  const specDir = cliSpec(values);
   const locks: SpecLock[] =
     values.lock !== undefined
       ? [loadLock(resolve(values.lock))]
-      : readdirSync(join(root, "spec-input"))
-          .filter((f) => f === "spec-lock.yaml" || f.endsWith(".lock.yaml"))
-          .sort()
-          .map((f) => loadLock(join(root, "spec-input", f)));
-  const mappings = loadMappings(root, join(root, "mapping"));
-  const decisions = loadDecisions(root, join(root, "decisions"));
-  const kernel = loadKernel(root);
-  const constructors = loadConstructors(root);
-  const vectors = loadVectors(root);
+      : allLocks(specDir);
+  const mappings = loadMappings(join(specDir, "mapping"));
+  const decisions = loadDecisions(join(specDir, "decisions"));
+  const kernel = loadKernel(root, specDir);
+  const constructors = loadConstructors(root, specDir);
+  const vectors = loadVectors(join(specDir, VECTORS_DIR));
   const expected = loadExpected();
   let failed = false;
   for (const lock of locks) {
-    const ir = JSON.parse(readFileSync(join(root, lock.ir_dir, "spec-ir.json"), "utf8"));
+    const ir = JSON.parse(readFileSync(join(specDir, lock.ir_dir, "spec-ir.json"), "utf8"));
     const { model, problems } = resolveModel({ ir, lock: lock.name, mappings, decisions, kernel, constructors });
     if (problems.length > 0) {
       for (const p of problems) console.error(`error: ${lock.name}: model: ${p}`);
@@ -50,9 +51,9 @@ async function main(): Promise<number> {
       continue;
     }
     const schemaDir = schemaDirOf(lock.ir_dir);
-    const emitted = emitSchemas(model, schemaDir);
-    const rules = emitRules({ model, ir, lock: lock.name, vectors, decisions, schemaDir, conditionsLeft: emitted.conditions.left });
-    const r = checkFidelity({ ir, lock: lock.name, model, files: emitted.files, kernel, rules: rules.doc, decisions, readings: readingsOf(mappings, lock.name), schemaDir, ruled: ruledOn(expected, lock.name) });
+    const emitted = emitSchemas(model, schemaDir, schemaNamesOfLock(lock));
+    const rules = emitRules({ model, ir, lock: lock.name, vectors, decisions, schemaDir, conditionsLeft: emitted.conditions.left, schemaBase: schemaNamesOfLock(lock).base });
+    const r = checkFidelity({ ir, lock: lock.name, model, files: emitted.files, kernel, rules: rules.doc, decisions, readings: readingsOf(mappings, lock.name), schemaDir, ruled: ruledOn(expected, lock.name), readers: fidelityOf(lock) });
     console.log(`${lock.name}: ${fidelityNote(r)}`);
     const listed = new Map(expected.groups.flatMap((g) => g.disagreements.filter((d) => d.locks.includes(lock.name)).map((d) => [d.constraint, g.owner] as const)));
     for (const d of r.disagreements) console.log(`  ${listed.has(d.constraint) ? `expected under ${listed.get(d.constraint)}` : "DISAGREE"} ${d.constraint}: ${d.detail}`);

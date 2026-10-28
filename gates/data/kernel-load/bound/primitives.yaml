@@ -1,0 +1,20 @@
+# A known-bad kernel file for the kernel-load gate: a primitive that cites a spec's
+# element and follows a spec's decision, which a spec's kernel binding gives.
+format: 1
+primitives:
+  - name: Uuid
+    description: The identity of a record a party mints.
+    type: string
+    concept: minted-id
+    constraints:
+      format: uuid
+    decision: D-037
+    sources:
+      spec:
+        - ir: field:4.1:proposal_id
+          digest: fb8604e60eabfa2db105b17ca562af8ba2f20784907dcce349772ce83054088d
+          quote: "`proposal_id` | String | immutable | Unique identity for the proposal object"
+    vectors:
+      valid: ["7c9e6679-7425-40de-944b-e07fc1f90ae7"]
+      invalid: [42]
+    showcase: ["3f2b8c1e-9d4a-4e7b-a6c5-1b2d3e4f5a6b"]

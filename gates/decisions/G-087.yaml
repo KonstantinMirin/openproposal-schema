@@ -1,0 +1,36 @@
+format: 1
+id: G-087
+date: 2026-10-27
+question: What changes in the gates to close the gaps an independent review of AdCOM's extraction found?
+decision: >-
+  The extraction fails where it read something as words that it shouldn't:
+  an HTML tag the Markdown parser left as text, markup an HTML table cell
+  holds that the reader doesn't know, such as a comment, a character
+  reference it doesn't know or that names no character, a tag inside a code
+  span, a second code span opened inside one, and a closing bold tag with no
+  opening one. An anchor whose href has no quotes, which GFM's autolink
+  splits into text and a link, is put back together, so its text reads as
+  GitHub shows it. Every AdCOM object table names its object, a heading of
+  several words in PascalCase. AdCOM's lint reports every anchor that
+  departs from the pattern, with how, and a list or object heading with no
+  anchor. Tests cover each case; the suite holds 445 tests, and MIN_TESTS is
+  445.
+rationale: >-
+  Each change makes the extraction stricter or its output truer to the
+  text, and no check is relaxed. OpenProposal writes no HTML, so its IR and
+  findings regenerate to their bytes.
+accepts:
+  - { gate: comparison, fingerprint: 482350c0ed6258e1cfda00dfc5b02e25782b32a6be515aa364353d698270607a }
+  - { gate: examples-validate, fingerprint: 2c99d2b517062a5745134a01a85da35ff06bcf7af4add6f25103ebb9d554587e }
+  - { gate: extraction, fingerprint: 90bc480178b4250743801af507043245bde1b8e7af6ffb9ecd5f92829b517e3b }
+  - { gate: feedback, fingerprint: 4e0eaedb403f740508f78925f658a905ea0e8877ce587bfd70234a8d8393cc0d }
+  - { gate: fidelity, fingerprint: 42e094a65f1397d3b3df1d86dff24b7f83b5d3a00615bf0c08dd6700a32b25db }
+  - { gate: field-examples, fingerprint: ab6e3f13a1d1659ca1ce5d476100c47846b718537d30acebdfb21b60f0c5aefa }
+  - { gate: npm-test, fingerprint: bb555045037ee35059479346cc98231ce5ae8cb8fb91083122de295eb26a7fe0 }
+  - { gate: round-trip, fingerprint: 4e15a3db67470d033a369a8f05bf55fbf4b265c872168809cf1859e73d340189 }
+  - { gate: rule-checks, fingerprint: aa34c93502c63d9c7aec67d8600c1998cdd7344080501a3e803b88c19229213d }
+  - { gate: site-builds, fingerprint: 208c88ae66ca61f609e85b293f2c41a81b4e3f5c011ad419f319ccc0595b5239 }
+  - { gate: spec-profile, fingerprint: dcd1ea3b06abe1e2f5bb9aa233521d886c77a61d7cea744f1774fb1f1176dac3 }
+  - { gate: type-examples-generate, fingerprint: 20453c5e411772875e48d18a235047d6ab604e975e413a2873c6b9fcf0971248 }
+  - { gate: type-examples-valid, fingerprint: 030847e89fee4d0b30f45e876a1c08f9efb4bed1b52f7758b14766a1b2498a51 }
+  - { gate: variant-examples, fingerprint: 9440b2c53ec05fff1dab3bc80a96b78d952188b58ee595abbfb0d2cfc4c7b3e0 }

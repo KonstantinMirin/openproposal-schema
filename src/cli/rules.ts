@@ -1,9 +1,11 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
-import { BUILD_OPTIONS, cliBuilds } from "../builds.ts";
+import { BUILD_OPTIONS, cliBuilds, cliSpec } from "../builds.ts";
 import { emitSchemas, schemaDirOf } from "../emit.ts";
-import { checkRuleVectors, emitRules, loadVectors, renderRules, RULES_FILE, rulesDirOf } from "../rules.ts";
+import { checkRuleVectors, emitRules, loadVectors, renderRules, RULES_FILE, rulesDirOf, VECTORS_DIR } from "../rules.ts";
+import { REPO_ROOT } from "../repo.ts";
+import { schemaNamesOfLock } from "../specs/index.ts";
 
 /**
  * Usage: rules [--lock <file>] [--variant <name>] [--out <dir>]
@@ -20,10 +22,11 @@ import { checkRuleVectors, emitRules, loadVectors, renderRules, RULES_FILE, rule
  */
 function main(): number {
   const { values } = parseArgs({ options: BUILD_OPTIONS });
-  const root = new URL("../..", import.meta.url).pathname.replace(/\/$/, "");
-  const vectors = loadVectors(root);
+  const root = REPO_ROOT;
+  const specDir = cliSpec(values);
+  const vectors = loadVectors(join(specDir, VECTORS_DIR));
   let failed = false;
-  for (const b of cliBuilds(root, values)) {
+  for (const b of cliBuilds(values)) {
     const { model, ir, lock, decisions } = b;
     if (b.problems.length > 0) {
       for (const p of b.problems) console.error(`error: ${b.label}: model: ${p}`);
@@ -31,21 +34,21 @@ function main(): number {
       continue;
     }
     const schemaDir = b.dirOf(schemaDirOf(b.irDir));
-    const emitted = emitSchemas(model, schemaDir);
+    const emitted = emitSchemas(model, schemaDir, schemaNamesOfLock(lock));
     if (emitted.problems.length > 0) {
       for (const p of emitted.problems) console.error(`error: ${b.label}: schemas: ${p}`);
       failed = true;
       continue;
     }
     const converted = b.vectors(vectors);
-    const r = emitRules({ model, ir, lock: lock.name, vectors: converted.vectors, decisions, schemaDir, conditionsLeft: emitted.conditions.left });
+    const r = emitRules({ model, ir, lock: lock.name, vectors: converted.vectors, decisions, schemaDir, conditionsLeft: emitted.conditions.left, schemaBase: schemaNamesOfLock(lock).base });
     const all = [...converted.problems, ...r.problems, ...checkRuleVectors(r.doc, model, emitted.files, schemaDir)];
     if (all.length > 0) {
       for (const p of all) console.error(`error: ${b.label}: ${p}`);
       failed = true;
       continue;
     }
-    const out = values.out !== undefined ? resolve(values.out) : join(root, b.dirOf(rulesDirOf(b.irDir)));
+    const out = values.out !== undefined ? resolve(values.out) : join(specDir, b.dirOf(rulesDirOf(b.irDir)));
     mkdirSync(dirname(join(out, RULES_FILE)), { recursive: true });
     writeFileSync(join(out, RULES_FILE), renderRules(r.doc));
     const shown = out.startsWith(`${root}/`) ? out.slice(root.length + 1) : out;

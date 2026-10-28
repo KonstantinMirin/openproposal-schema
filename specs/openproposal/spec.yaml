@@ -1,0 +1,132 @@
+# The OpenProposal profile (specs/spec.schema.json): how the pipeline reads the
+# specification and what it produces from it. The readers are in
+# src/specs/openproposal/.
+format: 1
+id: openproposal
+title: OpenProposal 3.0
+upstream: https://github.com/IABTechLab/OpenProposal
+front_end: text
+plugin: openproposal
+# § 4 describes the proposal and § 5 the line item.
+documents:
+  - { owner: proposal, document: Proposal, section: "4" }
+  - { owner: line_item, document: LineItem, section: "5" }
+statements: uppercase
+features:
+  markers: true
+  appendices: true
+  profiles: true
+# The names the outputs carry: the name in prose, the base of every schema's $id,
+# and the SDK packages. The $id base moves to a shared host in a later phase.
+names:
+  short: OpenProposal
+  edition: '3.0'
+  release: draft 1
+  schema_base: "https://openproposal.noetis.dev/"
+  sdk:
+    python:
+      package: openproposal
+      mode_key: openproposal_mode
+      entry_points: openproposal.extensions
+    go:
+      module: github.com/KonstantinMirin/openproposal-schema
+      package: openproposal
+    ts:
+      package: openproposal-types
+# Its pages on the public site (src/site/; specs/site.yaml gives the site).
+site:
+  # The type map opens at the line item, and the How it's built page follows its formats field.
+  default_type: LineItem
+  example: { document: LineItem, field: formats, element: "field:5.4:formats", lock: main, variant: as-written }
+  locks:
+    main: { label: main, short: main, where: on main, aliases: [ upstream ] }
+    with-open-prs: { label: With the open PRs, short: open PRs, where: with the open PRs, aliases: [ prs ] }
+# The implementation feedback (src/feedback.ts): a follow-up on #121, which
+# proposed seven authoring rules for the specification.
+feedback:
+  issue: "https://github.com/IABTechLab/OpenProposal/issues/121"
+  gist: "https://gist.github.com/KonstantinMirin/3c4439731aec62dc68f7bd7eb447bbd2"
+  prs:
+  - 119
+  - 120
+  - 123
+  headline: "OpenProposal 3.0 draft 1: what generating the schemas had to decide"
+  groups:
+  - id: formats
+    title: Value formats
+    asks: "How a value such as a timestamp, a domain, a hash, a URL, or a rate is written"
+  - id: options
+    title: Selectable and settable fields
+    asks: "What names an option, what a bare value is, and what a range allows"
+  - id: types
+    title: Types the tables leave open
+    asks: "The names, members, and types of the objects and value lists that only prose describes"
+  - id: statements
+    title: Where each statement is checked
+    asks: Whether a statement constrains a payload or binds a party
+  - id: readings
+    title: What each rule accepts
+    asks: Which payloads and changes a rule stated only in prose allows
+  rules:
+  - id: '1'
+    title: Every field and key table has a Required column
+    intro: "The field tables have no Required column, and most descriptions don't say REQUIRED or OPTIONAL, so a schema's `required` list can't be derived."
+  - id: '2'
+    title: "Every Object field has a key table, or links one"
+    intro: "Each of these is typed Object, or String/Object, with no key table, inline object form, or subsection defining its keys."
+  - id: '3'
+    title: A selectable or settable row names its option type
+    intro: "A selectable field needs the type of its `available[]` entries, and a settable field the type of `allowed[]` or of `min` and `max`. § 3.1 and § 3.2 define the wrapper, not the content."
+  - id: '4'
+    title: "A value list is written once, and an open list says that it is open"
+    intro: "An Enum needs a backticked value list, and one name needs one value set. A value set that is a strict subset of another may be one list declared twice, or two lists that need their own names."
+  - id: '5'
+    title: Tables use only the markers § 3 defines
+    intro: § 3 defines seven markers; the tables also use another.
+  - id: '6'
+    title: Paths in prose match the table rows
+    intro: "An array field written without `[]` in prose, or the other way round, doesn't say which entry a path means."
+  - id: '7'
+    title: "Every backticked name resolves to a row or a key, or is listed as an external reference"
+    intro: Each name is backticked in normative text but defined by no table row or key.
+  - id: statements
+    title: MUST statements that need conformance test vectors or bind a party
+  - id: other
+    title: Other findings
+  kinds:
+    appendix_a_missing: other
+    appendix_a_row_missing: other
+    appendix_a_row_extra: other
+    appendix_a_mismatch: other
+    appendix_a_order: other
+    appendix_b_missing: other
+    appendix_b_row_missing: other
+    appendix_b_row_extra: other
+    appendix_b_count: other
+    appendix_b_fields: other
+    appendix_b_distribution: other
+    appendix_b_distribution_unparsed: other
+    presence_unstated: '1'
+    key_presence_unstated: '1'
+    key_required_is_marker: '1'
+    object_without_structure: '2'
+    option_shape_missing: '3'
+    duplicate_field_disagrees: '4'
+    name_reused_with_different_values: '4'
+    value_set_duplicate: '4'
+    value_set_subset: '4'
+    enum_without_values: '4'
+    expression_value_unknown: '4'
+    marker_undefined: '5'
+    array_suffix_mismatch: '6'
+    unresolved_identifier: '7'
+    must_without_field: statements
+    unnumbered_heading: other
+    section_anchor_irregular: other
+    list_without_codes: other
+  suggestion:
+    title: "A suggestion for the working group: structured money and time"
+    lead: "Two structured forms would remove an ambiguity at the source. They are suggestions for the working group to weigh, not what the generated schemas do."
+    items:
+    - "**Money as `{ amount, currency }`.** An amount can't then appear without its currency. The specification writes a bare number with a sibling `currency`, as OpenRTB writes `bidfloor` and `bidfloorcur`. The generated schemas keep that form. Where an object carries a `currency`, they require it with the amount, using `required` and `dependentRequired` (decision {D-036}). Does the working group prefer the structured form?"
+    - "**A point in time with its time zone.** An RFC 3339 timestamp carries an offset, not an IANA zone. So day boundaries, dayparts, and daylight saving changes can't be read from the value alone. The generated schemas keep RFC 3339 instants (decision {D-001}). With the open PRs, they also carry the one line item `time_zone` that [#123](https://github.com/IABTechLab/OpenProposal/pull/123) adds, an IANA zone or `viewer_local`. On `main` they add none (decision {D-038}). Should each zoned value carry its zone? It could be a structured `{ instant, time_zone }`, or an RFC 9557 string such as `2026-11-01T00:00:00-04:00[America/New_York]`. JSON Schema's `date-time` format doesn't accept RFC 9557's `[zone]` suffix."

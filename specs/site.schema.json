@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/specs/site.schema.json",
+  "title": "The public site's settings",
+  "description": "One site for every specification under specs/ (src/site/): its host, its publisher, the public repository it links, where its deploy command copies it, and the specs it lists, in order.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "url",
+    "name",
+    "title",
+    "lead",
+    "publisher",
+    "repo",
+    "deploy",
+    "specs"
+  ],
+  "properties": {
+    "format": {
+      "const": 1
+    },
+    "url": {
+      "description": "The site's root URL.",
+      "type": "string",
+      "pattern": "^https://[^\\s/]+/$"
+    },
+    "name": {
+      "description": "The site's name in the header, as in \"<name> JSON Schema\".",
+      "type": "string",
+      "minLength": 2
+    },
+    "title": {
+      "description": "The root page's name.",
+      "type": "string",
+      "minLength": 2
+    },
+    "lead": {
+      "description": "The root page's opening paragraphs, in order. A backtick span is code and `**x**` is bold.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 20
+      }
+    },
+    "publisher": {
+      "description": "Who publishes the site, as every page says.",
+      "type": "string",
+      "minLength": 2
+    },
+    "repo": {
+      "description": "The public repository of this tooling, whose folders the site links in place of downloads; empty for none.",
+      "type": "string",
+      "pattern": "^(https://github\\.com/[^/\\s]+/[^/\\s]+)?$"
+    },
+    "deploy": {
+      "description": "Where the deploy command, which is printed and never run, copies the site.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "host",
+        "path"
+      ],
+      "properties": {
+        "host": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^/"
+        }
+      }
+    },
+    "specs": {
+      "description": "The specs the root lists, in order, each a folder under specs/ whose profile has a site.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*$"
+      }
+    }
+  }
+}

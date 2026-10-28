@@ -353,7 +353,9 @@ const typeNames = (t: TypeRef): string[] => (t.kind === "named" ? [t.name] : t.k
  * copy of a list. A vocabulary that cites another standard's code list is
  * that list, so two vocabularies of two lists whose codes happen to be the
  * same numbers, such as AdCOM's API frameworks and placement subtypes, are
- * two lists; two vocabularies of one list are one.
+ * two lists; two vocabularies of one list are one. A specification's own
+ * labeled list, as each of AdCOM's lists is, is its codes with their labels,
+ * so two such lists are one only when their codes and labels both agree.
  */
 export function listProblems(model: ModelDoc, decisions: DecisionRecord[] = []): string[] {
   const unstatedTerms = unstatedVocabularies(model, decisions);
@@ -364,7 +366,8 @@ export function listProblems(model: ModelDoc, decisions: DecisionRecord[] = []):
     lists.set(key, [...(lists.get(key) ?? []), name]);
   };
   for (const t of model.types) {
-    if (t.kind === "vocabulary" && !unstatedTerms.names.has(t.name)) add(t.terms.map((x) => x.value), t.name, t.list?.name);
+    // A specification's own labeled list, such as AdCOM's `List: Device Types`, is its codes with their labels: two are one list only when both agree.
+    if (t.kind === "vocabulary" && !unstatedTerms.names.has(t.name)) add(t.labeled ? t.terms.map((x) => [x.value, x.annotation ?? null]) : t.terms.map((x) => x.value), t.name, t.list?.name);
     if (t.kind === "primitive" && Array.isArray(t.schema.enum)) add(t.schema.enum, t.name);
   }
   for (const [key, names] of lists) {
@@ -426,7 +429,8 @@ export function modelStructures(model: ModelDoc, kernel: Kernel, constructors?: 
       case "copy":
         return named(t.schema, { copyOf: t.application });
       case "vocabulary":
-        return setAside.has(t.name) ? [] : named({ vocabulary: t.terms.map((x) => x.value), open: t.open });
+        // In a labeled list a code says nothing by itself; its label is what it means, so two such lists of the same codes are one structure only with the same labels.
+        return setAside.has(t.name) ? [] : named({ vocabulary: t.terms.map((x) => (t.labeled && x.annotation !== undefined ? [x.value, x.annotation] : x.value)), open: t.open });
       case "object":
         return unstated(t) ? [] : named({ object: props(t.properties), open: t.open, includes: t.includes ?? null });
       case "document":

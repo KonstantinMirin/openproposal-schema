@@ -8,21 +8,21 @@ import type { SpecIR } from "../src/ir-types.ts";
 import { loadKernel } from "../src/kernel.ts";
 import { loadDecisions, loadMappings } from "../src/mapping.ts";
 import { resolveModel, type ModelDoc } from "../src/model.ts";
-import { checkRuleVectors, emitRules, isChange, loadVectors, renderRules, rulesDirOf, type RulesInput, type VectorFile } from "../src/rules.ts";
-import { ROOT } from "./helpers.ts";
+import { checkRuleVectors, emitRules, isChange, loadVectors, renderRules, rulesDirOf, type RulesInput, type VectorFile, VECTORS_DIR } from "../src/rules.ts";
+import { OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT);
-const CONSTRUCTORS = loadConstructors(ROOT);
-const MAPPINGS = loadMappings(ROOT, join(ROOT, "mapping"));
-const DECISIONS = loadDecisions(ROOT, join(ROOT, "decisions"));
-const VECTORS = loadVectors(ROOT);
-const irOf = (dir: string) => JSON.parse(readFileSync(join(ROOT, dir, "spec-ir.json"), "utf8")) as SpecIR;
+const KERNEL = loadKernel(ROOT, SPEC);
+const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const MAPPINGS = loadMappings(join(SPEC, "mapping"));
+const DECISIONS = loadDecisions(join(SPEC, "decisions"));
+const VECTORS = loadVectors(join(SPEC, VECTORS_DIR));
+const irOf = (dir: string) => JSON.parse(readFileSync(join(SPEC, dir, "spec-ir.json"), "utf8")) as SpecIR;
 
 function lockInput(lock: string, irDir: string, schemaDir: string): RulesInput & { files: ReturnType<typeof emitSchemas>["files"] } {
   const ir = irOf(irDir);
   const model: ModelDoc = resolveModel({ ir, lock, mappings: MAPPINGS, decisions: DECISIONS, kernel: KERNEL, constructors: CONSTRUCTORS }).model;
-  const emitted = emitSchemas(model, schemaDir);
-  return { model, ir, lock, vectors: VECTORS, decisions: DECISIONS, schemaDir, conditionsLeft: emitted.conditions.left, files: emitted.files };
+  const emitted = emitSchemas(model, schemaDir, OP_SCHEMA);
+  return { model, ir, lock, vectors: VECTORS, decisions: DECISIONS, schemaDir, conditionsLeft: emitted.conditions.left, schemaBase: OP_SCHEMA.base, files: emitted.files };
 }
 const MAIN = lockInput("main", "ir", "schemas");
 const PRS = lockInput("with-open-prs", join("ir", "with-open-prs"), "schemas/with-open-prs");
@@ -50,7 +50,7 @@ test("each lock's rules emit with no problem, each with valid and invalid vector
 
 test("the committed rules are what the emitter writes", () => {
   for (const [input, dir] of [[MAIN, rulesDirOf("ir")], [PRS, rulesDirOf(join("ir", "with-open-prs"))]] as const) {
-    assert.equal(readFileSync(join(ROOT, dir, "rules.json"), "utf8"), renderRules(emitRules(input).doc), dir);
+    assert.equal(readFileSync(join(SPEC, dir, "rules.json"), "utf8"), renderRules(emitRules(input).doc), dir);
   }
 });
 

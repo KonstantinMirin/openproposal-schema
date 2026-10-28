@@ -1,16 +1,17 @@
 import { parseArgs } from "node:util";
 import { materialize, writeSnapshot } from "../fetch.ts";
 import { loadLock } from "../lock.ts";
+import { DEFAULT_LOCK } from "../repo.ts";
 
 /**
- * Usage: fetch [--lock spec-input/spec-lock.yaml] [--snapshot]. Writes the
+ * Usage: fetch [--lock specs/openproposal/spec-input/spec-lock.yaml] [--snapshot]. Writes the
  * locked specification to build/spec/<name>/ and verifies its blob SHA.
  * `--snapshot` instead writes the lock's snapshot directory from its clone:
  * the specification and every file under examples/ at the commit, verified
  * against the lock, so CI can run every gate on the lock without the clone.
  */
 async function main(): Promise<void> {
-  const { values } = parseArgs({ options: { lock: { type: "string", default: "spec-input/spec-lock.yaml" }, snapshot: { type: "boolean" } } });
+  const { values } = parseArgs({ options: { lock: { type: "string", default: DEFAULT_LOCK }, snapshot: { type: "boolean" } } });
   const lock = loadLock(values.lock!);
   if (values.snapshot) {
     const s = writeSnapshot(lock);

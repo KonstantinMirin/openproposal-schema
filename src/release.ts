@@ -46,6 +46,7 @@ import type { ModelDoc, ModelProperty, ModelType } from "./model.ts";
 import { compileSchema } from "./pipeline.ts";
 import { RULES_FILE, type Rule, type RulesDoc } from "./rules.ts";
 import { spawnWithInput } from "./spawn.ts";
+import { REPO_ROOT } from "./repo.ts";
 
 /** The manifest's name at the root of a lock's schema tree. */
 export const RELEASE_FILE = "release.json";
@@ -399,7 +400,7 @@ export function diffModels(from: ModelDoc, to: ModelDoc): Change[] {
       continue;
     }
     if (a.kind !== b.kind) add("breaking", name, "changed-kind", `${name} changes from a ${a.kind} to a ${b.kind}`);
-    const [ia, ib] = [schemaIdOf(a, ""), schemaIdOf(b, "")];
+    const [ia, ib] = [schemaIdOf(a, "", ""), schemaIdOf(b, "", "")];
     if (ia !== null && ib === null) add("breaking", name, "removed-type", `${name} is no longer emitted`);
     else if (ia !== null && ib !== null && ia !== ib) add("breaking", name, "moved-type", `${name} moves from ${ia} to ${ib}`);
 
@@ -752,8 +753,8 @@ export function checkDigests(doc: ReleaseDoc, files: Map<string, Buffer>, model?
 // Frozen releases
 
 /** Validates a manifest against `releases/release.schema.json`. Returns error strings. */
-export function validateRelease(root: string, doc: unknown): string[] {
-  return compileSchema(join(root, RELEASE_SCHEMA))(doc);
+export function validateRelease(doc: unknown): string[] {
+  return compileSchema(join(REPO_ROOT, RELEASE_SCHEMA))(doc);
 }
 
 /** The directory that holds a lock's frozen releases. */
@@ -799,7 +800,7 @@ export function loadFrozen(root: string, lock: string): Frozen[] {
         throw new Error(`${where(posix.join(FROZEN_SCHEMAS, p))}: ${(e as Error).message}`);
       }
     }
-    const errors = validateRelease(root, release);
+    const errors = validateRelease(release);
     if (errors.length > 0) throw new Error(`${where(RELEASE_FILE)}: not a valid manifest: ${errors.join("; ")}`);
     if (release.release !== v) throw new Error(`${where(RELEASE_FILE)} names the release ${release.release}`);
     if (release.lock !== lock) throw new Error(`${where(RELEASE_FILE)} names the lock ${release.lock}`);

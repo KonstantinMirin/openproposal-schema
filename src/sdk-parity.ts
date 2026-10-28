@@ -29,7 +29,7 @@
  * it back; the encoding must be the same JSON value, so the types hold what
  * they accept.
  */
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { canonicalJson } from "./canonical.ts";
@@ -39,7 +39,6 @@ import type { Kernel } from "./kernel.ts";
 import type { ModelDoc } from "./model.ts";
 import { payloadsOf } from "./rules.ts";
 import { applicationExpr, renderExpr, type Expr } from "./sdk.ts";
-import { goModulePath } from "./sdk-go.ts";
 import { locationOf } from "./emit.ts";
 import { spawnWithInput } from "./spawn.ts";
 
@@ -207,10 +206,20 @@ interface ZodLike {
   safeParse(v: unknown): { success: boolean; data?: unknown };
 }
 
-/** The Python SDK's run, under the venv's interpreter: tools/sdk/verdicts.py parses each case with Pydantic. `sdkPython` is the absolute path of the lock's `python/` directory. */
+/** The one package a generated tree's language directory holds: the folder with the file that marks a package, such as Python's `__init__.py`. Throws for none or several. */
+export function packageIn(dir: string, marker: (folder: string) => boolean): string {
+  const found = readdirSync(dir, { withFileTypes: true })
+    .filter((e) => e.isDirectory() && marker(join(dir, e.name)))
+    .map((e) => e.name);
+  if (found.length !== 1) throw new Error(`${dir}: holds ${found.length === 0 ? "no package" : `the packages ${found.join(", ")}`}; a generated tree holds one`);
+  return found[0]!;
+}
+
+/** The Python SDK's run, under the venv's interpreter: tools/sdk/verdicts.py parses each case with Pydantic. `sdkPython` is the absolute path of the lock's `python/` directory, which holds the SDK's package. */
 export function runPython(root: string, sdkPython: string, cases: SdkCase[]): SdkRun {
   const python = join(root, ".venv", "bin", "python");
-  const r = spawnWithInput(python, ["-I", "-B", join(root, "tools", "sdk", "verdicts.py"), sdkPython], JSON.stringify({ cases: cases.map((c) => ({ target: c.target, json: jsonOf(c) })) }), {
+  const pkg = packageIn(sdkPython, (d) => existsSync(join(d, "__init__.py")));
+  const r = spawnWithInput(python, ["-I", "-B", join(root, "tools", "sdk", "verdicts.py"), sdkPython, pkg], JSON.stringify({ cases: cases.map((c) => ({ target: c.target, json: jsonOf(c) })) }), {
     cwd: root,
     encoding: "utf8",
     maxBuffer: 64 * 1024 * 1024,
@@ -241,11 +250,14 @@ function goTypeOf(e: Expr): string {
 /**
  * The Go SDK's run: a harness generated into `work`, which names every
  * case's type statically, since Go applies its generics at compile time, is
- * built against the lock's Go module at `sdkGo` and run. `sdkDir` is the
- * lock's SDK directory, which names the module.
+ * built against the lock's Go module at `sdkGo`, by the module path and the
+ * package its tree declares, and run.
  */
-export function runGo(sdkGo: string, sdkDir: string, work: string, cases: SdkCase[]): SdkRun {
-  const module = goModulePath(sdkDir);
+export function runGo(sdkGo: string, work: string, cases: SdkCase[]): SdkRun {
+  // The module path is the one the tree's go.mod declares, and the package the one folder of Go files it holds.
+  const module = /^module (\S+)$/m.exec(readFileSync(join(sdkGo, "go.mod"), "utf8"))?.[1];
+  if (module === undefined) throw new Error(`${sdkGo}/go.mod declares no module`);
+  const pkg = packageIn(sdkGo, (d) => readdirSync(d).some((f) => f.endsWith(".go")));
   const keys = [...new Set(cases.map((c) => canonicalJson(c.target)))].sort();
   const index = new Map(keys.map((k, i) => [k, i]));
   const entries = keys.map((k, i) => `\ttypes[${i}] = op.TypeOf[${goTypeOf(JSON.parse(k) as Expr)}]()\n`).join("");
@@ -262,7 +274,7 @@ import (
 	"os"
 	"runtime/debug"
 
-	op "${module}/openproposal"
+	op "${module}/${pkg}"
 )
 
 var types = map[int]op.Type{}

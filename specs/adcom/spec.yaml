@@ -1,0 +1,26 @@
+# The AdCOM profile (specs/spec.schema.json): how the pipeline reads AdCOM 1.0
+# and what it produces from it. The readers are in src/specs/adcom/. This
+# phase reads AdCOM's lists as a registry of vocabularies, which OpenProposal
+# and the Deals API reference; its objects come later.
+format: 1
+id: adcom
+title: AdCOM 1.0
+upstream: https://github.com/InteractiveAdvertisingBureau/AdCOM
+front_end: text
+plugin: adcom
+statements: any-case
+# The names the outputs carry. AdCOM has no SDK types yet, and its schemas'
+# $ids start on the multi-spec site's host, where every spec's $ids move.
+names:
+  short: AdCOM
+  edition: "1.0"
+  release: main of 2026-07-23
+  schema_base: "https://adtechspec.noetis.dev/adcom/"
+# Its pages on the public site (src/site/; specs/site.yaml gives the site).
+site:
+  # The type map opens at the device types, a list other specs cite.
+  default_type: DeviceType
+  registry: true
+  locks:
+    main: { label: main, short: main, where: on main, aliases: [ upstream ] }
+    tag-202607: { label: Tag AdCOM1.0-202607, short: tag 202607, where: at the tag AdCOM1.0-202607, aliases: [ tag ] }

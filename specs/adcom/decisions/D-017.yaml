@@ -1,0 +1,56 @@
+format: 1
+id: D-017
+status: proposed
+kind: gap
+author: agent
+question: "List: Category Taxonomies says taxonomies 1 and 2 are \"Deprecated, and recommend NOT be used\". Are they codes of the vocabulary, and does the schema warn on them?"
+covers:
+  - ir: def:list_categorytaxonomies:1
+    digest: 92880a789bb6693cbc38773c7069b77cd224fac85c63f4e84273acb001aacb13
+    quote: "`1` | IAB Tech Lab Content Category Taxonomy 1.0: Deprecated, and recommend NOT be used since it does not have SCD flags."
+  - ir: def:list_categorytaxonomies:2
+    digest: a2bf4459dc264451aa3f9d4ac94104951dff9c0875433f5b51e8edd64c74be69
+    quote: "`2` | IAB Tech Lab Content Category Taxonomy 2.0: Deprecated, and recommend NOT be used since it does not have SCD flags."
+  - ir: key:object_content:Content.cattax
+    digest: 46d3fb6945d775ccd63e38ac2fccab3b0de153c3ba1b36e87de20969b7a94f0b
+    quote: "`cattax` | The taxonomy in use. Refer to list List: Category Taxonomies in AdCOM 1.0 for values."
+  - ir: key:object_content:Content.cat
+    digest: cf909f50b621212e0961ed39d674c67dde4a8914ada8fdd1c9e05f13825d375e
+    quote: "`cat` | Array of IAB Tech Lab content categories that describe the content. The taxonomy to be used is defined by the cattax field. If no cattax field is supplied Content Category Taxonomy 1.0 is assumed."
+  - ir: key:object_ad:Ad.cattax
+    digest: de90f047dd0254fea06e48ad2883bf41add7eb3adaf037b22c0832c4e55f4235
+    quote: "`cattax` | The taxonomy in use for the `cat` attribute. Refer to List: Category Taxonomies."
+  - ir: key:object_restrictions:Restrictions.cattax
+    digest: aff74435ae461ecd1ad7624e5279da1f95cfe603c32bfc41574744076c71bc31
+    quote: "`cattax` | The taxonomy in use for the `bcat` attribute. Refer to List: Category Taxonomies."
+options:
+  - id: core-terms
+    summary: >-
+      Core terms, each labeled with its deprecation; a payload that uses one
+      is still valid, and a warning on the attributes that carry a taxonomy
+      waits until AdCOM's objects are mapped.
+  - id: warning-rule
+    summary: >-
+      Core terms, plus a warning rule on any payload that uses 1 or 2.
+  - id: drop
+    summary: >-
+      Leave them out of the vocabulary.
+chosen: core-terms
+rationale: >-
+  A deprecated code is still a code: old payloads carry it, and
+  `Content.cattax` even defaults to 1. Leaving the codes out would reject
+  those payloads. "Recommend NOT be used" reads as NOT RECOMMENDED, and a
+  code alone can show it, so a warning is a fair reading; but the code is
+  used through an attribute, `cattax`, whose default makes taxonomy 1 the
+  value of an absent `Content.cattax`, so the warning belongs on those
+  attributes, beside their defaults, which aren't mapped yet. Until then,
+  each code's label carries the deprecation for every reader of the
+  vocabulary.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L2969"
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L2051"
+feedback: >-
+  Make `Content.cattax` default to the same taxonomy as `Ad.cattax` and
+  `Restrictions.cattax`, which default to 2, or to a current one: today an
+  absent `cattax` on `Content` means taxonomy 1, which this list recommends
+  against.

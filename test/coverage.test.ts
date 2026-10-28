@@ -11,15 +11,15 @@ import { writeMappings } from "../src/map-writer.ts";
 import { checkMapping, loadDecisions, loadMappings, type MappingFile } from "../src/mapping.ts";
 import { objectOfField, objectOfKey, presenceOf } from "../src/mapping-rules.ts";
 import { checkSources, identifiersOf, requiredLists } from "../src/mapping-sources.ts";
-import { ROOT } from "./helpers.ts";
+import { ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT);
-const CONSTRUCTORS = loadConstructors(ROOT);
-const MAPPINGS = loadMappings(ROOT, join(ROOT, "mapping"));
-const DECISIONS = loadDecisions(ROOT, join(ROOT, "decisions"));
+const KERNEL = loadKernel(ROOT, SPEC);
+const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const MAPPINGS = loadMappings(join(SPEC, "mapping"));
+const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 const LOCKS: [string, SpecIR][] = [
-  ["main", JSON.parse(readFileSync(join(ROOT, "ir", "spec-ir.json"), "utf8")) as SpecIR],
-  ["with-open-prs", JSON.parse(readFileSync(join(ROOT, "ir", "with-open-prs", "spec-ir.json"), "utf8")) as SpecIR],
+  ["main", JSON.parse(readFileSync(join(SPEC, "ir", "spec-ir.json"), "utf8")) as SpecIR],
+  ["with-open-prs", JSON.parse(readFileSync(join(SPEC, "ir", "with-open-prs", "spec-ir.json"), "utf8")) as SpecIR],
 ];
 const PRS = LOCKS[1]![1];
 

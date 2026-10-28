@@ -2,14 +2,18 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { buildSite, checkSite } from "../src/site/build.ts";
+import { assetTokens, buildSite, fillTokens, checkSite } from "../src/site/build.ts";
 import { loadSiteInputs } from "../src/site/data.ts";
 import { mapLink } from "../src/site/pages.ts";
 import { loadRoute, type RouteState } from "../src/site/route.ts";
-import { ROOT } from "./helpers.ts";
+import { ROOT, SPEC } from "./helpers.ts";
 
-const ROUTE = loadRoute(readFileSync(join(ROOT, "src", "site", "assets", "route.js"), "utf8"));
-const SITE = buildSite(ROOT, loadSiteInputs(ROOT));
+// The router as the site serves it, with its tokens filled from the profile.
+const INPUTS = loadSiteInputs(SPEC);
+const ROUTE = loadRoute(fillTokens(readFileSync(join(ROOT, "src", "site", "assets", "route.js")), assetTokens(INPUTS)).toString("utf8"));
+const SITE = buildSite([INPUTS]);
+/** OpenProposal's pages are under its path on the site. */
+const OP = "openproposal/";
 
 const parsed = (hash: string) => {
   const p = ROUTE.parse(hash);
@@ -22,7 +26,7 @@ test("the router's canonical names are the ones the site's switches and builds u
   assert.deepEqual(ROUTE.VARIANTS, ["as-written", "proposals"]);
   assert.deepEqual(ROUTE.VIEWS, ["schema", "example"]);
   assert.deepEqual(ROUTE.DEFAULT, { type: "LineItem", lock: "main", variant: "as-written", view: "schema", open: [] });
-  for (const lock of ROUTE.LOCKS) for (const variant of ROUTE.VARIANTS) assert.ok(SITE.files.has(`data/${lock}.${variant}.json`), `${lock}.${variant}`);
+  for (const lock of ROUTE.LOCKS) for (const variant of ROUTE.VARIANTS) assert.ok(SITE.files.has(`${OP}data/${lock}.${variant}.json`), `${lock}.${variant}`);
 });
 
 test("every canonical address reads back as itself, with no change", () => {
@@ -100,7 +104,7 @@ test("a hash that names an element of the page, such as the skip link's, is no r
 test("every link the site's pages write into the type map is an address the router reads unchanged", () => {
   let links = 0;
   for (const [path, data] of SITE.files) {
-    if (!path.endsWith(".html")) continue;
+    if (!path.endsWith(".html") || !path.startsWith(OP)) continue;
     for (const m of data.toString("utf8").matchAll(/href="(?:\.\.\/)*map\.html#([^"]+)"/g)) {
       const p = parsed(`#${m[1]!.replace(/&amp;/g, "&")}`);
       assert.deepEqual(p.changes, [], `${path}: ${m[1]}`);
@@ -115,10 +119,10 @@ test("every link the site's pages write into the type map is an address the rout
 
 test("the site's check fails on a type-map link the router rewrites, and on a script that leaves its page", () => {
   const withFile = (path: string, f: (s: string) => string) => new Map([...SITE.files].map(([p, b]) => [p, p === path ? Buffer.from(f(b.toString("utf8"))) : b]));
-  const link = checkSite(withFile("index.html", (h) => h.replace("</main>", '<a href="map.html#!/type/LineItem?lock=main&amp;variant=with-proposals&amp;view=example">x</a></main>')));
-  assert.match(link.join("\n"), /index\.html: links the type map at #!\/type\/LineItem\?lock=main&variant=with-proposals&view=example, which the router rewrites: variant=with-proposals reads as variant=proposals/);
+  const link = checkSite(withFile(`${OP}index.html`, (h) => h.replace("</main>", '<a href="map.html#!/type/LineItem?lock=main&amp;variant=with-proposals&amp;view=example">x</a></main>')));
+  assert.match(link.join("\n"), /openproposal\/index\.html: links the type map at #!\/type\/LineItem\?lock=main&variant=with-proposals&view=example, which the router rewrites: variant=with-proposals reads as variant=proposals/);
   for (const code of ['location.href = "examples.html";', 'window.location = "examples.html";', 'location.assign("examples.html");', 'history.replaceState(null, "", "examples.html");']) {
-    assert.match(checkSite(withFile("assets/map.js", (s) => `${s}\n${code}\n`)).join("\n"), /assets\/map\.js: leaves the page it runs on/, code);
+    assert.match(checkSite(withFile(`${OP}assets/map.js`, (s) => `${s}\n${code}\n`)).join("\n"), /assets\/map\.js: leaves the page it runs on/, code);
   }
-  assert.deepEqual(checkSite(withFile("assets/map.js", (s) => `${s}\nlocation.hash = "#!/";\nhistory.replaceState(null, "", "#!/");\n`)), []);
+  assert.deepEqual(checkSite(withFile(`${OP}assets/map.js`, (s) => `${s}\nlocation.hash = "#!/";\nhistory.replaceState(null, "", "#!/");\n`)), []);
 });

@@ -1,0 +1,20 @@
+format: 1
+id: G-089
+date: 2026-10-27
+question: What changes in the gates when AdCOM's decision records join, before AdCOM has an implementation report?
+decision: >-
+  A new gate, record-wording, holds every spec's decision records, on every
+  run, to the terms the report holds its lines to: no question, chosen
+  answer, or feedback cites a document or record of this repository, such as
+  a decision ID or the type rules, or names a type of the model that the
+  specification never writes. It has three fixtures. Until now only a
+  spec's rendered report was checked, so a spec without one, as AdCOM is,
+  had no such check. AdCOM's twelve records on its known inconsistencies
+  join the six that its mapping cites.
+rationale: >-
+  The gate adds a check and changes none: OpenProposal's records pass it, as
+  its report does, and AdCOM's records are now held to it before its report
+  exists.
+accepts:
+  - { gate: guard, fingerprint: 62f3588304e31375746c7e227edd96b98a9309d915deb99316de4cf709bfcb3b }
+  - { gate: record-wording, fingerprint: f1acad130bc1027ed019287311293c2262d9bf82bbb414f86b45f3fd29305302 }

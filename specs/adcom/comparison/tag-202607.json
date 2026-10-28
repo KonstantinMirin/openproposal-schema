@@ -1,0 +1,214 @@
+{
+  "base": {
+    "blob": "aca75af65c4261239d907bfd73705555874c85b1",
+    "commit": "26c59ba1b235cd8d938c9877409e506f1b8d3f0c",
+    "counts": {
+      "decisions": 4,
+      "elements.code_block": 3,
+      "elements.concept": 6,
+      "elements.definition": 303,
+      "elements.key": 411,
+      "elements.sentence": 11,
+      "elements.statement": 266,
+      "findings.conditions": 0,
+      "findings.examples": 0,
+      "findings.round_trip": 1,
+      "findings.spec": 15,
+      "findings.spec_open": 15,
+      "properties": 0,
+      "rules": 0,
+      "schema_files": 2,
+      "statements.example": 0,
+      "statements.obligation": 0,
+      "statements.rule": 0,
+      "statements.schema": 16,
+      "types.primitive": 2,
+      "types.vocabulary": 42
+    },
+    "ir_sha256": "87b067af5a6f681ca31896fc0901bf717212e44d429f9c91da4095e17afb277c",
+    "lock": "main"
+  },
+  "changes": [],
+  "decisions": {
+    "added": [],
+    "removed": [],
+    "reread": []
+  },
+  "elements": {
+    "added": [
+      {
+        "id": "key:object_content:Content.contentrating",
+        "kind": "key",
+        "text": "`contentrating` | Content rating (e.g., MPAA)."
+      },
+      {
+        "id": "key:object_content:Content.embeddable",
+        "kind": "key",
+        "text": "`embeddable` | Indicator of whether the content is embeddable (e.g., an embeddable video player), where 0 = no, 1 = yes."
+      },
+      {
+        "id": "key:object_content:Content.language",
+        "kind": "key",
+        "text": "`language` | Content language using ISO-639-1-alpha-2. Only one of `language` or `langb` should be present."
+      },
+      {
+        "id": "key:object_content:Content.livestream",
+        "kind": "key",
+        "text": "`livestream` | An enumeration indicating the method of broadcast of the content where: 0 = the broadcast is not scheduled (e.g. it is VOD or otherwise user initiated). 1 = the broadcast is scheduled (also referred to as linear viewing)."
+      },
+      {
+        "id": "key:object_content:Content.qagmediarating",
+        "kind": "key",
+        "text": "`qagmediarating` | Media rating per IQG guidelines. Refer to List: Media Ratings in AdCOM 1.0."
+      },
+      {
+        "id": "key:object_content:Content.sourcerelationship",
+        "kind": "key",
+        "text": "`sourcerelationship` | 0 = indirect, 1 = direct."
+      },
+      {
+        "id": "key:object_content:Content.userrating",
+        "kind": "key",
+        "text": "`userrating` | User rating of the content (e.g., number of stars, likes, etc.)."
+      },
+      {
+        "id": "rule:object_content:7faee66b",
+        "kind": "statement",
+        "text": "Only one of `language` or `langb` should be present."
+      },
+      {
+        "id": "rule:object_content:7faee66b-2",
+        "kind": "statement",
+        "text": "Only one of `language` or `langb` should be present."
+      }
+    ],
+    "changed": [
+      {
+        "id": "key:object_content:Content.firstbroadcast",
+        "kind": "key",
+        "text": "`firstbroadcast` | An enumeration indicating whether this broadcast is the first time the content is available to an audience where: 0 = not first time being broadcast 1 = first time being broadcast",
+        "was": "`firstbroadcast` | An enumeration indicating whether this broadcast is the first time the content is available to an audience where: 0 = not first time being broadcast 1 = first time being broadcast"
+      },
+      {
+        "id": "key:object_content:Content.gtax",
+        "kind": "key",
+        "text": "`gtax` | The taxonomy in use. Refer to list List: Category Taxonomies in AdCOM 1.0 for values. If no gtax field is supplied rows listed, Content Category Taxonomy 3.1 is assumed",
+        "was": "`gtax` | The taxonomy in use. Refer to list List: Category Taxonomies in AdCOM 1.0 for values. If no gtax field is supplied rows listed, Content Category Taxonomy 3.1 is assumed"
+      },
+      {
+        "id": "key:object_content:Content.langb",
+        "kind": "key",
+        "text": "`langb` | Content language using IETF BCP 47. Only one of `language` or `langb` should be present.",
+        "was": "`langb` | Content language using IETF BCP 47. Only one of `lang` or `langb` should be present."
+      },
+      {
+        "id": "key:object_content:Content.realtime",
+        "kind": "key",
+        "text": "`realtime` | An enumeration indicating if the event is happening in real time while it is being watched where: 0 = not happening in real time (e.g., a replay). 1 = yes, happening in real time (e.g., a live sports game).",
+        "was": "`realtime` | An enumeration indicating if the event is happening in real time while it is being watched where: 0 = not happening in real time (e.g., a replay). 1 = yes, happening in real time (e.g., a live sports game)."
+      }
+    ],
+    "removed": [
+      {
+        "id": "key:object_content:Content.embed",
+        "kind": "key",
+        "text": "`embed` | Indicator of whether the content is embeddable (e.g., an embeddable video player), where 0 = no, 1 = yes."
+      },
+      {
+        "id": "key:object_content:Content.lang",
+        "kind": "key",
+        "text": "`lang` | Content language using ISO-639-1-alpha-2. Only one of `lang` or `langb` should be present."
+      },
+      {
+        "id": "key:object_content:Content.live",
+        "kind": "key",
+        "text": "`live` | An enumeration indicating the method of broadcast of the content where: 0 = the broadcast is not scheduled (e.g. it is VOD or otherwise user initiated). 1 = the broadcast is scheduled (also referred to as linear viewing)."
+      },
+      {
+        "id": "key:object_content:Content.mrating",
+        "kind": "key",
+        "text": "`mrating` | Media rating per IQG guidelines. Refer to List: Media Ratings in AdCOM 1.0."
+      },
+      {
+        "id": "key:object_content:Content.rating",
+        "kind": "key",
+        "text": "`rating` | Content rating (e.g., MPAA)."
+      },
+      {
+        "id": "key:object_content:Content.srcrel",
+        "kind": "key",
+        "text": "`srcrel` | 0 = indirect, 1 = direct."
+      },
+      {
+        "id": "key:object_content:Content.urating",
+        "kind": "key",
+        "text": "`urating` | User rating of the content (e.g., number of stars, likes, etc.)."
+      },
+      {
+        "id": "rule:object_content:8e235a11",
+        "kind": "statement",
+        "text": "Only one of `lang` or `langb` should be present."
+      },
+      {
+        "id": "rule:object_content:8e235a11-2",
+        "kind": "statement",
+        "text": "Only one of `lang` or `langb` should be present."
+      }
+    ]
+  },
+  "findings": {
+    "conditions": {
+      "added": [],
+      "removed": []
+    },
+    "examples": {
+      "added": [],
+      "removed": []
+    },
+    "round_trip": {
+      "added": [],
+      "changed": [],
+      "removed": []
+    },
+    "spec": {
+      "added": [],
+      "changed": [],
+      "removed": []
+    }
+  },
+  "format": 1,
+  "lock": {
+    "blob": "ec21cf8425559495261d2b9c4084ddd3d26c4802",
+    "commit": "d67a6a8dedc883e0655e239d97116a91df6052ed",
+    "counts": {
+      "decisions": 4,
+      "elements.code_block": 3,
+      "elements.concept": 6,
+      "elements.definition": 303,
+      "elements.key": 411,
+      "elements.sentence": 11,
+      "elements.statement": 266,
+      "findings.conditions": 0,
+      "findings.examples": 0,
+      "findings.round_trip": 1,
+      "findings.spec": 15,
+      "findings.spec_open": 15,
+      "properties": 0,
+      "rules": 0,
+      "schema_files": 2,
+      "statements.example": 0,
+      "statements.obligation": 0,
+      "statements.rule": 0,
+      "statements.schema": 16,
+      "types.primitive": 2,
+      "types.vocabulary": 42
+    },
+    "ir_sha256": "1a0d528740da412cc8c988496d26aa73d8e9d55b81dcaba8b224c8612c97533f",
+    "lock": "tag-202607"
+  },
+  "statements": {
+    "added": [],
+    "moved": [],
+    "removed": []
+  }
+}

@@ -17,7 +17,7 @@ import { join, posix } from "node:path";
 import { treeDigest } from "../src/release.ts";
 import { constantName, plural } from "../src/sdk.ts";
 import { goTermName } from "../src/sdk-go.ts";
-import { ROOT } from "./helpers.ts";
+import { ROOT, SPEC } from "./helpers.ts";
 
 /** The four SDK trees: each one's directory, lock, variant, and schema directory. */
 const TREES = [
@@ -34,14 +34,14 @@ function python(tree: string, script: string): string {
   return r.stdout;
 }
 
-/** The digest of a committed schema tree, as a release manifest records it. */
+/** The digest of a committed schema tree, by path from the spec's folder, as a release manifest records it. */
 function committedDigest(dir: string): string {
   const files: { path: string; schema: unknown }[] = [];
   const walk = (rel: string) => {
-    for (const e of readdirSync(join(ROOT, dir, rel), { withFileTypes: true })) {
+    for (const e of readdirSync(join(SPEC, dir, rel), { withFileTypes: true })) {
       const p = rel === "" ? e.name : posix.join(rel, e.name);
       if (e.isDirectory()) walk(p);
-      else if (e.name.endsWith(".json")) files.push({ path: p, schema: JSON.parse(readFileSync(join(ROOT, dir, p), "utf8")) });
+      else if (e.name.endsWith(".json")) files.push({ path: p, schema: JSON.parse(readFileSync(join(SPEC, dir, p), "utf8")) });
     }
   };
   for (const top of ["kernel", "modules", "documents"]) walk(top);
@@ -51,7 +51,7 @@ function committedDigest(dir: string): string {
 
 test("each SDK states the commit, lock, variant, and schema release it was generated from, alike in Python, TypeScript, and Go", async () => {
   for (const t of TREES) {
-    const lock = readFileSync(join(ROOT, "spec-input", t.lock === "main" ? "spec-lock.yaml" : `${t.lock}.lock.yaml`), "utf8");
+    const lock = readFileSync(join(SPEC, "spec-input", t.lock === "main" ? "spec-lock.yaml" : `${t.lock}.lock.yaml`), "utf8");
     const commit = /^\s*commit:\s*"?([0-9a-f]{40})"?/m.exec(lock)?.[1];
     assert.ok(commit, `${t.lock}: the lock names a commit`);
     const want = { SPEC_COMMIT: commit, LOCK: t.lock, VARIANT: t.variant, SCHEMA_RELEASE: committedDigest(t.schemas) };
@@ -69,13 +69,13 @@ test("each SDK states the commit, lock, variant, and schema release it was gener
 
 test("the schema release of the SDKs with our proposals is the digest each lock's release manifest records", () => {
   for (const t of TREES.filter((x) => x.variant === "proposed")) {
-    const manifest = JSON.parse(readFileSync(join(ROOT, t.schemas, "release.json"), "utf8")) as { digest: string };
+    const manifest = JSON.parse(readFileSync(join(SPEC, t.schemas, "release.json"), "utf8")) as { digest: string };
     assert.equal(JSON.parse(python(t.dir, "import json, openproposal as op\nprint(json.dumps(op.SCHEMA_RELEASE))")), manifest.digest, t.dir);
   }
 });
 
 /** The type examples of a tree's build. */
-const examplesOf = (t: (typeof TREES)[number]) => join(ROOT, "type-examples", ...t.schemas.split("/").slice(1), "examples.json");
+const examplesOf = (t: (typeof TREES)[number]) => join(SPEC, "type-examples", ...t.schemas.split("/").slice(1), "examples.json");
 
 test("the receive mode ignores the members a closed object doesn't name, at any depth, and checks everything else as the strict mode does", () => {
   for (const t of TREES) {

@@ -1,0 +1,56 @@
+format: 1
+id: D-007
+status: proposed
+kind: gap
+author: agent
+question: "AdCOM says its lists \"may be extended at any time\" and that implementers \"must accept\" such changes within a version. Does a list's schema accept a code the list doesn't name yet?"
+covers:
+  - ir: rule:adcomprinciples:0f8c9ced
+    digest: 2cfa49df8af66463d660f62096bee94fb358d5a352444eed2680e5ba37da4d45
+    quote: New objects and attributes may be added and enumerated lists may be extended at any time and thus implementers must accept these types of changes without breakage within a version number.
+  - ir: def:list_devicetypes:1
+    digest: a5bed246b41c59a039391963d54e31a6c12d9021ea742d114bf1d10451990a6a
+    quote: "`1` | Mobile/Tablet - General"
+  - ir: def:list_apiframeworks:500+
+    digest: 93a8fc1119659fd133d4bd0d898af9fa0cd5e0b1301f887856684c68530faaa3
+    quote: "`500+` | Vendor-specific codes."
+options:
+  - id: pinned-codes
+    summary: >-
+      Each vocabulary holds the codes of its list at the pinned commit, plus
+      vendors' codes where the list reserves them. An unknown code fails
+      strict validation, which says that the value isn't a code of that
+      revision. A receiver that must accept codes added later reads with a
+      tolerant reader that keeps a code it doesn't know, which the SDK phase
+      provides.
+  - id: open-to-integers
+    summary: >-
+      Each vocabulary holds its codes, labeled, and is open to any other
+      integer, so a code added later always validates.
+  - id: any-integer
+    summary: >-
+      Each vocabulary accepts any integer, with no codes in its schema.
+chosen: pinned-codes
+rationale: >-
+  The principle binds receivers: a receiver must not break on a code added
+  after it was built. It doesn't make every integer a valid code: a sender
+  that writes a code no list holds is still wrong for that revision. A
+  schema of the pinned codes says exactly which codes the list held at its
+  commit, and each release names that commit, so a new code arrives as a new
+  release, which the release differ classes as additive. Opening every list
+  to any integer would keep the labels but make the schema accept every
+  typo, and a schema of no codes would lose what the lists say. So the
+  schemas state the codes, and accepting a later code is a reader's choice.
+  The tolerant reader that keeps an unknown code isn't built yet: the SDK
+  phase builds it, and until then a receiver that must accept later codes
+  validates with the next release. This stays a gap, since the text says
+  receivers must accept new codes but not what a schema of a revision
+  accepts.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L179"
+feedback: >-
+  Say, for each list, whether it is closed within a release, and how a
+  receiver or an intermediary that knows only an older release handles a
+  code it doesn't know: pass it through, drop it, or fail. Today the
+  principle binds receivers, but a list's table gives no way to tell which
+  codes a given release of AdCOM holds.

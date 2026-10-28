@@ -15,6 +15,24 @@ independent work, not a product of IAB Tech Lab, and it implies no endorsement.
 kernel/lists.yaml reproduces code lists from AdCOM 1.0 by IAB Tech Lab
 (CC BY 3.0): API frameworks, playback methods, and video placement subtypes.
 
+specs/adcom/ contains and adapts material from the AdCOM 1.0 Specification by
+IAB Tech Lab (https://github.com/InteractiveAdvertisingBureau/AdCOM), which its
+repository's README and the specification itself release under CC BY 3.0
+(https://creativecommons.org/licenses/by/3.0/): specs/adcom/spec-input/snapshots/
+holds the specification text at each locked commit, unmodified, and the IR, and
+the mapping, decision records, and schemas generated from it, quote and adapt
+it. This is an independent work, not a product of IAB Tech Lab, and it implies
+no endorsement.
+
+specs/adcom/drift/snapshots/ holds one folder of each of two artifacts that
+define AdCOM's lists as enums, reproduced whole and unmodified at the commits
+specs/adcom/drift/sources.yaml pins, with each one's license, so the drift
+report can be checked without a clone: the enums folder of IAB Tech Lab's
+adcom-proto (https://github.com/IABTechLab/adcom-proto, at 921f85e), and the
+adcom1/ folder of Prebid's openrtb (https://github.com/prebid/openrtb, at
+0d01af1), with its Go types, tests, and test data. Both are licensed under
+the Apache License 2.0.
+
 kernel/lists.yaml also lists the zone names of the IANA Time Zone Database
 (tzdata), which is in the public domain.
 

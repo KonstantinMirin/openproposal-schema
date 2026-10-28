@@ -3,13 +3,15 @@ import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { buildLock, DEFAULT_LOCK_FILE, type LockBuild } from "../compare.ts";
 import { loadConstructors } from "../constructors.ts";
-import { loadFindings } from "../examples.ts";
-import { allDecisions, buildFeedback, checkFeedback, DETAILS_LINK, FEEDBACK_DIR, FEEDBACK_FILES, renderComment, renderDetails, renderFeedback } from "../feedback.ts";
+import { FINDINGS_FILE, loadFindings } from "../examples.ts";
+import { allDecisions, buildFeedback, checkFeedback, DETAILS_LINK, feedbackOf, FEEDBACK_DIR, FEEDBACK_FILES, renderComment, renderDetails, renderFeedback } from "../feedback.ts";
 import { loadKernel } from "../kernel.ts";
 import { loadLock } from "../lock.ts";
 import { loadDecisions, loadMappings } from "../mapping.ts";
-import { loadDifferences } from "../render.ts";
-import { loadVectors } from "../rules.ts";
+import { DIFFERENCES_FILE, loadDifferences } from "../render.ts";
+import { loadVectors, VECTORS_DIR } from "../rules.ts";
+import { cliSpec } from "../builds.ts";
+import { REPO_ROOT } from "../repo.ts";
 
 /**
  * Usage: feedback [--out <dir>]
@@ -23,38 +25,39 @@ import { loadVectors } from "../rules.ts";
  * clean or the report can't place a record.
  */
 async function main(): Promise<number> {
-  const { values } = parseArgs({ options: { out: { type: "string" } } });
-  const root = new URL("../..", import.meta.url).pathname.replace(/\/$/, "");
-  const files = readdirSync(join(root, "spec-input"))
+  const { values } = parseArgs({ options: { spec: { type: "string" }, out: { type: "string" } } });
+  const root = REPO_ROOT;
+  const specDir = cliSpec(values);
+  const files = readdirSync(join(specDir, "spec-input"))
     .filter((f) => f === DEFAULT_LOCK_FILE || f.endsWith(".lock.yaml"))
     .sort((a, b) => (a === DEFAULT_LOCK_FILE ? -1 : b === DEFAULT_LOCK_FILE ? 1 : a < b ? -1 : a > b ? 1 : 0));
   const input = {
-    root,
-    mappings: loadMappings(root, join(root, "mapping")),
-    decisions: loadDecisions(root, join(root, "decisions")),
-    kernel: loadKernel(root),
-    constructors: loadConstructors(root),
-    vectors: loadVectors(root),
+    root: specDir,
+    mappings: loadMappings(join(specDir, "mapping")),
+    decisions: loadDecisions(join(specDir, "decisions")),
+    kernel: loadKernel(root, specDir),
+    constructors: loadConstructors(root, specDir),
+    vectors: loadVectors(join(specDir, VECTORS_DIR)),
   };
   const builds: LockBuild[] = [];
   let failed = false;
   for (const f of files) {
-    const lock = loadLock(join(root, "spec-input", f));
+    const lock = loadLock(join(specDir, "spec-input", f));
     const r = await buildLock(lock, input);
     for (const p of r.problems) console.error(`error: ${lock.name}: ${p}`);
     if (r.build) builds.push(r.build);
     else failed = true;
   }
   if (failed) return 1;
-  const { doc, problems } = buildFeedback({ ...input, builds, recordedFindings: loadFindings(root), recordedDifferences: loadDifferences(root) });
-  problems.push(...checkFeedback(doc, builds));
+  const { doc, problems } = buildFeedback({ ...input, builds, recordedFindings: loadFindings(join(specDir, FINDINGS_FILE)), recordedDifferences: loadDifferences(join(specDir, DIFFERENCES_FILE)) });
+  problems.push(...checkFeedback(doc, builds, feedbackOf(specDir)));
   for (const p of problems) console.error(`error: ${p}`);
   if (problems.length > 0) return 1;
-  const out = values.out !== undefined ? resolve(values.out) : join(root, FEEDBACK_DIR);
+  const out = values.out !== undefined ? resolve(values.out) : join(specDir, FEEDBACK_DIR);
   mkdirSync(out, { recursive: true });
   writeFileSync(join(out, FEEDBACK_FILES.data), renderFeedback(doc));
   writeFileSync(join(out, FEEDBACK_FILES.comment), renderComment(doc));
-  writeFileSync(join(out, FEEDBACK_FILES.details), renderDetails(doc));
+  writeFileSync(join(out, FEEDBACK_FILES.details), renderDetails(doc, feedbackOf(specDir)));
   const shown = out.startsWith(`${root}/`) ? out.slice(root.length + 1) : out;
   const decisions = allDecisions(doc);
   const proposed = decisions.filter((d) => d.status === "proposed").length;

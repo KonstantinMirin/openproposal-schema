@@ -9,13 +9,12 @@
  * resolved in process from the committed inputs, so the site is a function
  * of the repository.
  */
-import { readdirSync, readFileSync, type Dirent } from "node:fs";
+import { existsSync, readdirSync, readFileSync, type Dirent } from "node:fs";
 import { join, posix } from "node:path";
 import { allLocks, resolveBuild, type Build } from "../builds.ts";
 import { loadConstructors } from "../constructors.ts";
 import { indexElements } from "../elements.ts";
 import { schemaDirOf } from "../emit.ts";
-import { loadFindings, type FindingsFile } from "../examples.ts";
 import type { FeedbackDoc } from "../feedback.ts";
 import type { SpecIR } from "../ir-types.ts";
 import { loadKernel, type Kernel } from "../kernel.ts";
@@ -28,19 +27,22 @@ import { TYPE_EXAMPLES_FILE, typeExamplesDirOf, type TypeExamplesDoc } from "../
 import { checkVariantDiff, loadVariant, type Variant, type VariantDifference } from "../variant.ts";
 import type { VariantReport } from "../variant-report.ts";
 import { sourceInfo, type SourceInfo } from "./sources.ts";
+import { REPO_ROOT } from "../repo.ts";
+import { specOf } from "../specs/index.ts";
+import { brandOf, loadSiteConfig, type SiteBrand, type SiteConfig } from "./config.ts";
 
-/** The variants the site switches between, by the slug its URLs use: the text as written, and with our proposals. */
+/**
+ * The variants the site can switch between, by the slug its URLs use: the
+ * text as written, and with our proposals. A spec with departures has both;
+ * a spec with none proposes no change, so its one build is the text as
+ * written, and the site shows no variant switch.
+ */
 export const SITE_VARIANTS = [
   { slug: "as-written", variant: "as-written", label: "As written" },
   { slug: "proposals", variant: undefined, label: "With our proposals" },
 ] as const;
 export type VariantSlug = (typeof SITE_VARIANTS)[number]["slug"];
-
-/** The inputs the site switches between, by lock name. */
-export const SITE_LOCKS: Record<string, { label: string; short: string }> = {
-  main: { label: "main", short: "main" },
-  "with-open-prs": { label: "With the open PRs", short: "open PRs" },
-};
+export type SiteVariant = (typeof SITE_VARIANTS)[number];
 
 /** One build as the type map reads it. */
 export interface BuildData {
@@ -64,15 +66,26 @@ export interface BuildData {
 }
 
 export interface SiteInputs {
+  /** The spec's folder, which holds its locks, records, and generated files. */
   root: string;
+  /** What the pages name, from the spec's profile and the site's settings. */
+  brand: SiteBrand;
+  /** The spec's plugin, whose site copy writes its landing and How it's built pages. */
+  plugin: string;
+  /** Whether the spec has SDK types, which the files page lists as secondary. */
+  sdk: boolean;
   locks: SpecLock[];
+  /** The variants the spec's pages switch between: both where the spec has departures, and else the text as written alone. */
+  variants: readonly SiteVariant[];
   decisions: DecisionRecord[];
   mappings: MappingFile[];
   kernel: Kernel;
-  variant: Variant;
-  feedback: FeedbackDoc;
-  report: VariantReport;
-  findings: FindingsFile;
+  /** The as-written variant's switches; null for a spec with no departures. */
+  variant: Variant | null;
+  /** The implementation feedback, which numbers and groups the decisions; null for a spec with none yet. */
+  feedback: FeedbackDoc | null;
+  /** The as-written variant's report; null for a spec with no departures. */
+  report: VariantReport | null;
   /** Each lock's IR, by lock name. */
   irs: Map<string, SpecIR>;
   provenance: Map<string, ProvenanceDoc | null>;
@@ -81,45 +94,51 @@ export interface SiteInputs {
 }
 
 const readJson = <T>(root: string, path: string): T => JSON.parse(readFileSync(join(root, path), "utf8")) as T;
+const readJsonIf = <T>(root: string, path: string): T | null => (existsSync(join(root, path)) ? readJson<T>(root, path) : null);
 
-/** Loads everything the site reads, and resolves each lock's two builds. */
-export function loadSiteInputs(root: string): SiteInputs {
+/** Loads everything the site reads from a spec's folder, and resolves each lock's builds: the proposed one, and the as-written one where the spec has departures. */
+export function loadSiteInputs(root: string, site: SiteConfig = loadSiteConfig()): SiteInputs {
   const locks = allLocks(root);
-  const mappings = loadMappings(root, join(root, "mapping"));
-  const decisions = loadDecisions(root, join(root, "decisions"));
-  const kernel = loadKernel(root);
-  const constructors = loadConstructors(root);
-  const variant = loadVariant(root);
+  const mappings = loadMappings(join(root, "mapping"));
+  const decisions = loadDecisions(join(root, "decisions"));
+  const kernel = loadKernel(REPO_ROOT, root);
+  const constructors = loadConstructors(REPO_ROOT, root);
+  const variant = existsSync(join(root, "variants", "as-written.yaml")) ? loadVariant(root) : null;
   const builds = new Map<string, Map<VariantSlug, Build>>();
   const irs = new Map<string, SpecIR>();
   const provenance = new Map<string, ProvenanceDoc | null>();
   for (const lock of locks) {
     const proposed = resolveBuild({ lock, root, mappings, decisions, kernel, constructors });
-    const written = resolveBuild({ lock, root, mappings, decisions, kernel, constructors, variant, ir: proposed.ir });
+    const written = variant ? resolveBuild({ lock, root, mappings, decisions, kernel, constructors, variant, ir: proposed.ir }) : proposed;
     for (const b of [proposed, written]) if (b.problems.length > 0) throw new Error(`${b.label}: the model doesn't resolve: ${b.problems[0]}`);
-    builds.set(lock.name, new Map([["proposals", proposed], ["as-written", written]]));
+    builds.set(lock.name, new Map(variant ? [["proposals", proposed], ["as-written", written]] : [["as-written", proposed]]));
     irs.set(lock.name, proposed.ir);
     provenance.set(lock.name, loadProvenance(root, lock));
   }
+  const spec = specOf(root);
   return {
     root,
+    brand: brandOf(spec.profile, site),
+    plugin: spec.plugin?.id ?? spec.profile.id,
+    sdk: spec.profile.names.sdk !== undefined,
     locks,
+    variants: variant ? SITE_VARIANTS : SITE_VARIANTS.filter((v) => v.slug === "as-written"),
     decisions,
     mappings,
     kernel,
     variant,
-    feedback: readJson<FeedbackDoc>(root, "feedback/feedback.json"),
-    report: readJson<VariantReport>(root, "comparison/as-written.json"),
-    findings: loadFindings(root),
+    feedback: readJsonIf<FeedbackDoc>(root, "feedback/feedback.json"),
+    report: variant ? readJson<VariantReport>(root, "comparison/as-written.json") : null,
     irs,
     provenance,
     builds,
   };
 }
 
-/** Each decision's number in the supporting page of #121, and the feedback group it is listed in. */
-export function decisionNumbers(feedback: FeedbackDoc): Map<string, { number: number; group: string }> {
+/** Each decision's number in the feedback's supporting page, and the group it is listed in. */
+export function decisionNumbers(feedback: FeedbackDoc | null): Map<string, { number: number; group: string }> {
   const out = new Map<string, { number: number; group: string }>();
+  if (!feedback) return out;
   for (const g of feedback.groups) for (const d of g.decisions) out.set(d.id, { number: d.number, group: g.title });
   for (const d of feedback.departures) out.set(d.id, { number: d.number, group: "Changes we propose" });
   return out;
@@ -137,11 +156,13 @@ function sourcesOf(model: ModelDoc): string[] {
 
 /** One lock's source elements, each with its label, quote, and links. */
 export function sourceInfos(inputs: SiteInputs, lock: SpecLock, ids: Iterable<string>): Record<string, SourceInfo> {
-  const elements = indexElements(inputs.irs.get(lock.name)!);
+  const ir = inputs.irs.get(lock.name)!;
+  const elements = indexElements(ir);
+  const titles = new Map(ir.sections.map((s) => [s.id, s.title]));
   const out: Record<string, SourceInfo> = {};
   for (const id of [...ids].sort()) {
     const e = elements.get(id);
-    if (e) out[id] = sourceInfo(lock, inputs.provenance.get(lock.name) ?? null, id, e);
+    if (e) out[id] = sourceInfo(lock, inputs.provenance.get(lock.name) ?? null, id, e, (s) => titles.get(s));
   }
   return out;
 }
@@ -174,9 +195,9 @@ export function buildData(inputs: SiteInputs, lock: SpecLock, slug: VariantSlug)
   const cited = new Set(b.model.types.flatMap((t) => t.decisions));
   const decisions: BuildData["decisions"] = {};
   for (const d of inputs.decisions) if (cited.has(d.id)) decisions[d.id] = { kind: d.kind, number: numbers.get(d.id)?.number ?? null, question: d.question };
-  const proposed = inputs.builds.get(lock.name)!.get("proposals")!;
+  const proposed = inputs.builds.get(lock.name)!.get("proposals");
   const written = inputs.builds.get(lock.name)!.get("as-written")!;
-  const differences = checkVariantDiff(inputs.variant, proposed.model, written.model, inputs.decisions, lock.name).differences;
+  const differences = inputs.variant && proposed ? checkVariantDiff(inputs.variant, proposed.model, written.model, inputs.decisions, lock.name).differences : [];
   return {
     lock: lock.name,
     variant: slug,
@@ -194,9 +215,16 @@ export function buildData(inputs: SiteInputs, lock: SpecLock, slug: VariantSlug)
   };
 }
 
+/** The slug of the build with our proposals: "proposals", or for a spec that proposes no change, its one build's. */
+export const proposalsSlug = (inputs: Pick<SiteInputs, "variants">): VariantSlug => inputs.variants[inputs.variants.length - 1]!.slug;
+
+/** A lock's build in a variant. */
+export const buildOf = (inputs: SiteInputs, lock: string, slug: VariantSlug): Build => inputs.builds.get(lock)!.get(slug)!;
+
 /** The types a lock's build holds that the default lock's build of the same variant doesn't. */
 function addedTypes(inputs: SiteInputs, lock: SpecLock, slug: VariantSlug): string[] {
-  const main = inputs.locks.find((l) => l.merge_order === null);
+  // The default lock, which the type map's key compares the others with.
+  const main = inputs.locks[0];
   if (!main || main.name === lock.name) return [];
   const have = new Set(inputs.builds.get(main.name)!.get(slug)!.model.types.map((t) => t.name));
   return inputs.builds.get(lock.name)!.get(slug)!.model.types.filter((t) => !have.has(t.name)).map((t) => t.name).sort();
@@ -227,11 +255,11 @@ const readdirSafe = (dir: string): Dirent[] => {
 };
 
 /** Each kernel type's value domain and concept, with the concept's meaning, the variant's own concepts included. */
-function domainsOf(kernel: Kernel, variant: Variant): BuildData["domains"] {
+function domainsOf(kernel: Kernel, variant: Variant | null): BuildData["domains"] {
   const out: BuildData["domains"] = {};
   const concepts = new Map<string, { domain: string; concept: string; meaning: string }>();
   for (const d of kernel.domains?.domains ?? []) for (const c of d.concepts) concepts.set(c.name, { domain: d.name, concept: c.name, meaning: c.meaning });
-  for (const c of variant.concepts ?? []) concepts.set(c.name, { domain: c.domain, concept: c.name, meaning: c.meaning });
+  for (const c of variant?.concepts ?? []) concepts.set(c.name, { domain: c.domain, concept: c.name, meaning: c.meaning });
   for (const p of kernel.primitives) {
     const c = concepts.get(p.concept);
     if (c) out[p.name] = c;
@@ -241,7 +269,7 @@ function domainsOf(kernel: Kernel, variant: Variant): BuildData["domains"] {
 
 /** The types and properties a decision shapes on a build: the types that cite it, and the members of the mapping entries that cite it. */
 export function shapedBy(inputs: SiteInputs, lock: SpecLock, decision: string): { types: string[]; members: string[] } {
-  const model = inputs.builds.get(lock.name)!.get("proposals")!.model;
+  const model = buildOf(inputs, lock.name, proposalsSlug(inputs)).model;
   const types = model.types.filter((t) => t.decisions.includes(decision)).map((t) => t.name);
   const members = new Set<string>();
   const cites = (s: { decision?: string; decisions?: string[] }) => s.decision === decision || (s.decisions ?? []).includes(decision);

@@ -8,13 +8,13 @@ import { checkKernelEngines, engineCases, loadOracleGaps, type Engines } from ".
 import { checkKernel, checkKernelNames, checkKernelSources, kernelStructures, loadKernel, patternPortability, vectorCases, type Kernel, type Primitive } from "../src/kernel.ts";
 import { sharedStructures } from "../src/domains.ts";
 import { loadDecisions, type MappingFile } from "../src/mapping.ts";
-import { ROOT } from "./helpers.ts";
+import { ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT);
-const DECISIONS = loadDecisions(ROOT, join(ROOT, "decisions"));
+const KERNEL = loadKernel(ROOT, SPEC);
+const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 const LOCKS: [string, SpecIR][] = [
-  ["main", JSON.parse(readFileSync(join(ROOT, "ir", "spec-ir.json"), "utf8")) as SpecIR],
-  ["with-open-prs", JSON.parse(readFileSync(join(ROOT, "ir", "with-open-prs", "spec-ir.json"), "utf8")) as SpecIR],
+  ["main", JSON.parse(readFileSync(join(SPEC, "ir", "spec-ir.json"), "utf8")) as SpecIR],
+  ["with-open-prs", JSON.parse(readFileSync(join(SPEC, "ir", "with-open-prs", "spec-ir.json"), "utf8")) as SpecIR],
 ];
 
 /** The committed kernel with one primitive changed by `edit`. */

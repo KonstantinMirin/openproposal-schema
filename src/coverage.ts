@@ -48,7 +48,8 @@ export function inScopeDeclarations(mappings: MappingFile[], lock: string): { de
 export function ruleContext(ir: SpecIR, lock: string, mappings: MappingFile[], kernel: Kernel, constructors: Constructors): RuleContext {
   const owners = sectionOwners(mappings, []);
   const entries = new Map([...inScopeEntries(mappings, lock)].map(([id, x]) => [id, x.entry]));
-  return { ir, elements: indexElements(ir), kernel, constructors, entries, moduleOf: (s) => owners.get(s) };
+  const deferred = new Set(mappings.filter((m) => m.deferred).map((m) => m.module));
+  return { ir, elements: indexElements(ir), kernel, constructors, entries, moduleOf: (s) => owners.get(s), deferred: (s) => deferred.has(owners.get(s) ?? "") };
 }
 
 export interface CoverageResult {

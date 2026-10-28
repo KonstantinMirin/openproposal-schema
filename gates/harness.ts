@@ -36,7 +36,9 @@ export interface Result {
 /** A known-bad input: the real input changed so that the gate must fail, with a message that contains `expect` or matches it. */
 export interface Fixture<I> {
   name: string;
-  /** The lock whose input the fixture changes; the first lock's when absent. */
+  /** The spec whose input the fixture changes, by its folder's name; OpenProposal's, which the fixtures were first written for, when absent, or the first spec's that ran the gate when OpenProposal's didn't. */
+  spec?: string;
+  /** The lock whose input the fixture changes; the spec's first lock's when absent. */
   lock?: string;
   mutate: (input: I) => I | Promise<I>;
   expect: string | RegExp;
@@ -52,8 +54,9 @@ export interface Gate<I> {
   /**
    * The exemptions the gate reads, whose entries let a case pass: a file, or
    * `<file>#<property>` for the values of every member of that name in a
-   * YAML file, where `<file>` may be `<dir>/*.yaml`, as
-   * `kernel/domains.yaml#shared_structures`.
+   * YAML file, as `kernel/domains.yaml#shared_structures`. A path may hold
+   * `*` segments, which match every spec's file, as
+   * `specs/*\/decisions/*.yaml#sets_aside`; one that matches nothing fails.
    */
   exemptions?: string[];
   /** Whole files, and directories as `<dir>/`, that are part of the gate's code, such as the CI script for the guard or the test tree for the test suite. */
@@ -277,15 +280,30 @@ function namesOf(s: ts.Statement): string[] {
   return [];
 }
 
-/** The bytes an exemption names: a whole file, or the canonical JSON of every value of one member name in YAML files. */
+/**
+ * The files a path names: the file itself, or, where a segment holds `*`,
+ * every file whose path matches it, a `*` standing for any run of characters
+ * within one segment, as `specs/*\/decisions/*.yaml`. Sorted. A pattern that
+ * matches no file throws, so an exemption file that moves can't leave the
+ * fingerprint silently.
+ */
+export function filesMatching(path: string, src: Source): string[] {
+  const segments = path.split("/");
+  const first = segments.findIndex((s) => s.includes("*"));
+  if (first === -1) return [path];
+  const pattern = new RegExp(`^${segments.map((s) => s.split("*").map((x) => x.replace(/[.+?^${}()|[\]\\]/g, "\\$&")).join("[^/]*")).join("/")}$`);
+  const matched = src
+    .list(segments.slice(0, first).join("/"))
+    .filter((f) => pattern.test(f))
+    .sort();
+  if (matched.length === 0) throw new Error(`${path} matches no file`);
+  return matched;
+}
+
+/** The bytes an exemption names: a whole file, or the canonical JSON of every value of one member name in YAML files; the path may hold `*` segments (`filesMatching`). */
 function exemptionBytes(spec: string, src: Source): Buffer {
   const [path, property] = spec.split("#") as [string, string?];
-  const files = path.endsWith("/*.yaml")
-    ? src
-        .list(path.slice(0, -"/*.yaml".length))
-        .filter((f) => f.endsWith(".yaml") && posix.dirname(f) === path.slice(0, -"/*.yaml".length))
-        .sort()
-    : [path];
+  const files = filesMatching(path, src);
   if (property === undefined) return Buffer.concat(files.map((f) => src.read(f)));
   const values: unknown[] = [];
   const collect = (v: unknown) => {
@@ -293,6 +311,8 @@ function exemptionBytes(spec: string, src: Source): Buffer {
     else if (v !== null && typeof v === "object") for (const [k, x] of Object.entries(v)) k === property ? values.push(x) : collect(x);
   };
   for (const f of files) collect(parse(src.read(f).toString("utf8"), { version: "1.2", schema: "core" }));
+  // A member that names no value would read nothing, as when the exemptions move to another file.
+  if (values.length === 0) throw new Error(`${spec} names no value`);
   return Buffer.from(canonicalJson(values));
 }
 

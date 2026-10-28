@@ -1,0 +1,66 @@
+format: 1
+id: D-001
+status: proposed
+kind: gap
+author: agent
+question: "Which sentences of AdCOM state a requirement, when the text adopts no RFC 2119 convention and writes its keywords in either case?"
+covers:
+  - ir: rule:spec:54bce490
+    digest: 5818c5e3f1befad2ef68fc1e2e487c03d83fe87507b3994eda35a9ade1dca3fc
+    quote: Unless explicitly specified otherwise, annotated as optional, or called out as a best practice, all material aspects of this section are required for AdCOM compliance.
+  - ir: rule:spec:8fd3c6cb
+    digest: 7ff3cbc8cf8e3150118802882fbf920c88fff96ad61911fc468608e278e98e92
+    quote: Throughout the object specifications, attributes may be indicated as “Required” or “Recommended”.
+  - ir: rule:spec:fa354fff
+    digest: ec549651abe3681617b390537715c9012d9412fdce97c7c336b9e4c1159e4606
+    quote: Attributes are deemed required only if their omission would break the technical meaning of the object and is not necessarily an indicator of business value otherwise.
+  - ir: rule:spec:a97c89e6
+    digest: 64ee08ce816fe064dff6efd675887bb0efd94777bce334c59db819c63189c8d3
+    quote: Attributes are recommended when their omission would not break the object, but would dramatically diminish its value.
+  - ir: rule:spec:e820d36a
+    digest: 41bb7fce4f64aa45314d4e8673d788f437175906bd2c4b734372cb179de310ab
+    quote: Transaction layers in which AdCOM is used may provide additional required and/or recommended guidance specific to the application.
+  - ir: rule:spec:c10c403d
+    digest: 8f3608bca3e5b32b506944184ccbe627cf5150b839498fad22dbe0cc75c26663
+    quote: From a specification compliance perspective, any attribute not denoted required is optional, whether recommended or not.
+  - ir: rule:spec:15ef27ac
+    digest: c1f4c5c79078e19d28012ef4106529852cad24b054f71e10d2916af9e130e983
+    quote: An optional attribute may have a default value to be assumed if omitted.
+  - ir: rule:spec:eb0e6723
+    digest: 6157d272b55c37400ae83c8fda29eb133e0e149fe5398b6968ef3d7bb12ad278
+    quote: If no default is indicated, then by convention its absence should be interpreted as unknown, unless otherwise specified.
+  - ir: rule:spec:849b0d01
+    digest: a1b38202adc0ebec7793b0da0b2fb8904774b456f545757b7a9d0ab316a133c1
+    quote: Empty strings or null values should be interpreted the same as omitted (i.e., the default if one is specified or unknown otherwise).
+options:
+  - id: any-case
+    summary: >-
+      A sentence with an RFC 2119 keyword in any case, such as "must",
+      "should", "may", "required", or "recommended", is a statement with
+      that keyword's level.
+  - id: uppercase
+    summary: >-
+      Only a keyword in capitals makes a statement, as in a text that adopts
+      RFC 2119; AdCOM's text then states nothing.
+chosen: any-case
+rationale: >-
+  AdCOM writes its requirements in lowercase, "must accept these types of
+  changes", "should be interpreted as unknown", and adopts no convention
+  that reserves capitals for them, so an uppercase-only reading would find
+  no statement at all. Reading every keyword, in any case, keeps each
+  requirement as an element that a decision can cite. Some sentences use a
+  keyword in its ordinary sense, as "required by an ad" does; each such
+  statement is mapped to what it says, and none becomes a rule without a
+  decision.
+
+  The statements of the SPECIFICATION part's opening say how an attribute's
+  presence and default are read. They bind AdCOM's objects, which a later
+  phase maps, so they are informative until then.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L197"
+feedback: >-
+  State which words carry requirements: adopt RFC 2119 and BCP 14, and write
+  its keywords in capitals where a sentence states a requirement. Today
+  "must", "should", and "may" appear in lowercase both as requirements and
+  in their ordinary sense, so a reader can't tell which sentences an
+  implementation must meet.

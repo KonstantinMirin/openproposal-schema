@@ -8,6 +8,7 @@ import { join } from "node:path";
 import { canonicalJson } from "./canonical.ts";
 import { readYaml } from "./mapping.ts";
 import { compileSchema } from "./pipeline.ts";
+import { REPO_ROOT } from "./repo.ts";
 
 export interface ListCode {
   code: string | number;
@@ -40,7 +41,7 @@ const LISTS_SCHEMA = join("kernel", "lists.schema.json");
 /** Loads `kernel/lists.yaml` and validates it. Throws on an invalid file, or on a list or a code defined twice. */
 export function loadLists(root: string, file = join(root, LISTS_FILE)): Lists {
   const doc = readYaml(file);
-  const errors = compileSchema(join(root, LISTS_SCHEMA))(doc);
+  const errors = compileSchema(join(REPO_ROOT, LISTS_SCHEMA))(doc);
   if (errors.length > 0) throw new Error(`${file}: not a valid lists file: ${errors.join("; ")}`);
   const lists = (doc as Omit<Lists, "file">).lists;
   const names = new Set<string>();

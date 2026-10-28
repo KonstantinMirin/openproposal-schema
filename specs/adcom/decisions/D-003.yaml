@@ -1,0 +1,38 @@
+format: 1
+id: D-003
+status: proposed
+kind: gap
+author: agent
+question: "What do AdCOM's objects become while the registry of its lists is generated first?"
+covers:
+  - ir: key:object_ad:Ad.id
+    digest: c91212e637bf4a9042b519fb7a02592147d4222d58f6a4d20ab052b0f540a60d
+    quote: "`id` | ID of the creative; unique at least throughout the scope of a vendor (e.g., an exchange or buying platform). Note that multiple instances of the same ad when used in transactions must have the same ID."
+  - ir: key:object_content:Content.id
+    digest: 1d3d95ea80bc74d6651c82461edc5edf178a53a9b21d9fcc82523d04fe5e4059
+    quote: "`id` | Publisher-provided ID uniquely identifying the content."
+  - ir: key:object_dooh:Dooh.venue
+    digest: 299c1c33f2a9a4eb78fc87e4fb99c9f4300fe8b3236141cdc98f89b0da10d363
+    quote: "`venue` | The type of out-of-home venue. Refer to List: DOOH Venue TypesList: DOOH Venue Types."
+  - ir: key:object_videoplacement:VideoPlacement.delay
+    digest: fa11435f9ba22e71c2d11edb03732c978a8c5615a757b94446a43ddaa2a77021
+    quote: "`delay` | Indicates the start delay in seconds for pre-roll, mid-roll, or post-roll placements. For additional generic values, refer to List: Start Delay Modes."
+options:
+  - id: defer
+    summary: >-
+      Every element of the Object: sections is informative until a later
+      phase maps the objects; the lists become the registry now, and the
+      objects' rows stay extracted, so a decision can cite them.
+  - id: map-now
+    summary: >-
+      Map the objects with the lists, in one phase.
+chosen: defer
+rationale: >-
+  The lists are what the other specifications cite: OpenProposal and the
+  Deals API name AdCOM's lists, not its objects, so the registry of lists is
+  useful on its own and can be referenced first. The objects carry their own
+  open points, such as how a timestamp, an integer flag, or an extension
+  object is typed, which deserve their own decisions. Extracting the object
+  rows now, and mapping them as informative, keeps every row an element that
+  a decision can quote, so the records on those points already rest on the
+  text.

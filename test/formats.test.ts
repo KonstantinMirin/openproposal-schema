@@ -26,12 +26,12 @@ function dirs(mapping: string, decision: string, files = { mapping: "pricing.yam
 
 function check(spec: string, mapping = MAPPING, decision = DECISION, lock = "main"): string[] {
   const { m, d } = dirs(mapping, decision);
-  return checkMapping(extractText(spec), lock, loadMappings(ROOT, m), loadDecisions(ROOT, d));
+  return checkMapping(extractText(spec), lock, loadMappings(m), loadDecisions(d));
 }
 
 test("the mapping and decision fixtures validate and are current", () => {
-  const mappings = loadMappings(ROOT, join(FIXTURES, "mapping"));
-  const decisions = loadDecisions(ROOT, join(FIXTURES, "decisions"));
+  const mappings = loadMappings(join(FIXTURES, "mapping"));
+  const decisions = loadDecisions(join(FIXTURES, "decisions"));
   assert.equal(mappings[0]!.entries.length, 6);
   assert.equal(decisions[0]!.covers.length, 2);
   assert.deepEqual(checkMapping(extractText(SPEC), "main", mappings, decisions), []);
@@ -100,8 +100,8 @@ test("the schemas reject what the formats forbid", () => {
   const rejects = (mapping: string, decision: string, pattern: RegExp, files?: { mapping: string; decision: string }) => {
     const { m, d } = dirs(mapping, decision, files);
     assert.throws(() => {
-      loadMappings(ROOT, m);
-      loadDecisions(ROOT, d);
+      loadMappings(m);
+      loadDecisions(d);
     }, pattern);
   };
   rejects(MAPPING.replace("source: { decision: D-001 }\n    as: { role: type", "source: { rule: open-by-default }\n    as: { role: type"), DECISION, /not a valid mapping file/);

@@ -1,0 +1,64 @@
+format: 1
+id: D-013
+status: proposed
+kind: gap
+author: agent
+question: "AdCOM types 0 or 1 flags as integers, and the protocol buffer definitions as booleans; eight attributes are a single value in one and an array in the other, in both directions, such as `playmethod`; and `Banner.link` is an object in AdCOM and a string there. Which does the schema follow?"
+covers:
+  - ir: key:object_videoplacement:VideoPlacement.playmethod
+    digest: 4270679dff66b3a13932968096e2aa3fd4135b7e6aad648312da994570b3dc15
+    quote: "`playmethod` | Playback method(s) in use for this placement. Refer to List: Playback Methods."
+  - ir: key:object_audioplacement:AudioPlacement.playmethod
+    digest: 4270679dff66b3a13932968096e2aa3fd4135b7e6aad648312da994570b3dc15
+    quote: "`playmethod` | Playback method(s) in use for this placement. Refer to List: Playback Methods."
+  - ir: key:object_ad:Ad.secure
+    digest: ad2e55cdec1f7a6748e8c3eea2753eceab6e7f2973471fe956fad36f2a9a844d
+    quote: "`secure` | Flag to indicate if the creative is secure (i.e., uses HTTPS for all assets and markup), where 0 = no, 1 = yes. There is no default and thus if omitted, the secure state is unknown. However, as a practical matter, the safe assumption is to treat unknown as non-secure."
+  - ir: key:object_ad:Ad.attr
+    digest: dbf8986582297b0e3aed55f2e80e0aab786b32ed518870791d92da8934bb8a4d
+    quote: "`attr` | Set of attributes describing the creative. Refer to List: Creative Attributes."
+  - ir: key:object_display:Display.api
+    digest: e3c031210995ff9048727a23871c646510c4052e415991c5157a2c12d84d7fab
+    quote: "`api` | API required by the ad if applicable. Refer to List: API Frameworks."
+  - ir: key:object_display:Display.ctype
+    digest: fc07532a7508a18110651b7fa64754c3b29292e82a181b0a53f817e2f72e88f5
+    quote: "`ctype` | Subtype of display creative. Refer to List: Creative Subtypes - Display."
+  - ir: key:object_video:Video.ctype
+    digest: 8941889b27261cddad12a9066837e693592a94792ed8abb43d7997ba6d9050b3
+    quote: "`ctype` | Subtype of video creative. Refer to List: Creative Subtypes - Audio/Video."
+  - ir: key:object_audio:Audio.ctype
+    digest: c9a9d15761b8de510ecd20350b31793fdd56444267b95afe463c5ae124d4b5af
+    quote: "`ctype` | Subtype of audio creative. Refer to List: Creative Subtypes - Audio/Video."
+  - ir: key:object_content:Content.keywords
+    digest: b877c1ee8e2c2dfbbb785e2851c713a81851ff72b5cfdc333c264f5105075325
+    quote: "`keywords` | Comma separated list of keywords describing the content. Only one of `keywords` or `kwarray` may be present."
+  - ir: key:object_banner:Banner.link
+    digest: 3f7c772f574314af97a2e80adc707a5237b6e9e3e4d432080559f540546bb89f
+    quote: "`link` | Destination link if the image is activated (e.g., clicked); not applicable in some contexts (e.g., DOOH) and its inclusion does not guarantee it will be supported. Refer to Object: LinkAsset."
+options:
+  - id: defer
+    summary: >-
+      Until AdCOM's objects are mapped, the schemas say nothing about these
+      attributes; when they are, they follow the text: integer flags, an
+      array where the text writes "array", and `link` an object.
+  - id: proto
+    summary: >-
+      Follow the protocol buffer definitions' types.
+chosen: defer
+rationale: >-
+  The text is normative, and it changed `playmethod` from one integer to an
+  integer array within 1.0, which neither the protocol buffer definitions
+  nor the Prebid Go types followed. A payload the text allows, such as
+  `"playmethod": [1, 2]`, fails a reader built from those definitions. The
+  objects phase types each attribute as the text writes it, and this record
+  keeps the rows quoted until then.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L1404"
+  - "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/placement/placement.proto#L387"
+  - "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/video_placement.go#L67"
+feedback: >-
+  Regenerate the protocol buffer definitions from the specification, or mark
+  them as not normative and say which differences are deliberate. Today 24
+  integer flags are booleans there, 8 attributes differ between an array and
+  a single value, `playmethod` among them, and `Banner.link` is a string
+  where AdCOM writes an object.

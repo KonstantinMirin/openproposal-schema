@@ -154,15 +154,15 @@ export interface Provenance {
 /** The provenance of an SDK model whose schema tree has the digest `schemaRelease`. */
 export const provenanceOf = (sdk: SdkModel, schemaRelease: string): Provenance => ({ commit: sdk.input.commit, blob: sdk.input.blob, lock: sdk.input.lock, variant: sdk.input.variant ?? PROPOSED, schemaRelease });
 
-/** What each SDK says of each provenance constant, for its doc comment. */
-export const PROVENANCE_DOCS = {
-  commit: "The commit of the OpenProposal specification repository that the types are generated from.",
+/** What each SDK says of each provenance constant, for its doc comment, for a specification named `short`. */
+export const provenanceDocs = (short: string) => ({
+  commit: `The commit of the ${short} specification repository that the types are generated from.`,
   blob: "The Git blob SHA of the specification file at that commit.",
   lock: "The lock that pins the commit: `main`, or `with-open-prs`, which is `main` with the pull requests that were open on the day of the lock merged in.",
   variant: "The build: `as-written`, the specification as its text and examples write it, or `proposed`, with the changes we propose.",
   schemaRelease:
     "The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it.",
-} as const;
+});
 
 /**
  * A vocabulary's terms as constants, the way code built around enums reads
@@ -301,7 +301,8 @@ export function renderExpr(e: Expr): string {
  * Builds the SDK form of one lock's model. Returns the problems; a problem
  * means no SDK is to be written.
  */
-export function buildSdkModel(model: ModelDoc): { sdk: SdkModel; problems: string[] } {
+/** The SDK model of a build, whose descriptions name the specification as `short` (the profile's `names.short`). */
+export function buildSdkModel(model: ModelDoc, short: string): { sdk: SdkModel; problems: string[] } {
   const problems: string[] = [];
   const local = localSchemas(model);
   problems.push(...local.problems);
@@ -535,9 +536,9 @@ export function buildSdkModel(model: ModelDoc): { sdk: SdkModel; problems: strin
       case "object":
         return `The \`${t.name}\` object of the \`${t.module}\` module${t.open ? ". It is open, so it keeps the members it doesn't name" : ""}.${t.description ? ` ${t.description}` : ""}`;
       case "document":
-        return `The OpenProposal \`${t.name}\` document.`;
+        return `The ${short} \`${t.name}\` document.`;
       case "profile":
-        return `The OpenProposal \`${t.name}\` profile: the fields of the \`${t.document}\` document that the specification lists for it.`;
+        return `The ${short} \`${t.name}\` profile: the fields of the \`${t.document}\` document that the specification lists for it.`;
       case "union":
         return `The \`${t.name}\` union: a value of any one of its branches.`;
       case "copy":

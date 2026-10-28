@@ -1,12 +1,14 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
-import { BUILD_OPTIONS, cliBuilds } from "../builds.ts";
+import { BUILD_OPTIONS, cliBuilds, cliSpec } from "../builds.ts";
 import { emitSchemas, schemaDirOf } from "../emit.ts";
 import { lockExamples } from "../examples.ts";
-import { loadFieldExamples } from "../field-examples.ts";
+import { FIELD_EXAMPLES_FILE, loadFieldExamples } from "../field-examples.ts";
 import { codesOf } from "../rule-checks.ts";
 import { generateTypeExamples, renderTypeExamples, TYPE_EXAMPLES_FILE, typeExamplesDirOf } from "../type-examples.ts";
+import { REPO_ROOT } from "../repo.ts";
+import { ruleChecksOf, schemaNamesOfLock } from "../specs/index.ts";
 
 /**
  * Usage: type-examples [--lock <file>] [--variant <name>] [--out <dir>]
@@ -29,11 +31,12 @@ import { generateTypeExamples, renderTypeExamples, TYPE_EXAMPLES_FILE, typeExamp
  */
 async function main(): Promise<number> {
   const { values } = parseArgs({ options: BUILD_OPTIONS });
-  const root = new URL("../..", import.meta.url).pathname.replace(/\/$/, "");
-  const fields = loadFieldExamples(root).fields;
+  const root = REPO_ROOT;
+  const specDir = cliSpec(values);
+  const fields = loadFieldExamples(join(specDir, FIELD_EXAMPLES_FILE)).fields;
 
   let failed = false;
-  for (const b of cliBuilds(root, values)) {
+  for (const b of cliBuilds(values)) {
     const { model, lock, kernel } = b;
     const codes = codesOf(kernel.lists ?? { lists: [] });
     if (b.problems.length > 0) {
@@ -42,7 +45,7 @@ async function main(): Promise<number> {
       continue;
     }
     const schemaDir = b.dirOf(schemaDirOf(b.irDir));
-    const emitted = emitSchemas(model, schemaDir);
+    const emitted = emitSchemas(model, schemaDir, schemaNamesOfLock(lock));
     if (emitted.problems.length > 0) {
       for (const p of emitted.problems) console.error(`error: ${b.label}: schemas: ${p}`);
       failed = true;
@@ -56,13 +59,13 @@ async function main(): Promise<number> {
       failed = true;
       continue;
     }
-    const r = generateTypeExamples({ model, files: emitted.files, kernel, schemaDir, codes, spec, fields });
+    const r = generateTypeExamples({ model, files: emitted.files, kernel, schemaDir, codes, ruleChecks: ruleChecksOf(lock), spec, fields });
     if (r.problems.length > 0) {
       for (const p of r.problems) console.error(`error: ${b.label}: type examples: ${p}`);
       failed = true;
       continue;
     }
-    const out = values.out !== undefined ? resolve(values.out) : join(root, b.dirOf(typeExamplesDirOf(b.irDir)));
+    const out = values.out !== undefined ? resolve(values.out) : join(specDir, b.dirOf(typeExamplesDirOf(b.irDir)));
     mkdirSync(out, { recursive: true });
     writeFileSync(join(out, TYPE_EXAMPLES_FILE), renderTypeExamples(r.doc));
     const shown = out.startsWith(`${root}/`) ? out.slice(root.length + 1) : out;

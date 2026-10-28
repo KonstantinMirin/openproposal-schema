@@ -4,31 +4,31 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { loadConstructors } from "../src/constructors.ts";
 import { emitSchemas, schemaDirOf } from "../src/emit.ts";
-import { checkExamples, checkFindings, checkUndecided, loadFindings, loadJsonYaml, modelExamples, oracleAgrees, reasonProblems, type ExampleCase, type Failure, type FindingsFile, type Loaded, type ModelExample } from "../src/examples.ts";
+import { checkExamples, checkFindings, checkUndecided, type ExampleCase, type Failure, FINDINGS_FILE, type FindingsFile, type Loaded, loadFindings, loadJsonYaml, type ModelExample, modelExamples, oracleAgrees, reasonProblems } from "../src/examples.ts";
 import type { SpecIR } from "../src/ir-types.ts";
 import { loadKernel } from "../src/kernel.ts";
 import { loadLock } from "../src/lock.ts";
 import { loadDecisions, loadMappings } from "../src/mapping.ts";
 import { resolveModel } from "../src/model.ts";
 import { codesOf } from "../src/rule-checks.ts";
-import { ROOT } from "./helpers.ts";
+import { OP_SCHEMA, ROOT, RULE_CHECKS, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT);
+const KERNEL = loadKernel(ROOT, SPEC);
 const CODES = codesOf(KERNEL.lists!);
-const CONSTRUCTORS = loadConstructors(ROOT);
-const MAPPINGS = loadMappings(ROOT, join(ROOT, "mapping"));
-const DECISIONS = loadDecisions(ROOT, join(ROOT, "decisions"));
-const irOf = (dir: string) => JSON.parse(readFileSync(join(ROOT, dir, "spec-ir.json"), "utf8")) as SpecIR;
+const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const MAPPINGS = loadMappings(join(SPEC, "mapping"));
+const DECISIONS = loadDecisions(join(SPEC, "decisions"));
+const irOf = (dir: string) => JSON.parse(readFileSync(join(SPEC, dir, "spec-ir.json"), "utf8")) as SpecIR;
 const modelOf = (lock: string, dir: string) => resolveModel({ ir: irOf(dir), lock, mappings: MAPPINGS, decisions: DECISIONS, kernel: KERNEL, constructors: CONSTRUCTORS }).model;
 const MAIN = modelOf("main", "ir");
 const PRS = modelOf("with-open-prs", join("ir", "with-open-prs"));
-const MAIN_FILES = emitSchemas(MAIN, "schemas").files;
+const MAIN_FILES = emitSchemas(MAIN, "schemas", OP_SCHEMA).files;
 
 /** Validates in-test examples of a line item against the default lock's schemas. */
 function check(examples: { id: string; value: unknown; part?: boolean }[]) {
   const listed: ModelExample[] = examples.map((x) => ({ id: x.id, ir: "sentence:6.2:c19128b7", object: "LineItem", part: x.part ?? false }));
   const values = new Map<string, Loaded>(examples.map((x) => [x.id, { ok: true, value: x.value }]));
-  return checkExamples({ model: MAIN, files: MAIN_FILES, schemaDir: "schemas", examples: listed, values, codes: CODES });
+  return checkExamples({ model: MAIN, files: MAIN_FILES, schemaDir: "schemas", examples: listed, values, codes: CODES, ruleChecks: RULE_CHECKS });
 }
 const at = (fs: Failure[]) => fs.map((f) => `${f.kind} ${f.path}`);
 
@@ -54,7 +54,7 @@ test("each § 6 sentence that names a file is an example of the document its hea
 
 test("each lock lists, with its blob, exactly the files the specification names as examples", () => {
   for (const [file, model] of [["spec-lock.yaml", MAIN], ["with-open-prs.lock.yaml", PRS]] as const) {
-    const lock = loadLock(join(ROOT, "spec-input", file));
+    const lock = loadLock(join(SPEC, "spec-input", file));
     assert.deepEqual(Object.keys(lock.examples).sort(), modelExamples(model).filter((x) => !x.part).map((x) => x.id), file);
   }
 });
@@ -106,7 +106,7 @@ test("an object option without its id fails at the option, and a name in include
 });
 
 test("a UUID in included[] doesn't name an option given as a catalog_ref, so the display example's catalog audience stays a gap whatever form an id takes", () => {
-  const display = loadJsonYaml(readFileSync(join(ROOT, "spec-input", "snapshots", "main", "examples", "line-item-display.yaml"), "utf8"));
+  const display = loadJsonYaml(readFileSync(join(SPEC, "spec-input", "snapshots", "main", "examples", "line-item-display.yaml"), "utf8"));
   assert.ok(display.ok);
   const audiences = (display.value as { audiences: { available: unknown[] } }).audiences;
   assert.deepEqual(audiences.available[0], { catalog_ref: "examplepub/audiences/smb-decision-makers@3" });
@@ -114,17 +114,17 @@ test("a UUID in included[] doesn't name an option given as a catalog_ref, so the
   const r = check([{ id: "display", value: { audiences: { available: audiences.available.slice(0, 1), included: [uuid] } } }]);
   // The proposed form makes the entry valid, but no option carries it: what names a catalog option is the open point.
   assert.deepEqual(at(r.failures).filter((x) => x.endsWith("/audiences/included/0")), ["rule /audiences/included/0"]);
-  const f = loadFindings(ROOT).findings.filter((x) => x.example === "examples/line-item-display.yaml" && x.path === "/audiences/included/0");
+  const f = loadFindings(join(SPEC, FINDINGS_FILE)).findings.filter((x) => x.example === "examples/line-item-display.yaml" && x.path === "/audiences/included/0");
   assert.deepEqual(f.map((x) => [x.kind, x.decisions]), [["invalid", ["D-037"]], ["rule", ["D-007"]]]);
   assert.doesNotMatch(f[0]!.reason, /names an option by its UUID/, "the departure's reason promises no remedy the rule's finding refutes");
 });
 
-const PRS_FILES = emitSchemas(PRS, schemaDirOf(join("ir", "with-open-prs"))).files;
+const PRS_FILES = emitSchemas(PRS, schemaDirOf(join("ir", "with-open-prs")), OP_SCHEMA).files;
 /** Validates in-test examples against the open PRs' schemas, where more rules apply. */
 function checkPrs(examples: { id: string; value: unknown; part?: boolean; ir?: string }[]) {
   const listed: ModelExample[] = examples.map((x) => ({ id: x.id, ir: x.ir ?? "sentence:6.2:c19128b7", object: "LineItem", part: x.part ?? false }));
   const values = new Map<string, Loaded>(examples.map((x) => [x.id, { ok: true, value: x.value }]));
-  return checkExamples({ model: PRS, files: PRS_FILES, schemaDir: schemaDirOf(join("ir", "with-open-prs")), examples: listed, values, codes: CODES });
+  return checkExamples({ model: PRS, files: PRS_FILES, schemaDir: schemaDirOf(join("ir", "with-open-prs")), examples: listed, values, codes: CODES, ruleChecks: RULE_CHECKS });
 }
 
 test("the examples gate runs every rule one payload decides on the values of the type it reads, and a rule failure names its rule", () => {
@@ -191,7 +191,7 @@ test("a part of a document is validated field by field, and a field the document
 
 test("an example that doesn't load is a failure of the whole example", () => {
   const listed: ModelExample[] = [{ id: "examples/broken.yaml", ir: "sentence:6.2:c19128b7", object: "LineItem", part: false }];
-  const r = checkExamples({ model: MAIN, files: MAIN_FILES, schemaDir: schemaDirOf("ir"), examples: listed, values: new Map([["examples/broken.yaml", loadJsonYaml("a: 1\na: 2\n")]]), codes: CODES });
+  const r = checkExamples({ model: MAIN, files: MAIN_FILES, schemaDir: schemaDirOf("ir"), examples: listed, values: new Map([["examples/broken.yaml", loadJsonYaml("a: 1\na: 2\n")]]), codes: CODES, ruleChecks: RULE_CHECKS });
   assert.deepEqual(at(r.failures), ["load "]);
 });
 
@@ -228,7 +228,7 @@ test("the gate fails on an unrecorded undecided check, a stale one, and a SHOULD
 });
 
 test("the recorded findings file is schema-valid", () => {
-  const recorded = loadFindings(ROOT);
+  const recorded = loadFindings(join(SPEC, FINDINGS_FILE));
   assert.ok(recorded.findings.length > 0);
 });
 
@@ -253,5 +253,5 @@ test("a finding of a change we propose says the example follows the text, and ne
   assert.match(reasonProblems({ ...f, decisions: ["D-024", "D-037"], reason: ok }, DECISIONS).join("\n"), /cites a gap and a departure/);
   assert.ok(reasonProblems({ ...f, decisions: ["D-017"], reason: ok }, DECISIONS).some((p) => /every cause is a gap/.test(p)));
   // Every recorded finding passes.
-  for (const r of loadFindings(ROOT).findings) assert.deepEqual(reasonProblems(r, DECISIONS), [], `${r.example} ${r.path}`);
+  for (const r of loadFindings(join(SPEC, FINDINGS_FILE)).findings) assert.deepEqual(reasonProblems(r, DECISIONS), [], `${r.example} ${r.path}`);
 });

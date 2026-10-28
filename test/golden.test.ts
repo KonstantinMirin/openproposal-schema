@@ -6,15 +6,15 @@ import { materialize } from "../src/fetch.ts";
 import { loadLock, type SpecLock } from "../src/lock.ts";
 import { runStages, validateAgainst } from "../src/pipeline.ts";
 import { renderGolden } from "./golden-render.ts";
-import { ROOT } from "./helpers.ts";
+import { ROOT, SPEC } from "./helpers.ts";
 
 // Set UPDATE_GOLDEN=1 to rewrite test/golden/<lock>/ from the current extractor output.
 const UPDATE = process.env.UPDATE_GOLDEN === "1";
 
-const locks = readdirSync(join(ROOT, "spec-input"))
+const locks = readdirSync(join(SPEC, "spec-input"))
   .filter((f) => f === "spec-lock.yaml" || f.endsWith(".lock.yaml"))
   .sort()
-  .map((f) => loadLock(join(ROOT, "spec-input", f)));
+  .map((f) => loadLock(join(SPEC, "spec-input", f)));
 
 async function bytesOrSkip(lock: SpecLock, t: { skip: (msg: string) => void }): Promise<Buffer | null> {
   try {
@@ -32,8 +32,8 @@ for (const lock of locks) {
     if (!bytes) return;
     const out = runStages(lock, bytes);
     assert.deepEqual(out.exceptionProblems, [], "exception registry is current");
-    assert.deepEqual(validateAgainst(ROOT, "spec-ir.schema.json", out.ir), [], "IR validates against ir/spec-ir.schema.json");
-    assert.deepEqual(validateAgainst(ROOT, "findings.schema.json", out.findings), [], "findings validate against ir/findings.schema.json");
+    assert.deepEqual(validateAgainst("spec-ir.schema.json", out.ir), [], "IR validates against ir/spec-ir.schema.json");
+    assert.deepEqual(validateAgainst("findings.schema.json", out.findings), [], "findings validate against ir/findings.schema.json");
 
     const again = runStages(lock, Buffer.from(bytes));
     assert.equal(again.irJson, out.irJson, "IR is deterministic");
@@ -50,8 +50,8 @@ for (const lock of locks) {
       assert.ok(existsSync(path), `missing golden file ${path}; run with UPDATE_GOLDEN=1`);
       assert.equal(body, readFileSync(path, "utf8"), `golden ${lock.name}/${name} differs; review, then run with UPDATE_GOLDEN=1`);
     }
-    assert.equal(out.irJson, readFileSync(join(ROOT, lock.ir_dir, "spec-ir.json"), "utf8"), `committed ${lock.ir_dir}/spec-ir.json is current`);
-    assert.equal(out.findingsJson, readFileSync(join(ROOT, lock.ir_dir, "findings.json"), "utf8"), `committed ${lock.ir_dir}/findings.json is current`);
+    assert.equal(out.irJson, readFileSync(join(SPEC, lock.ir_dir, "spec-ir.json"), "utf8"), `committed ${lock.ir_dir}/spec-ir.json is current`);
+    assert.equal(out.findingsJson, readFileSync(join(SPEC, lock.ir_dir, "findings.json"), "utf8"), `committed ${lock.ir_dir}/findings.json is current`);
   });
 }
 

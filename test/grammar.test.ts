@@ -1,10 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseTypeExpr } from "../src/grammar/type-expr.ts";
+import { parseTypeExpr } from "../src/specs/openproposal/type-cell.ts";
 import { parseInlineObject } from "../src/grammar/inline-object.ts";
 import { parsePresence, resolveWith } from "../src/grammar/required.ts";
 import { parsePath } from "../src/grammar/path.ts";
-import { MARKERS } from "../src/extract.ts";
+import { MARKERS } from "../src/specs/openproposal/rows.ts";
 
 test("type expressions parse into the small grammar", () => {
   assert.deepEqual(parseTypeExpr("String"), { kind: "scalar", name: "String" });

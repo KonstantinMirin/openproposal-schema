@@ -1,0 +1,19 @@
+# A fixture spec for the plugin interface (test/plugin.test.ts): one table
+# layout, no markers, no appendices, and no profiles. It is not a real
+# specification.
+format: 1
+id: widgets
+title: Widget Catalog 1.0
+upstream: https://example.invalid/widgets
+front_end: text
+plugin: widgets
+statements: uppercase
+names:
+  short: Widget Catalog
+  edition: "1.0"
+  release: draft 1
+  schema_base: https://widgets.example.invalid/
+  sdk:
+    python: { package: widgets, mode_key: widgets_mode, entry_points: widgets.extensions }
+    go: { module: example.invalid/widgets, package: widgets }
+    ts: { package: widgets-types }

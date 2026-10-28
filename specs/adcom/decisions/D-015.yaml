@@ -1,0 +1,44 @@
+format: 1
+id: D-015
+status: proposed
+kind: gap
+author: agent
+question: "AdCOM removed the codes of the legacy List: Placement Subtypes - Video, which OpenRTB 2.6's deprecated `placement` and VAST's `[PLACEMENTTYPE]` macro still cite, and whose codes clash with List: Plcmt Subtypes - Video. What does the registry hold?"
+covers:
+  - ir: sentence:list_plcmtsubtypesvideo:c7364e2a
+    digest: bd92c613360ed50b6b88e10ae4414a235f0d0fef3c9df16d5a65cc747977053f
+    quote: To be sent using `plcmt` attribute in Object:Video.
+  - ir: def:list_plcmtsubtypesvideo:1
+    digest: 65d707558b0a7432226bc30c3a8a084c8710582cc483dcd0de7f216da6382777
+    quote: "`1` | Instream: Pre-roll, mid-roll, and post-roll ads that are played before, during or after the streaming video content that the consumer has requested. Instream video must be set to “sound on” by default at player start, or have explicitly clear user intent to watch the video content. While there may be other content surrounding the player, the video content must be the focus of the user’s visit. It should remain the primary content on the page and the only video player in-view capable of audio when playing. If the player converts to floating/sticky subsequent ad calls should accurately convey the updated player size."
+  - ir: key:object_videoplacement:VideoPlacement.ptype
+    digest: 7fd630fc17162d2a404ce15295de00f06d5058e3df80de6f588e1ed9b7a8573b
+    quote: "`ptype` | Placement subtype. Refer to List: Plcmt Subtypes - Video."
+options:
+  - id: current-only
+    summary: >-
+      Plcmt Subtypes - Video, the list AdCOM publishes; the legacy list has
+      no codes, so it becomes no vocabulary.
+  - id: both
+    summary: >-
+      Restore the legacy list as a deprecated vocabulary beside the current
+      one.
+chosen: current-only
+rationale: >-
+  The legacy list's section holds only a note that it is deprecated as of an
+  OpenRTB release, so AdCOM publishes no codes for it, and the registry
+  holds what AdCOM publishes. The two lists' codes clash, 1 being In-Stream
+  in the legacy list and Instream in the current one but 5 being
+  Interstitial in one and Pause in the other, so a value can't say which
+  list it comes from. The current list also says it is "sent using `plcmt`
+  attribute in Object:Video", while AdCOM's `VideoPlacement` carries it as
+  `ptype`.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L4201"
+  - "https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/1debba8001f40eb14597102dec3205afddf811d4/2.6.md#L693"
+  - "https://github.com/InteractiveAdvertisingBureau/VAST/blob/99d5d5132084be83ce4ea893143d240cdaca33c5/vast4macros/data/macros-data.json#L146"
+feedback: >-
+  Restore the legacy codes as a deprecated list, so that the VAST macro and
+  OpenRTB 2.6's `placement` still resolve, and say in Plcmt Subtypes - Video
+  that AdCOM's `VideoPlacement.ptype` carries it, beside OpenRTB 2.6's
+  `plcmt`.

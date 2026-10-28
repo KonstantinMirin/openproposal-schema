@@ -1,0 +1,7 @@
+# Exception registry for AdCOM's stage 2 findings (src/exceptions.ts).
+#
+# Each entry names one finding by its id, gives a fixed verdict, and says why.
+# Only findings with a settled verdict belong here; open findings are the
+# feedback to AdCOM's owners. An entry that names no current finding is stale
+# and fails the build.
+exceptions: []

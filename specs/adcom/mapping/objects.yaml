@@ -1,0 +1,2590 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: objects
+sections: [ mediaobjects, object_ad, object_display, object_banner, object_native, object_asset, object_linkasset, object_titleasset, object_imageasset, object_videoasset, object_dataasset, object_event, object_video, object_audio, object_audit, placementobjects, object_placement, object_displayplacement, object_displayformat, object_nativeformat, object_assetformat, object_titleassetformat, object_imageassetformat, object_dataassetformat, object_eventspec, object_videoplacement, object_audioplacement, object_companion, contextobjects, abstract_distributionchannel, object_site, object_app, object_dooh, object_publisher, object_content, object_producer, object_network, object_channel, object_user, object_device, object_useragent, object_brandversion, object_geo, object_data, object_segment, object_eids, object_eid_uids, object_regs, object_restrictions ]
+deferred: { decision: D-003 }
+types: []
+entries:
+  - ir: key:object_ad:Ad.id
+    digest: c91212e637bf4a9042b519fb7a02592147d4222d58f6a4d20ab052b0f540a60d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_ad:f389f272
+    digest: 367ff266b36c53df9aafb664dd440cbd9993047897fef31ec4b6f624cd9c0d09
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_ad:Ad.adomain
+    digest: 37f86ea90c1b17021ac578859cc9cba64cd065978d9e2d5aa2f4be4616bb6a44
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_ad:Ad.bundle
+    digest: 794d3ed1f7c6fa2b5ca7b84cd3ce44f146d01818822835c3669411bb5c2b2b08
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_ad:af1702e2
+    digest: 613ce76026ba11a23956b45029b6a2766ee4dc396702a14ea06baed85b398fce
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_ad:Ad.iurl
+    digest: 00d118af4209ccf6f72ca7cd87cd41b1bb73ac74e77a99d782661ba85c644080
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_ad:Ad.cat
+    digest: 2e738e1f7e4c852fe6f571c4ccf9198351016aff715cafaa146f6013eb13a549
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_ad:80e5afa9
+    digest: 66a366a87ebd75b667d854c3ae2faaff2c869a7c71bfe566506464cc1cb73073
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_ad:Ad.cattax
+    digest: de90f047dd0254fea06e48ad2883bf41add7eb3adaf037b22c0832c4e55f4235
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_ad:Ad.lang
+    digest: 572daf74ad5a7d351e97c341122ca30d3a6d47aa5719e3bf95cdd9d8c79844eb
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_ad:3598896a
+    digest: 762e9594779097c6c9a859434293a200cc0e490d1e557443baf4eeb75050e099
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_ad:d3cce13f
+    digest: bb914293ec90632cff893612b56fd3cb0600bff2d399103c00f0dc8480bd111b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_ad:Ad.attr
+    digest: dbf8986582297b0e3aed55f2e80e0aab786b32ed518870791d92da8934bb8a4d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_ad:Ad.secure
+    digest: ad2e55cdec1f7a6748e8c3eea2753eceab6e7f2973471fe956fad36f2a9a844d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_ad:Ad.mrating
+    digest: caff1edf3215f02629830c2e038d10154d3b0f8f3603f91073680931b61921b7
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_ad:Ad.init
+    digest: 10848abff390e3678c5b540d0374e1e94fdbc6ced1e75fa7742ded3c6c1929ef
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_ad:Ad.lastmod
+    digest: e6440c92c82d87c6dc58c981867a36bc21b5ff5724c1d9b1515e655fd3ace100
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_ad:Ad.display
+    digest: 2806d3cda429ef3f3500d6b0b12c02d7a9231e5712d25dc63be208dbf7079134
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_ad:e54fb6a6
+    digest: aecf4975a81fb6b84a608136ecb7f25730571cf423cb1811a6693b9797b7ce48
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_ad:Ad.video
+    digest: 372324f3cad4bb830db034ad76e191a6718e4954a15de0b27704cbf87476906a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_ad:e54fb6a6-2
+    digest: 2640fe2b2ffcd3e755de7dda32849c9f865a7f8e3dec6fc0db33422d5bb3e5df
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_ad:Ad.audio
+    digest: f806334e00c1317058573d9ca04304dbd282447ffac49fd47f3acb484be6fe6e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_ad:e54fb6a6-3
+    digest: fee8cafe93c3d9fd27b05610905f2e08b4ea6e133b9fbeb7c23399c8ef6357bc
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_ad:Ad.audit
+    digest: 957a8cedb10fc7d8ecce2ea41e0e5a9e66095ef1756cf91c73b20cdc307a3e80
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_ad:Ad.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_ad:91a2cd39
+    digest: d6542c7c1e149f2a27aff0b2186596ed523fb3d97cc0859cc194f81147ae8fb0
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_display:8b56a468
+    digest: 80cc35c0e2e815a587b05753a8b854a819ca45a8ef31c74cbe44397affb9686a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_display:f3887cc8
+    digest: 36fa9caaecca58379952105d75bebc2b0a00bcd417e1615b35ae100f02ffe0c9
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: sentence:object_display:50954672
+    digest: a6588f186191d30ab99a222af4d10ac950f23a99d321db3f44fba46654d4269f
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_display:Display.mime
+    digest: f90a2e71bdc76ec8c40029e2cd40b245a2bf36e5ef643ddc94b0dbf6939d5564
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_display:Display.api
+    digest: e3c031210995ff9048727a23871c646510c4052e415991c5157a2c12d84d7fab
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_display:5045d053
+    digest: 8c48ce8c51f5bf403338c847ccbcfde9b9c26957b03ceae5675bffc790208128
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_display:Display.ctype
+    digest: fc07532a7508a18110651b7fa64754c3b29292e82a181b0a53f817e2f72e88f5
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_display:Display.w
+    digest: 6c0ff9e6133bc5bc5f640ff02c6caf29c2e8a6372b031dbb6a07c9caf2ca7789
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_display:c25ca41a
+    digest: 90e6041cfac845ef4ed44adf6a86262f04b69d1755ce169de0f03b9efae7da74
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_display:Display.h
+    digest: 3351a6aca5832b888149e1a6435ac01acf6f0177732ebab0724d5ca271b6c4ec
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_display:c25ca41a-2
+    digest: ccc5de51ba58b64e4ddd0349ca1c2bb14f46def6a7d65643c0f1d506b86ab340
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_display:Display.wratio
+    digest: b0c57a7c3791f3eda95793620c38d75686341d4c73227342247e85f9dc47ffc5
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_display:c25ca41a-3
+    digest: ed66cd3b680f6bafc43492c01624638db36a6d0de26e4dff6af047d8c3c23e91
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_display:Display.hratio
+    digest: cb20b62fed763ce44ebeb6031ee47f5936c842b954459e968b1c4e3e2ca97905
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_display:c25ca41a-4
+    digest: 10efc752b32cafff04675758f074c95bb1d9cf110f39d3499b450dff8b799e4d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_display:Display.priv
+    digest: bcbc4b27efe2000d43e261678588169d7ee8fde059d7f1e3600a325d19b9213b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_display:Display.adm
+    digest: e0789ae21c6e6753ab7efa4a2c94d8d630af4546d6aa959da960ff6f2a191ae3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_display:ccaa6047
+    digest: 402a84977cfd92f20c8d271cbf830757ac8bc6c26e1272ba2065d1f4b4cbf971
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_display:Display.curl
+    digest: 5f830a1488d42e1f0a3cb738cfbdf5b0b267937828ec5658b7fa0af4cdfd3ed1
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_display:70aa634b
+    digest: 99e70c39947e9360179cb34295962d6ae6b2a8d598a2e46e86c23d4397385c1d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_display:ccaa6047-2
+    digest: 2e05068070d55488d41b9ed0ff93d5b626fe21a87d1697550e7fe61f7dc49e8a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_display:Display.banner
+    digest: 66413bf843c755f740946eb15c7fbe838cf53c9c670c7adcb263bee4610d79da
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_display:86b67742
+    digest: 49f22ffacbceb8e568658625be62d4e4863c5bb28e8699331a04634b6e73aecb
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_display:Display.native
+    digest: 6dd4750543296b6ca06ea706e04c12f6bc6130cdcd5f834be16c4c24683c2d94
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_display:e5f6116a
+    digest: 9b56026c84626b142bdac07611f5c976f9106aa654a705185c18e7f8eaa4c73a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_display:Display.event
+    digest: 1c581f16049afa5ecf3b6df81d83454d48df99a922ceb8ec8d2e8fdba450357b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_display:Display.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_display:91a2cd39
+    digest: 8eaaceed1511daff7d3a57a35ebde636f936fe803753f6cb7cd2d5c3348a46eb
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_banner:Banner.img
+    digest: 00a5f2f9dbc1c8fd5d95d06b930f9df8eedbf82834e1fcc84cd497e4156fbbd7
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_banner:Banner.link
+    digest: 3f7c772f574314af97a2e80adc707a5237b6e9e3e4d432080559f540546bb89f
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_banner:Banner.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_banner:91a2cd39
+    digest: 4746b285431fd4d1ae4ad2c5f46cd1aa94a52f3eef492c9f3091a5874bf13cbb
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_native:Native.link
+    digest: 3712be3f9fe2c35831f853d46e5983c827d2395b7a82cb46192f88a385f6caae
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_native:Native.asset
+    digest: 59baf13efd7effc5deddb47864428b31a55827476c70eff55ec8d162a33445ff
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_native:Native.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_native:91a2cd39
+    digest: a83e2d134cab03ced4f42d743176af42ed49172bd43975a0d57fcc8ecb6ea24f
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_asset:a743a0a2
+    digest: 1dbf379d3bc50df131f6a99aab729249fef220a965c6a56e7f1b6c6371d9d6af
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_asset:Asset.id
+    digest: 20f9dbb87c647e6bed67fd41018875c5c1eac85cdda743171d9f551070014cd2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_asset:Asset.req
+    digest: 206e02fe2d98a71daad0db7288e12853d552778dc7322bb7a724f3acf3185cf6
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_asset:fec82023
+    digest: fe7edb1ee5a9b129d3c26ecc57bf7fb34fc0b62106a1c64edbeea5765bc0f46d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_asset:Asset.title
+    digest: bda6203cda3172a1a410a4fec96f929dda57bb7aec1e644cda33a9236124affe
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_asset:e6a2f365
+    digest: b4295c7dd7e3c619c020dcd975e3e9c29ffa574425ea8a4da30d9bf30e2db9cb
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_asset:Asset.image
+    digest: d52989fc7a2c76f4d1252e5a9bfc55a72f0124ac132172a68f588a60f5aae064
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_asset:e6a2f365-2
+    digest: 1b9d6d4451d5bf5786c50cf898d87586a098218fa1be3ed5e678a29372b0196e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_asset:Asset.video
+    digest: bbd107bfe8d1514c89c16d2f95c97b91b106a9925c1d0a690e59b9c59823f38a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_asset:e6a2f365-3
+    digest: dc95399c9a84ee4c1e2d0ebb29ca0b4da3727e129f5bd945993a9fcb7b737005
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_asset:Asset.data
+    digest: 8a50bb9efb06abda34805a2fc7c000afa4f22d73d26e707615dfd4a857e12317
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_asset:e6a2f365-4
+    digest: 39075d027a7e74ae7b10315b8eb2f457e21cf0abaf0e5709e8b387e6710758ea
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_asset:Asset.link
+    digest: b279027067b12c824ff5f1527d0aa3338c99bc02d0155020063049122e731d08
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_asset:e6a2f365-5
+    digest: e13fa797859ee4700d6fcbfcb66aa9a1695aa52857e53e46cc203addd329bd64
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_asset:Asset.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_asset:91a2cd39
+    digest: 663246dfe739feda5614e2badc3e7bf0541e0292d40f6d2c9cba94b86a363998
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_linkasset:LinkAsset.url
+    digest: 8328b2a97c4dcdcc7664c60f39cc84fe14a7afedef73488c56ff843927a4d9a9
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_linkasset:LinkAsset.urlfb
+    digest: 898c3ac5272fe92fd16d9a591cc6733f4ab31e65e1eb3e7a664747b39087a705
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_linkasset:LinkAsset.trkr
+    digest: 4e8f0c17ff51095ea8946967c1c6e6b23d953d06943f568bd6f5cefcba5d2ad9
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_linkasset:LinkAsset.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_linkasset:91a2cd39
+    digest: 316bed21cf700a26f1d460fbfbfb45b30a5d9cfd6b3e6430171a23880f839931
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_titleasset:TitleAsset.text
+    digest: 6bcfdf00df9965c3ef80d506a1732072684292505c929e6504902c2a24142ca7
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_titleasset:TitleAsset.len
+    digest: 084d13af672bbef554edf23a7c34a1cdddc7bd05c562f00b21bb7da58ccb6dd6
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_titleasset:TitleAsset.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_titleasset:91a2cd39
+    digest: beb6a03542db1283a090e1c9113971ec0ca10b1e7b4c2fd20d7251ff4427fe27
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_imageasset:ImageAsset.url
+    digest: c7284eb68fb81cedf3620ee223caa58bca23540c00966886c4bbf1547ff06180
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_imageasset:ImageAsset.w
+    digest: 208caeecfcc91aa51a149b6b13334285d2e97c578369b8fd8e97c1ebcaadab2f
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_imageasset:ImageAsset.h
+    digest: 20dc49817ecf94892bfbb94b8b1320ca0d5e08b240f15277c821a4cda9ee33b6
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_imageasset:ImageAsset.type
+    digest: 6c7ed0591f918d481ce779955b91e884217392c7283288f6ac15b25975ae3dad
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_imageasset:ImageAsset.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_imageasset:91a2cd39
+    digest: 4d5b33cc638ea5bea06c461ceb5b455e02c4f1587abc1236d349fc968aadcb12
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoasset:aa0a74c1
+    digest: 966d56761cd3e3aa06a210e3ea7be7daaf19e7bb3873865e8b8c3edd2826eccd
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoasset:VideoAsset.adm
+    digest: add81e208b45f046549f141da1b7f11c0322587fe19a662cf5993a5dd1ad0709
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoasset:0375af38
+    digest: 5ac7e58d4f1ad97f226a078c0eaa244cee387413b83b749c84eeb4aabd7f4470
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoasset:6f5d60d7
+    digest: 396ae7d8ba249af140ea773b795c18ee01dfcb24a07beffd26b55ad72d58e0b1
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoasset:VideoAsset.curl
+    digest: d62eddcf9ab327e04a0c5de8f2b9132420cb0d52e0cd05762239a992c162342d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoasset:0375af38-2
+    digest: 9183cc8551c38ee9c9da04d627ea12076eb95e77fe3071711571c415d6f1b124
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoasset:6f5d60d7-2
+    digest: b68ae87938416a2fb53da35c0a71b7345eeef76ac5f9910090755ed81627557b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoasset:VideoAsset.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoasset:91a2cd39
+    digest: f6051906a8764864844cd06c5ceaf22ba511c7578a232350beba6e637a0ab353
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_dataasset:DataAsset.value
+    digest: e95d260f64538bf2a053ca46f9f8d0edbe0a7a5c5fad2a7237697e01f392a2b9
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_dataasset:DataAsset.len
+    digest: 666803ea48fce00374f02b1c473fa7692d6bf97c41723d834921177aeec2303e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_dataasset:fe7d4b68
+    digest: 392e3792100e8a09438a32be4ab31981e8455d382ab9e653b9b074e6fac2131f
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_dataasset:DataAsset.type
+    digest: ed42132c84314c8f5e60d31f0f88fa6b278e83edfe17595c252475a1a0f89783
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_dataasset:DataAsset.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_dataasset:91a2cd39
+    digest: 52e5cdd6b0520f2334fe8a1b8999f63437a585de28e29f7b6157aa2aa5cb6c82
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_event:b169087d
+    digest: 0607e73c4e9b9576d88c645356862365a201d6d415c729db51bc6faeb7760062
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_event:Event.type
+    digest: b8e8e3f5e4bbc2809de405bd4f6530196d4ef444d61c0f729fbb001846939b7e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_event:Event.method
+    digest: a2763c7fa1b44e0de29ec63fafb8c5375b6b1f45923da40f001f15c9a48a495d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_event:Event.api
+    digest: 87665d4b2af3d02dcaaf4858768aefd59b18cde626cd429cfce98d43ce3b2603
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_event:Event.url
+    digest: c61ad5a1e4d5649a68ad897827929ea5cab5bbafc03af87cf7f7f10f49e4cb0f
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_event:2bbe0e06
+    digest: e7d34cdc66c3eaff1c365d2fb95d267d2bdc7fc3e1c4da9b4ccb9ad1e7eca0d5
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_event:Event.cdata
+    digest: e75ef4e80e694823d46b2b19e79b66b0ea60117c53ffa171e0d5880aab8d635a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_event:feba7140
+    digest: 74df65e67260fb774c86e52175a196099809b6f9621064b060980f0368435642
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_event:Event.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_event:91a2cd39
+    digest: 4c838af4ace37168cc98d9f26c4ac344bf128e6157714bbecd4d12904fce90e8
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_video:Video.mime
+    digest: b8fb6c4ad7012811fa80998890e06db758d47fb1ef7d79a4edf4dd35fe1520b9
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_video:Video.api
+    digest: e3c031210995ff9048727a23871c646510c4052e415991c5157a2c12d84d7fab
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_video:5045d053
+    digest: 716cc532eb9c23085ca4418fca3a2e21e7b46f783ab571f182dbe63f273f9208
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_video:Video.ctype
+    digest: 8941889b27261cddad12a9066837e693592a94792ed8abb43d7997ba6d9050b3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_video:Video.dur
+    digest: 4db0dce8a5b0b983851637a50191fcd7ef77c1acde18a3fd7037f12735187845
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_video:Video.adm
+    digest: 72c2bad70b6ea9ba76049838d5939ef911adc9c545f4e29f76707793f3d7641a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_video:ccaa6047
+    digest: 3500da514ba9e01ab6115b0b0f62976a6b0fd6774206483da4fe903269e68be7
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_video:Video.curl
+    digest: 8baabf2a3f6329c4bde31f3e61b73cd57eee161053c672d653e4862b536e810f
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_video:60e477e3
+    digest: 2700d234b2407e73d4e381041d18b66020ef2d83dd3093f506d95a5f72083e67
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_video:ccaa6047-2
+    digest: a5d3e08ae10b16a61b5d90e046c7058dc3ba749adfee4d6d49c520ecf5aa619c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_video:Video.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_video:91a2cd39
+    digest: bb4345528b20439cb532360ed0fb2043b5fe7e8fd49f2be259b5c2d62daead8e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audio:Audio.mime
+    digest: fc8f5e1255a464a356c817d631af635be4d0b63fb81d8f47fe2377ae2f26f9d6
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audio:Audio.api
+    digest: e3c031210995ff9048727a23871c646510c4052e415991c5157a2c12d84d7fab
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_audio:5045d053
+    digest: 63201d62108fcbf87dceb4d1f8eb0ee461ee49d357cf975b827f78b1518efbb5
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audio:Audio.ctype
+    digest: c9a9d15761b8de510ecd20350b31793fdd56444267b95afe463c5ae124d4b5af
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audio:Audio.dur
+    digest: 3da7e84e8964c608346470fe900e5fe79b8a9b3b47610c04c1e435ba895859ff
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audio:Audio.adm
+    digest: 2b0ce51808303f047cd615325221be8b4af214531e9244b268aa776728d39b78
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_audio:ccaa6047
+    digest: f2f03a3c213b69cdc3078ac7f7c079f14b9bf52478e6f7581ecd14a325403465
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audio:Audio.curl
+    digest: 0074324e0ad277e0c9e4121621747b623c427cb7ff38d00ca09eabe6446224ee
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_audio:57e3374d
+    digest: 7ee2328b77d9af3dc47467fb2d550174efa202fa13278b7afab133d4dec57c54
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_audio:ccaa6047-2
+    digest: 250d4ab30a9ac5983b3dd04a0bb7dc39b1cbdfcd0b24c9a7c85df18cd93b7aef
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audio:Audio.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_audio:91a2cd39
+    digest: 7a9bfdc6814dae4da4d5709246a94062c2119ee21c7929ecaff6f3d7238d065a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audit:Audit.status
+    digest: 26fb486b6e218eb565dd6f5236df49b6e7af5202fe85be0b9d6916ea8ef802a0
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audit:Audit.feedback
+    digest: 419c3a6183c238c408987f700a6b20645bac0e852d7fca5f2b38d100ada7854e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audit:Audit.init
+    digest: 90bf50c81f1fb0681f0b74c54573c14eb308ddb7132c7d00c820422ed5d9806e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audit:Audit.lastmod
+    digest: f180d0ea7677636e9d7d5f93d53e8f29e42113e4148ba8a57f04ed1ac2f9f37c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audit:Audit.corr
+    digest: 370bcdb594ec09838455f0617dc85cc5ae879472ecc67b2e039059b3c4a3bdfd
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audit:Audit.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_audit:91a2cd39
+    digest: ef9e1c41461be3476e5acf658ed447155fcefb9c100511ed05bb27e367cb0b85
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: sentence:object_placement:7f6e3a0d
+    digest: e6cc8ea9d5ce32c654351787f97bd264d96e3d89eb32a3b90c2f01045a68828e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_placement:Placement.tagid
+    digest: 82940b9973e034825c226a0c21719dd37e3cec34e2506cbe309a8f3b36157963
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_placement:Placement.ssai
+    digest: b3d83eb33cc28ae925ab0a7185276cd50bddaf077bc722a06bdab4a2d5669295
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_placement:Placement.sdk
+    digest: 10c9bc3086c40a5413d70da30e3130e393ecf5c2cb517bda689aec0263c43229
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_placement:Placement.sdkver
+    digest: 7a1b74bb6fb5bf8c7c298b9c6782ae9c4e542704ffe949aff6c9b1046ccff4b3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_placement:Placement.reward
+    digest: 0acfe10af77dbfb16317538c7da2292678a85d914045ea7855661a10762770de
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_placement:Placement.wlang
+    digest: 676a17a65bfd90e9c0195ff9239aecb0c4b9ad178f01f5aeabeca6350ab18d7a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_placement:3598896a
+    digest: a32d8382956dda91c69251049bebfc9e7378e1d3ffa167880809eb820cf5c8c9
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_placement:Placement.secure
+    digest: ad2e55cdec1f7a6748e8c3eea2753eceab6e7f2973471fe956fad36f2a9a844d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_placement:Placement.admx
+    digest: 375709e6534f103575d529f740cd9474f9a542d995e0e469940c6d0fc6ac67b4
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_placement:Placement.curlx
+    digest: 419bec84baa6e0f90e69554d3b6bb744d00ecf1479bbd08537e9156f0f18f8b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_placement:Placement.display
+    digest: 94094b8c9bd889f22ca4279514eec1cdbe6909b046140224907ab8437638bcba
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_placement:79e998a4
+    digest: af632d654d593bf3892d42f421333475637df739b369186141144afd43f1bc3a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_placement:c424dfde
+    digest: 50939694c8eba101092fae18a3a70c4ed3a2e6aa0db92eaaeacbf921056adad0
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_placement:Placement.video
+    digest: 6a8edfb4ef87d1af23cb127c2fbe80878be14aba1f2619480ce0a6b2b9142a7c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_placement:d72ca680
+    digest: 7a2f6acd3516d78e4b9f317e58e9da9a61fc6df4761a2a2c1eb12c36ff84ac51
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_placement:c424dfde-2
+    digest: 68d7e283cceb0905d41426d53a3dc69cae5d051b6bb6f365e3f02dd39c6bdfb6
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_placement:Placement.audio
+    digest: 984d0f980694633246bface58c3b988731f5031788ceedb2af1eccebfed3adbd
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_placement:e884ea09
+    digest: 3efbacc403f9b49685bae3ceee6daaf0196418de8cb18cd21068f90c8754ca82
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_placement:c424dfde-3
+    digest: 52046595ab8d8fda298cdba7140427c452f40bd06c9271a2750b7794aa97eff1
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_placement:Placement.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_placement:91a2cd39
+    digest: 12b37c014660e7adf219605fa1d89f5675dee8a28e1814087260997042d3b4dd
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_displayplacement:5c4bcbd4
+    digest: f47a1523bb1fed469f4af538bf0bf326cdd861e1a77c21d4c70d5b18cd7fd578
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.pos
+    digest: 834bab4ce53f367b768a432f3daeb37740cebc3b76d25faf375c1d30122d2434
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.instl
+    digest: 501331cae23b6eef0670063359fb7c8fdce19fed89fb21e50f736d8ab387f56d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.topframe
+    digest: d6845c16ebe68aec90bdd7d897a7d88a7d197f5cdf80bc6302e64583ae5aa0f8
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.ifrbust
+    digest: d9c9d8bac6c0b77c6135c7a1e851be7998b8971489cc820cd9a4b55de794eb92
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_displayplacement:048c20a3
+    digest: 7805c6e228f9c9941f2527e0f3cf7126adc8d32f369986c6508b8e087ccda414
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.clktype
+    digest: 8369aacb67c205f605da914e56b8b268c02546002d10e3596a06de4ba1de2032
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.ampren
+    digest: ca886a8e9522115518daf27d580fd5cb0649eb3fd5d9d5612ab9e53d1b052116
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.ptype
+    digest: aa096660702bcef866630a614fc1e8430f66f21ba071fc2f40611e7ee0fb1bda
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.context
+    digest: 713d2577ac45f188b8d10b05804d7f6428a2d37f5b9a8c41bf9fb1101a1873d9
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.mime
+    digest: af9102e54520b8b6cefa34bf6d0cf45fcf6a80be1a1b8b835832bbb83f1e2fe4
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.api
+    digest: 3972510e0adbf9c5bb919ddb22e63f3c853625b21d2f517ef1e4ea1b682da193
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.ctype
+    digest: 3fe0af0618c8bbe5d0daba2efe2f8cdcbe874516282fa3827a996343622e8a05
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.w
+    digest: 36328f8498815a21ec0d2ddc67193277652f1256f44f09b22e2045d310009a0e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.h
+    digest: 40195afae09b2ae67142efa809ace4458aeb36faecb895dc6cba84f73b4399d6
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.unit
+    digest: 01306a6da19e916b2c1e91cb0fb94fb7192047cf925bb9e629dc9c519917a120
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.priv
+    digest: a549ab8611a7669c3c6d6f18aa87edea8bfffadcb3743e18cdb2aac35952a840
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.displayfmt
+    digest: 0d07b92fa5c07dea4c16c9315178d02f1680066e55b5d7e48e29182893c07c1b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.nativefmt
+    digest: 9e32b24a1f7124b199f7eac4ffd21e96a9ea1ef424eab5e512d143cf42a34f10
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_displayplacement:bf984e44
+    digest: d885adb969d02451b6f58b816c19ee065a8be2888b15819e42e210048e1706a7
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.event
+    digest: 06037a40cfd00a2409f9603bb24d1e9266dd9acbc4e59121f77c63aa2bcb4516
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayplacement:DisplayPlacement.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_displayplacement:91a2cd39
+    digest: 21781cb34d367c971b11a1818f902a0d6c08d5235c0fe9de8d19bda1d942e3fa
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayformat:DisplayFormat.w
+    digest: 93899b1f8697233691b10d98b838ad7dac4cb17df09f296c2f4b3a850fed0734
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_displayformat:c25ca41a
+    digest: a84c52383932525eed79c7607b300ba3373bc0abc80327bb0eedc8fac11746d0
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayformat:DisplayFormat.h
+    digest: 7a5a15ee200f96f3caabb29c5ec05be78591b20a49db4be100fba50bd33d1e64
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_displayformat:c25ca41a-2
+    digest: 94b897a243600524a7ea5cd7355d8f12bf9a71be022270375fb16ede0bd2a5c0
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayformat:DisplayFormat.wratio
+    digest: a2b307f6e717c2270f63c5680e005cf2ec66792458158f3e657b7e43e2c7f0ca
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_displayformat:c25ca41a-3
+    digest: 197bbcf0c4e8d2de33722362ea4f377f67d3cbb411546684126ee4011d7689b3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayformat:DisplayFormat.hratio
+    digest: e0096f808eaf34e22888beb13fe16d9f779f2bb13355181b98354e0f41ce4229
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_displayformat:c25ca41a-4
+    digest: ab75073c781b8b45b2280eea26a6fb6b2b51aa5ae21f4833a04c7ad247b8a549
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayformat:DisplayFormat.expdir
+    digest: 3d020b8223cacd34cb638fbac2c6162b71cd3b9486c7d5800a5d352b3ef67399
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_displayformat:DisplayFormat.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_displayformat:91a2cd39
+    digest: 6eb87843a1fd3606c1db5cfa2c634f7788baad14dcff8fec6c7f977b0bc49f06
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_nativeformat:NativeFormat.asset
+    digest: 0626cbf7cfba508315003144f436318a28f231e55c3935d13f52a361be4b26fd
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_nativeformat:NativeFormat.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_nativeformat:91a2cd39
+    digest: 577e4de01345113f74a56c0b1b6d1d14279ffac180bad60013f8d38aecf0d2ec
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_assetformat:194a18e3
+    digest: 727edf6d743dc9ff4486f3cfad8750258e588c14f3314eaa4df8028726251e7c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_assetformat:1bc0e4a5
+    digest: 25a9331bdfb6f880ad92f057724bb82e89ae648236d620300aa7b92b3656122a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_assetformat:AssetFormat.id
+    digest: 72a69c475f629fe77afd8f3246337af96fcc79e4ff45069eec102226ad0dbeae
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_assetformat:AssetFormat.req
+    digest: efe28905ffbb3afb14de6df4ee29c7a12200a1a5e76cf92a30b3724abc36c9ae
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_assetformat:9d256de4
+    digest: ace508d66a3eb512186374436472469a0ee9488343263195559e839cfa424560
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_assetformat:AssetFormat.title
+    digest: 29fe00a8b37c2cc428f5af947d55c59d1ee19541b6ebb083a56ce9f477d64060
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_assetformat:a5e2df16
+    digest: 3da937c81787c23429fac5e434cc09fbc6ed111a422c264fdfcca84f5140424c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_assetformat:AssetFormat.img
+    digest: 99d656edfdab748606208368d5477a815c3684a9bc0b9bfab6ee668cc7bf0d32
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_assetformat:a5e2df16-2
+    digest: 90bd1f2f81b81ca296afa6fe591f859e1377a8a6c7c11d5ec67c13f189b063d4
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_assetformat:AssetFormat.video
+    digest: 172e5b8efe461899adc627d4c736156c1378397424f4071cc2f79255ccfd2213
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_assetformat:a5e2df16-3
+    digest: 76aae42ba176c90862b803d69308c9469503c30c9b984bce7b4b0802f477d59a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_assetformat:AssetFormat.data
+    digest: a6a16f5901e8e2b54358779ee628d329dcc962f2da220949a177c0180ead678a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_assetformat:a5e2df16-4
+    digest: 2e52186ec6a425f98bdc737752c1d0d78049e8d0ecf00ae4d617826464c7fe15
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_assetformat:AssetFormat.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_assetformat:91a2cd39
+    digest: 6935a801d14aeb696fc9bbf0e74d4e0e1880103d7ae26070e50fd3e97ae32924
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_titleassetformat:TitleAssetFormat.len
+    digest: 610fd4cf48c7857b7eb00ecf650680da838e5ea33946bcf88482a946c44d7acf
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_titleassetformat:099fc915
+    digest: 845d7046a241108f9c58e117ea26ba3a8e1bd17ac2da8bbfaedacc35a49ba6ad
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_titleassetformat:TitleAssetFormat.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_titleassetformat:91a2cd39
+    digest: 4e9e876f91723d1c408f01a820b462eddb39a59bc7667521ff33a63608a2e17b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_imageassetformat:ImageAssetFormat.type
+    digest: 55e69bfbe82f2f73ac9460494006d05fdaca7e987416d875f44dd2c81fbbcdb4
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_imageassetformat:ImageAssetFormat.mime
+    digest: af9102e54520b8b6cefa34bf6d0cf45fcf6a80be1a1b8b835832bbb83f1e2fe4
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_imageassetformat:ImageAssetFormat.w
+    digest: c47e4ceef877a383e6d092bd4c59c7d8988f1e30624bcd35e5f319c9129160eb
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_imageassetformat:c25ca41a
+    digest: f3759508d9b9ea27714df38c06b02310af17f6c6d086acfd6f13b5fe8c1767a8
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_imageassetformat:ImageAssetFormat.h
+    digest: ae173974792565ad9990397a1c5ad0bbe3f6b432181dc64e269da0a74f8d87f4
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_imageassetformat:c25ca41a-2
+    digest: 09fc3a50f3116a91621f0ae957d1a2f673d2cc8fbef068282aefce440bdfd39d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_imageassetformat:ImageAssetFormat.wmin
+    digest: 12afccb7d07f3a4daf6909210cccbdb06396469641ffcc13abd292e0eb100e78
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_imageassetformat:10aa44e1
+    digest: 6cdc396987f22b8b3498e2388c50df3225add0e08265697c0734649cf0615539
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_imageassetformat:ImageAssetFormat.hmin
+    digest: 133face3622c20e1fd3b2a534e6d21a8a88adbdda2f5fd05ce43824bb4728375
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_imageassetformat:10aa44e1-2
+    digest: 22b77e2cae162adabd9f5acbca52d688a5c446d0c97cd253aa25a2ee40f8c613
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_imageassetformat:ImageAssetFormat.wratio
+    digest: 6efa76bbaab772a53467a3da20f5440330a4a554f2a49a5a7b76e37097a50a8e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_imageassetformat:c25ca41a-3
+    digest: 2db502c8b15543ee3cf46b710f78be4b7504d2540162efe9826046528bfae125
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_imageassetformat:ImageAssetFormat.hratio
+    digest: 1594a7d3a797ecced5c5da2c8308e681147ec29c26cc019379c61537ecd9aee1
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_imageassetformat:c25ca41a-4
+    digest: 3824c1728272882d25536313d0a0920e84dc949b7eb7c9aa04068aabd017492e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_imageassetformat:ImageAssetFormat.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_imageassetformat:91a2cd39
+    digest: 157fa973a0e5c286840f48615983e413d4bede12778cfb9c60baaee1d5343bc4
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_dataassetformat:DataAssetFormat.type
+    digest: e58dca4eeaa794e0167f1926e718a93f1a2b58270011572f08174ddfb73e0c8e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_dataassetformat:DataAssetFormat.len
+    digest: 45087684060c19e182d43d0ede5c29b3e7da3d07c234bcc6e0d3e96c3630f881
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_dataassetformat:DataAssetFormat.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_dataassetformat:91a2cd39
+    digest: 17f882dff4c292c846bfdb1456ac010922e081845e397fe2d2713f30fbabacd3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_eventspec:3b3b34eb
+    digest: c34cc74b7779146c625aa74565743d70e118b10f8a6b99f87df13cd030953546
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eventspec:EventSpec.type
+    digest: f3659050fb2fcd20d6186ba224ef45306f5091293b7a22b9300923251bce22d5
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eventspec:EventSpec.method
+    digest: 91bf6fe25f6d60724b7696d6a4646318757cfe470298b61f3b858660963e67da
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eventspec:EventSpec.api
+    digest: 4e2dcb700fb2b2a211431d2f898360a6cad11ed49026126dcd0ae12a90cf068e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eventspec:EventSpec.jstrk
+    digest: bcde160d89cea7d18eaa655123c2ddd9dd908a82df7a6d3f97e3ccf1b1797abd
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eventspec:EventSpec.wjs
+    digest: 4104df5209048c15be9146052ff58f1ffd6e5df1929bdf2f201cae80596f1425
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eventspec:EventSpec.pxtrk
+    digest: 91c0097e660d4a6905afa7f2142e4746a3bb4e129b60f9bf6a166976dd653cd9
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eventspec:EventSpec.wpx
+    digest: 601457aa0e4a62c2125b0cdff91dde09cd1fd872b83c7957f6f78709e6036328
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eventspec:EventSpec.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_eventspec:91a2cd39
+    digest: c431855aaa80a0dd074285e1189a2bda01c740fbe3affc0f396918c22797771a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoplacement:45be3b00
+    digest: 993e8c1105b9e0e13d7f80d4b425638c03bc66f2c7881e2d605a32559147d613
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.ptype
+    digest: 7fd630fc17162d2a404ce15295de00f06d5058e3df80de6f588e1ed9b7a8573b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.pos
+    digest: 834bab4ce53f367b768a432f3daeb37740cebc3b76d25faf375c1d30122d2434
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.delay
+    digest: fa11435f9ba22e71c2d11edb03732c978a8c5615a757b94446a43ddaa2a77021
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.skip
+    digest: f09941b07f0c4fb5c28d914fedeb62f1f767336b32e48be28bfabcfb28addc46
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.skipmin
+    digest: c8c668f17ba73a32ff3569d5684a600f9b2a852288dcb8e268972d5b11abde8b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.skipafter
+    digest: c179fd414f19bb5decf6caa6fdb8033a023e92891ca26e7e104d62d26ecd9d3c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoplacement:70536a02
+    digest: 36760a72f6f26c113fa9cbe7fd77918bb7dcdd6b67d381fbb0d1dc1afb09bb77
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.playmethod
+    digest: 4270679dff66b3a13932968096e2aa3fd4135b7e6aad648312da994570b3dc15
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.playend
+    digest: d2b9f4772508be9b052b012c0eea5c401f88d23f7d34d0cf25b58b59e18f65db
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.clktype
+    digest: b910b65de2517aa831f7beae28838bc396a833bb99b8d33a0109e99d5070ebb5
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.mime
+    digest: b14743c48f99311f3a1ecf2eac08bb27c25bc635768e3429822c907131e440fc
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.api
+    digest: 8d06a68a6f38ac6b9b483b75ed77eed50698e5643c93f2e3ebf65c463ba3b19a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.ctype
+    digest: da4886a45474eac4ba6812ea9904e5fd7e3bb0b79245a8bf535197e799918bdc
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.w
+    digest: 5449d3bf95627cecd72718160a5cf2fe9951191b0be76216f0d3b2af2a33d149
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.h
+    digest: 230b4b22e1a2beeb105efffa11dd5303c6df50b983f64fec6a31da1960569860
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.unit
+    digest: cb434faf1811886d406358508361cb7393d9c6b607c75d63c398d56053ea4608
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.mindur
+    digest: d6fb647591a94d10dadb9ce10f3a3cf642a926fa69c7c7c38f18cdd3e3bd6f5e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoplacement:f7ed0d1b
+    digest: a56961eb16250761a4e2fd2f95a842e460985ecb073ee70b6f366a3e286e40a1
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.maxdur
+    digest: fe95b7973c4080c75e75025b9061dddc8b0c21b52cb212be7dc3e992eb0cc48e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoplacement:4cf78110
+    digest: 72996c71daa82b32828ff9c3f7016cc8faa25bc82f1750ab228b2fa3cd471cf4
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.rqddurs
+    digest: 44bb9efd2ffd85c940f29a1e905c30a4bdef18d08759c7bec28ff00484d06f1e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoplacement:278ba706
+    digest: 01e1d4922e63a3c76a436817975501c460e74ba1d544617529ab6413caad3de2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.maxext
+    digest: cd19f77abdf31ac4b5e1e72c91160e7d2aca303f974dcd1816c4d0f7462d45c4
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.minbitr
+    digest: 9c4fb4a91096b34dcebae4afc79049ac5b1c9ba75f03b262affeb5b864bb13d8
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.maxbitr
+    digest: 29da7b5c326646c1e9ffb2b25ffc74fab0c299b9127f1487b74650ae865488d4
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.delivery
+    digest: c89339d078f1d40daee256ac11ab0aa258a358d60458c8c50657877a8bc3eb8e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.maxseq
+    digest: a0e2e0624efd13c25f230c594301f4563f426acaf0306d2879df0d59137e28b3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.poddur
+    digest: 13e961248d5a092b24ff5001b107b19be58abd2a0d55374310acf3c7e724f176
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoplacement:02b226dd
+    digest: 8497cef4b6c5cfac73c26f4fbadde5624c3822bb3ae1e6cfd3459bf58883f54c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoplacement:da8b9c41
+    digest: 840ff1a5a70946da1134eb751674e2b1122d76f0fbd41ee93baa13265032bfeb
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.podid
+    digest: 11088519629a6748fcb3d3655e7fb8effe9fb815914e63da6b14ca6ed613e1f3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.podseq
+    digest: b4f9bb98b9ee2ae686a67af22c601dc8937d836bca0df3d40ed8942bbb36b322
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.slotinpod
+    digest: 5ec08695e845c1972824762c27ecfe32d9f4b7e00d002cedd0cf7fef61f18a7b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.mincpmpersec
+    digest: 70f14b78ecf817849f7a38b85d9a314d52b9db057783860bfbb5c9317b4df445
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoplacement:14768d35
+    digest: 7f5ddc4bbd874633ff656b2aa5b482e43b6229a64e8d6012d2cb9a6ce1f92aeb
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.linear
+    digest: 8d4e4fb0eaa0e730bc99986353251c038b517ca9642b5f33903a1557107e1a76
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoplacement:85fc28b3
+    digest: d7530b2a581e343ce136df2a55d708a3a45af4c9c6664e9b4ef89f688ed198a2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.boxing
+    digest: a9f694bdcf874500749464d698462399a965e107481310f1b111c58e313ae75e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.comp
+    digest: 4f7d2b02da0c391eaefe8dea26fa1364133d580ae1276e26b8a68ff8124fb3af
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.comptype
+    digest: 46df2e4fffdf6c4c2784b5dbe44cc6c2bb55a797ad3b98d18fc6d7124401967e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoplacement:caab2a79
+    digest: 99c5d00dc7d0f538cdd1a1be08a598ed73845dcf35b3845b41fa2df3f8ae97ab
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.expdir
+    digest: f2b05e821f6caf162edd90e7109e17bf39a3a354dee9bab6931bbdbd02ddfe31
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.overlayexpdir
+    digest: 4a2557b91c364b15bcda3dac276caa2672c04a0837c1743dd2b4cb4ff11080ff
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_videoplacement:VideoPlacement.ext
+    digest: 59eda54b9d1ce5baa080657289f9979a37ba3925be4c3d2d4e9e3e3e30b259a5
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_videoplacement:91a2cd39
+    digest: 6bad690d38d6d366a787775c9929c6f9c8ae7eab6e22cc022615634714a88fdf
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_audioplacement:7d86e0ab
+    digest: 2a4d0448952803c2fb24fc9fda35d00ab05977608d2b1e93979acb3ac31842a2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.delay
+    digest: fa11435f9ba22e71c2d11edb03732c978a8c5615a757b94446a43ddaa2a77021
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.skip
+    digest: f09941b07f0c4fb5c28d914fedeb62f1f767336b32e48be28bfabcfb28addc46
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.skipmin
+    digest: c8c668f17ba73a32ff3569d5684a600f9b2a852288dcb8e268972d5b11abde8b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.skipafter
+    digest: c179fd414f19bb5decf6caa6fdb8033a023e92891ca26e7e104d62d26ecd9d3c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_audioplacement:70536a02
+    digest: 04eab4ef44cdcdbf05b3b650da8fa5821117e704038fc4cee937789a79310e8e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.playmethod
+    digest: 4270679dff66b3a13932968096e2aa3fd4135b7e6aad648312da994570b3dc15
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.playend
+    digest: d2b9f4772508be9b052b012c0eea5c401f88d23f7d34d0cf25b58b59e18f65db
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.feed
+    digest: 4cb81ba747cafd3e826141b7d47142b1fa91bd64886d4fb698e185936b6a1bb2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.nvol
+    digest: 461abe29351ffa1b4670a7b41ff46109657673c51c7f5b71de3ed4cb13f2cbe8
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.mime
+    digest: 44971266fd90b09a17bffaf98a5fb5ec56691128db4dfb72c42de9c267873a95
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.api
+    digest: 8d06a68a6f38ac6b9b483b75ed77eed50698e5643c93f2e3ebf65c463ba3b19a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.ctype
+    digest: da4886a45474eac4ba6812ea9904e5fd7e3bb0b79245a8bf535197e799918bdc
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.mindur
+    digest: d6fb647591a94d10dadb9ce10f3a3cf642a926fa69c7c7c38f18cdd3e3bd6f5e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_audioplacement:f7ed0d1b
+    digest: 3c725244652d60c2ffa0f7c5996ec8a61b58cd22e7a98934374b051f48a32736
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.maxdur
+    digest: fe95b7973c4080c75e75025b9061dddc8b0c21b52cb212be7dc3e992eb0cc48e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_audioplacement:4cf78110
+    digest: 8fcf0fab22a11e6e8eb8a3dc75cf518d133f4015bb8e11c52078ddca5e64f446
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.rqddurs
+    digest: 44bb9efd2ffd85c940f29a1e905c30a4bdef18d08759c7bec28ff00484d06f1e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_audioplacement:278ba706
+    digest: 942b8331d1a1e4756de0f2cc74e7495569b7ab545b697c1c531e3afeb57fbca9
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.maxext
+    digest: 9ffad6461fd5e5760b59e4ec352686463f2dd61a0cde514d27cb45ee6daa3c0c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.minbitr
+    digest: 9c4fb4a91096b34dcebae4afc79049ac5b1c9ba75f03b262affeb5b864bb13d8
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.maxbitr
+    digest: 29da7b5c326646c1e9ffb2b25ffc74fab0c299b9127f1487b74650ae865488d4
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.delivery
+    digest: c89339d078f1d40daee256ac11ab0aa258a358d60458c8c50657877a8bc3eb8e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.maxseq
+    digest: a0e2e0624efd13c25f230c594301f4563f426acaf0306d2879df0d59137e28b3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.poddur
+    digest: 13e961248d5a092b24ff5001b107b19be58abd2a0d55374310acf3c7e724f176
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_audioplacement:02b226dd
+    digest: c2a7f0f9c692aadac4e49299290eefd80e4bd1c041ab53f01e29480f527c2e73
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_audioplacement:da8b9c41
+    digest: a27fc8df56e4db211637b97b504eddb317cea3b999ccefaf7285f8bb149b33ea
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.podid
+    digest: 11088519629a6748fcb3d3655e7fb8effe9fb815914e63da6b14ca6ed613e1f3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.podseq
+    digest: b4f9bb98b9ee2ae686a67af22c601dc8937d836bca0df3d40ed8942bbb36b322
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.slotinpod
+    digest: 5ec08695e845c1972824762c27ecfe32d9f4b7e00d002cedd0cf7fef61f18a7b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.mincpmpersec
+    digest: 70f14b78ecf817849f7a38b85d9a314d52b9db057783860bfbb5c9317b4df445
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_audioplacement:14768d35
+    digest: 349660455095ffc232afed83ed76e686d7ced8ec545448d93661c690aff92197
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.comp
+    digest: 4f7d2b02da0c391eaefe8dea26fa1364133d580ae1276e26b8a68ff8124fb3af
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.comptype
+    digest: 46df2e4fffdf6c4c2784b5dbe44cc6c2bb55a797ad3b98d18fc6d7124401967e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_audioplacement:caab2a79
+    digest: c470e044295a8842b357e881927557c8fcf83e57ad76ab51c76fda72a60fb159
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.overlayexpdir
+    digest: ac396cbce9c591e3f9b5629de4bf2c834ccebbd7cd22e65aea416c691338964d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_audioplacement:AudioPlacement.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_audioplacement:91a2cd39
+    digest: 6b669ce6c15507fd90abb3bfe1ade9f82c3a493661f8346b043dcb476d5c5268
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_companion:Companion.id
+    digest: aa4802b55360e856c31b7a13bf3151c72e172fccb5f4fd0474bef2c7589ef12f
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_companion:Companion.vcm
+    digest: 794cf62aa147607eee1372ab6daeb88a12b73b8315de44db330b6fe3ab930e89
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_companion:2b5cb81c
+    digest: 32ccc69f6982d06bb30619afcb2d36d8884ab514613631cb2470bf9cd7567317
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_companion:Companion.display
+    digest: 529c1cad0dbac58e0428d44b9977cf81d5c0cf422c024da5e9192c4e7bf898e5
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_companion:Companion.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_companion:91a2cd39
+    digest: 9a6bf3d5daf8c81ac0489a2e3f250ff295a97c6e11ac3c01e4176bff58eaec21
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: sentence:abstract_distributionchannel:7bb8a267
+    digest: 3d158cee5a69b341425b95f55c0b6c3d094fecd560b028992976a65356d6e552
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:abstract_distributionchannel:DistributionChannel.id
+    digest: 7a8e6c77298b2c741e8075271f0a4e2da79adfb8ace55b5cae1942595e9579aa
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:abstract_distributionchannel:DistributionChannel.name
+    digest: 01d05acce2803b9bc5eb11b0ec61ef3ab053532fadbbd6842ce040e8c0f6e5f3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:abstract_distributionchannel:DistributionChannel.pub
+    digest: 9807686082b9e560639f11e1e47ef84883ffb1ce0168d87068b574443c97a546
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:abstract_distributionchannel:DistributionChannel.content
+    digest: cf06882c23d405dccb619dff80f4aafcec7c2ce037aeed2c99f4162acd2b4f5d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: sentence:object_site:3af19bc7
+    digest: 36cc2e90b6508b66d32a65843cadf07b5fc5a2ae546264c4ec5acbd3319a5149
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_site:Site.domain
+    digest: acc4bd733706974dc906dccc91b292764abb9e7057df0905b2b455f8ab324ef0
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_site:Site.cat
+    digest: c9527f969ec03ef77504c1ad95040e4d6b67fdbaa7847281c2ccf2ff2b5dd2b6
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_site:Site.sectcat
+    digest: 52111760d23f2f0e67620dd25dac3d084cab7deed35bc599352b05cc2daeb582
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_site:Site.pagecat
+    digest: 46ac8a77646d127ea9debdbb2254ea5745dc851a3812041cc88b1354bd72e171
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_site:Site.cattax
+    digest: a8f591de869cab9f79f4893d4b4d773d0c331341b4212519af5919093481f6a3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_site:Site.privpolicy
+    digest: 00f538801c1b72c4969e416fe24efc7d89fd63262d898fb212a97ca382aa5eaa
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_site:Site.keywords
+    digest: 70c2b88d4d1ca1ca60463575ef7c4781c66abc567aa1bc34ca884c8330b3c936
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_site:Site.kwarray
+    digest: 2ee5ac92c410b543d95cd05ebd0381d8088e95f162205d11e9dded7f13b1efbe
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_site:b3feb8dc
+    digest: 1244f3d0e945be0a64b026f6c38895236cb2b1dc411a8eacffbca0b6794c2990
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_site:Site.page
+    digest: 32c3e4d33e2b1d7456d8ed3dc960ea9061ed77d10442f7a43ef6d2a37bb94757
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_site:Site.ref
+    digest: 19e8709824ab4a99f3dbab3ad0198da89f51d0cad556280ffa505cf6f3db2586
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_site:Site.search
+    digest: bfab263268dba4e141ac146352a74983bdf363d93edfa57277b72302f12ae3a8
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_site:Site.mobile
+    digest: ce905b7e2454222abd7307e1654723fd7fb17374476e85cf05ac9cdeda6fe47b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_site:Site.amp
+    digest: 0886a609326c602f95f205c870b17c1d3ef320c20612b9cac186ec61be3b3f3e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_site:Site.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_site:91a2cd39
+    digest: b0515f209e46d93295c963700eea8acb0cd851820d9177a02aeb06bb75bc5321
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: sentence:object_app:1e9e13c6
+    digest: 5157db0740ffa030709fce8b9a5134ffbd5f2b8b96bd0c7efd0670e763a929fd
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_app:App.domain
+    digest: 96576a5581821e42e5fc1819a82d8334efd109aa54a8e2a4aea270dd5cd98ed0
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_app:App.cat
+    digest: 90b17ef3e1aa723c79b8a629ee8d322fd071a3e6ddcbb0e0f67ea2e9222fc992
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_app:App.sectcat
+    digest: a371d4c6b089ef9c99a7853bc37c624b63a7d5381a5bac65cbebe40de2792f89
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_app:App.pagecat
+    digest: e00e545b7007dce7582063b5df5db996f099d0e5acb37a12fce7e71f7f5a71ab
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_app:App.cattax
+    digest: a8f591de869cab9f79f4893d4b4d773d0c331341b4212519af5919093481f6a3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_app:App.privpolicy
+    digest: 8c7f9a98eb2219240fef5942691f9926fc476a21746b4e42041cf7533d0ab06f
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_app:App.keywords
+    digest: 70c2b88d4d1ca1ca60463575ef7c4781c66abc567aa1bc34ca884c8330b3c936
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_app:App.kwarray
+    digest: c4e47986c2d9abfe5577b71c14bb482d472ccdc0a246870436111725c11e82da
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_app:b3feb8dc
+    digest: f342e10a091ab885bb8171f8b464b10346a512b1f7c5c87c534620a3a13a7132
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_app:App.bundle
+    digest: ee33631f5d236dbcdbce8da0e6356af88704962c6cb4cb624ed8fd272fa6cd39
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_app:e08ab743
+    digest: cf4c32bf05138a6e959f09780627d4763dfdad252bc9100b02d7d75e07a3717e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_app:App.storeid
+    digest: decccfe865c5b6cc0d4532535884ab5ccafd27115c391259aa678634a9fb3b78
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_app:App.storeurl
+    digest: 28cdc4f6032875a15adc0bac17d2beffd9b0a6fcc46f916011525021586726a3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_app:App.ver
+    digest: f31ff936507083a5b6a3edcc9dfc60ec560964eec365019bdd3cffafeeebb89e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_app:App.paid
+    digest: f477c0112ebd3fab6ef974bd5b093a59ea4ca904bea42032f38708b2f549ed9a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_app:App.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_app:91a2cd39
+    digest: cb84fccfe3ad378a2e11e76a174ce2951551baabde450b123b54b28a16dd4984
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: sentence:object_dooh:91443f6e
+    digest: f5265e4c8bbbbf482eaf14b57e3caddef5e50acbd099ba2c87b3db3eb88d1830
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_dooh:Dooh.venue
+    digest: 299c1c33f2a9a4eb78fc87e4fb99c9f4300fe8b3236141cdc98f89b0da10d363
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_dooh:Dooh.fixed
+    digest: 0c1d322a1eef74f1d12116675479dbc93f08535bd26fa7cef3f9efb0199475a9
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_dooh:Dooh.etime
+    digest: 7519a72f86e7afd5d4c0a9e6f031583a641a38f1d7a858ac06d3143c9532a294
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_dooh:Dooh.dpi
+    digest: cdfbbcf021e16a4940137598467ebd3b082bb07ab2e275017b3d9900de99da52
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_dooh:Dooh.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_dooh:91a2cd39
+    digest: 8fb041862de0fb5a0d48589ee1032afafaa648cd805faf8ca4061808f8d5f364
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_publisher:Publisher.id
+    digest: 646ea635a012c4c18ca493f8f2c3372e33ce47950954bfd9021251062ef9e7e1
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_publisher:Publisher.name
+    digest: 05e79f419e0f07fcc318d2d2c237985a175d8df906fe21896c3ff532a63d3855
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_publisher:Publisher.domain
+    digest: 950d7bc31beac50133faebd1bee41be2fd3410c8e2c39d68ddac5d0c7b0d02ac
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_publisher:Publisher.cat
+    digest: 07cd20be17829ba43f1e2f9f21055ac94726f22615a73e737add7672e9906be7
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_publisher:80e5afa9
+    digest: f4598c27d2cee47508ead20dd2fa28711f27a1b0ef52fdb9ea0908b56cbd2009
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_publisher:Publisher.cattax
+    digest: a2cbefda9fcb3b1fae9861289561322cbdd8a92c560c89ae729a7aaf83720ee9
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_publisher:Publisher.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_publisher:91a2cd39
+    digest: e010ff709bfc848971ff6cb6cd6a5a14f7c5bcbb353048bce08fdb6b0bcab41d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_content:962c6efa
+    digest: 7bff5945e809a3028ec5ddb8448ef59c13c2a4cff94fdae77971299369682a1d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_content:b479240f
+    digest: cb46ca93d7054e9918e10d720f0d0af88111a3829da809aa694ee8e50d7707ed
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_content:d4fbd50c
+    digest: a9f9369f906b01aa31da8571ebf4624a6c333bb4a2b9dcb31c5831e94be010e8
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.id
+    digest: 1d3d95ea80bc74d6651c82461edc5edf178a53a9b21d9fcc82523d04fe5e4059
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.episode
+    digest: 87ec0d17cf796dc0bdc6f7848922bca9b2ea5889d1dcd921671dd7c41393a705
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.title
+    digest: 55b23ee410b077243f663a6dfcd243ee169934efd0c87328acd38d3d9ff85926
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.series
+    digest: a7aa122f52021a3ba45dcfa5936ac1f664f1cc4247524f083421419cb18d9f48
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.season
+    digest: d78ad4139775752504a7def2e8b9956f3ffbb75eb3cf1a4e0714434cce90eb51
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.artist
+    digest: e3875475ee763e08d821d4fe05772825e99e0f683b20262ad70be19f233049a7
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.genre
+    digest: 8ee13f7d591581c6aecf6583cd701ce12bab8bb72aba9cc646d4c21513f0230f
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.genres
+    digest: 59043894cfd4fdd910b5beb5c91b55f2e365b2de4453c8dfe66a5400b8ee7744
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.gtax
+    digest: c88d937b76b3cd0d0da1572f5b634436272b84dbecfbf7e36af9575a0a62ad21
+    locks: [ main ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.gtax
+    digest: f95ee2c1945369c279bf047816fd2d751c3c4c1dca4ab5569d3c58221967d0eb
+    locks: [ tag-202607 ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.album
+    digest: 83be133a7c35ee3dca347521d6b18c2546957b7b878ec5624c238d3caf49cf08
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.isrc
+    digest: 7c2ee636bced1085727b6b46d6dfeca884700ea702b2808016264e9bbf96284e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.url
+    digest: 9a480921c7eb6370ba906b448d2d0e87934717736bb33c1a5cd63464ca28043d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.cat
+    digest: cf909f50b621212e0961ed39d674c67dde4a8914ada8fdd1c9e05f13825d375e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.cattax
+    digest: 46d3fb6945d775ccd63e38ac2fccab3b0de153c3ba1b36e87de20969b7a94f0b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.prodq
+    digest: b83d47b95ae30a902e290d0dcb8d31134e2ae0c3efcdb973d56fc0c23197efba
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.context
+    digest: 0bec9f02955eda6d37ccab3dac3a3dd21e83339ef7c1451ce33204df1b0d4de8
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.rating
+    digest: 55b28046c71712661a3cb7aa4edd03cdff8b615fcc8a82772fa13473b9b91a0a
+    locks: [ main ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.contentrating
+    digest: d2b61afe7bc5f2de431a2d5a2c9fb3127cd10c162dcc0a3ea5c81ce93ee6a0f0
+    locks: [ tag-202607 ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.urating
+    digest: e1523d8c3f4ffa5ac9f79057776d6f2c15760b6301f867a027a74a4565524f4c
+    locks: [ main ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.mrating
+    digest: 03fc4072ac34fbb55da21d08919e5b525b83949ebd0851b7014ec7a959497080
+    locks: [ main ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.userrating
+    digest: 32e6c6fa70af9f3f67a49de6e23be4fbac50292e0c2e4b1a4e6a7148b75b1303
+    locks: [ tag-202607 ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.keywords
+    digest: b877c1ee8e2c2dfbbb785e2851c713a81851ff72b5cfdc333c264f5105075325
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.qagmediarating
+    digest: 1c194a2ba26d651ab813686fa781b675afd95e601699fa7154d98e96104bbe07
+    locks: [ tag-202607 ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_content:d9a8245c
+    digest: ba20431e85d6690502965981c2f0338f3873d42739758c77d458df9b8bbcc82c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.kwarray
+    digest: 2e7bc965dd3bd6eb1c8891a91709afd57770e33b6732b9f88c8f8b1b5584fc51
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_content:d9a8245c-2
+    digest: d58aaf7a6c77bb358c4552e8597297f8cc56b194de2ca73a9c17928260b965c6
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.live
+    digest: 6dfe6700e8d088f5e6f9961a053dddf588cbeeb42720ed47b0b964a358347544
+    locks: [ main ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.livestream
+    digest: e7772f91e1a26b17555d93ea566ba5727a57c27b3f6adcae0bb0be3b6aca3337
+    locks: [ tag-202607 ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.srcrel
+    digest: de7e018a6ffba078e0bd2e74963ebc99b573dddde0daec632f329b3d4e78daf0
+    locks: [ main ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.len
+    digest: 734e76b9c86c187a1491d491bc4b96149e91daad7b1dbe7ec455e02da0f81de1
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.sourcerelationship
+    digest: 9bab001a27bcaf15c7ba0dbdef38ae8c651928ff77ff4cc694d305742261b29a
+    locks: [ tag-202607 ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.lang
+    digest: 218210916f567d589f6c8d6e846efbc8b9f977c063d16c5f73dcf09a4c5e5536
+    locks: [ main ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_content:8e235a11
+    digest: 5b686f7b2a7087be17f6de922b9794f830a57dda46ce9bed0c49d78ffc0f278a
+    locks: [ main ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.langb
+    digest: a1320235b30fa88d2f3fea82215a6d26e33bb042232d133862a36284d5a2dfef
+    locks: [ main ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.langb
+    digest: 855324b98fc0b516943d983c3ee881096badbfd84562804001579bf10bd2739c
+    locks: [ tag-202607 ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.language
+    digest: 89e1bf4f90807031610a725fded04edf934a4342590cad8652860b654b7640ed
+    locks: [ tag-202607 ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_content:7faee66b
+    digest: 9a78ea15ebdceb4201f37cf6349245898a36a4e992fe471c4bda4956fc56c3ce
+    locks: [ tag-202607 ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_content:8e235a11-2
+    digest: 3c7a3a0cd2af781a7e756a5bd9f37d88c9a8d798ba8cbb287d351b3cc0b68c7e
+    locks: [ main ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.embed
+    digest: 82ac86fdf12d50e6ef247ce25d4279c066433ff47357e56f42fb240af6b3f103
+    locks: [ main ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_content:7faee66b-2
+    digest: a92d9fab44086402cb1078a49b856b5e5d3f584b113de4a84e1c2afa96251b3e
+    locks: [ tag-202607 ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.embeddable
+    digest: a6de0b4dc9c3ad8405d3eacd0e26e10d1b103cb275010e51744c1dccdc7ab660
+    locks: [ tag-202607 ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.producer
+    digest: 88212fa67fef1c4a6da3f31e25027d6ae9803feafc53835245786e26554e0d6b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.network
+    digest: 308af3095d29b6bdbf32d84d62f674d1b048a309a13e736be5f643c44f3833b3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.channel
+    digest: 28d6a4a7acd20d8a4407c83e061ebafbb4e2e7a987ce64470969c9e7bf69c1fe
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.data
+    digest: 7e8f978757d15282de4a77f52c669ad72622fd66e42e31042ab8078efe336e00
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.realtime
+    digest: bd29732651dfa368d035490e871039adbaf6c9b176e98de8c9e3a34b7ad06967
+    locks: [ main ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.realtime
+    digest: efb724a7c7541e70d2e0784fa8999c9be0f7a49e7b5554a00d6cd5310f0949ea
+    locks: [ tag-202607 ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.firstbroadcast
+    digest: 0dbf34f6b739d5c37b533cdf51fa3735f065fd9b291a4fe466255758e6c7d87a
+    locks: [ main ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.firstbroadcast
+    digest: 8cc9b3e40494fe48fc79a53337c670d611c154f03e9fa86e5a667f032d070806
+    locks: [ tag-202607 ]
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_content:Content.ext
+    digest: edfd1b1997afafeaa764dc75906ea25320ebd8c4a2ef164459e28267f4e8e174
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_producer:43f7d905
+    digest: ce3166a966cea32d8d1968e35d1bc3cb199a8a2c9e440ba7701912105ab407a1
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_producer:Producer.id
+    digest: 1f4fd8cc1ab4ea4f1eda9ef8033de2a98c6e8ac7dbe3954be09dc86bb5e30110
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_producer:ccdc0845
+    digest: b731bb6c6ba95eaa6ab77fd3edcf239a2af5c58c15494fbe9ed7a4244c677174
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_producer:Producer.name
+    digest: bc970476ed9181bd20354a272936977a632e2ac2860eb1be9d1d306e08f3b178
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_producer:Producer.domain
+    digest: d8736a6720264f82553f9e5f4bdf45460ce649b6484b0be644c8679dc83c7030
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_producer:Producer.cat
+    digest: 4e2632585d29902d6a2ecf0725ed7b67c841cd1e31f3399db472833a3064a48e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_producer:Producer.cattax
+    digest: 20f48156d8ec4f692eff95083e6f99e1b2069341cbc00b4e1a4b91e2cb66bec7
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_producer:Producer.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_producer:91a2cd39
+    digest: 07c442a4892dbc00d3aca4058e3adfb91f50caa74d790b3f073138774b827126
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_network:Network.id
+    digest: 59d6cc7f972a4fc16d67df929d24518768034147519ff5d91180060cf59a674c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_network:ba4a2d5f
+    digest: 064c5423118e531e8e5fbf1fe76bfa826e4b395a533d91c5f0df77e7bb9288b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_network:Network.name
+    digest: 5b73b270c6274cec215ead0938e75c631faec683538222385d5b88c13815ec30
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_network:Network.domain
+    digest: 22f84b6e439a535fe158a80e1b027dcd86c2acdd3485ffcd8b982f0a4df12282
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_network:d34e1eb7
+    digest: 758dc89b92f75be23a2ebfc8be9010e18325ccc6d3d653deb539f1d9b0066061
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_network:Network.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_network:91a2cd39
+    digest: 3a59bec61a1edd642c441dd04caeb873092e43dec2e071928790482285415cbc
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_channel:Channel.id
+    digest: 59d6cc7f972a4fc16d67df929d24518768034147519ff5d91180060cf59a674c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_channel:ba4a2d5f
+    digest: 9303fb596adfc5cff9efef0ef9bc9abff1c00f175532c933056f5d25a4388322
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_channel:Channel.name
+    digest: dead0f0ce60489a63a31dd01803722b94e4868bd8ab8db44bf36f088a7b3d08b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_channel:Channel.domain
+    digest: c2f5304080a22163a66e81ff3ddee9b2000226df595f03ecb4aff15a16e599f1
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_channel:d34e1eb7
+    digest: 98390aff218a4320b6f003528a1c6427ddf4e0421874c68cda892f0df4d40b18
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_channel:Channel.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_channel:91a2cd39
+    digest: b0967d507f2a2aa7e1aa6b1f94cd3bfd6744c41a6d98bbe68c127ffa739bb0a9
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_user:37e78377
+    digest: 07c52e61e7951059f0df51734eb4789ada6fac25f9248268c7c03521f218e277
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_user:8252509c
+    digest: a519a53fa47a7288f83dc2c66dc46c53ca729ccb2e989ca347e8107b38ec0f8d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_user:80e5afa9
+    digest: d127c8648771015b29010a06db0ae22d9a35e4d5554b9a26a17a0810c5382fb4
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_user:User.id
+    digest: a3cf1bd24db4581144a1972ae2d65082aaf0e47c633007305e76b84ea2002169
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_user:62bdb84a
+    digest: 5b3bd982b222fe32784be52dbc65612975e20a5c76bc7f7ce6d2d855f6ae85d3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_user:User.buyeruid
+    digest: c5ae824437e7a6b6658e567b4bb542cc1f064961af3cc7e3c9a4a361efdcf752
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_user:46559593
+    digest: 4fba07d195cea3665ae83b9cf9e798487e819089d05965a82f2ace5815856d6c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_user:User.yob
+    digest: 333378412413d5c9173c70eaff8e5839d009ca8d33464125b06b6a59ea45d8fd
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_user:User.gender
+    digest: b2dfca0409024a797685e171c6f41c4e13edbcaf7f9add153fd367f9212feb37
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_user:User.keywords
+    digest: 70c2b88d4d1ca1ca60463575ef7c4781c66abc567aa1bc34ca884c8330b3c936
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_user:User.kwarray
+    digest: 462dfe77513f6ae05f545bce22b6300688071c152bcd1713f1bd0af4feca1d12
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_user:b3feb8dc
+    digest: 8ad148306244608a61444dcba4682186c1d814f05fb9614033f3a61753ba6e25
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_user:User.consent
+    digest: 84291015c80b920e50eff181b02b9e7347f59a9124ee143cee88662dd759e4f6
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_user:User.geo
+    digest: 508ca5cc8414a20123cf676aef9d72d4de7a2ef0dcb61469caa6f22c86ee0f75
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_user:User.data
+    digest: 2a4df60d9b344beafc02db8c9bae76cd8e2f0c88f21d035bcd479296ba46a4ef
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_user:User.eids
+    digest: 32b0893b974cf3d7647e8e4625082686ed9cbb31c4a0eb29b392fe7131b33db8
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_user:User.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_user:91a2cd39
+    digest: 0aff54ed551997e13fe9e42598dd3508b7c69efb4cb46d479275c89b0fab54c6
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_device:80e5afa9
+    digest: da089c1760e095c7bc7bc46bb8903b076291507cd5432bf7c66e953c10cca4c6
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.type
+    digest: 0b9ea24cf39319d9e08813dd836a93e1727965e5bd87a24389aced16eaaa82fb
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.ua
+    digest: c29af8d8d23c34628c59117c3ad6c99406fdd25abf5bebed1ce910c5561895e2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_device:18b02d3b
+    digest: 9d8c864de5a561371d2240b8efe64f577a2942b4e5d146f0794efd3753a636ed
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_device:93c9ce16
+    digest: 849909d97af7c4f50f62b646b971a3b77ebc29ebf7fa18e6385b830142fc85dd
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_device:ed864e43
+    digest: 42231722a04502cea0792aee884ff7590ed631da455e840f9e790c9c79493892
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.sua
+    digest: 04eb1acef4db311f26d715bb7b42db70177cb1dd8126853548225227d26cd8ad
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_device:93c9ce16-2
+    digest: c26b688c159a826457b706a7b988ef0b14f7c610e439c47644dbbec35184b09b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_device:ed864e43-2
+    digest: 2861375bc2c7d3e768c739a52473a4bf6dacc250562ef2d95d67e66becb558d4
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.ifa
+    digest: 3f1f202435bf074407c582bd248f5ad21d01f09a254be31529c94b1838380471
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.dnt
+    digest: 18ce90c37c0c7e3d96da70e17624fa2a18318fa00fdd84ba2db851ad7deba47c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.lmt
+    digest: 850a9b6f6ee7e4da3413d60e8f2b9880c5d7632ccfbe47b33569c5e798ad5232
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_device:dff3bf67
+    digest: 28b3fa972935d65fa2826c356d1b55d4ca8f94e44c90bb0c7f770de74c2a68ee
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.make
+    digest: e5efc3e34b30b12fa4c6bd20dfbbb1065489214855b82e665ec2101d74204781
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.model
+    digest: 71e2a0031d601c8586c5f51f2e4516cd237bb82b78f1f852c2bd3faf0ea1d47a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_device:776d2311
+    digest: 6385e6ff686c3bdeded57960b0257c739ddb13d838a5ecf072b7f9dd8820a49d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.os
+    digest: 2a7dc2ebb93ba7238aa97a9033905492d59d2573ac6076e96cff62d79db22e35
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.osv
+    digest: d168ee2cb0630b6578123745b4c9c248585b3da98bdf2dc4f23f9ef0528a7f7c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.hwv
+    digest: eac8cbdbf90a8488bbb52fc55ae1d0171ba0c57db4153882293a283be81eb1f2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.h
+    digest: d63a8a817378cee95ccab554a8c6a27d77c6313e9882a3810c180c5ec256d74f
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.w
+    digest: 3ec321f10050428c088b606fafd8dc4cf35f747621e76d88803482674ae082f8
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.ppi
+    digest: 03c328cd51c930f96a7c1835cac3b2586db767cedf76e26b460ee0f0e2036b52
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.pxratio
+    digest: ae0db2cf6bb9662b332b186468f64d9cf5e2389003583c47e1a336475cf34047
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.js
+    digest: 8eb077020f6aefeaca18b1ffc8f7dabbc90d8dddf405251d17d5ebf977d870f3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.lang
+    digest: 6c66e634a1032ecaf60c6023926de8b5520354a32841d451db98b570df23102e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_device:bb49100d
+    digest: d3fd03867284f7f79d8b9e29906cfaa8008769f206371010e7c15c0a5e1c72c7
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.langb
+    digest: 56b32dd3a4b60063801e9f958bcfee7a1a6bf967df8c3eecd092342b997b9a48
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_device:bb49100d-2
+    digest: 2e6d716556faff8a39a21a0510593573c35f358fb46d15db74058944dd072f71
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.ip
+    digest: 4eb6a8ff4838ab71be07750f26e9d6d6123b8881248c0784c898164c02d791b0
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.ipv6
+    digest: 991314845aafec29fdb8c84633776a2ae01539c29c5e67084f17323ecb7c2175
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.xff
+    digest: 2d49f2c0407b6398b57f20b305df765005d8dd26e078fecd7f78eeaf20f02d5d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.iptr
+    digest: 95d4c61b0c2d6f663c4b492f2597ec9f78caba385897f537c128b3229f5d203a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.carrier
+    digest: ca541652c54771e2ebdc0c950d4cbed81210c1908ea3392f818c49319e065f6e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_device:ae88d289
+    digest: 4d3777c4d3ee07143add7412ee81d89ebb0fbbd7f0b4d2b20b8d06c9e52f9f07
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.mccmnc
+    digest: cd94cb4532d270d8f83d587b9052c02783efee0b6ad4cf5119548d248b18508e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_device:424b8fd2
+    digest: 671fe606e13b4d96caf14f0a868161ed121bcf92083c6301af3c6c8648fb2a1b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_device:ff8fa3ff
+    digest: b33376a01bbc35576f68469e17b2bd6b4aa337cade5d3b6d9e5ef288f1e69c44
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.mccmncsim
+    digest: 471092c65724049a39e02f5ffacaa4ec14ee7e13441490cac030bd4ed123d85f
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.contype
+    digest: 8b90412241afc3f25e28f0a7410412f4378e858f364888e1842c32a20c32b502
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.geofetch
+    digest: cf5827a78b7fb463cad17ece82d281708d5509c20784e2ced5ab2791f2c73bb1
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.geo
+    digest: dcf8faa48fbfc12fb9ab26ea3f97b6772e2202a3e05c836175b98bfc172daa76
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_device:Device.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_device:91a2cd39
+    digest: 911a6c97af4405520e55cda3abc02661bc65178c47e1f4f13bcdbb6e3a53b792
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_useragent:23431226
+    digest: 0ad31dbe7c01c071fa99e3b1672640e2a191a15548e76f24667984e02bb2fade
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_useragent:9e5ffb0b
+    digest: 308bb0f615ec113d7a95f9bb541ee76fbdcae5e5536683ffd4ec4dcea5fe3b92
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_useragent:UserAgent.browsers
+    digest: 1d32a8f0eb3081969225c1ac89f944e86590a0f46034a837d5598c275490827e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_useragent:0c118d46
+    digest: f9c9a3de7bdb207d918584016a9b605b7a796eff44a343f98583c0b11623e329
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_useragent:UserAgent.platform
+    digest: 751d192d6a80ee779b9b24d6bc6f1144585f74572f12f4056eb32c83347f55d0
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_useragent:39268cd6
+    digest: 4614a19f8ea8b670c417b88e772646735ea4159c33b2315ab854477518de4a46
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_useragent:UserAgent.mobile
+    digest: 3ed4dc0e756e24662979534b1ae1d854c08197f8ccd938365e387d18c1b0f7b0
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_useragent:c7dd5e2a
+    digest: 2f63a86f75bbe3ad0bb3d00fd92b70f30dc11a4a555c52ffa9ee7d24429055f7
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_useragent:UserAgent.architecture
+    digest: 1123704462637e5eb1601e0fcd4e5016d9efaaa8332e871412672a602c267e6a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_useragent:d841eaee
+    digest: ac7bd05b01a73e67606340bab2bbd06fc3c15a63007c1936348302d6a3f162c8
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_useragent:UserAgent.bitness
+    digest: aa1ba2b07b849e91dec2d93f1f520e65df32eaaf374eee81220daff2f2f3459a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_useragent:6b047d0a
+    digest: 7ec724ba3659f1e1b81a87476aefd091fb5bfef5368137077a116ee9e5da05d6
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_useragent:UserAgent.model
+    digest: 585eb59f173a3e2edafda4cdb87a35bdb333571938920e0bfde966bf65f41f39
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_useragent:892a38b7
+    digest: 522946b14ba06d8298a5c149bbfb98543603bc40c4600a7860dd14581c89e1da
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_useragent:UserAgent.source
+    digest: 1cf7402784336561545b0da64b2e2e1e4488878068d1a16f924acf264ab264dd
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_useragent:UserAgent.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_useragent:91a2cd39
+    digest: f058f663753a43dc7e3f0dfa570cff2d90f2feec0b7603b346d81859f6ef7af9
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_useragent:49580a24
+    digest: 6cd200180397d4038863ca8091921332ac91b6445f74aaa4a8045ad97a7db3ac
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_brandversion:BrandVersion.brand
+    digest: 697d401fd6b89fda9adf8f71ac9fc707cbbc88cd318824cd27b84a1e4e7b102c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_brandversion:103cd8fb
+    digest: d4a830e54e6a602eacd522cbe1ca38170820e0872380f302a78e43069274baff
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_brandversion:BrandVersion.version
+    digest: a15bc269246aa59a991a99194d8b626676e7db83c1d01d2000d25e6907e76d02
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_brandversion:BrandVersion.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_brandversion:91a2cd39
+    digest: ea0490aacd570fc4fb1f0cada25f86635c3e40b6354b91b0ab99fbc3b0654713
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: sentence:object_geo:0e4ce741
+    digest: d48d9ad47b01ea32f00e596e350c5fa0cdb74f4b5e4ce05f460f58b3560fa5f5
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: sentence:object_geo:68e0f57b
+    digest: f7704ec69111df1b7570d13db0fb46aa479a960e25962c58b089f6fdf026c23b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_geo:400ed98d
+    digest: 6e8fd941dc661663570489ce97a1add2bdc0c2627ff3a341d625c309c6a4cd4b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_geo:735fd37a
+    digest: 411b7c4effdfd280c08f726765370229d099b917464f7af9892103c64c5c8fee
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_geo:Geo.type
+    digest: 84b764bd31028ed4a7122278735f1630fb5e15e48a38899480e13a1b7016b556
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_geo:0789a971
+    digest: e78eba260c8567482eab3fbd296b56ba4b11bb4d1209f5f45c71f13523eb4a69
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_geo:Geo.lat
+    digest: d357a6c70250003b5587a0655321b96d4ee4c746530a9ee7529c2340d5440f01
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_geo:Geo.lon
+    digest: fbf61a00e58b973d44f2d509df9904cc58dc6bf2f94beed2c3a28e1021af4083
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_geo:Geo.accur
+    digest: d19d7b2fea970be792ae212ec19b1875585ecee6667a703a264402419e0bf918
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_geo:b1b4a4b7
+    digest: f428cacc1a4803e24cf674454780ea3a5aa1381d8c9b1254565596830f69ee3b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_geo:Geo.lastfix
+    digest: a6fc35019e7c8b00e956d8e43cc86d399e03702a515465f78439268265f5be48
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_geo:8d712c9e
+    digest: ad8d9002746a2103a425712aff50699c6099c3d2e33f8ceec464fca3e335239b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_geo:f15c4b2b
+    digest: af9a63e57da779850f5cd1bc1493deaec4a67b226e2037349cfbc4f68822637c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_geo:Geo.ipserv
+    digest: b9d23476fffdef654e34d4a9801cd62488172c62b06eaf7ba4fc29a67eb610d2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_geo:Geo.country
+    digest: de1432beb4ba5d771b7063103dc8d99a1a8f23a84f0533c333740469a2c3b785
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_geo:f50d8f72
+    digest: d1145fd8fb15237963a2a8761b1f8d5dac764cbe99d964d60eb138e66a6d8dd1
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_geo:Geo.region
+    digest: a727e7797308e316cd9d227eaaffa9909886a4515a24d5d2357ae307376d2b3a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_geo:Geo.metro
+    digest: 351ddac4aa21877e8744fcffe752d155224980fc37c7d9fda9e16bfff750218b
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_geo:Geo.city
+    digest: 69eaf49350ffc7535fd3876d35f70c6a1a1a63eb068165179e73a22a1616dc14
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_geo:Geo.zip
+    digest: 6c389992f276b5a09aff7b4d6e235b2c9726bc6ee9ab124296fbc56bbb115b57
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_geo:Geo.utcoffset
+    digest: e55cd0b7227c584a94b60ad4b427a3ef32cd313df26f5eaa8300fb683cf475af
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_geo:Geo.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_geo:91a2cd39
+    digest: 36b63f447752ffccc0c586af9789aecb4726df011efc700503ef26cedfcb14af
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_data:39fdccbb
+    digest: 69bfce088f72c76cb21fa3af94e7d84ef7f9eefb26c663068247be1ada9dd512
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_data:63223575
+    digest: a9cbb5ccc22db65d0a5722823de6acc50deeb8449dd29930296ca37a9787fbd6
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_data:80e5afa9
+    digest: 247ea17a0a6eeacd67c0f54366e2e0e38ced77e9c1e8d1e8d8e0adbd98051635
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_data:Data.id
+    digest: 2482ca489574239c0c7fd885195471d1ed424e2a8a6eb22f664ce548bb9f4820
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_data:Data.name
+    digest: 83faf94a8fb6e3da0933f59efc788cdddb058fcb02dbded82d1ca645486d5604
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_data:Data.cids
+    digest: 2d28aad56dac6b514e6aec198c44a040a0ede43c726618a1d857fcfde33332f9
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_data:Data.segment
+    digest: 826be6759fe4302b8f8080d6b92e9691dce6349dbec2cd84cf709d9613d93839
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_data:Data.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_data:91a2cd39
+    digest: 7688e0ba2337f4cc73b3337e4d4baca5f5c638040cecf6979015ba6e606ea144
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_segment:63223575
+    digest: 8f6d474f9049b0a8b87b35f859782b99049f0e484a82293778e4b61856932b83
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: sentence:object_segment:b7be90b7
+    digest: 7a6376a72df1a88f4936fdcd9bc1b6d2f055fad9209a30bb15e95fb02c308177
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_segment:Segment.id
+    digest: f483c5a82707ef52d9bf0c73107300bb829783db306a3fcb40caae70d04fcefb
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_segment:Segment.name
+    digest: 8598f68f13a0cd4a908c989e06cf0bd0e699dea3bfa14bfc260317c97933f41c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_segment:Segment.value
+    digest: a9e3e826d72b91ccd56c7575aa688f04e6775fe3fba309a994d8977dab314198
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_segment:Segment.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_segment:91a2cd39
+    digest: 5c75a2afe4dc3b70c101ee9b161ca01d3755db3af75912d20f5f88cf63bff691
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_eids:10d4b297
+    digest: 3b44426f0b4449f2a2aaebe25ea7eee512fb67ca17b9afbd62a2f4db462abe34
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eids:ExtendedIdentifiers.source
+    digest: 3bfff530d8d2b6604d38aa4c2e80b927397a44f7791c5fc89aff9ec284f5c2ba
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_eids:2727ebab
+    digest: ee2323b9e7f13e4f685329bc9dc8972df8461f90cfb1a29e42732e9b37a175a1
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eids:ExtendedIdentifiers.uids
+    digest: b1a3cd894fdccef1d1ff5f890086d1a98724df78db8e4f95bcc07afa5d8e048e
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eids:ExtendedIdentifiers.inserter
+    digest: ecae8748b680a5f921853464ac2200918f28394f4312898f14c653f7b7be9441
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_eids:22c5fee8
+    digest: 759269c417a0a5fbda3a68337bd2e41e014f62d04c0ba02a4076f665cbb1c79d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_eids:34965079
+    digest: d62045b3ab1b8a74dcb6e94a908b9cc6c94c727bed234bb3059d39ce82c2d61c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eids:ExtendedIdentifiers.matcher
+    digest: 4bc5bafe0fbad45afcf6ccdb986f1f5acb32aaf19d3827c0f04addad5cbaa82c
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_eids:01844f6a
+    digest: feb171eda4630273ecb455b25595cca16e3f218e7df98b5932a0436d965d2dce
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_eids:4c67a72f
+    digest: 5a6923ddee5be45b9399664c08436939c10c60164b634f9909fce5ee4907ed8f
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eids:ExtendedIdentifiers.mm
+    digest: b00bf7f4a0725799adbd1455268bfb9f859d7fea70c975788704ddae9bb8940a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eids:ExtendedIdentifiers.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_eids:91a2cd39
+    digest: f5bb381b2c4523a6028b8963dddb7d7eade70ba3755e5a11f6dc898b4a77786d
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eid_uids:ExtendedIdentifierUids.id
+    digest: 82d27ab806ff245aa003fe69027cabae0f229d67141a43498074ac4a223427ee
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eid_uids:ExtendedIdentifierUids.atype
+    digest: 012421122eef2855a320038830e97d9bd1dcdf4634cc93a13fa90d5738c416b7
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_eid_uids:929c82e3
+    digest: 7b0dff00041a484a8c55801a3e8c58da4493728eb404cc9895b2c003e7585e13
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_eid_uids:ExtendedIdentifierUids.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_eid_uids:91a2cd39
+    digest: 8f8ffce0a24335a568411b792a96fda179d3a48d99955e4a1116ab4b537b74c1
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_regs:Regs.coppa
+    digest: 4c46e401811b5fb53bf5f7ed84b6ea0e6d0dbceec32cf718410df92049621ef6
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_regs:Regs.gdpr
+    digest: 2912632ea7ec0810c787a72dba2a918ee8219eb2eb13ac57c9367125f5c41aaa
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_regs:Regs.gpp
+    digest: 020dd3513decb7d2410b951240e6c89d1c8a34a6a3436d519a7bd4b39b8c0aae
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_regs:Regs.gpp_sid
+    digest: 8462a5a8cc9cd9fead5de3bf7855a3c724bcca21d19b868c3cebf40c5575b83a
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_regs:421f1bca
+    digest: 1a139c43738677af3b47d587a8e158ef65a13d3f1061046a0b91a013fc9aafc2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_regs:454e6a10
+    digest: 29f7d06fccbfaa8c201efcce84636c42a86631592dbf0d62d217f92248b3b1ae
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_regs:Regs.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_regs:91a2cd39
+    digest: 97f69629def9304d2d2284b5f571adae056dd1850a537724301b7234f2af5558
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_restrictions:Restrictions.acat
+    digest: d591157e20e5eea946c2ae6f165c7b34fdf390236baf2603dd3deeee89b2dfa3
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_restrictions:9c6fbbf2
+    digest: 767da51442a100e9c924a8c0ad6ce5ef47157196e7fdc971362d8cab9e9fbafa
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_restrictions:Restrictions.bcat
+    digest: b99a4a88ae118f37f4c78d07d70afabe2fb1046e0e6f6a3f5170c6deb577fe1f
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_restrictions:9c6fbbf2-2
+    digest: 5ee245a488a41261a80e9cd82595c98340bfb9085df378e96025c45438bade13
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_restrictions:Restrictions.cattax
+    digest: aff74435ae461ecd1ad7624e5279da1f95cfe603c32bfc41574744076c71bc31
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_restrictions:Restrictions.badv
+    digest: 700eac91e66f0de2792406e879ee2ab53ec2626efac296ddb19f37e9b24617ca
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_restrictions:Restrictions.bapp
+    digest: ab411f2fc24402a26c3e3e1a69360f001a10fb403470dd5ce3b13d08985033af
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_restrictions:c4c6bed7
+    digest: ab6c0e9aca5aa7f46d42c88e1790c028d89eb6e4bfc6f00897d77b1628c3caf2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_restrictions:Restrictions.battr
+    digest: bbf355864f77c1ebfb55fe8ee362cbaf6430728439c05852d1b1429db0e6be03
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: key:object_restrictions:Restrictions.ext
+    digest: 4bbccfff12792b724116e12182c7f6c4d05a53a4576015541c9a0c6fd1f054b2
+    source: { rule: deferred-module }
+    as: { role: informative }
+  - ir: rule:object_restrictions:91a2cd39
+    digest: f9125dd3c0a63c6c0b756e7458381160b3cefc2e8a4c9772b488640b2317ab89
+    source: { rule: deferred-module }
+    as: { role: informative }

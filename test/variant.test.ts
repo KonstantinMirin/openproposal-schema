@@ -8,18 +8,18 @@ import { loadLock } from "../src/lock.ts";
 import { loadDecisions, loadMappings } from "../src/mapping.ts";
 import type { ModelDoc, ModelType } from "../src/model.ts";
 import { resolveModel } from "../src/model.ts";
-import { loadVectors } from "../src/rules.ts";
+import { loadVectors, VECTORS_DIR } from "../src/rules.ts";
 import { applyVariant, checkVariant, checkVariantDiff, loadVariant, variantDir, type Variant } from "../src/variant.ts";
-import { ROOT } from "./helpers.ts";
+import { ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT);
-const CONSTRUCTORS = loadConstructors(ROOT);
-const MAPPINGS = loadMappings(ROOT, join(ROOT, "mapping"));
-const DECISIONS = loadDecisions(ROOT, join(ROOT, "decisions"));
-const VARIANT = loadVariant(ROOT);
-const MAIN = loadLock(join(ROOT, "spec-input", "spec-lock.yaml"));
-const PRS = loadLock(join(ROOT, "spec-input", "with-open-prs.lock.yaml"));
-const build = (lock: typeof MAIN, variant: Variant | null) => resolveBuild({ lock, root: ROOT, mappings: MAPPINGS, decisions: DECISIONS, kernel: KERNEL, constructors: CONSTRUCTORS, ...(variant ? { variant } : {}) });
+const KERNEL = loadKernel(ROOT, SPEC);
+const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const MAPPINGS = loadMappings(join(SPEC, "mapping"));
+const DECISIONS = loadDecisions(join(SPEC, "decisions"));
+const VARIANT = loadVariant(SPEC);
+const MAIN = loadLock(join(SPEC, "spec-input", "spec-lock.yaml"));
+const PRS = loadLock(join(SPEC, "spec-input", "with-open-prs.lock.yaml"));
+const build = (lock: typeof MAIN, variant: Variant | null) => resolveBuild({ lock, root: SPEC, mappings: MAPPINGS, decisions: DECISIONS, kernel: KERNEL, constructors: CONSTRUCTORS, ...(variant ? { variant } : {}) });
 const MAIN_WRITTEN = build(MAIN, VARIANT);
 const MAIN_PROPOSED = build(MAIN, null);
 const PRS_WRITTEN = build(PRS, VARIANT);
@@ -106,7 +106,7 @@ test("checkVariant holds every departure to one switch, an option it lists, and 
 });
 
 test("the rule vectors are converted to the written forms, and a withheld member is dropped", () => {
-  const vectors = loadVectors(ROOT);
+  const vectors = loadVectors(join(SPEC, VECTORS_DIR));
   const r = PRS_WRITTEN.vectors(vectors);
   assert.deepEqual(r.problems, []);
   const entry = r.vectors.flatMap((f) => f.rules).find((e) => e.rule === "rule:5.2:f3d3f9e8")!;

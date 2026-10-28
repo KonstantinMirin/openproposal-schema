@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { cloneInput, declarationText, disk, fingerprint, matches, overlay, runFixture, defineGate } from "../gates/harness.ts";
+import { cloneInput, declarationText, disk, filesMatching, fingerprint, matches, overlay, runFixture, defineGate } from "../gates/harness.ts";
 import { REGISTRY } from "../gates/index.ts";
 import { decisionEdits, guard, loadGateDecisions } from "../gates/meta.ts";
 
@@ -47,6 +47,19 @@ test("a fingerprint changes with a helper of another file, a configuration file,
   assert.notEqual(tp(), tp(overlay({ "package.json": (t) => t.replace("test/**/*.test.ts", "test/**/*.none.ts") })));
   const tc = REGISTRY.find((r) => r.gate.id === "typecheck")!;
   assert.notEqual(fingerprint(tc.gate, tc.file, tc.name), fingerprint(tc.gate, tc.file, tc.name, overlay({ "tsconfig.json": (t) => t.replace('"strict": true', '"strict": false') })));
+});
+
+test("an exemption path with * segments names every spec's file, and one that matches nothing throws", () => {
+  assert.deepEqual(filesMatching("specs/*/ir/exceptions.yaml", disk), ["specs/adcom/ir/exceptions.yaml", "specs/openproposal/ir/exceptions.yaml"]);
+  assert.ok(filesMatching("specs/*/decisions/*.yaml", disk).includes("specs/openproposal/decisions/D-001.yaml"));
+  assert.deepEqual(filesMatching("kernel/domains.yaml", disk), ["kernel/domains.yaml"], "a plain path is itself");
+  const second = overlay({}, { ...disk, list: (dir) => [...disk.list(dir), ...(dir === "specs" ? ["specs/other/ir/exceptions.yaml"] : [])] });
+  assert.deepEqual(filesMatching("specs/*/ir/exceptions.yaml", second), ["specs/adcom/ir/exceptions.yaml", "specs/openproposal/ir/exceptions.yaml", "specs/other/ir/exceptions.yaml"], "another spec's file joins");
+  assert.throws(() => filesMatching("specs/*/ir/no-such.yaml", disk), /specs\/\*\/ir\/no-such\.yaml matches no file/);
+  const g = REGISTRY.find((r) => r.gate.id === "extraction")!;
+  const fp = (src = disk) => fingerprint(g.gate, g.file, g.name, src);
+  assert.notEqual(fp(), fp(overlay({ "specs/openproposal/ir/exceptions.yaml": (x) => `${x}# a change\n` })), "a spec's exception registry is part of the fingerprint");
+  assert.throws(() => fp(overlay({ "specs/openproposal/ir/exceptions.yaml": null, "specs/adcom/ir/exceptions.yaml": null })), /matches no file/, "a registry gone from every spec fails the fingerprint");
 });
 
 test("a fixture passes only when the gate fails with the expected message", async () => {

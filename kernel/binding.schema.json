@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/kernel/binding.schema.json",
+  "title": "Kernel binding",
+  "description": "One per spec: specs/<spec>/kernel-binding.yaml (src/binding.ts). It mirrors the kernel files, kernel/primitives.yaml, constructors.yaml, and domains.yaml, and gives, for each item the kernel defines, what rests on the spec's text: the elements it cites, the decision records it follows and on which locks, the locks it exists on, and the member names the spec uses. Each list item is named as the kernel names it. The loaders merge it into the kernel's definitions, and the kernel's own schemas validate the result.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "spec"],
+  "properties": {
+    "format": { "const": 1 },
+    "spec": { "description": "The spec's folder name under specs/.", "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "primitives": { "$ref": "#/$defs/named" },
+    "constructors": { "$ref": "#/$defs/named" },
+    "parts": { "$ref": "#/$defs/named" },
+    "domains": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": { "name": { "type": "string" }, "concepts": { "$ref": "#/$defs/named" }, "absent": { "description": "A domain the spec's text never uses, which leaves its kernel.", "const": true } },
+        "oneOf": [{ "properties": { "concepts": true }, "required": ["concepts"] }, { "properties": { "absent": true }, "required": ["absent"] }]
+      }
+    },
+    "homonyms": { "description": "The member names that resolve to more than one concept in the spec's model, each with the decision that explains it.", "type": "array", "items": { "type": "object" } },
+    "bases": { "description": "The vocabularies whose terms say what concept a sibling member is, with the decision that reads them so.", "type": "array", "items": { "type": "object" } },
+    "shared_structures": {
+      "type": "array",
+      "items": { "type": "object", "required": ["concepts"], "properties": { "concepts": { "type": "array", "items": { "type": "string" } } } }
+    }
+  },
+  "$defs": {
+    "named": {
+      "description": "Items named as the kernel names them, each with the keys that rest on the spec.",
+      "type": "array",
+      "items": { "type": "object", "required": ["name"], "properties": { "name": { "type": "string" }, "absent": { "description": "An item the spec's text never uses, which leaves the spec's kernel; it gives nothing else.", "const": true } } }
+    }
+  }
+}

@@ -63,11 +63,12 @@
 import { posix } from "node:path";
 import { canonicalJson } from "./canonical.ts";
 import { baselines, partSeeds, Validators } from "./corpus.ts";
-import { schemaIdOf, type EmittedFile } from "./emit.ts";
+import { baseOf, type EmittedFile, schemaIdOf } from "./emit.ts";
 import { instanceChecker, type InstanceCheck, type Loaded, type ModelExample } from "./examples.ts";
 import { fieldKey, fieldLocations, type FieldExample } from "./field-examples.ts";
 import type { Kernel } from "./kernel.ts";
 import type { ModelDoc } from "./model.ts";
+import type { Check } from "./rule-checks.ts";
 
 type Schema = Record<string, unknown>;
 
@@ -125,6 +126,8 @@ export interface TypeExamplesInput {
   schemaDir: string;
   /** The codes of the lists the repository pins, for the rules that rest on a list (`codesOf`). */
   codes: ReadonlyMap<string, ReadonlySet<string | number>>;
+  /** Every check a rule of the lock may have: the kernel's, the constructors', and the spec's (`checksOf`). */
+  ruleChecks: Readonly<Record<string, Check>>;
   /** The specification's examples, whose values the examples show first. */
   spec: SpecExamples;
   /** The per-field example values (src/field-examples.ts), every lock's; those in scope on the model's lock apply. */
@@ -218,13 +221,13 @@ function openObject(v: Validators, loc: string): boolean {
  * the location of the property it projects, with what lies below it. The
  * function gives a location's projected location, or undefined.
  */
-export function projections(model: ModelDoc, schemaDir: string): (loc: string) => string | undefined {
+export function projections(model: ModelDoc, schemaDir: string, base: string | null): (loc: string) => string | undefined {
   const byName = new Map(model.types.map((t) => [t.name, t]));
   const prefixes: [string, string][] = [];
   for (const t of model.types) {
     const target = t.kind === "profile" ? t.document : t.kind === "object" ? t.projects : undefined;
     const u = target === undefined ? undefined : byName.get(target);
-    const [from, to] = [schemaIdOf(t, schemaDir), u ? schemaIdOf(u, schemaDir) : null];
+    const [from, to] = [schemaIdOf(t, schemaDir, base), u ? schemaIdOf(u, schemaDir, base) : null];
     if (!u || !("properties" in u) || !("properties" in t) || from === null || to === null) continue;
     for (const k of Object.keys(t.properties)) if (k in u.properties) prefixes.push([`${locationOf(from)}/properties/${escape(k)}`, `${locationOf(to)}/properties/${escape(k)}`]);
   }
@@ -250,7 +253,7 @@ export function specValues(model: ModelDoc, v: Validators, schemaDir: string, sp
   const mapValues = new Map<string, unknown[]>();
   const terms = new Map<string, unknown[]>();
   const typeAt = new Map(model.types.flatMap((t) => {
-    const id = schemaIdOf(t, schemaDir);
+    const id = schemaIdOf(t, schemaDir, v.baseOf(schemaDir));
     return id === null ? [] : [[locationOf(id), t] as const];
   }));
   const add = (m: Map<string, unknown[]>, k: string, x: unknown) => {
@@ -292,7 +295,7 @@ export function specValues(model: ModelDoc, v: Validators, schemaDir: string, sp
   for (const ex of [...spec.examples].sort(bySection)) {
     const loaded = spec.values.get(ex.id);
     const doc = docs.get(ex.object);
-    const id = doc ? schemaIdOf(doc, schemaDir) : null;
+    const id = doc ? schemaIdOf(doc, schemaDir, v.baseOf(schemaDir)) : null;
     if (!loaded?.ok || id === null) continue;
     if (!ex.part) visit(locationOf(id), loaded.value, false);
     else if (isMap(loaded.value)) {
@@ -315,18 +318,18 @@ export function generateTypeExamples(input: TypeExamplesInput): { doc: TypeExamp
   const v = new Validators(files);
   const { typeValue, build } = baselines(model, v, kernel, schemaDir);
   const seeds = partSeeds(model, v, schemaDir);
-  const check = instanceChecker(model, files, schemaDir, input.codes);
+  const check = instanceChecker(model, files, schemaDir, input.codes, input.ruleChecks);
   const found = specValues(model, v, schemaDir, input.spec);
   const vectors = new Map(kernel.primitives.map((p) => [p.name, p.vectors.valid]));
   const showcases = new Map(kernel.primitives.map((p) => [p.name, p.showcase]));
   const typeAt = new Map(model.types.flatMap((t) => {
-    const id = schemaIdOf(t, schemaDir);
+    const id = schemaIdOf(t, schemaDir, v.baseOf(schemaDir));
     return id === null ? [] : [[locationOf(id), t] as const];
   }));
   const holds = (id: string, x: unknown) => failure(check(id, x));
-  const projected = projections(model, schemaDir);
+  const projected = projections(model, schemaDir, v.baseOf(schemaDir));
   /** The per-field entries by the schema location of each member they give a value. */
-  const fieldAt = new Map(fieldLocations(model, schemaDir, input.fields).flatMap(({ entry, locations }) => locations.map((l) => [l.at, entry] as const)));
+  const fieldAt = new Map(fieldLocations(model, schemaDir, v.baseOf(schemaDir), input.fields).flatMap(({ entry, locations }) => locations.map((l) => [l.at, entry] as const)));
 
   /** The values the specification gives at a location, or else at the location it projects. */
   const specAt = (loc: string): unknown[] => {
@@ -648,7 +651,7 @@ export function generateTypeExamples(input: TypeExamplesInput): { doc: TypeExamp
 
   const types: Record<string, TypeExample> = {};
   for (const t of [...model.types].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))) {
-    const id = schemaIdOf(t, schemaDir);
+    const id = schemaIdOf(t, schemaDir, baseOf(files, schemaDir));
     if (id === null) continue;
     const loc = locationOf(id);
     let minimal: unknown;
@@ -689,9 +692,9 @@ export function generateTypeExamples(input: TypeExamplesInput): { doc: TypeExamp
  */
 export function checkTypeExamples(doc: TypeExamplesDoc, input: Omit<TypeExamplesInput, "kernel" | "spec" | "fields">): string[] {
   const problems: string[] = [];
-  const check = instanceChecker(input.model, input.files, input.schemaDir, input.codes);
+  const check = instanceChecker(input.model, input.files, input.schemaDir, input.codes, input.ruleChecks);
   const expected = new Map(input.model.types.flatMap((t) => {
-    const id = schemaIdOf(t, input.schemaDir);
+    const id = schemaIdOf(t, input.schemaDir, baseOf(input.files, input.schemaDir));
     return id === null ? [] : [[t.name, id] as const];
   }));
   for (const [name, id] of expected) if (!(name in doc.types)) problems.push(`${name}: no examples`);
@@ -727,8 +730,8 @@ export function checkFieldExamples(input: TypeExamplesInput): { problems: string
   const lock = model.input.lock;
   const v = new Validators(files);
   const found = specValues(model, v, schemaDir, input.spec);
-  const projected = projections(model, schemaDir);
-  const check = instanceChecker(model, files, schemaDir, input.codes);
+  const projected = projections(model, schemaDir, v.baseOf(schemaDir));
+  const check = instanceChecker(model, files, schemaDir, input.codes, input.ruleChecks);
   const doc = generateTypeExamples(input).doc;
   const vocabularies = new Map(model.types.flatMap((t) => (t.kind === "vocabulary" ? [[t.name, t] as const] : [])));
   /** Every value the specification gives at a location or below it, and at the location it projects. */
@@ -740,7 +743,7 @@ export function checkFieldExamples(input: TypeExamplesInput): { problems: string
   const problems: string[] = [];
   const seen = new Set<string>();
   let locations = 0;
-  const located = fieldLocations(model, schemaDir, input.fields);
+  const located = fieldLocations(model, schemaDir, v.baseOf(schemaDir), input.fields);
   for (const { entry, locations: at } of located) {
     const key = fieldKey(entry);
     if (seen.has(key)) problems.push(`${key}: listed twice on lock "${lock}"`);

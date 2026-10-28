@@ -4,6 +4,7 @@ import { primitiveStructure, vectorCases, type Kernel, type VectorCase } from ".
 import { readYaml } from "./mapping.ts";
 import { compileSchema } from "./pipeline.ts";
 import { spawnWithInput } from "./spawn.ts";
+import { REPO_ROOT } from "./repo.ts";
 
 /** One vector of one primitive, as sent to the other engines. */
 export interface EngineCase extends VectorCase {
@@ -46,7 +47,7 @@ export interface OracleGaps {
 
 export function loadOracleGaps(root: string, file = join(root, ORACLE_GAPS)): OracleGaps {
   const doc = readYaml(file);
-  const errors = compileSchema(join(root, ORACLE_GAPS_SCHEMA))(doc);
+  const errors = compileSchema(join(REPO_ROOT, ORACLE_GAPS_SCHEMA))(doc);
   if (errors.length > 0) throw new Error(`${file}: not a valid oracle gaps file: ${errors.join("; ")}`);
   return { ...(doc as Omit<OracleGaps, "file">), file };
 }
@@ -119,6 +120,12 @@ export interface EngineReport {
  *   listed vector the oracle no longer differs on fails, and so does a gaps
  *   file written for other versions than the pins.
  */
+/** Each listed gap's vector that names a primitive the kernel file doesn't define, which no spec's kernel would check. */
+export function gapPrimitiveProblems(root: string, gaps: OracleGaps): string[] {
+  const defined = new Set(((readYaml(join(root, "kernel", "primitives.yaml")) as { primitives?: { name: string }[] }).primitives ?? []).map((p) => p.name));
+  return gaps.gaps.flatMap((g) => g.vectors.filter((x) => !defined.has(x.primitive)).map((x) => `${gaps.file}: ${g.id} names the primitive "${x.primitive}", which kernel/primitives.yaml doesn't define`));
+}
+
 export function checkKernelEngines(root: string, kernel: Kernel, engines: Engines = spawnEngines(root), gaps: OracleGaps = loadOracleGaps(root)): EngineReport {
   const problems: string[] = [];
   const cases = engineCases(kernel);
@@ -153,7 +160,10 @@ export function checkKernelEngines(root: string, kernel: Kernel, engines: Engine
     if (ids.has(g.id)) problems.push(`${gaps.file}: ${g.id} is used twice`);
     ids.add(g.id);
   }
-  const listed = gaps.gaps.flatMap((g) => g.vectors.map((x) => ({ ...x, id: g.id, key: `${x.primitive} ${JSON.stringify(x.value)}`, used: false })));
+  // A gap of a primitive the spec's kernel leaves out, as AdCOM's leaves out `Timestamp`, is checked with the spec that has it; a gap of a primitive the kernel file itself doesn't define fails.
+  const present = new Set(kernel.primitives.map((p) => p.name));
+  problems.push(...gapPrimitiveProblems(root, gaps));
+  const listed = gaps.gaps.flatMap((g) => g.vectors.filter((x) => present.has(x.primitive)).map((x) => ({ ...x, id: g.id, key: `${x.primitive} ${JSON.stringify(x.value)}`, used: false })));
 
   const goVerdict = new Map(regexCases.map((c, i) => [c, go.verdicts[i]!] as const));
   let oracleNewline = 0;

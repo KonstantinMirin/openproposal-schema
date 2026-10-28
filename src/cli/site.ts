@@ -3,6 +3,7 @@ import { dirname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { CSP_HEADER } from "../site/config.ts";
 import { buildSite } from "../site/build.ts";
+import { REPO_ROOT } from "../repo.ts";
 
 /**
  * Usage: site [--out <dir>]
@@ -17,8 +18,8 @@ import { buildSite } from "../site/build.ts";
  */
 function main(): number {
   const { values } = parseArgs({ options: { out: { type: "string" } } });
-  const root = new URL("../..", import.meta.url).pathname.replace(/\/$/, "");
-  const site = buildSite(root);
+  const root = REPO_ROOT;
+  const site = buildSite();
   if (site.problems.length > 0) {
     for (const p of site.problems) console.error(`error: site: ${p}`);
     return 1;

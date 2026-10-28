@@ -8,6 +8,9 @@ import { inputRecord } from "./input.ts";
 import type { SpecIR } from "./ir-types.ts";
 import { FINDING_KINDS, lint, type Finding } from "./lint.ts";
 import { repoRoot, type SpecLock } from "./lock.ts";
+import { REPO_ROOT } from "./repo.ts";
+import { pluginOf, profileOf } from "./specs/index.ts";
+import { hasFeature } from "./profile.ts";
 
 export interface FindingsDoc {
   ir_version: 1;
@@ -26,10 +29,12 @@ export interface StageOutput {
   exceptionProblems: string[];
 }
 
-/** Runs stage 1 (extract) and stage 2 (lint) over the locked bytes, then applies the exception registry, `ir/exceptions.yaml` unless one is given. */
+/** Runs stage 1 (extract), with the readers of the lock's spec, and stage 2 (lint) over the locked bytes, then applies the exception registry, `ir/exceptions.yaml` unless one is given. */
 export function runStages(lock: SpecLock, bytes: Buffer, exceptions: ExceptionEntry[] = loadExceptions(join(repoRoot(lock), "ir", "exceptions.yaml"))): StageOutput {
-  const ir = extract(bytes.toString("utf8"), inputRecord(lock, bytes));
-  const findings = lint(ir);
+  const text = pluginOf(lock).text;
+  const ir = extract(bytes.toString("utf8"), inputRecord(lock, bytes), text);
+  const profile = profileOf(lock);
+  const findings = lint(ir, text.lint, { appendices: hasFeature(profile, "appendices"), numbered: text.numbered !== false });
   const exceptionProblems = applyExceptions(findings, exceptions, lock.name);
   const doc = findingsDoc(lock, findings);
   return { ir, findings: doc, irJson: canonicalJson(ir), findingsJson: canonicalJson(doc), exceptionProblems };
@@ -54,9 +59,9 @@ export function findingsDoc(lock: SpecLock, findings: Finding[]): FindingsDoc {
   };
 }
 
-/** Validates a document against one of the committed schemas in `ir/`. Returns error strings; empty means valid. */
-export function validateAgainst(root: string, schemaFile: string, doc: unknown): string[] {
-  return compileSchema(join(root, "ir", schemaFile))(doc);
+/** Validates a document against one of the IR's format schemas in `ir/`. Returns error strings; empty means valid. */
+export function validateAgainst(schemaFile: string, doc: unknown): string[] {
+  return compileSchema(join(REPO_ROOT, "ir", schemaFile))(doc);
 }
 
 /**

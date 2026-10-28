@@ -56,7 +56,7 @@ export const workflow = defineGate<{ workflow: string; pkg: Pkg; goMods: Record<
  * that runs passes. Raise it when tests are added; lowering it is a gate
  * change a gate decision must accept.
  */
-export const MIN_TESTS = 410;
+export const MIN_TESTS = 465;
 
 /** A word for the shell, quoted. */
 const shellWord = (s: string) => `'${s.replace(/'/g, "'\\''")}'`;
@@ -82,8 +82,12 @@ export const npmTest = defineGate<{ script: string; extra: string[] }>({
   ],
 });
 
-/** The directories whose files are reviewed input or generated output, so none may be untracked. */
-export const TRACKED_DIRS = ["spec-input", "ir", "mapping", "decisions", "kernel", "schemas", "vectors", "rules", "corpus", "type-examples", "field-examples", "sdk", "plain-generator", "roundtrip", "examples", "releases", "comparison", "feedback", "gates", "variants", "src", "scripts", "test", "tools"];
+/**
+ * The directories whose files are reviewed input or generated output, so none
+ * may be untracked: every spec's folder, the root's tooling and format
+ * schemas, and the single-spec layout's other folders (`layoutTracked`).
+ */
+export const TRACKED_DIRS = ["specs", "spec-input", "ir", "mapping", "decisions", "kernel", "schemas", "vectors", "rules", "corpus", "type-examples", "field-examples", "sdk", "plain-generator", "roundtrip", "examples", "releases", "comparison", "feedback", "drift", "gates", "variants", "src", "scripts", "test", "tools"];
 
 export const untracked = defineGate<{ untracked: string[] }>({
   id: "untracked",
@@ -94,3 +98,31 @@ export const untracked = defineGate<{ untracked: string[] }>({
 
 /** The repository's package.json. */
 export const packageJson = (): Pkg => JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8")) as Pkg;
+
+/** The single-spec layout's folders at the root that hold nothing now: each spec's inputs and outputs are in its folder. */
+export const MOVED_DIRS = ["spec-input", "schemas", "rules", "corpus", "type-examples", "comparison", "feedback"];
+/** The root's folders that hold only their format schemas, `<dir>/<name>.schema.json`, which every spec's files validate against. */
+export const FORMAT_DIRS = ["ir", "mapping", "decisions", "vectors", "examples", "variants", "field-examples", "roundtrip", "plain-generator", "releases", "drift"];
+
+/** The tracked files the root's moved and format folders hold that the layout doesn't allow there. */
+export function strayAtRoot(tracked: readonly string[]): string[] {
+  return tracked.filter((p) => {
+    const [top, ...rest] = p.split("/");
+    if (MOVED_DIRS.includes(top!)) return true;
+    return FORMAT_DIRS.includes(top!) && !(rest.length === 1 && rest[0]!.endsWith(".schema.json"));
+  });
+}
+
+export const layoutTracked = defineGate<{ tracked: string[] }>({
+  id: "layout-tracked",
+  title: `layout: the root's ${MOVED_DIRS.map((d) => `${d}/`).join(", ")} track nothing, since each spec's files are in its folder, and ${FORMAT_DIRS.map((d) => `${d}/`).join(", ")} track only their format schemas`,
+  code: ["gates/setup.ts#strayAtRoot"],
+  check: (i) => {
+    const stray = strayAtRoot(i.tracked);
+    return { problems: stray.length === 0 ? [] : [`${stray.slice(0, 20).join(", ")}: the root holds only the tooling, the kernel, and the format schemas; move a spec's file into its folder under specs/`], note: `${i.tracked.length} format schemas` };
+  },
+  fixtures: [
+    { name: "a schema committed where the single-spec layout kept it", mutate: (i) => ({ tracked: [...i.tracked, "schemas/documents/1/proposal.json"] }), expect: "schemas/documents/1/proposal.json: the root holds only" },
+    { name: "a mapping file beside the mapping format", mutate: (i) => ({ tracked: [...i.tracked, "mapping/commercial.yaml"] }), expect: "mapping/commercial.yaml: the root holds only" },
+  ],
+});

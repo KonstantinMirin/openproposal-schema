@@ -1,0 +1,48 @@
+format: 1
+id: G-081
+date: 2026-10-27
+question: What changes in the gates to close the gaps an independent review of the multi-spec layout found?
+decision: >-
+  A new gate, layout-tracked, fails on a file tracked under the root's
+  spec-input/, schemas/, rules/, corpus/, type-examples/, comparison/, or
+  feedback/, which the tracked-file gates no longer read since they read
+  each spec's folder, and on anything but a format schema under the root's
+  ir/, mapping/, decisions/, vectors/, examples/, variants/,
+  field-examples/, roundtrip/, plain-generator/, or releases/; it has two
+  fixtures. CI checks every folder under specs/, so one without a profile
+  fails its load instead of being skipped, and the spec-profile gate fails
+  a profile that calls a spec with locks a schema set, with a fixture. The
+  lint names each owner the field rows have, not only OpenProposal's two.
+  A spec plugin's rule check that takes a kernel or constructor rule's ID
+  fails the build instead of replacing it. A plugin needs no stub: the row,
+  type-cell, value-list, identifier-list, marker, and conventions readers
+  are optional, and a row kind no reader reads fails extraction. The site
+  reads its worked example and the type map's default type from the
+  profile, and its assets name the issue and the default type by tokens the
+  build fills, failing on a token it doesn't know. Unused imports are gone,
+  and the extraction report's links point into the spec's folder. Four
+  tests cover these and a fifth that every relative link in the README and
+  docs/ resolves; the suite holds 431 tests, and MIN_TESTS is 431.
+rationale: >-
+  Each change adds a check or keeps one, and no output changes: every
+  committed file regenerates to its bytes and the site build is the one
+  G-077 accepted. The new gate restores the coverage of the root's old
+  folders that the move to specs/ left, and the CI change keeps a spec from
+  leaving every gate by losing its profile.
+accepts:
+  - { gate: comparison, fingerprint: d08d85d4f365df288c5f8fc2969a4364d9fcf572930c045361df2cbe159d2bf0 }
+  - { gate: examples-validate, fingerprint: 48c86ba0bfb7931fa7fa20c100372d3e6102f6344c7e15d59b9ff544f30acb53 }
+  - { gate: extraction, fingerprint: 60ac899e8bbec4b06e1d6690a7f2168ebc16b77e3be9b9f8e00b596be0af1c50 }
+  - { gate: feedback, fingerprint: 7b08613e80de3fce9efeb158003c2fcd8cb1bfc3e94dae609c12e212f89df4f3 }
+  - { gate: fidelity, fingerprint: 7ba092cf01605a870a7f4edd9d841f5059e6324e2945bf391a2aaba641df15e0 }
+  - { gate: field-examples, fingerprint: f3c4734f84a8c0dbef7c88b3c295558041ac80ba2f445fa362e595d83b100e79 }
+  - { gate: guard, fingerprint: c9c8e665a12e58d3471b1cdaa3edfcfbde0de27e6c599fbdbd8c151d0dffb5a6 }
+  - { gate: layout-tracked, fingerprint: 8bdc8fca27780b4aada431ee6e5617f171d2201007e8f5fef5ffda7a7ffee0f2 }
+  - { gate: npm-test, fingerprint: 062f6d83b6d9f68a54eb41f483b447fa2a9669a41b864974b26f52badd539803 }
+  - { gate: round-trip, fingerprint: ee0ad5fdf788955414f9fe5dd8ef404f1088f97adaeeae91315ad7ea25ecf00a }
+  - { gate: rule-checks, fingerprint: 40f70effd50d2dcf8e940ef8f8654df9c3ab29d7311a73f7d2c600e4e15be19d }
+  - { gate: site-builds, fingerprint: dd03f14656d1c92721a847f33b60d83b53f04aa4a43c144279116e3fc962f86e }
+  - { gate: spec-profile, fingerprint: 5ec1382437129f6d973e9510858f0c08f693dea5fcaeda1f93ebade5f8da665a }
+  - { gate: type-examples-generate, fingerprint: cafc42595eecd0b77822b20acde8c6de9d8f31aa60b51f4f92e8cb11bd279c4c }
+  - { gate: type-examples-valid, fingerprint: 104b4f31584798b706d4d5fcd0321d20dd11ae5a8e61d12c0d1b78cb95704f1b }
+  - { gate: variant-examples, fingerprint: 89cbde31155cca89fe394442784f100e5d2afc4813a719c062f385cb3afb6d12 }

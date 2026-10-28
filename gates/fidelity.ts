@@ -16,7 +16,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse } from "yaml";
-import { emitSchemas, type EmittedFile } from "../src/emit.ts";
+import { emitSchemas, type EmittedFile, type SchemaNames } from "../src/emit.ts";
 import { checkFidelity, fidelityNote, type FidelityInput, type RuledEntry } from "../src/fidelity.ts";
 import type { ModelDoc, ModelType } from "../src/model.ts";
 import { defineGate, ROOT } from "./harness.ts";
@@ -36,10 +36,10 @@ export const loadExpected = (file = join(ROOT, EXPECTED_FILE)): ExpectedFile => 
 export const ruledOn = (e: ExpectedFile, lock: string): RuledEntry[] => (e.ruled ?? []).filter((r) => r.locks.includes(lock)).map((r) => ({ constraint: r.constraint, rule: r.rule }));
 
 /** The input with the model changed and the schemas emitted from it again, as a change to the mapping would. */
-const remodel = <I extends FidelityInput>(i: I, change: (types: Map<string, ModelType>) => void): I => {
+const remodel = <I extends FidelityInput & { names: SchemaNames }>(i: I, change: (types: Map<string, ModelType>) => void): I => {
   const model = structuredClone(i.model) as ModelDoc;
   change(new Map(model.types.map((t) => [t.name, t])));
-  return { ...i, model, files: emitSchemas(model, i.schemaDir).files };
+  return { ...i, model, files: emitSchemas(model, i.schemaDir, i.names).files };
 };
 const vocabulary = (types: Map<string, ModelType>, name: string, drop: string) => {
   const t = types.get(name);
@@ -56,6 +56,7 @@ const PLCMT = "key:5.2.2:placement.plcmt#conditional@line_item.placement.plcmt";
 const PLCMT_RULE = "rule:5.2:f3d3f9e8";
 
 const COMMERCIAL = "modules/commercial/1/commercial.json";
+const ADCOM_LISTS = "modules/lists/1/lists.json";
 const PROPOSAL = "modules/proposal/1/proposal.json";
 const LINE_ITEM = "documents/1/line-item.json";
 const TIME_ZONE = "field:5.5:time_zone#conditional@line_item.time_zone";
@@ -77,11 +78,12 @@ const withDef = (files: EmittedFile[], path: string, name: string, change: (s: R
     return { ...f, schema, text: JSON.stringify(schema) };
   });
 
-export const fidelity = defineGate<FidelityInput & { expected: ExpectedFile }>({
+export const fidelity = defineGate<FidelityInput & { expected: ExpectedFile; names: SchemaNames }>({
   id: "fidelity",
   title: "fidelity: the schemas and rules give every constraint the IR states the specification's verdicts, or a departure covers its element",
-  code: ["src/fidelity.ts#checkFidelity", "src/fidelity.ts#readConstraints"],
-  exemptions: [EXPECTED_FILE, "mapping/*.yaml#reads"],
+  // The spec plugin's readers reach the oracle through its input, so the gate reads every plugin.
+  code: ["src/fidelity.ts#checkFidelity", "src/specs/index.ts#PLUGINS"],
+  exemptions: [EXPECTED_FILE, "specs/*/mapping/*.yaml#reads"],
   check: (i) => {
     const ruled = ruledOn(i.expected, i.lock);
     const r = checkFidelity({ ...i, ruled });
@@ -99,6 +101,13 @@ export const fidelity = defineGate<FidelityInput & { expected: ExpectedFile }>({
     return { problems, note: `${fidelityNote(r)}; ${listed.size} disagreements expected under ${[...new Set([...listed.values()].map((e) => e.owner))].join(", ") || "no task"}` };
   },
   fixtures: [
+    // AdCOM's lists: the oracle reads each list's rows alone, so a vocabulary that loses a code, gains one, or loses its vendor range disagrees.
+    { name: "an AdCOM list's vocabulary that lost a code", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "DeviceType", (s) => ({ ...s, enum: (s.enum as number[]).filter((x) => x !== 8) })) }), expect: "8 (the code 8) is valid, but DeviceType's schema rejects it" },
+    { name: "an AdCOM list's vocabulary that gained a code", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "DeviceType", (s) => ({ ...s, enum: [...(s.enum as number[]), 9] })) }), expect: "9 (a code no row names) is invalid, but DeviceType's schema accepts it" },
+    { name: "an AdCOM list's vocabulary that accepts a code between two it names", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "DisplayContextType", (s) => ({ ...s, anyOf: (s.anyOf as Record<string, unknown>[]).map((b, n) => (n === 0 ? { ...b, enum: [...(b.enum as number[]), 16] } : b)) })) }), expect: "16 (a code no row names, between two the list names) is invalid, but DisplayContextType's schema accepts it" },
+    { name: "an AdCOM list's vocabulary that took a vendor range its list doesn't reserve", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "IpLocationService", (s) => ({ anyOf: [s, { type: "integer", minimum: 500 }] })) }), expect: "500 (the first code of a vendor range, which the list doesn't reserve) is invalid, but IpLocationService's schema accepts it" },
+    { name: "an AdCOM list row whose value the reader can't read", spec: "adcom", mutate: (i) => ({ ...i, ir: { ...i.ir, definitions: i.ir.definitions.map((d) => (d.id === "def:list_devicetypes:8" ? { ...d, value: "8a" } : d)) } }), expect: 'the value "8a", which the list reader can\'t read' },
+    { name: "an AdCOM list's vocabulary that lost its vendor range", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "ApiFramework", (s) => (s.anyOf as Record<string, unknown>[])[0]!) }), expect: "500 (the first code of the vendor range 500+) is valid, but ApiFramework's schema rejects it" },
     {
       name: "a units commitment with no currency, which must stay valid",
       mutate: (i) => ({ ...i, files: withDef(i.files, COMMERCIAL, "Commitment", (s) => ({ ...s, required: [...(s.required as string[]), "currency"] })) }),

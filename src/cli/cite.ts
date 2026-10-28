@@ -6,9 +6,10 @@ import { citeText, elementDigest, indexElements, type Element } from "../element
 import type { SpecIR } from "../ir-types.ts";
 import { loadLock, repoRoot, type SpecLock } from "../lock.ts";
 import type { Cover } from "../mapping.ts";
+import { DEFAULT_LOCK } from "../repo.ts";
 
 /**
- * Usage: cite [--lock spec-input/spec-lock.yaml | --all-locks] <IR element ID>...
+ * Usage: cite [--lock specs/openproposal/spec-input/spec-lock.yaml | --all-locks] <IR element ID>...
  *
  * Prints a `covers` list for a decision record: each element's ID, current
  * digest, and quote, read from the lock's committed IR. A mapping entry takes
@@ -20,7 +21,7 @@ import type { Cover } from "../mapping.ts";
 function main(): number {
   const { values, positionals } = parseArgs({
     allowPositionals: true,
-    options: { lock: { type: "string", default: "spec-input/spec-lock.yaml" }, "all-locks": { type: "boolean", default: false } },
+    options: { lock: { type: "string", default: DEFAULT_LOCK }, "all-locks": { type: "boolean", default: false } },
   });
   if (positionals.length === 0) {
     console.error("usage: npm run cite -- [--lock <lock file> | --all-locks] <IR element ID>...");

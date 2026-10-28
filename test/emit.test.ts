@@ -7,19 +7,19 @@ import ajvFormats from "ajv-formats";
 import { canonicalJson } from "../src/canonical.ts";
 import { loadConstructors } from "../src/constructors.ts";
 import { walkSchemas } from "../src/conventions.ts";
-import { checkEmitted, DIALECT, emitSchemas, kebab, SCHEMA_BASE, schemaDirOf, type EmittedFile } from "../src/emit.ts";
+import { checkEmitted, DIALECT, emitSchemas, kebab, schemaDirOf, type EmittedFile } from "../src/emit.ts";
 import type { SpecIR } from "../src/ir-types.ts";
 import { loadKernel } from "../src/kernel.ts";
 import { loadDecisions, loadMappings } from "../src/mapping.ts";
 import { resolveModel, type ModelDoc } from "../src/model.ts";
 import { ajvProblems, oracleProblems, spawnOracle } from "../src/schema-check.ts";
-import { ROOT } from "./helpers.ts";
+import { OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT);
-const CONSTRUCTORS = loadConstructors(ROOT);
-const MAPPINGS = loadMappings(ROOT, join(ROOT, "mapping"));
-const DECISIONS = loadDecisions(ROOT, join(ROOT, "decisions"));
-const ir = (dir: string) => JSON.parse(readFileSync(join(ROOT, dir, "spec-ir.json"), "utf8")) as SpecIR;
+const KERNEL = loadKernel(ROOT, SPEC);
+const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const MAPPINGS = loadMappings(join(SPEC, "mapping"));
+const DECISIONS = loadDecisions(join(SPEC, "decisions"));
+const ir = (dir: string) => JSON.parse(readFileSync(join(SPEC, dir, "spec-ir.json"), "utf8")) as SpecIR;
 const resolve = (lock: string, dir: string) => resolveModel({ ir: ir(dir), lock, mappings: MAPPINGS, decisions: DECISIONS, kernel: KERNEL, constructors: CONSTRUCTORS }).model;
 const LOCKS: [string, ModelDoc, string][] = [
   ["main", resolve("main", "ir"), "schemas"],
@@ -44,16 +44,16 @@ function validatorFor(files: EmittedFile[], dir: string, path: string, fragment 
   const ajv = new Ajv2020({ strict: true, strictRequired: false, allErrors: true });
   ajvFormats.default(ajv);
   for (const f of files) ajv.addSchema(f.schema);
-  const v = ajv.getSchema(`${SCHEMA_BASE}${dir}/${path}${fragment}`);
+  const v = ajv.getSchema(`${OP_SCHEMA.base}${dir}/${path}${fragment}`);
   assert.ok(v, `no schema ${path}${fragment}`);
   return v;
 }
 
 test("each lock's model emits with no problem, follows the output conventions, and is valid 2020-12 under Ajv", () => {
   for (const [lock, model, dir] of LOCKS) {
-    const e = emitSchemas(model, dir);
+    const e = emitSchemas(model, dir, OP_SCHEMA);
     assert.deepEqual(e.problems, [], `${lock}: ${e.problems.join("\n")}`);
-    assert.deepEqual(checkEmitted(e.files, model, dir), [], lock);
+    assert.deepEqual(checkEmitted(e.files, model, dir, OP_SCHEMA.base), [], lock);
     assert.deepEqual(ajvProblems(e.files), [], lock);
     assert.deepEqual(e.files.map((f) => f.path), [...e.files.map((f) => f.path)].sort(), "files are sorted by path");
     for (const f of e.files) assert.equal(f.text, canonicalJson(f.schema));
@@ -61,7 +61,7 @@ test("each lock's model emits with no problem, follows the output conventions, a
 });
 
 test("every named type but a constructor and a model attribute's vocabulary is emitted once, at the file its layer and module give it", () => {
-  const { files } = emitSchemas(MAIN, MAIN_DIR);
+  const { files } = emitSchemas(MAIN, MAIN_DIR, OP_SCHEMA);
   const emitted = files.flatMap((f) => (f.schema.$defs ? Object.keys(f.schema.$defs as object) : [String(f.schema.title)]));
   assert.equal(new Set(emitted).size, emitted.length, "each type once");
   const published = MAIN.types.filter((t) => t.kind !== "constructor" && !(t.kind === "vocabulary" && t.attribute !== undefined));
@@ -77,10 +77,10 @@ test("every named type but a constructor and a model attribute's vocabulary is e
 });
 
 test("each file is one resource with its $id at its path, and references between files are relative", () => {
-  const { files } = emitSchemas(PRS, PRS_DIR);
+  const { files } = emitSchemas(PRS, PRS_DIR, OP_SCHEMA);
   const doc = fileOf(files, "documents/1/proposal.json");
   assert.equal(doc.$schema, DIALECT);
-  assert.equal(doc.$id, `${SCHEMA_BASE}schemas/with-open-prs/documents/1/proposal.json`);
+  assert.equal(doc.$id, `${OP_SCHEMA.base}schemas/with-open-prs/documents/1/proposal.json`);
   const props = doc.properties as Record<string, Record<string, unknown>>;
   assert.deepEqual(props.proposal_id, { $ref: "../../kernel/1/kernel.json#/$defs/Uuid", description: "Unique identity for the proposal object" });
   assert.equal((props.status as { $ref: string }).$ref, "../../modules/proposal/1/proposal.json#/$defs/ProposalStatus");
@@ -91,7 +91,7 @@ test("each file is one resource with its $id at its path, and references between
 });
 
 test("an object is closed unless the mapping marks it open, requires what the specification requires, and states a condition on a sibling with if / then", () => {
-  const { files, conditions } = emitSchemas(MAIN, MAIN_DIR);
+  const { files, conditions } = emitSchemas(MAIN, MAIN_DIR, OP_SCHEMA);
   const c = defOf(files, "modules/commercial/1/commercial.json", "Commitment");
   assert.equal(c.type, "object");
   assert.equal(c.additionalProperties, false);
@@ -115,20 +115,20 @@ test("an object is closed unless the mapping marks it open, requires what the sp
 });
 
 test("a condition that names no sibling and value is left to the rules", () => {
-  const { conditions } = emitSchemas(PRS, PRS_DIR);
+  const { conditions } = emitSchemas(PRS, PRS_DIR, OP_SCHEMA);
   assert.deepEqual(conditions.expressed, ["Commitment.currency", "LineItem.terms_ref", "LineItem.time_zone", "MinCommitmentEntry.currency", "Proposal.brief_ref"]);
   assert.equal(conditions.left.length, 1);
   assert.match(conditions.left[0]!, /^Placement\.plcmt: "REQUIRED for video ads/);
 });
 
 test("a member required with a sibling or a sibling's member is a dependency, beside the object's own if / then", () => {
-  const { files } = emitSchemas(PRS, PRS_DIR);
+  const { files } = emitSchemas(PRS, PRS_DIR, OP_SCHEMA);
   const li = fileOf(files, "documents/1/line-item.json");
   assert.deepEqual(li.dependentRequired, { daypart: ["time_zone"] });
   assert.deepEqual(li.dependentSchemas, { frequency_cap: { if: { properties: { frequency_cap: { type: "object", required: ["period"] } } }, then: { required: ["time_zone"] } } });
   assert.ok(li.if !== undefined, "the terms condition stays the object's own if / then");
   const v = validatorFor(files, PRS_DIR, "documents/1/line-item.json");
-  const base = JSON.parse(readFileSync(join(ROOT, "corpus", "with-open-prs", "cases.json"), "utf8")).constraints.find((c: { id: string }) => c.id === "LineItem#/additionalProperties").baseline;
+  const base = JSON.parse(readFileSync(join(SPEC, "corpus", "with-open-prs", "cases.json"), "utf8")).constraints.find((c: { id: string }) => c.id === "LineItem#/additionalProperties").baseline;
   assert.equal(v(base), true);
   assert.equal(v({ ...base, frequency_cap: { period: "day" } }), false, "a cap with a period needs the clock");
   assert.equal(v({ ...base, frequency_cap: { period: "day" }, time_zone: "viewer_local" }), true);
@@ -136,11 +136,11 @@ test("a member required with a sibling or a sibling's member is a dependency, be
   assert.equal(v({ ...base, frequency_cap: { max: { max: 3 } } }), true, "a cap with no period needs no clock");
   assert.equal(v({ ...base, daypart: { allowed: [] } }), false, "a daypart needs the clock");
   assert.equal(v({ ...base, daypart: { allowed: [] }, time_zone: "America/New_York" }), true);
-  assert.deepEqual(emitSchemas(MAIN, MAIN_DIR).files.find((f) => f.path === "documents/1/line-item.json")!.schema.dependentSchemas, undefined, "main has no time zone");
+  assert.deepEqual(emitSchemas(MAIN, MAIN_DIR, OP_SCHEMA).files.find((f) => f.path === "documents/1/line-item.json")!.schema.dependentSchemas, undefined, "main has no time zone");
 });
 
 test("a daypart window starts at any time of day but 24:00, which only ends one", () => {
-  const { files } = emitSchemas(MAIN, MAIN_DIR);
+  const { files } = emitSchemas(MAIN, MAIN_DIR, OP_SCHEMA);
   const window = validatorFor(files, MAIN_DIR, "kernel/1/kernel.json", "#/$defs/DaypartWindow");
   assert.equal(window({ days: ["monday"], start: "23:00", end: "24:00" }), true);
   assert.equal(window({ days: ["monday"], start: "24:00", end: "24:00" }), false);
@@ -152,7 +152,7 @@ test("a daypart window starts at any time of day but 24:00, which only ends one"
 });
 
 test("a vocabulary is an enum, and an open one is anyOf its core enum and NamespacedTerm; a code's label goes in the description", () => {
-  const { files } = emitSchemas(PRS, PRS_DIR);
+  const { files } = emitSchemas(PRS, PRS_DIR, OP_SCHEMA);
   assert.deepEqual(defOf(files, "modules/proposal/1/proposal.json", "ProposalType"), { type: "string", enum: ["standard", "custom"] });
   assert.deepEqual(defOf(files, "modules/line-item/1/line-item.json", "Channel"), {
     anyOf: [{ type: "string", enum: ["display", "video", "audio", "ctv", "dooh", "native"] }, { $ref: "../../../kernel/1/kernel.json#/$defs/NamespacedTerm" }],
@@ -181,7 +181,7 @@ test("a vocabulary is an enum, and an open one is anyOf its core enum and Namesp
 });
 
 test("an object that includes a profile carries the profile's fields itself, with no allOf", () => {
-  const { files } = emitSchemas(PRS, PRS_DIR);
+  const { files } = emitSchemas(PRS, PRS_DIR, OP_SCHEMA);
   const entry = defOf(files, "modules/publication/1/publication.json", "ProposalsEntry");
   const summary = fileOf(files, "documents/1/proposal-summary.json");
   const fields = Object.keys(entry.properties as object);
@@ -192,7 +192,7 @@ test("an object that includes a profile carries the profile's fields itself, wit
 });
 
 test("a union is anyOf its branches, named after its field", () => {
-  const { files } = emitSchemas(PRS, PRS_DIR);
+  const { files } = emitSchemas(PRS, PRS_DIR, OP_SCHEMA);
   assert.deepEqual(defOf(files, "modules/targeting/1/targeting.json", "Geo"), { anyOf: [{ $ref: "#/$defs/GeoSelection" }, { $ref: "#/$defs/GeoBounds" }] });
 });
 
@@ -203,7 +203,7 @@ test("no mutability marker reaches the schema, neither as a key nor as a vocabul
     assert.equal(marker.attribute, "marker", `${lock}: the model marks Marker as the marker attribute's values`);
     const terms = new Set(marker.terms.map((x) => String(x.value)));
     assert.equal(terms.size, 7, lock);
-    const files = emitSchemas(model, dir).files;
+    const files = emitSchemas(model, dir, OP_SCHEMA).files;
     for (const f of files) {
       assert.ok(!/marker|"x-|mutability/i.test(f.text), `${lock}: ${f.path} mentions a marker`);
       const defs = Object.keys((f.schema.$defs ?? {}) as Record<string, unknown>);
@@ -223,7 +223,7 @@ test("the emitter fails on a payload type that references the marker vocabulary"
   assert.ok(c && c.kind === "object");
   c.properties.basis = { ...c.properties.basis!, type: { kind: "named", name: "Marker" } };
   c.references = [...new Set([...c.references.filter((r) => r !== "CommitmentBasis"), "Marker"])].sort();
-  assert.match(emitSchemas(model, MAIN_DIR).problems.join("\n"), /references "Marker", which the model doesn't emit, since it lists the model's `marker` attribute/);
+  assert.match(emitSchemas(model, MAIN_DIR, OP_SCHEMA).problems.join("\n"), /references "Marker", which the model doesn't emit, since it lists the model's `marker` attribute/);
 });
 
 test("the model fails a vocabulary that mixes marker rows with payload terms", () => {
@@ -242,7 +242,7 @@ test("conditions on one sibling chain through else, and conditions on two siblin
   const c = model.types.find((t) => t.name === "Commitment");
   assert.ok(c && c.kind === "object");
   c.properties.derived_units = { ...c.properties.derived_units!, presence: "conditional", condition: "REQUIRED when `basis = units`" };
-  const chained = emitSchemas(model, MAIN_DIR);
+  const chained = emitSchemas(model, MAIN_DIR, OP_SCHEMA);
   assert.deepEqual(chained.problems, []);
   assert.deepEqual(defOf(chained.files, "modules/commercial/1/commercial.json", "Commitment").else, {
     if: { properties: { basis: { const: "units" } }, required: ["basis"] },
@@ -252,7 +252,7 @@ test("conditions on one sibling chain through else, and conditions on two siblin
   const li = prs.types.find((t) => t.name === "LineItem");
   assert.ok(li && li.kind === "document");
   li.properties.placement = { ...li.properties.placement!, presence: "conditional", condition: "REQUIRED when `channel = video`" };
-  const e = emitSchemas(prs, PRS_DIR);
+  const e = emitSchemas(prs, PRS_DIR, OP_SCHEMA);
   assert.equal(e.problems.length, 1, e.problems.join("\n"));
   assert.match(e.problems[0]!, /conditions on channel and terms_acceptance_required need one if \/ then each.*"allOf"/);
 });
@@ -262,17 +262,17 @@ test("the emitter fails on a condition whose value its sibling's vocabulary lack
   const c = model.types.find((t) => t.name === "Commitment");
   assert.ok(c && c.kind === "object");
   c.properties.currency = { ...c.properties.currency!, condition: "REQUIRED when `basis = budget`" };
-  assert.match(emitSchemas(model, MAIN_DIR).problems.join("\n"), /"budget" is no term of the vocabulary "CommitmentBasis"/);
+  assert.match(emitSchemas(model, MAIN_DIR, OP_SCHEMA).problems.join("\n"), /"budget" is no term of the vocabulary "CommitmentBasis"/);
 });
 
 test("the output gate fails on a nonstandard keyword, a constraint beside a $ref, allOf, untagged oneOf, a misplaced anyOf, a broken reference, and a required name the object lacks", () => {
-  const { files } = emitSchemas(MAIN, MAIN_DIR);
+  const { files } = emitSchemas(MAIN, MAIN_DIR, OP_SCHEMA);
   const broken = (edit: (defs: Record<string, Record<string, unknown>>) => void): string[] => {
     const copy = structuredClone(files);
     const f = copy.find((x) => x.path === "modules/commercial/1/commercial.json")!;
     edit(f.schema.$defs as Record<string, Record<string, unknown>>);
     f.text = canonicalJson(f.schema);
-    return checkEmitted(copy, MAIN, MAIN_DIR);
+    return checkEmitted(copy, MAIN, MAIN_DIR, OP_SCHEMA.base);
   };
   const props = (d: Record<string, Record<string, unknown>>) => d.Commitment!.properties as Record<string, Record<string, unknown>>;
   const cases: [string, (d: Record<string, Record<string, unknown>>) => void, RegExp][] = [
@@ -291,7 +291,7 @@ test("the output gate fails on a nonstandard keyword, a constraint beside a $ref
 });
 
 test("Ajv rejects a file that isn't valid 2020-12 or whose reference doesn't resolve", () => {
-  const { files } = emitSchemas(MAIN, MAIN_DIR);
+  const { files } = emitSchemas(MAIN, MAIN_DIR, OP_SCHEMA);
   const edited = (edit: (s: Record<string, unknown>) => void) => {
     const copy = structuredClone(files);
     edit(copy.find((x) => x.path === "kernel/1/kernel.json")!.schema);
@@ -312,7 +312,7 @@ test("the oracle gate fails when the oracle isn't the pinned version", () => {
 const VENV = existsSync(join(ROOT, ".venv", "bin", "python"));
 
 test("the reference oracle rejects a missing definition, a missing file, and an invalid keyword value", { skip: VENV ? false : "no oracle venv at .venv; run: npm run setup:oracle" }, () => {
-  const { files } = emitSchemas(MAIN, MAIN_DIR);
+  const { files } = emitSchemas(MAIN, MAIN_DIR, OP_SCHEMA);
   assert.deepEqual(oracleProblems(ROOT, files, spawnOracle(ROOT)).problems, [], "the emitted set passes");
   const copy = structuredClone(files);
   const kernel = copy.find((x) => x.path === "kernel/1/kernel.json")!.schema.$defs as Record<string, Record<string, unknown>>;
@@ -335,7 +335,7 @@ test("a lock's schema directory follows its IR directory", () => {
 
 test("a daypart window names at least one day, each once, as bounds on its own list", () => {
   for (const [m, dir] of [[MAIN, MAIN_DIR], [PRS, PRS_DIR]] as const) {
-    const { files } = emitSchemas(m, dir);
+    const { files } = emitSchemas(m, dir, OP_SCHEMA);
     const window = (fileOf(files, "kernel/1/kernel.json").$defs as Record<string, Record<string, unknown>>).DaypartWindow!;
     assert.deepEqual((window.properties as Record<string, unknown>).days, { type: "array", items: { $ref: "#/$defs/DayName" }, minItems: 1, uniqueItems: true });
     assert.equal(window.dependentSchemas, undefined, "the bounds sit on the list, where every generator reads them")
@@ -348,7 +348,7 @@ test("a daypart window names at least one day, each once, as bounds on its own l
 
 test("a frequency cap's period says its terms spell OpenDirect's codes, which are calendar periods with weeks from Monday, and flight runs between two points in time", () => {
   for (const [m, dir] of [[MAIN, MAIN_DIR], [PRS, PRS_DIR]] as const) {
-    const { files } = emitSchemas(m, dir);
+    const { files } = emitSchemas(m, dir, OP_SCHEMA);
     const period = (fileOf(files, "modules/targeting/1/targeting.json").$defs as Record<string, { description: string }>).FrequencyCapPeriod!;
     assert.match(period.description, /^The period a frequency cap counts over\. Each term is OpenDirect 2\.1's code spelled as the specification spells its terms\./);
     assert.match(period.description, /`hour`, `day`, `week`, and `month` are calendar periods on the line item's clock/);

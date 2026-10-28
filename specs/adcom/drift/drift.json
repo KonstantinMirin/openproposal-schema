@@ -1,0 +1,2342 @@
+{
+  "format": 1,
+  "input": {
+    "blob": "aca75af65c4261239d907bfd73705555874c85b1",
+    "commit": "26c59ba1b235cd8d938c9877409e506f1b8d3f0c",
+    "lock": "main"
+  },
+  "lists": [
+    {
+      "codes": 3,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L12",
+          "enum": "AgentType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "AgentType_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/agent_type.go#L4",
+          "enum": "AgentType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_agenttypes",
+      "title": "Agent Types",
+      "vendor": 500,
+      "vocabulary": "AgentType"
+    },
+    {
+      "codes": 9,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L25",
+          "enum": "APIFramework",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "APIFramework_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/api_framework.go#L4",
+          "enum": "APIFramework",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_apiframeworks",
+      "title": "API Frameworks",
+      "vendor": 500,
+      "vocabulary": "ApiFramework"
+    },
+    {
+      "codes": 6,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L43",
+          "enum": "AuditStatusCode",
+          "extra": [],
+          "missing": [
+            {
+              "label": "Expired: The ad has been marked as expired by the vendor. Vendors need to communicate offline as to the expected bidding behavior for ads with this status.",
+              "value": 6
+            }
+          ],
+          "narrow": null,
+          "sentinel": {
+            "name": "AuditStatusCode_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/audit_status.go#L4",
+          "enum": "AuditStatus",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_auditstatuscodes",
+      "title": "Audit Status Codes",
+      "vendor": 500,
+      "vocabulary": "AuditStatusCode"
+    },
+    {
+      "codes": 4,
+      "drift": [
+        {
+          "at": null,
+          "enum": null,
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/auto_refresh_trigger.go#L4",
+          "enum": "AutoRefreshTrigger",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_autorefreshtriggers",
+      "title": "Auto Refresh Triggers",
+      "vendor": null,
+      "vocabulary": "AutoRefreshTrigger"
+    },
+    {
+      "codes": 9,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L78",
+          "enum": "CategoryTaxonomy",
+          "extra": [],
+          "missing": [
+            {
+              "label": "IAB Tech Lab Content Taxonomy 3.0",
+              "value": 7
+            },
+            {
+              "label": "IAB Tech Lab Ad Product Taxonomy 2.0",
+              "value": 8
+            },
+            {
+              "label": "IAB Tech Lab Content Taxonomy 3.1",
+              "value": 9
+            }
+          ],
+          "narrow": null,
+          "sentinel": {
+            "name": "CategoryTaxonomy_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": [
+            {
+              "comment": "IAB Tech Lab Content Category Taxonomy 1.1 - See https://iabtechlab.com/standards/content-taxonomy/",
+              "label": "IAB Tech Lab Content Taxonomy 2.1",
+              "line": 85,
+              "name": "IAB_CONTENT_CAT_TAX_2_1",
+              "value": 5
+            }
+          ]
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/category_taxonomy.go#L4",
+          "enum": "CategoryTaxonomy",
+          "extra": [],
+          "missing": [
+            {
+              "label": "IAB Tech Lab Ad Product Taxonomy 2.0",
+              "value": 8
+            },
+            {
+              "label": "IAB Tech Lab Content Taxonomy 3.1",
+              "value": 9
+            }
+          ],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_categorytaxonomies",
+      "title": "Category Taxonomies",
+      "vendor": 500,
+      "vocabulary": "CategoryTaxonomy"
+    },
+    {
+      "codes": 4,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L93",
+          "enum": "ClickType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/click_type.go#L4",
+          "enum": "ClickType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_clicktypes",
+      "title": "Click Types",
+      "vendor": 500,
+      "vocabulary": "ClickType"
+    },
+    {
+      "codes": 3,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L105",
+          "enum": "CompanionType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "CompanionType_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/companion_type.go#L5",
+          "enum": "CompanionType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_companiontypes",
+      "title": "Companion Types",
+      "vendor": null,
+      "vocabulary": "CompanionType"
+    },
+    {
+      "codes": 7,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L117",
+          "enum": "ConnectionType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "ConnectionType_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/connection_type.go#L4",
+          "enum": "ConnectionType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "ConnectionUnknown",
+            "value": 0
+          },
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_connectiontypes",
+      "title": "Connection Types",
+      "vendor": null,
+      "vocabulary": "ConnectionType"
+    },
+    {
+      "codes": 7,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L135",
+          "enum": "ContentContext",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "ContentContext_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/content_context.go#L5",
+          "enum": "ContentContext",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_contentcontexts",
+      "title": "Content Contexts",
+      "vendor": null,
+      "vocabulary": "ContentContext"
+    },
+    {
+      "codes": 23,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L153",
+          "enum": "Creative.Attribute",
+          "extra": [],
+          "missing": [
+            {
+              "label": "Contains advertiser QR Code",
+              "value": 19
+            },
+            {
+              "label": "Support alpha channel transparency",
+              "value": 20
+            },
+            {
+              "label": "Static Visual. Creative contains no perceptible motion and renders as a static visual, even if delivered in a video file format (e.g., MP4). No animated elements or time-based visual transitions are present.",
+              "value": 21
+            },
+            {
+              "label": "Limited Motion (Cinemagraph). Creative contains subtle or localized motion within an otherwise static composition. Motion is minimal, looped, and does not constitute full-scene animation or continuous narrative progression.",
+              "value": 22
+            },
+            {
+              "label": "Full-Motion Video. Creative contains continuous or scene-level motion typical of standard video assets, including dynamic visual transitions, camera movement, or narrative progression across frames.",
+              "value": 23
+            }
+          ],
+          "narrow": null,
+          "sentinel": {
+            "name": "Attribute_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/creative_attribute.go#L4",
+          "enum": "CreativeAttribute",
+          "extra": [],
+          "missing": [
+            {
+              "label": "Contains advertiser QR Code",
+              "value": 19
+            },
+            {
+              "label": "Support alpha channel transparency",
+              "value": 20
+            },
+            {
+              "label": "Static Visual. Creative contains no perceptible motion and renders as a static visual, even if delivered in a video file format (e.g., MP4). No animated elements or time-based visual transitions are present.",
+              "value": 21
+            },
+            {
+              "label": "Limited Motion (Cinemagraph). Creative contains subtle or localized motion within an otherwise static composition. Motion is minimal, looped, and does not constitute full-scene animation or continuous narrative progression.",
+              "value": 22
+            },
+            {
+              "label": "Full-Motion Video. Creative contains continuous or scene-level motion typical of standard video assets, including dynamic visual transitions, camera movement, or narrative progression across frames.",
+              "value": 23
+            }
+          ],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_creativeattributes",
+      "title": "Creative Attributes",
+      "vendor": 500,
+      "vocabulary": "CreativeAttribute"
+    },
+    {
+      "codes": 16,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L180",
+          "enum": "Creative.AudioVideoType",
+          "extra": [],
+          "missing": [
+            {
+              "label": "VAST 4.3",
+              "value": 15
+            },
+            {
+              "label": "VAST 4.3 Wrapper",
+              "value": 16
+            }
+          ],
+          "narrow": null,
+          "sentinel": {
+            "name": "AudioVideoType_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/media_creative_subtype.go#L4",
+          "enum": "MediaCreativeSubtype",
+          "extra": [],
+          "missing": [
+            {
+              "label": "VAST 4.3",
+              "value": 15
+            },
+            {
+              "label": "VAST 4.3 Wrapper",
+              "value": 16
+            }
+          ],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_creativesubtypesaudiovideo",
+      "title": "Creative Subtypes - Audio/Video",
+      "vendor": null,
+      "vocabulary": "CreativeSubtypeAudioVideo"
+    },
+    {
+      "codes": 4,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L203",
+          "enum": "Creative.DisplayType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "DisplayType_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/display_creative_subtype.go#L4",
+          "enum": "DisplayCreativeSubtype",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_creativesubtypesdisplay",
+      "title": "Creative Subtypes - Display",
+      "vendor": null,
+      "vocabulary": "CreativeSubtypeDisplay"
+    },
+    {
+      "codes": 3,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L218",
+          "enum": "DeliveryMethod",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "DeliveryMethod_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/delivery_method.go#L4",
+          "enum": "DeliveryMethod",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_deliverymethods",
+      "title": "Delivery Methods",
+      "vendor": null,
+      "vocabulary": "DeliveryMethod"
+    },
+    {
+      "codes": 8,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L231",
+          "enum": "DeviceType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "DeviceType_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/device_type.go#L5",
+          "enum": "DeviceType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_devicetypes",
+      "title": "Device Types",
+      "vendor": null,
+      "vocabulary": "DeviceType"
+    },
+    {
+      "codes": 12,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L251",
+          "enum": "DisplayContextType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "DisplayContextType_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/display_context_type.go#L6",
+          "enum": "DisplayContextType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_displaycontexttypes",
+      "title": "Display Context Types",
+      "vendor": 500,
+      "vocabulary": "DisplayContextType"
+    },
+    {
+      "codes": 4,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L273",
+          "enum": "DisplayPlacementType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "DisplayPlacementType_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/display_placement_type.go#L4",
+          "enum": "DisplayPlacementType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_displayplacementtypes",
+      "title": "Display Placement Types",
+      "vendor": 500,
+      "vocabulary": "DisplayPlacementType"
+    },
+    {
+      "codes": 4,
+      "drift": [
+        {
+          "at": null,
+          "enum": null,
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/dooh_multiplier_measurement_source_type.go#L5",
+          "enum": "DOOHMultiplierMeasurementSourceType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_doohmultipliermeasurementmourcetypes",
+      "title": "DOOH Multiplier Measurement Source Types",
+      "vendor": null,
+      "vocabulary": "DoohMultiplierMeasurementSourceType"
+    },
+    {
+      "codes": 6,
+      "drift": [
+        {
+          "at": null,
+          "enum": null,
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/dooh_venue_taxonomies.go#L6",
+          "enum": "DOOHVenueTaxonomy",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_doohvenuetaxonomies",
+      "title": "DOOH Venue Taxonomies",
+      "vendor": null,
+      "vocabulary": "DoohVenueTaxonomy"
+    },
+    {
+      "codes": 0,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L289",
+          "enum": "DOOHVenueType",
+          "extra": [
+            {
+              "line": 292,
+              "name": "AIRBORNE",
+              "value": 1
+            },
+            {
+              "line": 293,
+              "name": "AIRPORT_GENERAL",
+              "value": 2
+            },
+            {
+              "line": 294,
+              "name": "AIRPORT_BAG_CLAIM",
+              "value": 3
+            },
+            {
+              "line": 295,
+              "name": "AIRPORT_TERMINAL",
+              "value": 4
+            },
+            {
+              "line": 296,
+              "name": "AIRPORT_LOUNGE",
+              "value": 5
+            },
+            {
+              "line": 297,
+              "name": "ATM",
+              "value": 6
+            },
+            {
+              "line": 298,
+              "name": "BACKLIGHT",
+              "value": 7
+            },
+            {
+              "line": 299,
+              "name": "BAR",
+              "value": 8
+            },
+            {
+              "line": 300,
+              "name": "BENCH",
+              "value": 9
+            },
+            {
+              "line": 301,
+              "name": "BIKE_RACK",
+              "value": 10
+            },
+            {
+              "line": 302,
+              "name": "BULLETIN",
+              "value": 11
+            },
+            {
+              "line": 303,
+              "name": "BUS",
+              "value": 12
+            },
+            {
+              "line": 304,
+              "name": "CAFE",
+              "value": 13
+            },
+            {
+              "line": 305,
+              "name": "CASUAL_DINING",
+              "value": 14
+            },
+            {
+              "line": 306,
+              "name": "CHILD_CARE",
+              "value": 15
+            },
+            {
+              "line": 307,
+              "name": "CINEMA",
+              "value": 16
+            },
+            {
+              "line": 308,
+              "name": "CITY_INFO_PANEL",
+              "value": 17
+            },
+            {
+              "line": 309,
+              "name": "CONVENIENCE_STORE",
+              "value": 18
+            },
+            {
+              "line": 310,
+              "name": "DED_WILD_POSTING",
+              "value": 19
+            },
+            {
+              "line": 311,
+              "name": "DOC_OFFICE_GEN",
+              "value": 20
+            },
+            {
+              "line": 312,
+              "name": "DOC_OFFICE_OB",
+              "value": 21
+            },
+            {
+              "line": 313,
+              "name": "DOC_OFFICE_PEDS",
+              "value": 22
+            },
+            {
+              "line": 314,
+              "name": "FAMILY_ENT",
+              "value": 23
+            },
+            {
+              "line": 315,
+              "name": "FERRY",
+              "value": 24
+            },
+            {
+              "line": 316,
+              "name": "FINANCIAL_SERVICE",
+              "value": 25
+            },
+            {
+              "line": 317,
+              "name": "GAS_STATION",
+              "value": 26
+            },
+            {
+              "line": 318,
+              "name": "GOLF_COURSE",
+              "value": 27
+            },
+            {
+              "line": 319,
+              "name": "GYM",
+              "value": 28
+            },
+            {
+              "line": 320,
+              "name": "HOSPITAL",
+              "value": 29
+            },
+            {
+              "line": 321,
+              "name": "HOTEL",
+              "value": 30
+            },
+            {
+              "line": 322,
+              "name": "JR_POSTER",
+              "value": 31
+            },
+            {
+              "line": 323,
+              "name": "KIOSK",
+              "value": 32
+            },
+            {
+              "line": 324,
+              "name": "MALL_GENERAL",
+              "value": 33
+            },
+            {
+              "line": 325,
+              "name": "MALL_FOOD_COURT",
+              "value": 34
+            },
+            {
+              "line": 326,
+              "name": "MARINE",
+              "value": 35
+            },
+            {
+              "line": 327,
+              "name": "MOBILE_BILLBOARD",
+              "value": 36
+            },
+            {
+              "line": 328,
+              "name": "MOVIE_THEATER_LOB",
+              "value": 37
+            },
+            {
+              "line": 329,
+              "name": "NEWSSTAND",
+              "value": 38
+            },
+            {
+              "line": 330,
+              "name": "OFFICE_BUILDING",
+              "value": 39
+            },
+            {
+              "line": 331,
+              "name": "PHONE_KIOSK",
+              "value": 40
+            },
+            {
+              "line": 332,
+              "name": "POSTER",
+              "value": 41
+            },
+            {
+              "line": 333,
+              "name": "QSR",
+              "value": 42
+            },
+            {
+              "line": 334,
+              "name": "RAIL",
+              "value": 43
+            },
+            {
+              "line": 335,
+              "name": "RECEPTACLE",
+              "value": 44
+            },
+            {
+              "line": 336,
+              "name": "RESORT",
+              "value": 45
+            },
+            {
+              "line": 337,
+              "name": "RETAIL",
+              "value": 46
+            },
+            {
+              "line": 338,
+              "name": "SALON",
+              "value": 47
+            },
+            {
+              "line": 339,
+              "name": "SHELTER",
+              "value": 48
+            },
+            {
+              "line": 340,
+              "name": "SPORTS_ARENA",
+              "value": 49
+            },
+            {
+              "line": 341,
+              "name": "SUBWAY",
+              "value": 50
+            },
+            {
+              "line": 342,
+              "name": "TAXI_WRAP_VEHICLE",
+              "value": 51
+            },
+            {
+              "line": 343,
+              "name": "TRUCKSIDE",
+              "value": 52
+            },
+            {
+              "line": 344,
+              "name": "UNIVERSITY",
+              "value": 53
+            },
+            {
+              "line": 345,
+              "name": "URBAN_PANEL",
+              "value": 54
+            },
+            {
+              "line": 346,
+              "name": "VET_OFFICE",
+              "value": 55
+            },
+            {
+              "line": 347,
+              "name": "WALL_SPECTACULAR",
+              "value": 56
+            },
+            {
+              "line": 348,
+              "name": "OTHER_X",
+              "value": 57
+            }
+          ],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "DOOHVenueType_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/dooh_venue_type.go#L5",
+          "enum": "DOOHVenueType",
+          "extra": [
+            {
+              "line": 11,
+              "name": "VenueAirborne",
+              "value": 1
+            },
+            {
+              "line": 12,
+              "name": "VenueAirportsGeneral",
+              "value": 2
+            },
+            {
+              "line": 13,
+              "name": "VenueAirportsBaggageClaim",
+              "value": 3
+            },
+            {
+              "line": 14,
+              "name": "VenueAirportsTerminal",
+              "value": 4
+            },
+            {
+              "line": 15,
+              "name": "VenueAirportsLounge",
+              "value": 5
+            },
+            {
+              "line": 16,
+              "name": "VenueATM",
+              "value": 6
+            },
+            {
+              "line": 17,
+              "name": "VenueBacklight",
+              "value": 7
+            },
+            {
+              "line": 18,
+              "name": "VenueBars",
+              "value": 8
+            },
+            {
+              "line": 19,
+              "name": "VenueBench",
+              "value": 9
+            },
+            {
+              "line": 20,
+              "name": "VenueBikeRack",
+              "value": 10
+            },
+            {
+              "line": 21,
+              "name": "VenueBulletin",
+              "value": 11
+            },
+            {
+              "line": 22,
+              "name": "VenueBuses",
+              "value": 12
+            },
+            {
+              "line": 23,
+              "name": "VenueCafes",
+              "value": 13
+            },
+            {
+              "line": 24,
+              "name": "VenueCasualDining",
+              "value": 14
+            },
+            {
+              "line": 25,
+              "name": "VenueChildCare",
+              "value": 15
+            },
+            {
+              "line": 26,
+              "name": "VenueCinema",
+              "value": 16
+            },
+            {
+              "line": 27,
+              "name": "VenueCityInformationPanel",
+              "value": 17
+            },
+            {
+              "line": 28,
+              "name": "VenueConvenienceStore",
+              "value": 18
+            },
+            {
+              "line": 29,
+              "name": "VenueDedicatedWildPosting",
+              "value": 19
+            },
+            {
+              "line": 30,
+              "name": "VenueDoctorsOffice",
+              "value": 20
+            },
+            {
+              "line": 31,
+              "name": "VenueDoctorsOfficeObstetrics",
+              "value": 21
+            },
+            {
+              "line": 32,
+              "name": "VenueDoctorsOfficePediatrics",
+              "value": 22
+            },
+            {
+              "line": 33,
+              "name": "VenueFamilyEntertainment",
+              "value": 23
+            },
+            {
+              "line": 34,
+              "name": "VenueFerry",
+              "value": 24
+            },
+            {
+              "line": 35,
+              "name": "VenueFinancialService",
+              "value": 25
+            },
+            {
+              "line": 36,
+              "name": "VenueGasStation",
+              "value": 26
+            },
+            {
+              "line": 37,
+              "name": "VenueGolfCourse",
+              "value": 27
+            },
+            {
+              "line": 38,
+              "name": "VenueGym",
+              "value": 28
+            },
+            {
+              "line": 39,
+              "name": "VenueHospital",
+              "value": 29
+            },
+            {
+              "line": 40,
+              "name": "VenueHotel",
+              "value": 30
+            },
+            {
+              "line": 41,
+              "name": "VenueJuniorPoster",
+              "value": 31
+            },
+            {
+              "line": 42,
+              "name": "VenueKiosk",
+              "value": 32
+            },
+            {
+              "line": 43,
+              "name": "VenueMall",
+              "value": 33
+            },
+            {
+              "line": 44,
+              "name": "VenueMallFoodCourt",
+              "value": 34
+            },
+            {
+              "line": 45,
+              "name": "VenueMarine",
+              "value": 35
+            },
+            {
+              "line": 46,
+              "name": "VenueMobileBillboard",
+              "value": 36
+            },
+            {
+              "line": 47,
+              "name": "VenueMovieTheaterLobby",
+              "value": 37
+            },
+            {
+              "line": 48,
+              "name": "VenueNewsStand",
+              "value": 38
+            },
+            {
+              "line": 49,
+              "name": "VenueOfficeBuilding",
+              "value": 39
+            },
+            {
+              "line": 50,
+              "name": "VenuePhoneKiosk",
+              "value": 40
+            },
+            {
+              "line": 51,
+              "name": "VenuePoster",
+              "value": 41
+            },
+            {
+              "line": 52,
+              "name": "VenueQSR",
+              "value": 42
+            },
+            {
+              "line": 53,
+              "name": "VenueRail",
+              "value": 43
+            },
+            {
+              "line": 54,
+              "name": "VenueReceptacle",
+              "value": 44
+            },
+            {
+              "line": 55,
+              "name": "VenueResortLeisure",
+              "value": 45
+            },
+            {
+              "line": 56,
+              "name": "VenueRetail",
+              "value": 46
+            },
+            {
+              "line": 57,
+              "name": "VenueSalon",
+              "value": 47
+            },
+            {
+              "line": 58,
+              "name": "VenueShelter",
+              "value": 48
+            },
+            {
+              "line": 59,
+              "name": "VenueSportsArena",
+              "value": 49
+            },
+            {
+              "line": 60,
+              "name": "VenueSubway",
+              "value": 50
+            },
+            {
+              "line": 61,
+              "name": "VenueTaxi",
+              "value": 51
+            },
+            {
+              "line": 62,
+              "name": "VenueTruckSide",
+              "value": 52
+            },
+            {
+              "line": 63,
+              "name": "VenueUniversity",
+              "value": 53
+            },
+            {
+              "line": 64,
+              "name": "VenueUrbanPanel",
+              "value": 54
+            },
+            {
+              "line": 65,
+              "name": "VenueVeterinarianOffice",
+              "value": 55
+            },
+            {
+              "line": 66,
+              "name": "VenueWallSpectacular",
+              "value": 56
+            },
+            {
+              "line": 67,
+              "name": "VenueOther",
+              "value": 57
+            }
+          ],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_doohvenuetypes",
+      "title": "DOOH Venue Types (deprecated)",
+      "vendor": null,
+      "vocabulary": null
+    },
+    {
+      "codes": 2,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L356",
+          "enum": "EventTrackingMethod",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "EventTrackingMethod_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/event_tracking_method.go#L5",
+          "enum": "EventTrackingMethod",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_eventtrackingmethods",
+      "title": "Event Tracking Methods",
+      "vendor": 500,
+      "vocabulary": "EventTrackingMethod"
+    },
+    {
+      "codes": 5,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L369",
+          "enum": "EventType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "EventType_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/event_type.go#L6",
+          "enum": "EventType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_eventtypes",
+      "title": "Event Types",
+      "vendor": 500,
+      "vocabulary": "EventType"
+    },
+    {
+      "codes": 6,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L384",
+          "enum": "ExpandableDirection",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "ExpandableDirection_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/expandable_direction.go#L4",
+          "enum": "ExpandableDirection",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_expandabledirections",
+      "title": "Expandable Directions",
+      "vendor": null,
+      "vocabulary": "ExpandableDirection"
+    },
+    {
+      "codes": 7,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L399",
+          "enum": "FeedType",
+          "extra": [],
+          "missing": [
+            {
+              "label": "AOD: Catch-up radio (recorded segment of a radio show that was originally broadcast live)",
+              "value": 4
+            },
+            {
+              "label": "LIVE: Web radio (live content only available via online streaming, not as AM/FM broadcast)",
+              "value": 5
+            },
+            {
+              "label": "MISC: Video game (background audio in video games)",
+              "value": 6
+            },
+            {
+              "label": "MISC: Text to speech (audio books, website plugin that can read article)",
+              "value": 7
+            }
+          ],
+          "narrow": null,
+          "sentinel": {
+            "name": "FeedType_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/feed_type.go#L4",
+          "enum": "FeedType",
+          "extra": [],
+          "missing": [],
+          "narrow": {
+            "codes": [],
+            "max": 127,
+            "type": "int8",
+            "vendor": true
+          },
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_feedtypes",
+      "title": "Feed Types",
+      "vendor": 500,
+      "vocabulary": "FeedType"
+    },
+    {
+      "codes": 6,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L413",
+          "enum": "MatchMethod",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/match_method.go#L5",
+          "enum": "MatchMethod",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_idmatchmethod",
+      "title": "ID Match Methods",
+      "vendor": 500,
+      "vocabulary": "IdMatchMethod"
+    },
+    {
+      "codes": 6,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L440",
+          "enum": "LocationService",
+          "extra": [],
+          "missing": [
+            {
+              "label": "51Degrees (High Confidence)",
+              "value": 511
+            },
+            {
+              "label": "51Degrees (Medium Confidence)",
+              "value": 512
+            }
+          ],
+          "narrow": null,
+          "sentinel": {
+            "name": "LocationService_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/ip_location_service.go#L4",
+          "enum": "IPLocationService",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_iplocationservices",
+      "title": "IP Location Services",
+      "vendor": null,
+      "vocabulary": "IpLocationService"
+    },
+    {
+      "codes": 2,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L455",
+          "enum": "LinearityMode",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "LinearityMode_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/linearity_mode.go#L4",
+          "enum": "LinearityMode",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_linearitymodes",
+      "title": "Linearity Modes",
+      "vendor": null,
+      "vocabulary": "LinearityMode"
+    },
+    {
+      "codes": 3,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L466",
+          "enum": "LocationType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "LocationType_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/location_type.go#L4",
+          "enum": "LocationType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_locationtypes",
+      "title": "Location Types",
+      "vendor": null,
+      "vocabulary": "LocationType"
+    },
+    {
+      "codes": 3,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L480",
+          "enum": "MediaRating",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "MediaRating_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/media_rating.go#L5",
+          "enum": "MediaRating",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_mediaratings",
+      "title": "Media Ratings",
+      "vendor": null,
+      "vocabulary": "MediaRating"
+    },
+    {
+      "codes": 12,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L495",
+          "enum": "NativeDataAssetType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "NativeDataAssetType_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/native_data_asset_type.go#L6",
+          "enum": "NativeDataAssetType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_nativedataassettypes",
+      "title": "Native Data Asset Types",
+      "vendor": 500,
+      "vocabulary": "NativeDataAssetType"
+    },
+    {
+      "codes": 2,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L550",
+          "enum": "NativeImageAssetType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "NativeImageAssetType_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/native_image_asset_type.go#L6",
+          "enum": "NativeImageAssetType",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_nativeimageassettypes",
+      "title": "Native Image Asset Types",
+      "vendor": 500,
+      "vocabulary": "NativeImageAssetType"
+    },
+    {
+      "codes": 29,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L570",
+          "enum": "OperatingSystem",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/operating_system.go#L4",
+          "enum": "OperatingSystem",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_operatingsystems",
+      "title": "Operating Systems",
+      "vendor": 500,
+      "vocabulary": "OperatingSystem"
+    },
+    {
+      "codes": 18,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L607",
+          "enum": "PlacementPosition",
+          "extra": [],
+          "missing": [
+            {
+              "label": "Partial Screen",
+              "value": 8
+            },
+            {
+              "label": "Top Left",
+              "value": 9
+            },
+            {
+              "label": "Top Right",
+              "value": 10
+            },
+            {
+              "label": "Frame the content",
+              "value": 11
+            },
+            {
+              "label": "Double box",
+              "value": 12
+            },
+            {
+              "label": "Double box with background",
+              "value": 13
+            },
+            {
+              "label": "Bottom Left",
+              "value": 14
+            },
+            {
+              "label": "Bottom Right",
+              "value": 15
+            },
+            {
+              "label": "L shape",
+              "value": 16
+            },
+            {
+              "label": "Reversed L shape",
+              "value": 17
+            }
+          ],
+          "narrow": null,
+          "sentinel": null,
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/placement_position.go#L5",
+          "enum": "PlacementPosition",
+          "extra": [],
+          "missing": [
+            {
+              "label": "Partial Screen",
+              "value": 8
+            },
+            {
+              "label": "Top Left",
+              "value": 9
+            },
+            {
+              "label": "Top Right",
+              "value": 10
+            },
+            {
+              "label": "Frame the content",
+              "value": 11
+            },
+            {
+              "label": "Double box",
+              "value": 12
+            },
+            {
+              "label": "Double box with background",
+              "value": 13
+            },
+            {
+              "label": "Bottom Left",
+              "value": 14
+            },
+            {
+              "label": "Bottom Right",
+              "value": 15
+            },
+            {
+              "label": "L shape",
+              "value": 16
+            },
+            {
+              "label": "Reversed L shape",
+              "value": 17
+            }
+          ],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_placementpositions",
+      "title": "Placement Positions",
+      "vendor": null,
+      "vocabulary": "PlacementPosition"
+    },
+    {
+      "codes": 0,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L624",
+          "enum": "VideoPlacementSubtype",
+          "extra": [
+            {
+              "line": 629,
+              "name": "IN_STREAM",
+              "value": 1
+            },
+            {
+              "line": 634,
+              "name": "IN_BANNER",
+              "value": 2
+            },
+            {
+              "line": 638,
+              "name": "IN_ARTICLE",
+              "value": 3
+            },
+            {
+              "line": 641,
+              "name": "IN_FEED",
+              "value": 4
+            },
+            {
+              "line": 645,
+              "name": "INTERSTITIAL",
+              "value": 5
+            }
+          ],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "VideoPlacementSubtype_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/video_placement_subtype.go#L7",
+          "enum": "VideoPlacementSubtype",
+          "extra": [
+            {
+              "line": 11,
+              "name": "VideoPlacementInStream",
+              "value": 1
+            },
+            {
+              "line": 12,
+              "name": "VideoPlacementInBanner",
+              "value": 2
+            },
+            {
+              "line": 13,
+              "name": "VideoPlacementInArticle",
+              "value": 3
+            },
+            {
+              "line": 14,
+              "name": "VideoPlacementInFeed",
+              "value": 4
+            },
+            {
+              "line": 15,
+              "name": "VideoPlacementAlwaysVisible",
+              "value": 5
+            }
+          ],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_placementsubtypesvideo",
+      "title": "Placement Subtypes - Video",
+      "vendor": null,
+      "vocabulary": null
+    },
+    {
+      "codes": 9,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L653",
+          "enum": "VideoPlcmtSubtype",
+          "extra": [],
+          "missing": [
+            {
+              "label": "Pause: An ad present in streaming video content that the consumer has requested. While there may be other content surrounding the player, the video content must be the focus of the user’s visit. It should remain the primary content on the page and the only video player in-view.",
+              "value": 5
+            },
+            {
+              "label": "Screensaver: An ad present, when OS/App Screen Saver are initiated.",
+              "value": 6
+            },
+            {
+              "label": "Overlay: Ads occurring during program content and outside of the traditional ad break. The ad format places ad creatives over top of the program content, often as a banner or picture in picture execution. While there may be other content surrounding the player with the overlay, the player with the overlay must be the focus of the user’s visit. It should remain the primary content on the page and the primary video player in-view.",
+              "value": 7
+            },
+            {
+              "label": "Squeezeback: Ads Alongside or Adjacent to Content, also known as L-Shape Ads & Double Box, are ads that occur during program content and outside of the traditional ad break. The program content is resized to allow for placement of an ad on the screen. In a squeezeback, none of the content is covered by the ad, instead it shares screen space with the ad. This is the major distinction between squeezeback and overlay. While there may be other content surrounding the player with the squeezeback, the player with the squeezeback must be the focus of the user’s visit. It should remain the primary content on the page and the primary video player in-view.",
+              "value": 8
+            },
+            {
+              "label": "In-scene: A form of advertising that integrates branded elements directly within the content itself, rather than appearing as separate pre-roll, mid-roll, overlay, or display formats. In Scene Advertising is composited into the video content and blends the brand naturally into the scene, environment, or storyline, ensuring contextual relevance and viewer immersion without interrupting the user experience. In-scene ads typically consist of product placements or virtual out of A insertions. At this time, the standardization focuses on the out of home insertions in non-live content. While there may be other content surrounding the player with the in-scene ad, the player with the in-scene ad must be the focus of the user’s visit. It should remain the primary content on the page and the primary video player in-view.",
+              "value": 9
+            }
+          ],
+          "narrow": null,
+          "sentinel": {
+            "name": "VideoPlcmtSubtype_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/video_plcmt_subtype.go#L5",
+          "enum": "VideoPlcmtSubtype",
+          "extra": [],
+          "missing": [
+            {
+              "label": "Pause: An ad present in streaming video content that the consumer has requested. While there may be other content surrounding the player, the video content must be the focus of the user’s visit. It should remain the primary content on the page and the only video player in-view.",
+              "value": 5
+            },
+            {
+              "label": "Screensaver: An ad present, when OS/App Screen Saver are initiated.",
+              "value": 6
+            },
+            {
+              "label": "Overlay: Ads occurring during program content and outside of the traditional ad break. The ad format places ad creatives over top of the program content, often as a banner or picture in picture execution. While there may be other content surrounding the player with the overlay, the player with the overlay must be the focus of the user’s visit. It should remain the primary content on the page and the primary video player in-view.",
+              "value": 7
+            },
+            {
+              "label": "Squeezeback: Ads Alongside or Adjacent to Content, also known as L-Shape Ads & Double Box, are ads that occur during program content and outside of the traditional ad break. The program content is resized to allow for placement of an ad on the screen. In a squeezeback, none of the content is covered by the ad, instead it shares screen space with the ad. This is the major distinction between squeezeback and overlay. While there may be other content surrounding the player with the squeezeback, the player with the squeezeback must be the focus of the user’s visit. It should remain the primary content on the page and the primary video player in-view.",
+              "value": 8
+            },
+            {
+              "label": "In-scene: A form of advertising that integrates branded elements directly within the content itself, rather than appearing as separate pre-roll, mid-roll, overlay, or display formats. In Scene Advertising is composited into the video content and blends the brand naturally into the scene, environment, or storyline, ensuring contextual relevance and viewer immersion without interrupting the user experience. In-scene ads typically consist of product placements or virtual out of A insertions. At this time, the standardization focuses on the out of home insertions in non-live content. While there may be other content surrounding the player with the in-scene ad, the player with the in-scene ad must be the focus of the user’s visit. It should remain the primary content on the page and the primary video player in-view.",
+              "value": 9
+            }
+          ],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_plcmtsubtypesvideo",
+      "title": "Plcmt Subtypes - Video",
+      "vendor": null,
+      "vocabulary": "PlcmtSubtypeVideo"
+    },
+    {
+      "codes": 3,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L686",
+          "enum": "PlaybackCessationMode",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "PlaybackCessationMode_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/playback_cessation_mode.go#L4",
+          "enum": "PlaybackCessationMode",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_playbackcessationmodes",
+      "title": "Playback Cessation Modes",
+      "vendor": null,
+      "vocabulary": "PlaybackCessationMode"
+    },
+    {
+      "codes": 11,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L699",
+          "enum": "PlaybackMethod",
+          "extra": [],
+          "missing": [
+            {
+              "label": "Continuous Playback - Media playback is set to play additional media automatically without user interaction. The media player will keep playing additional media (playlist or generated) for the user until the user actively stops this from happening.",
+              "value": 7
+            },
+            {
+              "label": "Initiated by user pausing content, Sound on",
+              "value": 8
+            },
+            {
+              "label": "Initiated by user pausing content, Sound off",
+              "value": 9
+            },
+            {
+              "label": "Initiated by idling (e.g. screensaver), Sound on",
+              "value": 10
+            },
+            {
+              "label": "Initiated by idling (e.g. screensaver), Sound off",
+              "value": 11
+            }
+          ],
+          "narrow": null,
+          "sentinel": {
+            "name": "PlaybackMethod_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/playback_method.go#L4",
+          "enum": "PlaybackMethod",
+          "extra": [],
+          "missing": [
+            {
+              "label": "Initiated by user pausing content, Sound on",
+              "value": 8
+            },
+            {
+              "label": "Initiated by user pausing content, Sound off",
+              "value": 9
+            },
+            {
+              "label": "Initiated by idling (e.g. screensaver), Sound on",
+              "value": 10
+            },
+            {
+              "label": "Initiated by idling (e.g. screensaver), Sound off",
+              "value": 11
+            }
+          ],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_playbackmethods",
+      "title": "Playback Methods",
+      "vendor": null,
+      "vocabulary": "PlaybackMethod"
+    },
+    {
+      "codes": 5,
+      "drift": [
+        {
+          "at": null,
+          "enum": null,
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/pod_dedupe.go#L6",
+          "enum": "PodDedupe",
+          "extra": [],
+          "missing": [
+            {
+              "label": "No deduplication",
+              "value": 5
+            }
+          ],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_poddedupe",
+      "title": "Pod Deduplication Settings",
+      "vendor": null,
+      "vocabulary": "PodDeduplicationSetting"
+    },
+    {
+      "codes": 3,
+      "drift": [
+        {
+          "at": null,
+          "enum": null,
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/pod_sequence.go#L4",
+          "enum": "PodSequence",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_podsequence",
+      "title": "Pod Sequence",
+      "vendor": null,
+      "vocabulary": "PodSequence"
+    },
+    {
+      "codes": 4,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L715",
+          "enum": "ProductionQuality",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/production_quality.go#L4",
+          "enum": "ProductionQuality",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_productionqualities",
+      "title": "Production Qualities",
+      "vendor": null,
+      "vocabulary": "ProductionQuality"
+    },
+    {
+      "codes": 3,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L728",
+          "enum": "SizeUnit",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": {
+            "name": "SizeUnit_UNKNOWN",
+            "value": 0
+          },
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/size_unit.go#L4",
+          "enum": "SizeUnit",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_sizeunits",
+      "title": "Size Units",
+      "vendor": null,
+      "vocabulary": "SizeUnit"
+    },
+    {
+      "codes": 4,
+      "drift": [
+        {
+          "at": null,
+          "enum": null,
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/slot_position_in_pod.go#L4",
+          "enum": "SlotPositionInPod",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_slotpositioninpod",
+      "title": "Slot Position in Pod",
+      "vendor": null,
+      "vocabulary": "SlotPositionInPod"
+    },
+    {
+      "codes": 3,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L742",
+          "enum": "StartDelayMode",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/start_delay.go#L4",
+          "enum": "StartDelay",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_startdelaymodes",
+      "title": "Start Delay Modes",
+      "vendor": null,
+      "vocabulary": "StartDelayMode"
+    },
+    {
+      "codes": 4,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L762",
+          "enum": "UserAgentSource",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/user_agent_source.go#L4",
+          "enum": "UserAgentSource",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "user-agent_source",
+      "title": "User-Agent Source",
+      "vendor": null,
+      "vocabulary": "UserAgentSource"
+    },
+    {
+      "codes": 5,
+      "drift": [
+        {
+          "at": "https://github.com/IABTechLab/adcom-proto/blob/921f85e685fed869344437378f4dea2be19b7b49/proto/com/iabtechlab/adcom/v1/enums/enums.proto#L751",
+          "enum": "VolumeNormalizationMode",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "adcom-proto",
+          "versions": []
+        },
+        {
+          "at": "https://github.com/prebid/openrtb/blob/0d01af1cd27503d7edd0584fadb7e740ab83cc9c/adcom1/volume_normalization_mode.go#L4",
+          "enum": "VolumeNormalizationMode",
+          "extra": [],
+          "missing": [],
+          "narrow": null,
+          "sentinel": null,
+          "source": "prebid-openrtb",
+          "versions": []
+        }
+      ],
+      "list": "list_volumenormalizationmodes",
+      "title": "Volume Normalization Modes",
+      "vendor": null,
+      "vocabulary": "VolumeNormalizationMode"
+    }
+  ],
+  "sources": [
+    {
+      "commit": "921f85e685fed869344437378f4dea2be19b7b49",
+      "files": 1,
+      "folder": "proto/com/iabtechlab/adcom/v1/enums",
+      "id": "adcom-proto",
+      "reader": "proto",
+      "title": "adcom-proto",
+      "upstream": "https://github.com/IABTechLab/adcom-proto"
+    },
+    {
+      "commit": "0d01af1cd27503d7edd0584fadb7e740ab83cc9c",
+      "files": 94,
+      "folder": "adcom1",
+      "id": "prebid-openrtb",
+      "reader": "go",
+      "title": "Prebid adcom1",
+      "upstream": "https://github.com/prebid/openrtb"
+    }
+  ],
+  "totals": {
+    "adcom-proto": {
+      "compared": 36,
+      "extra": 0,
+      "listsExtra": 0,
+      "listsMissing": 9,
+      "missing": 37,
+      "narrow": 0,
+      "noEnum": 6,
+      "removedKept": 2,
+      "sentinels": 30,
+      "versions": 1
+    },
+    "prebid-openrtb": {
+      "compared": 42,
+      "extra": 0,
+      "listsExtra": 0,
+      "listsMissing": 7,
+      "missing": 29,
+      "narrow": 1,
+      "noEnum": 0,
+      "removedKept": 2,
+      "sentinels": 1,
+      "versions": 0
+    }
+  }
+}

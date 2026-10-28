@@ -19,13 +19,20 @@
       "description": "The specification sections the module owns, as IR section IDs such as `5.6` or `5.4/creative-inspection-and-previews`. Every section belongs to exactly one module, and every entry's element sits in one of its file's sections.",
       "type": "array",
       "uniqueItems": true,
-      "items": { "type": "string", "pattern": "^[A-Za-z0-9.]+(/[a-z0-9-]+)?$" }
+      "items": { "type": "string", "pattern": "^[A-Za-z0-9._-]+(/[a-z0-9-]+)?$" }
     },
     "depends": {
       "description": "The other modules whose types this module's types may reference, the kernel aside, which every module may reference (type rules § 3). The convention gate fails on a reference to a module the file doesn't list, on a listed module that no type references on any lock, and on a cycle.",
       "type": "array",
       "uniqueItems": true,
       "items": { "$ref": "#/$defs/module" }
+    },
+    "deferred": {
+      "description": "A module whose elements the mapping leaves for a later phase, with the decision that says why: every element in its sections is informative by the rule `deferred-module`, so the bijection holds and nothing in them shapes a type yet.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision"],
+      "properties": { "decision": { "$ref": "#/$defs/decisionId" } }
     },
     "types": {
       "description": "Model types that no single IR element defines: a document, an object that a key table or sub-field rows describe, an object or vocabulary that a decision gives a shape, and a union that a slash type names.",
@@ -147,6 +154,21 @@
             }
           }
         },
+        "vendor": {
+          "description": "For a vocabulary of the specification's own codes: the codes it reserves for vendors, from `from` up, with the label its row gives them, as AdCOM's `500+` rows do. The vocabulary is open, and a vendor's code is its extension (type rules § 6).",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["from", "label"],
+          "properties": { "from": { "type": "integer", "minimum": 1 }, "label": { "type": "string" } }
+        },
+        "labeled": {
+          "description": "For a vocabulary whose terms its definition rows give: each term takes its row's text as its label, as a code list's codes do.",
+          "type": "boolean"
+        },
+        "extension": {
+          "description": "For an open vocabulary: the kernel primitive its extension terms are, where a decision gives one other than a vendor's code or a namespaced term, such as a range of codes a row writes as `>0`.",
+          "$ref": "#/$defs/name"
+        },
         "any_of": {
           "description": "A union's branches (type rules § 8).",
           "type": "array",
@@ -155,10 +177,10 @@
         }
       },
       "oneOf": [
-        { "properties": { "kind": { "const": "document" }, "open": false, "terms": false, "any_of": false, "includes": false, "list": false, "description": false } },
-        { "required": ["open"], "properties": { "kind": { "const": "object" }, "terms": false, "any_of": false, "list": false } },
+        { "properties": { "kind": { "const": "document" }, "open": false, "terms": false, "any_of": false, "includes": false, "list": false, "description": false, "vendor": false, "labeled": false, "extension": false } },
+        { "required": ["open"], "properties": { "kind": { "const": "object" }, "terms": false, "any_of": false, "list": false, "vendor": false, "labeled": false, "extension": false } },
         { "required": ["open"], "properties": { "kind": { "const": "vocabulary" }, "members": false, "any_of": false, "includes": false }, "dependentRequired": { "list": ["terms"] } },
-        { "required": ["any_of"], "properties": { "kind": { "const": "union" }, "open": false, "members": false, "terms": false, "includes": false, "list": false, "description": false } }
+        { "required": ["any_of"], "properties": { "kind": { "const": "union" }, "open": false, "members": false, "terms": false, "includes": false, "list": false, "description": false, "vendor": false, "labeled": false, "extension": false } }
       ]
     },
     "members": {

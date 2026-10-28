@@ -1,0 +1,60 @@
+# The AdCOM kernel binding (src/binding.ts): what AdCOM adds to the shared
+# kernel's definitions in kernel/primitives.yaml, constructors.yaml, and
+# domains.yaml. Each item is named as the kernel names it. A spec source is
+# quoted and digested; regenerate a quote and a digest with
+# `npm run cite -- --all-locks <IR element ID>`.
+format: 1
+spec: adcom
+# AdCOM's lists use one kernel primitive, the vendor's code its `500+` rows
+# reserve. Every other kernel item rests on a text AdCOM's lists don't write,
+# so it is absent from AdCOM's kernel until a later phase maps text that uses
+# it.
+primitives:
+  - { name: Uuid, absent: true }
+  - { name: ExternalId, absent: true }
+  - { name: Text, absent: true }
+  - { name: Url, absent: true }
+  - { name: Domain, absent: true }
+  - { name: FormatId, absent: true }
+  - { name: CurrencyCode, absent: true }
+  - { name: Amount, absent: true }
+  - { name: PriceAdjustment, absent: true }
+  - { name: PercentChange, absent: true }
+  - { name: Fraction, absent: true }
+  - { name: Count, absent: true }
+  - { name: Timestamp, absent: true }
+  - { name: Duration, absent: true }
+  - { name: TimeOfDay, absent: true }
+  - { name: DayName, absent: true }
+  - { name: TimeZone, absent: true }
+  - { name: NamespacedTerm, absent: true }
+  - { name: CatalogRef, absent: true }
+  - { name: Digest, absent: true }
+constructors:
+  - { name: Selectable, absent: true }
+  - { name: Settable, absent: true }
+  - { name: Range, absent: true }
+  - { name: CatalogRefOr, absent: true }
+  - { name: List, absent: true }
+  - { name: Map, absent: true }
+parts:
+  - { name: PriceDelta, absent: true }
+  - { name: CatalogReference, absent: true }
+  - { name: DaypartWindow, absent: true }
+domains:
+  - { name: identity, absent: true }
+  - { name: reference, absent: true }
+  - { name: text, absent: true }
+  - { name: network, absent: true }
+  - { name: money, absent: true }
+  - { name: ratio, absent: true }
+  - { name: quantity, absent: true }
+  - { name: time, absent: true }
+  - name: term
+    concepts:
+      - { name: namespaced-term, absent: true }
+  - { name: flag, absent: true }
+homonyms: []
+bases: []
+shared_structures:
+  - { concepts: [external-id, text], absent: true }

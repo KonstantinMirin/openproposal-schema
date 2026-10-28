@@ -1,0 +1,659 @@
+{
+  "$defs": {
+    "AgentType": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2,
+            3
+          ],
+          "type": "integer"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/VendorCode"
+        }
+      ],
+      "description": "The codes of List: Agent Types, each with its row's text; `1`: An ID which is tied to a specific web browser or device (cookie-based, probabilistic, or other).; `2`: In-app impressions, which will typically contain a type of device ID (or rather, the privacy-compliant versions of device IDs).; `3`: A person-based ID, i.e., that is the same across devices.; from 500 up: Vendor-specific codes."
+    },
+    "ApiFramework": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "type": "integer"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/VendorCode"
+        }
+      ],
+      "description": "The codes of List: API Frameworks, each with its row's text; `1`: VPAID 1.0; `2`: VPAID 2.0; `3`: MRAID 1.0; `4`: ORMMA; `5`: MRAID 2.0; `6`: MRAID 3.0; `7`: OMID 1.0; `8`: SIMID 1.0; `9`: SIMID 1.1; from 500 up: Vendor-specific codes."
+    },
+    "AuditStatusCode": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "type": "integer"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/VendorCode"
+        }
+      ],
+      "description": "The codes of List: Audit Status Codes, each with its row's text; `1`: Pending Audit: An audit has not yet been completed on this ad. A recommendation cannot be made to use this ad, but vendors' policies may override.; `2`: Pre-Approved: An audit has not yet been completed on this ad. Subject to vendors' policies, it can be recommended for use. However, once the audit has been completed, its status will change and it may or may not be approved for continued use.; `3`: Approved: The audit is complete and the ad is approved for use. Note, however, that some attributes (e.g., `adomain`, `cat`, `attr`, etc.) may have been changed in the process by the auditor.; `4`: Denied: The audit is complete, but the ad has been found unacceptable in some material aspect and is disapproved for use.; `5`: Changed; Resubmission Requested: A version of the ad has been detected in use that is materially different from the version that was previously audited, which may result in rejection during use until the ad is resubmitted for audit and approved. Vendors need to communicate offline as to the criteria that constitutes a material change.; `6`: Expired: The ad has been marked as expired by the vendor. Vendors need to communicate offline as to the expected bidding behavior for ads with this status.; from 500 up: Vendor-specific codes."
+    },
+    "AutoRefreshTrigger": {
+      "description": "The codes of List: Auto Refresh Triggers, each with its row's text; `0`: UNKNOWN; `1`: User Action: Refresh triggered by user-initiated action such as scrolling.; `2`: Event: Event-driven content change. For example, ads refresh when the football game score changes on the page.; `3`: Time:Time-based refresh. Ads refresh on a predefined time interval even without user activity.",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "type": "integer"
+    },
+    "CategoryTaxonomy": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "type": "integer"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/VendorCode"
+        }
+      ],
+      "description": "The codes of List: Category Taxonomies, each with its row's text; `1`: IAB Tech Lab Content Category Taxonomy 1.0: Deprecated, and recommend NOT be used since it does not have SCD flags.; `2`: IAB Tech Lab Content Category Taxonomy 2.0: Deprecated, and recommend NOT be used since it does not have SCD flags.; `3`: IAB Tech Lab Ad Product Taxonomy 1.0.; `4`: IAB Tech Lab Audience Taxonomy 1.1; `5`: IAB Tech Lab Content Taxonomy 2.1; `6`: IAB Tech Lab Content Taxonomy 2.2; `7`: IAB Tech Lab Content Taxonomy 3.0; `8`: IAB Tech Lab Ad Product Taxonomy 2.0; `9`: IAB Tech Lab Content Taxonomy 3.1; from 500 up: Vendor-specific codes."
+    },
+    "ClickType": {
+      "anyOf": [
+        {
+          "enum": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "type": "integer"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/VendorCode"
+        }
+      ],
+      "description": "The codes of List: Click Types, each with its row's text; `0`: Non-Clickable; `1`: Clickable - Details Unknown; `2`: Clickable - Embedded Browser/Webview; `3`: Clickable - Native Browser; from 500 up: Vendor-specific codes."
+    },
+    "CompanionType": {
+      "description": "The codes of List: Companion Types, each with its row's text; `1`: Static Resource; `2`: HTML Resource; `3`: iframe Resource",
+      "enum": [
+        1,
+        2,
+        3
+      ],
+      "type": "integer"
+    },
+    "ConnectionType": {
+      "description": "The codes of List: Connection Types, each with its row's text; `1`: Ethernet; Wired Connection; `2`: WIFI; `3`: Cellular Network - Unknown Generation; `4`: Cellular Network - 2G; `5`: Cellular Network - 3G; `6`: Cellular Network - 4G; `7`: Cellular Network - 5G",
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "type": "integer"
+    },
+    "ContentContext": {
+      "description": "The codes of List: Content Contexts, each with its row's text; `1`: Video (i.e., video file or stream such as Internet TV broadcasts); `2`: Game (i.e., an interactive software game); `3`: Music (i.e., audio file or stream such as Internet radio broadcasts); `4`: Application (i.e., an interactive software application); `5`: Text (i.e., primarily textual document such as a web page, eBook, or news article); `6`: Other (i.e., none of the other categories applies); `7`: Unknown",
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "type": "integer"
+    },
+    "CreativeAttribute": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "type": "integer"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/VendorCode"
+        }
+      ],
+      "description": "The codes of List: Creative Attributes, each with its row's text; `1`: Audio Ad (Autoplay); `2`: Audio Ad (User Initiated); `3`: Expandable (Automatic); `4`: Expandable (User Initiated - Click); `5`: Expandable (User Initiated - Rollover); `6`: In-Banner Video Ad (Autoplay); `7`: In-Banner Video Ad (User Initiated); `8`: Pop (e.g., Over, Under, or Upon Exit); `9`: Provocative or Suggestive Imagery; `10`: Shaky, Flashing, Flickering, Extreme Animation, Smileys; `11`: Surveys; `12`: Text Only; `13`: User Interactive (e.g., Embedded Games); `14`: Windows Dialog or Alert Style; `15`: Has Audio On/Off Button; `16`: Ad Provides Skip Button (e.g. VPAID-rendered skip button on pre-roll video); `17`: Adobe Flash; `18`: Responsive; Sizeless; Fluid (i.e., creatives that dynamically resize to environment); `19`: Contains advertiser QR Code; `20`: Support alpha channel transparency; `21`: Static Visual. Creative contains no perceptible motion and renders as a static visual, even if delivered in a video file format (e.g., MP4). No animated elements or time-based visual transitions are present.; `22`: Limited Motion (Cinemagraph). Creative contains subtle or localized motion within an otherwise static composition. Motion is minimal, looped, and does not constitute full-scene animation or continuous narrative progression.; `23`: Full-Motion Video. Creative contains continuous or scene-level motion typical of standard video assets, including dynamic visual transitions, camera movement, or narrative progression across frames.; from 500 up: Vendor-specific codes."
+    },
+    "CreativeSubtypeAudioVideo": {
+      "description": "The codes of List: Creative Subtypes - Audio/Video, each with its row's text; `1`: VAST 1.0; `2`: VAST 2.0; `3`: VAST 3.0; `4`: VAST 1.0 Wrapper; `5`: VAST 2.0 Wrapper; `6`: VAST 3.0 Wrapper; `7`: VAST 4.0; `8`: VAST 4.0 Wrapper; `9`: DAAST 1.0; `10`: DAAST 1.0 Wrapper; `11`: VAST 4.1; `12`: VAST 4.1 Wrapper; `13`: VAST 4.2; `14`: VAST 4.2 Wrapper; `15`: VAST 4.3; `16`: VAST 4.3 Wrapper",
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "type": "integer"
+    },
+    "CreativeSubtypeDisplay": {
+      "description": "The codes of List: Creative Subtypes - Display, each with its row's text; `1`: HTML; `2`: AMPHTML; `3`: Structured Image Object; `4`: Structured Native Object",
+      "enum": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "type": "integer"
+    },
+    "DeliveryMethod": {
+      "description": "The codes of List: Delivery Methods, each with its row's text; `1`: Streaming; `2`: Progressive; `3`: Download",
+      "enum": [
+        1,
+        2,
+        3
+      ],
+      "type": "integer"
+    },
+    "DeviceType": {
+      "description": "The codes of List: Device Types, each with its row's text; `1`: Mobile/Tablet - General; `2`: Personal Computer; `3`: Connected TV; `4`: Phone; `5`: Tablet; `6`: Connected Device; `7`: Set Top Box; `8`: OOH Device",
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "type": "integer"
+    },
+    "DisplayContextType": {
+      "anyOf": [
+        {
+          "enum": [
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            20,
+            21,
+            22,
+            30,
+            31,
+            32
+          ],
+          "type": "integer"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/VendorCode"
+        }
+      ],
+      "description": "The codes of List: Display Context Types, each with its row's text; `10`: Content-centric context (e.g., newsfeed, article, image gallery, video gallery, etc.).; `11`: - Primarily article content, which could include images, etc. as part of the article.; `12`: - Primarily video content.; `13`: - Primarily audio content.; `14`: - Primarily image content.; `15`: - User-generated content (e.g., forums, comments, etc.).; `20`: Social-centric context (e.g., social network feed, email, chat, etc.).; `21`: - Primarily email content.; `22`: - Primarily chat/IM content.; `30`: Product context (e.g., product listings, details, recommendations, reviews, etc.).; `31`: - App store/marketplace.; `32`: - Product reviews site primarily, which may sell product secondarily.; from 500 up: Vendor-specific codes."
+    },
+    "DisplayPlacementType": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "type": "integer"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/VendorCode"
+        }
+      ],
+      "description": "The codes of List: Display Placement Types, each with its row's text; `1`: In the feed of content (e.g., as an item inside the organic feed, grid, listing, carousel, etc.).; `2`: In the atomic unit of the content (e.g., in the article page or single image page).; `3`: Outside the core content (e.g., in the ads section on the right rail, as a banner-style placement near the content, etc.).; `4`: Recommendation widget; most commonly presented below article content.; from 500 up: Vendor-specific codes."
+    },
+    "DoohMultiplierMeasurementSourceType": {
+      "description": "The codes of List: DOOH Multiplier Measurement Source Types, each with its row's text; `0`: Unknown; `1`: Measurement Vendor Provided; `2`: Publisher Provided; `3`: Exchange Provided",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "type": "integer"
+    },
+    "DoohVenueTaxonomy": {
+      "description": "The codes of List: DOOH Venue Taxonomies, each with its row's text; `0`: AdCom DOOH Venue Types (deprecated); `1`: OpenOOH Venue Taxonomy 1.0 https://github.com/openooh/venue-taxonomy/blob/main/specification-1.0.md; `2`: DPAA Device Venue Types https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/master/AdCOM%20v1.0%20FINAL.md#list--dooh-venue-types-; `3`: DMI Categorization of Venues 1.1 https://www.dmi-org.com/download/DMI_Standards_for_DOOH_Venues.pdf; `4`: OMA taxonomy Jan 2022 https://www.oma.org.au/industry-standards; `5`: OpenOOH Venue Taxonomy 1.1 https://github.com/openooh/venue-taxonomy/blob/main/specification-1.1.md",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "type": "integer"
+    },
+    "EventTrackingMethod": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2
+          ],
+          "type": "integer"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/VendorCode"
+        }
+      ],
+      "description": "The codes of List: Event Tracking Methods, each with its row's text; `1`: Image-Pixel: URL provided will be inserted as a 1x1 pixel at the time of the event.; `2`: JavaScript: URL provided will be inserted as a JavaScript tag at the time of the event.; from 500 up: Vendor-specific codes."
+    },
+    "EventType": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "type": "integer"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/VendorCode"
+        }
+      ],
+      "description": "The codes of List: Event Types, each with its row's text; `1`: loaded: Delivered as a part of the creative markup. Creative may be pre-cached or pre-loaded; prior to initial rendering.; `2`: impression: Ad impression per IAB/MRC Ad Impression Measurement Guidelines.; `3`: viewable-mrc50: Visible impression using MRC definition of 50% in view for 1 second.; `4`: viewable-mrc100: 100% in view for 1 second (i.e., the GroupM standard).; `5`: viewable-video50: Visible impression for video using MRC definition of 50% in view for 2 seconds.; from 500 up: Vendor-specific codes."
+    },
+    "ExpandableDirection": {
+      "description": "The codes of List: Expandable Directions, each with its row's text; `1`: Left; `2`: Right; `3`: Up; `4`: Down; `5`: Full Screen; `6`: Resize/Minimize (make smaller)",
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "type": "integer"
+    },
+    "FeedType": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "type": "integer"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/VendorCode"
+        }
+      ],
+      "description": "The codes of List: Feed Types, each with its row's text; `1`: AOD: Music streaming service; `2`: LIVE: FM/AM broadcast (live content broadcast over the air but also available via online streaming); `3`: AOD: Podcast (original, pre-recorded content distributed as episodes in a series); `4`: AOD: Catch-up radio (recorded segment of a radio show that was originally broadcast live); `5`: LIVE: Web radio (live content only available via online streaming, not as AM/FM broadcast); `6`: MISC: Video game (background audio in video games); `7`: MISC: Text to speech (audio books, website plugin that can read article); from 500 up: MISC: Vendor-specific codes."
+    },
+    "IdMatchMethod": {
+      "anyOf": [
+        {
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "type": "integer"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/VendorCode"
+        }
+      ],
+      "description": "The codes of List: ID Match Methods, each with its row's text; `0`: Unknown; `1`: No Match: No matching has occurred. The associated ID came directly from a 3rd-party cookie or OS-provided resettable device ID for advertising (IFA).; `2`: Browser Cookie Sync: Real time cookie sync as described in Appendix: Cookie Based ID Syncing of OpenRTB 2.x; `3`: Authenticated: ID match was based on user authentication such as an email login or hashed PII; `4`: Observed: ID match was based on a 1st party observation, but without user authentication (e.g. GUID, SharedID, Session IDs, CHIPS or other 1st party cookies contained in localStorage); `5`: Inference: ID match was inferred from linkage based on non-authenticated features across multiple browsers or devices (e.g. IP address and/or UserAgent); from 500 up: Vendor Specific"
+    },
+    "IpLocationService": {
+      "description": "The codes of List: IP Location Services, each with its row's text; `1`: ip2location; `2`: Neustar (Quova); `3`: MaxMind; `4`: NetAcuity (Digital Element); `511`: 51Degrees (High Confidence); `512`: 51Degrees (Medium Confidence)",
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        511,
+        512
+      ],
+      "type": "integer"
+    },
+    "LinearityMode": {
+      "description": "The codes of List: Linearity Modes, each with its row's text; `1`: Linear; `2`: Non-Linear (i.e., Overlay)",
+      "enum": [
+        1,
+        2
+      ],
+      "type": "integer"
+    },
+    "LocationType": {
+      "description": "The codes of List: Location Types, each with its row's text; `1`: GPS/Location Services; `2`: IP Address; `3`: User Provided (e.g., registration data)",
+      "enum": [
+        1,
+        2,
+        3
+      ],
+      "type": "integer"
+    },
+    "MediaRating": {
+      "description": "The codes of List: Media Ratings, each with its row's text; `1`: All Audiences; `2`: Everyone Over Age 12; `3`: Mature Audiences",
+      "enum": [
+        1,
+        2,
+        3
+      ],
+      "type": "integer"
+    },
+    "NativeDataAssetType": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "type": "integer"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/VendorCode"
+        }
+      ],
+      "description": "The codes of List: Native Data Asset Types, each with its row's text; `1`: sponsored: \"Sponsored By\" message which should contain the brand name of the sponsor. Recommended maximum length of at least 25 characters.; `2`: desc: Descriptive text associated with the product or service being advertised. Long text lengths may be truncated or ellipsed when rendered. Recommended maximum length of at least 140 characters.; `3`: rating: Numeric rating of the product (e.g., an app's rating). Recommended integer range of 0-5.; `4`: likes: Number of social ratings or \"likes\" of the product.; `5`: downloads: Number downloads and/or installs of the product.; `6`: price: Price of the product, app, or in-app purchase. Value should include currency symbol in localized format (e.g., \"$10\").; `7`: saleprice: Sale price that can be used together with \"price\" to indicate a comparative discounted price. Value should include currency symbol in localized format (e.g., \"$8.50\").; `8`: phone: A formatted phone number.; `9`: address: A formatted address.; `10`: desc2: Additional descriptive text associated with the product.; `11`: displayurl: Display URL for the ad. To be used when sponsoring entity doesn't own the content (e.g., \"Sponsored by Brand on Site\", where Site is specified in this data asset).; `12`: ctatext: Description of the call to action (CTA) button for the destination URL. Recommended maximum length of at least 15 characters.; from 500 up: Vendor-specific codes."
+    },
+    "NativeImageAssetType": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            3
+          ],
+          "type": "integer"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/VendorCode"
+        }
+      ],
+      "description": "The codes of List: Native Image Asset Types, each with its row's text; `1`: Icon: Icon image. Maximum height at least 50 device independent pixels (DIPS); aspect ratio 1:1.; `3`: Main: Large image preview for the ad. At least one of 2 size variants required: Small: Maximum height at least 200 DIPS; maximum width at least 200, 267, or 382 DIPS (i.e., aspect ratios of 1:1, 4:3, or 1.91:1, respectively). Large: Maximum height at least 627 DIPS; maximum width at least 627, 836, or 1198 DIPS (i.e., aspect ratios of 1:1, 4:3, or 1.91:1, respectively).; from 500 up: Vendor-specific codes."
+    },
+    "OperatingSystem": {
+      "anyOf": [
+        {
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28
+          ],
+          "type": "integer"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/VendorCode"
+        }
+      ],
+      "description": "The codes of List: Operating Systems, each with its row's text; `0`: Other Not Listed; `1`: 3DS System Software; `2`: Android; `3`: Apple TV Software; `4`: Asha; `5`: Bada; `6`: BlackBerry; `7`: BREW; `8`: ChromeOS; `9`: Darwin; `10`: FireOS; `11`: FirefoxOS; `12`: HelenOS; `13`: iOS; `14`: Linux; `15`: MacOS; `16`: MeeGo; `17`: MorphOS; `18`: NetBSD; `19`: NucleusPLUS; `20`: PS Vita System Software; `21`: PS3 System Software; `22`: PS4 Software; `23`: PSP System Software; `24`: Symbian; `25`: Tizen; `26`: WatchOS; `27`: WebOS; `28`: Windows; from 500 up: Vendor-specific codes."
+    },
+    "PlacementPosition": {
+      "description": "The codes of List: Placement Positions, each with its row's text; `0`: Unknown; `1`: Above The Fold; `2`: Locked (i.e., fixed position); `3`: Below The Fold; `4`: Header; `5`: Footer; `6`: Sidebar; `7`: Fullscreen; `8`: Partial Screen; `9`: Top Left; `10`: Top Right; `11`: Frame the content; `12`: Double box; `13`: Double box with background; `14`: Bottom Left; `15`: Bottom Right; `16`: L shape; `17`: Reversed L shape",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "type": "integer"
+    },
+    "PlaybackCessationMode": {
+      "description": "The codes of List: Playback Cessation Modes, each with its row's text; `1`: On Video Completion or when Terminated by User; `2`: On Leaving Viewport or when Terminated by User; `3`: On Leaving Viewport Continues as a Floating/Slider Unit until Video Completion or when Terminated by User",
+      "enum": [
+        1,
+        2,
+        3
+      ],
+      "type": "integer"
+    },
+    "PlaybackMethod": {
+      "description": "The codes of List: Playback Methods, each with its row's text; `1`: Initiates without any specific user interaction with Sound On; `2`: Initiates without any specific user interaction Sound Off by Default; `3`: Initiates on Click with Sound On; `4`: Initiates on Mouse-Over or cursor over with Sound On; `5`: Initiates on Entering Viewport or scrolling into view with Sound On; `6`: Initiates on Entering Viewport or scrolling into view with Sound Off by Default; `7`: Continuous Playback - Media playback is set to play additional media automatically without user interaction. The media player will keep playing additional media (playlist or generated) for the user until the user actively stops this from happening.; `8`: Initiated by user pausing content, Sound on; `9`: Initiated by user pausing content, Sound off; `10`: Initiated by idling (e.g. screensaver), Sound on; `11`: Initiated by idling (e.g. screensaver), Sound off",
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "type": "integer"
+    },
+    "PlcmtSubtypeVideo": {
+      "description": "The codes of List: Plcmt Subtypes - Video, each with its row's text; `1`: Instream: Pre-roll, mid-roll, and post-roll ads that are played before, during or after the streaming video content that the consumer has requested. Instream video must be set to “sound on” by default at player start, or have explicitly clear user intent to watch the video content. While there may be other content surrounding the player, the video content must be the focus of the user’s visit. It should remain the primary content on the page and the only video player in-view capable of audio when playing. If the player converts to floating/sticky subsequent ad calls should accurately convey the updated player size.; `2`: Accompanying Content: Pre-roll, mid-roll, and post-roll ads that are played before, during, or after streaming video content. The video player loads and plays before, between, or after paragraphs of text or graphical content, and starts playing only when it enters the viewport. Accompanying content should only start playback upon entering the viewport. It may convert to a floating/sticky player as it scrolls off the page.; `3`: Interstitial:Video ads that are played without video content. During playback, it must be the primary focus of the page and take up the majority of the viewport and cannot be scrolled out of view. This can be in placements like in-app video or slideshows.; `4`: No Content/Standalone: Video ads that are played without streaming video content. This can be in placements like slideshows, native feeds, in-content or sticky/floating.; `5`: Pause: An ad present in streaming video content that the consumer has requested. While there may be other content surrounding the player, the video content must be the focus of the user’s visit. It should remain the primary content on the page and the only video player in-view.; `6`: Screensaver: An ad present, when OS/App Screen Saver are initiated.; `7`: Overlay: Ads occurring during program content and outside of the traditional ad break. The ad format places ad creatives over top of the program content, often as a banner or picture in picture execution. While there may be other content surrounding the player with the overlay, the player with the overlay must be the focus of the user’s visit. It should remain the primary content on the page and the primary video player in-view.; `8`: Squeezeback: Ads Alongside or Adjacent to Content, also known as L-Shape Ads & Double Box, are ads that occur during program content and outside of the traditional ad break. The program content is resized to allow for placement of an ad on the screen. In a squeezeback, none of the content is covered by the ad, instead it shares screen space with the ad. This is the major distinction between squeezeback and overlay. While there may be other content surrounding the player with the squeezeback, the player with the squeezeback must be the focus of the user’s visit. It should remain the primary content on the page and the primary video player in-view.; `9`: In-scene: A form of advertising that integrates branded elements directly within the content itself, rather than appearing as separate pre-roll, mid-roll, overlay, or display formats. In Scene Advertising is composited into the video content and blends the brand naturally into the scene, environment, or storyline, ensuring contextual relevance and viewer immersion without interrupting the user experience. In-scene ads typically consist of product placements or virtual out of A insertions. At this time, the standardization focuses on the out of home insertions in non-live content. While there may be other content surrounding the player with the in-scene ad, the player with the in-scene ad must be the focus of the user’s visit. It should remain the primary content on the page and the primary video player in-view.",
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "type": "integer"
+    },
+    "PodDeduplicationSetting": {
+      "description": "The codes of List: Pod Deduplication Settings, each with its row's text; `1`: Deduplicated on adomain; `2`: Deduplicated on IAB Tech Lab Content Taxonomy; `3`: Deduplicated on creative ID; `4`: Deduplicated on mediafile URL; `5`: No deduplication",
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "type": "integer"
+    },
+    "PodSequence": {
+      "description": "The codes of List: Pod Sequence, each with its row's text; `-1`: Last pod in the content stream; `0`: Any pod in the content stream; `1`: First pod in the content stream",
+      "enum": [
+        -1,
+        0,
+        1
+      ],
+      "type": "integer"
+    },
+    "ProductionQuality": {
+      "description": "The codes of List: Production Qualities, each with its row's text; `0`: Unknown; `1`: Professionally Produced; `2`: Prosumer; `3`: User Generated (UGC)",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "type": "integer"
+    },
+    "SizeUnit": {
+      "description": "The codes of List: Size Units, each with its row's text; `1`: Device Independent Pixels (DIPS); `2`: Inches; `3`: Centimeters",
+      "enum": [
+        1,
+        2,
+        3
+      ],
+      "type": "integer"
+    },
+    "SlotPositionInPod": {
+      "description": "The codes of List: Slot Position in Pod, each with its row's text; `-1`: Last ad in the pod; `0`: Any ad in the pod; `1`: First ad in the pod; `2`: First or Last ad in the pod",
+      "enum": [
+        -1,
+        0,
+        1,
+        2
+      ],
+      "type": "integer"
+    },
+    "StartDelayMode": {
+      "anyOf": [
+        {
+          "enum": [
+            0,
+            -1,
+            -2
+          ],
+          "type": "integer"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/MediaOffset"
+        }
+      ],
+      "description": "The codes of List: Start Delay Modes, each with its row's text, or, for a mid-roll at a given second, the delay in seconds, which the row `>0` stands for; `0`: Pre-Roll; `-1`: Generic Mid-Roll; `-2`: Generic Post-Roll"
+    },
+    "UserAgentSource": {
+      "description": "The codes of List: User-Agent Source, each with its row's text; `0`: Unspecified/unknown; `1`: User-Agent Client Hints (only low-entropy headers were available); `2`: User-Agent Client Hints (with high-entropy headers available); `3`: Parsed from User-Agent header (the same string carried by the ua field)",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "type": "integer"
+    },
+    "VolumeNormalizationMode": {
+      "description": "The codes of List: Volume Normalization Modes, each with its row's text; `0`: None; `1`: Ad Volume Average Normalized to Content; `2`: Ad Volume Peak Normalized to Content; `3`: Ad Loudness Normalized to Content; `4`: Custom Volume Normalization",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "type": "integer"
+    }
+  },
+  "$id": "https://adtechspec.noetis.dev/adcom/schemas/modules/lists/1/lists.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The AdCOM `lists` module: its 42 vocabularies.",
+  "title": "lists"
+}

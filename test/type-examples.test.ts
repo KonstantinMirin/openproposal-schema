@@ -7,7 +7,7 @@ import { baselines, Validators } from "../src/corpus.ts";
 import { emitSchemas, schemaIdOf, type EmittedFile } from "../src/emit.ts";
 import type { SpecIR } from "../src/ir-types.ts";
 import { lockExamples } from "../src/examples.ts";
-import { loadFieldExamples, type FieldExample } from "../src/field-examples.ts";
+import { FIELD_EXAMPLES_FILE, type FieldExample, loadFieldExamples } from "../src/field-examples.ts";
 import { loadKernel } from "../src/kernel.ts";
 import { loadLock } from "../src/lock.ts";
 import { loadLists } from "../src/lists.ts";
@@ -15,14 +15,14 @@ import { loadDecisions, loadMappings } from "../src/mapping.ts";
 import { resolveModel, type ModelDoc } from "../src/model.ts";
 import { codesOf } from "../src/rule-checks.ts";
 import { checkFieldExamples, checkTypeExamples, generateTypeExamples, renderTypeExamples, specValues, typeExamplesDirOf, type SpecExamples, type TypeExamplesDoc, type ValueSources } from "../src/type-examples.ts";
-import { ROOT } from "./helpers.ts";
+import { OP_SCHEMA, ROOT, RULE_CHECKS, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT);
-const CONSTRUCTORS = loadConstructors(ROOT);
-const MAPPINGS = loadMappings(ROOT, join(ROOT, "mapping"));
-const DECISIONS = loadDecisions(ROOT, join(ROOT, "decisions"));
+const KERNEL = loadKernel(ROOT, SPEC);
+const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const MAPPINGS = loadMappings(join(SPEC, "mapping"));
+const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 const CODES = codesOf(loadLists(ROOT));
-const FIELDS = loadFieldExamples(ROOT).fields;
+const FIELDS = loadFieldExamples(join(SPEC, FIELD_EXAMPLES_FILE)).fields;
 
 interface Lock {
   irDir: string;
@@ -36,12 +36,12 @@ interface Lock {
 }
 
 async function lockOf(lockFile: string, irDir: string, schemaDir: string): Promise<Lock> {
-  const lock = loadLock(join(ROOT, "spec-input", lockFile));
-  const ir = JSON.parse(readFileSync(join(ROOT, irDir, "spec-ir.json"), "utf8")) as SpecIR;
+  const lock = loadLock(join(SPEC, "spec-input", lockFile));
+  const ir = JSON.parse(readFileSync(join(SPEC, irDir, "spec-ir.json"), "utf8")) as SpecIR;
   const model = resolveModel({ ir, lock: lock.name, mappings: MAPPINGS, decisions: DECISIONS, kernel: KERNEL, constructors: CONSTRUCTORS }).model;
-  const files = emitSchemas(model, schemaDir).files;
+  const files = emitSchemas(model, schemaDir, OP_SCHEMA).files;
   const spec = await lockExamples(lock, model);
-  const { doc, problems, sources } = generateTypeExamples({ model, files, kernel: KERNEL, schemaDir, codes: CODES, spec, fields: FIELDS });
+  const { doc, problems, sources } = generateTypeExamples({ model, files, kernel: KERNEL, schemaDir, codes: CODES, ruleChecks: RULE_CHECKS, spec, fields: FIELDS });
   return { irDir, schemaDir, model, files, spec, doc, problems, sources };
 }
 const MAIN = await lockOf("spec-lock.yaml", "ir", "schemas");
@@ -52,13 +52,13 @@ const isMap = (v: unknown): v is Record<string, unknown> => v !== null && typeof
 test("every named type the schemas emit gets a minimal and a full example, and the committed files are what the generator writes", () => {
   for (const l of [MAIN, PRS]) {
     assert.deepEqual(l.problems, []);
-    const emitted = l.model.types.filter((t) => schemaIdOf(t, l.schemaDir) !== null).map((t) => t.name).sort();
+    const emitted = l.model.types.filter((t) => schemaIdOf(t, l.schemaDir, OP_SCHEMA.base) !== null).map((t) => t.name).sort();
     assert.deepEqual(Object.keys(l.doc.types), emitted);
     // Constructors are templates and have no schema of their own; the documents and the summaries do.
     assert.equal(Object.values(l.doc.types).some((x) => x.kind === "constructor"), false);
     for (const d of ["Proposal", "LineItem", "ProposalSummary", "LineItemSummary"]) assert.ok(d in l.doc.types, d);
-    assert.deepEqual(checkTypeExamples(l.doc, { model: l.model, files: l.files, schemaDir: l.schemaDir, codes: CODES }), []);
-    const committed = readFileSync(join(ROOT, typeExamplesDirOf(l.irDir), "examples.json"), "utf8");
+    assert.deepEqual(checkTypeExamples(l.doc, { model: l.model, files: l.files, schemaDir: l.schemaDir, codes: CODES, ruleChecks: RULE_CHECKS }), []);
+    const committed = readFileSync(join(SPEC, typeExamplesDirOf(l.irDir), "examples.json"), "utf8");
     assert.equal(committed, renderTypeExamples(l.doc));
   }
   assert.equal(typeExamplesDirOf("ir"), "type-examples");
@@ -87,7 +87,7 @@ test("a value comes from the specification's examples where the property's schem
   // § 6.2's display line item prices its CPM at 24.00 gross and 20.40 to the seller, in USD.
   assert.deepEqual([pricing.gross_rate, pricing.seller_rate, pricing.currency, pricing.cost_method], [24, 20.4, "USD", "CPM"]);
   // Without the per-field values, a member no example gives a valid value shows its primitive's showcase value.
-  const plain = generateTypeExamples({ model: MAIN.model, files: MAIN.files, kernel: KERNEL, schemaDir: MAIN.schemaDir, codes: CODES, spec: MAIN.spec, fields: [] });
+  const plain = generateTypeExamples({ model: MAIN.model, files: MAIN.files, kernel: KERNEL, schemaDir: MAIN.schemaDir, codes: CODES, ruleChecks: RULE_CHECKS, spec: MAIN.spec, fields: [] });
   assert.deepEqual(plain.problems, []);
   assert.equal(plain.sources.field, 0);
   const plainItem = plain.doc.types.LineItem!.full as Record<string, unknown>;
@@ -105,7 +105,7 @@ test("a value comes from the specification's examples where the property's schem
   assert.equal((plainItem.billing as Record<string, unknown>).payment_terms, KERNEL.primitives.find((p) => p.name === "Text")!.showcase[0]);
   assert.ok(MAIN.sources.spec > 0 && MAIN.sources.showcase > 0 && MAIN.sources.field > 0, JSON.stringify(MAIN.sources));
   // Without the specification's examples or the per-field values, every value is a showcase value, a term, or another value.
-  const bare = generateTypeExamples({ model: MAIN.model, files: MAIN.files, kernel: KERNEL, schemaDir: MAIN.schemaDir, codes: CODES, spec: NO_SPEC, fields: [] });
+  const bare = generateTypeExamples({ model: MAIN.model, files: MAIN.files, kernel: KERNEL, schemaDir: MAIN.schemaDir, codes: CODES, ruleChecks: RULE_CHECKS, spec: NO_SPEC, fields: [] });
   assert.deepEqual(bare.problems, []);
   assert.equal(bare.sources.spec, 0);
   assert.equal(((bare.doc.types.LineItem!.full as Record<string, unknown>).pricing as Record<string, unknown>[])[0]!.gross_rate, 18.5);
@@ -113,7 +113,7 @@ test("a value comes from the specification's examples where the property's schem
 
 test("the specification's values are read in its order, by section, and each only where its property's schema accepts it", () => {
   const v = new Validators(PRS.files);
-  const lineItem = schemaIdOf(PRS.model.types.find((t) => t.name === "LineItem")!, PRS.schemaDir)!;
+  const lineItem = schemaIdOf(PRS.model.types.find((t) => t.name === "LineItem")!, PRS.schemaDir, OP_SCHEMA.base)!;
   const ok = (value: unknown) => ({ ok: true as const, value });
   const spec: SpecExamples = {
     // Listed out of order: a § 6.10 file first, then a § 6.2 file and a § 5.5 code block.
@@ -132,7 +132,7 @@ test("the specification's values are read in its order, by section, and each onl
   assert.deepEqual(found.at.get(`${lineItem}#/properties/time_zone`), ["America/Chicago", "Asia/Tokyo", "Europe/London"]);
   assert.equal(found.at.get(`${lineItem}#/properties/line_item_id`), undefined);
   assert.equal(found.at.get(`${lineItem}#/properties/min_spend`), undefined);
-  const r = generateTypeExamples({ model: PRS.model, files: PRS.files, kernel: KERNEL, schemaDir: PRS.schemaDir, codes: CODES, spec, fields: FIELDS });
+  const r = generateTypeExamples({ model: PRS.model, files: PRS.files, kernel: KERNEL, schemaDir: PRS.schemaDir, codes: CODES, ruleChecks: RULE_CHECKS, spec, fields: FIELDS });
   assert.deepEqual(r.problems, []);
   assert.equal((r.doc.types.LineItem!.full as Record<string, unknown>).time_zone, "America/Chicago");
 });
@@ -181,7 +181,7 @@ test("a full selection holds two options, the first included and the second pric
 });
 
 test("the check fails a committed example its schema or a rule rejects, and a type with no entry", () => {
-  const input = { model: MAIN.model, files: MAIN.files, schemaDir: MAIN.schemaDir, codes: CODES };
+  const input = { model: MAIN.model, files: MAIN.files, schemaDir: MAIN.schemaDir, codes: CODES, ruleChecks: RULE_CHECKS };
   const broken = structuredClone(MAIN.doc);
   (broken.types.Commitment!.full as Record<string, unknown>).basis = "barter";
   broken.types.FormatsSelection!.full = { available: ["display/300x250"], included: ["display/300x250"], pricing: { "display/300x250": { delta_cpm: 1 } } };
@@ -194,7 +194,7 @@ test("the check fails a committed example its schema or a rule rejects, and a ty
   assert.ok(problems.includes("Extra: no type the schemas emit has this name"));
   // A list's code the generator's examples hold, no longer assigned, fails generation.
   const codes = new Map([...CODES].map(([k, c]) => [k, k === "ISO 4217" ? new Set([...c].filter((x) => x !== "USD")) : c]));
-  const r = generateTypeExamples({ model: MAIN.model, files: MAIN.files, kernel: KERNEL, schemaDir: MAIN.schemaDir, codes, spec: MAIN.spec, fields: FIELDS });
+  const r = generateTypeExamples({ model: MAIN.model, files: MAIN.files, kernel: KERNEL, schemaDir: MAIN.schemaDir, codes, ruleChecks: RULE_CHECKS, spec: MAIN.spec, fields: FIELDS });
   assert.ok(r.problems.some((p) => p.startsWith('CurrencyCode: the minimal example "USD" fails kernel:CurrencyCode:assigned')), r.problems.join("\n"));
 });
 
@@ -261,7 +261,7 @@ test("every bound pair in a full example is ordered, and the documents and summa
 
 test("the per-field check passes the committed entries, and fails a gone element, a value its schema rejects, a specification value, and a term a core term replaces", () => {
   for (const l of [MAIN, PRS]) {
-    const r = checkFieldExamples({ model: l.model, files: l.files, kernel: KERNEL, schemaDir: l.schemaDir, codes: CODES, spec: l.spec, fields: FIELDS });
+    const r = checkFieldExamples({ model: l.model, files: l.files, kernel: KERNEL, schemaDir: l.schemaDir, codes: CODES, ruleChecks: RULE_CHECKS, spec: l.spec, fields: FIELDS });
     assert.deepEqual(r.problems, []);
     assert.ok(r.entries > 50 && r.locations >= r.entries, JSON.stringify(r));
   }
@@ -270,7 +270,7 @@ test("the per-field check passes the committed entries, and fails a gone element
     { ir: "field:5.9:no_such_field", member: "no_such_field", values: ["x"] },
     { ir: "field:5.1:status", member: "status", values: ["published"] },
   ];
-  const r = checkFieldExamples({ model: PRS.model, files: PRS.files, kernel: KERNEL, schemaDir: PRS.schemaDir, codes: CODES, spec: PRS.spec, fields: bad });
+  const r = checkFieldExamples({ model: PRS.model, files: PRS.files, kernel: KERNEL, schemaDir: PRS.schemaDir, codes: CODES, ruleChecks: RULE_CHECKS, spec: PRS.spec, fields: bad });
   const has = (s: string) => assert.ok(r.problems.some((p) => p.includes(s)), `${s}\n${r.problems.join("\n")}`);
   has("field:5.9:no_such_field no_such_field: names an element that no longer exists");
   has('value 1, "many", fails its field\'s schema at CommitmentBounds.min_impressions');

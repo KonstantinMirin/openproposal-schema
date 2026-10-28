@@ -1,0 +1,8 @@
+# A known-bad kernel binding for the kernel-load gate: it gives a primitive's
+# constraints, which the kernel defines for every spec.
+format: 1
+spec: defining
+primitives:
+  - name: Uuid
+    constraints:
+      format: uuid

@@ -3,12 +3,14 @@ import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { buildLock, COMPARISON_DIR, compareLocks, DEFAULT_LOCK_FILE, renderComparison, renderComparisonMarkdown, type LockBuild } from "../compare.ts";
 import { loadConstructors } from "../constructors.ts";
-import { loadFindings } from "../examples.ts";
+import { FINDINGS_FILE, loadFindings } from "../examples.ts";
 import { loadKernel } from "../kernel.ts";
 import { loadLock } from "../lock.ts";
 import { loadDecisions, loadMappings } from "../mapping.ts";
-import { loadDifferences } from "../render.ts";
-import { loadVectors } from "../rules.ts";
+import { DIFFERENCES_FILE, loadDifferences } from "../render.ts";
+import { loadVectors, VECTORS_DIR } from "../rules.ts";
+import { cliSpec } from "../builds.ts";
+import { REPO_ROOT } from "../repo.ts";
 import { variantReportFiles } from "../variant-report.ts";
 
 /**
@@ -26,19 +28,20 @@ import { variantReportFiles } from "../variant-report.ts";
  * doesn't run clean.
  */
 async function main(): Promise<number> {
-  const { values } = parseArgs({ options: { out: { type: "string" } } });
-  const root = new URL("../..", import.meta.url).pathname.replace(/\/$/, "");
-  const locks = readdirSync(join(root, "spec-input"))
+  const { values } = parseArgs({ options: { spec: { type: "string" }, out: { type: "string" } } });
+  const root = REPO_ROOT;
+  const specDir = cliSpec(values);
+  const locks = readdirSync(join(specDir, "spec-input"))
     .filter((f) => f === DEFAULT_LOCK_FILE || f.endsWith(".lock.yaml"))
     .sort()
-    .map((f) => ({ file: f, lock: loadLock(join(root, "spec-input", f)) }));
+    .map((f) => ({ file: f, lock: loadLock(join(specDir, "spec-input", f)) }));
   const input = {
-    root,
-    mappings: loadMappings(root, join(root, "mapping")),
-    decisions: loadDecisions(root, join(root, "decisions")),
-    kernel: loadKernel(root),
-    constructors: loadConstructors(root),
-    vectors: loadVectors(root),
+    root: specDir,
+    mappings: loadMappings(join(specDir, "mapping")),
+    decisions: loadDecisions(join(specDir, "decisions")),
+    kernel: loadKernel(root, specDir),
+    constructors: loadConstructors(root, specDir),
+    vectors: loadVectors(join(specDir, VECTORS_DIR)),
   };
   const builds = new Map<string, LockBuild>();
   let failed = false;
@@ -51,9 +54,9 @@ async function main(): Promise<number> {
   if (failed) return 1;
   const base = builds.get(DEFAULT_LOCK_FILE);
   if (!base) throw new Error(`no default lock, spec-input/${DEFAULT_LOCK_FILE}`);
-  const recordedFindings = loadFindings(root);
-  const recordedDifferences = loadDifferences(root);
-  const out = values.out !== undefined ? resolve(values.out) : join(root, COMPARISON_DIR);
+  const recordedFindings = loadFindings(join(specDir, FINDINGS_FILE));
+  const recordedDifferences = loadDifferences(join(specDir, DIFFERENCES_FILE));
+  const out = values.out !== undefined ? resolve(values.out) : join(specDir, COMPARISON_DIR);
   mkdirSync(out, { recursive: true });
   for (const [file, build] of builds) {
     if (file === DEFAULT_LOCK_FILE) continue;

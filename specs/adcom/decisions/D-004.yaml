@@ -1,0 +1,50 @@
+format: 1
+id: D-004
+status: proposed
+kind: gap
+author: agent
+question: "What does List: Start Delay Modes accept, when its row `>0` stands for every positive number of seconds rather than one code?"
+covers:
+  - ir: def:list_startdelaymodes:>0
+    digest: 3cf746d64d32c97c88eef1627b66fad208ae9392eb1ec0cd9cb63ef209daa7b4
+    quote: "`>0` | Mid-Roll (value indicates start delay in second)"
+  - ir: def:list_startdelaymodes:0
+    digest: e670782d4a60fa0cd06acc29b99f61ce9d69865f3c965f0665733decbd8b7375
+    quote: "`0` | Pre-Roll"
+  - ir: def:list_startdelaymodes:-1
+    digest: 2d87b5335e9f2ac209549f460f2222a4982e6eddae2121e7de7685dd4790dafb
+    quote: "`-1` | Generic Mid-Roll"
+  - ir: def:list_startdelaymodes:-2
+    digest: 9c18dea3eea6216c45bb91e58875df2ecf75384729b92be04bb633cd8ee551d4
+    quote: "`-2` | Generic Post-Roll"
+options:
+  - id: codes-and-offset
+    summary: >-
+      A vocabulary of the three codes the list names, `0`, `-1`, and `-2`,
+      open to a media offset, a whole number of seconds of at least 0, for
+      the `>0` row.
+  - id: integer-range
+    summary: >-
+      Any integer of at least -2, with no vocabulary.
+  - id: codes-only
+    summary: >-
+      The three codes alone, so a mid-roll at a given second fails.
+chosen: codes-and-offset
+rationale: >-
+  The `>0` row says a positive value is a mid-roll's start delay, in
+  seconds, so every positive integer is valid and none is a code of its own.
+  The three other rows are codes with labels. A vocabulary of those codes,
+  open to a media offset in seconds, states both: the labels stay with their
+  codes, and a delay of 30 validates. A media offset starts at 0, which is
+  also the pre-roll code, and the two agree: a delay of 0 seconds is a
+  pre-roll. Any integer of at least -2 would accept the same values but lose
+  the codes' labels, and the codes alone would reject every mid-roll at a
+  given second.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L4462"
+feedback: >-
+  Write the mid-roll row as a range with its unit, such as "1 or more:
+  Mid-Roll, the start delay in seconds", and say whether 0 seconds is the
+  pre-roll code. Today `>0` is the only row besides the `500+` vendor ranges
+  that stands for many values, and unlike them it names no first code, so a
+  reader of the table alone can take it for a code.

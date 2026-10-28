@@ -1,0 +1,172 @@
+format: 1
+id: D-005
+status: proposed
+kind: gap
+author: agent
+question: "What do the statements in AdCOM's list sections become, when they say what a code means or how a list is used?"
+covers:
+  - ir: rule:list_apiframeworks:b27e9d77
+    digest: 63bf0ce57c8601f50ad14e4a2f6a5fae4c193ddbb51cb1c7b1237158e59dd6f9
+    quote: The following table is a list of API frameworks either supported by a placement or required by an ad.
+  - ir: rule:list_auditstatuscodes:57c59aad
+    digest: 1600c42a9ca5c1b7e11573059655055af640bf9377d7872e0492ae2fbc860556
+    quote: A recommendation cannot be made to use this ad, but vendors' policies may override.
+  - ir: rule:list_auditstatuscodes:82ca9603
+    digest: caed990878eca21fe74359206cc8f253505f7e95a6825ea6fa5792d1dae63dd2
+    quote: Subject to vendors' policies, it can be recommended for use.
+  - ir: rule:list_auditstatuscodes:7d68f80d
+    digest: 151765ddb0a05d608371d47d3079d9608f3297b81263c4c4953f124dbebcfb2e
+    quote: However, once the audit has been completed, its status will change and it may or may not be approved for continued use.
+  - ir: rule:list_auditstatuscodes:a018ec9a
+    digest: 5c63adb4d4456b118b131f88de0366d6908f0ea96cf13f39b4355e0220955061
+    quote: Note, however, that some attributes (e.g., `adomain`, `cat`, `attr`, etc.) may have been changed in the process by the auditor.
+  - ir: rule:list_auditstatuscodes:c4f176d6
+    digest: 447410945cf0df57c0da43ce9b549bdd69495c69040e28f5c1eb8ca5db173e1f
+    quote: "Changed; Resubmission Requested: A version of the ad has been detected in use that is materially different from the version that was previously audited, which may result in rejection during use until the ad is resubmitted for audit and approved."
+  - ir: rule:list_contentcontexts:2049d051
+    digest: d803c748ceb5ddea0851cbf694ccf4297f602a1ff1a2840d174e7ee8191e4567
+    quote: The following table lists the various options for indicating the type of content being used or consumed by the user in which ads may appear.
+  - ir: rule:list_displaycontexttypes:e3e141e2
+    digest: f943cba732808bbc687bc7b6aa3f09f1eb531f85c70f17054725bb235d34380d
+    quote: The following table lists the types of context in which a native ad may appear (i.e., the type of content surrounding the ad on the page).
+  - ir: rule:list_displaycontexttypes:27ae2909
+    digest: 519073e9adf912c0c84af0c87b9a4cf931647c1bf50874ab02d07f3f2549ab69
+    quote: This is intended to denote primary content although other content may also appear on the page.
+  - ir: rule:list_displaycontexttypes:7960d519
+    digest: 3e8c916afe8322f9f40c4e0ba36dc939bfd565d53021d0e84c54cf05c206727e
+    quote: "- Product reviews site primarily, which may sell product secondarily."
+  - ir: rule:list_displayplacementtypes:05dc096f
+    digest: 181ecb4c4cb57251b591eb58bee04270bca47a44da3bed092a1b90280d055789
+    quote: The following table lists the general types of display placements; the locations where a native ad may be shown in relationship to the surrounding content.
+  - ir: rule:list_doohvenuetaxonomies:6b7249d0
+    digest: 7eb2660d4c98a703d504e15e65a90555ee4c92e1f25e34692e95bdc309c90182
+    quote: The following table contains a list of supported taxonomies describing the locations and contexts in which Out-Of-Home media may be experienced.
+  - ir: rule:list_eventtrackingmethods:c66f557e
+    digest: 0f0213563c3b977588adbdaad9b6a0abce05b31be025a3064bbc1596965a9e34
+    quote: Vendor specific codes may include custom measurement companies (e.g., Moat, Doubleverify, IAS, etc.).
+  - ir: rule:list_eventtypes:8da0afd9
+    digest: b9859b405fe9523a762a15b95a00975a82ad3d60d9b2992d8cf7cf895f4e2eec
+    quote: Scripts that are performing measurement should be deployed at the "loaded" event.
+  - ir: rule:list_eventtypes:001e0b15
+    digest: 720832dec206825684f345d16dacc08189eddf277f188377d8f781252eef9691
+    quote: Creative may be pre-cached or pre-loaded; prior to initial rendering.
+  - ir: rule:list_expandabledirections:f0d57e80
+    digest: e64cea736bcd2f0b54dddfb4c33b986f52419bf3baf801d314ac3ffc93522250
+    quote: The following table lists the directions in which an expandable ad may expand, given the positioning of the ad unit on the page and constraints imposed by the content.
+  - ir: rule:list_idmatchmethod:dc80fa6f
+    digest: 00b9ab9af8c7a2368c4e5d0f08ea8e185f5673a628571ab3245a20679d0502da
+    quote: "It should be used on conjunction with the `mm` attribute in Object: EID of OpenRTB 2.x."
+  - ir: rule:list_linearitymodes:cc53650a
+    digest: ba1f5573ff702709733984d1ec928e7179efcca144032cf05879ba8ac6cc60ce
+    quote: This corresponds to the required type of VAST response, where a linear response is VAST containing video assets, and non-linear is a VAST response (typically) containing a banner/overlay.
+  - ir: rule:list_nativedataassettypes:9bbf9137
+    digest: df0e3fc29e214769080e632b16b5c39c6ec043daaaed93bff942ed96ab76a396
+    quote: Size recommendations are noted as "maximum length of at least", which means the publisher or supply platform should support a maximum length of at least this value and the buying platform knows that a string of this size should be accepted.
+  - ir: rule:list_nativedataassettypes:3552f36e
+    digest: 4c286f219caed0350fd8755a86ae34a3b21a39f887948990213e46286af0946f
+    quote: 'sponsored: "Sponsored By" message which should contain the brand name of the sponsor.'
+  - ir: rule:list_nativedataassettypes:e8a5a609
+    digest: 9fa222429ffab498fc473d0205381635882d5fc31839ab70aa5034d47ca5d5c1
+    quote: Recommended maximum length of at least 25 characters.
+  - ir: rule:list_nativedataassettypes:bb0b47a8
+    digest: 6d7d557305b2200358613fd29d9f5fb61cba08c9aa946a6ff217bd7acf5a3d86
+    quote: Long text lengths may be truncated or ellipsed when rendered.
+  - ir: rule:list_nativedataassettypes:114aae9c
+    digest: fe77a935f7fcd3179a7d40b8fd1166fe72862333f1897a737367dbe31f5f2266
+    quote: Recommended maximum length of at least 140 characters.
+  - ir: rule:list_nativedataassettypes:44395a42
+    digest: 0c96098dbfb2b1f9441dad2f5706ebf7a3571091c211b6f1dc6d2aeb2c3a958f
+    quote: Recommended integer range of 0-5.
+  - ir: rule:list_nativedataassettypes:4f75b55b
+    digest: eecc89afa4b8efa3a6a4d15733008a16046f2c5e5fd42f6ed20d04ad3f994570
+    quote: Value should include currency symbol in localized format (e.g., "$10").
+  - ir: rule:list_nativedataassettypes:43574e02
+    digest: 088340a99a8901fe7f08b43cf997e3836d8ca0c8884968f770d4524614ee061a
+    quote: Value should include currency symbol in localized format (e.g., "$8.50").
+  - ir: rule:list_nativedataassettypes:644fc88e
+    digest: 08fb8352f8fdc0bb76b07ec04ab6ec6cf2ababefc50ac32e4ddb4a975edc7ae9
+    quote: Recommended maximum length of at least 15 characters.
+  - ir: rule:list_nativeimageassettypes:c4ff3485
+    digest: 062711a7dcf21a1890f08f2a809d4a7d2fbb9bd7a7bcb06ee27b979c307068bd
+    quote: Size recommendations are noted as "maximum height or width of at least", which means the publisher or supply platform should support a maximum height or width of at least this value and the buying platform knows that an image of this size should be accepted.
+  - ir: rule:list_nativeimageassettypes:9e397c9f
+    digest: a6c8cbe70a0f3f10867d4acd8aa9819af784a93c234da3ed19648c5c8a3d572a
+    quote: "At least one of 2 size variants required: Small: Maximum height at least 200 DIPS; maximum width at least 200, 267, or 382 DIPS (i.e., aspect ratios of 1:1, 4:3, or 1.91:1, respectively)."
+  - ir: rule:list_plcmtsubtypesvideo:d4ca96c8
+    digest: 6a8c56d1d769579f53b8a0f51f1c28819286f78eaa166f12b8136021a164c5e2
+    quote: Instream video must be set to “sound on” by default at player start, or have explicitly clear user intent to watch the video content.
+  - ir: rule:list_plcmtsubtypesvideo:0f70c771
+    digest: da7690e8123c5c2c0c19d6f56e42e0789039ad87a91f8938df97be71a4d4e9b7
+    quote: While there may be other content surrounding the player, the video content must be the focus of the user’s visit.
+  - ir: rule:list_plcmtsubtypesvideo:27db857f
+    digest: 8941501eff3772cc3c390a1cf26de155d0c57302a61cf072cd77023b8aa80c3b
+    quote: It should remain the primary content on the page and the only video player in-view capable of audio when playing.
+  - ir: rule:list_plcmtsubtypesvideo:fc7d32c9
+    digest: b5eb177ad4417488f367eb0fea7736565ccc48616b1881f2bc42aee5aeed9d82
+    quote: If the player converts to floating/sticky subsequent ad calls should accurately convey the updated player size.
+  - ir: rule:list_plcmtsubtypesvideo:ca67e0ed
+    digest: ba54c70c9359abd928fe2269996a444db3263a72ff67e969fa69a73813189d13
+    quote: Accompanying content should only start playback upon entering the viewport.
+  - ir: rule:list_plcmtsubtypesvideo:3b4b9094
+    digest: 793fbaf6e4a1b50ee8438f5941a6d7d3d6c0cbfbe09e9d3b7800c217b957e06e
+    quote: It may convert to a floating/sticky player as it scrolls off the page.
+  - ir: rule:list_plcmtsubtypesvideo:49c6be74
+    digest: 8ebcacb6443bf4ad9875f56a3a1edb206e67b2b387997a1603ab525e0594636f
+    quote: During playback, it must be the primary focus of the page and take up the majority of the viewport and cannot be scrolled out of view.
+  - ir: rule:list_plcmtsubtypesvideo:0f70c771-2
+    digest: d5a608d08066a0e336d99280f6f7de35ee36e3547efbd4010dc7d99a713dde2d
+    quote: While there may be other content surrounding the player, the video content must be the focus of the user’s visit.
+  - ir: rule:list_plcmtsubtypesvideo:1fe030ab
+    digest: 9bf06480a5dd55c92d82d6c8f4f5350791a9ecf162986c9ac2da8d232ebdada3
+    quote: It should remain the primary content on the page and the only video player in-view.
+  - ir: rule:list_plcmtsubtypesvideo:07af47b1
+    digest: 513ec16ec85270bb3a323af4a232f54061ef914b20e49ef78e9380c943c858bd
+    quote: While there may be other content surrounding the player with the overlay, the player with the overlay must be the focus of the user’s visit.
+  - ir: rule:list_plcmtsubtypesvideo:c971f206
+    digest: 499bb6d073bb405b0019778038fac54878f9516244eb1978560a44bc74940e79
+    quote: It should remain the primary content on the page and the primary video player in-view.
+  - ir: rule:list_plcmtsubtypesvideo:0a29f7c1
+    digest: 1d3d4e7fa9f7a29ca8582795ed0f18e468b6a6c813914aa4cac559cad3687864
+    quote: While there may be other content surrounding the player with the squeezeback, the player with the squeezeback must be the focus of the user’s visit.
+  - ir: rule:list_plcmtsubtypesvideo:c971f206-2
+    digest: c143165624b5903bf3d8a3e50eaca2514ef4e8f78815748c7cf9b8eba7869485
+    quote: It should remain the primary content on the page and the primary video player in-view.
+  - ir: rule:list_plcmtsubtypesvideo:7808909a
+    digest: 02d56350c2bc7ebeef668fe559896d63e7419e066effb17f9c0e319e9997de73
+    quote: While there may be other content surrounding the player with the in-scene ad, the player with the in-scene ad must be the focus of the user’s visit.
+  - ir: rule:list_plcmtsubtypesvideo:c971f206-3
+    digest: 0b073d44ee4840b7d7cfb74a1991249c5971c53d4c9331bd84055f6218e10477
+    quote: It should remain the primary content on the page and the primary video player in-view.
+options:
+  - id: informative
+    summary: >-
+      Informative: each says what a code means, which the code's label
+      carries, or how a list is used, which no value of the list can show.
+  - id: obligations
+    summary: >-
+      An obligation on the party that sends or renders a code, such as the
+      player that plays an instream placement with its sound on.
+  - id: rules
+    summary: >-
+      A rule per statement, checked on payloads.
+chosen: informative
+rationale: >-
+  A value of a list is one code, and none of these statements constrains
+  which code a sender writes. Most say what a code means, such as how an
+  instream placement plays its sound, and that sentence is part of the
+  code's label, which the vocabulary's description keeps. The rest say how a
+  list is used, such as which attribute carries it, or describe the list
+  itself, as "required by an ad" does in its ordinary sense. None of them
+  can be checked on a code alone, so none becomes a rule. Several bind a
+  party, as "Instream video must be set to sound on" binds the player, and
+  several constrain an object's attribute, as the native assets' recommended
+  lengths do; each such obligation or rule belongs to the attribute that
+  carries the code, which the objects phase maps, and that phase revisits
+  these statements. In a registry of codes, they are what the codes mean.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L4204"
+feedback: >-
+  Keep each code's definition to what the code means, and move a requirement
+  on the party that sends or renders it, such as "Instream video must be set
+  to sound on by default", to the attribute that carries the code, where an
+  implementation can check it.

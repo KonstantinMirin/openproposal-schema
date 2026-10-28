@@ -1,21 +1,29 @@
 // The type map's routes, which map.js and examples.js read, and the site's check and tests load in Node.
 // The canonical address of a view is
-//   #!/type/<Name>?lock=<main|with-open-prs>&variant=<as-written|proposals>&view=<schema|example>&open=<paths>
+//   #!/type/<Name>?lock=<lock>&variant=<as-written|proposals>&view=<schema|example>&open=<paths>
 // with the parameters in that order and `open` left out when empty. parse() also takes the other names
 // below, such as the switches' labels in lowercase with hyphens, and lists every change it makes, so
 // the map can rewrite the address in place and say why. Nothing here navigates: a caller writes the
-// hash it returns, which keeps the reader on the page they opened.
+// hash it returns, which keeps the reader on the page they opened. The build fills in the spec's locks, the
+// other names its profile gives them, and its variants: both where the spec proposes changes, and else
+// the text as written alone.
 (function (root) {
   "use strict";
-  var LOCKS = ["main", "with-open-prs"];
-  var VARIANTS = ["as-written", "proposals"];
+  var LOCKS = __SPEC_LOCKS__;
+  var VARIANTS = __SPEC_VARIANTS__;
   var VIEWS = ["schema", "example"];
-  var DEFAULT = { type: "LineItem", lock: "main", variant: "as-written", view: "schema", open: [] };
+  var DEFAULT = { type: "__SPEC_DEFAULT_TYPE__", lock: LOCKS[0], variant: "as-written", view: "schema", open: [] };
   // Each parameter's other names, and each value's: the switches' labels, as slugs, and short forms.
   var PARAMS = { lock: "lock", input: "lock", variant: "variant", view: "view", show: "view", open: "open", type: "type" };
+  var VARIANT_NAMES = { "as-written": "as-written", written: "as-written", proposals: "proposals", "with-proposals": "proposals", "with-our-proposals": "proposals", proposed: "proposals" };
+  var only = function (names, values) {
+    var out = {};
+    Object.keys(names).forEach(function (k) { if (values.indexOf(names[k]) >= 0) out[k] = names[k]; });
+    return out;
+  };
   var VALUES = {
-    lock: { main: "main", upstream: "main", "with-open-prs": "with-open-prs", "with-the-open-prs": "with-open-prs", "open-prs": "with-open-prs", prs: "with-open-prs" },
-    variant: { "as-written": "as-written", written: "as-written", proposals: "proposals", "with-proposals": "proposals", "with-our-proposals": "proposals", proposed: "proposals" },
+    lock: __SPEC_LOCK_NAMES__,
+    variant: only(VARIANT_NAMES, VARIANTS),
     view: { schema: "schema", "json-schema": "schema", json: "schema", example: "example", examples: "example", "example-payload": "example", payload: "example" },
   };
   var slug = function (v) { return String(v).trim().toLowerCase().replace(/[\s_]+/g, "-"); };

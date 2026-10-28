@@ -6,18 +6,19 @@ import type { SpecIR } from "../src/ir-types.ts";
 import type { SpecLock } from "../src/lock.ts";
 import type { DecisionRecord } from "../src/mapping.ts";
 import type { ModelDoc } from "../src/model.ts";
-import { checkDifferences, loadDifferences, roundTrip, type DifferencesFile } from "../src/render.ts";
+import { checkDifferences, type DifferencesFile, loadDifferences, roundTrip, type RoundTripNotation } from "../src/render.ts";
 import { defineGate, ROOT } from "./harness.ts";
 import { withType } from "./model.ts";
+import type { Check } from "../src/rule-checks.ts";
 
 // Round trip --------------------------------------------------------------------
 
-export const differencesLoad = defineGate<{ file?: string }>({
+export const differencesLoad = defineGate<{ file: string }>({
   id: "differences-load",
   title: "round trip: differences file schema-valid",
   code: ["src/render.ts#loadDifferences"],
   check: (i) => {
-    const d = loadDifferences(ROOT, i.file);
+    const d = loadDifferences(i.file);
     return { problems: [], note: `${d.differences.length} recorded difference${d.differences.length === 1 ? "" : "s"}` };
   },
   fixtures: [{ name: "a difference with no decision", mutate: () => ({ file: join(ROOT, "gates/data/differences-load/differences.yaml") }), expect: "not a valid differences file" }],
@@ -30,13 +31,14 @@ export const differencesLocks = defineGate<{ recorded: DifferencesFile; locks: s
   fixtures: [{ name: "a difference on an unknown lock", mutate: (i) => ({ ...i, recorded: { ...i.recorded, differences: i.recorded.differences.map((d, n) => (n === 0 ? { ...d, locks: ["no-such-lock"] } : d)) } }), expect: 'names the unknown lock "no-such-lock"' }],
 });
 
-export const roundTripGate = defineGate<{ model: ModelDoc; ir: SpecIR; recorded: DifferencesFile; lock: string; decisions: DecisionRecord[] }>({
+export const roundTripGate = defineGate<{ model: ModelDoc; ir: SpecIR; recorded: DifferencesFile; lock: string; decisions: DecisionRecord[]; notation: RoundTripNotation }>({
   id: "round-trip",
   title: "round trip: the tables rendered from the model equal the specification's, or each difference is a recorded decision",
-  code: ["src/render.ts#roundTrip", "src/render.ts#checkDifferences"],
-  exemptions: ["roundtrip/differences.yaml"],
+  // The spec plugin's notation reaches the check through its input, so the gate reads every plugin.
+  code: ["src/render.ts#roundTrip", "src/render.ts#checkDifferences", "src/specs/index.ts#PLUGINS"],
+  exemptions: ["specs/*/roundtrip/differences.yaml"],
   check: (i) => {
-    const rt = roundTrip(i.model, i.ir);
+    const rt = roundTrip(i.model, i.ir, i.notation);
     const problems = [...rt.problems, ...checkDifferences(rt.differences, i.recorded, i.lock, i.decisions)];
     const rows = rt.model.reduce((n, t) => n + t.rows.length, 0);
     return { problems, note: `${rt.model.length} tables, ${rows} rows; ${rt.differences.length} recorded difference${rt.differences.length === 1 ? "" : "s"}` };
@@ -59,12 +61,12 @@ export const roundTripGate = defineGate<{ model: ModelDoc; ir: SpecIR; recorded:
 
 // Examples ----------------------------------------------------------------------
 
-export const findingsLoad = defineGate<{ file?: string }>({
+export const findingsLoad = defineGate<{ file: string }>({
   id: "findings-load",
   title: "examples: findings file schema-valid",
   code: ["src/examples.ts#loadFindings"],
   check: (i) => {
-    const f = loadFindings(ROOT, i.file);
+    const f = loadFindings(i.file);
     return { problems: [], note: `${f.findings.length} recorded finding${f.findings.length === 1 ? "" : "s"}` };
   },
   fixtures: [{ name: "a finding with no decisions", mutate: () => ({ file: join(ROOT, "gates/data/findings-load/findings.yaml") }), expect: "not a valid findings file" }],
@@ -104,6 +106,8 @@ export interface ExamplesInput {
   values: Map<string, Loaded>;
   /** The codes of the lists the repository pins, which the currency and zone rules read. */
   codes: ReadonlyMap<string, ReadonlySet<string | number>>;
+  /** Every check a rule of the lock may have: the kernel's, the constructors', and the spec's (`checksOf`). */
+  ruleChecks: Readonly<Record<string, Check>>;
   recorded: FindingsFile;
   lock: string;
   decisions: DecisionRecord[];
@@ -112,8 +116,9 @@ export interface ExamplesInput {
 export const examplesValidate = defineGate<ExamplesInput>({
   id: "examples-validate",
   title: "examples load under YAML 1.2 core, validate against their documents, use only keys the model defines, and keep every rule a check decides, or each failure is a recorded finding",
-  code: ["src/examples.ts#checkExamples", "src/examples.ts#checkFindings", "src/examples.ts#checkUndecided"],
-  exemptions: ["examples/findings.yaml"],
+  // The spec plugins' rule checks reach the check through its input, so the gate reads them too.
+  code: ["src/examples.ts#checkExamples", "src/examples.ts#checkFindings", "src/examples.ts#checkUndecided", "src/rule-checks.ts#CHECKS", "src/specs/index.ts#PLUGINS"],
+  exemptions: ["specs/*/examples/findings.yaml"],
   check: (i) => {
     const r = checkExamples(i);
     const problems = [...r.problems, ...checkFindings(r.failures, i.recorded, i.lock, i.decisions), ...checkUndecided(r.checks.undecided, i.recorded, i.lock, i.decisions)];

@@ -1,0 +1,18 @@
+# Default extractor input: AdCOM's `main`, pinned to one commit, the commit
+# OpenProposal's AdCOM lists already cite. `blob` is the git blob SHA of `path`
+# at `commit`; the fetch step verifies it. AdCOM keeps no examples/ folder.
+# Sources are tried in order. The clone and snapshot paths are relative to this
+# spec's folder, specs/adcom/; the snapshot holds the specification at
+# `commit`, so CI runs every gate without the clone, and
+# `npm run fetch -- --lock specs/adcom/spec-input/spec-lock.yaml --snapshot`
+# writes it.
+name: main
+upstream: https://github.com/InteractiveAdvertisingBureau/AdCOM
+commit: 26c59ba1b235cd8d938c9877409e506f1b8d3f0c
+path: AdCOM v1.0 FINAL.md
+blob: aca75af65c4261239d907bfd73705555874c85b1
+ir_dir: ir
+required: true
+sources:
+  - git: ../../vendor/AdCOM
+  - snapshot: spec-input/snapshots/main

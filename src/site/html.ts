@@ -4,7 +4,7 @@
  * site's Content-Security-Policy and loads only same-origin files, with no
  * inline script or style, so the policy needs no `unsafe-inline`.
  */
-import { CSP_META, ISSUE_URL, PUBLISHER } from "./config.ts";
+import { CSP_META, type SiteBrand } from "./config.ts";
 
 export const esc = (s: unknown): string => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
@@ -65,6 +65,8 @@ export interface PageOptions {
   bodyClass?: string;
   /** The path from the page to the root, where it isn't the page's own, as for a not-found page served at any path. */
   base?: string;
+  /** What the header and the footer name. */
+  brand: SiteBrand;
 }
 
 const NAV: [PageOptions["section"], string, string][] = [
@@ -73,16 +75,48 @@ const NAV: [PageOptions["section"], string, string][] = [
   ["map", "map.html", "Type map"],
   ["examples", "examples.html", "Examples"],
   ["decisions", "decisions/index.html", "Decisions"],
-  ["downloads", "downloads.html", "Downloads"],
+  ["downloads", "downloads.html", "Files"],
 ];
 
 /** The path from a page to the site's root. */
 export const baseOf = (path: string): string => "../".repeat(path.split("/").length - 1);
 
-/** A whole page in the shared layout. */
+/** A whole page of a spec, in the shared layout. */
 export function page(o: PageOptions): string {
   const base = o.base ?? baseOf(o.path);
+  const b = o.brand;
   const nav = NAV.map(([s, href, label]) => `<a href="${base}${href}"${s === o.section ? ' aria-current="page"' : ""}>${label}</a>`).join("");
+  const brand = `<a class="brand" href="${base}index.html"><span class="mark" aria-hidden="true"></span><span>${b.short}&nbsp;${b.edition} <em>JSON&nbsp;Schema</em></span></a>`;
+  const foot = `<p>Published by ${b.publisher}, an IAB Tech Lab member. Unofficial: this isn't an IAB Tech Lab artifact, and the ${b.short} specification remains the reference. Generated from ${b.short} ${b.edition} ${b.release}.</p>
+    <p>${b.feedback ? `<a href="${b.feedback.issue}">Implementation feedback on issue #${b.feedback.issueNumber}</a> · ` : ""}<a href="${base}decisions/index.html">Decision records</a> · <a href="${base}downloads.html">Files</a></p>`;
+  return layout({ ...o, base, brand, nav, foot });
+}
+
+/** What the site's root pages carry: the site's own name and publisher, and a nav of the specs. */
+export interface RootPageOptions {
+  path: string;
+  title: string;
+  description: string;
+  body: string;
+  /** The site's name, and each spec's link in the nav, by its path from the root. */
+  site: { name: string; publisher: string };
+  specs: { href: string; label: string }[];
+  base?: string;
+  bodyClass?: string;
+}
+
+/** A page at the site's root, such as the list of specs or the not-found page, in the shared layout. */
+export function rootPage(o: RootPageOptions): string {
+  const base = o.base ?? baseOf(o.path);
+  const brand = `<a class="brand" href="${base}index.html"><span class="mark" aria-hidden="true"></span><span>${esc(o.site.name)} <em>as&nbsp;JSON&nbsp;Schema</em></span></a>`;
+  const nav = o.specs.map((s) => `<a href="${base}${s.href}">${esc(s.label)}</a>`).join("");
+  const foot = `<p>Published by ${esc(o.site.publisher)}, an IAB Tech Lab member. Unofficial: this isn't an IAB Tech Lab artifact, and each specification's own text remains the reference.</p>`;
+  return layout({ path: o.path, title: o.title, description: o.description, body: o.body, base, brand, nav, foot, scripts: [], ...(o.bodyClass ? { bodyClass: o.bodyClass } : {}) });
+}
+
+/** The markup every page shares: the policy, the stylesheet, the scripts, the header, and the footer. */
+function layout(o: { path: string; title: string; description: string; body: string; base: string; brand: string; nav: string; foot: string; scripts?: string[]; bodyClass?: string }): string {
+  const base = o.base;
   const scripts = ["assets/site.js", ...(o.scripts ?? [])].map((s) => `<script src="${base}${s}" defer></script>`).join("\n");
   return `<!doctype html>
 <html lang="en">
@@ -102,9 +136,9 @@ ${scripts}
 <a class="skip" href="#main">Skip to the content</a>
 <header class="top">
   <div class="top-in">
-    <a class="brand" href="${base}index.html"><span class="mark" aria-hidden="true"></span><span>OpenProposal&nbsp;3.0 <em>JSON&nbsp;Schema</em></span></a>
+    ${o.brand}
     <span class="pill" title="Not an IAB Tech Lab artifact">Unofficial</span>
-    <nav aria-label="Site">${nav}</nav>
+    <nav aria-label="Site">${o.nav}</nav>
     <button class="theme" type="button" id="theme" aria-label="Color theme: system">◐</button>
   </div>
 </header>
@@ -113,8 +147,7 @@ ${o.body}
 </main>
 <footer class="foot">
   <div class="foot-in">
-    <p>Published by ${PUBLISHER}, an IAB Tech Lab member. Unofficial: this isn't an IAB Tech Lab artifact, and the OpenProposal specification remains the reference. Generated from OpenProposal 3.0 draft 1.</p>
-    <p><a href="${ISSUE_URL}">Implementation feedback on issue #121</a> · <a href="${base}decisions/index.html">Decision records</a> · <a href="${base}downloads.html">Downloads</a></p>
+    ${o.foot}
   </div>
 </footer>
 </body>

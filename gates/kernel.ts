@@ -10,15 +10,21 @@ import { defineGate, ROOT } from "./harness.ts";
 
 const withPrimitive = (k: Kernel, name: string, change: (p: Primitive) => Primitive): Kernel => ({ ...k, primitives: k.primitives.map((p) => (p.name === name ? change(p) : p)) });
 
-export const kernelLoad = defineGate<{ file?: string }>({
+export const kernelLoad = defineGate<{ spec: string | null; file?: string }>({
   id: "kernel-load",
   title: "kernel: schema-valid",
   code: ["src/kernel.ts#loadKernel"],
   check: (i) => {
-    const k = loadKernel(ROOT, i.file);
+    const k = loadKernel(ROOT, i.spec, i.file);
     return { problems: [], note: `${k.primitives.length} primitives, ${k.primitives.reduce((n, p) => n + (p.rules?.length ?? 0), 0)} rules` };
   },
-  fixtures: [{ name: "a primitive with no vectors", mutate: () => ({ file: `${ROOT}/gates/data/kernel-load/primitives.yaml` }), expect: "not a valid kernel file" }],
+  fixtures: [
+    { name: "a primitive with no vectors", mutate: () => ({ spec: null, file: `${ROOT}/gates/data/kernel-load/primitives.yaml` }), expect: "not a valid kernel file" },
+    // A kernel file keeps the definitions, and a spec's binding what rests on the spec.
+    { name: "a kernel file that cites a spec's element", mutate: (i) => ({ ...i, file: `${ROOT}/gates/data/kernel-load/bound/primitives.yaml` }), expect: "which rest on a spec; a spec's kernel binding gives them" },
+    { name: "a binding that gives a primitive's constraints", mutate: (i) => ({ ...i, spec: `${ROOT}/gates/data/kernel-load/defining` }), expect: "which the kernel defines for every spec" },
+    { name: "a binding for a primitive the kernel doesn't define", mutate: (i) => ({ ...i, spec: `${ROOT}/gates/data/kernel-load/undefined` }), expect: 'the binding names "NoSuchType", which the kernel doesn\'t define' },
+  ],
 });
 
 export const kernelCheck = defineGate<{ kernel: Kernel; decisions: DecisionRecord[] }>({
@@ -90,18 +96,24 @@ export const kernelSources = defineGate<{ ir: SpecIR; lock: string; kernel: Kern
       mutate: (i) => ({ ...i, kernel: withPrimitive(i.kernel, "Uuid", (p) => ({ ...p, sources: { ...p.sources, spec: p.sources.spec!.map((s, n) => (n === 0 ? { ...s, digest: "0".repeat(64) } : s)) } })) }),
       expect: "field:4.1:proposal_id",
     },
+    {
+      // Each spec's binding cites its own text: an element of another spec, here the widgets fixture's (test/fixtures/specs/widgets), is no element of this one.
+      name: "a binding that cites an element of another spec",
+      mutate: (i) => ({ ...i, kernel: withPrimitive(i.kernel, "ExternalId", (p) => ({ ...p, sources: { ...p.sources, spec: [...(p.sources.spec ?? []), { ir: "key:1.1:widget.id", digest: "0".repeat(64), quote: "`id` | REQUIRED | The widget's ID, which the catalog assigns." }] } })) }),
+      expect: 'no IR element "key:1.1:widget.id"',
+    },
   ],
 });
 
-export const constructorsLoad = defineGate<{ file?: string }>({
+export const constructorsLoad = defineGate<{ spec: string | null; file?: string }>({
   id: "constructors-load",
   title: "constructors: schema-valid",
   code: ["src/constructors.ts#loadConstructors"],
   check: (i) => {
-    const c = loadConstructors(ROOT, i.file);
+    const c = loadConstructors(ROOT, i.spec, i.file);
     return { problems: [], note: `${c.constructors.length} constructors, ${c.parts.length} parts, ${c.constructors.reduce((n, x) => n + (x.rules?.length ?? 0), 0)} rules` };
   },
-  fixtures: [{ name: "a constructor with no shell", mutate: () => ({ file: `${ROOT}/gates/data/constructors-load/constructors.yaml` }), expect: "not a valid constructors file" }],
+  fixtures: [{ name: "a constructor with no shell", mutate: () => ({ spec: null, file: `${ROOT}/gates/data/constructors-load/constructors.yaml` }), expect: "not a valid constructors file" }],
 });
 
 export const constructorsCheck = defineGate<{ model: Model; decisions: DecisionRecord[] }>({
@@ -258,7 +270,7 @@ export const duplicationKernel = defineGate<{ kernel: Kernel; model: Model | nul
   id: "duplication-kernel",
   title: "duplication: each named type defined once, no structural twins unless their concepts share a structure the domain model declares",
   code: ["src/duplication.ts#checkDuplication", "src/kernel.ts#checkKernelNames", "src/kernel.ts#kernelStructures", "src/constructors.ts#copyStructures", "src/domains.ts#sharedStructures"],
-  exemptions: ["kernel/domains.yaml#shared_structures"],
+  exemptions: ["kernel/domains.yaml#shared_structures", "specs/*/kernel-binding.yaml#shared_structures"],
   check: (i) => {
     const copies = i.model ? copyStructures(i.model, i.mappings) : [];
     const types = [...kernelStructures(i.kernel), ...(i.model ? partStructures(i.model.constructors) : []), ...copies];

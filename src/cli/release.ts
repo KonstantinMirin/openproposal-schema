@@ -1,6 +1,7 @@
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { parseArgs } from "node:util";
+import { allLocks, cliSpec } from "../builds.ts";
 import { loadConstructors } from "../constructors.ts";
 import { emitSchemas, schemaDirOf } from "../emit.ts";
 import { loadKernel } from "../kernel.ts";
@@ -8,9 +9,11 @@ import { loadLock, type SpecLock } from "../lock.ts";
 import { loadDecisions, loadMappings } from "../mapping.ts";
 import { resolveModel } from "../model.ts";
 import { buildRelease, freezeRelease, loadFrozen, RELEASE_FILE, RELEASES_DIR, renderRelease, unreviewedDecisions } from "../release.ts";
-import { emitRules, loadVectors } from "../rules.ts";
+import { emitRules, loadVectors, VECTORS_DIR } from "../rules.ts";
 import { generateCorpus } from "../corpus.ts";
 import { pinnedOracle } from "../engines.ts";
+import { REPO_ROOT } from "../repo.ts";
+import { schemaNamesOfLock } from "../specs/index.ts";
 
 /**
  * Usage: release [--lock <file>] [--out <dir>] [--freeze]
@@ -32,52 +35,50 @@ import { pinnedOracle } from "../engines.ts";
  */
 function main(): number {
   const { values } = parseArgs({ options: { lock: { type: "string" }, out: { type: "string" }, freeze: { type: "boolean" } } });
-  const root = new URL("../..", import.meta.url).pathname.replace(/\/$/, "");
+  const root = REPO_ROOT;
+  const specDir = cliSpec(values);
   if (values.out !== undefined && values.lock === undefined) throw new Error("--out needs --lock");
   if (values.out !== undefined && values.freeze) throw new Error("--freeze writes the committed tree's manifest, so it can't take --out");
   const locks: SpecLock[] =
     values.lock !== undefined
       ? [loadLock(resolve(values.lock))]
-      : readdirSync(join(root, "spec-input"))
-          .filter((f) => f === "spec-lock.yaml" || f.endsWith(".lock.yaml"))
-          .sort()
-          .map((f) => loadLock(join(root, "spec-input", f)));
-  const mappings = loadMappings(root, join(root, "mapping"));
-  const decisions = loadDecisions(root, join(root, "decisions"));
-  const kernel = loadKernel(root);
-  const constructors = loadConstructors(root);
-  const vectors = loadVectors(root);
+      : allLocks(specDir);
+  const mappings = loadMappings(join(specDir, "mapping"));
+  const decisions = loadDecisions(join(specDir, "decisions"));
+  const kernel = loadKernel(root, specDir);
+  const constructors = loadConstructors(root, specDir);
+  const vectors = loadVectors(join(specDir, VECTORS_DIR));
 
   let failed = false;
   for (const lock of locks) {
-    const ir = JSON.parse(readFileSync(join(root, lock.ir_dir, "spec-ir.json"), "utf8"));
+    const ir = JSON.parse(readFileSync(join(specDir, lock.ir_dir, "spec-ir.json"), "utf8"));
     const { model, problems } = resolveModel({ ir, lock: lock.name, mappings, decisions, kernel, constructors });
     if (problems.length > 0) {
       for (const p of problems) console.error(`error: ${lock.name}: model: ${p}`);
       failed = true;
       continue;
     }
-    const schemaDir = schemaDirOf(relative(root, join(root, lock.ir_dir)));
-    const emitted = emitSchemas(model, schemaDir);
+    const schemaDir = schemaDirOf(relative(specDir, join(specDir, lock.ir_dir)));
+    const emitted = emitSchemas(model, schemaDir, schemaNamesOfLock(lock));
     if (emitted.problems.length > 0) {
       for (const p of emitted.problems) console.error(`error: ${lock.name}: schemas: ${p}`);
       failed = true;
       continue;
     }
-    const rules = emitRules({ model, ir, lock: lock.name, vectors, decisions, schemaDir, conditionsLeft: emitted.conditions.left });
+    const rules = emitRules({ model, ir, lock: lock.name, vectors, decisions, schemaDir, conditionsLeft: emitted.conditions.left, schemaBase: schemaNamesOfLock(lock).base });
     if (rules.problems.length > 0) {
       for (const p of rules.problems) console.error(`error: ${lock.name}: rules: ${p}`);
       failed = true;
       continue;
     }
-    const last = loadFrozen(root, lock.name).at(-1) ?? null;
+    const last = loadFrozen(specDir, lock.name).at(-1) ?? null;
     const r = buildRelease({ model, files: emitted.files, rules: rules.doc, previous: last });
     if (r.problems.length > 0) {
       for (const p of r.problems) console.error(`error: ${lock.name}: ${p}`);
       failed = true;
       continue;
     }
-    const out = values.out !== undefined ? resolve(values.out) : join(root, schemaDir);
+    const out = values.out !== undefined ? resolve(values.out) : join(specDir, schemaDir);
     mkdirSync(out, { recursive: true });
     writeFileSync(join(out, RELEASE_FILE), renderRelease(r.doc));
     const shown = out.startsWith(`${root}/`) ? out.slice(root.length + 1) : out;
@@ -96,7 +97,7 @@ function main(): number {
         failed = true;
         continue;
       }
-      const wrote = freezeRelease(root, r.doc, model, rules.doc, corpus.doc, emitted.files);
+      const wrote = freezeRelease(specDir, r.doc, model, rules.doc, corpus.doc, emitted.files);
       console.log(`${lock.name}: ${wrote ? "froze" : "already frozen:"} ${RELEASES_DIR}/${lock.name}/${r.doc.release}/`);
     }
   }

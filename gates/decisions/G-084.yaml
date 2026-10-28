@@ -1,0 +1,23 @@
+format: 1
+id: G-084
+date: 2026-10-27
+question: What changes in the site gate to close the gaps an independent review of the multi-spec site found?
+decision: >-
+  The site's check reports a link that starts with two slashes, which names
+  another host, as the not-found page's navigation did; it treats every
+  link into the public repository as one, so a link off main, or with a
+  path that isn't a valid URL encoding, fails instead of passing as an
+  outside link; it requires a tree link to name a folder and a blob link a
+  file; and it loads every spec's router whether or not a page links the
+  type map with a route. Four fixtures cover these. The type map's key for
+  an added type compares each input with the default one, as the map's
+  script already did, and a lock that merges open PRs names its base by the
+  default lock's label.
+rationale: >-
+  Each change adds a check or makes one stricter, and no check is removed.
+  OpenProposal's committed outputs don't change; on the site, its type map
+  no longer says a schema is served at its $id, which is true only once the
+  $ids move to the site, and its files page says where each $id points.
+accepts:
+  - { gate: npm-test, fingerprint: fa05fdd9dc03085d5f6fd1bd6de3f0470f03d32b99be3b93c140e1a40f44606c }
+  - { gate: site-builds, fingerprint: 6702811c7ec95ff4b3425a48f33a0e77c84a1a3d6db9d5cfe921f1056573c721 }

@@ -15,6 +15,7 @@ import type { DecisionRecord, MappingFile } from "../src/mapping.ts";
 import type { ModelDoc, ModelType } from "../src/model.ts";
 import { checkVariant, checkVariantDiff, checkVariantExamples, loadVariantFile, type Variant } from "../src/variant.ts";
 import { defineGate, ROOT } from "./harness.ts";
+import type { Check } from "../src/rule-checks.ts";
 
 export const variantLoad = defineGate<{ file: string; name: string }>({
   id: "variant-load",
@@ -22,7 +23,7 @@ export const variantLoad = defineGate<{ file: string; name: string }>({
   code: ["src/variant.ts#loadVariantFile"],
   files: ["variants/variant.schema.json"],
   check: (i) => {
-    const v = loadVariantFile(ROOT, i.file, i.name);
+    const v = loadVariantFile(i.file, i.name);
     return { problems: [], note: `${v.name}: ${v.switches.length} switches, ${v.primitives.length} primitives` };
   },
   fixtures: [{ name: "a switch that names no option", mutate: (i) => ({ ...i, file: `${ROOT}/gates/data/variant-load/as-written.yaml` }), expect: "not a valid variant file" }],
@@ -95,6 +96,8 @@ export interface VariantExamplesInput {
   examples: ModelExample[];
   values: Map<string, Loaded>;
   codes: ReadonlyMap<string, ReadonlySet<string | number>>;
+  /** Every check a rule of the lock may have: the kernel's, the constructors', and the spec's (`checksOf`). */
+  ruleChecks: Readonly<Record<string, Check>>;
   variant: Variant;
   recorded: FindingsFile;
   lock: string;
@@ -104,8 +107,8 @@ export interface VariantExamplesInput {
 export const variantExamples = defineGate<VariantExamplesInput>({
   id: "variant-examples",
   title: "variant: the specification's examples fail only where a gap's recorded finding or a switch's own finding says, and every one of those still fails",
-  code: ["src/examples.ts#checkExamples", "src/variant.ts#checkVariantExamples"],
-  exemptions: ["examples/findings.yaml", "variants/*.yaml#findings"],
+  code: ["src/examples.ts#checkExamples", "src/variant.ts#checkVariantExamples", "src/rule-checks.ts#CHECKS", "src/specs/index.ts#PLUGINS"],
+  exemptions: ["specs/*/examples/findings.yaml", "specs/*/variants/*.yaml#findings"],
   check: (i) => {
     const r = checkExamples(i);
     const v = checkVariantExamples(r.failures, r.checks.undecided, i.variant, i.recorded, i.lock, i.decisions);

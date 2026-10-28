@@ -1,6 +1,7 @@
 /**
  * The implementation feedback: the decision records and the findings,
- * grouped for the working group, as a follow-up on IABTechLab/OpenProposal#121.
+ * grouped for the working group, as a follow-up on the issue the spec's
+ * profile names (`feedback.issue`).
  *
  * `npm run feedback` runs the pipeline on every lock, from its committed IR
  * and findings, as the lock comparison does (src/compare.ts), and writes
@@ -29,7 +30,7 @@
  *   that #121 proposes, plus the MUST statements that name no field, which
  *   no authoring rule removes, since each needs conformance test vectors or
  *   binds a party, and the rest.
- * - The open PRs that we posted, `OUR_PRS`, which the inputs name.
+ * - The open PRs that we posted, the profile's `feedback.prs`, which the inputs name.
  *
  * The text for the working group names a decision by its number, 1 to N in
  * reading order, never by its record's ID.
@@ -43,78 +44,32 @@ import type { LockBuild } from "./compare.ts";
 import { slots, type Constructors } from "./constructors.ts";
 import type { FindingsFile } from "./examples.ts";
 import type { Kernel } from "./kernel.ts";
-import type { FindingKind } from "./lint.ts";
 import { decisionsOf, inScope, type DecisionRecord, type MappingFile, type Target, type TypeRef } from "./mapping.ts";
 import type { DifferencesFile } from "./render.ts";
 import type { ModelType } from "./model.ts";
 import { citedDecisions } from "./release.ts";
 import type { VectorFile } from "./rules.ts";
+import type { FeedbackProfile } from "./profile.ts";
+import { specOf } from "./specs/index.ts";
+import { repoRoot } from "./lock.ts";
 
 /** Where the report lives. */
 export const FEEDBACK_DIR = "feedback";
 export const FEEDBACK_FILES = { data: "feedback.json", comment: "comment.md", details: "details.md" } as const;
-/** The issue the comment follows up on. */
-export const ISSUE = "https://github.com/IABTechLab/OpenProposal/issues/121";
 /** Stands for the details gist's URL, which exists only once the gist is posted. */
 export const DETAILS_LINK = "<details-gist-url>";
-/** The upstream PRs we posted ourselves, which the inputs name as ours. */
-export const OUR_PRS: readonly number[] = [119, 120, 123];
 
-/** The groups of decisions, in the order the pipeline cites them. */
-export const GROUPS = [
-  { id: "formats", title: "Value formats", asks: "How a value such as a timestamp, a domain, a hash, a URL, or a rate is written" },
-  { id: "options", title: "Selectable and settable fields", asks: "What names an option, what a bare value is, and what a range allows" },
-  { id: "types", title: "Types the tables leave open", asks: "The names, members, and types of the objects and value lists that only prose describes" },
-  { id: "statements", title: "Where each statement is checked", asks: "Whether a statement constrains a payload or binds a party" },
-  { id: "readings", title: "What each rule accepts", asks: "Which payloads and changes a rule stated only in prose allows" },
-] as const;
-export type GroupId = (typeof GROUPS)[number]["id"];
+/** A group of decisions, which the pipeline's stages give (`groupDecisions`), and the profile titles. */
+export type GroupId = FeedbackProfile["groups"][number]["id"];
+/** A row of findings: an authoring rule the issue proposes, or a row for the findings they don't cover. */
+export type RuleId = string;
 
-/** The authoring rules #121 proposes, and the two rows for the findings they don't cover. */
-export const AUTHORING_RULES = [
-  { id: "1", title: "Every field and key table has a Required column" },
-  { id: "2", title: "Every Object field has a key table, or links one" },
-  { id: "3", title: "A selectable or settable row names its option type" },
-  { id: "4", title: "A value list is written once, and an open list says that it is open" },
-  { id: "5", title: "Tables use only the markers § 3 defines" },
-  { id: "6", title: "Paths in prose match the table rows" },
-  { id: "7", title: "Every backticked name resolves to a row or a key, or is listed as an external reference" },
-  { id: "statements", title: "MUST statements that need conformance test vectors or bind a party" },
-  { id: "other", title: "Other findings" },
-] as const;
-export type RuleId = (typeof AUTHORING_RULES)[number]["id"];
-
-/** Each lint kind's row. The type makes the table total, so a new kind fails the typecheck until it has a row. */
-export const RULE_OF_KIND: Record<FindingKind, RuleId> = {
-  appendix_a_missing: "other",
-  appendix_a_row_missing: "other",
-  appendix_a_row_extra: "other",
-  appendix_a_mismatch: "other",
-  appendix_a_order: "other",
-  appendix_b_missing: "other",
-  appendix_b_row_missing: "other",
-  appendix_b_row_extra: "other",
-  appendix_b_count: "other",
-  appendix_b_fields: "other",
-  appendix_b_distribution: "other",
-  appendix_b_distribution_unparsed: "other",
-  presence_unstated: "1",
-  key_presence_unstated: "1",
-  key_required_is_marker: "1",
-  object_without_structure: "2",
-  option_shape_missing: "3",
-  duplicate_field_disagrees: "4",
-  name_reused_with_different_values: "4",
-  value_set_duplicate: "4",
-  value_set_subset: "4",
-  enum_without_values: "4",
-  expression_value_unknown: "4",
-  marker_undefined: "5",
-  array_suffix_mismatch: "6",
-  unresolved_identifier: "7",
-  must_without_field: "statements",
-  unnumbered_heading: "other",
-};
+/** A spec's feedback target and layout, from its profile. Throws when the profile gives none. */
+export function feedbackOf(spec: string): FeedbackProfile {
+  const { profile } = specOf(spec);
+  if (!profile.feedback) throw new Error(`${profile.file}: gives no feedback target`);
+  return profile.feedback;
+}
 
 /**
  * Text addressed to the working group can't cite this repository's own
@@ -132,7 +87,7 @@ export const RULE_OF_KIND: Record<FindingKind, RuleId> = {
  * the object model or a data model.
  */
 export const INTERNAL =
-  /type rules|initial (?:conventions|design)|\bD-\d+\b|\bG-\d+\b|\bops-[a-z0-9]+(?:\.[0-9]+)*\b|npm run|(?<![\w./-])(?:kernel|mapping|src|gates|decisions|vectors|rules|corpus|schemas|sdk|ir|tools|scripts|test|docs|build)\/[\w-][\w./-]*|\bthe mapping\b|\b(?:the|our)\s+(?:generated\s+|pipeline['’]s\s+)?models?\b|\b(?:generated|pipeline['’]s)\s+models?\b|\bkernel types?\b|\bconstructor\b[^.;]*\bparameter\b|\b(?:selectable|settable|ordered|constructor|template)\s+cop(?:y|ies)\b|\bcop(?:y|ies)\s+of\s+(?:a|the|each|one)\s+(?:constructor|template)s?\b|\bsummary\s+profiles?\b|\ba\s+profile\s+of\b|\b(?:is|as)\s+a\s+profile\b(?!\s+of\b)/i;
+  /type rules|initial (?:conventions|design)|\bD-\d+\b|\bG-\d+\b|\bops-[a-z0-9]+(?:\.[0-9]+)*\b|npm run|(?<![\w./-])(?:kernel|mapping|src|gates|decisions|vectors|rules|corpus|schemas|sdk|ir|tools|scripts|test|docs|build)\/[\w-][\w./-]*|\bthe mapping\b|\b(?:the|our)\s+(?:generated\s+|pipeline['’]s\s+)?models?\b|\b(?:generated|pipeline['’]s)\s+models?\b|\bkernel types?\b|\bconstructor\b[^.;]*\bparameter\b|\b(?:selectable|settable|ordered|constructor|template)\s+cop(?:y|ies)\b|\bcop(?:y|ies)\s+of\s+(?:a|the|each|one)\s+(?:constructor|template)s?\b|\bsummary\s+profiles?\b|\ba\s+profile\s+of\b|\b(?:is|as)\s+a\s+profile\b(?!\s+of\b)|\bobjects phase\b|\bthis record\b/i;
 
 /** The fields of the records whose text the report shows the working group: a question, a feedback, an option's summary, and a finding's or a difference's reason. */
 const SHOWN_FIELDS = new Set(["question", "feedback", "summary", "reason"]);
@@ -214,7 +169,7 @@ export interface LockSide {
   heads_on?: string;
   /** What the integration changed outside the PRs, beside resolving their conflicts, as clauses. */
   edits: string[];
-  /** Those of `prs` that we posted (`OUR_PRS`), in merge order. */
+  /** Those of `prs` that we posted (the profile's `feedback.prs`), in merge order. */
   ours: number[];
   /** The branches merged beside the PRs that aren't upstream PRs. */
   branches: number;
@@ -386,7 +341,7 @@ export function groupDecisions(input: Pick<FeedbackInput, "kernel" | "constructo
   return out;
 }
 
-function lockSide(b: LockBuild): LockSide {
+function lockSide(b: LockBuild, ourPrs: readonly number[]): LockSide {
   const order = (b.lock.merge_order ?? []) as { pr?: number; head?: string; branch?: string }[];
   const prs = order.flatMap((o) => (typeof o.pr === "number" ? [o.pr] : []));
   return {
@@ -401,7 +356,7 @@ function lockSide(b: LockBuild): LockSide {
     heads: order.flatMap((o) => (typeof o.pr === "number" && typeof o.head === "string" ? [{ pr: o.pr, head: o.head }] : [])),
     ...(b.lock.heads_on !== null ? { heads_on: b.lock.heads_on } : {}),
     edits: b.lock.edits,
-    ours: prs.filter((n) => OUR_PRS.includes(n)),
+    ours: prs.filter((n) => ourPrs.includes(n)),
     branches: order.length - prs.length,
   };
 }
@@ -459,6 +414,9 @@ export function internalTypeNames(builds: Pick<LockBuild, "model" | "ir">[]): Se
   for (const b of builds) {
     for (const f of b.ir.fields) for (const w of f.type.raw.match(/[A-Za-z][A-Za-z0-9]*/g) ?? []) written.add(w);
     for (const c of b.ir.code_spans) for (const w of c.value.match(/[A-Za-z][A-Za-z0-9]*/g) ?? []) written.add(w);
+    // An object a heading names, as AdCOM's `Object: Content`, and every key path a table writes, are names the text writes.
+    for (const tb of b.ir.tables) if (tb.parent?.identifier) for (const w of tb.parent.identifier.match(/[A-Za-z][A-Za-z0-9]*/g) ?? []) written.add(w);
+    for (const k of b.ir.keys) for (const w of k.key.path.match(/[A-Za-z][A-Za-z0-9]*/g) ?? []) written.add(w);
   }
   return new Set(builds.flatMap((b) => b.model.types.map((t) => t.name)).filter((n) => !written.has(n)));
 }
@@ -519,7 +477,9 @@ function conditionInTerms(text: string, model: LockBuild["model"]): string {
 export function buildFeedback(input: FeedbackInput): { doc: FeedbackDoc; problems: string[] } {
   const problems: string[] = [];
   const { builds } = input;
-  const locks = builds.map(lockSide);
+  // The report follows up on the issue the specification's profile names, the spec of the default lock.
+  const fb = feedbackOf(repoRoot(builds[0]!.lock));
+  const locks = builds.map((b) => lockSide(b, fb.prs));
   const lockNames = locks.map((l) => l.name);
   const lockOrder = (xs: Iterable<string>) => [...new Set(xs)].sort((a, b) => lockNames.indexOf(a) - lockNames.indexOf(b));
   if (new Set(locks.map((l) => l.label)).size !== locks.length) problems.push(`two locks get one label: ${locks.map((l) => l.label).join(", ")}`);
@@ -541,7 +501,7 @@ export function buildFeedback(input: FeedbackInput): { doc: FeedbackDoc; problem
     }
   }
   const groupOf = groupDecisions(input);
-  const items = new Map<GroupId, DecisionItem[]>(GROUPS.map((g) => [g.id, []]));
+  const items = new Map<GroupId, DecisionItem[]>(fb.groups.map((g) => [g.id, []]));
   const departures: DecisionItem[] = [];
   const records = new Map(input.decisions.map((d) => [d.id, d]));
   for (const id of [...cited.keys()].sort()) if (!records.has(id)) problems.push(`the model cites ${id}, which has no decision record`);
@@ -570,10 +530,10 @@ export function buildFeedback(input: FeedbackInput): { doc: FeedbackDoc; problem
       rests_on: [...rests].sort(bySpecOrder),
     });
   }
-  const groups = GROUPS.map((g) => ({ id: g.id, title: g.title, asks: g.asks, decisions: items.get(g.id)! }));
+  const groups = fb.groups.map((g) => ({ id: g.id, title: g.title, asks: g.asks, decisions: items.get(g.id)! }));
   [...groups.flatMap((g) => g.decisions), ...departures].forEach((d, i) => (d.number = i + 1));
   const listed = new Set([...groups.flatMap((g) => g.decisions), ...departures].map((d) => d.id));
-  for (const id of suggestionDecisions()) if (!listed.has(id)) problems.push(`the suggestion to the working group cites ${id}, which the report doesn't list, so it has no number`);
+  for (const id of suggestionDecisions(fb)) if (!listed.has(id)) problems.push(`the suggestion to the working group cites ${id}, which the report doesn't list, so it has no number`);
 
   // The open lint findings, by authoring rule.
   const lint = new Map<string, LintItem>();
@@ -597,10 +557,10 @@ export function buildFeedback(input: FeedbackInput): { doc: FeedbackDoc; problem
       lint.set(f.id, item);
     }
   }
-  const findings = AUTHORING_RULES.map((r) => ({
+  const findings = fb.rules.map((r) => ({
     rule: r.id,
     title: r.title,
-    findings: [...lint.values()].filter((f) => RULE_OF_KIND[f.kind as FindingKind] === r.id).sort((a, b) => cmp(a.kind, b.kind) || cmp(a.id, b.id)),
+    findings: [...lint.values()].filter((f) => fb.kinds[f.kind] === r.id).sort((a, b) => cmp(a.kind, b.kind) || cmp(a.id, b.id)),
   }));
 
   // The example failures, merged across locks and over locations that share their causes and reason.
@@ -706,7 +666,7 @@ export function buildFeedback(input: FeedbackInput): { doc: FeedbackDoc; problem
 
   const doc: FeedbackDoc = {
     format: 1,
-    issue: ISSUE,
+    issue: fb.issue,
     locks,
     groups,
     departures,
@@ -729,9 +689,9 @@ export const renderFeedback = (doc: FeedbackDoc): string => canonicalJson(doc);
  * the row its kind names, and every example failure, union, condition, and
  * round-trip difference is listed.
  */
-export function checkFeedback(doc: FeedbackDoc, builds: LockBuild[]): string[] {
+export function checkFeedback(doc: FeedbackDoc, builds: LockBuild[], fb: FeedbackProfile): string[] {
   const problems: string[] = [];
-  problems.push(...internalCitations(doc, internalTypeNames(builds)));
+  problems.push(...internalCitations(doc, fb, internalTypeNames(builds)));
   const all = allDecisions(doc);
   const listed = all.map((d) => d.id);
   const twice = listed.filter((id, i) => listed.indexOf(id) !== i);
@@ -766,7 +726,7 @@ export function checkFeedback(doc: FeedbackDoc, builds: LockBuild[]): string[] {
       if (f.disposition !== null) continue;
       const got = lintById.get(f.id);
       if (got === undefined || !got.f.messages.some((m) => m.lock === name && m.message === messageInTerms(f, b.ir))) problems.push(`${name}: lint finding ${f.id} isn't listed`);
-      else if (got.rule !== RULE_OF_KIND[f.kind]) problems.push(`${name}: lint finding ${f.id} is under row ${got.rule}, not ${RULE_OF_KIND[f.kind]}`);
+      else if (got.rule !== fb.kinds[f.kind]) problems.push(`${name}: lint finding ${f.id} is under row ${got.rule}, not ${fb.kinds[f.kind]}`);
     }
     if (doc.set_aside[name] !== b.lint.filter((f) => f.disposition !== null).length) problems.push(`${name}: the count of findings with a verdict is wrong`);
     for (const f of b.failures) if (!doc.examples.some((x) => x.example === f.example && x.kind === f.kind && x.severity === (f.severity === "warning" ? "warning" : "error") && x.paths.includes(f.path) && x.locks.includes(name))) problems.push(`${name}: the example failure at ${f.example} ${f.path || "/"} isn't listed`);
@@ -782,16 +742,46 @@ export function checkFeedback(doc: FeedbackDoc, builds: LockBuild[]): string[] {
 }
 
 /**
+ * Each place a decision record's text for the specification's owners, its
+ * question, its chosen option's summary, and its feedback, cites what the
+ * owners don't have: a document or record of this repository, or a type of
+ * the model that the specification never writes. The report checks its own
+ * lines the same way; this holds a spec's records to it before the spec has
+ * a report.
+ */
+export function recordCitations(decisions: readonly DecisionRecord[], names: ReadonlySet<string> = new Set()): string[] {
+  const problems: string[] = [];
+  for (const d of decisions) {
+    if (d.status === "superseded") continue;
+    const shown: [string, string | undefined][] = [
+      ["question", d.question],
+      ["summary of the chosen option", d.options.find((o) => o.id === d.chosen)?.summary],
+      ["feedback", d.feedback],
+    ];
+    for (const [field, text] of shown) {
+      if (text === undefined) continue;
+      for (const line of text.split("\n")) {
+        const m = INTERNAL.exec(line);
+        if (m) problems.push(`${d.id}: its ${field} cites "${m[0]}", which the specification's owners don't have; say it in the specification's terms`);
+        const n = internalTypeName(line, names);
+        if (n !== null) problems.push(`${d.id}: its ${field} names the type "${n}", which the specification never writes; say it in the specification's terms`);
+      }
+    }
+  }
+  return problems;
+}
+
+/**
  * Every line of the comment and the details, below the generated header,
  * that cites what the working group doesn't have: a document of this
  * repository, a command, an internal decision ID such as `D-7`, or one of
  * `names`, the model's type names the specification never writes.
  */
-export function internalCitations(doc: FeedbackDoc, names: ReadonlySet<string> = new Set()): string[] {
+export function internalCitations(doc: FeedbackDoc, fb: FeedbackProfile, names: ReadonlySet<string> = new Set()): string[] {
   const problems: string[] = [];
   for (const [file, text] of [
     [FEEDBACK_FILES.comment, renderComment(doc)],
-    [FEEDBACK_FILES.details, renderDetails(doc)],
+    [FEEDBACK_FILES.details, renderDetails(doc, fb)],
   ] as const) {
     text.split("\n").forEach((line, i) => {
       if (line.startsWith("<!-- Generated by")) return;
@@ -1089,7 +1079,7 @@ function labelled(label: string, text: string): string[] {
 }
 
 /** A line's permalink: the specification at the lock's commit, opened at that line. */
-export const permalink = (l: Pick<LockSide, "upstream" | "commit" | "path">, line: number) => `${l.upstream}/blob/${l.commit}/${l.path}?plain=1#L${line}`;
+export const permalink = (l: Pick<LockSide, "upstream" | "commit" | "path">, line: number) => `${l.upstream}/blob/${l.commit}/${l.path.split("/").map(encodeURIComponent).join("/")}?plain=1#L${line}`;
 
 /** The most line links one finding's row carries; the Where column still names every section. */
 export const MAX_LINE_LINKS = 4;
@@ -1131,36 +1121,16 @@ function ranges(ns: number[], show: (n: number) => string): string {
 /** The issue's number, from its URL. */
 const issueNumber = (url: string) => url.split("/").pop()!;
 
-/**
- * Suggestions to the working group that no decision makes: forms the
- * generated schemas don't use, offered for the working group to weigh. A
- * `{D-…}` stands for that decision's number.
- */
-export const SUGGESTION = {
-  title: "A suggestion for the working group: structured money and time",
-  lead: "Two structured forms would remove an ambiguity at the source. They are suggestions for the working group to weigh, not what the generated schemas do.",
-  items: [
-    "**Money as `{ amount, currency }`.** An amount can't then appear without its currency. The specification writes a bare number with a sibling `currency`, as OpenRTB writes `bidfloor` and `bidfloorcur`. The generated schemas keep that form. Where an object carries a `currency`, they require it with the amount, using `required` and `dependentRequired` (decision {D-036}). Does the working group prefer the structured form?",
-    "**A point in time with its time zone.** An RFC 3339 timestamp carries an offset, not an IANA zone. So day boundaries, dayparts, and daylight saving changes can't be read from the value alone. The generated schemas keep RFC 3339 instants (decision {D-001}). With the open PRs, they also carry the one line item `time_zone` that [#123](https://github.com/IABTechLab/OpenProposal/pull/123) adds, an IANA zone or `viewer_local`. On `main` they add none (decision {D-038}). Should each zoned value carry its zone? It could be a structured `{ instant, time_zone }`, or an RFC 9557 string such as `2026-11-01T00:00:00-04:00[America/New_York]`. JSON Schema's `date-time` format doesn't accept RFC 9557's `[zone]` suffix.",
-  ],
-} as const;
-
 /** The decision IDs a suggestion names, each of which the report must list. */
-export const suggestionDecisions = (): string[] => [...SUGGESTION.items.join(" ").matchAll(/\{(D-\d+)\}/g)].map((m) => m[1]!);
+export const suggestionDecisions = (fb: FeedbackProfile): string[] => [...fb.suggestion.items.join(" ").matchAll(/\{(D-\d+)\}/g)].map((m) => m[1]!);
 
-/** What each authoring rule asks, above its findings. */
-const RULE_INTROS: Partial<Record<RuleId, string>> = {
-  "1": "The field tables have no Required column, and most descriptions don't say REQUIRED or OPTIONAL, so a schema's `required` list can't be derived.",
-  "2": "Each of these is typed Object, or String/Object, with no key table, inline object form, or subsection defining its keys.",
-  "3": "A selectable field needs the type of its `available[]` entries, and a settable field the type of `allowed[]` or of `min` and `max`. § 3.1 and § 3.2 define the wrapper, not the content.",
-  "4": "An Enum needs a backticked value list, and one name needs one value set. A value set that is a strict subset of another may be one list declared twice, or two lists that need their own names.",
-  "5": "§ 3 defines seven markers; the tables also use another.",
-  "6": "An array field written without `[]` in prose, or the other way round, doesn't say which entry a path means.",
-  "7": "Each name is backticked in normative text but defined by no table row or key.",
-};
 
-/** The details, for the gist the comment links. A function of the JSON form. */
-export function renderDetails(doc: FeedbackDoc): string {
+/**
+ * The details, for the gist the comment links. A function of the JSON form
+ * and of the profile's layout (`fb`): its headline, each row's intro, and its
+ * suggestion to the working group.
+ */
+export function renderDetails(doc: FeedbackDoc, fb: FeedbackProfile): string {
   const out: string[] = [header("Post it as the gist the comment links."), ""];
   const push = (...xs: string[]) => out.push(...xs);
   const [base, ...rest] = doc.locks;
@@ -1174,7 +1144,7 @@ export function renderDetails(doc: FeedbackDoc): string {
   const appendices = !doc.findings.some((r) => r.findings.some((f) => f.kind.startsWith("appendix_")));
 
   push(
-    "# OpenProposal 3.0 draft 1: what generating the schemas had to decide",
+    `# ${fb.headline}`,
     "",
     `This page supports [our implementation feedback on deriving a schema from the specification (#${issueNumber(doc.issue)})](${doc.issue}). We generated our own schemas from ${code(base!.path)}. A deterministic parser reads its markdown syntax tree, with no model calls. Where the text leaves a point open, we record a decision, and this page lists them. Every table and row parsed${appendices ? ", and the appendices agree with the body" : ""}. The outputs are JSON Schema 2020-12, the rules JSON Schema can't express with their test vectors, and TypeScript, Python, and Go types.`,
     "",
@@ -1321,11 +1291,11 @@ export function renderDetails(doc: FeedbackDoc): string {
   }
 
   push(
-    `## ${SUGGESTION.title}`,
+    `## ${fb.suggestion.title}`,
     "",
-    SUGGESTION.lead,
+    fb.suggestion.lead,
     "",
-    ...SUGGESTION.items.map((x, i) => `${i + 1}. ${x.replace(/\{(D-\d+)\}/g, (_, id: string) => String(number(id) ?? id))}`),
+    ...fb.suggestion.items.map((x, i) => `${i + 1}. ${x.replace(/\{(D-\d+)\}/g, (_, id: string) => String(number(id) ?? id))}`),
     "",
   );
 
@@ -1433,7 +1403,7 @@ export function renderDetails(doc: FeedbackDoc): string {
   for (const r of doc.findings) {
     const title = /^\d$/.test(r.rule) ? `${r.rule}. ${r.title}` : r.title;
     push(`### ${title}`, "");
-    const intro = RULE_INTROS[r.rule];
+    const intro = fb.rules.find((x) => x.id === r.rule)?.intro;
     if (intro !== undefined && r.findings.length > 0) push(intro, "");
     if (r.rule === "statements") {
       const decided = placed.length === 0 ? "The decisions on where each statement is checked say how it is checked." : `Decisions ${placed[0]} to ${placed.at(-1)}, on where each statement is checked, say how it is checked.`;

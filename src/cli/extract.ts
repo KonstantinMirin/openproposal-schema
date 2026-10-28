@@ -4,23 +4,24 @@ import { parseArgs } from "node:util";
 import { materialize } from "../fetch.ts";
 import { loadLock, repoRoot } from "../lock.ts";
 import { runStages, validateAgainst } from "../pipeline.ts";
+import { DEFAULT_LOCK } from "../repo.ts";
 
 /**
- * Usage: extract [--lock spec-input/spec-lock.yaml] [--out DIR]
+ * Usage: extract [--lock specs/openproposal/spec-input/spec-lock.yaml] [--out DIR]
  *
  * Materializes the locked specification, runs stages 1 and 2, and writes
  * `spec-ir.json` and `findings.json` to the lock's `ir_dir`, or to `--out`.
  * Exits 1 on an extraction error, an invalid IR, or a stale exception.
  */
 async function main(): Promise<number> {
-  const { values } = parseArgs({ options: { lock: { type: "string", default: "spec-input/spec-lock.yaml" }, out: { type: "string" } } });
+  const { values } = parseArgs({ options: { lock: { type: "string", default: DEFAULT_LOCK }, out: { type: "string" } } });
   const lock = loadLock(values.lock!);
   const root = repoRoot(lock);
   const spec = await materialize(lock);
   const out = runStages(lock, spec.bytes);
   const problems = [
-    ...validateAgainst(root, "spec-ir.schema.json", out.ir).map((e) => `spec-ir.json: ${e}`),
-    ...validateAgainst(root, "findings.schema.json", out.findings).map((e) => `findings.json: ${e}`),
+    ...validateAgainst("spec-ir.schema.json", out.ir).map((e) => `spec-ir.json: ${e}`),
+    ...validateAgainst("findings.schema.json", out.findings).map((e) => `findings.json: ${e}`),
     ...out.exceptionProblems,
   ];
   const dir = values.out ? resolve(values.out) : join(root, lock.ir_dir);
