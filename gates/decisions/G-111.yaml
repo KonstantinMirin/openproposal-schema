@@ -1,0 +1,39 @@
+format: 1
+id: G-111
+date: 2026-10-28
+question: What changes in the gates to close the gaps an independent review of the titled const vocabularies found?
+decision: >-
+  Code titles misread some rows: Feed Types' class, as `AOD`, named several
+  codes; a URL's colon split two titles; a version's period kept others
+  whole; and rows that start with "- " or run on as sentences gave poor
+  names. A title is now the name a row starts with before a colon and a
+  space, or else its text without a leading "- ", a URL, or a final period,
+  cut at its first clause outside parentheses past 60 characters; a name two
+  codes share before their colons is a class, so they are named by the text
+  after it, and a name still shared takes its code. The conventions check
+  now fails an extension branch that also takes a code, so a value would
+  match two branches; two codes with one title; an integer-coded vocabulary
+  with no title or description; one written in any form but titled const
+  branches, an anyOf of consts among them; and codes other than the
+  model's, with five fixtures and a test that every AdCOM list's titles are
+  unique. Type rules § 6 limits the enum and anyOf forms to string
+  vocabularies and states the title algorithm, and the SDK naming rule now
+  covers negative codes, long names, and a real collision. G-108 named § 2
+  where its keyword change is in § 8, and left out that AdCOM's lists no
+  longer reference its kernel, so `VendorCode` and `MediaOffset` there are
+  referenced by its model alone. The copied-codes check the review found
+  blind to const branches was rewritten under G-110. OpenProposal's schema
+  view of a registry vocabulary is filed as follow-up work. The test suite
+  holds 496 tests, and MIN_TESTS is 496.
+rationale: >-
+  The conventions check gains five rules and loses none; titles change and
+  no verdict does. OpenProposal's with-open-prs release manifest changes in
+  its imports' digests, since AdCOM's lists file changed.
+accepts:
+  - { gate: comparison, fingerprint: f35963bec2f4ad3aa56b2c7a72dbdf13d936203f0f7efc1af269f55509495d21 }
+  - { gate: fidelity, fingerprint: 7ffe7a42aded3655c5685ea5bf1446375936da233f99d3211453fa7dc194a398 }
+  - { gate: npm-test, fingerprint: 50d096a3eb722b869c35e2d97ee1756bf0f4a58c6c87ebcd38e7e978d40adf4a }
+  - { gate: schemas-conventions, fingerprint: 3f819a26ff13dad1e1668164422ae2c8e6a4eff65508f96d503552db3260c8d5 }
+  - { gate: schemas-emit, fingerprint: 83c063f5e221893d0b8b2d3f3eba0869200fde4879852dce15605ba853e9c6de }
+  - { gate: sdk-generate, fingerprint: 80f1d7b65bfd0471707a14a90e6d93ec0d1fd2823357586be36be04cf78c24f6 }
+  - { gate: site-builds, fingerprint: 3ed268c5626bc6fffee0361eeb3d7fad7b93a8ed25ce489637b8f63140035bb4 }

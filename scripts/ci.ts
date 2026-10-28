@@ -329,7 +329,6 @@ import { DEFAULT_SPEC, lockFiles, specNames, specRoot } from "../src/repo.ts";
 import { loadConstructors, type Model } from "../src/constructors.ts";
 import { kernelTypes, type KernelType } from "../src/domains.ts";
 import { loadKernel, type Kernel } from "../src/kernel.ts";
-import { loadLists } from "../src/lists.ts";
 import { checksOf, codesOf } from "../src/rule-checks.ts";
 import { specOf } from "../src/specs/index.ts";
 import type { SpecPlugin } from "../src/specs/plugin.ts";
@@ -375,6 +374,8 @@ import { exceptionsFileOf } from "../gates/input.ts";
 import * as V from "../gates/variant.ts";
 import * as Site from "../gates/site.ts";
 import * as EnumDrift from "../gates/enum-drift.ts";
+import * as Registry from "../gates/registry.ts";
+import { agreementContext, lockText } from "../src/agreement.ts";
 import { allSnapshotFiles, ENUM_DRIFT_DIR, ENUM_DRIFT_FILES, ENUM_DRIFT_SOURCES, enumDriftFiles, loadEnumDriftSources } from "../src/enum-drift.ts";
 import { buildSite, exportTree } from "../src/site/build.ts";
 import { loadSiteConfig } from "../src/site/config.ts";
@@ -399,6 +400,9 @@ let NAMES!: SpecNames;
 
 /** What the spec's schema files are named by. */
 const specSchemaNames = (): SchemaNames => ({ base: NAMES.schema_base, short: NAMES.short, sections: PLUGIN.text.sections });
+
+/** The codes of every list the spec's kernel holds: the kernel's own and those it imports from a registry. */
+const specCodes = () => codesOf(loadKernel(ROOT, SPEC).lists ?? { lists: [] });
 
 /** Every check a rule of the spec's locks may have: the kernel's, the constructors', and the plugin's. */
 const ruleChecks = () => checksOf(PLUGIN.ruleChecks);
@@ -678,7 +682,7 @@ async function checkRuleGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[]
     const doc = emitRules(input).doc;
     emittedRules.set(lock.name, doc);
     await gate(O.ruleVectors, { doc, model, files: emitted.files, schemaDir }, lock);
-    await gate(O.ruleChecks, { doc, model, codes: codesOf(loadLists(ROOT)), ruleChecks: ruleChecks() }, lock);
+    await gate(O.ruleChecks, { doc, model, codes: specCodes(), ruleChecks: ruleChecks() }, lock);
     const file = posix.join(rulesDirOf(lock.ir_dir), RULES_FILE);
     expected.add(file);
     const want = Buffer.from(renderRules(doc));
@@ -703,6 +707,26 @@ async function checkFidelityGates(models: Map<SpecLock, ModelDoc>, rulesOf: Map<
       continue;
     }
     await gate(fidelity, { ir: committedIr(lock), lock: lock.name, model, files: emitSchemas(model, schemaDir, specSchemaNames()).files, kernel, rules, decisions: loaded.decisions, readings: readingsOf(loaded.mappings, lock.name), schemaDir, expected, readers: PLUGIN.fidelity!, names: specSchemaNames() }, lock);
+  }
+}
+
+/**
+ * The registry agreement: each lock of every spec that isn't a registry, in
+ * each variant, agrees with the registries on this site wherever it cites
+ * one of their lists (src/agreement.ts).
+ */
+async function checkAgreementGates(models: Map<SpecLock, ModelDoc>, variants: VariantBuilds[]): Promise<void> {
+  const context = agreementContext(SPEC);
+  const spec = posix.basename(SPEC);
+  for (const [lock, model] of models) {
+    const files = emitSchemas(model, schemaDirOf(lock.ir_dir), specSchemaNames()).files;
+    await gate(Registry.registryAgreement, { spec, lock: lock.name, ir: committedIr(lock), model, files, text: lockText(lock), ...context }, lock);
+  }
+  for (const { builds } of variants) {
+    for (const b of builds.values()) {
+      const files = emitSchemas(b.model, b.dirOf(schemaDirOf(b.lock.ir_dir)), specSchemaNames()).files;
+      await gate(Registry.registryAgreement, { spec, lock: b.label, ir: b.ir, model: b.model, files, text: lockText(b.lock), ...context }, asBuild(b));
+    }
   }
 }
 
@@ -743,7 +767,7 @@ async function checkCorpusGates(models: Map<SpecLock, ModelDoc>, rulesOf: Map<st
 async function checkTypeExampleGates(models: Map<SpecLock, ModelDoc>, kernel: Kernel, locks: SpecLock[], variantFiles: VariantFiles): Promise<void> {
   const expected = new Set<string>(variantFiles.typeExamples);
   let complete = models.size === locks.length;
-  const codes = codesOf(loadLists(ROOT));
+  const codes = specCodes();
   if (!(await gate(O.fieldExamplesLoad, { file: join(SPEC, FIELD_EXAMPLES_FILE) }))) {
     for (const lock of models.keys()) {
       skipped(O.typeExamplesGenerate, "the per-field example values didn't load", lock);
@@ -900,7 +924,7 @@ async function checkExampleGates(models: Map<SpecLock, ModelDoc>, locks: SpecLoc
     await gate(C.examplesListing, { lock, model }, lock);
     const schemaDir = schemaDirOf(lock.ir_dir);
     const emitted = emitSchemas(model, schemaDir, specSchemaNames());
-    const input = { model, files: emitted.files, schemaDir, examples: got.examples, values: got.values, codes: codesOf(loadLists(ROOT)), ruleChecks: ruleChecks(), recorded, lock: lock.name, decisions: loaded.decisions };
+    const input = { model, files: emitted.files, schemaDir, examples: got.examples, values: got.values, codes: specCodes(), ruleChecks: ruleChecks(), recorded, lock: lock.name, decisions: loaded.decisions };
     await gate(C.examplesValidate, input, lock);
     await gate(C.examplesOracle, { files: emitted.files, cases: checkExamples(input).cases }, lock);
   }
@@ -1146,7 +1170,7 @@ function expectedVariantFiles(variants: VariantBuilds[]): VariantFiles {
  */
 async function checkVariantOutputGates(variants: VariantBuilds[], vectors: VectorFile[], loaded: Loaded, model: Model): Promise<void> {
   const recorded = loadFindings(join(SPEC, FINDINGS_FILE));
-  const codes = codesOf(loadLists(ROOT));
+  const codes = specCodes();
   const fields = loadFieldExamples(join(SPEC, FIELD_EXAMPLES_FILE)).fields;
   const pinned = pinnedOracle(ROOT);
   const gaps = loaded.decisions.filter((d) => d.kind !== "departure");
@@ -1346,6 +1370,8 @@ async function checkSpec(): Promise<Kernel | null> {
       await checkSchemaGates(models, locks, variantFiles);
       const { vectors, rules } = await checkRuleGates(models, locks, loaded, variantFiles);
       await checkFidelityGates(models, rules, kernel, loaded);
+      // Every spec that isn't a registry agrees with the registries on this site wherever it cites one of their lists.
+      if (specOf(SPEC).profile.site?.registry !== true) await checkAgreementGates(models, variants);
       await checkCorpusGates(models, rules, kernel, locks);
       await checkTypeExampleGates(models, kernel, locks, variantFiles);
       // A spec whose profile names no SDK packages or no feedback target has no SDK types or report to check, unless it has, or owns, such outputs (optional-outputs).

@@ -9,7 +9,9 @@ import { checkCovers, readYaml, type Cover, type DecisionRecord, type MappingFil
 import { compileSchema } from "./pipeline.ts";
 import { loadDomains, type Domains } from "./domains.ts";
 import { checkListCopies } from "./list-copies.ts";
+import { importedLists } from "./imports.ts";
 import { loadLists, type Lists } from "./lists.ts";
+import { loadProfile } from "./profile.ts";
 import { CHECKS, codesOf } from "./rule-checks.ts";
 import { REPO_ROOT } from "./repo.ts";
 import { bound, loadBinding } from "./binding.ts";
@@ -88,7 +90,15 @@ export function loadKernel(root: string, spec: string | null, file = join(root, 
   const doc = bound("primitives", file, readYaml(file), binding);
   const errors = compileSchema(join(REPO_ROOT, KERNEL_SCHEMA))(doc);
   if (errors.length > 0) throw new Error(`${file}${binding ? ` with ${binding.file}` : ""}: not a valid kernel file: ${errors.join("; ")}`);
-  return { ...(doc as Omit<Kernel, "file" | "binding" | "domains" | "lists">), file, ...(binding ? { binding: binding.file } : {}), domains: loadDomains(root, binding), lists: loadLists(root) };
+  return { ...(doc as Omit<Kernel, "file" | "binding" | "domains" | "lists">), file, ...(binding ? { binding: binding.file } : {}), domains: loadDomains(root, binding), lists: withImports(loadLists(root), spec) };
+}
+
+/** The kernel's lists, with the lists of every registry a spec's profile imports; a list the kernel keeps and a registry keeps too fails, since the spec would copy it. */
+function withImports(lists: Lists, spec: string | null): Lists {
+  const imports = spec === null ? [] : (loadProfile(spec).imports ?? []);
+  const imported = imports.flatMap((i) => importedLists(i));
+  for (const l of imported) if (lists.lists.some((k) => k.name === l.name)) throw new Error(`${lists.file}: copies ${l.standard} ${l.name}, which the spec imports from its registry; remove the copy`);
+  return imported.length === 0 ? lists : { ...lists, lists: [...lists.lists, ...imported] };
 }
 
 /** Whether a primitive is published on a lock: every lock, unless it lists `locks`. */

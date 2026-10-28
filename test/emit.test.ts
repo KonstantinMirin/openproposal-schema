@@ -1,3 +1,4 @@
+import { withImports } from "../src/imports.ts";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
@@ -43,7 +44,7 @@ const defOf = (files: EmittedFile[], path: string, name: string) => {
 function validatorFor(files: EmittedFile[], dir: string, path: string, fragment = "") {
   const ajv = new Ajv2020({ strict: true, strictRequired: false, allErrors: true });
   ajvFormats.default(ajv);
-  for (const f of files) ajv.addSchema(f.schema);
+  for (const f of withImports(files)) ajv.addSchema(f.schema);
   const v = ajv.getSchema(`${OP_SCHEMA.base}${dir}/${path}${fragment}`);
   assert.ok(v, `no schema ${path}${fragment}`);
   return v;
@@ -157,12 +158,16 @@ test("a vocabulary is an enum, and an open one is anyOf its core enum and Namesp
   assert.deepEqual(defOf(files, "modules/line-item/1/line-item.json", "Channel"), {
     anyOf: [{ type: "string", enum: ["display", "video", "audio", "ctv", "dooh", "native"] }, { $ref: "../../../kernel/1/kernel.json#/$defs/NamespacedTerm" }],
   });
+  // A vocabulary of a list the AdCOM registry keeps references the registry's, which holds the codes; it copies none.
   const plcmt = defOf(files, "modules/inventory/1/inventory.json", "PlcmtSubtype");
-  assert.deepEqual({ ...plcmt, description: undefined }, { type: "integer", enum: [1, 2, 3, 4, 5, 6, 7, 8, 9], description: undefined });
-  assert.match(String(plcmt.description), /^The codes of AdCOM 1\.0 List: Plcmt Subtypes - Video \(https:\/\/github\.com\/InteractiveAdvertisingBureau\/AdCOM\/blob\/26c59ba[^)]*\); `1`: Instream; .*`9`: In-scene$/);
-  // A list that reserves codes for vendors extends its vocabulary with them, not with namespaced terms.
+  assert.equal(plcmt.$ref, "https://adtechspec.noetis.dev/adcom/schemas/modules/lists/1/lists.json#/$defs/PlcmtSubtypeVideo");
+  assert.equal(plcmt.enum, undefined);
+  assert.match(String(plcmt.description), /^The codes of AdCOM 1\.0 List: Plcmt Subtypes - Video \(https:\/\/github\.com\/InteractiveAdvertisingBureau\/AdCOM\/blob\/26c59ba[^)]*\), as the AdCOM 1\.0 registry defines them$/);
+  const plcmtV = validatorFor(files, PRS_DIR, "modules/inventory/1/inventory.json", "#/$defs/PlcmtSubtype");
+  for (const [x, ok] of [[1, true], [9, true], [10, false], [0, false]] as const) assert.equal(plcmtV(x), ok, String(x));
+  // A list that reserves codes for vendors extends its vocabulary with them, not with namespaced terms, in the registry's schema.
   const api = defOf(files, "modules/inventory/1/inventory.json", "ApiFramework");
-  assert.deepEqual(api.anyOf, [{ type: "integer", enum: [1, 2, 3, 4, 5, 6, 7, 8, 9] }, { $ref: "../../../kernel/1/kernel.json#/$defs/VendorCode" }]);
+  assert.equal(api.$ref, "https://adtechspec.noetis.dev/adcom/schemas/modules/lists/1/lists.json#/$defs/ApiFramework");
   const apiV = validatorFor(files, PRS_DIR, "modules/inventory/1/inventory.json", "#/$defs/ApiFramework");
   for (const [x, ok] of [[7, true], [500, true], [10, false], [499, false], ["examplepub.example:x", false]] as const) assert.equal(apiV(x), ok, String(x));
   const playV = validatorFor(files, PRS_DIR, "modules/inventory/1/inventory.json", "#/$defs/PlaybackMethod");

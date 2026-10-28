@@ -16,6 +16,10 @@ import { defineGate, ROOT } from "./harness.ts";
 import { withType } from "./model.ts";
 
 /** A schema file changed by a function of its schema. */
+/** AdCOM's lists file, which holds its integer-coded vocabularies. */
+const LISTS_FILE = "modules/lists/1/lists.json";
+/** A schema file with one of its `$defs` changed. */
+const withDef = (s: Record<string, unknown>, name: string, change: (d: Record<string, unknown>) => Record<string, unknown>) => ({ ...s, $defs: { ...(s.$defs as Record<string, Record<string, unknown>>), [name]: change((s.$defs as Record<string, Record<string, unknown>>)[name]!) } });
 const withFile = (files: EmittedFile[], path: string, change: (s: Record<string, unknown>) => Record<string, unknown>): EmittedFile[] =>
   files.map((f) => {
     if (f.path !== path) return f;
@@ -74,6 +78,17 @@ export const schemasConventions = defineGate<{ files: EmittedFile[]; model: Mode
   fixtures: [
     { name: "an x- keyword", mutate: (i) => ({ ...i, files: withFile(i.files, KERNEL_FILE, (s) => withAmount(s, { "x-unit": "money" })) }), expect: '"x-unit" is no standard JSON Schema 2020-12 keyword' },
     { name: "an allOf", mutate: (i) => ({ ...i, files: withFile(i.files, KERNEL_FILE, (s) => withAmount(s, { allOf: [{ minimum: 0 }] })) }), expect: '"allOf"' },
+    // An integer-coded vocabulary names each code (type rules § 6): a bare enum of its codes, a code with no title, and an extension that isn't one titled integer fail.
+    { name: "an integer-coded list as a bare enum", spec: "adcom", mutate: (i) => ({ ...i, files: withFile(i.files, LISTS_FILE, (s) => withDef(s, "DeviceType", () => ({ type: "integer", enum: [1, 2, 3, 4, 5, 6, 7, 8] }))) }), expect: 'the integer-coded vocabulary "DeviceType" is a bare enum' },
+    { name: "an integer-coded list as an open bare enum", spec: "adcom", mutate: (i) => ({ ...i, files: withFile(i.files, LISTS_FILE, (s) => withDef(s, "ApiFramework", () => ({ anyOf: [{ type: "integer", enum: [1, 2, 3, 4, 5, 6, 7, 8, 9] }, { $ref: "../../../kernel/1/kernel.json#/$defs/VendorCode" }] }))) }), expect: 'the integer-coded vocabulary "ApiFramework" is a bare enum' },
+    { name: "a code with no title", spec: "adcom", mutate: (i) => ({ ...i, files: withFile(i.files, LISTS_FILE, (s) => withDef(s, "DeviceType", (d) => ({ ...d, oneOf: (d.oneOf as Record<string, unknown>[]).map((b, n) => (n === 0 ? { const: b.const } : b)) }))) }), expect: "a code's branch is no integer const with a title" },
+    { name: "a code listed twice", spec: "adcom", mutate: (i) => ({ ...i, files: withFile(i.files, LISTS_FILE, (s) => withDef(s, "DeviceType", (d) => ({ ...d, oneOf: [...(d.oneOf as unknown[]), (d.oneOf as unknown[])[0]] }))) }), expect: "two branches have the same code" },
+    { name: "an extension that also takes a code", spec: "adcom", mutate: (i) => ({ ...i, files: withFile(i.files, LISTS_FILE, (s) => withDef(s, "StartDelayMode", (d) => ({ ...d, oneOf: (d.oneOf as Record<string, unknown>[]).map((b) => (b.const === undefined ? { ...b, not: undefined } : b)) }))) }), expect: "the extension branch also takes the code 0, so it matches two branches" },
+    { name: "two codes with one title", spec: "adcom", mutate: (i) => ({ ...i, files: withFile(i.files, LISTS_FILE, (s) => withDef(s, "DeviceType", (d) => ({ ...d, oneOf: (d.oneOf as Record<string, unknown>[]).map((b) => (b.const === 2 ? { ...b, title: "Mobile/Tablet - General" } : b)) }))) }), expect: "two codes have the same title" },
+    { name: "an integer-coded vocabulary with no title", spec: "adcom", mutate: (i) => ({ ...i, files: withFile(i.files, LISTS_FILE, (s) => withDef(s, "DeviceType", (d) => ({ ...d, title: undefined }))) }), expect: "an integer-coded vocabulary has no title or no description" },
+    { name: "an integer-coded vocabulary as an anyOf of consts", spec: "adcom", mutate: (i) => ({ ...i, files: withFile(i.files, LISTS_FILE, (s) => withDef(s, "DeviceType", (d) => ({ anyOf: d.oneOf }))) }), expect: 'the integer-coded vocabulary "DeviceType" isn\'t type integer with titled const branches in a oneOf' },
+    { name: "a code the model doesn't hold", spec: "adcom", mutate: (i) => ({ ...i, files: withFile(i.files, LISTS_FILE, (s) => withDef(s, "DeviceType", (d) => ({ ...d, oneOf: [...(d.oneOf as unknown[]), { const: 9, title: "Nine" }] }))) }), expect: "the codes are 1, 2, 3, 4, 5, 6, 7, 8, 9, where the model's are 1, 2, 3, 4, 5, 6, 7, 8" },
+    { name: "two extension branches", spec: "adcom", mutate: (i) => ({ ...i, files: withFile(i.files, LISTS_FILE, (s) => withDef(s, "ApiFramework", (d) => ({ ...d, oneOf: [...(d.oneOf as unknown[]), { type: "integer", minimum: 900, title: "More" }] }))) }), expect: "a branch other than a code's is no titled integer extension, or there are several" },
   ],
 });
 

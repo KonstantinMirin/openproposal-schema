@@ -11,7 +11,9 @@
 # keeper's latest version, as SIX serves ISO 4217's List One, names under
 # `copy` the repository's copy of the file it served at `version`, so the
 # SHA-256 stays verifiable. Change a list only when the URL's commit or the
-# list's version changes.
+# list's version changes. A list a registry spec on this site keeps, as
+# AdCOM keeps its lists, is never copied here: a spec's profile imports it
+# from the registry's committed outputs (src/imports.ts).
 format: 1
 lists:
   - name: Line.frequencyinterval
@@ -23,48 +25,6 @@ lists:
       - { code: Week }
       - { code: Hour }
       - { code: LineDuration }
-  - name: "List: Plcmt Subtypes - Video"
-    standard: AdCOM 1.0
-    url: https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#list_plcmtsubtypesvideo
-    codes:
-      - { code: 1, label: "Instream" }
-      - { code: 2, label: "Accompanying Content" }
-      - { code: 3, label: "Interstitial" }
-      - { code: 4, label: "No Content/Standalone" }
-      - { code: 5, label: "Pause" }
-      - { code: 6, label: "Screensaver" }
-      - { code: 7, label: "Overlay" }
-      - { code: 8, label: "Squeezeback" }
-      - { code: 9, label: "In-scene" }
-  - name: "List: Playback Methods"
-    standard: AdCOM 1.0
-    url: https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#list_playbackmethods
-    codes:
-      - { code: 1, label: "Initiates without any specific user interaction with Sound On" }
-      - { code: 2, label: "Initiates without any specific user interaction Sound Off by Default" }
-      - { code: 3, label: "Initiates on Click with Sound On" }
-      - { code: 4, label: "Initiates on Mouse-Over or cursor over with Sound On" }
-      - { code: 5, label: "Initiates on Entering Viewport or scrolling into view with Sound On" }
-      - { code: 6, label: "Initiates on Entering Viewport or scrolling into view with Sound Off by Default" }
-      - { code: 7, label: "Continuous Playback - Media playback is set to play additional media automatically without user interaction. The media player will keep playing additional media (playlist or generated) for the user until the user actively stops this from happening." }
-      - { code: 8, label: "Initiated by user pausing content, Sound on" }
-      - { code: 9, label: "Initiated by user pausing content, Sound off" }
-      - { code: 10, label: "Initiated by idling (e.g. screensaver), Sound on" }
-      - { code: 11, label: "Initiated by idling (e.g. screensaver), Sound off" }
-  - name: "List: API Frameworks"
-    standard: AdCOM 1.0
-    url: https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#list_apiframeworks
-    codes:
-      - { code: 1, label: "VPAID 1.0" }
-      - { code: 2, label: "VPAID 2.0" }
-      - { code: 3, label: "MRAID 1.0" }
-      - { code: 4, label: "ORMMA" }
-      - { code: 5, label: "MRAID 2.0" }
-      - { code: 6, label: "MRAID 3.0" }
-      - { code: 7, label: "OMID 1.0" }
-      - { code: 8, label: "SIMID 1.0" }
-      - { code: 9, label: "SIMID 1.1" }
-    vendor: { from: 500, label: "Vendor-specific codes" }
   - name: ISO 4217
     standard: "ISO 4217, Codes for the representation of currencies: List One, the current currency and funds codes, as SIX publishes it for the ISO 4217 Maintenance Agency"
     version: "2026-09-17"

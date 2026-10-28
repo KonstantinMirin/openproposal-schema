@@ -73,6 +73,20 @@
         }
       }
     },
+    "imports": {
+      "description": "The registry specs on this site whose code lists the spec takes, each at the one lock of it the spec pins, as OpenProposal takes AdCOM's lists at main. A list the spec cites comes from the registry's committed outputs at that lock, and its schemas reference the registry's, so the spec copies no code.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["spec", "lock"],
+        "properties": {
+          "spec": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "lock": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }
+        }
+      }
+    },
     "statements": {
       "description": "Which sentences are statements with a level: `uppercase`, a sentence with an RFC 2119 keyword in capitals, as the specification's conventions say; or `any-case`, a sentence with a keyword in any case, for a specification that states no convention and writes its keywords in either case, as a decision records.",
       "enum": [

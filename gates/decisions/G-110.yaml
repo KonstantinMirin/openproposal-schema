@@ -1,0 +1,36 @@
+format: 1
+id: G-110
+date: 2026-10-28
+question: What changes in registry-agreement to close the gaps an independent review found, two of which defeated the owner's own examples?
+decision: >-
+  The gate read citations and restated codes only inside one IR string, so
+  it never saw the text's "List: Device Types" sentence or the device
+  tables' "Connected TV (3)", and it slugged the IR's normalized heading, so
+  it rejected GitHub's real `#list--device-types-` and accepted one that
+  doesn't exist. It now reads citations, case and spacing aside, from the
+  IR and from every line of the text, and a link to a list's anchor cites
+  that list; a restated code is any "(n)" whose words before it are exactly
+  a label, or a label's name before a dash or a colon, of a list the lock
+  cites anywhere, so a device table restates Device Types wherever it sits,
+  and a phrase among such labels that is none restates a label the registry
+  doesn't write; a heading's slug is GitHub's, from the heading line as the
+  registry's text writes it. A link must be at the pinned lock's commit. A
+  citation of a list the registry titles with no codes, as a deprecated
+  one, fails, and so does a citation or link of a registry the spec doesn't
+  import. The copied-codes check reads an enum and const branches alike,
+  takes a superset of a list's codes, and names every list it could be,
+  with the codes alone as evidence only where they are exactly a list of
+  four or more, and else the list's name or labels. Kernel lists that copy
+  a registry's list, by its text's URL or by its codes and labels, fail. A
+  vocabulary's openness must be its list's. A spec's second pin is reported
+  once. The gate runs on every spec that isn't a registry, not only on one
+  that imports. Twenty fixtures cover each check, the plan's "Connected TV
+  (3)" and both slug directions among them, and the tests hold GitHub's slug
+  and a link by it. The test suite holds 495 tests, and MIN_TESTS is 495.
+rationale: >-
+  Every check is stricter or new, and the gate runs on more specs; nothing
+  is relaxed. It passes on every OpenProposal build, so no output changes.
+accepts:
+  - { gate: guard, fingerprint: cd7ab416766fb37b9d94b491828d74abfe1df1b03160db93e784688e1152593f }
+  - { gate: npm-test, fingerprint: 4ae49a6708fc81808545cd130642015ecb2dd38d5c020acfd6fd694eb7d61576 }
+  - { gate: registry-agreement, fingerprint: 9bbb8e71240115c58818e9dc56a1e3d22298452e8d1a4f32443183463ac1a66a }

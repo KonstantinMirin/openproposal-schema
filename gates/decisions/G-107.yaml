@@ -1,0 +1,31 @@
+format: 1
+id: G-107
+date: 2026-10-28
+question: What gate holds a spec that imports a registry's code lists to agree with the registry wherever it cites one?
+decision: >-
+  The new gate registry-agreement (src/agreement.ts, gates/registry.ts) runs
+  on each lock of a spec whose profile imports a registry, in each variant,
+  OpenProposal's on main and with the open PRs, as proposed and as written.
+  It fails a citation, "List: X" anywhere in the lock's IR, that no list the
+  registry titles at the pinned lock names; a code the text restates beside
+  a label after a citation, as "MRAID 3.0 (6)", that the registry doesn't
+  hold or labels otherwise; a vocabulary of a registry's list whose codes or
+  labels aren't the registry's, or that takes them from a copy; an emitted
+  integer `enum` that holds exactly a registry list's codes, which copies the
+  list; a registry's vocabulary whose schema isn't a `$ref` to the
+  registry's; a spec that pins a registry more than once, or at a lock it
+  doesn't have, or a registry two specs pin at different locks; and a link
+  into the registry's text at an anchor that is neither a section's own nor
+  its heading's slug. Eight fixtures cover a restated code that disagrees, a
+  code the registry doesn't hold, an unknown list name, a copied enum, a
+  vocabulary missing a code, a second pin, another spec's other pin, and a
+  link to an anchor the registry lacks. A test runs it clean on both locks
+  and checks it reads a changed label. The guard changes with scripts/ci.ts.
+  The test suite holds 490 tests, and MIN_TESTS is 490.
+rationale: >-
+  The gate is new, and nothing existing is relaxed. It passes on every
+  OpenProposal build, so no output changes.
+accepts:
+  - { gate: guard, fingerprint: 930f1b996181df38c016fb0197763a20665fd6e69259ca41561f3f9e151d40ea }
+  - { gate: npm-test, fingerprint: 3fd094d5140a006f7aec93243a6253e6ce71171a06c63cdf7cd5c6ac828ed544 }
+  - { gate: registry-agreement, fingerprint: a884b1ad5d40e60ed859351f33c29c218c270768a3ab220413b510343527e99b }

@@ -35,6 +35,7 @@
  * corpus, whose valid cases every later release within the major must
  * still accept (src/corpus.ts, `checkOldCorpus`).
  */
+import { withImports } from "./imports.ts";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, posix } from "node:path";
 import { canonicalJson, sha256 } from "./canonical.ts";
@@ -126,6 +127,8 @@ export interface ReleaseDoc {
   files: Record<string, FileEntry>;
   /** The differences from the previous release, sorted. */
   changes: Change[];
+  /** The JCS digest of each registry file the tree references across hosts, by its `$id`, so a change to an imported list changes the release. */
+  imports?: Record<string, string>;
 }
 
 /** A frozen release: its manifest, the model it was built from, its rules, its conformance corpus, and its schema tree by path. */
@@ -664,6 +667,13 @@ export interface ReleaseInput {
  * major, or a previous release the differ can't read; the manifest is still
  * built, with a minor bump, so the gate can show it.
  */
+/** The digests of the registry files a tree imports, or nothing where it imports none. */
+function importDigests(files: EmittedFile[]): { imports?: Record<string, string> } {
+  const own = new Set(files.map((f) => String(f.schema.$id)));
+  const imported = withImports(files).filter((f) => !own.has(String(f.schema.$id)));
+  return imported.length === 0 ? {} : { imports: Object.fromEntries(imported.map((f) => [String(f.schema.$id), jcsDigest(f.schema)] as const).sort(([a], [b]) => (a < b ? -1 : 1))) };
+}
+
 export function buildRelease(input: ReleaseInput): { doc: ReleaseDoc; problems: string[] } {
   const { model, files, rules, previous } = input;
   const problems: string[] = [];
@@ -677,6 +687,7 @@ export function buildRelease(input: ReleaseInput): { doc: ReleaseDoc; problems: 
     model: modelDigest,
     rules: rulesDigest,
     digest: treeDigest(files),
+    ...importDigests(files),
   };
   const first = `${MAJOR}.0.0`;
   if (!previous) {

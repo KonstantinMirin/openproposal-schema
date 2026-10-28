@@ -1,0 +1,105 @@
+format: 1
+id: G-106
+date: 2026-10-28
+question: What changes in the gates when OpenProposal takes AdCOM's lists from the registry and references its schemas, in place of the copies kernel/lists.yaml held?
+decision: >-
+  kernel/lists.yaml no longer copies AdCOM's List: Plcmt Subtypes - Video,
+  List: Playback Methods, or List: API Frameworks. A spec's profile names
+  under `imports` a registry spec on this site and the lock it pins,
+  OpenProposal's AdCOM at main, and the kernel takes each of the registry's
+  42 lists from the registry's committed IR and schemas (src/imports.ts):
+  codes, labels (a row's name before a colon, or its text), vendor range,
+  URL at the lock's commit, and the registry's vocabulary. The three lists
+  it took are equal to the copies they replace, which a test holds. A
+  vocabulary of a registry's list emits as a `$ref` to the registry's
+  vocabulary at its absolute `$id` on adtechspec.noetis.dev, with a
+  description naming the list, and no `enum`; the model and the SDK keep
+  its terms. Every validator, Ajv and the reference oracle alike, loads the
+  registry's committed files that a tree references, and theirs in turn
+  (`withImports`); the conventions check resolves a cross-host reference
+  against them; the plain generator reads a local copy of the tree whose
+  cross-host references point at copies of those files, since it fetches
+  nothing. The fidelity gate's five fixtures on the three lists now change
+  the registry's file that decides the verdict, since a change to
+  OpenProposal's terms no longer reaches its schema, and a closed
+  vocabulary counts as reached where the registry's vocabulary it
+  references is. A file with no absolute `$id`, as the plain generator's
+  fixture is, loads as it is. Type rules § 6 states the rule. The test
+  suite holds 488 tests, and MIN_TESTS is 488.
+rationale: >-
+  The verdicts don't change: every case of the committed corpus, 3,206
+  verdicts on both locks and both variants, gives the same verdict under
+  the trees before and after, and the fidelity, example, and type-example
+  outputs are identical. Only two schema files change, each in the three
+  definitions whose enum a `$ref` replaces; the corpus loses the four
+  cases of the copied enums, which the registry's own corpus holds, and
+  the release manifest and the SDKs' stated schema digest follow. Every
+  fixture still fails its gate, now on the file that decides it; no gate
+  is relaxed. feedback/ is byte-identical.
+accepts:
+  - { gate: comparison, fingerprint: 301536baed90c0896e7391bbaf595d471b6784bc95e420c17c881d7b2d163e49 }
+  - { gate: constructors-applied, fingerprint: aa2a0ea6b0a66726a5b5f0b8a32d15e5f706fa3365fa94f90d3b970fe227d539 }
+  - { gate: constructors-check, fingerprint: 610cafec9afa22b352f14cc7793b2043db04242b45f40fb9af3738b39b61a7b0 }
+  - { gate: convention-beside-reference, fingerprint: 2f90b9cfcea61fc3a59a04e7ae961c5ac6d33868fc2414747372a1c2be684ab7 }
+  - { gate: convention-inline, fingerprint: 695b2623ac7665adfddff28bf0ab01fc562b9c72a86e42fec2a3228f6f9317be }
+  - { gate: convention-keywords, fingerprint: 3cc7a3e856f72cad60c648316a47dab88d795b2171a7e79a2948b33c7316d01f }
+  - { gate: convention-layers, fingerprint: d59a092c2041d1f5f66513e4913d8ad637a481735e0e8e82dc31c31f8a540663 }
+  - { gate: convention-lists, fingerprint: 00d01a1298974bd07edf53b47779a0d0d3b464257a9fbbda88d5262624822917 }
+  - { gate: convention-modules, fingerprint: c4654a247f80aa407ea9b4d0dc54dfc55b7ad6eb4285b3c2ee0181090b8f98bb }
+  - { gate: convention-unions, fingerprint: 1613b7cb7885c382193f4166c538ba9bfaeeb2c66dd9c741c73e68bd9556ebb2 }
+  - { gate: corpus-generates, fingerprint: 98387b7905b07bbf4d53980d58565c9b8ffa6c927c2e2e301087a8d4d962df74 }
+  - { gate: corpus-isolation, fingerprint: 8bf19c7a151d4897abe6d7f814931b3ac22041782a0e160f5c68a0c323989a1c }
+  - { gate: corpus-labels, fingerprint: cbc0e1fe9a3bdc5588929b8461b5abfb3e337898d93e999f0eeeab4f9642c48c }
+  - { gate: domains-homonyms, fingerprint: 901fa7c638f5cfb0dab7751ffc8f318194494c92c9832f4b7eb941bb4660b868 }
+  - { gate: domains-properties, fingerprint: fa985d8881510eea00aa27d521aa16c7bef8aa64d8bc4028cdd617a3d98e7938 }
+  - { gate: domains-used, fingerprint: f13b680510b4f84bc88e2878c4992e075fdd916619c3dfc76d27d0517f675299 }
+  - { gate: duplication-kernel, fingerprint: ac2b083bab9cc32f5e2e5fd491e271a681576478d9990aa6f21239ba20e6cde7 }
+  - { gate: duplication-model, fingerprint: c2bbbc753fd995fb79a51da8c058338cba2b31c9de0d09813cfcb371cdc847bc }
+  - { gate: enum-drift-sources, fingerprint: 0c0228003f4324f8e3e4d4f2f5d2f118ebfb0ebb66ba18e1fb5f5fbf63366ff1 }
+  - { gate: examples-listing, fingerprint: 241ba79dea306b467738e12308425f8d538e5dfbdd9d11bab1b5203b078b52df }
+  - { gate: examples-oracle, fingerprint: bb74f554777973308a05f6c4db7e5180e09f5d2330642376623168d624f654b9 }
+  - { gate: examples-validate, fingerprint: 9be7687910831fbbfe3c60573ae5fbb7fc1174b7d36c9829d99671334033e3a8 }
+  - { gate: extraction, fingerprint: f9f8292af9e9945a0e58b75351668c37db7854346ae8bd2ae1a501c0ddfa1ff4 }
+  - { gate: feedback, fingerprint: d54b1bc3f82c52466a463c9e6440bd5ca17ee1fa2cc76f2049da3a124fca8973 }
+  - { gate: fidelity, fingerprint: cb8e4e18243866360a4aae60812ce8c460427c2a94760606960f463559b7b5f6 }
+  - { gate: field-examples, fingerprint: 60e04845a8b4662cc2733d18375d46564c1a93f6c1e02efd460ebee471225b7d }
+  - { gate: frozen-releases, fingerprint: ba0d84d36037a8db6a97e1c64975759324c38684704edaaef3098acdc07369b3 }
+  - { gate: frozen-reviewed, fingerprint: 7bad562f5c726e44860eac9e8fc492aa19100907e0b6062233584ef976e52b21 }
+  - { gate: kernel-check, fingerprint: e432a83c3c6c739e9c4cc8998a0247d7f644780e4091d8efe8986022d1cd175f }
+  - { gate: kernel-engines, fingerprint: fa822fe2140b4f6ae7ff2200e519b098ea212b2fd91c71251a42a8651ef91373 }
+  - { gate: kernel-load, fingerprint: 6bf5c1c5b57f81eb50803817fa4d653a7691e6fb03d9a99fa7b13ad21ca1a9f2 }
+  - { gate: kernel-sources, fingerprint: abf99ae6bfe7cf0eff20a6ff08ff1ed23d78056118b371cc0b4c01c2e2dcf8dc }
+  - { gate: map-drift, fingerprint: 02b248b3bcb402668896c59ceaab316bbaf62c387c0f7839db8bb5fedaf0e255 }
+  - { gate: mapping-bijection, fingerprint: dfb8d206d282ce90d678dd93608409a397e870032fd51a106c8cec4f692f686d }
+  - { gate: mapping-constructors, fingerprint: 7cfbeb29e27539f91bc4e802282dd222d11f8f77a867da6e6f17ec49bb4dc5b4 }
+  - { gate: mapping-current, fingerprint: 32c49133c3b08329db6ef94d7e0c8e2b2e721f455c2e3d6f4af2eea43a9774de }
+  - { gate: mapping-location, fingerprint: ab79bacdabd0b323dd927ffa0253af00051e4daebcc28a7017a34d38c8db1859 }
+  - { gate: mapping-names, fingerprint: ae8ebdb2b9f8b4c79afaa35b886e5dfdb0a4e12f4cf98cf8f040d042eb98447c }
+  - { gate: mapping-rules, fingerprint: 11a3d98d79b7ef55d59e8fa4be5d164afeb1df13724d83661fa894398baa1a73 }
+  - { gate: mapping-sources, fingerprint: 294ab99b2c44a361edf3f986e648240c818d97abed268703bdc410b10304678f }
+  - { gate: model-resolves, fingerprint: 6def614342639f2a4f5c4a2e4aa30e2b3b10651fd00e72eb9709d65fa2ff7280 }
+  - { gate: modules-depends, fingerprint: 11f418de28d0567961d25951de2a6ec96daf71eb2ba60dcfa67e6a90a34f46e4 }
+  - { gate: nesting, fingerprint: 48c02dfc56a8aeff3115faa9551c9f7582d21d3b27f676a985310c3349404413 }
+  - { gate: npm-test, fingerprint: 1fb371d5b601deae0f67a229a33775749c5c0c58393383a059cd54ac63b59b4d }
+  - { gate: plain-generates, fingerprint: 394c63a1c7e902f31f5c9f34707d7c139dee31f91caae738c3dd3f97b0cd2f62 }
+  - { gate: record-wording, fingerprint: 96ed0341bb7fdb535b8aac443c81848cd8bd2b4d53fd4e64fa07d01f50962b35 }
+  - { gate: release-breaking, fingerprint: 660d7275997671ed449d8c21edfc2a4baf144350ff767c4360096ec97d998cc1 }
+  - { gate: release-breaking-corpus, fingerprint: 071ea60de21f6fa5e8df8fc1f4f5d260efdf4265c5254e8794da31010774f567 }
+  - { gate: release-builds, fingerprint: 3fee7c89cbe19d43dd1dbd2e2a598a71b2749487bc8ad966effa527ef6ce210a }
+  - { gate: release-digests, fingerprint: 9ac4635b0e5bca542567a937f8198f2f8254c92b6aecadebbe5392ff69622ce9 }
+  - { gate: round-trip, fingerprint: ce9ef0520bb1f622ca2cc7103f5a73a50251c051822e6a6b743cb730588d8f0a }
+  - { gate: rule-checks, fingerprint: d77878d808aa4ca093e0d7ddbee9a902b0f7c7c7d106b72167ee702c5e719412 }
+  - { gate: rule-vectors, fingerprint: 0172de99ff4219b3e86fe09e3e0a43616f2330f40ef8dc715334f073f97c0664 }
+  - { gate: rules-emit, fingerprint: db938ad5aee55450249ff80bc17aecb7e08d28c01f96f71d3da773de16078922 }
+  - { gate: schemas-ajv, fingerprint: e79d8a088062e5caa0c93015338e5eeef5dc2798468c6a093e4bb47e4242823e }
+  - { gate: schemas-conventions, fingerprint: 0f44c4411e19e68c3062a802db9d05736f3c6d1e61b98cdb2894c7f8d94f593d }
+  - { gate: schemas-emit, fingerprint: 23a359cd309c9af453db4415af70ce1544e9a3d96900bca3dacf971b60a9a09f }
+  - { gate: schemas-oracle, fingerprint: 9107609e10edd6b572ad30496f1fc3c996e0144f5409ecbec1d6c3b1d6473481 }
+  - { gate: sdk-generate, fingerprint: 6dd80f09046a4b689558af70d84eb0ae70bc4eb78c79f724e6609339f7bbcae3 }
+  - { gate: site-builds, fingerprint: 634f20b5eb780c713ec1f067b8345a00bf6dfcf4f279046460f4bbd9744072ac }
+  - { gate: spec-profile, fingerprint: b85f9963e71c2f1906b713c47cd7aaf772af7e145b094b200aae8da923e73b8d }
+  - { gate: type-examples-generate, fingerprint: 41caf6c734dfcb282dee9d90288ab545eca0d599eeb385ee8cc2c73f6b0cf94a }
+  - { gate: type-examples-valid, fingerprint: 1bb5d162d60c918f468b31584fc2dd264d422684a1695a61521e65564f9c8410 }
+  - { gate: variant-check, fingerprint: a561698a7e91799ded00710aef3aff5ff2a990c20cf9d38c5cbbbe5dca1c8213 }
+  - { gate: variant-diff, fingerprint: 9687f184df6b705de205cea45f3fe0eb0d6f885d77cb8afd00ff0d1cee25726a }
+  - { gate: variant-examples, fingerprint: e0ab028d49e69c8ddbb727e17f8da7c12d5ffb087a026f2d5e77d8cbcaa37011 }

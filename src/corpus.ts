@@ -42,6 +42,7 @@
  * must be the label. The one exception is the known Python `$` defect: the
  * stock oracle may accept a trailing-newline mutant, which the gate counts.
  */
+import { withImports } from "./imports.ts";
 import { existsSync, readFileSync } from "node:fs";
 import { join, posix } from "node:path";
 import { Ajv2020 } from "ajv/dist/2020.js";
@@ -135,8 +136,12 @@ const pointerOf = (ts: string[]) => ts.map((t) => `/${escape(t)}`).join("");
 /** Keywords that hold a constraint of their own. `anyOf` is also an applicator, and `additionalProperties` is a constraint only when it is `false`. */
 const CONSTRAINT_KEYWORDS = new Set([
   "type", "enum", "const", "pattern", "format", "minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum",
-  "minLength", "maxLength", "minItems", "maxItems", "uniqueItems", "minProperties", "maxProperties", "required", "dependentRequired", "anyOf",
+  "minLength", "maxLength", "minItems", "maxItems", "uniqueItems", "minProperties", "maxProperties", "required", "dependentRequired", "anyOf", "oneOf",
 ]);
+
+/** Whether a node is an integer-coded vocabulary: `type: integer` and `oneOf` integer consts, with at most an integer extension branch (type rules § 6). */
+const integerCoded = (node: Schema): node is Schema & { oneOf: Schema[] } =>
+  node.type === "integer" && Array.isArray(node.oneOf) && node.oneOf.every((b) => isMap(b) && (Number.isInteger(b.const) || b.type === "integer"));
 /** Keywords that only apply other schemas, or that annotate. */
 const PASSIVE_KEYWORDS = new Set(["$ref", "properties", "items", "additionalProperties", "propertyNames", "if", "then", "else", "dependentSchemas", "description", "title", "$schema", "$id", "examples", "default"]);
 /** The keywords that restrict how a string is spelled, so a trailing newline breaks a valid value (type rules § 2). */
@@ -181,6 +186,9 @@ export function constraintsOf(schema: Schema): { found: Found[]; implied: (Found
         for (const [member, names] of Object.entries(v)) for (const name of Array.isArray(names) ? names : []) found.push({ keyword: k, at, member, name: String(name) });
       } else if (k === "additionalProperties" && v === false) {
         found.push({ keyword: k, at });
+      } else if (k === "type" && integerCoded(node)) {
+        // Every branch of an integer-coded vocabulary is an integer, so its `type` holds whenever its `oneOf` does.
+        implied.push({ keyword: k, at, by: "oneOf" });
       } else if (k === "type" && ("enum" in node || "const" in node)) {
         const values = "const" in node ? [node.const] : Array.isArray(node.enum) ? node.enum : [];
         if (values.every((x) => hasType(x, v))) implied.push({ keyword: k, at, by: "const" in node ? "const" : "enum" });
@@ -271,11 +279,12 @@ export class Validators {
     this.lax = new Ajv2020({ strict: false, allErrors: false, validateSchema: false });
     installFormats(this.strict);
     installFormats(this.lax);
-    for (const f of files) {
+    const all = withImports(files);
+    for (const f of all) {
       this.strict.addSchema(f.schema);
       this.lax.addSchema(f.schema);
     }
-    this.byId = new Map(files.map((f) => [String(f.schema.$id), f.schema]));
+    this.byId = new Map(all.map((f) => [String(f.schema.$id), f.schema]));
   }
   /** The base of the tree's `$id`s, for a type's `$id` (`schemaIdOf`). */
   baseOf(dir: string): string | null {
@@ -438,6 +447,8 @@ export function baselines(model: ModelDoc, v: Validators, kernel: Kernel, schema
     }
     if ("const" in node) return node.const;
     if (Array.isArray(node.enum)) return node.enum[0];
+    // An integer-coded vocabulary's value is its first code.
+    if (integerCoded(node)) return node.oneOf.find((b) => "const" in b)?.const ?? node.oneOf[0]!.minimum;
     const type = node.type;
     if (type === "object" || isMap(node.properties)) {
       const props = isMap(node.properties) ? node.properties : {};
@@ -646,6 +657,13 @@ export function generateCorpus(input: CorpusInput): { doc: CorpusDoc; problems: 
         return [...(hasType(0.5, k) || !hasType(0, k) ? [] : [n + 0.5]), ...OTHER_TYPES.filter((x) => !hasType(x, k))];
       case "anyOf":
         return OTHER_TYPES;
+      case "oneOf": {
+        // An integer no branch of the vocabulary takes: past its codes on either side, and below its vendor range.
+        const branches = Array.isArray(k) ? k.filter(isMap) : [];
+        const codes = branches.flatMap((b) => (Number.isInteger(b.const) ? [b.const as number] : []));
+        const floors = branches.flatMap((b) => (typeof b.minimum === "number" ? [b.minimum - 1] : []));
+        return codes.length === 0 ? OTHER_TYPES : [Math.max(...codes) + 1, Math.min(...codes) - 1, ...floors, Math.max(...codes) + 2, Math.min(...codes) - 2];
+      }
       case "enum": {
         const nums = (Array.isArray(k) ? k : []).filter((x): x is number => typeof x === "number");
         return ["", "x", ...(nums.length > 0 ? [Math.max(...nums) + 1, Math.min(...nums) - 1] : []), ...OTHER_TYPES];

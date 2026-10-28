@@ -358,7 +358,9 @@
       var cs = B.types.filter(function (x) { return x.kind === "copy" && x.of.constructor === t.name; });
       if (cs.length) h += "<h4>Copies (" + cs.length + ')</h4><div class="chips">' + cs.map(function (x) { return chip(x.name); }).join("") + "</div>";
     }
-    if (t.kind === "vocabulary") h += "<h4>Terms (" + t.terms.length + ")" + (t.open ? ", open" : "") + '</h4><p class="terms">' + esc(t.terms.map(function (x) { return x.value; }).join(" | ")) + "</p>" + (t.open ? '<p class="note">' + openNote(t) + "</p>" : "") + (t.attribute === "marker" ? '<p class="note">A mutability marker: the rules use it, and the schema never carries it.</p>' : "");
+    // An integer-coded vocabulary lists each code with its name, as its schema titles it.
+    var named = B.codes && B.codes[t.name];
+    if (t.kind === "vocabulary") h += "<h4>Terms (" + t.terms.length + ")" + (t.open ? ", open" : "") + "</h4>" + (named ? '<ul class="codes">' + named.map(function (c) { return "<li><code>" + esc(c.value) + "</code> " + esc(c.title) + "</li>"; }).join("") + "</ul>" : '<p class="terms">' + esc(t.terms.map(function (x) { return x.value; }).join(" | ")) + "</p>") + (t.open ? '<p class="note">' + openNote(t) + "</p>" : "") + (t.attribute === "marker" ? '<p class="note">A mutability marker: the rules use it, and the schema never carries it.</p>' : "");
     if (t.kind === "profile") h += '<h4>Projected from</h4><div class="chips">' + chip(t.document) + '</div><h4>Paths</h4><p class="terms">' + esc(t.paths.join(", ")) + "</p>";
     var d = deps.get(sel), u = users.get(sel);
     h += "<h4>Built from (" + d.length + ")</h4>" + (d.length ? '<div class="chips">' + d.map(chip).join("") + "</div>" : '<p class="note">Nothing: a base type.</p>');

@@ -67,6 +67,12 @@
         }
       }
     },
+    "imports": {
+      "description": "The JCS SHA-256 of each registry schema file the tree references across hosts, by its $id, as OpenProposal's references AdCOM's lists, so a change to an imported list changes the release.",
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+    },
     "changes": {
       "description": "The differences between the previous release and this one, in the model, the rules, and the schema files, sorted by type, member, change, and detail.",
       "type": "array",

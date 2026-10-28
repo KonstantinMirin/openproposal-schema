@@ -87,6 +87,7 @@
  * listed, never skipped silently, and so is every closed vocabulary of the
  * model that no value list the oracle reads reaches.
  */
+import { withImports } from "./imports.ts";
 import { Ajv2020, type ErrorObject } from "ajv/dist/2020.js";
 import { canonicalJson } from "./canonical.ts";
 import { baselines, Validators, type Baselines } from "./corpus.ts";
@@ -364,7 +365,7 @@ export function checkFidelity(input: FidelityInput): FidelityResult & { problems
   const make: Baselines = baselines(model, v, kernel, schemaDir);
   const ajv = new Ajv2020({ strict: false, allErrors: true, validateSchema: false });
   installFormats(ajv);
-  for (const f of files) ajv.addSchema(f.schema);
+  for (const f of withImports(files)) ajv.addSchema(f.schema);
   const validate = (id: string, value: unknown): ErrorObject[] | null => {
     const fn = ajv.getSchema(id);
     if (!fn) throw new Error(`no schema has the $id ${id}`);
@@ -802,7 +803,9 @@ export function checkFidelity(input: FidelityInput): FidelityResult & { problems
   for (const t of model.types) {
     if (t.kind !== "vocabulary" || t.open || t.attribute !== undefined) continue;
     const id = schemaIdOf(t, schemaDir, baseOf(files, schemaDir));
-    if (id === null || reached.has(id)) continue;
+    // A registry's vocabulary is reached where a value list reaches the registry's schema, which the spec's references.
+    const registry = t.list?.registry ? `${t.list.registry.schema}#/$defs/${t.list.registry.def}` : null;
+    if (id === null || reached.has(id) || (registry !== null && reached.has(registry))) continue;
     unread.push({ element: t.sources[0] ?? t.name, form: "a closed vocabulary no closed value list the oracle reads reaches", text: `${t.name}: ${t.terms.map((x) => x.value).join(" | ")}` });
   }
   unread.sort((a, b) => (a.element < b.element ? -1 : a.element > b.element ? 1 : a.text < b.text ? -1 : a.text > b.text ? 1 : 0));

@@ -27,6 +27,7 @@
  *   selectable field's `included[]` on § 3.1's. A finding cites a decision
  *   that covers one of them, as a round-trip difference does.
  */
+import { withImports } from "./imports.ts";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { Ajv2020 } from "ajv/dist/2020.js";
@@ -243,8 +244,8 @@ export interface InstanceCheck {
 export function instanceChecker(model: ModelDoc, files: EmittedFile[], schemaDir: string, codes: ReadonlyMap<string, ReadonlySet<string | number>>, ruleChecks: Readonly<Record<string, Check>>): (ref: string, value: unknown) => InstanceCheck {
   const ajv = new Ajv2020({ strict: true, strictRequired: false, allErrors: true });
   installFormats(ajv);
-  for (const f of files) ajv.addSchema(f.schema);
-  const walker = new Walker(model, files, schemaDir, ajv);
+  for (const f of withImports(files)) ajv.addSchema(f.schema);
+  const walker = new Walker(model, withImports(files), schemaDir, ajv);
   const checksOn = checksByType(model, ruleChecks);
   const orderOf = copyOrders(model);
   return (ref, value) => {
@@ -291,11 +292,11 @@ export function checkExamples(input: {
   const ajv = new Ajv2020({ strict: true, strictRequired: false, allErrors: true });
   installFormats(ajv);
   try {
-    for (const f of files) ajv.addSchema(f.schema);
+    for (const f of withImports(files)) ajv.addSchema(f.schema);
   } catch (e) {
     return { failures, cases, problems: [`Ajv doesn't load the schemas: ${(e as Error).message}`], checks };
   }
-  const walker = new Walker(model, files, schemaDir, ajv);
+  const walker = new Walker(model, withImports(files), schemaDir, ajv);
   const types = new Map(model.types.map((t) => [t.name, t]));
   const checksOn = checksByType(model, input.ruleChecks);
   const orderOf = copyOrders(model);
@@ -692,7 +693,7 @@ export function spawnInstanceOracle(root: string): InstanceOracle {
   const python = join(root, ".venv", "bin", "python");
   return (files, cases) => {
     if (!existsSync(python)) throw new Error("no oracle venv at .venv; run: npm run setup:oracle");
-    const input = JSON.stringify({ schemas: files.map((f) => f.schema), cases: cases.map((c) => ({ ref: c.ref, value: c.value })) });
+    const input = JSON.stringify({ schemas: withImports(files).map((f) => f.schema), cases: cases.map((c) => ({ ref: c.ref, value: c.value })) });
     const r = spawnWithInput(python, ["-I", join(root, "tools", "oracle", "instance_verdicts.py")], input, { cwd: root, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
     if (r.error) throw new Error(`${python}: ${r.error.message}`);
     if (r.status !== 0) throw new Error(`tools/oracle/instance_verdicts.py failed: ${(r.stderr || r.stdout).trim()}`);

@@ -33,6 +33,7 @@ import type { Expr } from "./sdk.ts";
 import { jsonEqual, jsonOf, type SdkCase, type SdkRun } from "./sdk-parity.ts";
 import { spawnWithInput } from "./spawn.ts";
 import { REPO_ROOT } from "./repo.ts";
+import { withImports } from "./imports.ts";
 
 export const PLAIN_REQUIREMENTS = "tools/plaingen/requirements.in";
 export const EXEMPTIONS_FILE = "plain-generator/exemptions.yaml";
@@ -107,11 +108,36 @@ export function generatePlain(root: string, schemaDir: string, out: string): { v
   mkdirSync(pkg, { recursive: true });
   writeFileSync(join(pkg, "__init__.py"), "");
   const files = publishedFiles(schemaDir);
+  const input = localTree(schemaDir, files, join(out, "_input"));
   for (const f of files) {
-    const r = spawnSync(generator, ["--input", join(schemaDir, f), "--output", join(pkg, `${plainModuleOf(f)}.py`), ...PLAIN_OPTIONS], { encoding: "utf8", env: { ...process.env, PYTHONWARNINGS: "ignore" } });
+    const r = spawnSync(generator, ["--input", join(input, f), "--output", join(pkg, `${plainModuleOf(f)}.py`), ...PLAIN_OPTIONS], { encoding: "utf8", env: { ...process.env, PYTHONWARNINGS: "ignore" } });
     if (r.status !== 0) problems.push(`${f}: datamodel-codegen failed: ${(r.stderr || r.stdout).trim().split("\n").slice(-3).join(" ")}`);
   }
   return { version, modules: files.length, problems };
+}
+
+/**
+ * A copy of a schema tree the generator reads with no network: each `$ref`
+ * across hosts, into a registry another spec publishes, points instead at
+ * a copy of the registry's committed file beside the tree, under
+ * `imports/<spec>/`, where the registry's own relative references resolve
+ * too. The published files are unchanged; only the generator's input is.
+ */
+function localTree(schemaDir: string, files: string[], dir: string): string {
+  rmSync(dir, { recursive: true, force: true });
+  const all = withImports(files.map((f) => ({ path: f, schema: JSON.parse(readFileSync(join(schemaDir, f), "utf8")) as Record<string, unknown>, text: "" })));
+  const pathOf = new Map(all.map((f) => [String(f.schema.$id), f.path]));
+  for (const f of all) {
+    const local = JSON.parse(JSON.stringify(f.schema), (k, v: unknown) => {
+      if (k !== "$ref" || typeof v !== "string" || !/^https:\/\//.test(v)) return v;
+      const [id, fragment] = v.split("#") as [string, string?];
+      const to = pathOf.get(id);
+      return to === undefined ? v : `${posix.relative(posix.dirname(f.path), to)}${fragment !== undefined ? `#${fragment}` : ""}`;
+    }) as Record<string, unknown>;
+    mkdirSync(join(dir, posix.dirname(f.path)), { recursive: true });
+    writeFileSync(join(dir, f.path), JSON.stringify(local));
+  }
+  return dir;
 }
 
 /** A target as the plain classes have it, with each named type's module, or null where it applies a template with no named copy. */

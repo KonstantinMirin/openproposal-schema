@@ -1,0 +1,60 @@
+format: 1
+id: G-108
+date: 2026-10-28
+question: What changes in the gates when every integer-coded vocabulary is emitted as titled const branches, so each code carries its name, in place of a bare enum with its codes in the description?
+decision: >-
+  An integer-coded vocabulary, each of AdCOM's 42 lists and so each one
+  OpenProposal references, emits as `type: integer` and `oneOf` a branch
+  per code, `{ const, title, description }`, the title the code's name (its
+  row's own name before a colon, or its text) and the description its row's
+  text where that says more; a vendor range adds `{ type: integer, minimum:
+  500, title: "Vendor-specific" }`, and Start Delay Modes' media offset a
+  branch of its primitive's constraints with `not` the code 0 it would also
+  match, so every value matches exactly one branch. The vocabulary keeps a
+  title, its list's heading, and a short description naming the list. The
+  conventions check (schemas-conventions) fails an integer-coded vocabulary
+  written as a bare enum, plain or open, a code's branch with no title, a
+  code listed twice, and more than one extension branch, with five
+  fixtures; it allows such a `oneOf` at a vocabulary's root beside the
+  tagged unions it allowed. The corpus reads an integer-coded `oneOf` as one
+  constraint, its `type` as implied, and builds its mutants from integers no
+  branch takes. The registry import reads a vocabulary's list from its
+  title. The fidelity gate's ten fixtures on AdCOM's lists, AdCOM's own
+  and those OpenProposal's references reach, change the titled branches
+  in place of the enum, and the vendor range's floor is the branch's. The type map lists each integer-coded vocabulary's codes with their
+  names. Type rules § 2 and § 6 state the rule and the SDK naming rule the
+  emitter phase will use, UPPER_SNAKE of the title; no SDK is generated. The
+  test suite holds 493 tests, and MIN_TESTS is 493.
+rationale: >-
+  The wire format and every verdict are unchanged: every case of the
+  corpora committed before, AdCOM's on both locks and OpenProposal's on
+  both locks and both variants, gives the same verdict under the trees
+  before and after, Ajv's and the oracle's, and the vocabulary vectors hold
+  every code, the vendor boundary, and the media offset's boundary both
+  ways. AdCOM's corpus has 16 fewer constraints, since each open list's
+  enum and anyOf are one oneOf now. OpenProposal's schema files, SDK trees,
+  and feedback don't change. The conventions check gains four rules and
+  loses none.
+accepts:
+  - { gate: comparison, fingerprint: 6094fdf6d00775a6c1e0d810e56e41570f57de96a24c89747f26f1842dfece65 }
+  - { gate: corpus-generates, fingerprint: 9100d81312dbf49aeebe8f136505c2860788c7fe976076eef84f391a191bc6e4 }
+  - { gate: corpus-isolation, fingerprint: 59c830c998dac1caeb62fd94f8d5ba031d376fd124a335e45662bbaa4239c726 }
+  - { gate: corpus-labels, fingerprint: 80c8ea4d12936ea38dfbf6c809df1651b3b15727f32286945c0b068b57f916a8 }
+  - { gate: examples-oracle, fingerprint: 90a9a6673ee56ee60a0ef70d64d3e9488412d9e91b03e836ad425e8baeb5f0fd }
+  - { gate: examples-validate, fingerprint: d7382d7a115847b62e1197a5ab9f8be5316dcb738b96364e6061cd7f8eb8cd5a }
+  - { gate: fidelity, fingerprint: 8e5b57dd3c59725b822839492e7537b402d4ce8623d8f1282aa61128440d43e5 }
+  - { gate: field-examples, fingerprint: d68b191dfeaa62d4abe066ccdc68c1cab4e37ab87e10099758023ccc7cbf9510 }
+  - { gate: kernel-load, fingerprint: e6f5c88bf8fedd56ba95f9c76ad4bf9fe13319af38d1483cbc6093e5c497d1d1 }
+  - { gate: npm-test, fingerprint: a3f09cf0f5ccb5f32a79e6d222de0f16426afdc41f2ec075c1ce5dc5931c2e8c }
+  - { gate: plain-generates, fingerprint: 2112b38e6ff62becf7b2cd91b593f6b40ec795fab58185bdb092bcfd5952cf49 }
+  - { gate: release-breaking-corpus, fingerprint: 7924378a86d329a3e9c565686fe4d7b744d1b6424b96457d83e274edb2d72d46 }
+  - { gate: rule-vectors, fingerprint: 70662dc42f36ba7f14f77b0bca984444af5f2a51f79da0d93f2f35658e40c4d9 }
+  - { gate: schemas-ajv, fingerprint: c26c428227f46fc0781f4ca4e6521b13d6a7f55fae36b302247b5d7f10cfa497 }
+  - { gate: schemas-conventions, fingerprint: 8090fa5f05b05e46aac27790139dd0603bbfaf89df65a11999f4b26f64bc76ac }
+  - { gate: schemas-emit, fingerprint: 193804fb3092ea3b6e5757691ab8f56505d6b9863537b7db335d439e5ad9c32a }
+  - { gate: schemas-oracle, fingerprint: f3ea2e764f7211390f990f9a51b479160d583c214d8aa7ea06fcb39a46e26bfe }
+  - { gate: sdk-generate, fingerprint: 90e5a624bc3901e2de0669080f96b3e9501be53901ac9c9e5f31d20f1fc4b29d }
+  - { gate: site-builds, fingerprint: cfe56e64a64573d9e919334e7be1cbf1bf13b8bc5d1ddbafba87fb1253f9863e }
+  - { gate: type-examples-generate, fingerprint: 75d88b702775e085cb7e039cc73071d5701447659d26c880ad697e1242a07ac2 }
+  - { gate: type-examples-valid, fingerprint: 266bd00f442853faf192312e892880fc0f43359c545bd578e3d78eacbfa1f72f }
+  - { gate: variant-examples, fingerprint: 260745cb1bf607024705f9697ee6e7e5fa6b6efe53d8deed2c2bf6484be6aecf }

@@ -19,6 +19,7 @@ import { parse } from "yaml";
 import { emitSchemas, type EmittedFile, type SchemaNames } from "../src/emit.ts";
 import { checkFidelity, fidelityNote, type FidelityInput, type RuledEntry } from "../src/fidelity.ts";
 import type { ModelDoc, ModelType } from "../src/model.ts";
+import { registryFiles } from "../src/imports.ts";
 import { defineGate, ROOT } from "./harness.ts";
 
 export const EXPECTED_FILE = "gates/fidelity-expected.yaml";
@@ -41,6 +42,19 @@ const remodel = <I extends FidelityInput & { names: SchemaNames }>(i: I, change:
   change(new Map(model.types.map((t) => [t.name, t])));
   return { ...i, model, files: emitSchemas(model, i.schemaDir, i.names).files };
 };
+/** The registry files OpenProposal's schemas reference, by the path each has under the registry's schema directory. */
+const LISTS = "modules/lists/1/lists.json";
+/** The input with one of the registry's files changed, which the schemas load in place of the committed one, as a change to AdCOM's lists would. */
+const registry = <I extends FidelityInput>(i: I, path: string, change: (schema: Record<string, unknown>) => void): I => {
+  const file = registryFiles({ spec: "adcom", lock: "main" }).find((f) => f.path.endsWith(path))!;
+  const schema = structuredClone(file.schema);
+  change(schema);
+  return { ...i, files: [...i.files, { ...file, schema, text: JSON.stringify(schema) }] };
+};
+/** An integer-coded vocabulary's branches (type rules § 6): a titled const per code, and its extension's branch. */
+const branchesOf = (schema: Record<string, unknown>, def: string): Record<string, unknown>[] => (schema.$defs as Record<string, { oneOf: Record<string, unknown>[] }>)[def]!.oneOf;
+/** The vocabulary with its branches changed. */
+const withBranches = (s: Record<string, unknown>, change: (b: Record<string, unknown>[]) => Record<string, unknown>[]) => ({ ...s, oneOf: change(s.oneOf as Record<string, unknown>[]) });
 const vocabulary = (types: Map<string, ModelType>, name: string, drop: string) => {
   const t = types.get(name);
   if (t?.kind !== "vocabulary") throw new Error(`no vocabulary ${name}`);
@@ -102,12 +116,12 @@ export const fidelity = defineGate<FidelityInput & { expected: ExpectedFile; nam
   },
   fixtures: [
     // AdCOM's lists: the oracle reads each list's rows alone, so a vocabulary that loses a code, gains one, or loses its vendor range disagrees.
-    { name: "an AdCOM list's vocabulary that lost a code", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "DeviceType", (s) => ({ ...s, enum: (s.enum as number[]).filter((x) => x !== 8) })) }), expect: "8 (the code 8) is valid, but DeviceType's schema rejects it" },
-    { name: "an AdCOM list's vocabulary that gained a code", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "DeviceType", (s) => ({ ...s, enum: [...(s.enum as number[]), 9] })) }), expect: "9 (a code no row names) is invalid, but DeviceType's schema accepts it" },
-    { name: "an AdCOM list's vocabulary that accepts a code between two it names", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "DisplayContextType", (s) => ({ ...s, anyOf: (s.anyOf as Record<string, unknown>[]).map((b, n) => (n === 0 ? { ...b, enum: [...(b.enum as number[]), 16] } : b)) })) }), expect: "16 (a code no row names, between two the list names) is invalid, but DisplayContextType's schema accepts it" },
-    { name: "an AdCOM list's vocabulary that took a vendor range its list doesn't reserve", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "IpLocationService", (s) => ({ anyOf: [s, { type: "integer", minimum: 500 }] })) }), expect: "500 (the first code of a vendor range, which the list doesn't reserve) is invalid, but IpLocationService's schema accepts it" },
+    { name: "an AdCOM list's vocabulary that lost a code", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "DeviceType", (s) => withBranches(s, (b) => b.filter((x) => x.const !== 8))) }), expect: "8 (the code 8) is valid, but DeviceType's schema rejects it" },
+    { name: "an AdCOM list's vocabulary that gained a code", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "DeviceType", (s) => withBranches(s, (b) => [...b, { const: 9, title: "Nine" }])) }), expect: "9 (a code no row names) is invalid, but DeviceType's schema accepts it" },
+    { name: "an AdCOM list's vocabulary that accepts a code between two it names", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "DisplayContextType", (s) => withBranches(s, (b) => [...b, { const: 16, title: "Sixteen" }])) }), expect: "16 (a code no row names, between two the list names) is invalid, but DisplayContextType's schema accepts it" },
+    { name: "an AdCOM list's vocabulary that took a vendor range its list doesn't reserve", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "IpLocationService", (s) => withBranches(s, (b) => [...b, { type: "integer", minimum: 500, title: "Vendor-specific" }])) }), expect: "500 (the first code of a vendor range, which the list doesn't reserve) is invalid, but IpLocationService's schema accepts it" },
     { name: "an AdCOM list row whose value the reader can't read", spec: "adcom", mutate: (i) => ({ ...i, ir: { ...i.ir, definitions: i.ir.definitions.map((d) => (d.id === "def:list_devicetypes:8" ? { ...d, value: "8a" } : d)) } }), expect: 'the value "8a", which the list reader can\'t read' },
-    { name: "an AdCOM list's vocabulary that lost its vendor range", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "ApiFramework", (s) => (s.anyOf as Record<string, unknown>[])[0]!) }), expect: "500 (the first code of the vendor range 500+) is valid, but ApiFramework's schema rejects it" },
+    { name: "an AdCOM list's vocabulary that lost its vendor range", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "ApiFramework", (s) => withBranches(s, (b) => b.filter((x) => "const" in x))) }), expect: "500 (the first code of the vendor range 500+) is valid, but ApiFramework's schema rejects it" },
     {
       name: "a units commitment with no currency, which must stay valid",
       mutate: (i) => ({ ...i, files: withDef(i.files, COMMERCIAL, "Commitment", (s) => ({ ...s, required: [...(s.required as string[]), "currency"] })) }),
@@ -193,26 +207,30 @@ export const fidelity = defineGate<FidelityInput & { expected: ExpectedFile; nam
       mutate: (i) => remodel(i, (types) => void (property(types, "Placement", "plcmt").presence = "required")),
       expect: '"plcmt" absent while channel = "display" is valid, but the schema rejects it',
     },
-    { name: "Initiated by idling, sound off (11) dropped from the playback methods", lock: "with-open-prs", mutate: (i) => remodel(i, (types) => vocabulary(types, "PlaybackMethod", "11")), expect: '"playmethod" listing the listed 11 is valid, but the schema rejects it' },
+    // AdCOM's lists decide these verdicts: OpenProposal's schema references the registry's vocabulary, so each fixture changes the registry file it loads.
+    { name: "Initiated by idling, sound off (11) dropped from the playback methods", lock: "with-open-prs", mutate: (i) => registry(i, LISTS, (s) => void branchesOf(s, "PlaybackMethod").splice(branchesOf(s, "PlaybackMethod").findIndex((b) => b.const === 11), 1)), expect: '"playmethod" listing the listed 11 is valid, but the schema rejects it' },
     {
       name: "a playback method the list doesn't hold accepted",
       lock: "with-open-prs",
-      mutate: (i) => remodel(i, (types) => void (types.get("PlaybackMethod") as { terms: { value: number; sources: string[] }[] }).terms.push({ value: 12, sources: [] })),
+      mutate: (i) => registry(i, LISTS, (s) => void branchesOf(s, "PlaybackMethod").push({ const: 12, title: "Twelve" })),
       expect: '"playmethod" listing the unlisted 12 is invalid, but the schema accepts it',
     },
     {
       name: "the API frameworks closed, so a vendor's code is rejected",
       lock: "with-open-prs",
-      mutate: (i) => remodel(i, (types) => void ((types.get("ApiFramework") as { open: boolean }).open = false)),
+      mutate: (i) => registry(i, LISTS, (s) => {
+        const b = branchesOf(s, "ApiFramework");
+        b.splice(b.findIndex((x) => !("const" in x)), 1);
+      }),
       expect: '"api" listing the vendor code 500 is valid, but the schema rejects it',
     },
     {
       name: "the vendor codes from 499, a code List: API Frameworks doesn't hold",
       lock: "with-open-prs",
-      mutate: (i) => remodel(i, (types) => void ((types.get("VendorCode") as { schema: Record<string, unknown> }).schema.minimum = 499)),
+      mutate: (i) => registry(i, LISTS, (s) => void (branchesOf(s, "ApiFramework").find((x) => !("const" in x))!.minimum = 499)),
       expect: '"api" listing the unlisted 499, below the vendor codes, is invalid, but the schema accepts it',
     },
-    { name: "In-scene (9) dropped from the plcmt codes", lock: "with-open-prs", mutate: (i) => remodel(i, (types) => vocabulary(types, "PlcmtSubtype", "9")), expect: '"plcmt" as the listed 9 is valid, but the schema rejects it' },
+    { name: "In-scene (9) dropped from the plcmt codes", lock: "with-open-prs", mutate: (i) => registry(i, LISTS, (s) => void branchesOf(s, "PlcmtSubtypeVideo").pop()), expect: '"plcmt" as the listed 9 is valid, but the schema rejects it' },
     {
       name: "best_effort and keyword dropped from the exclusion vocabularies",
       lock: "with-open-prs",

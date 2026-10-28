@@ -3,6 +3,7 @@
  * `specs/spec.schema.json`: its name, how the pipeline reads it, and the
  * data the pipeline reads for it.
  */
+import type { SpecImport } from "./imports.ts";
 import { existsSync } from "node:fs";
 import { basename, join } from "node:path";
 import { pascalField } from "./constructors.ts";
@@ -80,6 +81,8 @@ export interface SpecProfile {
   /** The last pipeline stage a spec still being added has reached; absent, every stage (`STAGES`). */
   through?: "input" | "extract" | "model";
   names: SpecNames;
+  /** The registry specs whose code lists the spec takes, each at the one lock it pins (src/imports.ts). */
+  imports?: SpecImport[];
   site?: SiteProfile;
   feedback?: FeedbackProfile;
   /** Absolute path of the profile. */

@@ -13,6 +13,7 @@
  * - The reference oracle, python-jsonschema with `referencing` as
  *   tools/oracle/requirements.txt pins them (`tools/oracle/schema_check.py`).
  */
+import { withImports } from "./imports.ts";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { Ajv2020 } from "ajv/dist/2020.js";
@@ -33,7 +34,8 @@ export function ajvProblems(files: EmittedFile[]): string[] {
   }
   if (problems.length > 0) return problems;
   try {
-    for (const f of files) ajv.addSchema(f.schema);
+    // A registry file the tree references loads beside it, so each cross-host reference resolves.
+    for (const f of withImports(files)) ajv.addSchema(f.schema);
   } catch (e) {
     return [`Ajv doesn't load the files: ${(e as Error).message}`];
   }
@@ -61,7 +63,7 @@ export function spawnOracle(root: string): SchemaOracle {
   const python = join(root, ".venv", "bin", "python");
   return (files) => {
     if (!existsSync(python)) throw new Error("no oracle venv at .venv; run: npm run setup:oracle");
-    const input = JSON.stringify({ schemas: files.map((f) => ({ path: f.path, schema: f.schema })) });
+    const input = JSON.stringify({ schemas: withImports(files).map((f) => ({ path: f.path, schema: f.schema })) });
     const r = spawnWithInput(python, ["-I", join(root, "tools", "oracle", "schema_check.py")], input, { cwd: root, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
     if (r.error) throw new Error(`${python}: ${r.error.message}`);
     if (r.status !== 0) throw new Error(`tools/oracle/schema_check.py failed: ${(r.stderr || r.stdout).trim()}`);

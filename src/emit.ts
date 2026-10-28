@@ -40,6 +40,7 @@ import { KEYWORDS, tagOf, walkSchemas } from "./conventions.ts";
 import type { TypeRef } from "./mapping.ts";
 import { KERNEL_MODULE } from "./mapping-rules.ts";
 import type { SectionIds } from "./specs/plugin.ts";
+import { registryFileById } from "./imports.ts";
 import { extensionOf, type ModelDoc, type ModelProperty, type ModelType } from "./model.ts";
 
 export const DIALECT = "https://json-schema.org/draft/2020-12/schema";
@@ -332,8 +333,12 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
           ...t.terms.filter((x) => x.annotation !== undefined).map((x) => `\`${x.value}\`: ${x.annotation}`),
           ...((t.vendor ?? t.list?.vendor) ? [`from ${(t.vendor ?? t.list?.vendor)!.from} up: ${(t.vendor ?? t.list?.vendor)!.label}`] : []),
         ];
+        // A vocabulary of a list a registry on this site keeps is that registry's vocabulary: a reference to it, which copies no code.
+        if (t.list?.registry) return { description: `The codes of ${t.list.standard} ${t.list.name} (${t.list.url}), as the ${t.list.standard} registry defines them`, $ref: `${t.list.registry.schema}#/$defs/${t.list.registry.def}` };
         // An open vocabulary whose core terms the specification doesn't list accepts namespaced terms only (D-041).
         if (t.open && values.length === 0) return { description: "No core terms are listed yet, so every term is namespaced.", $ref: "#/$defs/NamespacedTerm" };
+        // An integer-coded vocabulary names each code: one titled const branch per code, and its extension as a branch of its own (type rules § 6).
+        if (type === "integer") return integerCoded(t, types);
         return { ...(notes.length > 0 ? { description: notes.join("; ") } : {}), ...(t.open ? { anyOf: [core, { $ref: `#/$defs/${extensionOf(t)}` }] } : core) };
       }
       case "union": {
@@ -396,6 +401,8 @@ export function emitSchemas(model: ModelDoc, dir: string, names: SchemaNames): E
     return Object.fromEntries(
       Object.entries(schema).map(([k, v]) => {
         if (k !== "$ref" || typeof v !== "string") return [k, relocate(v, file, where)];
+        // A reference into a registry another spec publishes keeps its absolute `$id`.
+        if (/^https:\/\//.test(v)) return [k, v];
         const name = v.replace(/^#\/\$defs\//, "");
         const l = locations.get(name);
         if (!l) {
@@ -418,8 +425,11 @@ export function emitSchemas(model: ModelDoc, dir: string, names: SchemaNames): E
     const where = `${l.file}: ${t.kind} "${t.name}"`;
     const local = localOf.schemas.get(t.name)!;
     const refs = [...new Set(refNamesOf(local))].sort();
-    if (canonicalJson(refs) !== canonicalJson(t.references)) {
-      problems.push(`${where}: the schema references ${refs.join(", ") || "nothing"}, but the model says ${t.references.join(", ") || "nothing"}`);
+    // A registry's vocabulary is the registry's schema, so its extension, which the model and the SDK keep, is the registry's too.
+    // An integer-coded vocabulary writes its extension as a branch of its own, so its schema references no primitive, though the model and the SDK keep it.
+    const references = t.kind === "vocabulary" && (t.list?.registry || isIntegerCoded(t)) ? [] : t.references;
+    if (canonicalJson(refs) !== canonicalJson(references)) {
+      problems.push(`${where}: the schema references ${refs.join(", ") || "nothing"}, but the model says ${references.join(", ") || "nothing"}`);
     }
     const schema = relocate(local, l.file, where) as Record<string, unknown>;
     if (l.fragment === "") roots.set(l.file, { type: t, schema });
@@ -462,6 +472,82 @@ export function emitSchemas(model: ModelDoc, dir: string, names: SchemaNames): E
   return { files, conditions, problems };
 }
 
+/** Whether a vocabulary's codes are integers, which its schema names one by one. */
+export const isIntegerCoded = (t: ModelType): boolean => t.kind === "vocabulary" && t.terms.length > 0 && t.terms.every((x) => Number.isInteger(x.value));
+
+/**
+ * A code's name, from its row's text: the name the row starts with before a
+ * colon and a space, as "Instream: Pre-roll, …" names `Instream` (a URL's
+ * colon is no such colon), or else the text, without a leading "- ", a URL,
+ * or a final period, and cut at its first clause where it runs past 60
+ * characters.
+ */
+export function codeTitle(text: string): string {
+  const named = /^(.{1,60}?):\s/.exec(text)?.[1];
+  let t = (named ?? text).replace(/^\s*-\s+/, "").replace(/\s*https?:\/\/\S+/g, "").trim().replace(/\.$/, "");
+  if (t.length > 60) {
+    // The first clause break outside parentheses: a sentence's end, a dash, a semicolon, a parenthesis, or a comma.
+    let depth = 0;
+    for (let n = 0; n < t.length; n++) {
+      if (t[n] === "(") depth++;
+      else if (t[n] === ")") depth = Math.max(0, depth - 1);
+      if (n < 10 || (depth > 0 && t[n] !== "(")) continue;
+      if ([". ", " - ", "; ", ", "].some((x) => t.startsWith(x, n)) || (t[n] === "(" && depth === 1 && t[n - 1] === " ")) {
+        t = t.slice(0, t[n] === "(" ? n - 1 : n);
+        break;
+      }
+    }
+  }
+  return t;
+}
+
+/**
+ * The names of a list's codes. A name two codes share before their colons is
+ * a class the list groups codes by, as Feed Types' `AOD`, so those codes are
+ * named by the text after it; a name still shared takes its code.
+ */
+export function codeTitles(terms: readonly { value: unknown; annotation?: string }[]): string[] {
+  const texts = terms.map((x) => x.annotation ?? String(x.value));
+  const first = texts.map(codeTitle);
+  const shared = (xs: string[]) => new Set(xs.filter((x, n) => xs.indexOf(x) !== n));
+  const classes = shared(first);
+  const second = texts.map((t, n) => (classes.has(first[n]!) && /^.{1,60}?:\s/.test(t) ? codeTitle(t.replace(/^.{1,60}?:\s/, "")) : first[n]!));
+  const still = shared(second);
+  return second.map((t, n) => (still.has(t) ? `${t} (${String(terms[n]!.value)})` : t));
+}
+
+/**
+ * An integer-coded vocabulary's schema: `type: integer` and `oneOf` a branch
+ * per code, `{ const, title, description }`, where the title is the code's
+ * name and the description its row's text, where that says more. A vendor
+ * range adds `{ type: integer, minimum, title: "Vendor-specific" }`; another
+ * extension, such as Start Delay Modes' media offset, adds its primitive's
+ * constraints as a branch, without the codes it would also match, so each
+ * value matches one branch. The vocabulary keeps its title, the list it
+ * comes from, and a short description.
+ */
+function integerCoded(t: Extract<ModelType, { kind: "vocabulary" }>, types: Map<string, ModelType>): Record<string, unknown> {
+  const vendor = t.vendor ?? t.list?.vendor;
+  const codes = t.terms.map((x) => x.value as number);
+  const titles = codeTitles(t.terms);
+  const branches: Record<string, unknown>[] = t.terms.map((x, n) => {
+    const text = x.annotation ?? String(x.value);
+    const title = titles[n]!;
+    return { const: x.value, title, ...(text !== title ? { description: text } : {}) };
+  });
+  if (vendor) branches.push({ type: "integer", minimum: vendor.from, title: "Vendor-specific", ...(vendor.label ? { description: vendor.label } : {}) });
+  else if (t.open) {
+    const ext = types.get(extensionOf(t));
+    const schema = ext?.kind === "primitive" ? (structuredClone(ext.schema) as Record<string, unknown>) : {};
+    const { description, ...constraints } = schema;
+    const inRange = codes.filter((c) => (typeof constraints.minimum !== "number" || c >= constraints.minimum) && (typeof constraints.maximum !== "number" || c <= constraints.maximum));
+    branches.push({ ...constraints, title: extensionOf(t).replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^(.)(.*)$/, (_, a: string, b: string) => a + b.toLowerCase()), ...(typeof description === "string" ? { description } : {}), ...(inRange.length > 0 ? { not: { enum: inRange } } : {}) });
+  }
+  const title = /\bList:\s[^,;]+/.exec(t.description ?? "")?.[0] ?? t.list?.name;
+  const description = t.list ? `The codes of ${t.list.standard} ${t.list.name} (${t.list.url})` : (t.description ?? "").replace(/, each with its row's text/, "").replace(/\.$/, "");
+  return { ...(title ? { title } : {}), ...(description ? { description } : {}), type: "integer", oneOf: branches };
+}
+
 /** Every `$ref` value in a schema. */
 function refValues(schema: unknown): string[] {
   const out: string[] = [];
@@ -471,7 +557,7 @@ function refValues(schema: unknown): string[] {
   return out;
 }
 
-const refNamesOf = (schema: unknown) => refValues(schema).map((r) => r.replace(/^#\/\$defs\//, ""));
+const refNamesOf = (schema: unknown) => refValues(schema).filter((r) => !/^https:\/\//.test(r)).map((r) => r.replace(/^#\/\$defs\//, ""));
 
 /** "§ 5.6, § 5.6.1, and § 5.6.2", from section IDs; a subsection without a number counts as its numbered parent. */
 function sectionList(ids: string[]): string {
@@ -545,13 +631,41 @@ export function checkEmitted(files: EmittedFile[], model: ModelDoc, dir: string,
         if (problem) problems.push(`${at}: ${problem}`);
       }
       if ("allOf" in node) problems.push(`${at}: "allOf"; no schema inherits from another (type rules § 8)`);
-      if ("oneOf" in node) {
+      const root = roots.find(([p]) => p === pointer);
+      // An integer-coded vocabulary names each code, so a bare enum of integers at a vocabulary's root fails (type rules § 6).
+      if (root?.[2]?.kind === "vocabulary") {
+        const bare = [node, ...(Array.isArray(node.anyOf) ? node.anyOf : [])].find((x) => isMap(x) && Array.isArray(x.enum) && x.enum.length > 0 && x.enum.every((v) => Number.isInteger(v)));
+        if (bare) problems.push(`${at}: the integer-coded vocabulary "${root[2].name}" is a bare enum; emit each code as a titled const branch of a oneOf (type rules § 6)`);
+      }
+      // An integer-coded vocabulary that isn't a registry's is titled const branches, not another form such as an anyOf of consts.
+      if (root?.[2] && isIntegerCoded(root[2]) && !(root[2].kind === "vocabulary" && root[2].list?.registry) && !(node.type === "integer" && Array.isArray(node.oneOf))) problems.push(`${at}: the integer-coded vocabulary "${root[2].name}" isn't type integer with titled const branches in a oneOf (type rules § 6)`);
+      if ("oneOf" in node && node.type === "integer" && root?.[2]?.kind === "vocabulary") {
+        // An integer-coded vocabulary: a titled const branch per code, and at most one titled integer branch for its extension, no branch matching another's value.
+        const branches = (Array.isArray(node.oneOf) ? node.oneOf : []).filter(isMap);
+        const consts = branches.filter((b) => "const" in b);
+        const rest = branches.filter((b) => !("const" in b));
+        if (consts.some((b) => !Number.isInteger(b.const) || typeof b.title !== "string" || b.title === "")) problems.push(`${at}: a code's branch is no integer const with a title (type rules § 6)`);
+        if (new Set(consts.map((b) => b.const)).size !== consts.length) problems.push(`${at}: two branches have the same code (type rules § 6)`);
+        if (rest.length > 1 || rest.some((b) => b.type !== "integer" || typeof b.title !== "string" || b.title === "")) problems.push(`${at}: a branch other than a code's is no titled integer extension, or there are several (type rules § 6)`);
+        // Each value matches exactly one branch: the extension leaves every code in its range to the code's own branch.
+        for (const b of rest) {
+          const inRange = consts.map((c) => c.const as number).filter((c) => (typeof b.minimum !== "number" || c >= b.minimum) && (typeof b.maximum !== "number" || c <= b.maximum));
+          const left = isMap(b.not) && Array.isArray(b.not.enum) ? (b.not.enum as unknown[]) : [];
+          const both = inRange.filter((c) => !left.includes(c));
+          if (both.length > 0) problems.push(`${at}: the extension branch also takes the code${both.length > 1 ? "s" : ""} ${both.join(", ")}, so ${both.length > 1 ? "they match" : "it matches"} two branches and fail${both.length > 1 ? "" : "s"} (type rules § 6)`);
+        }
+        const titles = consts.map((b) => b.title);
+        if (new Set(titles).size !== titles.length) problems.push(`${at}: two codes have the same title, which an SDK's names would collide on (type rules § 6)`);
+        if (typeof node.title !== "string" || typeof node.description !== "string") problems.push(`${at}: an integer-coded vocabulary has no title or no description naming its list (type rules § 6)`);
+        const t = root[2]!;
+        const want = t.kind === "vocabulary" ? t.terms.map((x) => x.value) : [];
+        if (JSON.stringify([...consts.map((b) => b.const)].sort()) !== JSON.stringify([...want].sort())) problems.push(`${at}: the codes are ${consts.map((b) => b.const).join(", ")}, where the model's are ${want.join(", ")}`);
+      } else if ("oneOf" in node) {
         const tags = (Array.isArray(node.oneOf) ? node.oneOf : []).map(tagOf);
         if (tags.some((x) => x === null)) problems.push(`${at}: a oneOf branch has no required "const" tag (type rules § 8)`);
         else if (new Set(tags.map((x) => JSON.stringify(x))).size !== tags.length) problems.push(`${at}: two oneOf branches have the same tag (type rules § 8)`);
       }
       if ("anyOf" in node) {
-        const root = roots.find(([p]) => p === pointer);
         if (!root || !mayAnyOf(root[2])) problems.push(`${at}: "anyOf" where type rules § 8 allows none: only at the root of an open vocabulary, a union, or a union copy`);
       }
     });
@@ -563,7 +677,7 @@ export function checkEmitted(files: EmittedFile[], model: ModelDoc, dir: string,
 /** The `$defs` entry a `$ref` names, from the file it sits in, or undefined. */
 function refTarget(ref: string, from: string, files: Map<string, Record<string, unknown>>): Record<string, unknown> | undefined {
   const [path, fragment = ""] = ref.split("#");
-  const target = files.get(path === "" ? from : posix.normalize(posix.join(posix.dirname(from), path!)));
+  const target = /^https:\/\//.test(path!) ? registryFileById(path!)?.schema : files.get(path === "" ? from : posix.normalize(posix.join(posix.dirname(from), path!)));
   const m = /^\/\$defs\/([A-Za-z0-9]+)$/.exec(fragment);
   const d = m && target && isMap(target.$defs) ? target.$defs[m[1]!] : undefined;
   return isMap(d) ? d : undefined;
@@ -571,9 +685,11 @@ function refTarget(ref: string, from: string, files: Map<string, Record<string, 
 
 function refProblem(ref: string, from: string, files: Map<string, Record<string, unknown>>): string | null {
   const [path, fragment = ""] = ref.split("#");
-  const file = path === "" ? from : posix.normalize(posix.join(posix.dirname(from), path!));
-  const target = files.get(file);
-  if (!target) return `"$ref" ${ref} names the file ${file}, which isn't emitted`;
+  // A reference across hosts names a registry's committed file by its `$id`.
+  const external = /^https:\/\//.test(path!);
+  const file = external ? path! : path === "" ? from : posix.normalize(posix.join(posix.dirname(from), path!));
+  const target = external ? registryFileById(file)?.schema : files.get(file);
+  if (!target) return external ? `"$ref" ${ref} names ${file}, which no registry spec on this site has committed` : `"$ref" ${ref} names the file ${file}, which isn't emitted`;
   if (fragment === "") return null;
   const m = /^\/\$defs\/([A-Za-z0-9]+)$/.exec(fragment);
   if (!m) return `"$ref" ${ref} points at something other than a "$defs" entry`;

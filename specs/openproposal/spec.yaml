@@ -18,6 +18,10 @@ features:
   profiles: true
 # The names the outputs carry: the name in prose, the base of every schema's $id,
 # and the SDK packages. The $id base moves to a shared host in a later phase.
+# The registry whose code lists the text cites, at the lock its links pin:
+# AdCOM's lists at main, 26c59ba (src/imports.ts).
+imports:
+  - { spec: adcom, lock: main }
 names:
   short: OpenProposal
   edition: '3.0'

@@ -4,6 +4,7 @@
  */
 import * as checks from "./checks.ts";
 import * as enumDrift from "./enum-drift.ts";
+import * as registry from "./registry.ts";
 import * as fidelity from "./fidelity.ts";
 import type { Gate } from "./harness.ts";
 import * as input from "./input.ts";
@@ -32,6 +33,7 @@ const MODULES: Record<string, Record<string, unknown>> = {
   "gates/reports.ts": reports,
   "gates/fidelity.ts": fidelity,
   "gates/enum-drift.ts": enumDrift,
+  "gates/registry.ts": registry,
   "gates/variant.ts": variant,
   "gates/site.ts": site,
   "gates/meta.ts": meta,

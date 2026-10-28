@@ -21,6 +21,7 @@ import { citeText, indexElements, type Element } from "./elements.ts";
 import type { Presence as StatedPresence } from "./grammar/required.ts";
 import type { SpecIR } from "./ir-types.ts";
 import { kernelOn, primitiveStructure, type Kernel } from "./kernel.ts";
+import type { RegistryRef } from "./imports.ts";
 import { codeOfTerm } from "./lists.ts";
 import { conceptOfType } from "./domains.ts";
 import { decisionsOf, type DecisionRecord, type MappingFile, type Members, type Presence, type Source, type TypeRef } from "./mapping.ts";
@@ -90,7 +91,7 @@ export type ModelType = Base &
         open: boolean;
         terms: ModelTerm[];
         /** The code list of another standard whose codes the terms are (type rules § 6), with the codes it reserves for vendors. */
-        list?: { name: string; standard: string; url: string; vendor?: { from: number; label: string } };
+        list?: { name: string; standard: string; url: string; vendor?: { from: number; label: string }; registry?: RegistryRef };
         /** For the specification's own code list: the codes it reserves for vendors, from `from` up, with their row's label. */
         vendor?: { from: number; label: string };
         /** The kernel primitive an open vocabulary's extension terms are, where a decision gives one other than a vendor's code or a namespaced term. */
@@ -374,7 +375,7 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
         if ((decl.vendor !== undefined || decl.extension !== undefined) && !decl.open) problems.push(`${where}: has ${decl.vendor ? "a vendor range" : "an extension"}, so it is open`);
         if (decl.extension !== undefined && !kernel.primitives.some((p) => p.name === decl.extension)) problems.push(`${where}: its extension "${decl.extension}" is no kernel primitive`);
         if (decl.labeled) labeled.add(decl.name);
-        define({ ...b, kind: "vocabulary", open: decl.open ?? false, terms, ...(list ? { list: { name: list.name, standard: list.standard, url: list.url, ...(list.vendor ? { vendor: list.vendor } : {}) } } : {}), ...(decl.vendor ? { vendor: decl.vendor } : {}), ...(decl.extension ? { extension: decl.extension } : {}), ...(decl.labeled ? { labeled: true as const } : {}), ...(decl.description ? { description: decl.description } : {}) }, where);
+        define({ ...b, kind: "vocabulary", open: decl.open ?? false, terms, ...(list ? { list: { name: list.name, standard: list.standard, url: list.url, ...(list.vendor ? { vendor: list.vendor } : {}), ...(list.registry ? { registry: list.registry } : {}) } } : {}), ...(decl.vendor ? { vendor: decl.vendor } : {}), ...(decl.extension ? { extension: decl.extension } : {}), ...(decl.labeled ? { labeled: true as const } : {}), ...(decl.description ? { description: decl.description } : {}) }, where);
         break;
       }
       case "union":

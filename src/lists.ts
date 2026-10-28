@@ -5,6 +5,7 @@
  * gives a list published outside git.
  */
 import { join } from "node:path";
+import type { RegistryRef } from "./imports.ts";
 import { canonicalJson } from "./canonical.ts";
 import { readYaml } from "./mapping.ts";
 import { compileSchema } from "./pipeline.ts";
@@ -27,6 +28,10 @@ export interface ExternalList {
   codes: ListCode[];
   /** The codes the list reserves for vendors, from `from` up. */
   vendor?: { from: number; label: string };
+  /** For a list a registry keeps, the row that stands for values beyond its codes, as Start Delay Modes' `>0` for a delay in seconds. */
+  extension?: string;
+  /** For a list a registry spec on this site keeps, the registry's vocabulary of it, which a schema `$ref`s in place of its codes (src/imports.ts). */
+  registry?: RegistryRef;
 }
 
 export interface Lists {

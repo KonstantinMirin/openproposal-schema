@@ -14,7 +14,7 @@ import { join, posix } from "node:path";
 import { allLocks, resolveBuild, type Build } from "../builds.ts";
 import { loadConstructors } from "../constructors.ts";
 import { indexElements } from "../elements.ts";
-import { schemaDirOf } from "../emit.ts";
+import { codeTitles, isIntegerCoded, schemaDirOf } from "../emit.ts";
 import type { FeedbackDoc } from "../feedback.ts";
 import type { SpecIR } from "../ir-types.ts";
 import { loadKernel, type Kernel } from "../kernel.ts";
@@ -56,6 +56,8 @@ export interface BuildData {
   rules: { id: string; owner: string; statement: string; severity: string }[];
   domains: Record<string, { domain: string; concept: string; meaning: string }>;
   sources: Record<string, SourceInfo>;
+  /** Each integer-coded vocabulary's codes with their names, as its schema titles them (type rules § 6). */
+  codes: Record<string, { value: number; title: string }[]>;
   decisions: Record<string, { kind: string; number: number | null; question: string }>;
   /** Where this lock's two builds differ, each with the departure that makes the difference. */
   differences: VariantDifference[];
@@ -210,6 +212,7 @@ export function buildData(inputs: SiteInputs, lock: SpecLock, slug: VariantSlug)
     rules,
     domains: domainsOf(b.kernel, inputs.variant),
     sources: sourceInfos(inputs, lock, sourcesOf(b.model)),
+    codes: Object.fromEntries(b.model.types.flatMap((t) => (t.kind === "vocabulary" && isIntegerCoded(t) ? [[t.name, ((titles) => t.terms.map((x, n) => ({ value: x.value as number, title: titles[n]! })))(codeTitles(t.terms))]] : []))),
     decisions,
     differences,
     added: addedTypes(inputs, lock, slug),

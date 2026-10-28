@@ -23,6 +23,7 @@
  * accepts every payload (`checkRuleVectors`), so the rule, not the schema,
  * decides each vector.
  */
+import { withImports } from "./imports.ts";
 import { existsSync, readdirSync } from "node:fs";
 import { basename, join, posix } from "node:path";
 import { Ajv2020 } from "ajv/dist/2020.js";
@@ -423,7 +424,7 @@ export function checkRuleVectors(doc: RulesDoc, model: ModelDoc, files: EmittedF
   const ajv = new Ajv2020({ strict: true, strictRequired: false, allErrors: true });
   installFormats(ajv);
   try {
-    for (const f of files) ajv.addSchema(f.schema);
+    for (const f of withImports(files)) ajv.addSchema(f.schema);
   } catch (e) {
     return [`Ajv doesn't load the schemas: ${(e as Error).message}`];
   }
