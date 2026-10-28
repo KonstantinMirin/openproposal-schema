@@ -1,0 +1,36 @@
+format: 1
+id: D-008
+status: proposed
+kind: gap
+author: agent
+question: "Does `pricetype` default to 2, Second Price Plus, though 0, Dynamic, defers to the bid request's auction type?"
+covers:
+  - ir: field:object-terms:pricetype
+    digest: 23f820410859f9fc1c37fac093d06257fa086ab3e6ba61d25c91b78f1d60cba9
+    quote: "`pricetype` | int, default 2 | Deal Price Type where: `0` = Dynamic (ie. auction type will be provided by `request.at` attribute in OpenRTB Bid Request) `1` = First Price `2` = Second Price Plus `3` = Fixed Price Exchange-specific auction types can be defined using values 500 and greater."
+options:
+  - id: default-2
+    summary: >-
+      Yes: `pricetype` absent is 2, Second Price Plus, as the Type cell
+      writes it.
+  - id: default-0
+    summary: >-
+      No: absent is 0, Dynamic, which leaves the auction type to the bid
+      request's `at`.
+chosen: default-2
+rationale: >-
+  The Type cell states `default 2`, and nothing in the text contradicts it,
+  so the schema keeps it. A deal that leaves `pricetype` out is a
+  second-price deal, even where the bid request says first price; the
+  feedback asks whether that is meant, since 0 would defer to the request.
+  How each code meets a bid request's `at` is a bridge between the deal and
+  the bid request, which the deal's own schema doesn't state: no sentence
+  of the text is a rule a deal payload alone can be checked against, so the
+  schema states none, and the bridge belongs to the map from deal to bid
+  request.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L114"
+feedback: >-
+  Say whether the default 2, Second Price Plus, is meant. A deal that leaves
+  `pricetype` out then overrides the bid request's auction type, which 0,
+  Dynamic, would follow.

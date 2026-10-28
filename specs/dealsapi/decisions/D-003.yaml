@@ -1,0 +1,34 @@
+format: 1
+id: D-003
+status: proposed
+kind: gap
+author: agent
+question: "How does an evergreen deal leave `enddate` blank?"
+covers:
+  - ir: field:object-terms:enddate
+    digest: 387ca29773be1a3d68d1bcb46828acd2358f734e8fdef410b3cdef98fb144af4
+    quote: "`enddate` | string | UTC timestamp in seconds in ISO-8601 of when the deal ends. Evergreen or always on deals should leave this field blank."
+  - ir: rule:object-terms:5c3134f5
+    digest: 0c525e45c48b0b9a60f1058a01f98288229799f362e3c50da10f6bfcbbf6b82a
+    quote: "Evergreen or always on deals should leave this field blank."
+options:
+  - id: absent
+    summary: >-
+      It leaves `enddate` out; an empty string is no date-time, so a payload
+      that sends one fails.
+  - id: empty-string
+    summary: >-
+      It sends an empty string, which `enddate` then accepts beside a
+      date-time.
+chosen: absent
+rationale: >-
+  A blank field is one the deal doesn't send, as every other field that "may
+  be omitted" in the text. Accepting an empty string would make `enddate`
+  hold two kinds of value, and a receiver would have to tell "no end" from
+  an end it can't read. The sentence states what the origin system does, so
+  it is an obligation of the seller's side.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L109"
+feedback: >-
+  Say how an evergreen deal leaves `enddate` blank: omitted, or an empty
+  string, which is no timestamp.

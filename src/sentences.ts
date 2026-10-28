@@ -25,8 +25,10 @@ const STARTERS = /[A-Z`"“(\[§*]/;
  * Splits a block's tokens into sentences. A sentence ends at `.`, `!` or `?`
  * outside a code span, followed by whitespace and a capital letter, a code
  * span, or an opening bracket or quote. The block's end also ends a sentence.
+ * A period that ends one of `abbreviations`, as "i.e.", ends none, for a text
+ * whose plugin lists the abbreviations it writes mid-sentence.
  */
-export function splitSentences(tokens: readonly Token[]): Sentence[] {
+export function splitSentences(tokens: readonly Token[], abbreviations: readonly string[] = []): Sentence[] {
   const chars: Char[] = [];
   tokens.forEach((t, index) => {
     if (t.kind === "code") {
@@ -65,6 +67,8 @@ export function splitSentences(tokens: readonly Token[]): Sentence[] {
   for (let i = 0; i < chars.length; i++) {
     const c = chars[i]!;
     if (c.code || !".!?".includes(c.ch)) continue;
+    // A period that ends an abbreviation the text writes mid-sentence, as "(i.e. OpenRTB …)", ends no sentence.
+    if (c.ch === "." && abbreviations.some((a) => i + 1 >= a.length && chars.slice(i + 1 - a.length, i + 1).every((x, n) => !x.code && x.ch === a[n]) && (i + 1 === a.length || !/[A-Za-z]/.test(chars[i - a.length]!.ch)))) continue;
     let j = i + 1;
     while (j < chars.length && !chars[j]!.code && CLOSERS.has(chars[j]!.ch)) j++;
     if (j >= chars.length) continue;

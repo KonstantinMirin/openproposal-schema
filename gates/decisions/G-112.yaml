@@ -1,0 +1,28 @@
+format: 1
+id: G-112
+date: 2026-10-28
+question: What changes in the site gate when a spec's type map opens the registry vocabularies its schemas reference across hosts?
+decision: >-
+  A spec's schema view showed a vocabulary it takes from a registry, as
+  OpenProposal's `ApiFramework`, `PlaybackMethod`, and `PlcmtSubtype` take
+  AdCOM's lists, as a bare `$ref` across hosts, and the reference opened the
+  spec's own type of the name it ends with, or nothing where the registry
+  names it otherwise, as AdCOM's `PlcmtSubtypeVideo`. Each build's data now
+  resolves every `$ref` across hosts to the registry vocabulary it names, at
+  the lock the spec's profile imports, with the registry's page of it, its
+  schema file on the site, and its schema; a reference to a file or a
+  vocabulary no imported registry holds fails the build. The reference opens
+  the registry's page, and the schema view shows the registry's schema
+  below the spec's, with each code's title. The site check now holds a data
+  file's registry links as it holds a page's: each is relative, names a file
+  the site holds, and a type-map address its router reads unchanged that
+  names a type of the build it opens, with four fixtures. `mapLink` moves to
+  src/site/route.ts beside the router whose addresses it writes. The test
+  suite holds 497 tests, and MIN_TESTS is 497.
+rationale: >-
+  The site check gains a check and loses none. Schemas, rules, corpora, and
+  every other output are unchanged; only the site's data files and the type
+  map's script change.
+accepts:
+  - { gate: npm-test, fingerprint: cfabfcb81c4f70d4932a4045f2154985d423dc209955dc005775b547b23eea82 }
+  - { gate: site-builds, fingerprint: e36ffff67fb16955b7a22781da4357bf7b69467410829082e2aa06dab50658ce }

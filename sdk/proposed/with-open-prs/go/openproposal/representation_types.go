@@ -72,13 +72,13 @@ func (LineItemSummaryPricingEntry) ValidateValue(v any, at string, errs *Errors)
 // LineItemSummaryPlacement: The `LineItemSummaryPlacement` object of the `representation` module.
 type LineItemSummaryPlacement struct {
 	// Instl: `0` (no) | `1` (yes). The ad is interstitial or full screen
-	Instl *bool `json:"instl,omitempty"`
+	Instl *IntegerFlag `json:"instl,omitempty"`
 	// Plcmt: One value from List: Plcmt Subtypes - Video: Instream (1), Accompanying Content (2), Interstitial (3), No Content/Standalone (4), Pause (5), Screensaver (6), Overlay (7), Squeezeback (8), In-scene (9)
 	Plcmt *PlcmtSubtype `json:"plcmt,omitempty"`
 	// Reward: `0` (no) | `1` (yes). The user receives a reward for viewing the ad
-	Reward *bool `json:"reward,omitempty"`
+	Reward *IntegerFlag `json:"reward,omitempty"`
 	// Skip: Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad
-	Skip *bool `json:"skip,omitempty"`
+	Skip *IntegerFlag `json:"skip,omitempty"`
 }
 
 // ValidateValue implements Value.
@@ -89,16 +89,16 @@ func (LineItemSummaryPlacement) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkClosed(m, at, errs, "instl", "plcmt", "reward", "skip")
 	if x, ok := m["instl"]; ok {
-		validateBool(x, member(at, "instl"), errs)
+		validateAs[IntegerFlag](x, member(at, "instl"), errs)
 	}
 	if x, ok := m["plcmt"]; ok {
 		validateAs[PlcmtSubtype](x, member(at, "plcmt"), errs)
 	}
 	if x, ok := m["reward"]; ok {
-		validateBool(x, member(at, "reward"), errs)
+		validateAs[IntegerFlag](x, member(at, "reward"), errs)
 	}
 	if x, ok := m["skip"]; ok {
-		validateBool(x, member(at, "skip"), errs)
+		validateAs[IntegerFlag](x, member(at, "skip"), errs)
 	}
 }
 

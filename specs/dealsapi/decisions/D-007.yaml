@@ -1,0 +1,44 @@
+format: 1
+id: D-007
+status: proposed
+kind: gap
+author: agent
+question: "Which field must a fixed-price deal provide, when the text says \"Price attribute must be provided if the deal is a fixed price deal\"?"
+covers:
+  - ir: rule:terms-object-1:647b6593
+    digest: e4b08754ebc34fe5523007e2fd84a060e9e66d1f30a39a9464535f296698db97
+    quote: "Price attribute must be provided if the deal is a fixed price deal, especially if it's a programmatic guaranteed deal, but otherwise can be used as pricing guidance or not provided at all if there is no pricing guidance (for example, for a Run-of-Exchange deal where there is no pricing guidance)"
+  - ir: rule:object-terms:ac924378
+    digest: d08a00bffe5b434a15e00fb5d4261232ee506a5682075ef05eb3abfbff2cbdc7
+    quote: "Unless `pricetype` is Fixed, this should be used as guidance to buyers."
+  - ir: field:object-terms:dealfloor
+    digest: 4884dfb2518a4b08a4ba8ea197f13ab31af115ad8fc6b33e403f3ad44ca50b05
+    quote: "`dealfloor` | float | Minimum bid for impressions for this deal expressed in CPM. Unless `pricetype` is Fixed, this should be used as guidance to buyers. See Implementation Guidance for additional detail"
+  - ir: field:object-terms:pricetype
+    digest: 23f820410859f9fc1c37fac093d06257fa086ab3e6ba61d25c91b78f1d60cba9
+    quote: "`pricetype` | int, default 2 | Deal Price Type where: `0` = Dynamic (ie. auction type will be provided by `request.at` attribute in OpenRTB Bid Request) `1` = First Price `2` = Second Price Plus `3` = Fixed Price Exchange-specific auction types can be defined using values 500 and greater."
+options:
+  - id: dealfloor
+    summary: >-
+      `dealfloor`, the only price the terms carry: a deal whose `pricetype`
+      is `3`, Fixed Price, must send it; elsewhere it is guidance.
+  - id: unread
+    summary: >-
+      No field: the sentence names none, so it states no requirement a
+      payload can be checked against.
+chosen: dealfloor
+rationale: >-
+  The terms carry one price, `dealfloor`, and its row says it is guidance
+  "unless `pricetype` is Fixed", so a fixed-price deal's price is its
+  `dealfloor`. The sentence's "must" makes the rule an error: a deal with
+  `pricetype` `3` and no `dealfloor` breaks it. It is a sentence of the
+  Implementation Guidance, not a row's stated presence, from which alone the
+  schema's conditions come, so it is a rule with valid and invalid vectors.
+  The row's own "should be used as guidance to buyers" says what the value
+  means where the price isn't fixed, which the field's description carries,
+  so it is informative.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L232"
+feedback: >-
+  Name the field: "`dealfloor` must be provided if `pricetype` is 3 (Fixed
+  Price)". The sentence says "Price attribute", which no table names.

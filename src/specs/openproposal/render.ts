@@ -258,8 +258,8 @@ class Renderer {
         const l = item.l!;
         elements.push(l.id);
         const vocabularies = type ? this.heldOfKind(type, "vocabulary") : [];
-        // A flag's two values are the boolean's (D-039).
-        const rendered = type?.kind === "boolean" ? "`false` | `true`" : vocabularies.length === 1 ? this.termsCell(vocabularies[0]!, true) : this.memberEnum(l, type);
+        // A JSON boolean's two values are `false` and `true`.
+        const rendered = type?.kind === "boolean" ? "`false` | `true`" : vocabularies.length === 1 ? this.termsCell(vocabularies[0]!, true) : (this.codesCell(type) ?? this.memberEnum(l, type));
         place(citeText({ kind: "value_list", element: l }), rendered);
       } else {
         const o = item.o!;
@@ -303,6 +303,13 @@ class Renderer {
     });
     const members = orderBy(entries, o.form.members.map((m) => m.key));
     return `{ ${members.map(([name, p]) => this.memberText(o.id, name, p, o.form.members.find((m) => m.key === name))).join(", ")} }`;
+  }
+
+  /** A primitive's titled codes, as `IntegerFlag`'s, in the tables' notation: each code with its name in parentheses, in lower case, as "`0` (no) | `1` (yes)"; null for any other type. */
+  codesCell(type: TypeRef | null): string | null {
+    const t = type?.kind === "named" ? this.types.get(type.name) : undefined;
+    if (t?.kind !== "primitive" || !Array.isArray(t.schema.oneOf)) return null;
+    return (t.schema.oneOf as { const: number; title: string }[]).map((b) => `${code(String(b.const))} (${b.title.toLowerCase()})`).join(" | ");
   }
 
   /**
@@ -370,7 +377,7 @@ function specCells(e: Element, layout: string): string[] {
   switch (e.kind) {
     case "field": {
       const f = e.element;
-      return [stripCell(f.name_cell), f.type.raw, f.marker, f.description.text];
+      return [stripCell(f.name_cell), f.type.raw, f.marker ?? "", f.description.text];
     }
     case "key": {
       const k = e.element;

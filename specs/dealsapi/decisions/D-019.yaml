@@ -1,0 +1,32 @@
+format: 1
+id: D-019
+status: proposed
+kind: gap
+author: agent
+question: "May a buying system's status of a seat send no member at all, when the table requires none?"
+covers:
+  - ir: field:object-buyerstatus:buyerseatid
+    digest: 2ae010783c34370a10304479cc9eef7d4b338ba61f035c1d234a907165ef3517
+    quote: "`buyerseatid` | string | Seat ID in the buying system that the response refers to"
+  - ir: field:object-buyerstatus:status
+    digest: 67c40cf27fbe1bff3aaa5a6d84e98c469e1f6ae0dc7006d060bf4100d6c78310
+    quote: "`status` | int | Status of the deal in the buying system: `0` = pending approval `1` = buyer has approved (ie. non PG deal is ready for bid requests) `2` = buyer has rejected `3` = ready to serve (ie. deal is in a campaign - ready to receive bid requests, relevant especially for PG deals) `4` = active (i.e. deal is actively serving impressions) `5` = paused `6` = complete (ie. buying system shows deal has completed)"
+options:
+  - id: schema-as-written
+    summary: >-
+      Yes: every member is optional, as the table writes them, and an empty
+      status is valid though it says nothing.
+  - id: min-one
+    summary: >-
+      No: a status names at least one member.
+chosen: schema-as-written
+rationale: >-
+  The table states no presence for either member, so the schema rejects
+  nothing the text allows: an empty `BuyerStatus` is valid. A status with
+  neither the seat nor its status tells the origin system nothing, so the
+  feedback asks for `buyerseatid` and `status` to be required.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L173"
+feedback: >-
+  Require `buyerseatid` and `status` in a buyer's status: a status that
+  names neither says nothing.

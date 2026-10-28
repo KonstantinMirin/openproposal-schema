@@ -1,0 +1,33 @@
+format: 1
+id: G-128
+date: 2026-10-28
+question: What changes in the gates when the Deals API gains its as-written variant and its pages on the site?
+decision: >-
+  The Deals API has an as-written variant, which switches its one
+  departure, D-004, off: `CountryCode` is replaced by `ExternalId`, so
+  each of a deal's `countries` is any string, a code compared as written,
+  and the ISO 3166-1 rule doesn't apply;
+  every gap stays filled in both variants. Its schemas, rules, type
+  examples, and comparison are written for the variant beside the
+  proposed build, and the variant gates hold the two builds to differing
+  only where the switch says. A variant's SDK types and their parity on
+  the corpus are checked only for a spec whose profile names SDK packages,
+  as its proposed build's are (optional-outputs), so the Deals API, whose
+  schemas come first, gets none. The site lists the Deals API and gives it
+  every page a specification has: a landing page and a How it's built page
+  of its own, which follow `sellerstatus` from its row to its schema and
+  its example value, the type map with both inputs and both variants, the
+  examples, the decision pages, and the files. The root page's card counts
+  one gap or one proposal in the singular, and AdCOM's registry page counts
+  the Deals API among the specifications that cite its lists. The test
+  suite holds 533 tests, and MIN_TESTS is 533.
+rationale: >-
+  No check is relaxed: the variant gates and the site's checks run on the
+  Deals API as on OpenProposal. OpenProposal's and AdCOM's committed
+  outputs are unchanged; the site, which no commit holds, adds the Deals
+  API's pages, lists it on the root page, and counts it on AdCOM's
+  registry page.
+accepts:
+  - { gate: guard, fingerprint: 7ac6b71de8929f5c54193e433605528d5a714f295c9b2910ec9c28a482fe07c8 }
+  - { gate: npm-test, fingerprint: 4dfa9d34a43581a0526035b6e399203db82e5bbc11c1c301bcf59b52a3e538c5 }
+  - { gate: site-builds, fingerprint: d481c33cb79199ef388549a3d24b5a09e8d141b0cecd0bc9dcf8957fcd0a1591 }

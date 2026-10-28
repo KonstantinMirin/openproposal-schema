@@ -1,0 +1,84 @@
+format: 1
+id: G-120
+date: 2026-10-28
+question: What changes in the gates when the kernel gains the Deals API's value domains, a model property carries its stated default, and no emitted enum may hold an integer?
+decision: >-
+  The kernel gains `CountryCode`, an ISO 3166-1 alpha-3 code of the new place
+  domain's concept `country`, with the rule `kernel:CountryCode:assigned`,
+  whose check reads ISO 3166-1's alpha-3 codes as kernel/lists.yaml pins them
+  from the iso-codes project's release 4.20.1, with a copy under
+  kernel/sources/ whose SHA-256 and codes the kernel gate checks, as it checks
+  ISO 4217's; and `Ext`, a part of the new extension domain's concept
+  `extension`, an object that takes any members, for a specification that
+  leaves members to its parties, as the Deals API's `ext`. `CountryCode` and
+  `CurrencyCode` share one structure, three capital letters, which the domain
+  file lists with why a receiver processes them differently. `IntegerFlag`
+  (G-118) is the Deals API's `guar` too, so a field that copies an IAB flag
+  and one that the Deals API defines take one type: a primitive validates
+  differently from the boolean, and its titled codes name both values, while
+  each field's description keeps its own words. OpenProposal and AdCOM bind
+  the new items as absent. A model property carries the default its row
+  states, and a sibling that a concept requires, as money requires its
+  currency, is satisfied by a stated default, so neither `required` nor
+  `dependentRequired` applies to it. No emitted `enum` holds an integer
+  anywhere: the conventions and the output check fail one, and an integer
+  extension leaves out the one code it would also match with a `not` of its
+  `const`, so AdCOM's Start Delay Modes' media offset now writes `not: {
+  const: 0 }`; Ajv and the reference oracle give the same verdicts on its
+  schema before and after, on twenty values from -1000 to 2^53 and of every
+  JSON type. Three fixtures cover the new checks: an integer enum inside a
+  branch, a model enum that holds an integer, and ISO 3166-1's list without
+  a code its copy holds.
+rationale: >-
+  Each check is new or stricter; none is relaxed. AdCOM's lists file changes
+  in one keyword with the same verdicts, so its release manifests and
+  OpenProposal's with-open-prs manifest, which digests the imported file,
+  change with it; no other output of either spec changes.
+accepts:
+  - { gate: comparison, fingerprint: 5a49ef3da806c356798c569f3c07a7bfd2c2b4b61a976178603d7a2d9ccc7066 }
+  - { gate: convention-beside-reference, fingerprint: d3869de2d287c704f9b206870674a20441099f99b187800eacde3b99b2434a1e }
+  - { gate: convention-inline, fingerprint: 974ec07ac5abf4a6ddd674b25c982e3710a69e3a943bfeaa5dc8805253815d33 }
+  - { gate: convention-keywords, fingerprint: 14fb1f15227e8d115eb258cc24a9f1566f41423db90aefc0b09acc352744d97d }
+  - { gate: convention-layers, fingerprint: a38cfab960af46bd278993b2e99d87a701399908c63c753297b844b3ef4bedfc }
+  - { gate: convention-lists, fingerprint: 5382a922576f3c03ef99a05d9511e8de21b34a5aae7ad5f7e26b75b9a28a9213 }
+  - { gate: convention-modules, fingerprint: 746d87cc7a188c06c5fbf8e55b1dc644cfdcbf37994030634115e415308c2bcb }
+  - { gate: convention-unions, fingerprint: 6b6377bce9b5abcd41e8af6e36b4c2fb2ea09c72afa5d8fff7e3a50d00f0f463 }
+  - { gate: corpus-generates, fingerprint: 700d4199aeae4b986e74c385cc24d31dc6e4bb758ec50aa9e2063580bdbc12e5 }
+  - { gate: corpus-isolation, fingerprint: fdff8c81f0dd3c8bf4d11ce6ce4da90e0cc28ade6d5b287ca741fcf5cdbb34be }
+  - { gate: domains-homonyms, fingerprint: 0c730facda9f74c7aa1bf8efc7640569588b3f6eef326e09194cbdccf89c9f86 }
+  - { gate: domains-properties, fingerprint: 2880c9095316061b87c3e58ad1fd2e2342b47d01db5c835228832c31398b07e1 }
+  - { gate: domains-used, fingerprint: e0233e6c5b5c4cb02bf66e8bca3f6fa28ea48feaf57561059deaa87f4157d8d5 }
+  - { gate: duplication-kernel, fingerprint: 741aace3a37d17c8deccdb1d2ecc5863a55837bdbd7f7df4d77c0b8a969f2744 }
+  - { gate: duplication-model, fingerprint: d1e90e111c39f22fd8cec9900c6bee53bc0447dec6bc9a8036e116f93fa51c08 }
+  - { gate: enum-drift-sources, fingerprint: 4c905707eab90c674a121f529518d59cf62fe0931b97a01bc427f8d86964b542 }
+  - { gate: examples-listing, fingerprint: 7ebbb1bc63530744ffc921b4c0539378daf4c1e099fe0c8058460ee1216e834e }
+  - { gate: examples-validate, fingerprint: f2b4019a8e913690575f50486e88b16e7b33dad21c79503188d878a23e153013 }
+  - { gate: extraction, fingerprint: 79b47e68bb9d6cd45a0db0acbd189cd80ebbe55c3708197d9dc8a26aa8781cac }
+  - { gate: feedback, fingerprint: de7f481c5b0978f35654d79c5b4bd764463f2b90ccd5e66cecd2053a7defb2fc }
+  - { gate: fidelity, fingerprint: be7cb3e79c147865235d0047b9bb416f665a67c872eb4ba7f88d4b7a511f39e9 }
+  - { gate: field-examples, fingerprint: 3dc1f891d3279c396bf067b2bdcb58035ca4e5605ea43995c2ee39bdc3e25c22 }
+  - { gate: frozen-releases, fingerprint: da14cef54f8ce775795e7c1828bdf15e7791c84fe890709ff6a214b82b6c7d4d }
+  - { gate: frozen-reviewed, fingerprint: ce7f5db39697a1a81d4b0e424ad7c0ff157d7f62f292ae6035f8a5de59213d09 }
+  - { gate: kernel-check, fingerprint: 29ec733d9de7e912ba32b26b04fe18db02c53f332ebca1c0a3d7e28f1aa63800 }
+  - { gate: model-resolves, fingerprint: 7c9a72f11a6d3861b7fda31b232e7d9e82c0677fa367ac863ae8f5cab48fc71d }
+  - { gate: modules-depends, fingerprint: c8923732ae4459e41cee04071776cb2f74e7c3aa5852da7900e4000fc2961606 }
+  - { gate: npm-test, fingerprint: 079f8707191bf74384a0779acff06b2f3a634968a630a959b2330c2323bebb7d }
+  - { gate: record-wording, fingerprint: 4c31634273aae11e11eeb3e5228bc4f7d10a080e4659f54f4ddb1adfea4942c5 }
+  - { gate: registry-agreement, fingerprint: 079d134a871f26954de965715c7e331a0434966a166e82bbd048e300c504393c }
+  - { gate: release-breaking, fingerprint: f6b5d56eca0c156d45a478a564479e5d3b6dad5cc68f2c339958e3edd3e5ad01 }
+  - { gate: release-builds, fingerprint: 5eb96f5d8fad735b2e5ac98c18684cb3cbeb5ec52ebe423cabeeb26cfbb74deb }
+  - { gate: release-digests, fingerprint: c92fbbe573770693f2392c71bfd7d3a2a52919620a9e1f4a32107b4953571f69 }
+  - { gate: round-trip, fingerprint: 649053ce9b7faf42caf38f0ee0f3474d5612c476f811b458605fa250a63a0f75 }
+  - { gate: rule-checks, fingerprint: 83a0f6dd8ac05d63c93e705ecae399be70da6b36b878a01b6582286b66bc669b }
+  - { gate: rule-vectors, fingerprint: 8eb9461834132f78080f04977ac091ba7cf34293a40d891dab8a8702fee30efc }
+  - { gate: rules-emit, fingerprint: d64ee4da69bdb70be1241f1e13952d35b19e64f0bc78bf3b9dea1e41164d29a4 }
+  - { gate: schemas-conventions, fingerprint: 532d30b1d10b2bb327fcfa8ef2cf96bebf1cc236473e899a01a080ee5009cc5d }
+  - { gate: schemas-emit, fingerprint: 4d35f7294c22803dc76498a68bbecf7afa0350593d021fa13209e83519532074 }
+  - { gate: sdk-generate, fingerprint: 58eb70dcda6529a25b1143e8fe7ccd999f93200bc5b0e85fb988a2f470315f10 }
+  - { gate: site-builds, fingerprint: 56cba5db4a7be3c30704d403ce1758f6d291739e10092e649cc57ce7f89d6d64 }
+  - { gate: spec-profile, fingerprint: fd6386e1284f0c5ba51e70e2ad75d7868dd445130ad45e4e5dd04fefb6f2081b }
+  - { gate: type-examples-generate, fingerprint: d559f63590558c6bc5e778b8f05b879f968099cdf4751775ce14a7dc84a68f5c }
+  - { gate: type-examples-valid, fingerprint: b3cdc0ef16e4c0f5ab9deb6e51ad4bbcc5ce23ba65d5c81041302dc29fb77075 }
+  - { gate: variant-check, fingerprint: bd2cff2dade08ab4a58cfeb22299a5e050fbb097b96edd142731daf6a08651d2 }
+  - { gate: variant-diff, fingerprint: 6ee6af30661d0edb05ce19f754dcc00c6ea5d14ce2f8615938e6abd1efd5967c }
+  - { gate: variant-examples, fingerprint: 5d778cba7aef544acd4dc450e78eaea00884bc69394350f7f35c6eda1d5c3d76 }

@@ -13,7 +13,7 @@ from pydantic import TypeAdapter
 
 from . import _runtime as rt
 from ._runtime import Mode, dump, dump_json, is_format
-from .kernel import Amount, BareTerm, CalendarDate, CatalogRef, CatalogRefOr, CatalogReference, Count, CurrencyCode, DayName, DayNames, DaypartWindow, Digest, Domain, Duration, ExternalId, FormatId, Fraction, Identifier, IntegerFlag, Measure, NamespacedTerm, Parties, Party, PercentChange, PriceAdjustment, PriceDelta, Range, Selectable, SelectableOrValue, Settable, SettableOrValue, Text, TimeOfDay, TimeZone, Timestamp, Url, VendorCode
+from .kernel import Amount, BareTerm, CalendarDate, CatalogRef, CatalogRefOr, CatalogReference, Count, CurrencyCode, DayName, DayNames, DaypartWindow, Digest, Domain, Duration, ExternalId, FormatId, Fraction, Identifier, IntegerFlag, IntegerFlags, Measure, NamespacedTerm, Parties, Party, PercentChange, PriceAdjustment, PriceDelta, Range, Selectable, SelectableOrValue, Settable, SettableOrValue, Text, TimeOfDay, TimeZone, Timestamp, Url, VendorCode
 from .audience import ActivationRoute, ActivationRouteSelection, ActivationRoutes, AudiencesOption, AudiencesOptionOrCatalogRef, AudiencesSelection, BuyerSupplied, SuppressionList
 from .commercial import Availability, AvailabilityType, AvailabilityTypes, CancellationPolicyOption, CancellationPolicySelection, Commitment, CommitmentBases, CommitmentBasis, CommitmentBounds, CostMethod, CostMethods, CreativePolicy, ExclusivityOption, ExclusivitySelection, HoldScope, HoldScopes, HoldState, HoldStates, HoldStatus, MinCommitmentEntry, PricingEntry, Requires
 from .creative import Approval, AssetsEntry, CreativeDelivery, CreativeDeliveryMethod, CreativeDeliveryMethods, FormatsSelection, MaterialsDue, ProductionOption, ProductionSelection, Specs, ThirdPartyTags
@@ -41,7 +41,7 @@ LOCK: Final = "with-open-prs"
 VARIANT: Final = "as-written"
 """The build: `as-written`, the specification as its text and examples write it, or `proposed`, with the changes we propose."""
 
-SCHEMA_RELEASE: Final = "3ec8f57aed0ce252591ad4e786afeb479e4b595f69ac7e3ad97ea31af050a13c"
+SCHEMA_RELEASE: Final = "312b5f7f2749c6edc38e013bde5e8cc48613fe7981ab1dcff8c6c129183011cf"
 """The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it."""
 
 TYPES: dict[str, Any] = {
@@ -316,6 +316,7 @@ __all__ = [
     "HoldStatus",
     "Identifier",
     "IntegerFlag",
+    "IntegerFlags",
     "LOCK",
     "LineItem",
     "LineItemStatus",

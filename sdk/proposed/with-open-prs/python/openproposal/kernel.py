@@ -85,6 +85,19 @@ Fraction = TypeAliasType("Fraction", Annotated[float, Strict(), Field(ge=0, le=1
 """A proportion from 0 to 1, such as 0.7 for 70 %."""
 
 
+IntegerFlag = TypeAliasType("IntegerFlag", Annotated[Literal[0, 1], BeforeValidator(rt.integer_term)])
+"""A yes or no written as an integer, `0` for no and `1` for yes, as AdCOM 1.0 and OpenRTB 2.6 write their flags, such as a placement's `instl`. A receiver reads it as a flag, never as a count, and a field that takes it keeps the integer its text writes."""
+
+
+class IntegerFlags:
+    """The terms of `IntegerFlag`, as constants."""
+
+    __slots__ = ()
+
+    CODE_0: Final = 0
+    CODE_1: Final = 1
+
+
 Measure = TypeAliasType("Measure", Annotated[float, Strict(), Field(ge=0)])
 """What a metric that isn't a rate measures, a number never negative and not always whole, such as 1,200,000 audience impacts for DOOH or a modelled audience of 14.2 impacts per play."""
 

@@ -1,0 +1,54 @@
+format: 1
+id: D-017
+status: proposed
+kind: gap
+author: agent
+question: "What do `origin`, `seller`, and `curator` hold, when the table and the guidance define each twice?"
+covers:
+  - ir: field:object-deal:origin
+    digest: ce99360cea2bbe7a1ce0062398ecda06b2329079842d82cca3fc60bf41fa6a47
+    quote: "`origin` | string, required | The advertising system domain of the business entity that will receive bid responses for the deal, typically the SSP hosting the API."
+  - ir: field:object-deal:seller
+    digest: 340feab53f097fa9b7675d9a9ee782b92c911a70cbc87d953d9454ae7236741d
+    quote: "`seller` | string, recommended | Canonical domain of the business entity who sold the deal. This may be the same as the origin or curator, but it also could be any intermediate seller. See Implementation Guidance for additional detail"
+  - ir: field:object-curation:curator
+    digest: 526328206505761bd3a8da9bf7a66e2af9fe4ec6cbe02fbfce0db4484aae11c4
+    quote: "`curator` | string | Canonical domain of the business entity that did the packaging of inventory, technology and/or data. Most often, this will be the seller of the deal."
+  - ir: sentence:origin-curator-and-seller:0cc548ed
+    digest: e20969bf0aed6ac9a1063ce074dfb75c100f182becab8b060f433f334fa3c395
+    quote: "The `origin` attribute refers to the system with the UI where the deal is first input."
+  - ir: sentence:origin-curator-and-seller:19027373
+    digest: 8b960b4ff1b574fff7e5d3bfea095b99e72fed42d0374d13727c482d06740e22
+    quote: "The `curator` attribute names the business entity that did the packaging of inventory, technology and/or data."
+  - ir: sentence:origin-curator-and-seller:4f4c7526
+    digest: 45591fad6a4f3af2a07369c0ba1f855e10f3eea2d14fe7e4f88e7d9988b2853c
+    quote: "The `seller` attribute represents the business entity who has sourced the demand (aka contracted with the buyer of the deal)."
+  - ir: sentence:example-1:7f955850
+    digest: 4eb252d43a58aee98bc59c43c05d6cec34f7b93f8a4787460d58a87a1b9e65b4
+    quote: "In this case the `seller`=saleshousedomain.com, the `curator`=curatordomain.com, and the `origin`=sspdomain.com"
+  - ir: sentence:example-2:b3e88358
+    digest: 5fba7f836296b6a62a4b90064d1adaea55cc41480e0a1488aa23b404321a0f43
+    quote: "In this case the `seller`=publishercompany.com, the `curator`=datacompany.com, and the `origin`=sspdomain.com"
+options:
+  - id: domain
+    summary: >-
+      A domain name, such as `sspdomain.com`, the table's definition: "The
+      advertising system domain", "Canonical domain"; each description
+      quotes the table.
+  - id: entity
+    summary: >-
+      A name of the business entity, as the guidance's "refers to the system
+      with the UI" and "represents the business entity" read.
+chosen: domain
+rationale: >-
+  The table says domain for each, and the guidance's examples write domains,
+  `saleshousedomain.com` and `sspdomain.com`, so each holds a domain name,
+  compared as written. The guidance's second definitions describe the party
+  the domain names, and stay informative.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L89"
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L258"
+feedback: >-
+  Define `origin`, `seller`, and `curator` once: the table calls `origin`
+  the domain of the system that receives bid responses, and the guidance the
+  system with the UI where the deal is first input.

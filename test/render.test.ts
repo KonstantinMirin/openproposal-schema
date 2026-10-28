@@ -150,3 +150,27 @@ test("the gate fails on an unrecorded difference, a changed one, a stale one, an
   assert.match(checkDifferences([d], missing, "main", DECISIONS).join("\n"), /no decision record/);
   assert.deepEqual(checkDifferences([], { ...file, differences: [{ ...entry, locks: ["with-open-prs"] }] }, "main", DECISIONS), [], "an entry out of the lock's scope isn't checked");
 });
+
+test("a round-trip difference, an example finding, or an undecided check that cites a withdrawn record fails", async () => {
+  const { checkDifferences, loadDifferences } = await import("../src/render.ts");
+  const { checkFindings, checkUndecided, loadFindings } = await import("../src/examples.ts");
+  const { loadDecisions } = await import("../src/mapping.ts");
+  const { join: j } = await import("node:path");
+  const { SPEC: S } = await import("./helpers.ts");
+  const decisions = loadDecisions(j(S, "decisions"));
+  // A recorded difference, as it occurs, citing D-039, which is withdrawn.
+  const diffs = loadDifferences(j(S, "roundtrip", "differences.yaml"));
+  const d = diffs.differences.find((x) => (x.locks ?? ["main"]).includes("main"))!;
+  const actual = [{ table: d.table, row: d.row, column: d.column, spec: d.spec, model: d.model, elements: [d.row] }];
+  const cites = (id: string) => checkDifferences(actual as never, { ...diffs, differences: [{ ...d, decision: id }] }, "main", decisions).join("\n");
+  assert.doesNotMatch(cites(d.decision), /withdrawn/);
+  assert.match(cites("D-039"), /cites "D-039", which is withdrawn/);
+  // A recorded example finding, as it occurs, citing D-039.
+  const findings = loadFindings(j(S, "examples", "findings.yaml"));
+  const f = findings.findings.find((x) => (x.locks ?? ["main"]).includes("main") && x.kind === "invalid")!;
+  const failure = { example: f.example, path: f.path, kind: f.kind, value: f.value, message: "a fixture", elements: [] };
+  assert.match(checkFindings([failure] as never, { ...findings, findings: [{ ...f, decisions: ["D-039"] }] }, "main", decisions).join("\n"), /cites "D-039", which is withdrawn/);
+  // An undecided check citing D-039.
+  const undecided = { example: "x.yaml", path: "/a", rule: "rule:x", elements: ["field:4.1:proposal_id"] };
+  assert.match(checkUndecided([undecided], { ...findings, undecided: [{ ...undecided, decisions: ["D-039"], reason: "A fixture's reason." } as never] }, "main", decisions).join("\n"), /undecided .* cites "D-039", which is withdrawn/);
+});

@@ -2,7 +2,7 @@
 
 /** The OpenProposal `inventory` module's types. */
 import { z } from "zod";
-import { CatalogRefOr, Domain, Duration, ExternalId, FormatId, NamespacedTerm, Selectable, Text, Url, Uuid, VendorCode } from "./kernel.js";
+import { CatalogRefOr, Domain, Duration, ExternalId, FormatId, IntegerFlag, NamespacedTerm, Selectable, Text, Url, Uuid, VendorCode } from "./kernel.js";
 
 /** The `ContentDetail` object of the `inventory` module. It is open, so it keeps the members it doesn't name. The shows, series, sections, and network verticals the line item's inventory holds. The specification states no members, so the object accepts any. */
 export interface ContentDetail {
@@ -217,7 +217,7 @@ export interface Placement {
   /** Values from List: API Frameworks that every impression supports, such as MRAID 3.0 (6), OMID 1.0 (7) and SIMID 1.1 (9) */
   api?: Array<ApiFramework>;
   /** `0` (no) | `1` (yes). The ad is interstitial or full screen */
-  instl?: boolean;
+  instl?: IntegerFlag;
   /** Video or audio. Values from List: Playback Methods in use, such as Initiates without any specific user interaction with Sound On (1), Initiates without any specific user interaction Sound Off by Default (2), Initiates on Click with Sound On (3) and Continuous Playback (7) */
   playmethod?: Array<PlaybackMethod>;
   /** One value from List: Plcmt Subtypes - Video: Instream (1), Accompanying Content (2), Interstitial (3), No Content/Standalone (4), Pause (5), Screensaver (6), Overlay (7), Squeezeback (8), In-scene (9) */
@@ -225,19 +225,19 @@ export interface Placement {
   /** `{ min_interval_s }`: minimum seconds a creative renders before the slot refreshes */
   refresh?: Refresh;
   /** `0` (no) | `1` (yes). The user receives a reward for viewing the ad */
-  reward?: boolean;
+  reward?: IntegerFlag;
   /** Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad */
-  skip?: boolean;
+  skip?: IntegerFlag;
   /** When `skip` is `1`: seconds the ad plays before the placement enables skipping */
   skipafter?: Duration;
 }
 export const Placement: z.ZodType<Placement> = z.strictObject({
   api: z.array(ApiFramework).optional(),
-  instl: z.boolean().optional(),
+  instl: IntegerFlag.optional(),
   playmethod: z.array(PlaybackMethod).optional(),
   plcmt: PlcmtSubtype.optional(),
   refresh: Refresh.optional(),
-  reward: z.boolean().optional(),
-  skip: z.boolean().optional(),
+  reward: IntegerFlag.optional(),
+  skip: IntegerFlag.optional(),
   skipafter: Duration.optional(),
 });

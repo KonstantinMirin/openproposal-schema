@@ -1,0 +1,111 @@
+format: 1
+id: G-125
+date: 2026-10-28
+question: What changes in the gates when the Deals API emits its schemas, rules, and vectors, before its examples, corpus, and other outputs?
+decision: >-
+  The pipeline gains a stage, `schemas`, between `model` and `outputs`: a
+  spec that has reached it holds its JSON Schemas, its rules, and their
+  vectors, and CI runs on it the schema, rule, fidelity, and
+  registry-agreement gates, and no gate of its corpus, type examples,
+  examples, round trip, release, or comparison, which the `outputs` stage
+  writes; the spec-profile gate holds it to no such file. The Deals API is
+  at `schemas`. Its plugin gives the rule checks of its eight rules, which
+  count characters, not UTF-16 units, read the pushed deal's `id` as a
+  status response's context, and leave undecided only what a part of a deal
+  leaves out and the rule turns on; and the fidelity oracle's readers of its
+  Type cells, a presence of one level, `required`, or `recommended` or a
+  bare cell, both optional as type rules § 4 reads them, its type, and its
+  default or none, and of its Description cells, their codes, each a value,
+  with every integer from a "values N and greater" sentence's N up, and a
+  sentence that says what an empty list means. The oracle gains the form
+  `default`: the schema's node for the member carries the stated default,
+  and a value equal to it is accepted, or, where the row states none,
+  carries none; a departure may list it. A closed list of integer codes is
+  also tested with the code below its lowest and the first code missing
+  between two it lists, as the Deals API's tag lists `sellerstatus` 0, 1,
+  2, and 4; OpenProposal's and AdCOM's lists give no new disagreement. A
+  vocabulary of a specification's own labeled list is titled with its name
+  in words and described by the attribute whose codes it holds, as type
+  rules § 6 asks of every integer-coded vocabulary, and a code the list
+  gives twice is titled by both its meanings. The registry agreement no
+  longer reads a vocabulary of the specification's own labeled list as a
+  copy of a registry's list for its codes alone, as the Deals API's
+  `sellerstatus`, `0` = deal is active, is no AdCOM Volume Normalization
+  Mode; its labels or its name still make it one. A profile's import may
+  carry allowances, each citing a decision record that must stand and cover
+  the row the citation sits in, on the locks it names or on every lock: a
+  list the text names other than as the registry titles it, read as the
+  registry's list, and links at a branch rather than the pinned commit; an
+  allowance that excuses no citation on a lock it reads fails. The Deals
+  API's D-027 reads "List: Device Type" as AdCOM's List: Device Types and
+  its links at AdCOM's main as the pinned commit. Twenty fixtures cover the
+  new checks: a default the schema drops, changes, or adds; a required
+  attribute left optional and a bare cell's made required; an empty list
+  rejected; a Deals API list that loses a code or its vendor range, takes
+  a code below its lowest, or, on the tag, the code it skips; a citation or
+  a link with no allowance; an allowance whose decision doesn't cover the
+  row or the line, no longer stands, reads another lock, or excuses
+  nothing; an own labeled list titled with a registry's labels or named
+  after its list; and a spec at its schemas that holds its corpus. The
+  test suite holds 528 tests, and MIN_TESTS is 528.
+rationale: >-
+  No check is relaxed: a copy is still a copy by its labels or its name, an
+  allowance excuses only a row a standing decision covers and fails when it
+  excuses nothing, the oracle tests more values than before, and the new
+  stage runs every gate of the files it holds. OpenProposal's and AdCOM's
+  outputs are unchanged: OpenProposal's profile has no allowance and its
+  model no own labeled list, and the agreement gate doesn't run on AdCOM,
+  a registry.
+accepts:
+  - { gate: comparison, fingerprint: d702bd8b2ad65213e227e5b58c00f0d8cb6aec4082c0777a967d86b146a6cc26 }
+  - { gate: convention-beside-reference, fingerprint: 6448a4a211c1a4fed043785e00a598a84997a64c1345ec4a029e999c3f11d26d }
+  - { gate: convention-inline, fingerprint: d9f1d74eb85a6155ddff6ab408940a89f5b3bb8e1f18a422687e057235f24cb8 }
+  - { gate: convention-keywords, fingerprint: a78b3b9e34cceacbb7c3cac0940f7097be59ff62fa90e4f17a6c587ddda13e37 }
+  - { gate: convention-layers, fingerprint: 78908d03f8fcf837eda2d77bc56d5c46a29f6b8664beb0494503e32b072d475b }
+  - { gate: convention-lists, fingerprint: fb938e35b32977ab034d2ef0cb42bb12bd83a709ddee1f1797ea714fbee4a45f }
+  - { gate: convention-modules, fingerprint: 9b714338c4b73ef15b8c0d6a79ec26ceb43a373c40770a01bd574e9e4a1c15d0 }
+  - { gate: convention-unions, fingerprint: 0e8c0477c2ee93c62dcea396847e0e91f3d341c62fc6f4e11bc975f0cd0a21a1 }
+  - { gate: corpus-generates, fingerprint: a2301fda336e899f3e664f2e2fe9b87559cb3a71722245c24d0e00b71ef94f92 }
+  - { gate: corpus-isolation, fingerprint: 7ce5061e48088714ac7b3eebf644a579a1411b162ad1df20ec6395b83c4c686a }
+  - { gate: corpus-labels, fingerprint: b6df70796cdd2934974abf92ea706bf046ae66532c9952981c6184c43a35e54d }
+  - { gate: domains-homonyms, fingerprint: 763be1bba0155484cf78bf67e2d65e12e6e67f8e9e75a1b0cd7cb163191101a5 }
+  - { gate: domains-properties, fingerprint: b988000f58bdae243c9f7fea7c50cd32cd1c8ca723e7f2bf49f3af887e07a227 }
+  - { gate: domains-used, fingerprint: a94cd730b2cf547082d43807ec6d8cf7c63c9f3dba4e4a404231a911616975e8 }
+  - { gate: duplication-model, fingerprint: 4a4d188ba8363779f0652045fc8ee7c852f0f66a997bf5eea4c7ebec69f72bba }
+  - { gate: enum-drift-sources, fingerprint: d3c3a4009f41f6b3616d89f3b4f2cc827c58b60f78cccec8c11c09f9b40bba8f }
+  - { gate: examples-listing, fingerprint: 0e769d7c3181b552634bb7fe9650a095f782b2d82947fa3659727257e5859ae4 }
+  - { gate: examples-oracle, fingerprint: 3876366b818fb64282162b7b1d0867dde64545f045d5122a94d4a068af9b47b1 }
+  - { gate: examples-validate, fingerprint: 493fdee04c10051bf0b03a901d9dd04d53efbc9c1f5037068af2e5e4c8b44efa }
+  - { gate: extraction, fingerprint: 9a6ba1676a9e1120aa0f06f8543638c832c748bbde722636ae53103cdce1cc00 }
+  - { gate: feedback, fingerprint: 810b74d70d918a4c37bad8ba4931fbce0f8c04271e03defef76fe72653066d44 }
+  - { gate: fidelity, fingerprint: 3cae18b846b79b987f4b08845f2ba34b62ea27755ec5dfc52cf30ff6d53c867d }
+  - { gate: field-examples, fingerprint: 59064085ef3bc08431b00c26942eaddb0f3223315433acd6bfdbaab41a361cbb }
+  - { gate: frozen-releases, fingerprint: d91428ea0f59ff5a025f3fc3c44b70380dacb8b7bbf7ae3e908f8f62304a7c7d }
+  - { gate: frozen-reviewed, fingerprint: 2fa197f096538560e7edc8feb08dd2ce46f426282852f3e847fe7005c8d06ff3 }
+  - { gate: guard, fingerprint: 5fee924ea9734a1f53e3b852e5f704e5f6b45afbb3630349a5f8106a2e8ec785 }
+  - { gate: kernel-load, fingerprint: 59f68518510a1641b96082f4dba58d863d17cc1de1b7de465139525c075b94d3 }
+  - { gate: model-resolves, fingerprint: c4d6016ee1842cf272db875a9c0645f62e6dac628ba5ef92500b09eee5257568 }
+  - { gate: modules-depends, fingerprint: 72d9b36e5be72e4aee0cc284a25da92bd075bc94bb65007134932c2e500bcd60 }
+  - { gate: npm-test, fingerprint: bafa6a81d6db33afb5f9d6c68ac23d1d4bcd62626634b04b6ec8cfee67652008 }
+  - { gate: plain-generates, fingerprint: 228be48ff829d27d3a30fc11cd6df52da24d078fc79df9abece653b930331eea }
+  - { gate: record-wording, fingerprint: cd5c5e1efe3c65a4149a67658be1c9a1a3659ddf69e006e948d33bb15b23303a }
+  - { gate: registry-agreement, fingerprint: d22f95ce7ee57c9b5062781991fe5724c29d3c453840862fab28ebbfaa19a003 }
+  - { gate: release-breaking, fingerprint: 8e283c919b0a3b24c7dc002098e197ae50529ac4c2f6a2a592cfac4062d02668 }
+  - { gate: release-breaking-corpus, fingerprint: c620afc83c02a30467ce26964ba82411b21eb68efb68fc0f808ebd57e4db55cb }
+  - { gate: release-builds, fingerprint: fe0056a454499c3794241a9390dc3f5b95c868cf43bbf2cde7dffa63e45996ea }
+  - { gate: release-digests, fingerprint: b0348ca4ba6a5d0332d87f47dd0bc3f996f10d1295c8e4774b18767f291f9cd6 }
+  - { gate: round-trip, fingerprint: 9bca631e2142f926dbacdd30e1827d8a6286119bfbf7e3bc517b51b4a297e066 }
+  - { gate: rule-checks, fingerprint: 1cc96d8c3101998f6c13d7cf8365fb79979cb9efda6bef663d1e956173da2fcb }
+  - { gate: rule-vectors, fingerprint: db07c5442b9c6c124c6357f8c53081ed284a39b656755faff4706844914c4a73 }
+  - { gate: rules-emit, fingerprint: 977bdbfab68e7c38873162593bfb82d2cb7222ae1cff147b84eb7f17e09d33f1 }
+  - { gate: schemas-ajv, fingerprint: d086e7d626924726660c87787aa4d6691adecae66d22bc0089b779a05b6ef475 }
+  - { gate: schemas-conventions, fingerprint: 1ad1a34054633ddf88ce8b6a0b5f7238ad7b979390a51541b73e76aa87b30c5c }
+  - { gate: schemas-emit, fingerprint: 190a3d955b6b5e977bf8404a966abc6b7a12e6cd8be04b3c403bdf749673b96b }
+  - { gate: schemas-oracle, fingerprint: e50f7e458e10c7565be639436b97a80925c1e870de0154b02ea541751675766b }
+  - { gate: sdk-generate, fingerprint: 23a3ba1dc483ee962af41a2bb6d489b9a664381ee6078ee1f9493cd84809f3df }
+  - { gate: site-builds, fingerprint: 09444def62165b4a70b23e28251e7322e03e35ef8ba785cee00bc589588cede2 }
+  - { gate: spec-profile, fingerprint: 2135db7d397e5cbb53d24f68fb5147f549759a32b41b2b69c684ebf8224397eb }
+  - { gate: type-examples-generate, fingerprint: e7732c3a634fdf2999789f40f7bf21700cb3a5616b8b7d70edb93afeca935db5 }
+  - { gate: type-examples-valid, fingerprint: f4c3a968050fb8446d746cc8d29833a625122dc8c3ffadee093e88c239643273 }
+  - { gate: variant-diff, fingerprint: 55a33169480a1dc34cd2f7570aee85b8f6b9af1732789696804ba814e6d73786 }
+  - { gate: variant-examples, fingerprint: 39fad091d3f17fdf800db76f02fe39c36d39687ead32398e195e2155bfac084c }

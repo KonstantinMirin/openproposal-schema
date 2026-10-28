@@ -1,0 +1,63 @@
+{
+  "$defs": {
+    "BuyerDealStatus": {
+      "description": "The codes of `BuyerStatus.status`, each with the label the text gives it",
+      "oneOf": [
+        {
+          "const": 0,
+          "title": "pending approval"
+        },
+        {
+          "const": 1,
+          "description": "buyer has approved (ie. non PG deal is ready for bid requests)",
+          "title": "buyer has approved"
+        },
+        {
+          "const": 2,
+          "title": "buyer has rejected"
+        },
+        {
+          "const": 3,
+          "description": "ready to serve (ie. deal is in a campaign - ready to receive bid requests, relevant especially for PG deals)",
+          "title": "ready to serve"
+        },
+        {
+          "const": 4,
+          "title": "active (i.e. deal is actively serving impressions)"
+        },
+        {
+          "const": 5,
+          "title": "paused"
+        },
+        {
+          "const": 6,
+          "title": "complete (ie. buying system shows deal has completed)"
+        }
+      ],
+      "title": "Buyer Deal Status",
+      "type": "integer"
+    },
+    "BuyerStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "buyerseatid": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId",
+          "description": "Seat ID in the buying system that the response refers to"
+        },
+        "ext": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Ext",
+          "description": "Placeholder for deal-specific extensions"
+        },
+        "status": {
+          "$ref": "#/$defs/BuyerDealStatus",
+          "description": "Status of the deal in the buying system: `0` = pending approval `1` = buyer has approved (ie. non PG deal is ready for bid requests) `2` = buyer has rejected `3` = ready to serve (ie. deal is in a campaign - ready to receive bid requests, relevant especially for PG deals) `4` = active (i.e. deal is actively serving impressions) `5` = paused `6` = complete (ie. buying system shows deal has completed)"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "$id": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/tag-1.0-202602/modules/buyer-seat/1/buyer-seat.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The Deals API `buyer-seat` module: its 1 vocabulary and 1 object.",
+  "title": "buyer-seat"
+}

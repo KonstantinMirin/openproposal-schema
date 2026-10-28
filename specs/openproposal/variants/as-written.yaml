@@ -9,8 +9,8 @@ format: 1
 name: as-written
 description: >-
   The schemas as the specification and its examples write the points our
-  proposals change: opaque string IDs, the integers 0 and 1 for AdCOM's
-  flags, spans as the text or its examples write them, bare terms where the
+  proposals change: opaque string IDs, spans as the text or its examples
+  write them, bare terms where the
   text lists none, calendar dates for a flight, and options with only the
   members the text lists. Every point the text leaves open is filled as in
   the schemas we propose.
@@ -39,31 +39,6 @@ primitives:
       valid: [ "examplepub-us-q4-2026-omni", "business-daily-display", "7c9e6679-7425-40de-944b-e07fc1f90ae7", "" ]
       invalid: [ 42, true, null, [ "business-daily-display" ] ]
     showcase: [ "examplepub-q4-2026-display", "examplepub-q4-2026-video" ]
-  - name: IntegerFlag
-    description: A yes or no, written as the integer `0` (no) or `1` (yes), as AdCOM 1.0 and OpenRTB 2.6 write the flag of the same name.
-    type: integer
-    concept: flag
-    locks: [ with-open-prs ]
-    constraints:
-      minimum: 0
-      maximum: 1
-    sources:
-      spec:
-        - ir: key:5.2.2:placement.reward#meaning/values:1
-          digest: a1ee2de06115664b61cd55dd1806c6f7bf19446b7c9a49840198ae8c461aeddd
-          quote: "`0` (no) | `1` (yes)"
-          locks: [ with-open-prs ]
-        - ir: rule:5.2.2:463dfafd
-          digest: eee71b1ff54c633f884713ce121e5b82ef4ecc041de54921c9ab66336402c469
-          quote: Each key takes an integer, except `playmethod[]` and `api[]`, which take arrays of integers, and `refresh`, an object whose `min_interval_s` is a REQUIRED integer.
-          locks: [ with-open-prs ]
-      standards:
-        - name: AdCOM 1.0, Object Placement (`reward`), Object DisplayPlacement (`instl`), Object VideoPlacement (`skip`)
-          url: https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#object_placement
-    vectors:
-      valid: [ 0, 1 ]
-      invalid: [ 2, -1, 0.5, true, "1" ]
-    showcase: [ 1, 0 ]
   - name: BareTerm
     description: A term or word written bare, letters and digits joined by underscores, such as `modeled`, `daily`, or `30d`, as the specification's examples write it where the text lists no values and states no form.
     type: string
@@ -117,17 +92,6 @@ switches:
     rewrite:
       - { in: Selectable, from: "the UUID the seller mints for it", to: "the identity the seller mints for it" }
       - { in: Selectable, from: "so `K` is `Uuid`, the identity", to: "so `K` is the type of that `id`, the identity" }
-  - decision: D-039
-    option: integer
-    reads: >-
-      `placement.reward`, `instl`, and `skip` are the integers `0` (no) and
-      `1` (yes), as § 5.2.2 and AdCOM 1.0 write them.
-    retype:
-      - { ir: key:5.2.2:placement.reward, from: boolean, to: IntegerFlag, locks: [ with-open-prs ] }
-      - { ir: key:5.2.2:placement.instl, from: boolean, to: IntegerFlag, locks: [ with-open-prs ] }
-      - { ir: key:5.2.2:placement.skip, from: boolean, to: IntegerFlag, locks: [ with-open-prs ] }
-    convert:
-      - { from: true, to: 1 }
   - decision: D-040
     option: as-written
     reads: >-

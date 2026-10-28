@@ -1,0 +1,19 @@
+# Default extractor input: the Deals API's `main`, pinned to one commit, the
+# errata its maintainer applied after the tag 1.0-202602 and the text GitHub
+# shows. `blob` is the git blob SHA of `path` at `commit`; the fetch step
+# verifies it. The repository keeps no examples/ folder. Sources are tried in
+# order. The clone and snapshot paths are relative to this spec's folder,
+# specs/dealsapi/; the snapshot holds the specification at `commit`, so CI
+# runs every gate without the clone, and
+# `npm run fetch -- --lock specs/dealsapi/spec-input/spec-lock.yaml --snapshot`
+# writes it.
+name: main
+upstream: https://github.com/IABTechLab/deal-api
+commit: 3028ddcb8d5faea44bdab272aeaa9be6b5980f81
+path: deal1.0.md
+blob: c2dc7944d257036aa6dbbe70ca084c4f6670da8e
+ir_dir: ir
+required: true
+sources:
+  - git: ../../vendor/deal-api
+  - snapshot: spec-input/snapshots/main

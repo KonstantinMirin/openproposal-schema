@@ -167,6 +167,13 @@
       "view": "model"
     },
     {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the primitive IntegerFlag is added",
+      "type": "IntegerFlag",
+      "view": "model"
+    },
+    {
       "change": "added-property",
       "class": "additive",
       "detail": "LineItem.agreement_ref is added, optional",
@@ -569,33 +576,9 @@
     {
       "change": "changed-rule",
       "class": "additive",
-      "detail": "the rule kernel:CurrencyCode:assigned changes its vectors",
-      "member": "kernel:CurrencyCode:assigned",
-      "type": "CurrencyCode",
-      "view": "rules"
-    },
-    {
-      "change": "changed-rule",
-      "class": "additive",
-      "detail": "the rule kernel:DaypartWindow:ordered changes its sources, vectors",
+      "detail": "the rule kernel:DaypartWindow:ordered changes its sources",
       "member": "kernel:DaypartWindow:ordered",
       "type": "DaypartWindow",
-      "view": "rules"
-    },
-    {
-      "change": "changed-rule",
-      "class": "additive",
-      "detail": "the rule block:5.6.2:1/values:1 changes its vectors",
-      "member": "block:5.6.2:1/values:1",
-      "type": "HoldStatus",
-      "view": "rules"
-    },
-    {
-      "change": "changed-rule",
-      "class": "additive",
-      "detail": "the rule rule:2.2:06ccee9f changes its vectors",
-      "member": "rule:2.2:06ccee9f",
-      "type": "LineItem",
       "view": "rules"
     },
     {
@@ -631,14 +614,6 @@
       "view": "rules"
     },
     {
-      "change": "changed-rule",
-      "class": "additive",
-      "detail": "the rule rule:5.4:2eaa294f changes its vectors",
-      "member": "rule:5.4:2eaa294f",
-      "type": "LineItem",
-      "view": "rules"
-    },
-    {
       "change": "added-rule",
       "class": "breaking",
       "detail": "the rule rule:5.5:16494a1a is added at error severity on LineItem, which the last release had",
@@ -655,14 +630,6 @@
       "view": "rules"
     },
     {
-      "change": "changed-rule",
-      "class": "additive",
-      "detail": "the rule rule:5.7:4994173c changes its vectors",
-      "member": "rule:5.7:4994173c",
-      "type": "LineItem",
-      "view": "rules"
-    },
-    {
       "change": "added-rule",
       "class": "breaking",
       "detail": "the rule rule:5.8:59a01393 is added at error severity on LineItem, which the last release had",
@@ -673,24 +640,8 @@
     {
       "change": "changed-rule",
       "class": "additive",
-      "detail": "the rule marker:3:derived changes its vectors",
-      "member": "marker:3:derived",
-      "type": "Marker",
-      "view": "rules"
-    },
-    {
-      "change": "changed-rule",
-      "class": "additive",
-      "detail": "the rule marker:3:immutable changes its applies_to, vectors",
+      "detail": "the rule marker:3:immutable changes its applies_to",
       "member": "marker:3:immutable",
-      "type": "Marker",
-      "view": "rules"
-    },
-    {
-      "change": "changed-rule",
-      "class": "additive",
-      "detail": "the rule marker:3:requestable changes its vectors",
-      "member": "marker:3:requestable",
       "type": "Marker",
       "view": "rules"
     },
@@ -705,7 +656,7 @@
     {
       "change": "changed-rule",
       "class": "additive",
-      "detail": "the rule marker:3:seller-set changes its applies_to, vectors",
+      "detail": "the rule marker:3:seller-set changes its applies_to",
       "member": "marker:3:seller-set",
       "type": "Marker",
       "view": "rules"
@@ -713,7 +664,7 @@
     {
       "change": "changed-rule",
       "class": "additive",
-      "detail": "the rule marker:3:settable changes its applies_to, vectors",
+      "detail": "the rule marker:3:settable changes its applies_to",
       "member": "marker:3:settable",
       "type": "Marker",
       "view": "rules"
@@ -721,17 +672,9 @@
     {
       "change": "changed-rule",
       "class": "additive",
-      "detail": "the rule marker:3:supplied changes its applies_to, vectors",
+      "detail": "the rule marker:3:supplied changes its applies_to",
       "member": "marker:3:supplied",
       "type": "Marker",
-      "view": "rules"
-    },
-    {
-      "change": "changed-rule",
-      "class": "additive",
-      "detail": "the rule rule:4.1:8e9aacb8 changes its vectors",
-      "member": "rule:4.1:8e9aacb8",
-      "type": "Proposal",
       "view": "rules"
     },
     {
@@ -798,6 +741,14 @@
       "class": "additive",
       "detail": "kernel/1/kernel.json#/$defs/Digest is added",
       "member": "Digest",
+      "type": "kernel/1/kernel.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "kernel/1/kernel.json#/$defs/IntegerFlag is added",
+      "member": "IntegerFlag",
       "type": "kernel/1/kernel.json",
       "view": "files"
     },
@@ -1056,11 +1007,6 @@
       {
         "id": "D-032",
         "question": "How are the creative inspection statements of § 5.4 checked?",
-        "status": "proposed"
-      },
-      {
-        "id": "D-039",
-        "question": "How is a two-valued flag written where § 5.2.2 copies an AdCOM `0` | `1` integer?",
         "status": "proposed"
       }
     ],
@@ -3069,36 +3015,6 @@
         },
         {
           "decisions": [
-            "D-039"
-          ],
-          "example": "examples/line-item-rewarded-video.yaml",
-          "kind": "invalid",
-          "message": "must be boolean",
-          "path": "/placement/instl",
-          "reason": "The example follows the text, which writes `instl` as AdCOM's `0` or `1`: it writes `1`. We propose a JSON boolean for every flag, `true` here."
-        },
-        {
-          "decisions": [
-            "D-039"
-          ],
-          "example": "examples/line-item-rewarded-video.yaml",
-          "kind": "invalid",
-          "message": "must be boolean",
-          "path": "/placement/reward",
-          "reason": "The example follows the text, which writes `reward` as AdCOM's `0` or `1`: it writes `1`. We propose a JSON boolean for every flag, `true` here."
-        },
-        {
-          "decisions": [
-            "D-039"
-          ],
-          "example": "examples/line-item-rewarded-video.yaml",
-          "kind": "invalid",
-          "message": "must be boolean",
-          "path": "/placement/skip",
-          "reason": "The example follows the text, which writes `skip` as AdCOM's `0` or `1`: it writes `0`. We propose a JSON boolean for every flag, `false` here."
-        },
-        {
-          "decisions": [
             "D-037"
           ],
           "example": "examples/line-item-rewarded-video.yaml",
@@ -3151,35 +3067,7 @@
       "removed": []
     },
     "round_trip": {
-      "added": [
-        {
-          "column": "Meaning",
-          "decision": "D-039",
-          "model": "`false` | `true`. The ad is interstitial or full screen",
-          "reason": "A yes-or-no value is a JSON boolean, as every other flag of the specification is; the row copies AdCOM's `0` and `1`.",
-          "row": "key:5.2.2:placement.instl",
-          "spec": "`0` (no) | `1` (yes). The ad is interstitial or full screen",
-          "table": "table:5.2.2:1"
-        },
-        {
-          "column": "Meaning",
-          "decision": "D-039",
-          "model": "`false` | `true`. The user receives a reward for viewing the ad",
-          "reason": "A yes-or-no value is a JSON boolean, as every other flag of the specification is; the row copies AdCOM's `0` and `1`.",
-          "row": "key:5.2.2:placement.reward",
-          "spec": "`0` (no) | `1` (yes). The user receives a reward for viewing the ad",
-          "table": "table:5.2.2:1"
-        },
-        {
-          "column": "Meaning",
-          "decision": "D-039",
-          "model": "Video or audio. `false` | `true`. The placement lets the user skip the ad",
-          "reason": "A yes-or-no value is a JSON boolean, as every other flag of the specification is; the row copies AdCOM's `0` and `1`.",
-          "row": "key:5.2.2:placement.skip",
-          "spec": "Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad",
-          "table": "table:5.2.2:1"
-        }
-      ],
+      "added": [],
       "changed": [
         {
           "column": "Description",
@@ -3551,7 +3439,7 @@
     "blob": "fdb303f07c669c21c0c1196e1c8e441790a62d3c",
     "commit": "292bb51e654c2eef563d721eb6af8317371c906a",
     "counts": {
-      "decisions": 42,
+      "decisions": 41,
       "elements.appendix_a": 80,
       "elements.appendix_b": 8,
       "elements.code_block": 6,
@@ -3566,8 +3454,8 @@
       "elements.statement": 80,
       "elements.value_list": 31,
       "findings.conditions": 1,
-      "findings.examples": 92,
-      "findings.round_trip": 7,
+      "findings.examples": 89,
+      "findings.round_trip": 4,
       "findings.spec": 100,
       "findings.spec_open": 73,
       "properties": 251,
@@ -3582,7 +3470,7 @@
       "types.document": 3,
       "types.object": 48,
       "types.part": 3,
-      "types.primitive": 22,
+      "types.primitive": 23,
       "types.profile": 2,
       "types.union": 3,
       "types.vocabulary": 42
@@ -3619,17 +3507,17 @@
       },
       {
         "ir": "key:5.2.2:placement.instl#meaning/values:1",
-        "placed": "schema Placement",
+        "placed": "schema IntegerFlag",
         "text": "`0` (no) | `1` (yes)"
       },
       {
         "ir": "key:5.2.2:placement.reward#meaning/values:1",
-        "placed": "schema Placement",
+        "placed": "schema IntegerFlag",
         "text": "`0` (no) | `1` (yes)"
       },
       {
         "ir": "key:5.2.2:placement.skip#meaning/values:1",
-        "placed": "schema Placement",
+        "placed": "schema IntegerFlag",
         "text": "`0` (no) | `1` (yes)"
       },
       {

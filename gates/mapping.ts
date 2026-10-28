@@ -116,6 +116,34 @@ export const mappingRules = defineGate<CoverageInput>({
       mutate: (i) => ({ ...i, mappings: i.mappings.map((m) => ({ ...m, entries: m.entries.map((e) => (e.ir.startsWith("sentence:") && "rule" in e.source ? { ...e, as: { role: "rendered" } } : e)) })) as MappingFile[] }),
       expect: "prose-sentence",
     },
+    // Two lists of the same codes restate each other only with the same labels, as the Deals API's `pubcount` and `dinventory` don't.
+    {
+      name: "a labeled list read as restating another of the same codes",
+      spec: "dealsapi",
+      mutate: (i) => ({ ...i, mappings: i.mappings.map((m) => ({ ...m, entries: m.entries.map((e) => (e.ir === "field:object-deal:dinventory#description/values:1" ? { ...e, source: { rule: "restated-value-list" }, as: { role: "same", name: "PublisherCount" } } : e)) })) as MappingFile[] }),
+      expect: 'entry "field:object-deal:dinventory#description/values:1": cites rule "restated-value-list", but no mapping rule applies',
+    },
+    // A labeled list of the codes 0 and 1 restates the integer flag only with its titles, or on a row the binding cites for it.
+    {
+      name: "a labeled 0 and 1 list that is no flag read as restating the integer flag",
+      spec: "dealsapi",
+      mutate: (i) => {
+        const id = "field:object-deal:dinventory#description/values:1";
+        return {
+          ...i,
+          ir: { ...i.ir, value_lists: i.ir.value_lists.map((v) => (v.id === id ? { ...v, items: [{ value: "0", annotation: "undisclosed" }, { value: "1", annotation: "single publisher" }] } : v)) },
+          mappings: i.mappings.map((m) => ({ ...m, entries: m.entries.map((e) => (e.ir === id ? { ...e, source: { rule: "restated-value-list" }, as: { role: "schema", in: "IntegerFlag" } } : e)) })) as MappingFile[],
+        };
+      },
+      expect: 'entry "field:object-deal:dinventory#description/values:1": cites rule "restated-value-list", but no mapping rule applies',
+    },
+    // A table whose columns are headed by member names, as the Example Scenarios, is no concept table.
+    {
+      name: "a scenario row read as a concept row",
+      spec: "dealsapi",
+      mutate: (i) => ({ ...i, mappings: i.mappings.map((m) => ({ ...m, entries: m.entries.map((e) => (e.ir === "concept:example-scenarios:1" ? { ...e, source: { rule: "concept-row" }, as: { role: "informative" } } : e)) })) as MappingFile[] }),
+      expect: 'entry "concept:example-scenarios:1": cites rule "concept-row", but no mapping rule applies',
+    },
     {
       name: "a type the mapping names that nobody defines",
       mutate: (i) => retype(i, "field:5.6:min_spend", (as) => ({ ...as, type: { kind: "named", name: "NoSuchType" } })),
@@ -158,6 +186,13 @@ export const mappingNames = defineGate<MappingInput>({
       name: "an object renamed with no decision",
       mutate: (i) => ({ ...i, mappings: JSON.parse(JSON.stringify(i.mappings).replaceAll('"HoldStatus"', '"HoldInfo"')) as MappingFile[] }),
       expect: "HoldInfo",
+    },
+    // An object the text names by its own table's heading keeps that name only as the rule that declares it from the text says.
+    {
+      name: "a heading-named object declared by a decision",
+      spec: "dealsapi",
+      mutate: (i) => ({ ...i, mappings: i.mappings.map((m) => ({ ...m, types: (m.types ?? []).map((t) => (t.name === "BuyerStatus" ? { ...t, source: { decision: "D-021" } } : t)) })) as MappingFile[] }),
+      expect: 'the field or member that holds "BuyerStatus" names it "BuyerstatusEntry"',
     },
   ],
 });

@@ -22,6 +22,7 @@
  */
 import { Instantiator } from "./constructors.ts";
 import { canonicalJson } from "./canonical.ts";
+import { isTitledCodes } from "./conventions.ts";
 import { fieldOfSources, localSchemas, locationOf, nestedIf, templatesOf } from "./emit.ts";
 import type { TypeRef } from "./mapping.ts";
 import { KERNEL_MODULE } from "./mapping-rules.ts";
@@ -499,7 +500,9 @@ export function buildSdkModel(model: ModelDoc, short: string): { sdk: SdkModel; 
   };
 
   const SCALAR_KEYS = new Set(["type", "enum", "pattern", "format", "minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum", "minLength", "maxLength", "description"]);
-  const scalarOf = (s: Schema, where: string): Scalar => {
+  const scalarOf = (schema: Schema, where: string): Scalar => {
+    // A primitive written as titled integer codes, as IntegerFlag, accepts exactly its codes: an enum of them, to an SDK.
+    const s: Schema = isTitledCodes(schema) ? (({ oneOf, ...rest }) => ({ ...rest, enum: (oneOf as { const: number }[]).map((b) => b.const) }))(schema) : schema;
     for (const k of Object.keys(s)) if (!SCALAR_KEYS.has(k)) throw new Error(`${where}: the SDK emitters don't know the keyword "${k}" on a scalar`);
     if (!["string", "number", "integer", "boolean"].includes(String(s.type))) throw new Error(`${where}: a scalar has "type" ${JSON.stringify(s.type)}`);
     const scalar: Scalar = { json: s.type as Scalar["json"] };

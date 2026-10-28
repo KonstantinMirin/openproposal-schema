@@ -241,17 +241,24 @@
             "module": {
               "description": "A vocabulary that no module owns, such as the two parties every § 3 marker names, belongs to the kernel, beside `Marker` (type rules § 3). The entry stays in the file of the module that owns its element's section, and a decision it cites says why, in a sentence that says the type is the kernel's, as \"`Party` is the kernel's\", with its reason; the mapping-sources gate checks it.",
               "const": "kernel"
+            },
+            "vendor": {
+              "description": "An integer-coded vocabulary whose list reserves codes for vendors, as the Deals API's `pricetype` does from 500: where the range starts, and the text's words for it. The vocabulary is open to those codes and to nothing else.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["from", "label"],
+              "properties": { "from": { "type": "integer", "minimum": 1 }, "label": { "type": "string", "minLength": 3 } }
             }
           },
           "if": { "properties": { "layer": { "const": "vocabulary" } } },
           "then": { "required": ["open"], "properties": { "open": { "type": "boolean" }, "members": false } },
           "else": {
             "if": { "properties": { "layer": { "const": "object" } } },
-            "then": { "required": ["open"], "properties": { "open": { "type": "boolean" }, "module": false } },
+            "then": { "required": ["open"], "properties": { "open": { "type": "boolean" }, "module": false, "vendor": false } },
             "else": {
               "if": { "properties": { "layer": { "const": "document" } } },
-              "then": { "properties": { "open": false, "module": false } },
-              "else": { "properties": { "open": false, "members": false, "module": false } }
+              "then": { "properties": { "open": false, "module": false, "vendor": false } },
+              "else": { "properties": { "open": false, "members": false, "module": false, "vendor": false } }
             }
           }
         },
@@ -330,7 +337,14 @@
           "required": ["role", "object"],
           "properties": {
             "role": { "const": "example" },
-            "object": { "$ref": "#/$defs/name" }
+            "object": { "$ref": "#/$defs/name" },
+            "columns": {
+              "description": "For a row of a table whose columns after the first are headed by member names, as the Deals API's Example Scenarios: the member path a column holds whose header names no member, as the cited decision reads it, such as `curationfee` read as `curation.curfeetype`. Every other column after the first holds the member its header names, and the first is the row's prose.",
+              "type": "object",
+              "minProperties": 1,
+              "propertyNames": { "pattern": "^[a-z][a-z0-9_]*$" },
+              "additionalProperties": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$" }
+            }
           }
         },
         {
@@ -451,7 +465,7 @@
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" }
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*([-.][a-z0-9]+)*$" }
     }
   }
 }

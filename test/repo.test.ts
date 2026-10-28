@@ -12,9 +12,14 @@ import { ROOT, SPEC } from "./helpers.ts";
 
 test("the repository's root holds specs/, and each spec's folder holds its locks", () => {
   assert.equal(REPO_ROOT, ROOT);
-  assert.deepEqual(specNames(), ["adcom", "openproposal"]);
+  assert.deepEqual(specNames(), ["adcom", "dealsapi", "openproposal"]);
   assert.equal(specRoot(), SPEC);
   assert.deepEqual(lockFiles(SPEC), [join(SPEC, "spec-input", "spec-lock.yaml"), join(SPEC, "spec-input", "with-open-prs.lock.yaml")], "the default lock first");
+  // The default lock comes first even where another lock's name sorts before it.
+  const tmp = mkdtempSync(join(tmpdir(), "locks-"));
+  mkdirSync(join(tmp, "spec-input"));
+  for (const f of ["release-1.lock.yaml", "spec-lock.yaml", "a.lock.yaml", "zz.lock.yaml", "notes.yaml"]) writeFileSync(join(tmp, "spec-input", f), "");
+  assert.deepEqual(lockFiles(tmp).map((f) => f.slice(tmp.length + 12)), ["spec-lock.yaml", "a.lock.yaml", "release-1.lock.yaml", "zz.lock.yaml"]);
   assert.equal(DEFAULT_LOCK, join(SPEC, "spec-input", "spec-lock.yaml"));
 });
 
@@ -65,16 +70,20 @@ test("every relative link in the README and under docs/ names a file of the repo
 test("a spec still being added holds no file of a stage it hasn't reached, and CI runs its gates through the stage its profile names", () => {
   const adcom = loadProfile(specRoot("adcom"));
   const base = { profile: adcom, text: null, roles: [], findingKinds: [], locks: 2 };
-  assert.deepEqual(STAGES, ["input", "extract", "model", "outputs"]);
+  assert.deepEqual(STAGES, ["input", "extract", "model", "schemas", "outputs"]);
   assert.equal(stageOf({}), "outputs");
   assert.ok(reaches("model", "extract") && !reaches("extract", "model"));
   const at = (through: Exclude<Stage, "outputs">, entries: string[]) => checkProfile({ ...base, profile: { ...adcom, through }, text: { layouts: [], keywords: () => ["MUST"] }, entries }).filter((p) => p.includes("stage writes"));
   assert.deepEqual(at("input", ["spec-input", "spec.yaml", "build"]), []);
   assert.match(at("input", ["ir"]).join("\n"), /says the spec has reached "input", and it holds ir, which the "extract" stage writes/);
   assert.match(at("extract", ["ir", "mapping"]).join("\n"), /holds mapping, which the "model" stage writes/);
-  assert.match(at("model", ["ir", "mapping", "rules"]).join("\n"), /holds rules, which the "outputs" stage writes/);
+  assert.match(at("model", ["ir", "mapping", "rules"]).join("\n"), /holds rules, which the "schemas" stage writes/);
   assert.deepEqual(at("model", ["ir", "mapping", "decisions", "kernel-binding.yaml"]), []);
-  assert.match(at("model", ["ir", "mapping", "vectors"]).join("\n"), /holds vectors, which the "outputs" stage writes/);
+  assert.match(at("model", ["ir", "mapping", "vectors"]).join("\n"), /holds vectors, which the "schemas" stage writes/);
+  // A spec at its schemas holds its schemas, rules, and vectors, and none of its other outputs.
+  assert.deepEqual(at("schemas", ["ir", "mapping", "schemas", "rules", "vectors"]), []);
+  assert.match(at("schemas", ["ir", "schemas", "corpus"]).join("\n"), /holds corpus, which the "outputs" stage writes/);
+  assert.match(at("schemas", ["ir", "schemas", "examples"]).join("\n"), /holds examples, which the "outputs" stage writes/);
   const stray = checkProfile({ ...base, text: { layouts: [], keywords: () => ["MUST"] }, entries: ["spec.yaml", "spec-input", "notes"] });
   assert.match(stray.join("\n"), /the spec's folder holds notes, which no stage of the pipeline writes and no gate reads/);
 });

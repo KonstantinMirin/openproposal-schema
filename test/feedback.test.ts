@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { buildLock, type LockBuild } from "../src/compare.ts";
 import { loadConstructors } from "../src/constructors.ts";
 import { FINDINGS_FILE, loadFindings } from "../src/examples.ts";
-import { allDecisions, placeCounts, buildFeedback, checkFeedback, checkLineLinks, compareSections, DETAILS_LINK, foldedCodeSpans, messageInTerms, proseParts, groupDecisions, INTERNAL, internalCitations, internalTypeName, internalTypeNames, renderComment, renderDetails, renderFeedback, restsOn, type FeedbackInput } from "../src/feedback.ts";
+import { allDecisions, placeCounts, proposedOf, buildFeedback, feedbackOf, checkFeedback, checkLineLinks, compareSections, DETAILS_LINK, foldedCodeSpans, messageInTerms, proseParts, groupDecisions, INTERNAL, internalCitations, internalTypeName, internalTypeNames, renderComment, renderDetails, renderFeedback, restsOn, type FeedbackInput } from "../src/feedback.ts";
 import { loadKernel } from "../src/kernel.ts";
 import { FINDING_KINDS } from "../src/lint.ts";
 import { loadLock } from "../src/lock.ts";
@@ -164,8 +164,12 @@ test("the report keeps the points the text leaves open apart from the changes we
   const { doc } = buildFeedback(inp);
   const kind = new Map(inp.decisions.map((d) => [d.id, d.kind]));
   assert.ok(doc.groups.every((g) => g.decisions.every((d) => kind.get(d.id) === "gap")));
-  assert.deepEqual(doc.departures.map((d) => d.id).sort(), inp.decisions.filter((d) => d.kind === "departure").map((d) => d.id).sort());
-  for (const id of ["D-037", "D-039", "D-040", "D-041"]) assert.ok(doc.departures.some((d) => d.id === id), `${id} is a change we propose`);
+  assert.deepEqual(proposedOf(doc).map((d) => d.id).sort(), inp.decisions.filter((d) => d.kind === "departure" && d.status !== "withdrawn" && d.status !== "superseded").map((d) => d.id).sort());
+  for (const id of ["D-037", "D-040", "D-041"]) assert.ok(proposedOf(doc).some((d) => d.id === id), `${id} is a change we propose`);
+  // D-039 is withdrawn: § 5.2.2's flags keep the integers the text writes, so it is no change we propose, and five remain; it keeps its place.
+  assert.ok(!proposedOf(doc).some((d) => d.id === "D-039"));
+  assert.ok(doc.departures.some((d) => d.id === "D-039" && d.withdrawn !== undefined));
+  assert.equal(proposedOf(doc).length, 5);
   // The flights' calendar dates follow the text; the placeholder hash disagrees with it.
   assert.deepEqual(doc.examples.find((x) => x.paths.includes("/commitment/flight_start"))?.causes, ["departure"]);
   assert.deepEqual(doc.examples.find((x) => x.paths.includes("/exclusions/list_ref/sha256"))?.causes, ["gap"]);
@@ -350,4 +354,51 @@ test("a lint message names an unnumbered heading by its section and title, and a
   // The suggestion's decisions must be listed, or the report has no number for them.
   const without = { ...inp, decisions: inp.decisions.map((d) => (d.id === "D-036" ? { ...d, status: "superseded" as const } : d)) };
   assert.ok(buildFeedback(without).problems.some((p) => p.includes("the suggestion to the working group cites D-036")));
+});
+
+test("a withdrawn record says why and when, stands for nothing, and no entry may cite it", async () => {
+  const { checkMapping, loadDecisions, loadMappings, stands } = await import("../src/mapping.ts");
+  const { compileSchema } = await import("../src/pipeline.ts");
+  const { join: j } = await import("node:path");
+  const { ROOT: R, SPEC: S } = await import("./helpers.ts");
+  const decisions = loadDecisions(j(S, "decisions"));
+  const d039 = decisions.find((d) => d.id === "D-039")!;
+  assert.equal(d039.status, "withdrawn");
+  assert.equal(stands(d039), false);
+  assert.match(d039.withdrawn!.reason, /The schemas keep those integers\.$/);
+  const validate = compileSchema(j(R, "decisions", "decision.schema.json"));
+  const { file: _f, ...raw } = d039;
+  assert.deepEqual(validate(raw), []);
+  assert.ok(validate({ ...raw, withdrawn: undefined }).length > 0, "a withdrawn record without its reason fails");
+  assert.ok(validate({ ...raw, status: "proposed" }).length > 0, "a record that isn't withdrawn carries no withdrawal");
+  assert.ok(validate({ ...raw, superseded_by: "D-037" }).length > 0, "a withdrawn record names no record that replaces it");
+  // An entry that cites the withdrawn record fails.
+  const ir = JSON.parse((await import("node:fs")).readFileSync(j(S, "ir", "with-open-prs", "spec-ir.json"), "utf8"));
+  const mappings = loadMappings(j(S, "mapping")).map((m) => ({ ...m, entries: m.entries.map((e) => (e.ir === "key:5.2.2:placement.reward" ? { ...e, source: { decision: "D-039" } } : e)) }));
+  assert.ok(checkMapping(ir, "with-open-prs", mappings, decisions).some((p) => /cites "D-039", which is withdrawn/.test(p)));
+});
+
+test("a withdrawn change keeps the number the posted report gave it, so no other item's number moves", async () => {
+  const inp = await input();
+  const { doc } = buildFeedback(inp);
+  // The numbers #121's report was posted with, before D-039 was withdrawn.
+  // Every item's number as #121's report was posted, at 274cd6b, before D-039 was withdrawn.
+  const posted: Record<string, number> = {"D-001": 1, "D-002": 2, "D-003": 3, "D-004": 4, "D-005": 5, "D-006": 6, "D-009": 7, "D-010": 8, "D-019": 9, "D-036": 10, "D-038": 11, "D-045": 12, "D-007": 13, "D-008": 14, "D-011": 15, "D-046": 16, "D-012": 17, "D-013": 18, "D-014": 19, "D-016": 20, "D-017": 21, "D-018": 22, "D-020": 23, "D-021": 24, "D-022": 25, "D-024": 26, "D-025": 27, "D-026": 28, "D-027": 29, "D-028": 30, "D-044": 31, "D-023": 32, "D-029": 33, "D-030": 34, "D-031": 35, "D-032": 36, "D-033": 37, "D-034": 38, "D-035": 39, "D-037": 40, "D-039": 41, "D-040": 42, "D-041": 43, "D-042": 44, "D-047": 45};
+  assert.deepEqual(Object.fromEntries(allDecisions(doc).map((d) => [d.id, d.number])), posted);
+  const withdrawn = doc.departures.find((d) => d.id === "D-039")!;
+  assert.equal(withdrawn.withdrawn, "§ 5.2.2's keys follow AdCOM 1.0, which writes `reward`, `instl`, and `skip` as `0` (no) or `1` (yes). The schemas keep those integers.");
+  assert.match(renderComment(doc), /^- \*\*41\.\*\* Withdrawn: How is a two-valued flag written/m);
+  assert.match(renderComment(doc), /It took 44 decisions: 39 where the text leaves a point open, and 5 changes we propose/);
+});
+
+test("a withdrawn change stands for nothing, so the suggestion to the working group may not cite it, though it keeps its number", async () => {
+  const inp = await input();
+  const fb = feedbackOf(SPEC);
+  const cites = (id: string) => buildFeedback({ ...inp, profile: { ...fb, suggestion: { ...fb.suggestion, items: [...fb.suggestion.items, `As {${id}} reads it.`] } } }).problems;
+  assert.ok(cites("D-039").some((p) => /cites D-039, which the report lists as withdrawn, which stands for nothing/.test(p)));
+  assert.deepEqual(cites("D-040").filter((p) => /suggestion/.test(p)), []);
+  assert.ok(cites("D-999").some((p) => /cites D-999, which the report doesn't list, so it has no number/.test(p)));
+  // A withdrawn change shows the locks its covers name, each of which the report builds.
+  const decisions = inp.decisions.map((d) => (d.id === "D-039" ? { ...d, covers: d.covers.map((c) => ({ ...c, locks: ["tag-2025"] })) } : d));
+  assert.ok(buildFeedback({ ...inp, decisions }).problems.some((p) => p === 'D-039: its covers name the lock "tag-2025", which the report builds no model of'));
 });

@@ -1,0 +1,43 @@
+format: 1
+id: D-026
+status: proposed
+kind: gap
+author: agent
+question: "Which ID must match which, when a deal's `id` must match the bid request's `deal.id` and a status response's `id` \"should always be the same id as `deal.id`\"?"
+covers:
+  - ir: rule:object-buyerseat:be619ed4
+    digest: 86ea2e48e965aab405c043acad4199e9b53e8c1ebff4a5db745978740a2edbb4
+    quote: "This should always be the same id as `deal.id`"
+  - ir: rule:matching-bid-requests-to-deals:13ab19fc
+    digest: 14efa4041cd3ad9143b9ea575958c6814b4c7341074579fe6675c3b59c3fc2b7
+    quote: "The `deal.id` from both the sender and receiver should match the `deal.id` in the OpenRTB request when bidding."
+  - ir: rule:matching-bid-requests-to-deals:a48a0c62
+    digest: 0de510d9aad2941927da4b834faa765b6a1a47e7b10d52e57b51245d8531ebbf
+    quote: "Implementers should use the Deal ID from the Origin system that did the PUSH."
+  - ir: field:object-buyerseat:id
+    digest: 5c05c04b0c154b57aed8809bba4a456224e9f73ee22cbc43f894abe5a06cb316
+    quote: "`id` | string, required | A unique identifier for the deal as passed in the initial push that this response is referring to. This should always be the same id as `deal.id`"
+  - ir: field:object-deal:id
+    digest: aaddfa0cb70710aabb5451db0b5e92e7742131f02f5f813adb9ec840edf64da9
+    quote: "`id` | string; required | A unique identifier for the direct deal in origin's namespace."
+options:
+  - id: rule-and-obligations
+    summary: >-
+      A status's `id` equals the pushed deal's `id`, a rule read with the
+      deal as its context; that both systems and the bid request use the
+      origin's `id` binds the parties, as obligations.
+  - id: informative
+    summary: >-
+      All three are informative.
+chosen: rule-and-obligations
+rationale: >-
+  A status refers to one pushed deal, so its `id` is that deal's, which a
+  rule checks given the deal; one payload can't show it, so its vectors
+  carry the deal's `id` as context. That the bid request carries the same
+  deal ID is what the systems do, so it is an obligation of each.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L162"
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L189"
+feedback: >-
+  Say "must" where an ID must match: a status that names another deal's ID
+  is useless, and the sentence says "should".

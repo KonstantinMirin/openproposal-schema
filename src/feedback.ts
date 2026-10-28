@@ -44,7 +44,7 @@ import type { LockBuild } from "./compare.ts";
 import { slots, type Constructors } from "./constructors.ts";
 import type { FindingsFile } from "./examples.ts";
 import type { Kernel } from "./kernel.ts";
-import { decisionsOf, inScope, type DecisionRecord, type MappingFile, type Target, type TypeRef } from "./mapping.ts";
+import { decisionsOf, inScope, type DecisionRecord, type MappingFile, type Target, type TypeRef, stands } from "./mapping.ts";
 import type { DifferencesFile } from "./render.ts";
 import type { ModelType } from "./model.ts";
 import { citedDecisions } from "./release.ts";
@@ -192,6 +192,8 @@ export interface DecisionItem {
   locks: string[];
   /** The IR elements it covers on those locks, in specification order. */
   rests_on: string[];
+  /** For a change we proposed and withdrew, why, in one line: the item keeps its number, which a posted report gave it, and counts as no change. */
+  withdrawn?: string;
 }
 
 export interface LintItem {
@@ -287,6 +289,8 @@ export interface FeedbackInput {
   vectors: VectorFile[];
   recordedFindings: FindingsFile;
   recordedDifferences: DifferencesFile;
+  /** The feedback layout, for a test that changes it; else the default lock's spec profile gives it. */
+  profile?: FeedbackProfile;
 }
 
 const cmp = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
@@ -478,7 +482,7 @@ export function buildFeedback(input: FeedbackInput): { doc: FeedbackDoc; problem
   const problems: string[] = [];
   const { builds } = input;
   // The report follows up on the issue the specification's profile names, the spec of the default lock.
-  const fb = feedbackOf(repoRoot(builds[0]!.lock));
+  const fb = input.profile ?? feedbackOf(repoRoot(builds[0]!.lock));
   const locks = builds.map((b) => lockSide(b, fb.prs));
   const lockNames = locks.map((l) => l.name);
   const lockOrder = (xs: Iterable<string>) => [...new Set(xs)].sort((a, b) => lockNames.indexOf(a) - lockNames.indexOf(b));
@@ -506,11 +510,21 @@ export function buildFeedback(input: FeedbackInput): { doc: FeedbackDoc; problem
   const records = new Map(input.decisions.map((d) => [d.id, d]));
   for (const id of [...cited.keys()].sort()) if (!records.has(id)) problems.push(`the model cites ${id}, which has no decision record`);
   for (const d of [...input.decisions].sort((a, b) => cmp(a.id, b.id))) {
-    if (d.status === "superseded") continue;
+    // A change we proposed and withdrew keeps its place, and so its number, which the posted report gave it; it states no change.
+    if (d.status === "withdrawn" && d.kind === "departure") {
+      const reason = (d.withdrawn?.reason ?? "").replace(/\s+/g, " ").trim();
+      internal(`${d.id}'s withdrawal`, reason);
+      const coverLocks = d.covers.every((c) => c.locks !== undefined) ? lockOrder([...new Set(d.covers.flatMap((c) => c.locks ?? []))]) : input.builds.map((b) => b.lock.name);
+      for (const l of coverLocks) if (!input.builds.some((b) => b.lock.name === l)) problems.push(`${d.id}: its covers name the lock "${l}", which the report builds no model of`);
+      departures.push({ id: d.id, kind: d.kind, number: 0, question: d.question, reading: "", status: d.status, locks: coverLocks, rests_on: [], withdrawn: reason });
+      continue;
+    }
+    if (d.status === "withdrawn") problems.push(`${d.id}: a withdrawn open point has no group to keep its number in; the report keeps only a withdrawn change in its place`);
+    if (!stands(d)) continue;
     const on = lockOrder(cited.get(d.id) ?? []);
     const group = groupOf.get(d.id);
     if (on.length === 0 || (group === undefined && d.kind === "gap")) {
-      problems.push(`${d.id}: no lock's model or rules cite it, so the report has no place for it; supersede it, or cite it`);
+      problems.push(`${d.id}: no lock's model or rules cite it, so the report has no place for it; supersede it, withdraw it, or cite it`);
       continue;
     }
     internal(`${d.id}'s feedback`, d.feedback);
@@ -532,8 +546,9 @@ export function buildFeedback(input: FeedbackInput): { doc: FeedbackDoc; problem
   }
   const groups = fb.groups.map((g) => ({ id: g.id, title: g.title, asks: g.asks, decisions: items.get(g.id)! }));
   [...groups.flatMap((g) => g.decisions), ...departures].forEach((d, i) => (d.number = i + 1));
-  const listed = new Set([...groups.flatMap((g) => g.decisions), ...departures].map((d) => d.id));
-  for (const id of suggestionDecisions(fb)) if (!listed.has(id)) problems.push(`the suggestion to the working group cites ${id}, which the report doesn't list, so it has no number`);
+  // A withdrawn change keeps its number, but stands for nothing, so no suggestion may cite it.
+  const listed = new Set([...groups.flatMap((g) => g.decisions), ...departures].filter((d) => d.withdrawn === undefined).map((d) => d.id));
+  for (const id of suggestionDecisions(fb)) if (!listed.has(id)) problems.push(`the suggestion to the working group cites ${id}, which the report ${departures.some((d) => d.id === id) ? "lists as withdrawn, which stands for nothing" : "doesn't list, so it has no number"}`);
 
   // The open lint findings, by authoring rule.
   const lint = new Map<string, LintItem>();
@@ -752,7 +767,7 @@ export function checkFeedback(doc: FeedbackDoc, builds: LockBuild[], fb: Feedbac
 export function recordCitations(decisions: readonly DecisionRecord[], names: ReadonlySet<string> = new Set()): string[] {
   const problems: string[] = [];
   for (const d of decisions) {
-    if (d.status === "superseded") continue;
+    if (!stands(d)) continue;
     const shown: [string, string | undefined][] = [
       ["question", d.question],
       ["summary of the chosen option", d.options.find((o) => o.id === d.chosen)?.summary],
@@ -882,6 +897,9 @@ export function restsOn(ids: string[]): string {
 const asked = (g: FeedbackDoc["groups"][number]) => g.decisions.filter((d) => d.feedback !== undefined);
 /** Every decision, in reading order: the ones the text leaves open, by group, then the changes we propose. */
 export const allDecisions = (doc: FeedbackDoc): DecisionItem[] => [...doc.groups.flatMap((g) => g.decisions), ...doc.departures];
+
+/** The changes we propose that stand: every departure but one we withdrew, which keeps only its number. */
+export const proposedOf = (doc: FeedbackDoc): DecisionItem[] => doc.departures.filter((d) => d.withdrawn === undefined);
 /**
  * The distinct places an example fails on a lock, by example and location,
  * each with the kinds of its failures' causes: a place can fail its schema
@@ -945,7 +963,7 @@ const ruleCounts = (doc: FeedbackDoc) =>
 export function renderComment(doc: FeedbackDoc): string {
   const gaps = doc.groups.reduce((n, g) => n + g.decisions.length, 0);
   const asking = doc.groups.reduce((n, g) => n + asked(g).length, 0);
-  const proposed = doc.departures.length;
+  const proposed = proposedOf(doc).length;
   const out: string[] = [header("Post it as a comment on the issue, with the details link replaced by the gist of details.md."), ""];
   out.push(
     `We now generate the schemas from the specification. It took ${gaps + proposed} decisions: ${gaps} where the text leaves a point open, and ${proposed} changes we propose to what the text or its examples settle. Of the ${gaps} open points, ${asking} ask the specification to state something, and each one says what, so that the next revision needs none of them. The outputs are JSON Schema 2020-12, the rules JSON Schema can't express with their test vectors, and TypeScript, Python, and Go types.`,
@@ -960,11 +978,12 @@ export function renderComment(doc: FeedbackDoc): string {
       [":---", "---:", ":---"],
     ),
   );
-  if (proposed > 0) {
+  // A withdrawn change keeps its slot, even where it leaves no change standing, as details.md keeps its heading.
+  if (doc.departures.length > 0) {
     out.push(`The ${proposed} changes we propose, each a departure from what the text or its examples write:`, "");
     for (const d of doc.departures) {
       const only = d.locks.length === doc.locks.length ? "" : ` (only ${d.locks.map((n) => doc.locks.find((l) => l.name === n)?.phrase ?? code(n)).join(", ")})`;
-      out.push(`- **${d.number}.** ${d.question}${only}`);
+      out.push(d.withdrawn !== undefined ? `- **${d.number}.** Withdrawn: ${d.question}${only}` : `- **${d.number}.** ${d.question}${only}`);
     }
     out.push("");
   }
@@ -1148,7 +1167,7 @@ export function renderDetails(doc: FeedbackDoc, fb: FeedbackProfile): string {
     "",
     `This page supports [our implementation feedback on deriving a schema from the specification (#${issueNumber(doc.issue)})](${doc.issue}). We generated our own schemas from ${code(base!.path)}. A deterministic parser reads its markdown syntax tree, with no model calls. Where the text leaves a point open, we record a decision, and this page lists them. Every table and row parsed${appendices ? ", and the appendices agree with the body" : ""}. The outputs are JSON Schema 2020-12, the rules JSON Schema can't express with their test vectors, and TypeScript, Python, and Go types.`,
     "",
-    `Generating them took ${all.length} decisions: ${gaps} where the text leaves a point open, and ${doc.departures.length} changes we propose to what the text or examples settle. This page keeps the two groups apart. Of the ${gaps} open points, ${asking} ask the specification to state something, and each says what, so that the next revision needs none of them.`,
+    `Generating them took ${gaps + proposedOf(doc).length} decisions: ${gaps} where the text leaves a point open, and ${proposedOf(doc).length} changes we propose to what the text or examples settle. This page keeps the two groups apart. Of the ${gaps} open points, ${asking} ask the specification to state something, and each says what, so that the next revision needs none of them.`,
     "",
     "## Inputs",
     "",
@@ -1270,7 +1289,7 @@ export function renderDetails(doc: FeedbackDoc, fb: FeedbackProfile): string {
   }
   if (doc.departures.length > 0) {
     push(
-      `## Changes we propose (${doc.departures.length})`,
+      `## Changes we propose (${proposedOf(doc).length})`,
       "",
       "Each of these departs from what the specification settles, in its text or in the form its examples write. Each names what we propose, what the generated schemas do, and the rows it rests on. An example that follows the text but not the change is listed with it, and in [the second table of example failures](#the-examples-follow-the-text-but-not-a-change-we-propose) with its reason. The example isn't wrong: the change would rewrite it.",
       "",
@@ -1278,6 +1297,11 @@ export function renderDetails(doc: FeedbackDoc, fb: FeedbackProfile): string {
     for (const d of doc.departures) {
       const onSome = d.locks.length === doc.locks.length ? "" : ` (only ${d.locks.map((n) => doc.locks.find((l) => l.name === n)?.phrase ?? code(n)).join(", ")})`;
       push(`#### ${d.number}. ${d.question}${onSome}`, "");
+      // A withdrawn change keeps its heading, and says why, with nothing it proposes or the schemas do.
+      if (d.withdrawn !== undefined) {
+        push(`- **Withdrawn:** ${d.withdrawn}`, "");
+        continue;
+      }
       if (d.feedback !== undefined) push(...labelled("What we propose", d.feedback));
       push(...labelled("What the schemas do", d.reading));
       push(`- **Rests on:** ${restsOn(d.rests_on)}`);

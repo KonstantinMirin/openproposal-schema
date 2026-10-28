@@ -96,6 +96,7 @@ func init() {
 	Types["HoldScope"] = TypeOf[HoldScope]()
 	Types["HoldState"] = TypeOf[HoldState]()
 	Types["HoldStatus"] = TypeOf[HoldStatus]()
+	Types["IntegerFlag"] = TypeOf[IntegerFlag]()
 	Types["LineItem"] = TypeOf[LineItem]()
 	Types["LineItemStatus"] = TypeOf[LineItemStatus]()
 	Types["LineItemSummary"] = TypeOf[LineItemSummary]()

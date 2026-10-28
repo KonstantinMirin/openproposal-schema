@@ -92,9 +92,15 @@ export const Fraction: z.ZodType<Fraction> = z.number().gte(0).lte(1);
 export type Identifier = string;
 export const Identifier: z.ZodType<Identifier> = z.string();
 
-/** A yes or no, written as the integer `0` (no) or `1` (yes), as AdCOM 1.0 and OpenRTB 2.6 write the flag of the same name. */
-export type IntegerFlag = number;
-export const IntegerFlag: z.ZodType<IntegerFlag> = z.number().gte(0).lte(1).refine(Number.isInteger, "isn't an integer");
+/** A yes or no written as an integer, `0` for no and `1` for yes, as AdCOM 1.0 and OpenRTB 2.6 write their flags, such as a placement's `instl`. A receiver reads it as a flag, never as a count, and a field that takes it keeps the integer its text writes. */
+export type IntegerFlag = 0 | 1;
+export const IntegerFlag: z.ZodType<IntegerFlag> = z.literal([0, 1]);
+
+/** The terms of `IntegerFlag`, as constants. */
+export const IntegerFlags = {
+  CODE_0: 0,
+  CODE_1: 1,
+} as const;
 
 /** What a metric that isn't a rate measures, a number never negative and not always whole, such as 1,200,000 audience impacts for DOOH or a modelled audience of 14.2 impacts per play. */
 export type Measure = number;

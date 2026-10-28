@@ -1,0 +1,97 @@
+format: 1
+id: G-118
+date: 2026-10-28
+question: What changes in the gates when the owner withdraws D-039, so § 5.2.2's reward, instl, and skip keep the integers 0 and 1 that AdCOM writes?
+decision: >-
+  A decision record may be `withdrawn`: its owner dropped it and no record
+  replaces it. It keeps its text, says why and when under `withdrawn`, which
+  only a withdrawn record carries, and stands for nothing, as a superseded
+  record doesn't: no entry, primitive, rule, or concept may cite it, no
+  variant switches it, the fidelity gate takes no excuse from it, the
+  feedback lists it nowhere, and the site gives it no page. D-039 is
+  withdrawn. The kernel gains `IntegerFlag`, the concept `integer-flag` of
+  the flag domain, a primitive whose schema is titled const branches, `0`
+  (No) and `1` (Yes), as an integer-coded vocabulary's codes are; the
+  kernel format lets an integer primitive state such codes and nothing
+  else. The conventions and the output check accept titled codes at a
+  primitive's root, and only codes, each once with a title; the SDK
+  emitters read them as an enum of their codes. Mapping rule
+  `restated-value-list` reads a value list that restates a primitive's
+  titled codes as what the primitive's schema expresses, and `domain-row`
+  types a key whose only value lists restate its concept's type, so
+  `reward`, `instl`, and `skip` are `IntegerFlag` by rule, cited by the
+  integer-flag concept in OpenProposal's kernel binding, with no decision.
+  The as-written variant drops its D-039 switch and its own `IntegerFlag`,
+  so it has 5 departures to switch off, and both builds type the three keys
+  alike. OpenProposal's round trip renders titled codes in its tables'
+  notation, `0` (no) | `1` (yes), so the three rows round-trip with no
+  recorded difference; their example findings and their rule vectors' `true`
+  are gone, the vectors writing `1`. The plain generator takes `true`,
+  `false`, and `"1"` for `IntegerFlag`, which PG-15 lists. Gate fixtures
+  that used D-039 now use D-037's code-block cover and D-040's switch. The
+  feedback renumbers the proposals after the 40th. The test suite holds 513
+  tests, and MIN_TESTS is 513.
+rationale: >-
+  Every check that read `superseded` now reads both statuses that no longer
+  stand, so a withdrawn record excuses and shapes nothing; the conventions
+  accept one more form, an integer primitive's titled codes, and check it as
+  strictly as an integer-coded vocabulary's. OpenProposal's outputs change
+  only where the three keys reach: its with-open-prs schemas, rules,
+  corpus, type examples, SDK types, release manifests, comparison, and
+  feedback. AdCOM's outputs are unchanged; its kernel binding marks
+  `IntegerFlag` absent.
+accepts:
+  - { gate: comparison, fingerprint: ebeafb2f903dc8974f483f07d31fdc4ab71f6cb6b446846d79ae0d94e0dfc262 }
+  - { gate: constructors-applied, fingerprint: b6b1fc22b94c64e7f27f229de97b70d335ce65c0182fef434f9b4245536d8c03 }
+  - { gate: constructors-check, fingerprint: 8013c9eddde8930919419aca5583ab05b6790c86d2d95aac295449ebaf422764 }
+  - { gate: convention-beside-reference, fingerprint: 54867a3f49193bdde1309a01979b061a1ed58ac8ad2472b76637d5f56fb86312 }
+  - { gate: convention-inline, fingerprint: 045158654e78464b0808bb0c343c97d741527855a647bc55cb7a70520424439d }
+  - { gate: convention-keywords, fingerprint: fe83a189661bed24a125a3b3574322a0e25d36b5da7b7b1c8d7b64d2f5a5e556 }
+  - { gate: convention-layers, fingerprint: 34a62e14e12245531664a4b6fdab577f7695689c58d164960f847d199ba63b7c }
+  - { gate: convention-lists, fingerprint: 8379d9db307765e8152351196a19df2d4d8e42cb6f33ae27d3b4d4f558948353 }
+  - { gate: convention-modules, fingerprint: 468fcbe17012476accb46a041bfd06425c837c68d517a29b68f09bb674e93908 }
+  - { gate: convention-unions, fingerprint: 47b6099f82e73f4c1752b3ea374182ce2ebdd5f798aa35670c9daf73147d9584 }
+  - { gate: corpus-generates, fingerprint: 4bd32f6ff8595708094de0747131e59b82e52d590cbba6394cb47a149e066ddc }
+  - { gate: domains-check, fingerprint: b2658daf2b6b100a1ed599b908cf6fe8cbddf00a55eac1562c2795fbb77200f9 }
+  - { gate: domains-properties, fingerprint: bec91e6a7c262d5034f5e1ea2a17657cc0fcf96d015df185abfb8966d80b86fd }
+  - { gate: duplication-kernel, fingerprint: 3f75e2283fa993ee265f1018423169a825736ca311917fbb9aff23ff1abe2134 }
+  - { gate: duplication-model, fingerprint: 0169827e4e3d41e5604c2d8563229635641b22858bb186808e264b63e4f5e0a7 }
+  - { gate: examples-validate, fingerprint: 296a9fd7bbf9ab7e0fb75f49d3e872fd50783e88a363d5bc6a3dad87da23654d }
+  - { gate: extraction, fingerprint: 1e2e9b1c3f22ec99b521197de8a7f817d7919e39a71fabc233abe9e7c6688862 }
+  - { gate: feedback, fingerprint: d844f8143f01ea7d57c079dd2b6cc5476e2d27aa2c28dc8813be5c8a7dfddbb2 }
+  - { gate: fidelity, fingerprint: e873d472a0bcac989eab44e5cb6ac7eac5fefd009f092a2d87a9a82e12562bd3 }
+  - { gate: field-examples, fingerprint: e88a4b307c7972569c7d83f40e7a91528f0777bb4aab383333369d7552d24638 }
+  - { gate: frozen-reviewed, fingerprint: d52aca092b70635a4f7f7444e6bf8dfceeefdfc023944f2bd5fc69f30693237d }
+  - { gate: kernel-check, fingerprint: 4f482cd7fbd57ba233246d4fbc8be9f8f00d8137a45f78d4b65608df70b653a3 }
+  - { gate: kernel-engines, fingerprint: 53e728418694d97f2914ac1fdcdabe229c344bc74513d6d4f479d3c58c31adb6 }
+  - { gate: kernel-load, fingerprint: 02a751abce4e60f7eac37b1ae30c03e6c91fc2b1c15fd4b32cef3a37067f611c }
+  - { gate: kernel-sources, fingerprint: 1d0d642ac9c736d576cd8f85ca930c47b14f0abf69f8f1e9291a61019e22662c }
+  - { gate: map-drift, fingerprint: 5614f43f267e0105f3f18c6ba7d115889d9ba268cde8f9d180ab5930453d183a }
+  - { gate: mapping-bijection, fingerprint: 788fea9f4210a649ef7d8eeba0374a5ab8e8fc2a316449ecfb6dcf9817939427 }
+  - { gate: mapping-constructors, fingerprint: 55a9dcac7b8248c4405f090ec708b30bf9ea8e5a6a5567b3b81749ee65c5ab98 }
+  - { gate: mapping-current, fingerprint: ccfb3688f980d8b4aa4fe5412eed96aeacd9e92893cdce1aa2a4b7d3d290de51 }
+  - { gate: mapping-load, fingerprint: 6673be907974a054b0c938c17caa2aa42acbdfde60eaaf5522ebcef72c99e5fb }
+  - { gate: mapping-location, fingerprint: 2a9dc95100e7783ee3d40152d01420842f73563f7333a6a486b13769d518f69c }
+  - { gate: mapping-names, fingerprint: 5e9067df774489e67fc9e335a8284afc48f0ce1f2ef0365776bd5b6fbfedba40 }
+  - { gate: mapping-rules, fingerprint: 77419006798514e3397fde0cac658b8541a649432f55392a84be69152c10704f }
+  - { gate: mapping-sources, fingerprint: c02204f26ce06df18b98cdc96bc6f356b13ad648429ff31e4809b995dcae5462 }
+  - { gate: model-resolves, fingerprint: e786b49bad7bff803e8b33e4873ab2f8159c93c19e708f6e7d5ce484ddeafc12 }
+  - { gate: nesting, fingerprint: edc3e0c8135206da1ee3290701f08f3d41e4c62a3959159097ef05155e7191ad }
+  - { gate: npm-test, fingerprint: f0ab88ebc4cf0e49d2007739e92d934a3b93562b8d4c3c680d7207979a7341e2 }
+  - { gate: plain-exemptions-file, fingerprint: e2ed4ca120a0b9c1fda348508bbdbbd7b3009e872c6de7fd01b3c39d34a0a20f }
+  - { gate: plain-parity, fingerprint: 6d79fe5d118951c1b452cec063a91dbbc82cc6358b83559a861b4e4f5d6fe802 }
+  - { gate: record-wording, fingerprint: 2181b9cfa5971cd12865049d90142b0c28b0520d6f058c3b7ac1e4b1e4152886 }
+  - { gate: round-trip, fingerprint: 1cf70dc01eb59784f166aec10912e4de66a25ecea4cdd608f505defb85409cd7 }
+  - { gate: rule-checks, fingerprint: ba0111225e4a8f99bdb240f6808b93a6321b67e8e6675bd0923a02f1620b3066 }
+  - { gate: rules-emit, fingerprint: b95fc227701f074db02091d4c63b0a9901b8de4105541ceeeaa477af7b6dbcd3 }
+  - { gate: schemas-conventions, fingerprint: e996f877bf971b99da88200b68bcdd0ca748a50feda908f9fe4b5c60c5f774ff }
+  - { gate: schemas-emit, fingerprint: 1fd71b844c9bd0bd213f035fd0d08b3f9491f106ea26154d66c8da488d1777f8 }
+  - { gate: sdk-generate, fingerprint: 6aa070faf130a70cd5e017a3a7d7c9ce4867386e10684afaa5730cded3e2204f }
+  - { gate: site-builds, fingerprint: 8b22a0be475f1413114b6f617079ec666963408cf2932d56cc9e79c67bba9579 }
+  - { gate: spec-profile, fingerprint: cb7abdb62162b56c72047d48894a6c5f22e6a4d1ebd5def8153c345db11385f9 }
+  - { gate: type-examples-generate, fingerprint: 27e5424acd04f6deec9314c9227cfde51692fe961d445226ca61979fe00b0aa2 }
+  - { gate: type-examples-valid, fingerprint: 1d83f64a3fcb91a2235257cda9445d4aed20fa5f045a1c0e0508da615b4db435 }
+  - { gate: variant-check, fingerprint: 9c4ff55f97aac740071788062ac5d27b4b609143f6f2a0f53637cc7bc55ab3f5 }
+  - { gate: variant-diff, fingerprint: 65903978b93bdc66e3592da7cf3ca98485f84d80024e624284025bd1d292b71d }
+  - { gate: variant-examples, fingerprint: 34b4c68813667e83f0f06d1346a50672983203c82529831025bfca73d964bc0a }
+  - { gate: variant-load, fingerprint: 79be011920d2bfd1bf53ce05f797953ba5cb4f8a13cffa91ce4f2b61599cc5f8 }

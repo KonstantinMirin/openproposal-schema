@@ -1,0 +1,19 @@
+# The second required input: the Deals API's tag 1.0-202602, the release the
+# repository tags. It differs from `main` in two lines: the `sellerstatus`
+# codes, where the tag writes `4` twice, for "complete" and for "archived",
+# and `main` writes `3` for "complete"; and a word of the What it is list.
+# `tag` names the tag, which CI checks still names `commit` wherever a clone
+# is reachable. The snapshot holds the specification at `commit`;
+# `npm run fetch -- --lock specs/dealsapi/spec-input/tag-1.0-202602.lock.yaml
+# --snapshot` writes it.
+name: tag-1.0-202602
+tag: 1.0-202602
+upstream: https://github.com/IABTechLab/deal-api
+commit: 938a5d1fdb5705ae53b2584c90b9eb325b71a96b
+path: deal1.0.md
+blob: f675232c0e0d57b77ce1fc34b74baa2e42bc700a
+ir_dir: ir/tag-1.0-202602
+required: true
+sources:
+  - git: ../../vendor/deal-api
+  - snapshot: spec-input/snapshots/tag-1.0-202602

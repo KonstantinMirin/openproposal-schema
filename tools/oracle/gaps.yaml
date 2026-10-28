@@ -19,6 +19,7 @@ gaps:
       SDKs accept it.
     vectors:
       - { primitive: Timestamp, value: "2016-12-31T23:59:60Z", oracle: rejects }
+      - { primitive: UtcTimestamp, value: "2016-12-31T23:59:60Z", oracle: rejects }
   - id: OG-2
     reason: >-
       rfc3339-validator rejects the year 0000, which it treats as no valid

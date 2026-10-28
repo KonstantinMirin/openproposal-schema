@@ -169,3 +169,16 @@ exemptions:
     cases:
       - { label: "primitive Timestamp valid vector 5", kind: verdict }
       - { label: "primitive Timestamp valid vector 6", kind: verdict }
+  - id: PG-15
+    reason: >-
+      For an integer primitive written as titled const branches, as
+      `IntegerFlag`'s `0` (No) and `1` (Yes), the generator writes a
+      `Literal[0, 1]` Pydantic doesn't run in strict mode, so it takes
+      `true` and `false` as the integers they equal, and coerces the string
+      `"1"`, where the schema's `type: integer` rejects each. It rejects
+      `2`, `-1`, and `0.5`, as the schema does.
+    locks: [with-open-prs]
+    cases:
+      - { label: "primitive IntegerFlag invalid vector 3", kind: verdict }
+      - { label: "primitive IntegerFlag invalid vector 4", kind: verdict }
+      - { label: "primitive IntegerFlag invalid vector 5", kind: verdict }

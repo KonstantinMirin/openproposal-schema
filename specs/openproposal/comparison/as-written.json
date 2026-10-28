@@ -1,5 +1,5 @@
 {
-  "description": "The schemas as the specification and its examples write the points our proposals change: opaque string IDs, the integers 0 and 1 for AdCOM's flags, spans as the text or its examples write them, bare terms where the text lists none, calendar dates for a flight, and options with only the members the text lists. Every point the text leaves open is filled as in the schemas we propose.",
+  "description": "The schemas as the specification and its examples write the points our proposals change: opaque string IDs, spans as the text or its examples write them, bare terms where the text lists none, calendar dates for a flight, and options with only the members the text lists. Every point the text leaves open is filled as in the schemas we propose.",
   "format": 1,
   "locks": [
     {
@@ -553,54 +553,6 @@
         },
         {
           "change": "retyped",
-          "decision": "D-039",
-          "from": "boolean",
-          "member": "instl",
-          "to": "IntegerFlag",
-          "type": "LineItemSummaryPlacement"
-        },
-        {
-          "change": "retyped",
-          "decision": "D-039",
-          "from": "boolean",
-          "member": "reward",
-          "to": "IntegerFlag",
-          "type": "LineItemSummaryPlacement"
-        },
-        {
-          "change": "retyped",
-          "decision": "D-039",
-          "from": "boolean",
-          "member": "skip",
-          "to": "IntegerFlag",
-          "type": "LineItemSummaryPlacement"
-        },
-        {
-          "change": "retyped",
-          "decision": "D-039",
-          "from": "boolean",
-          "member": "instl",
-          "to": "IntegerFlag",
-          "type": "Placement"
-        },
-        {
-          "change": "retyped",
-          "decision": "D-039",
-          "from": "boolean",
-          "member": "reward",
-          "to": "IntegerFlag",
-          "type": "Placement"
-        },
-        {
-          "change": "retyped",
-          "decision": "D-039",
-          "from": "boolean",
-          "member": "skip",
-          "to": "IntegerFlag",
-          "type": "Placement"
-        },
-        {
-          "change": "retyped",
           "decision": "D-040",
           "from": "Duration",
           "member": "granularity",
@@ -795,10 +747,10 @@
       ],
       "examples": {
         "proposed": {
-          "departure": 82,
-          "failures": 92,
+          "departure": 79,
+          "failures": 89,
           "gap": 10,
-          "places": 88
+          "places": 85
         },
         "variant": {
           "departure": 6,
@@ -819,15 +771,6 @@
       "question": "How is the ID of a record a party mints written, so that every party compares it the same way?",
       "reads": "Every ID a party mints, and every reference to one, is any string, as the text types `proposal_id` and `line_item_id`: `proposal_id`, `line_item_id`, `asset_id`, `correlation_id`, `idempotency_key`, a commitment's `proposal_id`, `requires`' line items, and the `id` of every object option, which `included[]` and the `pricing` keys name it by.",
       "written": "Any string the minting party chooses."
-    },
-    {
-      "chosen": "boolean",
-      "decision": "D-039",
-      "option": "integer",
-      "proposed": "A JSON boolean, as every other flag of the specification is.",
-      "question": "How is a two-valued flag written where § 5.2.2 copies an AdCOM `0` | `1` integer?",
-      "reads": "`placement.reward`, `instl`, and `skip` are the integers `0` (no) and `1` (yes), as § 5.2.2 and AdCOM 1.0 write them.",
-      "written": "The integers `0` and `1`, as § 5.2.2, AdCOM 1.0, and OpenRTB 2.6 write them."
     },
     {
       "chosen": "duration",

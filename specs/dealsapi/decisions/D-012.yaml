@@ -1,0 +1,43 @@
+format: 1
+id: D-012
+status: proposed
+kind: gap
+author: agent
+question: "Which field does the guidance's `curationfee` name, when the Curation table names the fee type `curfeetype`?"
+covers:
+  - ir: sentence:curation-fee:b84e34fe
+    digest: c05ffefb3b2d4531c2490887ab0a86609d948d3abed90c3bddbb763809c6c42a
+    quote: "`curationfee` provides information about the type of fee being applied in the bidstream, but not what that fee is."
+  - ir: sentence:curation-fee:f82c1eb3
+    digest: 677e046b7ce47065af926539ecfbb3dd17fd377b1f7ffd113948c91fbebbdfb4
+    quote: "For example, if a curator is charging a CPM of $5, the `curationfee` will equal 3 because it is a CPM."
+  - ir: sentence:curation-fee:84cbb25a
+    digest: 646e869a9afac9865276d85a89819a18224b72b1f10c853de1725890f235bc74
+    quote: "If a curator is charging a flat fee of $100, the value sent in the `curationfee` attribute will be 2, because it is a flat fee."
+  - ir: field:object-curation:curfeetype
+    digest: ebecc92b7d1c65164f063024324d9bd47109ee72c36cb1e85c15797062b0b499
+    quote: "`curfeetype` | int | Fee type being applied for curation of the deal: `0` = undisclosed `1` = percentage of spend `2` = flat fee `3` = CPM `4` = no fee is paid for curation services See Implementation Guidance for additional detail"
+  - ir: field:object-curation:curfeetype#description/values:1
+    digest: 74ab661b0a825540109857897ab7331f22f55d875d7da723b8839f16245613b3
+    quote: "`0` (undisclosed) | `1` (percentage of spend) | `2` (flat fee) | `3` (CPM) | `4` (no fee is paid for curation services)"
+options:
+  - id: curfeetype
+    summary: >-
+      `curfeetype`, the table's name: the guidance and the example scenarios
+      describe its codes by another name.
+  - id: curationfee
+    summary: >-
+      A second field, `curationfee`, which no table defines.
+chosen: curfeetype
+rationale: >-
+  The guidance's codes, 3 for a CPM and 2 for a flat fee, are
+  `curfeetype`'s, and no table defines a `curationfee`, so the guidance
+  names `curfeetype` by another name. The table is the definition, so its
+  name wins. The lint reports `curationfee` as a name that resolves to
+  nothing.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L289"
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L145"
+feedback: >-
+  Rename `curationfee` in the Curation Fee guidance and in the Example
+  Scenarios header to `curfeetype`, the table's name.

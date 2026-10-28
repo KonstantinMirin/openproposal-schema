@@ -4,7 +4,7 @@
 
 This page supports [our implementation feedback on deriving a schema from the specification (#121)](https://github.com/IABTechLab/OpenProposal/issues/121). We generated our own schemas from `spec/openproposal-3.0.md`. A deterministic parser reads its markdown syntax tree, with no model calls. Where the text leaves a point open, we record a decision, and this page lists them. Every table and row parsed, and the appendices agree with the body. The outputs are JSON Schema 2020-12, the rules JSON Schema can't express with their test vectors, and TypeScript, Python, and Go types.
 
-Generating them took 45 decisions: 39 where the text leaves a point open, and 6 changes we propose to what the text or examples settle. This page keeps the two groups apart. Of the 39 open points, 37 ask the specification to state something, and each says what, so that the next revision needs none of them.
+Generating them took 44 decisions: 39 where the text leaves a point open, and 5 changes we propose to what the text or examples settle. This page keeps the two groups apart. Of the 39 open points, 37 ask the specification to state something, and each says what, so that the next revision needs none of them.
 
 ## Inputs
 
@@ -46,14 +46,14 @@ The 37 open points that ask the specification to state something:
 
 The other 2 open points, 32 and 37, only choose how the schemas express text the specification already states.
 
-In 55 distinct places on `main`, and 88 with the open PRs, the examples fail against the generated schemas or break a generated MUST rule. Most of them come from the changes we propose, not from the specification: the examples follow the text there.
+In 55 distinct places on `main`, and 85 with the open PRs, the examples fail against the generated schemas or break a generated MUST rule. Most of them come from the changes we propose, not from the specification: the examples follow the text there.
 
 | Places where an example | `main` | With the open PRs |
 | :--- | ---: | ---: |
 | Only disagrees with the text | 4 | 9 |
-| Only follows the text but not a change we propose | 50 | 78 |
+| Only follows the text but not a change we propose | 50 | 75 |
 | Does both, with one failure of each kind | 1 | 1 |
-| Total | 55 | 88 |
+| Total | 55 | 85 |
 
 The place that does both is the display example's `/audiences/included/0`. None breaks a SHOULD rule, which would be a warning rather than an error. A generated rule can't decide 0 places on `main` and 2 with the open PRs, where an example leaves out what decides it.
 
@@ -388,7 +388,7 @@ Which payloads and changes a rule stated only in prose allows.
   - the seller named by the proposal's `seller_id`
 - **Rests on:** § 2.2: 1 statement; § 5.1.1: `channel.audio`, `channel.ctv`, `channel.display`, `channel.dooh`, `channel.native`, `channel.video`, 1 statement; § 5.2: 1 statement; § 5.2.1: `environments.app_mobile`, `environments.ctv`, `environments.dooh`, `environments.web_desktop`, `environments.web_mobile`, 1 statement; § 5.2.2: `placement.plcmt`, 1 statement; § 5.5: 2 statements
 
-## Changes we propose (6)
+## Changes we propose (5)
 
 Each of these departs from what the specification settles, in its text or in the form its examples write. Each names what we propose, what the generated schemas do, and the rows it rests on. An example that follows the text but not the change is listed with it, and in [the second table of example failures](#the-examples-follow-the-text-but-not-a-change-we-propose) with its reason. The example isn't wrong: the change would rewrite it.
 
@@ -409,12 +409,7 @@ Each of these departs from what the specification settles, in its text or in the
 
 #### 41. How is a two-valued flag written where § 5.2.2 copies an AdCOM `0` | `1` integer? (only with the open PRs)
 
-- **What we propose:** Write `placement.reward`, `instl`, and `skip` as JSON booleans, as every other flag of the specification is. Say they mean what the AdCOM fields of the same name mean. AdCOM 1.0 and OpenRTB 2.6 write these flags as the integers `0` and `1`. A seller that builds a bid request writes `true` as `1` and `false` as `0`, and reads them back the same way.
-- **What the schemas do:** A JSON boolean, as every other flag of the specification is.
-- **Rests on:** § 5.2.2: `placement.instl`, `placement.reward`, `placement.skip`, 1 statement, 1 sentence
-- **Only on:** With the open PRs
-- **Examples that follow the text:**
-  - `examples/line-item-rewarded-video.yaml`, only with the open PRs, at `/placement/instl`, `/placement/reward`, `/placement/skip`
+- **Withdrawn:** § 5.2.2's keys follow AdCOM 1.0, which writes `reward`, `instl`, and `skip` as `0` (no) or `1` (yes). The schemas keep those integers.
 
 #### 42. How is a length of time written where the specification or its examples write it as prose, a word, or a count of seconds?
 
@@ -557,9 +552,6 @@ Each place where an example follows the text and fails against the generated sch
 | `examples/line-item-rewarded-video.yaml` | `/measurement_source/available/0/attribution_window`, `/measurement_source/available/1/attribution_window` | invalid | The example follows the text, which gives `attribution_window` no form: it writes `30d`. We propose an ISO 8601 duration for every length of time, `P30D` here. | 42 | With the open PRs |
 | `examples/line-item-rewarded-video.yaml` | `/measurement_source/available/1` | invalid | The example follows the text, which lists a measurement source option's members as `vendor`, `attribution_window`, and `qualifier`: this option, from `DoubleVerify`, has no `id`. We propose an `id`, REQUIRED, on every object option, so that `included[]` and the `pricing` keys name the option by it. | 45 | With the open PRs |
 | `examples/line-item-rewarded-video.yaml` | `/measurement_source/included/0` | invalid, breaks a rule | The example follows the text, which gives a measurement source option no `id`: `included[]` names the option by its `vendor`, `IAS`, which no option of `available[]` carries as its `id`. We propose an `id` on every object option, a UUID as for every ID a party mints, so that `included[]` names the option by that UUID. | 40, 45 | With the open PRs |
-| `examples/line-item-rewarded-video.yaml` | `/placement/instl` | invalid | The example follows the text, which writes `instl` as AdCOM's `0` or `1`: it writes `1`. We propose a JSON boolean for every flag, `true` here. | 41 | With the open PRs |
-| `examples/line-item-rewarded-video.yaml` | `/placement/reward` | invalid | The example follows the text, which writes `reward` as AdCOM's `0` or `1`: it writes `1`. We propose a JSON boolean for every flag, `true` here. | 41 | With the open PRs |
-| `examples/line-item-rewarded-video.yaml` | `/placement/skip` | invalid | The example follows the text, which writes `skip` as AdCOM's `0` or `1`: it writes `0`. We propose a JSON boolean for every flag, `false` here. | 41 | With the open PRs |
 | `examples/line-item-rewarded-video.yaml` | `/properties/available/0` | invalid | The example follows the text, which states no form for an option's `id`: it writes the readable name `puzzle-pack`. We propose a UUID for every ID a party mints, a catalog entry's `id` included. | 40 | With the open PRs |
 | `examples/line-item-rewarded-video.yaml` | `/properties/included/0` | invalid | The example follows the text, which states no form for an option's `id`: `included[]` names the property by the readable ID `puzzle-pack` its `available[]` gives it. We propose a UUID for every ID a party mints, an option's `id` included, so `included[]` names the property by that UUID. | 40 | With the open PRs |
 | `examples/manifest.json` | `/proposals/0/proposal_id` | invalid | The example follows the text, which types `proposal_id` as a String: it writes the readable name `examplepub-us-q4-2026-omni`. We propose a UUID for every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`. | 40 | With the open PRs |
@@ -609,9 +601,6 @@ The field and key tables rendered back from the generated schemas equal the spec
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `properties` | Description | `available[]` of `{ id, name, domains, supported_formats }`, `included[]`, `pricing`, `max_select` | `available[]` of `{ id, name, domains[], supported_formats[] }`, `included[]`, `pricing`, `max_select` | The option's plural members are lists, which the generated table writes with `[]`; the inline object writes them without it. | `main` |
 | `properties` | Description | `available[]` of `{ id, name, domains, apps, supported_formats }`, `included[]`, `pricing`, `max_select`. Each property MUST carry `domains`, `apps` or both | `available[]` of `{ id, name, domains[], apps[], supported_formats[] }`, `included[]`, `pricing`, `max_select`. Each property MUST carry `domains`, `apps` or both | The option's plural members are lists, which the generated table writes with `[]`; the inline object writes them without it, though the App identity table is headed `apps[]`. | With the open PRs |
-| `placement.instl` | Meaning | `0` (no) \| `1` (yes). The ad is interstitial or full screen | `false` \| `true`. The ad is interstitial or full screen | A yes-or-no value is a JSON boolean, as every other flag of the specification is; the row copies AdCOM's `0` and `1`. | With the open PRs |
-| `placement.reward` | Meaning | `0` (no) \| `1` (yes). The user receives a reward for viewing the ad | `false` \| `true`. The user receives a reward for viewing the ad | A yes-or-no value is a JSON boolean, as every other flag of the specification is; the row copies AdCOM's `0` and `1`. | With the open PRs |
-| `placement.skip` | Meaning | Video or audio. `0` (no) \| `1` (yes). The placement lets the user skip the ad | Video or audio. `false` \| `true`. The placement lets the user skip the ad | A yes-or-no value is a JSON boolean, as every other flag of the specification is; the row copies AdCOM's `0` and `1`. | With the open PRs |
 | `production` | Description | Custom units. `available[]` of build options with `pricing` and `lead_time`; `{ custom_unit, build_owner, lead_time, cost }` | Custom units. `available[]` of build options with `pricing` and `lead_time`; `{ custom_unit, build_owner, lead_time, cost, id }` | We propose an `id`, REQUIRED, beside the members the inline object lists, so that `included[]` and the `pricing` keys name the option by it. |  |
 | `measurement_source` | Description | `available[]` of `{ vendor, attribution_window, qualifier }` with `pricing`. Lets a buyer transact in its own currency | `available[]` of `{ vendor, attribution_window, qualifier, id }` with `pricing`. Lets a buyer transact in its own currency | We propose an `id`, REQUIRED, beside the members the inline object lists, so that `included[]` and the `pricing` keys name the option by it. |  |
 | `reporting` | Description | `available[]` of `{ feed_type: log_level \| aggregate \| none, cadence, delivery_mechanism, metrics_provided[], latency }` with `pricing` | `available[]` of `{ feed_type: log_level \| aggregate \| none, cadence, delivery_mechanism, metrics_provided[], latency, id }` with `pricing` | We propose an `id`, REQUIRED, beside the members the inline object lists, so that `included[]` and the `pricing` keys name the option by it. |  |

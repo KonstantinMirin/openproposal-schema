@@ -244,21 +244,24 @@ function gateInput(): FidelityInput & { expected: ExpectedFile; names: SchemaNam
   built = { ir: PRS, lock: lock.name, model, files: emitted.files, kernel, rules, decisions, readings: readingsOf(mappings, lock.name), schemaDir, expected: loadExpected(), readers: FIDELITY, names: OP_SCHEMA };
   return built;
 }
-const D039_VALUES = "key:5.2.2:placement.reward#meaning/values:1";
+const D037_EXAMPLE = "code:5.6.3:1";
 type Cover = DecisionRecord["covers"][number];
-const withD039 = <I extends FidelityInput>(i: I, change: (c: Cover) => Cover): I => ({ ...i, decisions: i.decisions.map((d) => (d.id === "D-039" ? { ...d, covers: d.covers.map(change) } : d)) });
+const withD037 = <I extends FidelityInput>(i: I, change: (c: Cover) => Cover): I => ({ ...i, decisions: i.decisions.map((d) => (d.id === "D-037" ? { ...d, covers: d.covers.map(change) } : d)) });
 
 test("a departure excuses only the element and the form its cover lists, and a listed form that excuses nothing is a problem", () => {
   const i = gateInput();
   const r = checkFidelity(i);
-  assert.ok(r.departed.some((d) => d.decision === "D-039" && d.element === D039_VALUES && d.status === "proposed"), "a proposed departure excuses, and says so");
-  // The form on the row's cover, not on its value list's: the value list's disagreement is no longer excused.
-  const moved = checkFidelity(withD039(i, (c) => (c.ir === D039_VALUES ? { ...c, departs: undefined } : c.ir === "key:5.2.2:placement.reward" ? { ...c, departs: ["values"] } : c)));
-  assert.ok(moved.disagreements.some((d) => d.element === D039_VALUES && d.form === "values"));
-  assert.ok(moved.problems.some((p) => p.includes("D-039: departs from the values form of key:5.2.2:placement.reward on")));
+  assert.ok(r.departed.some((d) => d.decision === "D-037" && d.element === D037_EXAMPLE && d.status === "proposed"), "a proposed departure excuses, and says so");
+  // The form on another element's cover, not on the code block's: the code block's disagreement is no longer excused.
+  const moved = checkFidelity(withD037(i, (c) => (c.ir === D037_EXAMPLE ? { ...c, departs: undefined } : c.ir === "field:5.10:correlation_id" ? { ...c, departs: ["example"] } : c)));
+  assert.ok(moved.disagreements.some((d) => d.element === D037_EXAMPLE && d.form === "example"));
+  assert.ok(moved.problems.some((p) => p.includes("D-037: departs from the example form of field:5.10:correlation_id on")));
   // A form the element never disagrees in.
-  const extra = checkFidelity(withD039(i, (c) => (c.ir === D039_VALUES ? { ...c, departs: ["values", "required"] } : c)));
-  assert.ok(extra.problems.some((p) => p.includes(`departs from the required form of ${D039_VALUES}`)));
+  const extra = checkFidelity(withD037(i, (c) => (c.ir === D037_EXAMPLE ? { ...c, departs: ["example", "required"] } : c)));
+  assert.ok(extra.problems.some((p) => p.includes(`departs from the required form of ${D037_EXAMPLE}`)));
+  // A withdrawn record excuses nothing, as one that is superseded doesn't.
+  const gone = checkFidelity({ ...i, decisions: i.decisions.map((d) => (d.id === "D-037" ? { ...d, status: "withdrawn" as const, withdrawn: { date: "2026-10-28", reason: "A fixture's withdrawn record, which excuses nothing." } } : d)) });
+  assert.ok(gone.disagreements.some((d) => d.element === D037_EXAMPLE && d.form === "example"));
 });
 
 test("no rule excuses a constraint by naming its element: only a listed rule on the path, with an invalid vector the constraint rules out, does", () => {

@@ -165,12 +165,12 @@ test("the fixture spec's SDKs and schemas carry its own names, and none of OpenP
 });
 
 test("the registry builds the OpenProposal plugin from its profile, and refuses a profile whose plugin it doesn't know", () => {
-  assert.deepEqual(Object.keys(PLUGINS), ["adcom", "openproposal"]);
+  assert.deepEqual(Object.keys(PLUGINS), ["adcom", "dealsapi", "openproposal"]);
   const op = specOf(SPEC);
   assert.equal(op.profile.id, "openproposal");
   assert.deepEqual(op.profile.documents?.map((d) => d.document), ["Proposal", "LineItem"]);
   assert.equal(op.plugin?.id, "openproposal");
-  assert.throws(() => specOf(DIR), /names the plugin "widgets", and src\/specs\/ holds adcom, openproposal/);
+  assert.throws(() => specOf(DIR), /names the plugin "widgets", and src\/specs\/ holds adcom, dealsapi, openproposal/);
 });
 
 test("a plugin states how its text identifies sections, and every heading it reads agrees", () => {

@@ -1,0 +1,47 @@
+format: 1
+id: D-024
+status: proposed
+kind: gap
+author: agent
+question: "What does an empty or missing list mean in `adtypes`, `countries`, `inclinventory`, `sellerids`, `sitedomains`, and `appbundles`?"
+covers:
+  - ir: rule:object-inventory:476d1ead
+    digest: 0655c3a43349b9debfd171190821d80d95c3ee8c0e6c9b229016016ed7b928e9
+    quote: "An empty list implies the deal may runs across all sellers."
+  - ir: rule:object-inventory:658daf9f
+    digest: d2bb2cdea2408dfaf6bb61dae037f35cfa943df1f37f22373e5e53d95dbf129f
+    quote: "An empty list implies the deal may run across many unspecified site domain(s)."
+  - ir: rule:object-inventory:6b8d396b
+    digest: 75d927bd0e95f0cf023009d3b9e705a572ab652c9d581551843d0bce5f289ed4
+    quote: "An empty list implies the deal may run across many unspecified bundles/package(s)"
+  - ir: field:object-deal:adtypes
+    digest: 8f0369b4d12f77930e955ee5ef4ef0618d59216027769aeed806c9bbc9029877
+    quote: "`adtypes` | int array | The format of the ad creative(s) supported by the inventory in the deal: `1` = Banner `2` = Video `3` = Audio `4` = Native If this is empty or missing, the deal is assumed to apply to all types of ad creative."
+  - ir: field:object-terms:countries
+    digest: 2163f6ca4661e298607dfcb0835a31140673ce8edde999f59c94ea2df16fdb2b
+    quote: "`countries` | string array | An array of country codes in which the deal is available, where country code is a string using ISO-3166-3. If this is empty or missing, the deal is assumed to apply to all countries."
+  - ir: field:object-inventory:inclinventory
+    digest: bb02493c6c76dcd01e09607847e4344f199f6e978bdc683f9d49e0171e10e631
+    quote: "`inclinventory` | integer array | High-level information about the kind of inventory included in the deal: `1` = site `2` = app `3` = dooh `4` = audio `5` = endemic `6` = other If this is empty or missing, the deal is assumed to apply to all types of inventory"
+options:
+  - id: all
+    summary: >-
+      An empty list is valid, as a missing one is, and means what its row
+      says: all values, all sellers, or many unspecified domains or bundles;
+      the schema sets no minimum, and each description says what it means.
+  - id: non-empty
+    summary: >-
+      A list holds at least one value; a missing list means all.
+chosen: all
+rationale: >-
+  Every row says what an empty list means: `adtypes`, `countries`, and
+  `inclinventory` say an empty or missing list applies to all; `sellerids`
+  says an empty one runs across all sellers; `sitedomains` and `appbundles`
+  say an empty one may run across many unspecified domains or bundles. So
+  an empty list is valid on each, and the schema sets no minimum. The
+  sentences that say so are informative; the descriptions carry them.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L129"
+feedback: >-
+  None needed: the rows say it. The phrasing differs, "all" for some and
+  "many unspecified" for others, which could be made one.

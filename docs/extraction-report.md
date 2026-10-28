@@ -73,6 +73,7 @@ Each cell shows open findings, plus findings with a verdict in brackets.
 | `name_reused_with_different_values` | 2 | 2 |
 | `value_set_duplicate` | 0 | 2 |
 | `value_set_subset` | 1 (+1) | 1 (+1) |
+| `value_list_duplicate_code` | 0 | 0 |
 | `unresolved_identifier` | 6 (+3) | 13 (+26) |
 | `array_suffix_mismatch` | 4 | 6 |
 | `expression_value_unknown` | 0 | 2 |

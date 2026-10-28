@@ -35,20 +35,20 @@
       "additionalProperties": false,
       "properties": {
         "instl": {
-          "description": "`0` (no) | `1` (yes). The ad is interstitial or full screen",
-          "type": "boolean"
+          "$ref": "../../../kernel/1/kernel.json#/$defs/IntegerFlag",
+          "description": "`0` (no) | `1` (yes). The ad is interstitial or full screen"
         },
         "plcmt": {
           "$ref": "../../inventory/1/inventory.json#/$defs/PlcmtSubtype",
           "description": "One value from List: Plcmt Subtypes - Video: Instream (1), Accompanying Content (2), Interstitial (3), No Content/Standalone (4), Pause (5), Screensaver (6), Overlay (7), Squeezeback (8), In-scene (9)"
         },
         "reward": {
-          "description": "`0` (no) | `1` (yes). The user receives a reward for viewing the ad",
-          "type": "boolean"
+          "$ref": "../../../kernel/1/kernel.json#/$defs/IntegerFlag",
+          "description": "`0` (no) | `1` (yes). The user receives a reward for viewing the ad"
         },
         "skip": {
-          "description": "Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad",
-          "type": "boolean"
+          "$ref": "../../../kernel/1/kernel.json#/$defs/IntegerFlag",
+          "description": "Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad"
         }
       },
       "type": "object"

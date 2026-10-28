@@ -1,0 +1,347 @@
+# The Deals API kernel binding (src/binding.ts): what the Deals API 1.0 adds
+# to the shared kernel's definitions in kernel/primitives.yaml,
+# constructors.yaml, and domains.yaml. Each item is named as the kernel names
+# it. A spec source is quoted and digested; regenerate a quote and a digest
+# with `npm run cite -- --lock specs/dealsapi/spec-input/spec-lock.yaml
+# --all-locks <IR element ID>`.
+format: 1
+spec: dealsapi
+primitives:
+  - { name: Uuid, absent: true }
+  - name: ExternalId
+    sources:
+      spec:
+        - ir: field:object-deal:id
+          digest: aaddfa0cb70710aabb5451db0b5e92e7742131f02f5f813adb9ec840edf64da9
+          quote: "`id` | string; required | A unique identifier for the direct deal in origin's namespace."
+        - ir: field:object-deal:wseat
+          digest: d2802374ec07a59552e98a2ac62cdaccc6bd829b27c3d73dc70288c2440257aa
+          quote: "`wseat` | string array, recommended | Allowed list of buyer seats (e.g., advertisers, agencies) allowed to bid on this impression. IDs of seats and knowledge of the buyer's customers to which they refer must be coordinated between bidders and the exchange a priori. At most, only one of `wseat` and `bseat` should be used in the same request. Omission of both implies no seat restrictions."
+        - ir: field:object-deal:bseat
+          digest: 601e1c992da55aa364a39079a713fa6073dcdf00613b08a66ab7851958b1cb56
+          quote: "`bseat` | string array | Block list of buyer seats (e.g., advertisers, agencies) restricted from bidding on this impression. IDs of seats and knowledge of the buyer's customers to which they refer must be coordinated between bidders and the exchange a priori. At most, only one of `wseat` and `bseat` should be used in the same request. Omission of both implies no seat restrictions."
+        - ir: field:object-inventory:sellerids
+          digest: fd8b923ff3aeb9c7ac6c293a840c28165315d62dda90e0e8ff95737c47764ba6
+          quote: "`sellerids` | string array | The identifier associated with the seller or reseller account within the advertising system. If used, the values in this attribute must contain the same value used in transactions (i.e. OpenRTB bid requests) in the field specified by the SSP/exchange. An empty list implies the deal may runs across all sellers. Typically, in OpenRTB, this is `publisher.id`. For OpenDirect it is typically the publisher's organization ID. Should be limited to 64 characters in length."
+        - ir: field:object-inventory:appbundles
+          digest: 771b52f9b47e459f73dc14c5ae7e81b200a388848c0d64398bda2509166f910f
+          quote: "`appbundles` | string array | An array containing one or more bundle/package name(s) of the app. An empty list implies the deal may run across many unspecified bundles/package(s)"
+        - ir: field:object-inventory:cat
+          digest: 63b3ef5441314652c6531a76cba2bc222e9fdcd444456851d372bdaeff7a6c46
+          quote: "`cat` | string array | Array of IAB Tech Lab content categories included in the deal. The taxonomy to be used is defined by the cattax field."
+        - ir: field:object-curation:cdealid
+          digest: a0cb0fca2b0ff05d740f29c78047f83c14fd83b5e45c53a6421e7e0df768de75
+          quote: "`cdealid` | string | Unique identifier for the deal in the Curators namespace."
+        - ir: field:object-buyerseat:version
+          digest: 5d8347a4aab6be0ffe130b75daacb6b2f8256fb276f5650f58178098ce88baec
+          quote: "`version` | string, required | Version of the Deal API in use"
+        - ir: field:object-buyerseat:id
+          digest: 5c05c04b0c154b57aed8809bba4a456224e9f73ee22cbc43f894abe5a06cb316
+          quote: "`id` | string, required | A unique identifier for the deal as passed in the initial push that this response is referring to. This should always be the same id as `deal.id`"
+        - ir: field:object-buyerstatus:buyerseatid
+          digest: 2ae010783c34370a10304479cc9eef7d4b338ba61f035c1d234a907165ef3517
+          quote: "`buyerseatid` | string | Seat ID in the buying system that the response refers to"
+  - name: Text
+    sources:
+      spec:
+        - ir: field:object-deal:name
+          digest: aafbf8178f16173d1bb333bc69b942832a17100d282908c02d766ca4442dd0e7
+          quote: "`name` | string, recommended | Name of the deal as created in the origin system. Note: This name may be displayed to the buyer. The person inputting the deal into the `origin` system should consider that when setting up the deal."
+        - ir: field:object-deal:desc
+          digest: 9e98c8164cc05f0999a8fe6d5ffefaf8b0807ba21750e1875ba69cc5740f6410
+          quote: "`desc` | string | Short description for the deal to help the receiver locate the deal once it has been sent. It is strongly recommended to keep this field to 250 characters or less."
+  - { name: Url, absent: true }
+  - name: Domain
+    decision: D-017
+    sources:
+      spec:
+        - ir: field:object-deal:origin
+          digest: ce99360cea2bbe7a1ce0062398ecda06b2329079842d82cca3fc60bf41fa6a47
+          quote: "`origin` | string, required | The advertising system domain of the business entity that will receive bid responses for the deal, typically the SSP hosting the API."
+        - ir: field:object-deal:seller
+          digest: 340feab53f097fa9b7675d9a9ee782b92c911a70cbc87d953d9454ae7236741d
+          quote: "`seller` | string, recommended | Canonical domain of the business entity who sold the deal. This may be the same as the origin or curator, but it also could be any intermediate seller. See Implementation Guidance for additional detail"
+        - ir: field:object-curation:curator
+          digest: 526328206505761bd3a8da9bf7a66e2af9fe4ec6cbe02fbfce0db4484aae11c4
+          quote: "`curator` | string | Canonical domain of the business entity that did the packaging of inventory, technology and/or data. Most often, this will be the seller of the deal."
+        - ir: field:object-inventory:sitedomains
+          digest: de6ddbd885bf947a9fc3fd819ff72501645828f9cdf1e68654b4a5512bf03475
+          quote: "`sitedomains` | string array | An array containing one or more site domain(s). An empty list implies the deal may run across many unspecified site domain(s)."
+  - { name: FormatId, absent: true }
+  - name: CurrencyCode
+    decision: D-005
+    sources:
+      spec:
+        - ir: field:object-terms:cur
+          digest: b5e0a9eb31eac74f657557986f97aae80b5be5963393228c78cf24e65fc31c61
+          quote: "`cur` | string; default \"USD\" | Bid currency using ISO-4217 alpha codes."
+  - name: CountryCode
+    decision: D-004
+    sources:
+      spec:
+        - ir: field:object-terms:countries
+          digest: 2163f6ca4661e298607dfcb0835a31140673ce8edde999f59c94ea2df16fdb2b
+          quote: "`countries` | string array | An array of country codes in which the deal is available, where country code is a string using ISO-3166-3. If this is empty or missing, the deal is assumed to apply to all countries."
+  - name: Amount
+    decision: D-005
+    sources:
+      spec:
+        - ir: field:object-terms:dealfloor
+          digest: 4884dfb2518a4b08a4ba8ea197f13ab31af115ad8fc6b33e403f3ad44ca50b05
+          quote: "`dealfloor` | float | Minimum bid for impressions for this deal expressed in CPM. Unless `pricetype` is Fixed, this should be used as guidance to buyers. See Implementation Guidance for additional detail"
+        - ir: field:object-terms:totalcost
+          digest: d99b424a4b4835aa25da211b0ddc98b0b34b83535b9a62fde60a50ba06494fb6
+          quote: "`totalcost` | float | The total cost over the specified start and end date of the deal. If the deal is guaranteed, this value should be provided. If the deal is not guaranteed this may be omitted. See Implementation Guidance for additional detail"
+  - { name: PriceAdjustment, absent: true }
+  - { name: PercentChange, absent: true }
+  - { name: Fraction, absent: true }
+  - name: Count
+    sources:
+      spec:
+        - ir: field:object-terms:units
+          digest: e9a8fe666cbf1b98dc9f22407b967fe7368d45ad3d3b0d5c75ea8ab993a9b2a8
+          quote: "`units` | int | Number of units (impressions) over the specified start and end date of the deal. If the deal is guaranteed, this number should be provided. If the deal is not guaranteed this may be omitted."
+  - { name: Measure, absent: true }
+  - name: IntegerFlag
+    decision: D-018
+    sources:
+      spec:
+        - ir: field:object-terms:guar
+          digest: 372ad02a0bfed4c5e8dca1c18389f2ccccefa680f7850c8a8664e06eb7b81219
+          quote: "`guar` | int | Indicates that the deal is of type guaranteed and the bidder must bid on the deal, where 0 = not a guaranteed deal, 1 = guaranteed deal."
+  - { name: Timestamp, absent: true }
+  - name: UtcTimestamp
+    decision: D-002
+    sources:
+      spec:
+        - ir: field:object-deal:created
+          digest: edccdff06879d2e97652451b19dc5a523065afac87cdadf68497a78d1d010aed
+          quote: "`created` | string | UTC timestamp in seconds in ISO-8601 of when the deal was created in the Origin system"
+        - ir: field:object-terms:startdate
+          digest: 85cee5c323064ae0d44601eb24a57193a06b0a3879007fb20de0438a49bc431a
+          quote: "`startdate` | string | UTC timestamp in seconds in ISO-8601 of when the deal starts"
+        - ir: field:object-terms:enddate
+          digest: 387ca29773be1a3d68d1bcb46828acd2358f734e8fdef410b3cdef98fb144af4
+          quote: "`enddate` | string | UTC timestamp in seconds in ISO-8601 of when the deal ends. Evergreen or always on deals should leave this field blank."
+  - { name: Duration, absent: true }
+  - { name: TimeOfDay, absent: true }
+  - { name: DayName, absent: true }
+  - { name: TimeZone, absent: true }
+  - { name: NamespacedTerm, absent: true }
+  - name: VendorCode
+    decision: D-009
+  - { name: MediaOffset, absent: true }
+  - { name: CatalogRef, absent: true }
+  - { name: Digest, absent: true }
+constructors:
+  - { name: Selectable, absent: true }
+  - { name: Settable, absent: true }
+  - { name: Range, absent: true }
+  - { name: CatalogRefOr, absent: true }
+  - name: List
+    sources:
+      spec:
+        - ir: field:object-deal:wseat
+          digest: d2802374ec07a59552e98a2ac62cdaccc6bd829b27c3d73dc70288c2440257aa
+          quote: "`wseat` | string array, recommended | Allowed list of buyer seats (e.g., advertisers, agencies) allowed to bid on this impression. IDs of seats and knowledge of the buyer's customers to which they refer must be coordinated between bidders and the exchange a priori. At most, only one of `wseat` and `bseat` should be used in the same request. Omission of both implies no seat restrictions."
+        - ir: field:object-buyerseat:buyerstatus
+          digest: 5038fc294dbe88abe4cb2e9ca459b2fd103038dec958ed846f5fcbaa959350bf
+          quote: "`buyerstatus` | object array | Information about the buying seat where the Deal will be trafficked"
+  - { name: Map, absent: true }
+parts:
+  - name: Ext
+    sources:
+      spec:
+        - ir: field:object-deal:ext
+          digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+          quote: "`ext` | object | Placeholder for deal-specific extensions"
+        - ir: field:object-terms:ext
+          digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+          quote: "`ext` | object | Placeholder for deal-specific extensions"
+        - ir: field:object-inventory:ext
+          digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+          quote: "`ext` | object | Placeholder for deal-specific extensions"
+        - ir: field:object-curation:ext
+          digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+          quote: "`ext` | object | Placeholder for deal-specific extensions"
+        - ir: field:object-buyerseat:ext
+          digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+          quote: "`ext` | object | Placeholder for deal-specific extensions"
+        - ir: field:object-buyerstatus:ext
+          digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+          quote: "`ext` | object | Placeholder for deal-specific extensions"
+  - { name: PriceDelta, absent: true }
+  - { name: CatalogReference, absent: true }
+  - { name: DaypartWindow, absent: true }
+domains:
+  - name: identity
+    concepts:
+      - { name: minted-id, absent: true }
+      - name: external-id
+        sources:
+          spec:
+            - ir: field:object-deal:id
+              digest: aaddfa0cb70710aabb5451db0b5e92e7742131f02f5f813adb9ec840edf64da9
+              quote: "`id` | string; required | A unique identifier for the direct deal in origin's namespace."
+            - ir: field:object-deal:wseat
+              digest: d2802374ec07a59552e98a2ac62cdaccc6bd829b27c3d73dc70288c2440257aa
+              quote: "`wseat` | string array, recommended | Allowed list of buyer seats (e.g., advertisers, agencies) allowed to bid on this impression. IDs of seats and knowledge of the buyer's customers to which they refer must be coordinated between bidders and the exchange a priori. At most, only one of `wseat` and `bseat` should be used in the same request. Omission of both implies no seat restrictions."
+            - ir: field:object-deal:bseat
+              digest: 601e1c992da55aa364a39079a713fa6073dcdf00613b08a66ab7851958b1cb56
+              quote: "`bseat` | string array | Block list of buyer seats (e.g., advertisers, agencies) restricted from bidding on this impression. IDs of seats and knowledge of the buyer's customers to which they refer must be coordinated between bidders and the exchange a priori. At most, only one of `wseat` and `bseat` should be used in the same request. Omission of both implies no seat restrictions."
+            - ir: field:object-inventory:sellerids
+              digest: fd8b923ff3aeb9c7ac6c293a840c28165315d62dda90e0e8ff95737c47764ba6
+              quote: "`sellerids` | string array | The identifier associated with the seller or reseller account within the advertising system. If used, the values in this attribute must contain the same value used in transactions (i.e. OpenRTB bid requests) in the field specified by the SSP/exchange. An empty list implies the deal may runs across all sellers. Typically, in OpenRTB, this is `publisher.id`. For OpenDirect it is typically the publisher's organization ID. Should be limited to 64 characters in length."
+            - ir: field:object-inventory:appbundles
+              digest: 771b52f9b47e459f73dc14c5ae7e81b200a388848c0d64398bda2509166f910f
+              quote: "`appbundles` | string array | An array containing one or more bundle/package name(s) of the app. An empty list implies the deal may run across many unspecified bundles/package(s)"
+            - ir: field:object-inventory:cat
+              digest: 63b3ef5441314652c6531a76cba2bc222e9fdcd444456851d372bdaeff7a6c46
+              quote: "`cat` | string array | Array of IAB Tech Lab content categories included in the deal. The taxonomy to be used is defined by the cattax field."
+            - ir: field:object-curation:cdealid
+              digest: a0cb0fca2b0ff05d740f29c78047f83c14fd83b5e45c53a6421e7e0df768de75
+              quote: "`cdealid` | string | Unique identifier for the deal in the Curators namespace."
+            - ir: field:object-buyerseat:version
+              digest: 5d8347a4aab6be0ffe130b75daacb6b2f8256fb276f5650f58178098ce88baec
+              quote: "`version` | string, required | Version of the Deal API in use"
+            - ir: field:object-buyerseat:id
+              digest: 5c05c04b0c154b57aed8809bba4a456224e9f73ee22cbc43f894abe5a06cb316
+              quote: "`id` | string, required | A unique identifier for the deal as passed in the initial push that this response is referring to. This should always be the same id as `deal.id`"
+            - ir: field:object-buyerstatus:buyerseatid
+              digest: 2ae010783c34370a10304479cc9eef7d4b338ba61f035c1d234a907165ef3517
+              quote: "`buyerseatid` | string | Seat ID in the buying system that the response refers to"
+      - { name: format-id, absent: true }
+  - { name: reference, absent: true }
+  - name: text
+    concepts:
+      - name: text
+        sources:
+          spec:
+            - ir: field:object-deal:name
+              digest: aafbf8178f16173d1bb333bc69b942832a17100d282908c02d766ca4442dd0e7
+              quote: "`name` | string, recommended | Name of the deal as created in the origin system. Note: This name may be displayed to the buyer. The person inputting the deal into the `origin` system should consider that when setting up the deal."
+            - ir: field:object-deal:desc
+              digest: 9e98c8164cc05f0999a8fe6d5ffefaf8b0807ba21750e1875ba69cc5740f6410
+              quote: "`desc` | string | Short description for the deal to help the receiver locate the deal once it has been sent. It is strongly recommended to keep this field to 250 characters or less."
+  - name: network
+    concepts:
+      - { name: url, absent: true }
+      - name: domain-name
+        sources:
+          spec:
+            - ir: field:object-deal:origin
+              digest: ce99360cea2bbe7a1ce0062398ecda06b2329079842d82cca3fc60bf41fa6a47
+              quote: "`origin` | string, required | The advertising system domain of the business entity that will receive bid responses for the deal, typically the SSP hosting the API."
+            - ir: field:object-deal:seller
+              digest: 340feab53f097fa9b7675d9a9ee782b92c911a70cbc87d953d9454ae7236741d
+              quote: "`seller` | string, recommended | Canonical domain of the business entity who sold the deal. This may be the same as the origin or curator, but it also could be any intermediate seller. See Implementation Guidance for additional detail"
+            - ir: field:object-curation:curator
+              digest: 526328206505761bd3a8da9bf7a66e2af9fe4ec6cbe02fbfce0db4484aae11c4
+              quote: "`curator` | string | Canonical domain of the business entity that did the packaging of inventory, technology and/or data. Most often, this will be the seller of the deal."
+            - ir: field:object-inventory:sitedomains
+              digest: de6ddbd885bf947a9fc3fd819ff72501645828f9cdf1e68654b4a5512bf03475
+              quote: "`sitedomains` | string array | An array containing one or more site domain(s). An empty list implies the deal may run across many unspecified site domain(s)."
+  - name: money
+    concepts:
+      - name: amount
+        sources:
+          spec:
+            - ir: field:object-terms:dealfloor
+              digest: 4884dfb2518a4b08a4ba8ea197f13ab31af115ad8fc6b33e403f3ad44ca50b05
+              quote: "`dealfloor` | float | Minimum bid for impressions for this deal expressed in CPM. Unless `pricetype` is Fixed, this should be used as guidance to buyers. See Implementation Guidance for additional detail"
+            - ir: field:object-terms:totalcost
+              digest: d99b424a4b4835aa25da211b0ddc98b0b34b83535b9a62fde60a50ba06494fb6
+              quote: "`totalcost` | float | The total cost over the specified start and end date of the deal. If the deal is guaranteed, this value should be provided. If the deal is not guaranteed this may be omitted. See Implementation Guidance for additional detail"
+        requires:
+          member: cur
+          decision: D-005
+          lacking: []
+      - { name: price-adjustment, absent: true }
+      - { name: option-price-delta, absent: true }
+      - name: currency
+        sources:
+          spec:
+            - ir: field:object-terms:cur
+              digest: b5e0a9eb31eac74f657557986f97aae80b5be5963393228c78cf24e65fc31c61
+              quote: "`cur` | string; default \"USD\" | Bid currency using ISO-4217 alpha codes."
+  - name: place
+    concepts:
+      - name: country
+        sources:
+          spec:
+            - ir: field:object-terms:countries
+              digest: 2163f6ca4661e298607dfcb0835a31140673ce8edde999f59c94ea2df16fdb2b
+              quote: "`countries` | string array | An array of country codes in which the deal is available, where country code is a string using ISO-3166-3. If this is empty or missing, the deal is assumed to apply to all countries."
+  - { name: ratio, absent: true }
+  - name: quantity
+    concepts:
+      - name: count
+        sources:
+          spec:
+            - ir: field:object-terms:units
+              digest: e9a8fe666cbf1b98dc9f22407b967fe7368d45ad3d3b0d5c75ea8ab993a9b2a8
+              quote: "`units` | int | Number of units (impressions) over the specified start and end date of the deal. If the deal is guaranteed, this number should be provided. If the deal is not guaranteed this may be omitted."
+      - { name: measure, absent: true }
+  - name: time
+    concepts:
+      - { name: instant, absent: true }
+      - name: utc-instant
+        sources:
+          spec:
+            - ir: field:object-deal:created
+              digest: edccdff06879d2e97652451b19dc5a523065afac87cdadf68497a78d1d010aed
+              quote: "`created` | string | UTC timestamp in seconds in ISO-8601 of when the deal was created in the Origin system"
+            - ir: field:object-terms:startdate
+              digest: 85cee5c323064ae0d44601eb24a57193a06b0a3879007fb20de0438a49bc431a
+              quote: "`startdate` | string | UTC timestamp in seconds in ISO-8601 of when the deal starts"
+            - ir: field:object-terms:enddate
+              digest: 387ca29773be1a3d68d1bcb46828acd2358f734e8fdef410b3cdef98fb144af4
+              quote: "`enddate` | string | UTC timestamp in seconds in ISO-8601 of when the deal ends. Evergreen or always on deals should leave this field blank."
+      - { name: duration, absent: true }
+      - { name: daypart-window, absent: true }
+      - { name: time-zone, absent: true }
+  - name: term
+    concepts:
+      - { name: namespaced-term, absent: true }
+      - name: vendor-code
+  - { name: media, absent: true }
+  - name: extension
+    concepts:
+      - name: extension
+        sources:
+          spec:
+            - ir: field:object-deal:ext
+              digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+              quote: "`ext` | object | Placeholder for deal-specific extensions"
+            - ir: field:object-terms:ext
+              digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+              quote: "`ext` | object | Placeholder for deal-specific extensions"
+            - ir: field:object-inventory:ext
+              digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+              quote: "`ext` | object | Placeholder for deal-specific extensions"
+            - ir: field:object-curation:ext
+              digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+              quote: "`ext` | object | Placeholder for deal-specific extensions"
+            - ir: field:object-buyerseat:ext
+              digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+              quote: "`ext` | object | Placeholder for deal-specific extensions"
+            - ir: field:object-buyerstatus:ext
+              digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+              quote: "`ext` | object | Placeholder for deal-specific extensions"
+  - name: flag
+    concepts:
+      - { name: flag, absent: true }
+      - name: integer-flag
+        sources:
+          spec:
+            - ir: field:object-terms:guar
+              digest: 372ad02a0bfed4c5e8dca1c18389f2ccccefa680f7850c8a8664e06eb7b81219
+              quote: "`guar` | int | Indicates that the deal is of type guaranteed and the bidder must bid on the deal, where 0 = not a guaranteed deal, 1 = guaranteed deal."
+homonyms: []
+bases: []
+shared_structures:
+  - concepts: [external-id, text]
+    decisions: [D-011]
+  - concepts: [currency, country]
+    decisions: [D-004, D-005]
+  - { concepts: [amount, measure], absent: true }

@@ -26,7 +26,7 @@
 import { join } from "node:path";
 import { indexElements } from "./elements.ts";
 import type { SpecIR } from "./ir-types.ts";
-import { checkCovers, inScope, readYaml, type Cover, type DecisionRecord, type TypeRef } from "./mapping.ts";
+import { checkCovers, inScope, readYaml, type Cover, type DecisionRecord, type TypeRef, stands, retired } from "./mapping.ts";
 import type { ModelDoc, ModelProperty, ModelType } from "./model.ts";
 import type { SharedStructures } from "./duplication.ts";
 import { compileSchema } from "./pipeline.ts";
@@ -150,7 +150,7 @@ export function checkDomains(d: Domains, kernel: KernelType[], decisions: Decisi
   const cites = (where: string, id: string) => {
     const x = decided.get(id);
     if (!x) problems.push(`${where}: cites decision "${id}", which doesn't exist`);
-    else if (x.status === "superseded") problems.push(`${where}: cites "${id}", which is superseded by "${x.superseded_by}"`);
+    else if (!stands(x)) problems.push(`${where}: cites "${id}", which is ${retired(x)}`);
   };
   const domains = new Set<string>();
   const concepts = new Set<string>();

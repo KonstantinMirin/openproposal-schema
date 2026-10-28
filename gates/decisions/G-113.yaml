@@ -1,0 +1,35 @@
+format: 1
+id: G-113
+date: 2026-10-28
+question: What changes in the gates when a third spec, the Deals API, joins with only its locks?
+decision: >-
+  specs/dealsapi/ holds the Deals API's profile, which says the spec has
+  reached its input stage, and its two required locks: `main` at 3028ddc,
+  the default, and the tag 1.0-202602 at 938a5d1, each with a snapshot of
+  deal1.0.md whose blob the lock pins. CI runs the input gates on both
+  locks with no clone, and the stage gate holds the folder to no file of a
+  later stage. The plugin registry gains the Deals API's plugin, which
+  holds no table layout yet and reads keywords in any case, so every gate
+  that reaches the registry is fingerprinted anew; none of their checks
+  changes. A test pins both locks' commits, blobs, and tag, and the two
+  lines the snapshots differ in. The test suite holds 498 tests, and
+  MIN_TESTS is 498.
+rationale: >-
+  No check is added or relaxed: the gates reach one more plugin through the
+  registry, and AdCOM's and OpenProposal's outputs don't change.
+accepts:
+  - { gate: comparison, fingerprint: d5fa0fba1340af12771229bc4a853ac4507dca58b2288330d713769dba44ac40 }
+  - { gate: examples-validate, fingerprint: 59cd8c8367961e4063ebb7c706d444ac25147730ab9e07d860851516807c1696 }
+  - { gate: extraction, fingerprint: d0b461d95547c7a39b5a86542b5910b1948f58a225b8ea4a126519786709ef92 }
+  - { gate: feedback, fingerprint: 867907c40a25e1fd03cac19844c3dea3c1946230fa722421d8c5784009f6ad8f }
+  - { gate: fidelity, fingerprint: 14774c4df1b5e7f08361a3ccc005511361a6966ae1cb89c5133aad9efb4362d2 }
+  - { gate: field-examples, fingerprint: 7e865bcaddf91b249b7be7581d32a40298977bb8f103e4a2df3938644ca2816e }
+  - { gate: npm-test, fingerprint: 144db301f8b09be1008b6a26878a8f17943b53a06624ea4e730265477f3f2115 }
+  - { gate: record-wording, fingerprint: 68c424053c66af1602a1f79b61dd4db02616a991ae7e42f016a2cd8cd04d2ab0 }
+  - { gate: round-trip, fingerprint: b8534644cda2be523edff661a42ea86b34984c872605bc089c3a5ec94120c50d }
+  - { gate: rule-checks, fingerprint: b331ba3d6a5898a9e9344125920097905908e097c513c90f302a31fede7baafa }
+  - { gate: site-builds, fingerprint: c2b557204c5fc18d7d8d720f92c72e92332a92142dc0864bb69154750c4b7ddc }
+  - { gate: spec-profile, fingerprint: 1318005b9768f01061bf97c977e2f8b62dbd0c17cb5cdc54538ad4984032bd4c }
+  - { gate: type-examples-generate, fingerprint: 33b630bbab364fb10f10cd3807ea042288629aef23d5cd2bc6620b9ee11c9e6e }
+  - { gate: type-examples-valid, fingerprint: d2b9f2a30251de655897f93587afc50532600d21f7e0de0aabb5f56bbd1df32f }
+  - { gate: variant-examples, fingerprint: 3da98a520a4079f4d239094780324626e91e304b8c97d1f8db365e0352f2107e }

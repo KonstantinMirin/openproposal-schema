@@ -34,8 +34,26 @@ adcom1/ folder of Prebid's openrtb (https://github.com/prebid/openrtb, at
 0d01af1), with its Go types, tests, and test data. Both are licensed under
 the Apache License 2.0.
 
+specs/dealsapi/ contains and adapts material from the Deals API 1.0
+Specification (the Deal Sync API) by IAB Tech Lab
+(https://github.com/IABTechLab/deal-api), which its repository's README
+releases under CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/):
+specs/dealsapi/spec-input/snapshots/ holds the specification text at each
+locked commit, unmodified, and the IR, mapping, decision records, and schemas
+generated from it quote and adapt it. This is an independent work, not a
+product of IAB Tech Lab, and it implies no endorsement.
+
 kernel/lists.yaml also lists the zone names of the IANA Time Zone Database
 (tzdata), which is in the public domain.
+
+kernel/sources/iso-3166-1-iso-codes-4.20.1.json is the ISO 3166-1 data file
+of the iso-codes project (https://salsa.debian.org/iso-codes-team/iso-codes,
+release 4.20.1, at commit 7462323), reproduced whole and unmodified so its
+SHA-256 can be verified, and kernel/lists.yaml lists its alpha-3 codes and
+names. The file is Copyright 2016 Dr. Tobias Quathamer, as the project's
+REUSE.toml states, and licensed under the GNU Lesser General Public License,
+version 2.1 or later, whose text is kernel/sources/iso-codes-LGPL-2.1-or-later.txt.
+The codes themselves are ISO 3166-1's; ISO 3166 is (c) ISO.
 
 kernel/sources/iso-4217-list-one-2026-09-17.xml is ISO 4217 List One as
 published by SIX Financial Information AG for the ISO 4217 Maintenance Agency,

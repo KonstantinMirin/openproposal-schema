@@ -1,0 +1,31 @@
+format: 1
+id: G-127
+date: 2026-10-28
+question: What changes when the lock comparison compares each rule's vectors by the schema file they name, not by an $id that holds the lock's schema directory?
+decision: >-
+  A rule's vectors name their schema by `$id`, and a lock other than the
+  default writes its schemas under a directory of its own, as
+  `schemas/tag-1.0-202602/`, so every rule's vectors named another `$id`
+  and the release differ reported each rule as changing its vectors though
+  no vector changed. The lock comparison now names each vector schema by
+  the emitted file's path and fragment before the differ compares the
+  rules, so a rule shows only a change of its own. The Deals API's
+  comparison of its tag with `main` shows exactly the `sellerstatus`
+  difference, the removed code 3, code 4's label, and the attribute's
+  description as the model's changes, and the narrowed schema;
+  OpenProposal's with-open-prs comparison drops eight rule entries that
+  only the path made, and five others no longer name the vectors among
+  what they change. An empty list of added elements now says "None.", as every
+  other empty section does. A test shows a rule whose vectors differ only
+  by the path shows no change, and one whose vector changes, or whose
+  vectors name another file or definition, still does, and that an empty
+  added section says so. The test suite
+  holds 531 tests, and MIN_TESTS is 531.
+rationale: >-
+  No check is relaxed: the differ still compares every vector, statement,
+  severity, source, and type a rule applies to. OpenProposal's two
+  with-open-prs comparison files change, by the entries the path alone
+  made; the Deals API's comparison gains its "None."; no other output of
+  any spec changes.
+accepts:
+  - { gate: npm-test, fingerprint: 14f7f8bef2cade071f954be55932ac55e7854ec9f15d868ad4e13da7acccdb6a }

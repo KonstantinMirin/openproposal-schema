@@ -2869,6 +2869,16 @@
     },
     {
       "at": "",
+      "baseline": 0,
+      "id": "IntegerFlag#/oneOf",
+      "keyword": "oneOf",
+      "mutant": 2,
+      "path": "",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/IntegerFlag",
+      "type": "IntegerFlag"
+    },
+    {
+      "at": "",
       "baseline": {},
       "id": "LineItem#/additionalProperties",
       "keyword": "additionalProperties",
@@ -3935,48 +3945,6 @@
       "type": "LineItemSummaryPlacement"
     },
     {
-      "at": "/properties/instl",
-      "baseline": {
-        "instl": true
-      },
-      "id": "LineItemSummaryPlacement#/properties/instl/type",
-      "keyword": "type",
-      "mutant": {
-        "instl": ""
-      },
-      "path": "/instl",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPlacement",
-      "type": "LineItemSummaryPlacement"
-    },
-    {
-      "at": "/properties/reward",
-      "baseline": {
-        "reward": true
-      },
-      "id": "LineItemSummaryPlacement#/properties/reward/type",
-      "keyword": "type",
-      "mutant": {
-        "reward": ""
-      },
-      "path": "/reward",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPlacement",
-      "type": "LineItemSummaryPlacement"
-    },
-    {
-      "at": "/properties/skip",
-      "baseline": {
-        "skip": true
-      },
-      "id": "LineItemSummaryPlacement#/properties/skip/type",
-      "keyword": "type",
-      "mutant": {
-        "skip": ""
-      },
-      "path": "/skip",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPlacement",
-      "type": "LineItemSummaryPlacement"
-    },
-    {
       "at": "",
       "baseline": {},
       "id": "LineItemSummaryPlacement#/type",
@@ -4669,20 +4637,6 @@
       "type": "Placement"
     },
     {
-      "at": "/properties/instl",
-      "baseline": {
-        "instl": true
-      },
-      "id": "Placement#/properties/instl/type",
-      "keyword": "type",
-      "mutant": {
-        "instl": ""
-      },
-      "path": "/instl",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/Placement",
-      "type": "Placement"
-    },
-    {
       "at": "/properties/playmethod",
       "baseline": {
         "playmethod": []
@@ -4693,34 +4647,6 @@
         "playmethod": ""
       },
       "path": "/playmethod",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/Placement",
-      "type": "Placement"
-    },
-    {
-      "at": "/properties/reward",
-      "baseline": {
-        "reward": true
-      },
-      "id": "Placement#/properties/reward/type",
-      "keyword": "type",
-      "mutant": {
-        "reward": ""
-      },
-      "path": "/reward",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/Placement",
-      "type": "Placement"
-    },
-    {
-      "at": "/properties/skip",
-      "baseline": {
-        "skip": true
-      },
-      "id": "Placement#/properties/skip/type",
-      "keyword": "type",
-      "mutant": {
-        "skip": ""
-      },
-      "path": "/skip",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/Placement",
       "type": "Placement"
     },
@@ -6737,6 +6663,13 @@
     },
     {
       "at": "",
+      "by": "oneOf",
+      "id": "IntegerFlag#/type",
+      "keyword": "type",
+      "type": "IntegerFlag"
+    },
+    {
+      "at": "",
       "by": "enum",
       "id": "LineItemStatus#/type",
       "keyword": "type",
@@ -8135,7 +8068,7 @@
           "value": {
             "channel": "video",
             "placement": {
-              "skip": true
+              "skip": 1
             }
           }
         },
@@ -8163,7 +8096,7 @@
           "value": {
             "channel": "display",
             "placement": {
-              "instl": true
+              "instl": 1
             }
           }
         },

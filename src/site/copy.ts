@@ -5,6 +5,7 @@
  * a spec's own words live with its plugin, under src/specs/<plugin>/.
  */
 import { adcomSite } from "../specs/adcom/site.ts";
+import { dealsapiSite } from "../specs/dealsapi/site.ts";
 import { openproposalSite } from "../specs/openproposal/site.ts";
 import type { SiteInputs } from "./data.ts";
 
@@ -20,7 +21,7 @@ export interface SiteCopy {
 }
 
 /** Each spec's site copy, by its plugin's name. */
-export const SITE_COPY: Readonly<Record<string, SiteCopy>> = { adcom: adcomSite, openproposal: openproposalSite };
+export const SITE_COPY: Readonly<Record<string, SiteCopy>> = { adcom: adcomSite, dealsapi: dealsapiSite, openproposal: openproposalSite };
 
 /** A spec's site copy. Throws when its plugin has none, since every spec on the site needs its own landing and How it's built pages. */
 export function siteCopyOf(inputs: Pick<SiteInputs, "plugin" | "brand">): SiteCopy {

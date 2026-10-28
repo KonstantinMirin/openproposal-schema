@@ -1,0 +1,88 @@
+{
+  "description": "The schemas as the specification writes the one point our proposal changes: a country code is any string, as the row types it, compared by exact equality, since the codes \"ISO-3166-3\" names are of countries that no longer exist. Every point the text leaves open is filled as in the schemas we propose.",
+  "format": 1,
+  "locks": [
+    {
+      "commit": "3028ddcb8d5faea44bdab272aeaa9be6b5980f81",
+      "differences": [
+        {
+          "change": "replaced",
+          "decision": "D-004",
+          "from": "CountryCode",
+          "to": "ExternalId",
+          "type": "CountryCode"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-004",
+          "from": "List<CountryCode>",
+          "member": "countries",
+          "to": "List<ExternalId>",
+          "type": "Terms"
+        }
+      ],
+      "examples": {
+        "proposed": {
+          "departure": 0,
+          "failures": 0,
+          "gap": 0,
+          "places": 0
+        },
+        "variant": {
+          "departure": 0,
+          "failures": 0,
+          "gap": 0,
+          "places": 0
+        }
+      },
+      "name": "main"
+    },
+    {
+      "commit": "938a5d1fdb5705ae53b2584c90b9eb325b71a96b",
+      "differences": [
+        {
+          "change": "replaced",
+          "decision": "D-004",
+          "from": "CountryCode",
+          "to": "ExternalId",
+          "type": "CountryCode"
+        },
+        {
+          "change": "replaced",
+          "decision": "D-004",
+          "from": "List<CountryCode>",
+          "member": "countries",
+          "to": "List<ExternalId>",
+          "type": "Terms"
+        }
+      ],
+      "examples": {
+        "proposed": {
+          "departure": 0,
+          "failures": 0,
+          "gap": 0,
+          "places": 0
+        },
+        "variant": {
+          "departure": 0,
+          "failures": 0,
+          "gap": 0,
+          "places": 0
+        }
+      },
+      "name": "tag-1.0-202602"
+    }
+  ],
+  "switches": [
+    {
+      "chosen": "iso-3166-1-alpha-3",
+      "decision": "D-004",
+      "option": "as-written",
+      "proposed": "An ISO 3166-1 alpha-3 code, such as `USA`, as OpenRTB 2.6 writes `geo.country`, checked against the codes ISO 3166-1 assigns.",
+      "question": "What is a country code in `countries`, which the text writes as \"ISO-3166-3\"?",
+      "reads": "Each of a deal's `countries` is any string, as the row types it, a code a receiver compares by exact equality, with no check that ISO 3166-1 assigns it.",
+      "written": "Any string, as the row types it: the codes ISO 3166-3 names are the four-letter codes of countries that no longer exist, which no current deal can run in, so the row's string type is all that stays."
+    }
+  ],
+  "variant": "as-written"
+}

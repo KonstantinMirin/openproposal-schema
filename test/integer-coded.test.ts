@@ -35,7 +35,11 @@ test("an integer-coded vocabulary is type integer with a titled const branch per
 test("an extension that would match a code leaves the code to its own branch, so each value matches one branch", () => {
   const start = LISTS.$defs.StartDelayMode!;
   const ext = (start.oneOf as Record<string, unknown>[]).at(-1)!;
-  assert.deepEqual(ext.not, { enum: [0] });
+  assert.deepEqual(ext.not, { const: 0 });
+  // No enum anywhere in the file holds an integer.
+  const enums: unknown[][] = [];
+  JSON.stringify(LISTS, (k, v) => (k === "enum" && Array.isArray(v) ? (enums.push(v), v) : v));
+  assert.deepEqual(enums.filter((e) => e.some((x) => Number.isInteger(x))), []);
   const v = validator("StartDelayMode");
   for (const [x, ok] of [[0, true], [-1, true], [-2, true], [5, true], [-3, false], [1.5, false]] as const) assert.equal(v(x), ok, String(x));
 });
@@ -57,4 +61,55 @@ test("a list's code names are unique and readable: a class two codes share is no
     const titles = (def.oneOf as Record<string, unknown>[]).filter((b) => "const" in b).map((b) => String(b.title));
     assert.equal(new Set(titles).size, titles.length, name);
   }
+});
+
+test("§ 5.2.2's reward, instl, and skip are the kernel's IntegerFlag, titled 0 (No) and 1 (Yes), in both variants with the open PRs, and main has none", async () => {
+  const { withImports } = await import("../src/imports.ts");
+  const { readdirSync } = await import("node:fs");
+  const op = join(ROOT, "specs", "openproposal", "schemas");
+  const tree = (sub: string) => {
+    const files: { path: string; schema: Record<string, unknown>; text: string }[] = [];
+    const walk = (d: string) => {
+      for (const e of readdirSync(join(op, sub, d), { withFileTypes: true })) {
+        const rel = d === "" ? e.name : `${d}/${e.name}`;
+        if (e.isDirectory()) walk(rel);
+        else if (e.name.endsWith(".json") && e.name !== "release.json") {
+          const text = readFileSync(join(op, sub, rel), "utf8");
+          files.push({ path: rel, schema: JSON.parse(text), text });
+        }
+      }
+    };
+    for (const d of ["kernel", "modules", "documents"]) walk(d);
+    return files;
+  };
+  for (const sub of ["with-open-prs", join("as-written", "with-open-prs")]) {
+    const a = new Ajv2020({ strict: true, allErrors: true });
+    installFormats(a);
+    for (const f of withImports(tree(sub))) a.addSchema(f.schema);
+    const kernel = tree(sub).find((f) => f.path === "kernel/1/kernel.json")!.schema as { $id: string; $defs: Record<string, Record<string, unknown>> };
+    assert.deepEqual(kernel.$defs.IntegerFlag!.oneOf, [{ const: 0, title: "No" }, { const: 1, title: "Yes" }], sub);
+    const inventory = tree(sub).find((f) => f.path === "modules/inventory/1/inventory.json")!.schema as { $id: string };
+    const placement = a.getSchema(`${inventory.$id}#/$defs/Placement`)!;
+    for (const key of ["reward", "instl", "skip"]) {
+      for (const [x, ok] of [[0, true], [1, true], [true, false], [false, false], [2, false], [-1, false], ["1", false]] as const) assert.equal(placement({ [key]: x }), ok, `${sub} ${key}=${JSON.stringify(x)}`);
+    }
+  }
+  // main writes no § 5.2.2 keys, so it has no flag of this kind.
+  assert.doesNotMatch(readFileSync(join(op, "kernel", "1", "kernel.json"), "utf8"), /IntegerFlag/);
+});
+
+test("titled codes are an integer type and two or more titled integer consts, each code and title once, and nothing else", async () => {
+  const { isTitledCodes } = await import("../src/conventions.ts");
+  const ok = { type: "integer", oneOf: [{ const: 0, title: "No" }, { const: 1, title: "Yes", description: "A yes." }] };
+  assert.equal(isTitledCodes(ok), true);
+  for (const bad of [
+    { ...ok, type: "string" },
+    { ...ok, oneOf: [{ const: 0, title: "No" }] },
+    { ...ok, oneOf: [{ const: 0, title: "No" }, { const: 1 }] },
+    { ...ok, oneOf: [{ const: 0, title: "No" }, { const: 0, title: "Yes" }] },
+    { ...ok, oneOf: [{ const: 0, title: "No" }, { const: 1, title: "No" }] },
+    { ...ok, oneOf: [{ const: 0, title: "No" }, { const: 1.5, title: "Yes" }] },
+    { ...ok, oneOf: [{ const: 0, title: "No" }, { const: 1, title: "Yes", minimum: 0 }] },
+    { ...ok, oneOf: [{ const: 0, title: "No" }, { type: "integer", minimum: 500, title: "Vendor-specific" }] },
+  ]) assert.equal(isTitledCodes(bad), false, JSON.stringify(bad));
 });

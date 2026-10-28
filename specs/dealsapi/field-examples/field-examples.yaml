@@ -1,0 +1,110 @@
+# Per-field example values for readers' example payloads (src/field-examples.ts).
+# Each entry names a member by the IR element its property rests on and the member's name,
+# for a member the specification's examples give no value. The values are for the type
+# examples only, not conformance vectors; the type-examples gate checks each one against the
+# member's emitted schema and the rules, and fails on one the specification's examples now
+# give, or whose element or member no longer exists. A second value is for a second option.
+format: 1
+fields:
+  # Deal ----------------------------------------------------------------------------
+  - ir: field:object-deal:id
+    member: id
+    values: [ ssp-deal-2026-q4-0193 ]
+  - ir: field:object-deal:name
+    member: name
+    values: [ "Business news, US and Canada, Q4 2026" ]
+  - ir: field:object-deal:created
+    member: created
+    values: [ "2026-10-15T09:30:00Z" ]
+  - ir: field:object-deal:origin
+    member: origin
+    values: [ examplessp.example ]
+  - ir: field:object-deal:seller
+    member: seller
+    values: [ examplepub.example ]
+  - ir: field:object-deal:desc
+    member: desc
+    values: [ "Weekday business news readers on desktop and mobile web and in the publisher's app." ]
+  - ir: field:object-deal:bseat
+    member: bseat
+    values: [ [ agency-seat-0007 ] ]
+  - ir: field:object-deal:adtypes
+    member: adtypes
+    values: [ [ 1, 2 ] ]
+  - ir: field:object-deal:sellerstatus
+    member: sellerstatus
+    values: [ 0 ]
+
+  # Terms ---------------------------------------------------------------------------
+  - ir: field:object-terms:startdate
+    member: startdate
+    values: [ "2026-11-01T00:00:00Z" ]
+  - ir: field:object-terms:enddate
+    member: enddate
+    values: [ "2026-12-31T23:59:59Z" ]
+  - ir: field:object-terms:countries
+    member: countries
+    values: [ [ USA, CAN ] ]
+  - ir: field:object-terms:dealfloor
+    member: dealfloor
+    values: [ 12.5 ]
+  - ir: field:object-terms:pricetype
+    member: pricetype
+    values: [ 3 ]
+  - ir: field:object-terms:units
+    member: units
+    values: [ 4000000 ]
+  - ir: field:object-terms:totalcost
+    member: totalcost
+    values: [ 50000 ]
+
+  # Inventory -----------------------------------------------------------------------
+  - ir: field:object-inventory:sellerids
+    member: sellerids
+    values: [ [ pub-88231 ] ]
+  - ir: field:object-inventory:sitedomains
+    member: sitedomains
+    values: [ [ examplepub.example ] ]
+  - ir: field:object-inventory:appbundles
+    member: appbundles
+    values: [ [ com.examplepub.news ] ]
+  - ir: field:object-inventory:cat
+    member: cat
+    values: [ [ "52", "379" ] ]
+    note: >-
+      Business and Finance and News and Politics, in the IAB Tech Lab Content
+      Taxonomy 3.0 that `cattax` 7 names.
+  - ir: field:object-inventory:cattax
+    member: cattax
+    values: [ 7 ]
+  - ir: field:object-inventory:devicetype
+    member: devicetype
+    values: [ [ 2, 4 ] ]
+  - ir: field:object-inventory:inclinventory
+    member: inclinventory
+    values: [ [ 1, 2 ] ]
+
+  # Curation ------------------------------------------------------------------------
+  - ir: field:object-curation:cdealid
+    member: cdealid
+    values: [ curator-q4-0451 ]
+  - ir: field:object-curation:curator
+    member: curator
+    values: [ examplecurator.example ]
+
+  # BuyerSeat and BuyerStatus -------------------------------------------------------
+  - ir: field:object-buyerseat:id
+    member: id
+    values: [ ssp-deal-2026-q4-0193 ]
+  - ir: field:object-buyerseat:version
+    member: version
+    values: [ "1.0" ]
+  - ir: field:object-buyerstatus:buyerseatid
+    member: buyerseatid
+    values: [ agency-seat-1042 ]
+  - ir: field:object-buyerstatus:status
+    member: status
+    values: [ 3 ]
+    note: >-
+      Ready to serve, as a programmatic guaranteed deal is once it is in a
+      campaign; the deal the examples show is guaranteed at a fixed price.

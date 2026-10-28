@@ -664,7 +664,6 @@
         "names",
         "name_cell",
         "type",
-        "marker",
         "description",
         "presence",
         "value_lists",
@@ -679,10 +678,9 @@
           "pattern": "^field:"
         },
         "owner": {
-          "enum": [
-            "proposal",
-            "line_item"
-          ]
+          "description": "The object whose rows the field row is one of, in snake case: a document of the profile, or an object another row holds.",
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
         },
         "names": {
           "type": "array",
@@ -707,6 +705,36 @@
             },
             "parsed": {
               "$ref": "#/$defs/typeExpr"
+            }
+          }
+        },
+        "type_cell": {
+          "description": "The whole Type cell, where it states the presence and the default beside the type.",
+          "type": "string",
+          "minLength": 1
+        },
+        "default": {
+          "description": "The default the Type cell states.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "raw",
+            "value"
+          ],
+          "properties": {
+            "raw": {
+              "type": "string",
+              "minLength": 1
+            },
+            "value": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                }
+              ]
             }
           }
         },

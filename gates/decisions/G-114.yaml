@@ -1,0 +1,26 @@
+format: 1
+id: G-114
+date: 2026-10-28
+question: What changes in the site gate to close the gaps an independent review of the registry references in the type map found?
+decision: >-
+  The type map's handling of a reference across hosts was checked only by
+  matching its script's text. Where such a reference opens is now the
+  router's, `registryHref` and `registryInnerHref` in assets/route.js,
+  which the tests run in Node as the site check does: a registry's
+  reference opens the registry's page, another absolute one, `http` or
+  `https`, opens nothing, and a reference inside the registry's schema to
+  one of its vocabularies opens the registry's page of it. The build's data
+  now resolves `http` references across hosts as it does `https` ones, and
+  a reference no imported registry file holds fails with the files the
+  profile imports. For each reference, the site check now also fails an
+  entry that names no vocabulary, lock, page, map, or file; a link that is
+  a bare fragment or absolute; a page at another vocabulary or lock than
+  the entry names; and a broken link inside the registry's schema, with
+  four more fixtures. The schema view labels each of its two schema trees,
+  so a reader of either toolbar knows which schema it copies.
+rationale: >-
+  Each check is new or stricter; none is relaxed. No output changes but the
+  type map's scripts.
+accepts:
+  - { gate: npm-test, fingerprint: 2b5b77189a26e9b5e3f782d7650a9db5efcbe82a56b2e6bd1e70e5cdf99b60b6 }
+  - { gate: site-builds, fingerprint: 94894d8ed261f7f91f7f9944e6e129301dfbda73f20ee698419d57eb006d7c10 }

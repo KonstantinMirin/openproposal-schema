@@ -1,0 +1,38 @@
+format: 1
+id: D-010
+status: proposed
+kind: gap
+author: agent
+question: "What does `sellerstatus` code 4 mean on the tag 1.0-202602, where it is both \"deal is complete\" and \"deal is archived\"?"
+covers:
+  - ir: field:object-deal:sellerstatus#description/values:1
+    digest: dd529e414958473bad788115a191289a0d211501f0494a03faccba4da5d71cf9
+    quote: "`0` (deal is active) | `1` (deal is paused) | `2` (deal is pending) | `3` (deal is complete (ie. selling scomplete (ie. selling system shows deal has completed)) | `4` (deal is archived (cannot be active again))"
+    locks: [main]
+  - ir: field:object-deal:sellerstatus#description/values:1
+    digest: 5ce582edd21c71a68d1eb059567e90aa167f7c8e007db7316a5ff8d2bfc494c8
+    quote: "`0` (deal is active) | `1` (deal is paused) | `2` (deal is pending) | `4` (deal is complete (ie. selling scomplete (ie. selling system shows deal has completed)) | `4` (deal is archived (cannot be active again))"
+    locks: [tag-1.0-202602]
+options:
+  - id: both
+    summary: >-
+      Code 4 holds both meanings on the tag, and no code means complete
+      alone; on `main`, the errata give complete 3 and archived 4.
+  - id: archived
+    summary: >-
+      Code 4 is archived, its last row, and complete has no code.
+chosen: both
+rationale: >-
+  The tag's table lists `4` twice, so a receiver that reads 4 can't tell a
+  completed deal from an archived one. The schema doesn't choose between
+  them: on the tag, 4's name joins both labels, and the lint reports the
+  code given twice. `main`'s errata give complete the code 3. The comparison
+  of the two locks shows the change, and every build names the lock it was
+  built from.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/938a5d1fdb5705ae53b2584c90b9eb325b71a96b/deal1.0.md#L88"
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L88"
+feedback: >-
+  Release the errata: the tag 1.0-202602 still gives 4 to both "complete"
+  and "archived". Say which release is the one of record, and bump the
+  version when a code changes.

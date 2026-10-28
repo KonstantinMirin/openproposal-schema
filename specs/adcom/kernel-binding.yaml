@@ -17,13 +17,16 @@ primitives:
   - { name: Domain, absent: true }
   - { name: FormatId, absent: true }
   - { name: CurrencyCode, absent: true }
+  - { name: CountryCode, absent: true }
   - { name: Amount, absent: true }
   - { name: PriceAdjustment, absent: true }
   - { name: PercentChange, absent: true }
   - { name: Fraction, absent: true }
   - { name: Count, absent: true }
   - { name: Measure, absent: true }
+  - { name: IntegerFlag, absent: true }
   - { name: Timestamp, absent: true }
+  - { name: UtcTimestamp, absent: true }
   - { name: Duration, absent: true }
   - { name: TimeOfDay, absent: true }
   - { name: DayName, absent: true }
@@ -42,21 +45,25 @@ parts:
   - { name: PriceDelta, absent: true }
   - { name: CatalogReference, absent: true }
   - { name: DaypartWindow, absent: true }
+  - { name: Ext, absent: true }
 domains:
   - { name: identity, absent: true }
   - { name: reference, absent: true }
   - { name: text, absent: true }
   - { name: network, absent: true }
   - { name: money, absent: true }
+  - { name: place, absent: true }
   - { name: ratio, absent: true }
   - { name: quantity, absent: true }
   - { name: time, absent: true }
   - name: term
     concepts:
       - { name: namespaced-term, absent: true }
+  - { name: extension, absent: true }
   - { name: flag, absent: true }
 homonyms: []
 bases: []
 shared_structures:
   - { concepts: [external-id, text], absent: true }
+  - { concepts: [currency, country], absent: true }
   - { concepts: [amount, measure], absent: true }

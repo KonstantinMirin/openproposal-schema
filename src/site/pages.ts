@@ -13,18 +13,16 @@ import type { DecisionRecord } from "../mapping.ts";
 import { lockNames, named, type SiteBrand } from "./config.ts";
 import { buildOf, decisionNumbers, proposalsSlug, shapedBy, sourceInfos, type SiteInputs, type VariantSlug } from "./data.ts";
 import { baseOf, esc, inline, page, prose } from "./html.ts";
+import { mapLink } from "./route.ts";
 import type { SourceInfo } from "./sources.ts";
 import { REPO_ROOT } from "../repo.ts";
+import { stands } from "../mapping.ts";
 
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
-/** A link into the type map, at a type, on a lock, in a variant, in a view, with the composition's members `open` expanded. */
-export const mapLink = (base: string, type: string, lock: string, variant: VariantSlug, view?: "schema" | "example", open?: string[]) =>
-  `${base}map.html#!/type/${encodeURIComponent(type)}?lock=${lock}&variant=${variant}&view=${view ?? "schema"}${open && open.length > 0 ? `&open=${open.map(encodeURIComponent).join(",")}` : ""}`;
-
 function counts(inputs: SiteInputs) {
-  const gaps = inputs.decisions.filter((d) => d.kind === "gap" && d.status !== "superseded").length;
-  const departures = inputs.decisions.filter((d) => d.kind === "departure" && d.status !== "superseded").length;
+  const gaps = inputs.decisions.filter((d) => d.kind === "gap" && stands(d)).length;
+  const departures = inputs.decisions.filter((d) => d.kind === "departure" && stands(d)).length;
   return { gaps, departures, total: gaps + departures };
 }
 
@@ -157,16 +155,18 @@ export function decisionGroups(inputs: SiteInputs): { title: string; asks?: stri
   const proposals = { title: "Changes we propose", asks: "Where the text or its examples settle a point, and we propose to write it differently" };
   // A spec with no feedback yet lists its gaps, then its proposals, each in ID order.
   if (!inputs.feedback) {
-    const live = inputs.decisions.filter((d) => d.status !== "superseded");
+    const live = inputs.decisions.filter((d) => stands(d));
     return [
       { title: "Points the text leaves open", asks: "Where the text leaves a point open, and a decision fills it", decisions: live.filter((d) => d.kind === "gap") },
       { ...proposals, decisions: live.filter((d) => d.kind === "departure") },
     ].filter((g) => g.decisions.length > 0);
   }
   const groups: { title: string; asks?: string; decisions: DecisionRecord[] }[] = inputs.feedback.groups.map((g) => ({ title: g.title, asks: g.asks, decisions: g.decisions.map((d) => byId.get(d.id)!) }));
-  groups.push({ ...proposals, decisions: inputs.feedback.departures.map((d) => byId.get(d.id)!) });
+  // A withdrawn change keeps its number in the feedback, and has no page here.
+  groups.push({ ...proposals, decisions: inputs.feedback.departures.filter((d) => d.withdrawn === undefined).map((d) => byId.get(d.id)!) });
   const listed = new Set(groups.flatMap((g) => g.decisions.map((d) => d.id)));
-  const rest = inputs.decisions.filter((d) => !listed.has(d.id));
+  // A record that no longer stands, superseded or withdrawn, has no page, so the index lists it nowhere.
+  const rest = inputs.decisions.filter((d) => !listed.has(d.id) && stands(d));
   if (rest.length > 0) groups.push({ title: "Not in the supporting page", decisions: rest });
   return groups;
 }

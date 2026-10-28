@@ -328,7 +328,10 @@
     var vendor = t.vendor || (t.list && t.list.vendor);
     return vendor ? "Open: a vendor-specific code, " + vendor.from + " or more, is also accepted." : "Open: a namespaced term <code>&lt;domain&gt;:&lt;term&gt;</code> is also accepted.";
   }
+  // A reference across hosts opens the registry's own page of the vocabulary it names, whatever this spec calls it.
   function refHref(ref) {
+    var across = window.MapRoute.registryHref(B.registry, ref);
+    if (across !== undefined) return across;
     var m = /#\/\$defs\/([A-Za-z0-9]+)$/.exec(ref);
     var name = m ? m[1] : null;
     if (!name) {
@@ -378,6 +381,19 @@
     $("#detail").innerHTML = h;
     renderPanel(t, em);
   }
+  // A vocabulary this spec takes from a registry: the registry's schema of it, which holds its codes and their names, with its own references opening the registry's page.
+  function registryPanel(host, reg) {
+    var p = document.createElement("p");
+    p.className = "note";
+    p.innerHTML = "The reference resolves to " + esc(reg.short) + '\'s <a href="' + esc(reg.href) + '"><code>' + esc(reg.def) + '</code></a>, in <a href="' + esc(reg.file) + '"><code>' + esc(reg.file.replace(/^\.\.\//, "")) + "</code></a> on this site, whose schema defines the codes:";
+    host.appendChild(p);
+    var box = document.createElement("div");
+    box.setAttribute("role", "group");
+    box.setAttribute("aria-label", reg.short + "'s schema of " + reg.def);
+    host.appendChild(box);
+    // Three levels open, so each branch shows its code and name.
+    window.JsonTree.render(box, reg.schema, { open: 3, refHref: function (ref) { return window.MapRoute.registryInnerHref(reg, ref); } });
+  }
   function renderPanel(t, em) {
     var host = $("#panel");
     if (state.view === "schema") {
@@ -390,8 +406,13 @@
       p.innerHTML = 'In <a href="' + esc(em.file) + '"><code>' + esc(em.file) + "</code></a>, on this site. Each <code>$ref</code> opens the type it names.";
       host.appendChild(p);
       var box = document.createElement("div");
+      box.setAttribute("role", "group");
+      box.setAttribute("aria-label", "The schema of " + t.name);
       host.appendChild(box);
       window.JsonTree.render(box, em.schema, { open: 2, refHref: refHref });
+      // A vocabulary this spec takes from a registry is a $ref to it: the registry's own schema follows.
+      var reg = typeof em.schema.$ref === "string" && window.MapRoute.registryHref(B.registry, em.schema.$ref) ? B.registry[em.schema.$ref] : null;
+      if (reg) registryPanel(host, reg);
       return;
     }
     var x = B.examples[t.name];

@@ -39,7 +39,7 @@ export const frozenReleases = defineGate<{ root: string; locks: string[] }>({
 /** The frozen releases by lock, with the decisions, and the current lock's model and rules, for a fixture to freeze. */
 export const frozenReviewed = defineGate<{ frozen: [string, Frozen[]][]; decisions: { id: string; status: string }[]; current: { model: ModelDoc; rules: RulesDoc } }>({
   id: "frozen-reviewed",
-  title: "frozen releases rest on reviewed decisions only: every decision a frozen model or its rules cite is accepted, filed, or superseded",
+  title: "frozen releases rest on reviewed decisions only: every decision a frozen model or its rules cite is accepted, filed, superseded, or withdrawn",
   code: ["src/release.ts#unreviewedDecisions"],
   check: (i) => {
     const problems = i.frozen.flatMap(([l, list]) => list.flatMap((f) => unreviewedDecisions(f.model, f.rules, i.decisions).map((p) => `${RELEASES_DIR}/${l}/${f.release.release} ${p}`)));

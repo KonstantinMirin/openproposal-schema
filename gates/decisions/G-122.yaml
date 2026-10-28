@@ -1,0 +1,74 @@
+format: 1
+id: G-122
+date: 2026-10-28
+question: What changes in the gates when the Deals API reaches its model, with its mapping, its 32 decision records, and its kernel binding?
+decision: >-
+  specs/dealsapi/ holds four mapping modules, overview, deal, buyer-seat,
+  and guidance; 32 decision records, the plan's D1 to D30 with the names of
+  the code lists and the guidance's obligations, one of them a departure,
+  the ISO 3166-1 country codes; and a kernel binding whose concepts cite the
+  rows they type, `cur` as the money's sibling. The mapping rules read a
+  field's type by what its plugin parses, so the Deals API's `string array`
+  is OpenProposal's `Array[String]`, and OpenProposal's raw types map to
+  them one to one. An owner of field rows that another owner's object field
+  holds, as `terms` holds `Object: Terms`, is a closed object named by its
+  heading (rule `held-object`), the field has it (rule
+  `held-object-field`), and it is no document; the naming check takes the
+  heading's name. `domain-row` types a field whose only value lists restate
+  its concept's type, as `guar`'s "where 0 = …, 1 = …" restates
+  `IntegerFlag`. `enum-row` reads an integer field, or a list of integers,
+  with one value list. `restated-value-list` takes two lists that both
+  label their codes as one only with the same labels, and `concept-row`
+  leaves a table whose columns are headed by member names to a decision,
+  as the Example Scenarios are partial deals. A vocabulary type entry may
+  state a vendor range, as `pricetype`'s "500 and greater", and an integer
+  list whose codes all carry labels is a labeled list, so lists of the same
+  codes and different labels are two lists; a code a list gives twice, as
+  the tag's `sellerstatus` gives 4, holds both labels. A property may carry
+  its stated default beside its type in the model. List's own vectors name
+  `ExternalId`, which every spec that binds List has, where they named
+  OpenProposal's `FormatId`. A lock's name may join its parts with a dot,
+  as `tag-1.0-202602`. The constructors format lets a part take any
+  members, as `Ext`. Three mapping fixtures run on the Deals API: a labeled
+  list read as another's restatement, a scenario row read as a concept row,
+  and a heading-named object declared by a decision. The test suite holds
+  520 tests, and MIN_TESTS is 520.
+rationale: >-
+  The new rules apply only where a text has object tables or labeled code
+  lists, which OpenProposal and AdCOM don't, so their mappings and outputs
+  are unchanged; each widened pattern admits a lock name or a part's form
+  a spec writes, and every check that read them still runs.
+accepts:
+  - { gate: comparison, fingerprint: 13be2704db9f16033d3516f59ce7fcc934f31138e474c882d54cc526be487813 }
+  - { gate: constructors-applied, fingerprint: 4d75d0bb631d8a6345e2f17b67fd4c7dfae20afefb0202cb74f087a5adb9ee3e }
+  - { gate: convention-beside-reference, fingerprint: 74c4e86bcc152cd15e17d258c84adad1731803b76d13d6c0aecd449ace082e77 }
+  - { gate: convention-inline, fingerprint: 3c95b66451283291889dc7758810884c5a4a2cca4ed2f9724f7832cfcac5e7cf }
+  - { gate: convention-keywords, fingerprint: eb1fb44543c8f75153a8f1819886487ad0b74c732a17645efa6cabdc849f0b46 }
+  - { gate: convention-layers, fingerprint: d259d89b604dc3bcd0a403c670ad3bc56799189d87685f455324d014a3684e58 }
+  - { gate: convention-lists, fingerprint: bbd185070ac1d82a846eb753495703d4d2aacba232c1511cc43c838d7bf62de3 }
+  - { gate: convention-modules, fingerprint: 2e6bcf506c39feefe1157e41dbcd7fcb00c712b8d958cb151c3115e417140b02 }
+  - { gate: convention-unions, fingerprint: 0d97a722c5fc1f3a123c9267138e4de5f2a788b4fc7c7b3d5d6e233fe97be763 }
+  - { gate: domains-homonyms, fingerprint: 4f8627ea431b9846ba225256bc5d1b5c97dfe0268a3d0e111c992dd4888d6f0d }
+  - { gate: domains-properties, fingerprint: a9357901564304cfcd5790585b1579eacf92b0b19179e5af90743222f79d2722 }
+  - { gate: duplication-kernel, fingerprint: 4490f71bce28ee7511142514d3c9ced17e090919cc639f0e77a921413cadede9 }
+  - { gate: duplication-model, fingerprint: d266196da4965c57290ffc9ae05bd4f5a5dc1443c50aa5fac5e56fe908167aae }
+  - { gate: feedback, fingerprint: 8779ea063027310fdde3fd7bb3a350f56e1857ee8f4152c7e3ee64f4de5795ca }
+  - { gate: map-drift, fingerprint: bf32905ca664f1f965ab5db2d8f4943f5075fbe5bbb9df147347ce20278d291a }
+  - { gate: mapping-bijection, fingerprint: 026102010a6b2e395e78e2f2c2eebd02175e38d4cec79dae1e4f95785777efe1 }
+  - { gate: mapping-constructors, fingerprint: 1ac16709a8e50d27a22f968442a248fd68aae21447b546f5c1ef342c51f35071 }
+  - { gate: mapping-current, fingerprint: c6b6f2a0463e6e5c115d32056196260b47eb24a43042e23f103e3e0e02b7dd1b }
+  - { gate: mapping-load, fingerprint: 95045979d1396117d8f6a5522f0225d1a51fd541186d65ea08268ebf9dbf1976 }
+  - { gate: mapping-location, fingerprint: fb78aa3e5c2e1f85ee57a65630911251934d61edcf41b1aaeb76bf48faf56f9b }
+  - { gate: mapping-names, fingerprint: 6a0136a52534ffbc4df036af5379dc98770bd4d7160ce6817257f2b3eb28409d }
+  - { gate: mapping-rules, fingerprint: 0f37fb5ccf4ed846233f1686b75fecaa1cb4538a712cb3ba3a2ae925598ff8cc }
+  - { gate: mapping-sources, fingerprint: eda59386113d7b748bacbe1b01731c188be498d73400a951442a6eec553e07f6 }
+  - { gate: model-resolves, fingerprint: 35c72da90493c61f8885b263df3b6b5ec58d82b61c95dc04c955184ebb32a84a }
+  - { gate: modules-depends, fingerprint: 8dd045c1044a665bdb03e1d278db4c2e02d746b4eb76ae6e40a3d874cc8dc0f2 }
+  - { gate: nesting, fingerprint: c4836e0a7c78b06d7fa28410a36415da9a270b3c32e6791d5d6143acb8503a37 }
+  - { gate: npm-test, fingerprint: 357d6a7cb031fe507afada08e51cd85a3f064ce6301904f33f842e921538e067 }
+  - { gate: record-wording, fingerprint: 5e5b3063c35d224a03de7ed602c9ffa32d7c4275987cbf9c7a18bb5f47fd53eb }
+  - { gate: site-builds, fingerprint: 8e86d5d71519b53f5384ca79482cb76500f865cdcc06a6c7bce2ab2454532106 }
+  - { gate: spec-profile, fingerprint: e38e4283f58759af9abc4791a43962efac520e1b5d75d70f533a6f2892612b79 }
+  - { gate: variant-check, fingerprint: 99760ed20cf24a1a26de4b6bbfbe8759abfcb84c76bfcabdf47a177fe81d18c0 }
+  - { gate: variant-diff, fingerprint: dc37c6aa475eff6da7c1f7c6c9126da7f0b277a2a071597b1f2c4c2547692d17 }
+  - { gate: variant-load, fingerprint: 5f56e016d44a70ea5776a9e1c7a689149cc5bdb596dccfa82aa0eb78a511ad64 }

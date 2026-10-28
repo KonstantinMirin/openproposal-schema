@@ -294,8 +294,10 @@ function schemeName(holder: string, t: TypeRef, x: string): string | null {
  * holds it makes it: `<Field>` for its value, `<Field>Entry` for an item of
  * its list, and `<Field>Option` for an option of its `available[]` or
  * `allowed[]`. An object that no field holds directly, such as a union
- * branch, follows no scheme. A decision the object cites may name it
- * instead, by writing the name as code.
+ * branch, follows no scheme, and neither does one the text names by its own
+ * table's heading, as the Deals API's `Object: BuyerStatus`, which mapping rule
+ * `held-object` declares. A decision the object cites may name it instead,
+ * by writing the name as code.
  */
 function nameProblems(
   entries: ReturnType<typeof inScopeEntries>,
@@ -324,6 +326,8 @@ function nameProblems(
   for (const o of objects) {
     if (seen.has(o.name)) continue;
     seen.add(o.name);
+    // An object whose own table the text heads with its name, as `Object: BuyerStatus`, is named so; its holder's name is the text's too.
+    if ("rule" in o.source && o.source.rule === "held-object") continue;
     const expected = [...new Set(holders.flatMap((h) => schemeName(h.holder, h.type, o.name) ?? []))].sort();
     if (expected.length === 0 || (expected.length === 1 && expected[0] === o.name)) continue;
     const named = decisionsOf(o.source).some((id) => {

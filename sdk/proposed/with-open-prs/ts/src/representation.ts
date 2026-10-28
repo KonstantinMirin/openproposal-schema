@@ -6,7 +6,7 @@ import { CostMethod } from "./commercial.js";
 import { TransactionMechanism, TransactionMechanismSelection } from "./execution.js";
 import { CommittedMetricsEntry } from "./guarantees.js";
 import { ContentDetail, Environment, PlcmtSubtype } from "./inventory.js";
-import { Amount, CatalogRefOr, Count, CurrencyCode, FormatId, Selectable, Text, Timestamp, Uuid } from "./kernel.js";
+import { Amount, CatalogRefOr, Count, CurrencyCode, FormatId, IntegerFlag, Selectable, Text, Timestamp, Uuid } from "./kernel.js";
 import { Channel } from "./line-item.js";
 import { LinkedExecution } from "./proposal.js";
 
@@ -45,19 +45,19 @@ export const LineItemSummaryPricingEntry: z.ZodType<LineItemSummaryPricingEntry>
 /** The `LineItemSummaryPlacement` object of the `representation` module. */
 export interface LineItemSummaryPlacement {
   /** `0` (no) | `1` (yes). The ad is interstitial or full screen */
-  instl?: boolean;
+  instl?: IntegerFlag;
   /** One value from List: Plcmt Subtypes - Video: Instream (1), Accompanying Content (2), Interstitial (3), No Content/Standalone (4), Pause (5), Screensaver (6), Overlay (7), Squeezeback (8), In-scene (9) */
   plcmt?: PlcmtSubtype;
   /** `0` (no) | `1` (yes). The user receives a reward for viewing the ad */
-  reward?: boolean;
+  reward?: IntegerFlag;
   /** Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad */
-  skip?: boolean;
+  skip?: IntegerFlag;
 }
 export const LineItemSummaryPlacement: z.ZodType<LineItemSummaryPlacement> = z.strictObject({
-  instl: z.boolean().optional(),
+  instl: IntegerFlag.optional(),
   plcmt: PlcmtSubtype.optional(),
-  reward: z.boolean().optional(),
-  skip: z.boolean().optional(),
+  reward: IntegerFlag.optional(),
+  skip: IntegerFlag.optional(),
 });
 
 /** The `LineItemSummaryPropertiesOption` object of the `representation` module. */

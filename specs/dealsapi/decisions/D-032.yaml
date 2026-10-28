@@ -1,0 +1,89 @@
+format: 1
+id: D-032
+status: proposed
+kind: gap
+author: agent
+question: "Which of the Deals API's statements bind a party, as obligations no payload shows?"
+covers:
+  - ir: rule:what-it-isnt:6dd81df9
+    digest: 43f9ab2fd8f6d7471b80436e1ebfb91e6a2cada1bb77d3aceaefc8e73c372ab1
+    quote: "Implementers are strongly encouraged to validate the conditions laid out in this deal with OpenRTB requests to ensure their expectations are being met."
+  - ir: rule:considerations:0177440b
+    digest: a6ccc6f26a8d7ce4341228dcb98aed29f0b8ae9a0800db9140abc3f2493f9a96
+    quote: "The information contained in this API should be used as a guide of what the terms that were agreed to, but they should never be used to bid without validating that information coming from the OpenRTB Bid Request is in line with the terms laid out in this API."
+  - ir: rule:considerations:e67e066e
+    digest: 556f614f44e7ea4fe20e1c9efdcc309531d5751658f328d085725802c7094a1d
+    quote: "In other words, buyers should ALWAYS apply targeting matching the terms outlined in any deal on their side."
+  - ir: rule:considerations:0e9898a0
+    digest: 944c51e5df14eb944560c2426d944adffbe5e73833e509c10e21942ef72bd8f0
+    quote: "For example, if a deal is struck for US only inventory, buyers should include that targeting in their DSP when trafficking the campaign."
+  - ir: rule:considerations:4fbe8443
+    digest: 3e98b7d96b28ce6549828984e1267819ecb8ecef4fc924055e6809226684934e
+    quote: "If bid requests continually do not match the expectations laid out in the API, a conversation should be had between the buyer and seller to continue negotiations offline."
+  - ir: rule:considerations:5f88e3d1
+    digest: 1c8c2b407bae83b31f6ce4a1b84ea589923343f9719ae22c14e62042e21cdeed
+    quote: "Deal IDs receiving requests without that information should be used rarely and closely monitored."
+  - ir: rule:object-deal:9aa65446
+    digest: a3755507a4d8044f36d82bdc040d6ff7d9a10537bbd7d86b15ec6860d050f0c6
+    quote: "The person inputting the deal into the `origin` system should consider that when setting up the deal."
+  - ir: rule:object-deal:8540a232
+    digest: a56e4671aa673d0435b3b9b34066ea331070150478b426c2c10b00f4f24d446b
+    quote: "IDs of seats and knowledge of the buyer's customers to which they refer must be coordinated between bidders and the exchange a priori."
+  - ir: rule:object-deal:8540a232-2
+    digest: ffa7e486838f6ecfe5641f7704813df302cc3f091dab68beaa98eec8e59c240b
+    quote: "IDs of seats and knowledge of the buyer's customers to which they refer must be coordinated between bidders and the exchange a priori."
+  - ir: rule:object-inventory:81ab0b3a
+    digest: 839cf61993f70a2572439e02156571e5a5367f29cd6564d39e490d787dcd5c00
+    quote: "If used, the values in this attribute must contain the same value used in transactions (i.e. OpenRTB bid requests) in the field specified by the SSP/exchange."
+  - ir: rule:matching-bid-requests-to-deals:c25bb816
+    digest: 26c2c056477f225ec1e82febee9f74e984448d723cdd9d046e4368121b0ff571
+    quote: "Conversations between implementers should be had around what attributes, if any, may be subject to change after the deal has gone live."
+  - ir: rule:matching-bid-requests-to-deals:8cd01d0a
+    digest: 9c4b2f4b4fbfd28640c66a97d0a5759fea1b89cc058e30fa03c434ca0084cdbd
+    quote: "Implementers are strongly encouraged to discuss where targeting criteria will be set."
+  - ir: rule:matching-bid-requests-to-deals:30bd062c
+    digest: e1086ddd22f051e03b6532000277cf3fc11b5d3bf196505790182d5ae5516260
+    quote: "In instances where additional targeting will be applied in the receiving system, implementers should discuss potential implicaitons to delivery if sources of targeting may differ."
+  - ir: rule:authorization:6c7eb7db
+    digest: abe6e1f6553aaac90360d43c32f74dab08cb38d42b31284fff7ced00ac3537cb
+    quote: "Supply Chain validation should always be done using Object: Supply Chain from OpenRTB."
+  - ir: rule:authorization:bb5fb360
+    digest: 47d4d816eca7615f544986911c80a79682f58302442992eab19a5db3a78cfacf
+    quote: "If this information is unavailable, implementers should proceed with extreme caution with the understanding that there is no mechanism to know if a given path is authorized to sell the inventory."
+  - ir: rule:auxiliary-data:3020f0de
+    digest: 176f1b12cff99beb65db510c35da6f2f592255ecd7a8753bf5ca4fcbf590c567
+    quote: "`auxdata` should be used whenever any non-publisher data is expected to be part of a given deal."
+  - ir: rule:auxiliary-data:bf4c5c99
+    digest: 96739fc3def87386bc52644a68bb6422e49a8f86757bf59af86d104a2e3dd308
+    quote: "While the non-publisher data entities are not named, if any company is being paid for their data and/or optimization, this value should indicate the presence of non-publisher data."
+  - ir: rule:auxiliary-data:436042a5
+    digest: 0ea9b0f012e4a791c48322642f352450bc2234d390ab453227d5d7de9664282e
+    quote: "For example, a deal starts with some additional data and expects the list of data and/or optimization services to be added or updated as the deal is in flight should use a value of 2."
+  - ir: rule:publisher-count:734470bd
+    digest: 48fdd24a313b7ff1e24d711c0da61cfa54cc7945569972aeeb8885b248187b80
+    quote: "Intermediaries should be identified using Supply Chain Validation from OpenRTB requests."
+  - ir: rule:dynamic-inventory:0af8b640
+    digest: 901e9a716b59e2c89b45a5fcd43872e6cbf24408323b70e9410671a3a66f46f6
+    quote: "Implementers are strongly encouraged to communicate and discuss the specifics of any and all inventory updates to ensure expectations are met."
+options:
+  - id: obligations
+    summary: >-
+      Each statement about what a buyer, a seller, or both do, with a deal
+      or with the bid requests it covers, is an obligation of that party,
+      with no schema keyword and no vector.
+  - id: informative
+    summary: >-
+      Each is guidance, with no conformance content.
+chosen: obligations
+rationale: >-
+  These sentences say what the parties do: buyers validate bid requests
+  against the deal and apply its targeting, sellers set `auxdata` when
+  non-publisher data is paid for, both sides coordinate seat IDs a priori.
+  None can be checked on a deal payload, so each is an obligation of the
+  party it names: the buyer, the seller, or, where both are meant, each
+  implementation.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L69"
+feedback: >-
+  Write each party's duties in capitals, and say which side each binds: many
+  say "implementers", which names both.

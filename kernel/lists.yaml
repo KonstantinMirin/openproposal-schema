@@ -5,8 +5,8 @@
 # SHA-256 of the file the URL served at that version. A vocabulary that cites
 # a list takes its terms from these codes, the fidelity oracle reads a
 # sentence that names a list with them, and a rule's check reads the codes of
-# the list its rule rests on: ISO 4217's currency codes and the IANA zone
-# names. A list that reserves codes for vendors, as AdCOM 1.0 reserves 500 and
+# the list its rule rests on: ISO 4217's currency codes, ISO 3166-1's
+# alpha-3 country codes, and the IANA zone names. A list that reserves codes for vendors, as AdCOM 1.0 reserves 500 and
 # up in some lists, says so under `vendor`. A URL that serves only the
 # keeper's latest version, as SIX serves ISO 4217's List One, names under
 # `copy` the repository's copy of the file it served at `version`, so the
@@ -210,6 +210,262 @@ lists:
       - { code: ZAR, label: "Rand" }
       - { code: ZMW, label: "Zambian Kwacha" }
       - { code: ZWG, label: "Zimbabwe Gold" }
+  - name: ISO 3166-1 alpha-3
+    standard: "ISO 3166-1, Codes for the representation of names of countries and their subdivisions: the alpha-3 codes of the officially assigned country codes, as the iso-codes project lists them in its release 4.20.1"
+    version: "4.20.1"
+    url: https://salsa.debian.org/iso-codes-team/iso-codes/-/raw/74623235ae99f6e835e1e465017ce4c544ae6b53/data/iso_3166-1.json
+    sha256: f01b812b57fba9f31ff621bf33e7c7570a01964dbeb5be2167e94decf538c89f
+    copy: kernel/sources/iso-3166-1-iso-codes-4.20.1.json
+    codes:
+      - { code: ABW, label: "Aruba" }
+      - { code: AFG, label: "Afghanistan" }
+      - { code: AGO, label: "Angola" }
+      - { code: AIA, label: "Anguilla" }
+      - { code: ALA, label: "Åland Islands" }
+      - { code: ALB, label: "Albania" }
+      - { code: AND, label: "Andorra" }
+      - { code: ARE, label: "United Arab Emirates" }
+      - { code: ARG, label: "Argentina" }
+      - { code: ARM, label: "Armenia" }
+      - { code: ASM, label: "American Samoa" }
+      - { code: ATA, label: "Antarctica" }
+      - { code: ATF, label: "French Southern Territories" }
+      - { code: ATG, label: "Antigua and Barbuda" }
+      - { code: AUS, label: "Australia" }
+      - { code: AUT, label: "Austria" }
+      - { code: AZE, label: "Azerbaijan" }
+      - { code: BDI, label: "Burundi" }
+      - { code: BEL, label: "Belgium" }
+      - { code: BEN, label: "Benin" }
+      - { code: BES, label: "Bonaire, Sint Eustatius and Saba" }
+      - { code: BFA, label: "Burkina Faso" }
+      - { code: BGD, label: "Bangladesh" }
+      - { code: BGR, label: "Bulgaria" }
+      - { code: BHR, label: "Bahrain" }
+      - { code: BHS, label: "Bahamas" }
+      - { code: BIH, label: "Bosnia and Herzegovina" }
+      - { code: BLM, label: "Saint Barthélemy" }
+      - { code: BLR, label: "Belarus" }
+      - { code: BLZ, label: "Belize" }
+      - { code: BMU, label: "Bermuda" }
+      - { code: BOL, label: "Bolivia, Plurinational State of" }
+      - { code: BRA, label: "Brazil" }
+      - { code: BRB, label: "Barbados" }
+      - { code: BRN, label: "Brunei Darussalam" }
+      - { code: BTN, label: "Bhutan" }
+      - { code: BVT, label: "Bouvet Island" }
+      - { code: BWA, label: "Botswana" }
+      - { code: CAF, label: "Central African Republic" }
+      - { code: CAN, label: "Canada" }
+      - { code: CCK, label: "Cocos (Keeling) Islands" }
+      - { code: CHE, label: "Switzerland" }
+      - { code: CHL, label: "Chile" }
+      - { code: CHN, label: "China" }
+      - { code: CIV, label: "Côte d'Ivoire" }
+      - { code: CMR, label: "Cameroon" }
+      - { code: COD, label: "Congo, The Democratic Republic of the" }
+      - { code: COG, label: "Congo" }
+      - { code: COK, label: "Cook Islands" }
+      - { code: COL, label: "Colombia" }
+      - { code: COM, label: "Comoros" }
+      - { code: CPV, label: "Cabo Verde" }
+      - { code: CRI, label: "Costa Rica" }
+      - { code: CUB, label: "Cuba" }
+      - { code: CUW, label: "Curaçao" }
+      - { code: CXR, label: "Christmas Island" }
+      - { code: CYM, label: "Cayman Islands" }
+      - { code: CYP, label: "Cyprus" }
+      - { code: CZE, label: "Czechia" }
+      - { code: DEU, label: "Germany" }
+      - { code: DJI, label: "Djibouti" }
+      - { code: DMA, label: "Dominica" }
+      - { code: DNK, label: "Denmark" }
+      - { code: DOM, label: "Dominican Republic" }
+      - { code: DZA, label: "Algeria" }
+      - { code: ECU, label: "Ecuador" }
+      - { code: EGY, label: "Egypt" }
+      - { code: ERI, label: "Eritrea" }
+      - { code: ESH, label: "Western Sahara" }
+      - { code: ESP, label: "Spain" }
+      - { code: EST, label: "Estonia" }
+      - { code: ETH, label: "Ethiopia" }
+      - { code: FIN, label: "Finland" }
+      - { code: FJI, label: "Fiji" }
+      - { code: FLK, label: "Falkland Islands (Malvinas)" }
+      - { code: FRA, label: "France" }
+      - { code: FRO, label: "Faroe Islands" }
+      - { code: FSM, label: "Micronesia, Federated States of" }
+      - { code: GAB, label: "Gabon" }
+      - { code: GBR, label: "United Kingdom" }
+      - { code: GEO, label: "Georgia" }
+      - { code: GGY, label: "Guernsey" }
+      - { code: GHA, label: "Ghana" }
+      - { code: GIB, label: "Gibraltar" }
+      - { code: GIN, label: "Guinea" }
+      - { code: GLP, label: "Guadeloupe" }
+      - { code: GMB, label: "Gambia" }
+      - { code: GNB, label: "Guinea-Bissau" }
+      - { code: GNQ, label: "Equatorial Guinea" }
+      - { code: GRC, label: "Greece" }
+      - { code: GRD, label: "Grenada" }
+      - { code: GRL, label: "Greenland" }
+      - { code: GTM, label: "Guatemala" }
+      - { code: GUF, label: "French Guiana" }
+      - { code: GUM, label: "Guam" }
+      - { code: GUY, label: "Guyana" }
+      - { code: HKG, label: "Hong Kong" }
+      - { code: HMD, label: "Heard Island and McDonald Islands" }
+      - { code: HND, label: "Honduras" }
+      - { code: HRV, label: "Croatia" }
+      - { code: HTI, label: "Haiti" }
+      - { code: HUN, label: "Hungary" }
+      - { code: IDN, label: "Indonesia" }
+      - { code: IMN, label: "Isle of Man" }
+      - { code: IND, label: "India" }
+      - { code: IOT, label: "British Indian Ocean Territory" }
+      - { code: IRL, label: "Ireland" }
+      - { code: IRN, label: "Iran, Islamic Republic of" }
+      - { code: IRQ, label: "Iraq" }
+      - { code: ISL, label: "Iceland" }
+      - { code: ISR, label: "Israel" }
+      - { code: ITA, label: "Italy" }
+      - { code: JAM, label: "Jamaica" }
+      - { code: JEY, label: "Jersey" }
+      - { code: JOR, label: "Jordan" }
+      - { code: JPN, label: "Japan" }
+      - { code: KAZ, label: "Kazakhstan" }
+      - { code: KEN, label: "Kenya" }
+      - { code: KGZ, label: "Kyrgyzstan" }
+      - { code: KHM, label: "Cambodia" }
+      - { code: KIR, label: "Kiribati" }
+      - { code: KNA, label: "Saint Kitts and Nevis" }
+      - { code: KOR, label: "Korea, Republic of" }
+      - { code: KWT, label: "Kuwait" }
+      - { code: LAO, label: "Lao People's Democratic Republic" }
+      - { code: LBN, label: "Lebanon" }
+      - { code: LBR, label: "Liberia" }
+      - { code: LBY, label: "Libya" }
+      - { code: LCA, label: "Saint Lucia" }
+      - { code: LIE, label: "Liechtenstein" }
+      - { code: LKA, label: "Sri Lanka" }
+      - { code: LSO, label: "Lesotho" }
+      - { code: LTU, label: "Lithuania" }
+      - { code: LUX, label: "Luxembourg" }
+      - { code: LVA, label: "Latvia" }
+      - { code: MAC, label: "Macao" }
+      - { code: MAF, label: "Saint Martin (French part)" }
+      - { code: MAR, label: "Morocco" }
+      - { code: MCO, label: "Monaco" }
+      - { code: MDA, label: "Moldova, Republic of" }
+      - { code: MDG, label: "Madagascar" }
+      - { code: MDV, label: "Maldives" }
+      - { code: MEX, label: "Mexico" }
+      - { code: MHL, label: "Marshall Islands" }
+      - { code: MKD, label: "North Macedonia" }
+      - { code: MLI, label: "Mali" }
+      - { code: MLT, label: "Malta" }
+      - { code: MMR, label: "Myanmar" }
+      - { code: MNE, label: "Montenegro" }
+      - { code: MNG, label: "Mongolia" }
+      - { code: MNP, label: "Northern Mariana Islands" }
+      - { code: MOZ, label: "Mozambique" }
+      - { code: MRT, label: "Mauritania" }
+      - { code: MSR, label: "Montserrat" }
+      - { code: MTQ, label: "Martinique" }
+      - { code: MUS, label: "Mauritius" }
+      - { code: MWI, label: "Malawi" }
+      - { code: MYS, label: "Malaysia" }
+      - { code: MYT, label: "Mayotte" }
+      - { code: NAM, label: "Namibia" }
+      - { code: NCL, label: "New Caledonia" }
+      - { code: NER, label: "Niger" }
+      - { code: NFK, label: "Norfolk Island" }
+      - { code: NGA, label: "Nigeria" }
+      - { code: NIC, label: "Nicaragua" }
+      - { code: NIU, label: "Niue" }
+      - { code: NLD, label: "Netherlands" }
+      - { code: NOR, label: "Norway" }
+      - { code: NPL, label: "Nepal" }
+      - { code: NRU, label: "Nauru" }
+      - { code: NZL, label: "New Zealand" }
+      - { code: OMN, label: "Oman" }
+      - { code: PAK, label: "Pakistan" }
+      - { code: PAN, label: "Panama" }
+      - { code: PCN, label: "Pitcairn" }
+      - { code: PER, label: "Peru" }
+      - { code: PHL, label: "Philippines" }
+      - { code: PLW, label: "Palau" }
+      - { code: PNG, label: "Papua New Guinea" }
+      - { code: POL, label: "Poland" }
+      - { code: PRI, label: "Puerto Rico" }
+      - { code: PRK, label: "Korea, Democratic People's Republic of" }
+      - { code: PRT, label: "Portugal" }
+      - { code: PRY, label: "Paraguay" }
+      - { code: PSE, label: "Palestine, State of" }
+      - { code: PYF, label: "French Polynesia" }
+      - { code: QAT, label: "Qatar" }
+      - { code: REU, label: "Réunion" }
+      - { code: ROU, label: "Romania" }
+      - { code: RUS, label: "Russian Federation" }
+      - { code: RWA, label: "Rwanda" }
+      - { code: SAU, label: "Saudi Arabia" }
+      - { code: SDN, label: "Sudan" }
+      - { code: SEN, label: "Senegal" }
+      - { code: SGP, label: "Singapore" }
+      - { code: SGS, label: "South Georgia and the South Sandwich Islands" }
+      - { code: SHN, label: "Saint Helena, Ascension and Tristan da Cunha" }
+      - { code: SJM, label: "Svalbard and Jan Mayen" }
+      - { code: SLB, label: "Solomon Islands" }
+      - { code: SLE, label: "Sierra Leone" }
+      - { code: SLV, label: "El Salvador" }
+      - { code: SMR, label: "San Marino" }
+      - { code: SOM, label: "Somalia" }
+      - { code: SPM, label: "Saint Pierre and Miquelon" }
+      - { code: SRB, label: "Serbia" }
+      - { code: SSD, label: "South Sudan" }
+      - { code: STP, label: "Sao Tome and Principe" }
+      - { code: SUR, label: "Suriname" }
+      - { code: SVK, label: "Slovakia" }
+      - { code: SVN, label: "Slovenia" }
+      - { code: SWE, label: "Sweden" }
+      - { code: SWZ, label: "Eswatini" }
+      - { code: SXM, label: "Sint Maarten (Dutch part)" }
+      - { code: SYC, label: "Seychelles" }
+      - { code: SYR, label: "Syrian Arab Republic" }
+      - { code: TCA, label: "Turks and Caicos Islands" }
+      - { code: TCD, label: "Chad" }
+      - { code: TGO, label: "Togo" }
+      - { code: THA, label: "Thailand" }
+      - { code: TJK, label: "Tajikistan" }
+      - { code: TKL, label: "Tokelau" }
+      - { code: TKM, label: "Turkmenistan" }
+      - { code: TLS, label: "Timor-Leste" }
+      - { code: TON, label: "Tonga" }
+      - { code: TTO, label: "Trinidad and Tobago" }
+      - { code: TUN, label: "Tunisia" }
+      - { code: TUR, label: "Türkiye" }
+      - { code: TUV, label: "Tuvalu" }
+      - { code: TWN, label: "Taiwan, Province of China" }
+      - { code: TZA, label: "Tanzania, United Republic of" }
+      - { code: UGA, label: "Uganda" }
+      - { code: UKR, label: "Ukraine" }
+      - { code: UMI, label: "United States Minor Outlying Islands" }
+      - { code: URY, label: "Uruguay" }
+      - { code: USA, label: "United States" }
+      - { code: UZB, label: "Uzbekistan" }
+      - { code: VAT, label: "Holy See (Vatican City State)" }
+      - { code: VCT, label: "Saint Vincent and the Grenadines" }
+      - { code: VEN, label: "Venezuela, Bolivarian Republic of" }
+      - { code: VGB, label: "Virgin Islands, British" }
+      - { code: VIR, label: "Virgin Islands, U.S." }
+      - { code: VNM, label: "Viet Nam" }
+      - { code: VUT, label: "Vanuatu" }
+      - { code: WLF, label: "Wallis and Futuna" }
+      - { code: WSM, label: "Samoa" }
+      - { code: YEM, label: "Yemen" }
+      - { code: ZAF, label: "South Africa" }
+      - { code: ZMB, label: "Zambia" }
+      - { code: ZWE, label: "Zimbabwe" }
   - name: IANA time zone database
     standard: "IANA Time Zone Database: the names of its zones and links, as the default build installs them from africa, antarctica, asia, australasia, europe, northamerica, southamerica, etcetera, factory, and backward"
     version: 2026e

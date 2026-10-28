@@ -131,6 +131,8 @@ export interface TextFrontEnd {
   markers?: readonly string[];
   /** The RFC 2119 keywords a sentence's prose states. */
   keywords(prose: string): Rfc2119Keyword[];
+  /** The abbreviations the text writes mid-sentence, as "i.e.", whose period ends no sentence; none unless listed. */
+  abbreviations?: readonly string[];
   /** Whether a sentence with keywords only names them, as a conventions paragraph does, and states no requirement. */
   statesConventions?(prose: string, keywords: readonly Rfc2119Keyword[]): boolean;
   /** Called with each paragraph's tokens, for a reader that collects prose. */

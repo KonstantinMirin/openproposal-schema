@@ -1,0 +1,55 @@
+format: 1
+id: D-002
+status: proposed
+kind: gap
+author: agent
+question: "How is a deal's `created`, `startdate`, and `enddate` written, when the text says \"UTC timestamp in seconds in ISO-8601\"?"
+covers:
+  - ir: field:object-deal:created
+    digest: edccdff06879d2e97652451b19dc5a523065afac87cdadf68497a78d1d010aed
+    quote: "`created` | string | UTC timestamp in seconds in ISO-8601 of when the deal was created in the Origin system"
+  - ir: field:object-terms:startdate
+    digest: 85cee5c323064ae0d44601eb24a57193a06b0a3879007fb20de0438a49bc431a
+    quote: "`startdate` | string | UTC timestamp in seconds in ISO-8601 of when the deal starts"
+  - ir: field:object-terms:enddate
+    digest: 387ca29773be1a3d68d1bcb46828acd2358f734e8fdef410b3cdef98fb144af4
+    quote: "`enddate` | string | UTC timestamp in seconds in ISO-8601 of when the deal ends. Evergreen or always on deals should leave this field blank."
+options:
+  - id: utc-rfc3339
+    summary: >-
+      An RFC 3339 date-time in UTC, the ISO 8601 profile that JSON Schema's
+      date-time format checks, such as `2026-11-02T00:00:00Z`: its offset is
+      zero, written `Z`, `+00:00`, or `-00:00`, and "in seconds" reads as
+      precise to at least the second.
+  - id: any-iso8601
+    summary: >-
+      Any ISO 8601 representation of a UTC time, such as the basic format
+      `20261102T000000Z` or a week date, which no JSON Schema format checks.
+  - id: epoch-seconds
+    summary: >-
+      A count of seconds since the Unix epoch, written in the string the row
+      types; OpenRTB 2.6 and AdCOM 1.0 count their timestamps in
+      milliseconds instead.
+chosen: utc-rfc3339
+rationale: >-
+  ISO 8601 writes a point in time in many forms, basic and extended,
+  calendar, week, and ordinal dates, and at several precisions, and the text
+  names none of them, so which form a deal writes is a point the text leaves
+  open, as it is for OpenProposal's timestamps. RFC 3339 is the profile of
+  ISO 8601 that JSON Schema's date-time format checks, and its UTC values
+  are those whose offset is zero, so the schema accepts exactly them and
+  rejects a value with any other offset, which the text's "UTC" excludes.
+  "In seconds" next to ISO 8601, which a count of seconds isn't, reads as
+  the precision: a date and a time to the second, which a fraction refines
+  and doesn't contradict. Any ISO 8601 form would leave a receiver to parse
+  every one of them; a count of seconds is no ISO 8601 value.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L87"
+  - "https://www.rfc-editor.org/rfc/rfc3339#section-5.6"
+  - "https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/1debba8001f40eb14597102dec3205afddf811d4/2.6.md#objectimp"
+feedback: >-
+  Say which form "UTC timestamp in seconds in ISO-8601" takes. ISO 8601 has
+  several, and "in seconds" could be the precision or a count of seconds
+  since the epoch, where OpenRTB 2.6 and AdCOM 1.0 count milliseconds. An
+  RFC 3339 date-time in UTC, such as `2026-11-02T00:00:00Z`, is the one
+  JSON Schema checks.

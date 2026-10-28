@@ -1,0 +1,336 @@
+{
+  "format": 1,
+  "lock": "main",
+  "commit": "3028ddcb8d5faea44bdab272aeaa9be6b5980f81",
+  "types": {
+    "AdType": {
+      "kind": "vocabulary",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/AdType",
+      "minimal": 1,
+      "full": 1
+    },
+    "Amount": {
+      "kind": "primitive",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/kernel/1/kernel.json#/$defs/Amount",
+      "minimal": 18.5,
+      "full": 18.5
+    },
+    "AuxiliaryData": {
+      "kind": "vocabulary",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/AuxiliaryData",
+      "minimal": 3,
+      "full": 3
+    },
+    "BuyerDealStatus": {
+      "kind": "vocabulary",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/buyer-seat/1/buyer-seat.json#/$defs/BuyerDealStatus",
+      "minimal": 0,
+      "full": 0
+    },
+    "BuyerSeat": {
+      "kind": "document",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/documents/1/buyer-seat.json",
+      "minimal": {
+        "id": "ssp-deal-2026-q4-0193",
+        "version": "1.0"
+      },
+      "full": {
+        "buyerstatus": [
+          {
+            "buyerseatid": "agency-seat-1042",
+            "ext": {},
+            "status": 3
+          }
+        ],
+        "ext": {},
+        "id": "ssp-deal-2026-q4-0193",
+        "version": "1.0"
+      },
+      "illustrative": [
+        {
+          "path": "/buyerstatus/0/status",
+          "note": "Ready to serve, as a programmatic guaranteed deal is once it is in a campaign; the deal the examples show is guaranteed at a fixed price."
+        }
+      ],
+      "undecided": [
+        {
+          "path": "",
+          "rule": "rule:object-buyerseat:be619ed4"
+        }
+      ]
+    },
+    "BuyerStatus": {
+      "kind": "object",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/buyer-seat/1/buyer-seat.json#/$defs/BuyerStatus",
+      "minimal": {},
+      "full": {
+        "buyerseatid": "agency-seat-1042",
+        "ext": {},
+        "status": 3
+      },
+      "illustrative": [
+        {
+          "path": "/status",
+          "note": "Ready to serve, as a programmatic guaranteed deal is once it is in a campaign; the deal the examples show is guaranteed at a fixed price."
+        }
+      ]
+    },
+    "CategoryTaxonomy": {
+      "kind": "vocabulary",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/CategoryTaxonomy",
+      "minimal": 1,
+      "full": 1
+    },
+    "Count": {
+      "kind": "primitive",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/kernel/1/kernel.json#/$defs/Count",
+      "minimal": 250000,
+      "full": 250000
+    },
+    "Curation": {
+      "kind": "object",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/Curation",
+      "minimal": {},
+      "full": {
+        "cdealid": "curator-q4-0451",
+        "curator": "examplecurator.example",
+        "curfeetype": 4,
+        "ext": {}
+      }
+    },
+    "CurationFeeType": {
+      "kind": "vocabulary",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/CurationFeeType",
+      "minimal": 4,
+      "full": 4
+    },
+    "CurrencyCode": {
+      "kind": "primitive",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/kernel/1/kernel.json#/$defs/CurrencyCode",
+      "minimal": "USD",
+      "full": "USD"
+    },
+    "Deal": {
+      "kind": "document",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/documents/1/deal.json",
+      "minimal": {
+        "id": "ssp-deal-2026-q4-0193",
+        "origin": "examplessp.example",
+        "terms": {}
+      },
+      "full": {
+        "adtypes": [
+          1,
+          2
+        ],
+        "auxdata": 3,
+        "bseat": [
+          "agency-seat-0007"
+        ],
+        "created": "2026-10-15T09:30:00Z",
+        "curation": {
+          "cdealid": "curator-q4-0451",
+          "curator": "examplecurator.example",
+          "curfeetype": 4,
+          "ext": {}
+        },
+        "desc": "Weekday business news readers on desktop and mobile web and in the publisher's app.",
+        "dinventory": 1,
+        "ext": {},
+        "id": "ssp-deal-2026-q4-0193",
+        "inventory": {
+          "appbundles": [
+            "com.examplepub.news"
+          ],
+          "cat": [
+            "52",
+            "379"
+          ],
+          "cattax": 7,
+          "devicetype": [
+            2,
+            4
+          ],
+          "ext": {},
+          "inclinventory": [
+            1,
+            2
+          ],
+          "sellerids": [
+            "pub-88231"
+          ],
+          "sitedomains": [
+            "examplepub.example"
+          ]
+        },
+        "name": "Business news, US and Canada, Q4 2026",
+        "origin": "examplessp.example",
+        "pubcount": 1,
+        "seller": "examplepub.example",
+        "sellerstatus": 0,
+        "terms": {
+          "countries": [
+            "USA",
+            "CAN"
+          ],
+          "cur": "USD",
+          "dealfloor": 12.5,
+          "enddate": "2026-12-31T23:59:59Z",
+          "ext": {},
+          "guar": 1,
+          "pricetype": 3,
+          "startdate": "2026-11-01T00:00:00Z",
+          "totalcost": 50000,
+          "units": 4000000
+        }
+      },
+      "notes": [
+        {
+          "path": "/wseat",
+          "holds": "omitted",
+          "reason": "rule:object-deal:c221f2e9: /bseat: the deal sends both `wseat` and `bseat`"
+        }
+      ],
+      "illustrative": [
+        {
+          "path": "/inventory/cat",
+          "note": "Business and Finance and News and Politics, in the IAB Tech Lab Content Taxonomy 3.0 that `cattax` 7 names."
+        }
+      ]
+    },
+    "DeviceType": {
+      "kind": "vocabulary",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/DeviceType",
+      "minimal": 1,
+      "full": 1
+    },
+    "Domain": {
+      "kind": "primitive",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/kernel/1/kernel.json#/$defs/Domain",
+      "minimal": "examplepub.example",
+      "full": "examplepub.example"
+    },
+    "DynamicInventory": {
+      "kind": "vocabulary",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/DynamicInventory",
+      "minimal": 1,
+      "full": 1
+    },
+    "Ext": {
+      "kind": "part",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/kernel/1/kernel.json#/$defs/Ext",
+      "minimal": {},
+      "full": {}
+    },
+    "ExternalId": {
+      "kind": "primitive",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/kernel/1/kernel.json#/$defs/ExternalId",
+      "minimal": "EP-104233",
+      "full": "EP-104233"
+    },
+    "IncludedInventory": {
+      "kind": "vocabulary",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/IncludedInventory",
+      "minimal": 1,
+      "full": 1
+    },
+    "IntegerFlag": {
+      "kind": "primitive",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/kernel/1/kernel.json#/$defs/IntegerFlag",
+      "minimal": 1,
+      "full": 1
+    },
+    "Inventory": {
+      "kind": "object",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/Inventory",
+      "minimal": {},
+      "full": {
+        "appbundles": [
+          "com.examplepub.news"
+        ],
+        "cat": [
+          "52",
+          "379"
+        ],
+        "cattax": 7,
+        "devicetype": [
+          2,
+          4
+        ],
+        "ext": {},
+        "inclinventory": [
+          1,
+          2
+        ],
+        "sellerids": [
+          "pub-88231"
+        ],
+        "sitedomains": [
+          "examplepub.example"
+        ]
+      },
+      "illustrative": [
+        {
+          "path": "/cat",
+          "note": "Business and Finance and News and Politics, in the IAB Tech Lab Content Taxonomy 3.0 that `cattax` 7 names."
+        }
+      ]
+    },
+    "PriceType": {
+      "kind": "vocabulary",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/PriceType",
+      "minimal": 0,
+      "full": 0
+    },
+    "PublisherCount": {
+      "kind": "vocabulary",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/PublisherCount",
+      "minimal": 1,
+      "full": 1
+    },
+    "SellerDealStatus": {
+      "kind": "vocabulary",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/SellerDealStatus",
+      "minimal": 0,
+      "full": 0
+    },
+    "Terms": {
+      "kind": "object",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/Terms",
+      "minimal": {},
+      "full": {
+        "countries": [
+          "USA",
+          "CAN"
+        ],
+        "cur": "USD",
+        "dealfloor": 12.5,
+        "enddate": "2026-12-31T23:59:59Z",
+        "ext": {},
+        "guar": 1,
+        "pricetype": 3,
+        "startdate": "2026-11-01T00:00:00Z",
+        "totalcost": 50000,
+        "units": 4000000
+      }
+    },
+    "Text": {
+      "kind": "primitive",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/kernel/1/kernel.json#/$defs/Text",
+      "minimal": "Weekday reach among business news readers in the US.",
+      "full": "Weekday reach among business news readers in the US."
+    },
+    "UtcTimestamp": {
+      "kind": "primitive",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/kernel/1/kernel.json#/$defs/UtcTimestamp",
+      "minimal": "2026-11-02T00:00:00Z",
+      "full": "2026-11-02T00:00:00Z"
+    },
+    "VendorCode": {
+      "kind": "primitive",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/kernel/1/kernel.json#/$defs/VendorCode",
+      "minimal": 500,
+      "full": 500
+    }
+  }
+}

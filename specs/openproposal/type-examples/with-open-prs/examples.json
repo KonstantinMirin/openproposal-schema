@@ -808,6 +808,12 @@
         "state": "none"
       }
     },
+    "IntegerFlag": {
+      "kind": "primitive",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/IntegerFlag",
+      "minimal": 1,
+      "full": 1
+    },
     "LineItem": {
       "kind": "document",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
@@ -1155,7 +1161,7 @@
             6,
             7
           ],
-          "instl": true,
+          "instl": 1,
           "playmethod": [
             3
           ],
@@ -1163,8 +1169,8 @@
           "refresh": {
             "min_interval_s": "PT30S"
           },
-          "reward": true,
-          "skip": true,
+          "reward": 1,
+          "skip": 0,
           "skipafter": "PT5S"
         },
         "pricing": [
@@ -1479,10 +1485,10 @@
         "line_item_id": "d2a7c5e8-4b1f-4f6a-9c3e-7e8f9a0b1c2d",
         "min_spend": 10000,
         "placement": {
-          "instl": true,
+          "instl": 1,
           "plcmt": 1,
-          "reward": true,
-          "skip": true
+          "reward": 1,
+          "skip": 0
         },
         "pricing": [
           {
@@ -1550,10 +1556,10 @@
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPlacement",
       "minimal": {},
       "full": {
-        "instl": true,
+        "instl": 1,
         "plcmt": 1,
-        "reward": true,
-        "skip": true
+        "reward": 1,
+        "skip": 0
       }
     },
     "LineItemSummaryPricingEntry": {
@@ -1777,7 +1783,7 @@
           6,
           7
         ],
-        "instl": true,
+        "instl": 1,
         "playmethod": [
           3
         ],
@@ -1785,8 +1791,8 @@
         "refresh": {
           "min_interval_s": "PT30S"
         },
-        "reward": true,
-        "skip": true,
+        "reward": 1,
+        "skip": 0,
         "skipafter": "PT5S"
       }
     },

@@ -79,7 +79,7 @@ export interface SpecProfile {
   statements?: "uppercase" | "any-case";
   features?: { markers?: boolean; appendices?: boolean; profiles?: boolean };
   /** The last pipeline stage a spec still being added has reached; absent, every stage (`STAGES`). */
-  through?: "input" | "extract" | "model";
+  through?: "input" | "extract" | "model" | "schemas";
   names: SpecNames;
   /** The registry specs whose code lists the spec takes, each at the one lock it pins (src/imports.ts). */
   imports?: SpecImport[];
@@ -89,8 +89,8 @@ export interface SpecProfile {
   file: string;
 }
 
-/** The pipeline's stages, in order: a spec's locks and snapshots, its IR, its mapping and model, and its outputs. */
-export const STAGES = ["input", "extract", "model", "outputs"] as const;
+/** The pipeline's stages, in order: a spec's locks and snapshots, its IR, its mapping and model, its schemas with its rules and their vectors, and its other outputs. */
+export const STAGES = ["input", "extract", "model", "schemas", "outputs"] as const;
 export type Stage = (typeof STAGES)[number];
 
 /** The stage a spec has reached: the one its profile names, or every stage. */
@@ -104,7 +104,8 @@ export const STAGE_ENTRIES: Readonly<Record<Stage, readonly string[]>> = {
   input: ["spec.yaml", "spec-input", "build"],
   extract: ["ir"],
   model: ["mapping", "decisions", "kernel-binding.yaml"],
-  outputs: ["vectors", "schemas", "rules", "corpus", "type-examples", "comparison", "feedback", "variants", "examples", "releases", "roundtrip", "field-examples", "plain-generator", "enum-drift"],
+  schemas: ["vectors", "schemas", "rules"],
+  outputs: ["corpus", "type-examples", "comparison", "feedback", "variants", "examples", "releases", "roundtrip", "field-examples", "plain-generator", "enum-drift"],
 };
 
 /** A spec's SDK packages. Throws for a spec with no SDK types, whose profile names none. */

@@ -1,0 +1,68 @@
+format: 1
+id: G-116
+date: 2026-10-28
+question: What changes in the gates when the extractor reads the Deals API's text, its IR is committed, and the lint gains a kind?
+decision: >-
+  The extractor reads an anchor on a line of its own, `<a name="…"></a>`,
+  which CommonMark parses as a paragraph of two inline tags, as the name of
+  the heading right after it, and fails one that a heading doesn't follow,
+  one that ends the text, and a heading named both ways. A field row may
+  carry no mutability marker, for a text whose rows have none, and may keep
+  its whole Type cell and the default it states beside the base type; the
+  IR schema's field owner is any snake-case name, and a profile's document
+  may name its section by an anchor. The Deals API's plugin reads its
+  `Attribute | Type | Description` tables as field rows owned by the object
+  their `Object:` heading names, its Type cells by the grammar of plan §
+  4.2, its `` `n` = label `` lines and its "where n = label, n = label"
+  prose as value lists, its keywords in any case with "strongly encouraged"
+  as RECOMMENDED, and its Example Scenarios table as rows of values. A code
+  span such as `inclinventory.adtype=1,2` is an expression with values
+  joined by commas. The lint gains `value_list_duplicate_code`, a list that
+  gives one value twice, and no longer reports an object field as without
+  structure where it names another owner's rows, as `terms` names `Object:
+  Terms`; neither occurs in AdCOM's or OpenProposal's text, so their IR and
+  findings are unchanged, and OpenProposal's extraction report gains the new
+  kind's row of zeros. The Deals API has its own extraction report,
+  docs/dealsapi-extraction-report.md, generated from both locks' committed
+  IR and kept current by a test. Three extraction fixtures run on the Deals
+  API's text: an anchor that names no heading, a Type cell with an unknown
+  qualifier, and an attribute table outside an Object: section. The test
+  suite holds 506 tests, and MIN_TESTS is 506.
+rationale: >-
+  The extractor accepts a form it used to reject only where the form is
+  read whole, and fails every variant of it a text could misread; the lint
+  gains a kind and narrows one check to the objects a text describes. No
+  check is relaxed for an existing spec, and their outputs don't change.
+accepts:
+  - { gate: committed-files, fingerprint: 88b730821b839b0711bca021e6efb19b37d07ee3ef7f6c7c938731242a639129 }
+  - { gate: comparison, fingerprint: 4f066715efe0b4059b6460425a5f6816aa9c49552d9f45224e75da274662febf }
+  - { gate: constructor-sources, fingerprint: e7d204e9552b5bfb78940a7bfc2cbd663a0fdebef3ac55bc440f9ecbe59cae27 }
+  - { gate: domain-sources, fingerprint: a01a043a1c61944f420dfc94bc6188773324b3ac0b0194b6dbb0119a62336b91 }
+  - { gate: enum-drift-sources, fingerprint: e47f024ffd3dd31ecb86d7cf50c19afc75c43ea90e3cea87d9c34db1d5fa7ca3 }
+  - { gate: examples-validate, fingerprint: e1e0c9ed725c9e44a7273e176698309595cf95b23ec0fb587d33096dba47529e }
+  - { gate: extraction, fingerprint: e3062fa0e4c192e4825b6b4f349383a10ebc1fdc809d270ed45ac0ff61a8396e }
+  - { gate: feedback, fingerprint: ef1f1dc7ea35439946c0c3d9a64f2f20f1ce6e546f44dceef50cdc16c97f8d0c }
+  - { gate: fidelity, fingerprint: 2590ca6b4b0f7390acd328b2e23f2c4544cf145ac1451de1889a8bbbcacf1397 }
+  - { gate: field-examples, fingerprint: 1d878a9c2a63b3d930dfde633d1700438ea7aa70fa67417c1964346dcc387c71 }
+  - { gate: kernel-load, fingerprint: 9be4fa950c31e2975f15e743a40f222388eca3dd80269c0878e852f98ae6965d }
+  - { gate: kernel-sources, fingerprint: 14e1308850429fb197ba9bc874d2658851217000e6cbb902e0e1e3b44f8df3cb }
+  - { gate: map-drift, fingerprint: 67d637f5b76660965bfcf3dd181a5aab1b5e3d267004147b0cc63d385b301151 }
+  - { gate: mapping-bijection, fingerprint: 5d658d5ed704193f518c9c7ad6f3b6c876df52f1de881dd1540c2a44eb2421e3 }
+  - { gate: mapping-current, fingerprint: 25f12b0eb00c79643f5a6ae56579d7ec310788b44f0469b1b3a2c158189a4cd5 }
+  - { gate: mapping-location, fingerprint: 8462047f8c8c1491f7cb57fc70d73c56453fb4ed906bc77df6b9f1201dde0ea5 }
+  - { gate: mapping-names, fingerprint: 891fc3b99fe4340316224745c23a671a5798335eea6b14cc02c79869904e7174 }
+  - { gate: mapping-rules, fingerprint: ae1ea1f7038733e38ab742f2718b0c1ebe236adeaa3a76ae2a2456e5eca603f5 }
+  - { gate: mapping-sources, fingerprint: c393399add551ba91de5ebbe164ad529eb4745685376cc7bcc80306c89d3fc81 }
+  - { gate: model-resolves, fingerprint: 93a18150aef023207df220175ebad50343483de76d30553f2866c00c7af3bdc3 }
+  - { gate: npm-test, fingerprint: 3609341d1d187d8cdee0c57714d5c0037d9dd477dd5344550e37372bb96f4c58 }
+  - { gate: record-wording, fingerprint: 87b04a367e22818d86693da0b7e5f906e9c1c92be0cd758e3d6d1d5535322461 }
+  - { gate: registry-agreement, fingerprint: fd6443124e84879dea3882d2f10df029c2b576e47f3b4e51684a652df4144245 }
+  - { gate: round-trip, fingerprint: 08b654050cf68dc45736dff6808e6398ea22c5a1c60efec3d9756c7c710b0615 }
+  - { gate: rule-checks, fingerprint: 2a0891aed30e739eb3783f1ae441ae26d39c48562977d0f4a9667650fa7c29e6 }
+  - { gate: rules-emit, fingerprint: d3a58619ac123cc6f00ddd790feeb827e4037850778ee20473a5e513a3f3d363 }
+  - { gate: site-builds, fingerprint: 1b0d1f6e7febd9b000f8f3612f5872b8e0e9f5c9fed310054d3120629d66c9c3 }
+  - { gate: spec-profile, fingerprint: aa5541c3fe4d0a301ec137e5773ee0490d8dbded09cb3af27215d99e93beea06 }
+  - { gate: type-examples-generate, fingerprint: c674d52da5612488341b12fd5636ece2b453d03900571f48021a2daf97bf9065 }
+  - { gate: type-examples-valid, fingerprint: d339d7e4a837c4d178435097764c2e3bac8c927c807c12b65b9454b50da8c5c2 }
+  - { gate: variant-diff, fingerprint: 4c88b8edc2dda4cbd9c5741fc94cc2351fef438d843f7de60f31fe5bc43da3b4 }
+  - { gate: variant-examples, fingerprint: b79b0a28f772c053441b39916d944370c478c2804a9fa7c708def1b101d8ca0e }

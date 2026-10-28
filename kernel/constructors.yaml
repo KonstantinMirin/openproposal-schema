@@ -207,13 +207,13 @@ constructors:
       type: array
       items: { $model: { kind: parameter, name: T } }
     vectors:
-      - arguments: { T: { kind: named, name: FormatId } }
+      - arguments: { T: { kind: named, name: ExternalId } }
         valid:
           - []
-          - ["display/300x250", "display/728x90"]
+          - ["seat-99812", "IAS"]
         invalid:
-          - ["display/300x250", 300]
-          - "display/300x250"
+          - ["seat-99812", 300]
+          - "seat-99812"
           - {}
     sources:
       design:
@@ -254,6 +254,26 @@ constructors:
           section: 7. Constructors
 
 parts:
+  - name: Ext
+    description: An object for members the specification leaves to the parties to define, such as the Deals API's `ext` on each of its objects. It takes any members, and a receiver keeps the ones it doesn't know.
+    concept: extension
+    shell:
+      type: object
+      additionalProperties: true
+    vectors:
+      valid:
+        - {}
+        - { com.example: { tier: 2 } }
+      invalid:
+        - []
+        - "ext"
+        - 1
+        - null
+    sources:
+      design:
+        - doc: docs/design/type-rules.md
+          section: 4. Named or inline
+
   - name: PriceDelta
     description: The change in price when the buyer selects an option outside `included[]`, given as exactly one of a change to the CPM, a flat change, or a change in percent.
     concept: option-price-delta

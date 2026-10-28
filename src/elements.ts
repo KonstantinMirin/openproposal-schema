@@ -81,7 +81,8 @@ export function citeText(e: Element): string {
   switch (e.kind) {
     case "field": {
       const f = e.element;
-      return cells([f.names.map((n) => code(n.path)).join(" · "), f.type.raw, f.marker, f.description.text]);
+      // A Type cell that also states the presence and the default is quoted whole.
+      return cells([f.names.map((n) => code(n.path)).join(" · "), f.type_cell ?? f.type.raw, f.marker, f.description.text]);
     }
     case "key": {
       const k = e.element;

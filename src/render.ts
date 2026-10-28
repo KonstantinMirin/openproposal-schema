@@ -12,7 +12,7 @@
  */
 import { join } from "node:path";
 import type { SpecIR } from "./ir-types.ts";
-import { inScope, readYaml, type DecisionRecord } from "./mapping.ts";
+import { inScope, readYaml, retired, stands, type DecisionRecord } from "./mapping.ts";
 import type { ModelDoc } from "./model.ts";
 import { compileSchema } from "./pipeline.ts";
 import { REPO_ROOT } from "./repo.ts";
@@ -192,6 +192,7 @@ export function checkDifferences(actual: Difference[], recorded: DifferencesFile
     }
     const decision = decisions.find((x) => x.id === r.decision);
     if (!decision) problems.push(`${recorded.file}: ${keyOf(d)} cites "${r.decision}", which is no decision record`);
+    else if (!stands(decision)) problems.push(`${recorded.file}: ${keyOf(d)} cites "${r.decision}", which is ${retired(decision)}`);
     else if (d.elements.length > 0 && !decision.covers.some((c) => inScope(c.locks, lock) && d.elements.includes(c.ir))) {
       problems.push(`${recorded.file}: ${keyOf(d)} cites ${r.decision}, which covers none of ${d.elements.join(", ")} on lock "${lock}"`);
     }

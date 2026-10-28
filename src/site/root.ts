@@ -38,7 +38,7 @@ export function rootIndex(site: SiteConfig, cards: readonly SpecCard[]): string 
       (c) => `<li class="card spec-card"><h3><a href="${c.spec}/index.html">${esc(c.name)}</a></h3>
 <p class="note">${esc(c.release)} · ${plural(c.locks.length, "input")}: ${c.locks.map(esc).join(", ")}</p>
 <p>${inline(c.summary, `${c.spec}/`)}</p>
-<p class="stats-line"><span><b>${c.types}</b> types</span> <span><b>${c.gaps}</b> open points filled</span> <span><b>${c.departures}</b> changes proposed</span></p>
+<p class="stats-line"><span><b>${c.types}</b> types</span> <span><b>${c.gaps}</b> open ${c.gaps === 1 ? "point" : "points"} filled</span> <span><b>${c.departures}</b> ${c.departures === 1 ? "change" : "changes"} proposed</span></p>
 <p class="actions"><a class="button primary" href="${c.spec}/index.html">Open ${esc(c.name)}</a><a class="button" href="${c.spec}/map.html">Type map</a>${c.registry ? `<a class="button" href="${c.spec}/registry.html">Who cites each list</a>` : ""}<a class="button" href="${c.spec}/decisions/index.html">Decisions</a></p></li>`,
     )
     .join("\n");

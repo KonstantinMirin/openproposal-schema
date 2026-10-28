@@ -26,11 +26,12 @@ import GithubSlugger from "github-slugger";
 import { allLocks } from "./builds.ts";
 import type { EmittedFile } from "./emit.ts";
 import { snapshotOf } from "./fetch.ts";
-import { importedLists } from "./imports.ts";
+import { importedLists, type ImportAllowance } from "./imports.ts";
 import type { SpecIR } from "./ir-types.ts";
 import { loadLists, type ExternalList } from "./lists.ts";
 import { repoRoot, type SpecLock } from "./lock.ts";
 import type { ModelDoc } from "./model.ts";
+import { loadDecisions, stands } from "./mapping.ts";
 import { loadProfile } from "./profile.ts";
 import { REPO_ROOT, specRoot } from "./repo.ts";
 
@@ -63,6 +64,10 @@ export interface AgreementInput {
   registries: AgreementRegistry[];
   /** Every spec on this site that imports a registry, with the lock it pins. */
   pins: { spec: string; registry: string; lock: string }[];
+  /** The citations of each imported registry that the spec's profile reads as a decision record says (`ImportAllowance`). */
+  allowances?: (ImportAllowance & { registry: string })[];
+  /** The spec's decision records: whether each stands, and the IR elements it covers, each with the locks it is on, or none for every lock. */
+  decisions?: { id: string; stands: boolean; covers: { ir: string; locks?: string[] }[] }[];
 }
 
 /** Every string of an IR, with where it is. */
@@ -84,6 +89,36 @@ export function headingSlug(line: string): string {
 export function checkAgreement(i: AgreementInput): string[] {
   const problems: string[] = [];
   const where = `${i.spec}/${i.lock}`;
+  // The IR elements a place holds: the element an IR path runs through, or every element of a text line.
+  const elementsAt = (at: string): string[] => {
+    const line = /^line (\d+)$/.exec(at);
+    if (line) {
+      const n = Number(line[1]);
+      return Object.values(i.ir).flatMap((v) => (Array.isArray(v) ? v.flatMap((e) => (e !== null && typeof e === "object" && (e as { loc?: { line?: number } }).loc?.line === n && typeof (e as { id?: unknown }).id === "string" ? [(e as { id: string }).id] : [])) : []));
+    }
+    let node: unknown = i.ir;
+    let id: string | null = null;
+    for (const k of at.split("/").filter((x) => x !== "")) {
+      if (node === null || typeof node !== "object") break;
+      node = (node as Record<string, unknown>)[k];
+      if (node !== null && typeof node === "object" && typeof (node as { id?: unknown }).id === "string") id = (node as { id: string }).id;
+    }
+    return id === null ? [] : [id];
+  };
+  // An allowance excuses a citation only where its decision stands and covers an element at the citation's place.
+  const used = new Set<ImportAllowance>();
+  // A variant's build is labeled by its lock, as "main (as-written)".
+  const lock = i.lock.split(" ")[0]!;
+  const onLock = (a: ImportAllowance) => a.locks === undefined || a.locks.includes(lock);
+  const allowed = (a: ImportAllowance, at: string): boolean => {
+    const d = (i.decisions ?? []).find((x) => x.id === a.decision);
+    return onLock(a) && d !== undefined && d.stands && elementsAt(at).some((e) => d.covers.some((c) => c.ir === e && (c.locks === undefined || c.locks.includes(lock))));
+  };
+  for (const a of i.allowances ?? []) {
+    const d = (i.decisions ?? []).find((x) => x.id === a.decision);
+    if (!d) problems.push(`${i.spec}: an allowance for ${a.registry} cites ${a.decision}, which has no decision record`);
+    else if (!d.stands) problems.push(`${i.spec}: an allowance for ${a.registry} cites ${a.decision}, which no longer stands`);
+  }
   const imported = i.registries.filter((r) => r.imported);
   // 4. One pin per registry, at a lock it has, the same across specs.
   for (const r of imported) {
@@ -98,7 +133,17 @@ export function checkAgreement(i: AgreementInput): string[] {
   const cited = new Map<string, { r: AgreementRegistry; l: ExternalList }>();
   const cite = (at: string, rest: string) => {
     const flat = rest.replace(/\s+/g, " ");
-    const hit = byLength.find((t) => new RegExp(`^${escapeRe(t.title)}(?![A-Za-z0-9/-])`, "i").test(flat));
+    let hit = byLength.find((t) => new RegExp(`^${escapeRe(t.title)}(?![A-Za-z0-9/-])`, "i").test(flat));
+    // A citation the registry titles otherwise, as "List: Device Type" or a link's "List: [Device Type]", is the list a decision reads it as.
+    if (!hit) {
+      const unbracketed = flat.replace(/\[([^\]]*)\](\([^)]*\))?/g, "$1");
+      const a = (i.allowances ?? []).find((x): x is ImportAllowance & { cites: string; means: string; registry: string } => "cites" in x && new RegExp(`^${escapeRe(x.cites)}(?![A-Za-z0-9/-])`, "i").test(unbracketed) && allowed(x, at));
+      if (a) {
+        used.add(a);
+        hit = titled.find((t) => t.r.spec === a.registry && t.title.toLowerCase() === a.means.toLowerCase());
+        if (!hit) return problems.push(`${where}: ${at} cites "${a.cites}", which ${a.decision} reads as ${a.means}, and ${a.registry} titles no such list`);
+      }
+    }
     if (!hit) return problems.push(`${where}: ${at} cites "${/^List:\s*.+?(?=\s+(?:in|and|or|that|for|respectively|each|which|from|of)\b|[.;,()]|$)/i.exec(flat)?.[0]?.trim() ?? flat.slice(0, 40)}", which no registry on this site titles`);
     if (!hit.r.imported) return problems.push(`${where}: ${at} cites ${hit.title} of ${hit.r.spec}, a registry its profile doesn't import`);
     const list = lists.find((x) => x.r === hit.r && x.l.name.toLowerCase() === hit.title.toLowerCase());
@@ -124,7 +169,11 @@ export function checkAgreement(i: AgreementInput): string[] {
           anchor = m[2]!;
         }
         if (!r.imported) problems.push(`${where}: line ${n + 1} links ${r.spec}'s text, a registry its profile doesn't import`);
-        else if (!(r.commit.startsWith(m[1]!) && m[1]!.length >= 7)) problems.push(`${where}: line ${n + 1} links ${r.spec}'s text at ${m[1]}, not at ${r.commit.slice(0, 7)}, the commit of the lock "${r.lock}" the spec pins`);
+        else if (!(r.commit.startsWith(m[1]!) && m[1]!.length >= 7)) {
+          const a = (i.allowances ?? []).find((x) => "links_at" in x && x.registry === r.spec && x.links_at === m[1] && allowed(x, `line ${n + 1}`));
+          if (a) used.add(a);
+          else problems.push(`${where}: line ${n + 1} links ${r.spec}'s text at ${m[1]}, not at ${r.commit.slice(0, 7)}, the commit of the lock "${r.lock}" the spec pins`);
+        }
         if (!anchors.has(anchor)) problems.push(`${where}: line ${n + 1} links ${r.spec}'s text at #${m[2]}, which names no section of it`);
         const s = r.sections.find((x) => x.id === anchor || x.slug === anchor);
         const list = s && lists.find((x) => x.r === r && x.l.name.toLowerCase() === s.title.replace(/\s+/g, " ").trim().toLowerCase());
@@ -179,18 +228,23 @@ export function checkAgreement(i: AgreementInput): string[] {
     if (t.open !== (r.l.vendor !== undefined || r.l.extension !== undefined)) problems.push(`${where}: ${t.name} is ${t.open ? "open" : "closed"}, where ${t.list.name} at ${r.r.lock} is ${t.open ? "closed" : "open"}`);
   }
   // 2. No emitted schema holds a registry list's codes, in an enum or in const branches; a registry's vocabulary is a `$ref`; the kernel copies no list.
+  // The vocabularies of the spec's own labeled lists, by their definitions' names, whose codes alone say nothing.
+  const ownLabeled = new Set(i.model.types.flatMap((t) => (t.kind === "vocabulary" && t.labeled === true && t.list === undefined ? [t.name] : [])));
   const walk = (node: unknown, file: string, ptr: string) => {
     if (Array.isArray(node)) node.forEach((n, k) => walk(n, file, `${ptr}/${k}`));
     else if (node !== null && typeof node === "object") {
       const o = node as Record<string, unknown>;
+      const own = ownLabeled.has(/^\/\$defs\/([^/]+)$/.exec(ptr)?.[1] ?? "");
       const branches = Array.isArray(o.oneOf) ? (o.oneOf as Record<string, unknown>[]).filter((b) => b !== null && typeof b === "object" && "const" in b) : [];
       const codes = new Set<unknown>(Array.isArray(o.enum) ? o.enum : branches.map((b) => b.const));
       const titles = new Set(branches.map((b) => norm(String(b.title ?? ""))));
       const text = norm(`${String(o.title ?? "")} ${String(o.description ?? "")}`);
       const copies = codes.size === 0 ? [] : lists.filter(({ l }) => {
         if (l.codes.length < 2 || !l.codes.every((c) => codes.has(c.code))) return false;
-        // The codes alone are evidence where a list has four or more and the node holds exactly them; else its labels or its name must be there too.
-        const exact = codes.size === l.codes.length && l.codes.length >= 4;
+        // The codes alone are evidence where a list has four or more and the node holds exactly them; else its labels or its name must be there
+        // too. A vocabulary of the spec's own list, each code with the label the text gives it, is another list of the same codes, as the Deals
+        // API's `0` = deal is active is no AdCOM Volume Normalization Mode, unless its labels or its name are the registry's.
+        const exact = !own && codes.size === l.codes.length && l.codes.length >= 4;
         const named = text.includes(norm(l.name));
         const labeled = l.codes.filter((c) => titles.has(norm(c.label ?? ""))).length * 2 >= l.codes.length;
         return exact || named || labeled;
@@ -216,11 +270,14 @@ export function checkAgreement(i: AgreementInput): string[] {
       }
     }
   }
+  for (const a of i.allowances ?? []) {
+    if (onLock(a) && !used.has(a)) problems.push(`${where}: the allowance of ${a.decision} for ${a.registry}, ${"cites" in a ? `"${a.cites}" as ${a.means}` : `links at ${a.links_at}`}, excuses no citation on this lock; remove it`);
+  }
   return [...new Set(problems)];
 }
 
 /** Every registry on this site, as a spec that imports some of them reads it, and every pin. */
-export function agreementContext(specDir: string): Pick<AgreementInput, "registries" | "pins" | "kernelLists"> {
+export function agreementContext(specDir: string): Pick<AgreementInput, "registries" | "pins" | "kernelLists" | "allowances" | "decisions"> {
   const specs = readdirSync(join(REPO_ROOT, "specs"), { withFileTypes: true }).filter((d) => d.isDirectory() && existsSync(join(REPO_ROOT, "specs", d.name, "spec.yaml"))).map((d) => d.name);
   const imports = loadProfile(specDir).imports ?? [];
   const registries: AgreementRegistry[] = specs
@@ -247,7 +304,10 @@ export function agreementContext(specDir: string): Pick<AgreementInput, "registr
   // An import of a spec that isn't a registry, or of none on this site, is a registry with no lists, so its pin is checked.
   for (const x of imports) if (!registries.some((r) => r.spec === x.spec)) registries.push({ spec: x.spec, lock: x.lock, imported: true, commit: "", locks: [], lists: [], sections: [], upstream: "", path: "" });
   const pins = specs.flatMap((s) => (loadProfile(specRoot(s)).imports ?? []).map((x) => ({ spec: s, registry: x.spec, lock: x.lock })));
-  return { registries, pins, kernelLists: loadLists(REPO_ROOT).lists };
+  const allowances = imports.flatMap((x) => (x.allowances ?? []).map((a) => ({ ...a, registry: x.spec })));
+  const decisionsDir = join(specDir, "decisions");
+  const decisions = existsSync(decisionsDir) ? loadDecisions(decisionsDir).map((d) => ({ id: d.id, stands: stands(d), covers: d.covers.map((c) => ({ ir: c.ir, ...(c.locks ? { locks: c.locks } : {}) })) })) : [];
+  return { registries, pins, kernelLists: loadLists(REPO_ROOT).lists, allowances, decisions };
 }
 
 /** A lock's specification text, line by line, from its snapshot, or none. */

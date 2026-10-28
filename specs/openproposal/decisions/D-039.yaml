@@ -1,6 +1,11 @@
 format: 1
 id: D-039
-status: proposed
+status: withdrawn
+withdrawn:
+  date: 2026-10-28
+  reason: >-
+    § 5.2.2's keys follow AdCOM 1.0, which writes `reward`, `instl`, and
+    `skip` as `0` (no) or `1` (yes). The schemas keep those integers.
 kind: departure
 author: agent
 question: How is a two-valued flag written where § 5.2.2 copies an AdCOM `0` | `1` integer?

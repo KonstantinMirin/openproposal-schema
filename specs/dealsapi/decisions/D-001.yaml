@@ -1,0 +1,79 @@
+format: 1
+id: D-001
+status: proposed
+kind: gap
+author: agent
+question: "Which sentences of the Deals API state a requirement, when the text adopts no RFC 2119 convention and writes its keywords in lowercase?"
+covers:
+  - ir: rule:what-it-isnt:ffac85fa
+    digest: 6d4605f1e87af3fd0397b41605a70c44a1e567f463cd32371f4201ade94fb21e
+    quote: "Future versions may include that functionality."
+  - ir: rule:object-deal:cc4670a1
+    digest: a98a804cceade0fd5d9d7699cb3e76fc7c8ac42817390b3243d1d7a7dad5c558
+    quote: "Note: This name may be displayed to the buyer."
+  - ir: rule:object-deal:60d8bec5
+    digest: f0aa4dc3ed22c30df5c8aeb65d76b6559a78fd930012ff28dfa56a0cdc7da19f
+    quote: "This may be the same as the origin or curator, but it also could be any intermediate seller."
+  - ir: rule:object-deal:341e94b4
+    digest: c4d277d1b9bc31755cfc97e32b61a425cfbf16d2269a9542210a5bb0d5398ea8
+    quote: "Indicates if the inventory for the deal is dynamic, meaning sites or applications included in the deal may update after the deal is live where: `0` = undisclosed `1` = inventory will NOT update once the deal goes live `2` = inventory where this deal may run is updated dynamically."
+  - ir: rule:matching-bid-requests-to-deals:fbadcee1
+    digest: 97aa0a899f44551e26104a2a5fbed67495d0071cf7021f26584cf9db4a7a680a
+    quote: "Some level of trust is required when buying any Deal ID."
+  - ir: rule:matching-bid-requests-to-deals:a165d6d3
+    digest: d1f610363456ebcd274e895a9cf1e67d59440716210873d2b99f4623a777ea01
+    quote: "However, some attributes may be subject to change over the flight of the deal."
+  - ir: rule:auxiliary-data:212f573b
+    digest: 3a2a167ccc7b0834295b6cd35947b8c969312f9c8a6620c950d1907af81b8e72
+    quote: "This attribute also communicates information about whether or not additional data layers may be applied after the deal has gone live."
+  - ir: rule:publisher-count:d6dcb5e5
+    digest: 13598652560976343954136c87735f5c7a80dff6e83bd907dcf504faff8de2f7
+    quote: "Inventory aggregation services representing multiple publishing sites may also be considered a single publisher deal."
+  - ir: rule:terms-object-1:fcbe8020
+    digest: 8d4fb46d02c74e5e90f2182fa3812628e69e160e833a2621ba989b8cfb5fdd48
+    quote: "Examples of Deal name and description so there's a reference point for a standard way of what the fields should contain"
+  - ir: rule:sending-and-receiving-information:759bca86
+    digest: c7e452ca9967bfc81eba589196b0eb8d839c6dd0d8143abfbc16d45162befb41
+    quote: "Once a deal has been sent by the origin system to the receiving system, it may query the endpoint setup by the receiving system for information about the status of the Deal."
+  - ir: rule:sending-and-receiving-information:a8824341
+    digest: 1adaf16b178fa3de326213d98b4cb71c0092a83f708cdf68e46f8c3244f90af1
+    quote: "Implementers may choose to accept incoming webhooks to their API endpoints for events."
+  - ir: rule:example-scenarios:b2ba9fd4
+    digest: 4ddceba952e5f4eb0c09d82e42ecdb7dd143c4411c573a91832c93a18eff4341
+    quote: "Data providers will not be changed, but inventory may be updated after the start of the deal."
+  - ir: rule:example-scenarios:47eab074
+    digest: afecf3017eae42128dc60488e8de37365707f88930f43acb7dbcfdae867536b2
+    quote: "They do not currently work with other data providers, but may layer them in based on deal performance."
+options:
+  - id: any-case
+    summary: >-
+      A sentence with a requirement keyword in any case, such as "must",
+      "should", "may", "required", or "recommended", is a statement with
+      that keyword's level, and "strongly encouraged" reads as recommended.
+      A sentence that uses the word in its ordinary sense, as "Some level of
+      trust is required" does, states no requirement on a deal or a party.
+  - id: uppercase
+    summary: >-
+      Only a keyword in capitals states a requirement, as in a text that
+      adopts RFC 2119; the Deals API's text then states none.
+chosen: any-case
+rationale: >-
+  The text writes every requirement in lowercase, "should be provided",
+  "must bid on the deal", and adopts no convention that reserves capitals,
+  so an uppercase-only reading would find no requirement at all. Reading
+  every keyword keeps each requirement as an element a decision can cite,
+  and its level sets a rule's severity: a should is a warning, a must an
+  error. Some sentences use the keyword in its ordinary sense: what a field
+  may hold ("This may be the same as the origin or curator"), what future
+  versions may add, what a scenario may do, or what the text allows a party
+  to choose ("Implementers may choose to accept incoming webhooks"). Each of
+  those is informative, and it is listed here.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L185"
+feedback: >-
+  State which words carry requirements: adopt RFC 2119 and BCP 14, and write
+  the keywords in capitals where a sentence states a requirement. Today
+  "must", "should", and "may" appear in lowercase both as requirements and
+  in their ordinary sense, as in "Some level of trust is required when
+  buying any Deal ID", so an implementer can't tell which sentences bind
+  them.

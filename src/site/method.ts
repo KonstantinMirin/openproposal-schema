@@ -115,3 +115,29 @@ ${legend}
 export function pipelineFigure(): string {
   return `<figure class="pipeline">${svgOf(wide(), "fig-wide", "pipe-wide")}${svgOf(tall(), "fig-tall", "pipe-tall")}<figcaption>Each step is a function of the steps before it and of the inputs we review by hand. The verification step reads the extracted text, not the mapping, so it can disagree with every step in between.</figcaption></figure>`;
 }
+
+// ---- Design notes -----------------------------------------------------------
+
+/** The design notes' entry in a How it's built page's table of contents. */
+export const DESIGN_NOTES_TOC: [string, string] = ["design", "Design notes: codes and flags"];
+
+/** A spec's own examples for the design notes: where it writes integer codes, and how its flags are written. */
+export interface DesignExamples {
+  codes: string;
+  flags: string;
+}
+
+/** The design notes every spec's How it's built page shows: how integer codes and yes-or-no flags are written, with the spec's own examples. */
+export function designNotes(x: DesignExamples): string {
+  const code = (v: unknown) => `<pre class="code"><code>${esc(JSON.stringify(v, null, 2))}</code></pre>`;
+  return `<section id="design">
+<h2>Design notes: codes and flags</h2>
+<h3>Integer codes carry their names</h3>
+<p>${x.codes} A bare <code>enum</code> of the integers says which numbers are valid, but not what they mean. So every integer code list on this site is <code>type: integer</code> and a <code>oneOf</code> of one <code>const</code> branch per code, titled with the name its row gives, as in List: Device Types:</p>
+${code({ type: "integer", oneOf: [{ const: 1, title: "Mobile/Tablet - General" }, { const: 2, title: "Personal Computer" }, { const: 3, title: "Connected TV" }] })}
+<p>It validates exactly as the <code>enum</code> would: no two branches match the same value. A reader of the schema alone sees what each code means, and a generator can name SDK constants from the titles deterministically, such as <code>CONNECTED_TV = 3</code>, with no hand-kept table. Where the text opens a vendor range, one more branch takes it: <code>{ "type": "integer", "minimum": 500, "title": "Vendor-specific" }</code>. String vocabularies keep their <code>enum</code>, since a string term already names itself.</p>
+<h3>Flags keep the encoding of their source</h3>
+<p>A yes-or-no field keeps the encoding its text gives it, and a field copied from another IAB standard keeps that standard's. OpenRTB 2.6 and its object model write flags as <code>0</code> (no) or <code>1</code> (yes), and such a field is <code>IntegerFlag</code>: two titled branches, <code>0</code> "No" and <code>1</code> "Yes". ${x.flags}</p>
+<p>The trade-off: a JSON boolean reads more naturally and can't take a third value. But a copied key that turns into a boolean must be converted at every handoff, such as when a seller builds a bid request from a proposal, and the schema then contradicts the text it cites. Following the source keeps each value as the standard it comes from writes it.</p>
+</section>`;
+}

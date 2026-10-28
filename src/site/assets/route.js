@@ -100,5 +100,20 @@
     return { route: true, state: s, changes: changes };
   }
 
-  root.MapRoute = { LOCKS: LOCKS, VARIANTS: VARIANTS, VIEWS: VIEWS, DEFAULT: DEFAULT, PARAMS: PARAMS, VALUES: VALUES, parse: parse, hashOf: hashOf };
+  // Where a reference across hosts opens: the registry's page of the vocabulary it names, from the build's
+  // registry targets, by the registry's own name; null for another absolute reference, so it opens nothing.
+  // A reference within the page's own schemas gives undefined, for the caller to resolve.
+  function registryHref(registry, ref) {
+    var t = registry && Object.prototype.hasOwnProperty.call(registry, ref) ? registry[ref] : null;
+    if (t) return t.href;
+    return /^https?:/.test(ref) ? null : undefined;
+  }
+  // Where a reference inside a registry's schema opens: a `#/$defs/<Name>` names a vocabulary of the same
+  // registry file, which the registry's type map opens at the lock the spec imports; any other opens nothing.
+  function registryInnerHref(target, ref) {
+    var m = /^#\/\$defs\/([A-Za-z0-9]+)$/.exec(ref);
+    return m ? target.map + hashOf({ type: m[1], lock: target.lock, variant: "as-written", view: "schema", open: [] }) : null;
+  }
+
+  root.MapRoute = { LOCKS: LOCKS, VARIANTS: VARIANTS, VIEWS: VIEWS, DEFAULT: DEFAULT, PARAMS: PARAMS, VALUES: VALUES, parse: parse, hashOf: hashOf, registryHref: registryHref, registryInnerHref: registryInnerHref };
 })(window);

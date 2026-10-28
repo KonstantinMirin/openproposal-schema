@@ -24,6 +24,8 @@ export const kernelLoad = defineGate<{ spec: string | null; file?: string }>({
     { name: "a kernel file that cites a spec's element", mutate: (i) => ({ ...i, file: `${ROOT}/gates/data/kernel-load/bound/primitives.yaml` }), expect: "which rest on a spec; a spec's kernel binding gives them" },
     { name: "a binding that gives a primitive's constraints", mutate: (i) => ({ ...i, spec: `${ROOT}/gates/data/kernel-load/defining` }), expect: "which the kernel defines for every spec" },
     { name: "a binding for a primitive the kernel doesn't define", mutate: (i) => ({ ...i, spec: `${ROOT}/gates/data/kernel-load/undefined` }), expect: 'the binding names "NoSuchType", which the kernel doesn\'t define' },
+    // An integer primitive whose values are a few named codes states only its titled codes.
+    { name: "titled codes with a range beside them", mutate: () => ({ spec: null, file: `${ROOT}/gates/data/kernel-load/titled-codes/primitives.yaml` }), expect: "not a valid kernel file" },
   ],
 });
 
@@ -46,6 +48,11 @@ export const kernelCheck = defineGate<{ kernel: Kernel; decisions: DecisionRecor
       name: "a currency code the copy of List One holds dropped from the list",
       mutate: (i) => ({ ...i, kernel: { ...i.kernel, lists: { ...i.kernel.lists!, lists: i.kernel.lists!.lists.map((l) => (l.name === "ISO 4217" ? { ...l, codes: l.codes.filter((c) => c.code !== "USD") } : l)) } } }),
       expect: "ISO 4217: its copy lists USD, which the list doesn't",
+    },
+    {
+      name: "ISO 3166-1's list without a code its copy holds",
+      mutate: (i) => ({ ...i, kernel: { ...i.kernel, lists: { ...i.kernel.lists!, lists: i.kernel.lists!.lists.map((l) => (l.name === "ISO 3166-1 alpha-3" ? { ...l, codes: l.codes.filter((c) => c.code !== "USA") } : l)) } } }),
+      expect: "ISO 3166-1 alpha-3: its copy lists USA, which the list doesn't",
     },
     {
       name: "a copy whose SHA-256 isn't the list's",

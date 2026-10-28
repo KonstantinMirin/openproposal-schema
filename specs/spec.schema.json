@@ -45,7 +45,7 @@
       "pattern": "^[a-z][a-z0-9-]*$"
     },
     "documents": {
-      "description": "The documents the specification's field rows describe: each row's owner, found by the top-level section the row sits in, and the document it names, the owner in PascalCase.",
+      "description": "The documents the specification's field rows describe: each row's owner, found by the section the row sits in, and the document it names, the owner in PascalCase. An owner the profile lists no document for is an object another row holds.",
       "type": "array",
       "minItems": 1,
       "items": {
@@ -66,9 +66,9 @@
             "pattern": "^[A-Z][A-Za-z0-9]*$"
           },
           "section": {
-            "description": "The top-level section number whose field rows the owner has.",
+            "description": "The section whose field rows the owner has: a top-level section number, for a text that numbers its sections, or the section's anchor, for one that anchors them.",
             "type": "string",
-            "pattern": "^[0-9]+$"
+            "pattern": "^(?:[0-9]+|[a-z][a-z0-9_-]*)$"
           }
         }
       }
@@ -83,7 +83,18 @@
         "required": ["spec", "lock"],
         "properties": {
           "spec": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
-          "lock": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }
+          "lock": { "type": "string", "pattern": "^[a-z][a-z0-9]*([-.][a-z0-9]+)*$" },
+          "allowances": {
+            "description": "Where the text cites the registry in a form the registry agreement refuses, each read as a decision record of the spec says, which must stand and cover the row the citation sits in, and must excuse a citation on some lock: a list it names other than as the registry titles it (`cites`, as the text writes it, and `means`, the registry's title), or links into the registry's text at a branch (`links_at`), not at the pinned commit.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "anyOf": [
+                { "type": "object", "additionalProperties": false, "required": ["decision", "cites", "means"], "properties": { "decision": { "type": "string", "pattern": "^D-[0-9]{3,}$" }, "cites": { "type": "string", "pattern": "^List: \\S" }, "means": { "type": "string", "pattern": "^List: \\S" }, "locks": { "$ref": "#/$defs/allowanceLocks" } } },
+                { "type": "object", "additionalProperties": false, "required": ["decision", "links_at"], "properties": { "decision": { "type": "string", "pattern": "^D-[0-9]{3,}$" }, "links_at": { "type": "string", "pattern": "^[A-Za-z0-9._/-]+$" }, "locks": { "$ref": "#/$defs/allowanceLocks" } } }
+              ]
+            }
+          }
         }
       }
     },
@@ -114,11 +125,12 @@
       }
     },
     "through": {
-      "description": "The last stage of the pipeline the spec has reached, for a spec still being added: `input`, its locks and snapshots; `extract`, its IR and findings; or `model`, its mapping, decisions, kernel binding, and model. CI runs its gates through that stage, and the spec's folder may hold no file of a later stage, and none that no stage writes. Left out, the spec has every stage, and every gate runs on it.",
+      "description": "The last stage of the pipeline the spec has reached, for a spec still being added: `input`, its locks and snapshots; `extract`, its IR and findings; `model`, its mapping, decisions, kernel binding, and model; or `schemas`, its JSON Schemas, its rules, and their vectors, which the schema, rule, fidelity, and registry-agreement gates check. CI runs its gates through that stage, and the spec's folder may hold no file of a later stage, and none that no stage writes. Left out, the spec has every stage, and every gate runs on it.",
       "enum": [
         "input",
         "extract",
-        "model"
+        "model",
+        "schemas"
       ]
     },
     "names": {
@@ -473,6 +485,15 @@
           "features"
         ]
       }
+    }
+  },
+  "$defs": {
+    "allowanceLocks": {
+      "description": "The locks whose text the allowance reads; without it, every lock's.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*([-.][a-z0-9]+)*$" }
     }
   }
 }

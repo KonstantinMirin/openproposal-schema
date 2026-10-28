@@ -1,0 +1,962 @@
+{
+  "counts": {
+    "by_kind": {
+      "must_without_field": 1,
+      "object_without_structure": 6,
+      "presence_unstated": 6,
+      "unresolved_identifier": 6,
+      "value_list_duplicate_code": 1,
+      "value_set_duplicate": 2,
+      "value_set_subset": 7
+    },
+    "by_verdict": {
+      "open": 29
+    },
+    "open": 29,
+    "total": 29
+  },
+  "findings": [
+    {
+      "details": {
+        "values": [
+          "0",
+          "1",
+          "2"
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_duplicate:0 | 1 | 2",
+      "kind": "value_set_duplicate",
+      "locs": [
+        {
+          "line": 96,
+          "row": 12,
+          "section": "object-deal",
+          "table": "table:object-deal:1"
+        },
+        {
+          "line": 97,
+          "row": 13,
+          "section": "object-deal",
+          "table": "table:object-deal:1"
+        }
+      ],
+      "message": "The value set 0 | 1 | 2 is declared 2 times.",
+      "subjects": [
+        "field:object-deal:pubcount#description/values:1",
+        "field:object-deal:dinventory#description/values:1"
+      ]
+    },
+    {
+      "details": {
+        "values": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4"
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_duplicate:0 | 1 | 2 | 3 | 4",
+      "kind": "value_set_duplicate",
+      "locs": [
+        {
+          "line": 95,
+          "row": 11,
+          "section": "object-deal",
+          "table": "table:object-deal:1"
+        },
+        {
+          "line": 145,
+          "row": 3,
+          "section": "object-curation",
+          "table": "table:object-curation:1"
+        }
+      ],
+      "message": "The value set 0 | 1 | 2 | 3 | 4 is declared 2 times.",
+      "subjects": [
+        "field:object-deal:auxdata#description/values:1",
+        "field:object-curation:curfeetype#description/values:1"
+      ]
+    },
+    {
+      "details": {
+        "subset": [
+          "0",
+          "1"
+        ],
+        "supersets": [
+          {
+            "lists": [
+              "field:object-deal:sellerstatus#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2",
+              "4"
+            ]
+          },
+          {
+            "lists": [
+              "field:object-deal:auxdata#description/values:1",
+              "field:object-curation:curfeetype#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4"
+            ]
+          },
+          {
+            "lists": [
+              "field:object-deal:pubcount#description/values:1",
+              "field:object-deal:dinventory#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2"
+            ]
+          },
+          {
+            "lists": [
+              "field:object-terms:pricetype#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2",
+              "3"
+            ]
+          },
+          {
+            "lists": [
+              "field:object-buyerstatus:status#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6"
+            ]
+          }
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_subset:0 | 1",
+      "kind": "value_set_subset",
+      "locs": [
+        {
+          "line": 113,
+          "row": 6,
+          "section": "object-terms",
+          "table": "table:object-terms:1"
+        }
+      ],
+      "message": "The value set 0 | 1 is a strict subset of 0 | 1 | 2 | 4; and of 0 | 1 | 2 | 3 | 4; and of 0 | 1 | 2; and of 0 | 1 | 2 | 3; and of 0 | 1 | 2 | 3 | 4 | 5 | 6.",
+      "subjects": [
+        "field:object-terms:guar#description/values:1",
+        "field:object-deal:sellerstatus#description/values:1",
+        "field:object-deal:auxdata#description/values:1",
+        "field:object-curation:curfeetype#description/values:1",
+        "field:object-deal:pubcount#description/values:1",
+        "field:object-deal:dinventory#description/values:1",
+        "field:object-terms:pricetype#description/values:1",
+        "field:object-buyerstatus:status#description/values:1"
+      ]
+    },
+    {
+      "details": {
+        "subset": [
+          "0",
+          "1",
+          "2"
+        ],
+        "supersets": [
+          {
+            "lists": [
+              "field:object-deal:sellerstatus#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2",
+              "4"
+            ]
+          },
+          {
+            "lists": [
+              "field:object-deal:auxdata#description/values:1",
+              "field:object-curation:curfeetype#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4"
+            ]
+          },
+          {
+            "lists": [
+              "field:object-terms:pricetype#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2",
+              "3"
+            ]
+          },
+          {
+            "lists": [
+              "field:object-buyerstatus:status#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6"
+            ]
+          }
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_subset:0 | 1 | 2",
+      "kind": "value_set_subset",
+      "locs": [
+        {
+          "line": 96,
+          "row": 12,
+          "section": "object-deal",
+          "table": "table:object-deal:1"
+        },
+        {
+          "line": 97,
+          "row": 13,
+          "section": "object-deal",
+          "table": "table:object-deal:1"
+        }
+      ],
+      "message": "The value set 0 | 1 | 2 is a strict subset of 0 | 1 | 2 | 4; and of 0 | 1 | 2 | 3 | 4; and of 0 | 1 | 2 | 3; and of 0 | 1 | 2 | 3 | 4 | 5 | 6.",
+      "subjects": [
+        "field:object-deal:pubcount#description/values:1",
+        "field:object-deal:dinventory#description/values:1",
+        "field:object-deal:sellerstatus#description/values:1",
+        "field:object-deal:auxdata#description/values:1",
+        "field:object-curation:curfeetype#description/values:1",
+        "field:object-terms:pricetype#description/values:1",
+        "field:object-buyerstatus:status#description/values:1"
+      ]
+    },
+    {
+      "details": {
+        "subset": [
+          "0",
+          "1",
+          "2",
+          "3"
+        ],
+        "supersets": [
+          {
+            "lists": [
+              "field:object-deal:auxdata#description/values:1",
+              "field:object-curation:curfeetype#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4"
+            ]
+          },
+          {
+            "lists": [
+              "field:object-buyerstatus:status#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6"
+            ]
+          }
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_subset:0 | 1 | 2 | 3",
+      "kind": "value_set_subset",
+      "locs": [
+        {
+          "line": 114,
+          "row": 7,
+          "section": "object-terms",
+          "table": "table:object-terms:1"
+        }
+      ],
+      "message": "The value set 0 | 1 | 2 | 3 is a strict subset of 0 | 1 | 2 | 3 | 4; and of 0 | 1 | 2 | 3 | 4 | 5 | 6.",
+      "subjects": [
+        "field:object-terms:pricetype#description/values:1",
+        "field:object-deal:auxdata#description/values:1",
+        "field:object-curation:curfeetype#description/values:1",
+        "field:object-buyerstatus:status#description/values:1"
+      ]
+    },
+    {
+      "details": {
+        "subset": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "supersets": [
+          {
+            "lists": [
+              "field:object-buyerstatus:status#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6"
+            ]
+          }
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_subset:0 | 1 | 2 | 3 | 4",
+      "kind": "value_set_subset",
+      "locs": [
+        {
+          "line": 95,
+          "row": 11,
+          "section": "object-deal",
+          "table": "table:object-deal:1"
+        },
+        {
+          "line": 145,
+          "row": 3,
+          "section": "object-curation",
+          "table": "table:object-curation:1"
+        }
+      ],
+      "message": "The value set 0 | 1 | 2 | 3 | 4 is a strict subset of 0 | 1 | 2 | 3 | 4 | 5 | 6.",
+      "subjects": [
+        "field:object-deal:auxdata#description/values:1",
+        "field:object-curation:curfeetype#description/values:1",
+        "field:object-buyerstatus:status#description/values:1"
+      ]
+    },
+    {
+      "details": {
+        "subset": [
+          "0",
+          "1",
+          "2",
+          "4"
+        ],
+        "supersets": [
+          {
+            "lists": [
+              "field:object-deal:auxdata#description/values:1",
+              "field:object-curation:curfeetype#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4"
+            ]
+          },
+          {
+            "lists": [
+              "field:object-buyerstatus:status#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6"
+            ]
+          }
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_subset:0 | 1 | 2 | 4",
+      "kind": "value_set_subset",
+      "locs": [
+        {
+          "line": 88,
+          "row": 4,
+          "section": "object-deal",
+          "table": "table:object-deal:1"
+        }
+      ],
+      "message": "The value set 0 | 1 | 2 | 4 is a strict subset of 0 | 1 | 2 | 3 | 4; and of 0 | 1 | 2 | 3 | 4 | 5 | 6.",
+      "subjects": [
+        "field:object-deal:sellerstatus#description/values:1",
+        "field:object-deal:auxdata#description/values:1",
+        "field:object-curation:curfeetype#description/values:1",
+        "field:object-buyerstatus:status#description/values:1"
+      ]
+    },
+    {
+      "details": {
+        "subset": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "supersets": [
+          {
+            "lists": [
+              "field:object-deal:auxdata#description/values:1",
+              "field:object-curation:curfeetype#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4"
+            ]
+          },
+          {
+            "lists": [
+              "field:object-inventory:inclinventory#description/values:1"
+            ],
+            "values": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6"
+            ]
+          },
+          {
+            "lists": [
+              "field:object-buyerstatus:status#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6"
+            ]
+          }
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_subset:1 | 2 | 3 | 4",
+      "kind": "value_set_subset",
+      "locs": [
+        {
+          "line": 94,
+          "row": 10,
+          "section": "object-deal",
+          "table": "table:object-deal:1"
+        }
+      ],
+      "message": "The value set 1 | 2 | 3 | 4 is a strict subset of 0 | 1 | 2 | 3 | 4; and of 1 | 2 | 3 | 4 | 5 | 6; and of 0 | 1 | 2 | 3 | 4 | 5 | 6.",
+      "subjects": [
+        "field:object-deal:adtypes#description/values:1",
+        "field:object-deal:auxdata#description/values:1",
+        "field:object-curation:curfeetype#description/values:1",
+        "field:object-inventory:inclinventory#description/values:1",
+        "field:object-buyerstatus:status#description/values:1"
+      ]
+    },
+    {
+      "details": {
+        "subset": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "supersets": [
+          {
+            "lists": [
+              "field:object-buyerstatus:status#description/values:1"
+            ],
+            "values": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6"
+            ]
+          }
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_subset:1 | 2 | 3 | 4 | 5 | 6",
+      "kind": "value_set_subset",
+      "locs": [
+        {
+          "line": 126,
+          "row": 1,
+          "section": "object-inventory",
+          "table": "table:object-inventory:1"
+        }
+      ],
+      "message": "The value set 1 | 2 | 3 | 4 | 5 | 6 is a strict subset of 0 | 1 | 2 | 3 | 4 | 5 | 6.",
+      "subjects": [
+        "field:object-inventory:inclinventory#description/values:1",
+        "field:object-buyerstatus:status#description/values:1"
+      ]
+    },
+    {
+      "details": {
+        "annotations": [
+          "deal is complete (ie. selling scomplete (ie. selling system shows deal has completed)",
+          "deal is archived (cannot be active again)"
+        ],
+        "value": "4"
+      },
+      "disposition": null,
+      "id": "value_list_duplicate_code:field:object-deal:sellerstatus#description/values:1:4",
+      "kind": "value_list_duplicate_code",
+      "locs": [
+        {
+          "line": 88,
+          "row": 4,
+          "section": "object-deal",
+          "table": "table:object-deal:1"
+        }
+      ],
+      "message": "The value list gives `4` 2 times, as \"deal is complete (ie. selling scomplete (ie. selling system shows deal has completed)\" and as \"deal is archived (cannot be active again)\", so a value of `4` doesn't say which it means.",
+      "subjects": [
+        "field:object-deal:sellerstatus#description/values:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 3
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:curationfee",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 289,
+          "section": "curation-fee"
+        },
+        {
+          "line": 289,
+          "section": "curation-fee"
+        },
+        {
+          "line": 289,
+          "section": "curation-fee"
+        }
+      ],
+      "message": "`curationfee` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:curation-fee:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:imp.banner",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 248,
+          "section": "included-inventory"
+        }
+      ],
+      "message": "`imp.banner` resolves to no table row, key, or table-declared value; no table defines `imp`.",
+      "subjects": [
+        "block:included-inventory:2"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:imp.video",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 248,
+          "section": "included-inventory"
+        }
+      ],
+      "message": "`imp.video` resolves to no table row, key, or table-declared value; no table defines `imp`.",
+      "subjects": [
+        "block:included-inventory:2"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:inclinventory.adtype",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 248,
+          "section": "included-inventory"
+        }
+      ],
+      "message": "`inclinventory.adtype` resolves to no table row, key, or table-declared value; no table defines `adtype`.",
+      "subjects": [
+        "block:included-inventory:2"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:publisher.id",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 128,
+          "row": 3,
+          "section": "object-inventory",
+          "table": "table:object-inventory:1"
+        }
+      ],
+      "message": "`publisher.id` resolves to no table row, key, or table-declared value; no table defines `publisher`.",
+      "subjects": [
+        "field:object-inventory:sellerids#description"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:request.at",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 114,
+          "row": 7,
+          "section": "object-terms",
+          "table": "table:object-terms:1"
+        }
+      ],
+      "message": "`request.at` resolves to no table row, key, or table-declared value; no table defines `request`.",
+      "subjects": [
+        "field:object-terms:pricetype#description"
+      ]
+    },
+    {
+      "details": {
+        "description": "Placeholder for deal-specific extensions",
+        "type": "object"
+      },
+      "disposition": null,
+      "id": "object_without_structure:field:object-buyerseat:ext",
+      "kind": "object_without_structure",
+      "locs": [
+        {
+          "line": 164,
+          "row": 4,
+          "section": "object-buyerseat",
+          "table": "table:object-buyerseat:1"
+        }
+      ],
+      "message": "`ext` is typed object, and nothing in the specification gives its structure.",
+      "subjects": [
+        "field:object-buyerseat:ext"
+      ]
+    },
+    {
+      "details": {
+        "description": "Placeholder for deal-specific extensions",
+        "type": "object"
+      },
+      "disposition": null,
+      "id": "object_without_structure:field:object-buyerstatus:ext",
+      "kind": "object_without_structure",
+      "locs": [
+        {
+          "line": 175,
+          "row": 3,
+          "section": "object-buyerstatus",
+          "table": "table:object-buyerstatus:1"
+        }
+      ],
+      "message": "`ext` is typed object, and nothing in the specification gives its structure.",
+      "subjects": [
+        "field:object-buyerstatus:ext"
+      ]
+    },
+    {
+      "details": {
+        "description": "Placeholder for deal-specific extensions",
+        "type": "object"
+      },
+      "disposition": null,
+      "id": "object_without_structure:field:object-curation:ext",
+      "kind": "object_without_structure",
+      "locs": [
+        {
+          "line": 146,
+          "row": 4,
+          "section": "object-curation",
+          "table": "table:object-curation:1"
+        }
+      ],
+      "message": "`ext` is typed object, and nothing in the specification gives its structure.",
+      "subjects": [
+        "field:object-curation:ext"
+      ]
+    },
+    {
+      "details": {
+        "description": "Placeholder for deal-specific extensions",
+        "type": "object"
+      },
+      "disposition": null,
+      "id": "object_without_structure:field:object-deal:ext",
+      "kind": "object_without_structure",
+      "locs": [
+        {
+          "line": 101,
+          "row": 17,
+          "section": "object-deal",
+          "table": "table:object-deal:1"
+        }
+      ],
+      "message": "`ext` is typed object, and nothing in the specification gives its structure.",
+      "subjects": [
+        "field:object-deal:ext"
+      ]
+    },
+    {
+      "details": {
+        "description": "Placeholder for deal-specific extensions",
+        "type": "object"
+      },
+      "disposition": null,
+      "id": "object_without_structure:field:object-inventory:ext",
+      "kind": "object_without_structure",
+      "locs": [
+        {
+          "line": 133,
+          "row": 8,
+          "section": "object-inventory",
+          "table": "table:object-inventory:1"
+        }
+      ],
+      "message": "`ext` is typed object, and nothing in the specification gives its structure.",
+      "subjects": [
+        "field:object-inventory:ext"
+      ]
+    },
+    {
+      "details": {
+        "description": "Placeholder for deal-specific extensions",
+        "type": "object"
+      },
+      "disposition": null,
+      "id": "object_without_structure:field:object-terms:ext",
+      "kind": "object_without_structure",
+      "locs": [
+        {
+          "line": 117,
+          "row": 10,
+          "section": "object-terms",
+          "table": "table:object-terms:1"
+        }
+      ],
+      "message": "`ext` is typed object, and nothing in the specification gives its structure.",
+      "subjects": [
+        "field:object-terms:ext"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:terms-object-1:647b6593",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 232,
+          "section": "terms-object-1"
+        }
+      ],
+      "message": "A MUST statement in § terms-object-1 names no field or key: \"Price attribute must be provided if the deal is a fixed price deal, especially if it's a programmatic guaranteed deal, but otherwise can be used as pricing guidance or not provided at all if there is no pricing guidance (for example, for a Run-of-Exchange deal where there is no pricing guidance)\"",
+      "subjects": [
+        "rule:terms-object-1:647b6593"
+      ]
+    },
+    {
+      "details": {
+        "stated": [
+          "field:object-buyerseat:version",
+          "field:object-buyerseat:id"
+        ]
+      },
+      "disposition": null,
+      "id": "presence_unstated:buyer_seat",
+      "kind": "presence_unstated",
+      "locs": [],
+      "message": "2 of 4 buyer seat fields don't say whether they're REQUIRED or OPTIONAL.",
+      "subjects": [
+        "field:object-buyerseat:buyerstatus",
+        "field:object-buyerseat:ext"
+      ]
+    },
+    {
+      "details": {
+        "stated": []
+      },
+      "disposition": null,
+      "id": "presence_unstated:buyer_status",
+      "kind": "presence_unstated",
+      "locs": [],
+      "message": "3 of 3 buyer status fields don't say whether they're REQUIRED or OPTIONAL.",
+      "subjects": [
+        "field:object-buyerstatus:buyerseatid",
+        "field:object-buyerstatus:status",
+        "field:object-buyerstatus:ext"
+      ]
+    },
+    {
+      "details": {
+        "stated": []
+      },
+      "disposition": null,
+      "id": "presence_unstated:curation",
+      "kind": "presence_unstated",
+      "locs": [],
+      "message": "4 of 4 curation fields don't say whether they're REQUIRED or OPTIONAL.",
+      "subjects": [
+        "field:object-curation:curator",
+        "field:object-curation:cdealid",
+        "field:object-curation:curfeetype",
+        "field:object-curation:ext"
+      ]
+    },
+    {
+      "details": {
+        "stated": [
+          "field:object-deal:id",
+          "field:object-deal:name",
+          "field:object-deal:sellerstatus",
+          "field:object-deal:origin",
+          "field:object-deal:seller",
+          "field:object-deal:wseat",
+          "field:object-deal:terms"
+        ]
+      },
+      "disposition": null,
+      "id": "presence_unstated:deal",
+      "kind": "presence_unstated",
+      "locs": [],
+      "message": "10 of 17 deal fields don't say whether they're REQUIRED or OPTIONAL.",
+      "subjects": [
+        "field:object-deal:created",
+        "field:object-deal:desc",
+        "field:object-deal:bseat",
+        "field:object-deal:adtypes",
+        "field:object-deal:auxdata",
+        "field:object-deal:pubcount",
+        "field:object-deal:dinventory",
+        "field:object-deal:inventory",
+        "field:object-deal:curation",
+        "field:object-deal:ext"
+      ]
+    },
+    {
+      "details": {
+        "stated": []
+      },
+      "disposition": null,
+      "id": "presence_unstated:inventory",
+      "kind": "presence_unstated",
+      "locs": [],
+      "message": "8 of 8 inventory fields don't say whether they're REQUIRED or OPTIONAL.",
+      "subjects": [
+        "field:object-inventory:inclinventory",
+        "field:object-inventory:devicetype",
+        "field:object-inventory:sellerids",
+        "field:object-inventory:sitedomains",
+        "field:object-inventory:appbundles",
+        "field:object-inventory:cat",
+        "field:object-inventory:cattax",
+        "field:object-inventory:ext"
+      ]
+    },
+    {
+      "details": {
+        "stated": []
+      },
+      "disposition": null,
+      "id": "presence_unstated:terms",
+      "kind": "presence_unstated",
+      "locs": [],
+      "message": "10 of 10 terms fields don't say whether they're REQUIRED or OPTIONAL.",
+      "subjects": [
+        "field:object-terms:startdate",
+        "field:object-terms:enddate",
+        "field:object-terms:countries",
+        "field:object-terms:dealfloor",
+        "field:object-terms:cur",
+        "field:object-terms:guar",
+        "field:object-terms:pricetype",
+        "field:object-terms:units",
+        "field:object-terms:totalcost",
+        "field:object-terms:ext"
+      ]
+    }
+  ],
+  "input": {
+    "blob": "f675232c0e0d57b77ce1fc34b74baa2e42bc700a",
+    "commit": "938a5d1fdb5705ae53b2584c90b9eb325b71a96b",
+    "name": "tag-1.0-202602"
+  },
+  "ir_version": 1
+}

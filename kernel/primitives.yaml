@@ -119,6 +119,32 @@ primitives:
         valid: ["USD", "JPY"]
         invalid: ["ABC", "QQQ"]
 
+  - name: CountryCode
+    description: An ISO 3166-1 alpha-3 country code, such as `USA`, as OpenRTB 2.6 writes `geo.country`. A receiver compares it with the codes ISO 3166-1 assigns.
+    type: string
+    concept: country
+    constraints:
+      pattern: '^[A-Z]{3}$'
+    sources:
+      standards:
+        - name: ISO 3166-1, Codes for the representation of names of countries (alpha-3)
+          url: https://www.iso.org/iso-3166-country-codes.html
+        - name: OpenRTB 2.6, Object Geo (`country`, ISO-3166-1-alpha-3)
+          url: https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/2.6.md#objectgeo
+    vectors:
+      valid: ["USA", "DEU", "JPN"]
+      invalid: ["usa", "US", "USAA", "U5A", 840]
+    showcase: ["USA", "CAN"]
+    rules:
+      - id: kernel:CountryCode:assigned
+        statement: A CountryCode MUST be an alpha-3 code that ISO 3166-1 currently assigns.
+        source:
+          standard:
+            name: ISO 3166-1, Codes for the representation of names of countries (alpha-3)
+            url: https://www.iso.org/iso-3166-country-codes.html
+        valid: ["USA", "GBR", "ATA"]
+        invalid: ["ABC", "XXX", "ANT"]
+
   - name: Amount
     description: A sum of money or a price per unit of a cost method, never negative, such as a budget, a minimum spend, or a CPM. It is in the currency of the `currency` member of the object that carries it, and the cost method says what a rate is per.
     type: number
@@ -128,7 +154,7 @@ primitives:
     sources:
       standards:
         - name: OpenRTB 2.6, Object Imp (`bidfloor` and `bidfloorcur`)
-          url: https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/2.6.md#3.2.4
+          url: https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/2.6.md#objectimp
     vectors:
       valid: [0, 25000, 12.5]
       invalid: [-1, -0.01, "25000"]
@@ -199,6 +225,27 @@ primitives:
       invalid: [-1, -0.5, "1200000"]
     showcase: [1200000, 500000]
 
+  # Flags
+
+  - name: IntegerFlag
+    description: A yes or no written as an integer, `0` for no and `1` for yes, as AdCOM 1.0 and OpenRTB 2.6 write their flags, such as a placement's `instl`. A receiver reads it as a flag, never as a count, and a field that takes it keeps the integer its text writes.
+    type: integer
+    concept: integer-flag
+    constraints:
+      oneOf:
+        - { const: 0, title: "No" }
+        - { const: 1, title: "Yes" }
+    sources:
+      standards:
+        - name: AdCOM 1.0, Object DisplayPlacement (`instl`, where 0 = no, 1 = yes)
+          url: https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#object_displayplacement
+        - name: OpenRTB 2.6, Object Imp (`instl`, `rwdd`, and the other integer flags)
+          url: https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/2.6.md#objectimp
+    vectors:
+      valid: [0, 1]
+      invalid: [2, -1, true, false, "1", 0.5, null]
+    showcase: [1, 0]
+
   # Time
 
   - name: Timestamp
@@ -216,6 +263,24 @@ primitives:
       valid: ["2026-10-25T09:00:00Z", "2026-10-25T09:00:00.250-05:00", "2026-10-25t09:00:00z", "2026-10-25T09:00:00-00:00", "2016-12-31T23:59:60Z", "0000-01-01T00:00:00Z"]
       invalid: ["2026-10-25", "2026-10-25T09:00:00", "2026-02-30T09:00:00Z", "20261025T090000Z", "2026-10-07 10:00:00+05", "2026-10-07T10:00:00+0500", "2026-10-07T10:00:00+05", "2026-10-07 10:00:00Z"]
     showcase: ["2026-11-02T09:00:00Z", "2026-12-21T23:59:59Z"]
+
+  - name: UtcTimestamp
+    description: A point in time in UTC, written as an RFC 3339 date-time whose offset is zero, such as `2026-11-02T00:00:00Z`, for a specification that says its timestamps are UTC. It follows `Timestamp`'s grammar, with an offset of `Z`, `z`, or `+00:00`, a time in UTC, or `-00:00`, a time in UTC whose local offset is unknown (RFC 3339 section 4.3), and never another, so a value whose offset isn't zero is no UTC timestamp. A receiver compares two of them as instants, not as strings.
+    type: string
+    concept: utc-instant
+    constraints:
+      format: date-time
+      pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}[Tt][0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?([Zz]|[+-]00:00)$'
+    sources:
+      standards:
+        - name: RFC 3339, Date and Time on the Internet (section 5.6, date-time, whose offset `Z` is UTC)
+          url: https://www.rfc-editor.org/rfc/rfc3339#section-5.6
+        - name: RFC 3339, section 4.3, Unknown Local Offset Convention (`-00:00`, a time in UTC whose local offset is unknown)
+          url: https://www.rfc-editor.org/rfc/rfc3339#section-4.3
+    vectors:
+      valid: ["2026-11-02T00:00:00Z", "2026-11-02t00:00:00z", "2026-11-02T00:00:00+00:00", "2026-11-02T00:00:00-00:00", "2026-11-02T00:00:00.250Z", "2016-12-31T23:59:60Z"]
+      invalid: ["2026-11-02T00:00:00+05:00", "2026-11-02T00:00:00-08:00", "2026-11-02T00:00:00+00:30", "20261102T000000Z", "2026-11-02T00:00:00", "2026-11-02", "2026-02-30T00:00:00Z", "1761955200"]
+    showcase: ["2026-11-02T00:00:00Z", "2027-01-31T23:59:59Z"]
 
   - name: Duration
     description: A length of time, written as an ISO 8601 duration in the grammar of RFC 3339 Appendix A, such as `PT48H`.

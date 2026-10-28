@@ -1,0 +1,35 @@
+format: 1
+id: G-124
+date: 2026-10-28
+question: What changes in the gates when a change the feedback proposed is withdrawn after the report was posted with its number?
+decision: >-
+  A withdrawn departure keeps its place among the changes we propose, and so
+  the number the posted report gave it, which G-118 had taken away, moving
+  every later change's number down by one. The feedback lists it as the
+  posted item it was, with its question, the locks it was on, and the one-line
+  reason its record's `withdrawn` states, and with nothing it proposes, no
+  reading, and no rows it rests on. It counts as no change: the comment's and
+  the details page's counts, the CLI's summary, and the site's proposals read
+  only the changes that stand, and the site still gives a withdrawn record no
+  page. A withdrawn open point, which has no group to keep a number in, is a
+  feedback problem, and so is a suggestion to the working group that cites a
+  withdrawn change, which stands for nothing though it keeps its number, and
+  a withdrawn change whose covers name a lock the report builds no model of.
+  The comment lists the changes whenever the details page does, so a slot
+  stays in both even where every change is withdrawn. OpenProposal's report keeps D-039 as item 41, so D-040 to
+  D-047 are 42 to 45 again, as posted, and the site's decision pages cite
+  those numbers. The reason passes the same wording check as the rest of the
+  feedback. A test pins every item's posted number, 1 to 45, by its record.
+  The test suite holds 526 tests, and MIN_TESTS is 526.
+rationale: >-
+  The working group reads the numbers the posted report gave; a withdrawn
+  item that keeps its number, and says why, lets every other item keep its
+  number too. No check is relaxed: the counts that read standing changes
+  still read only those, and a withdrawn record still excuses and shapes
+  nothing. Only OpenProposal's feedback files and its site's decision pages
+  change; AdCOM's and the Deals API's outputs are unchanged.
+accepts:
+  - { gate: feedback, fingerprint: b7a4424e973cc765733465a4650bfbf04d2d497ee2ec362f213058e34aa7ff61 }
+  - { gate: npm-test, fingerprint: 274d86f87476d5d5237a6f6f98bb479c9cb87f7a10bf99eb9ebd5e65ba1257e1 }
+  - { gate: record-wording, fingerprint: 6b7c1f1f73a034a980952c6439a8ea9e9a5a2d11a9f3a31d053fe7cd7af801c1 }
+  - { gate: site-builds, fingerprint: 9d125ff5b9dc174698e93309b65d14253024db4a1ed54547cc37133bff5025b0 }

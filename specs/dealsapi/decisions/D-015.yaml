@@ -1,0 +1,39 @@
+format: 1
+id: D-015
+status: proposed
+kind: gap
+author: agent
+question: "What does a deal do with `inventory` unless `dinventory` is 1, when the text says it \"should only be included when the deal is for a static set of sites or applications (`dinventory=1`)\"?"
+covers:
+  - ir: rule:object-deal:1ff4e5fa
+    digest: 6c1111d87370844130ee3a365a285cbd7ff28e7a11bea1c93f53fac5d211920d
+    quote: "This object should only be included when the deal is for a static set of sites or applications (`dinventory=1`)."
+  - ir: rule:inventory-object-1:1ff4e5fa
+    digest: 300117d6ff7b6c2a4ffd41c989eae5505c680b4854f05ceb66d78b0e159a73e6
+    quote: "This object should only be included when the deal is for a static set of sites or applications (`dinventory=1`)."
+  - ir: field:object-deal:inventory
+    digest: 0c5af0dd15314d1dacc4b7e547dfd1fc83d2cd33ca84f8277fb4d1ebbb862608
+    quote: "`inventory` | object | Information about the inventory included in the deal. This object should only be included when the deal is for a static set of sites or applications (`dinventory=1`). See Object: Inventory for additional detail"
+  - ir: field:object-deal:dinventory
+    digest: 37ba973c0e2b1da392bf2e11fb03546f9327680c3fccc14b9c43ad01859894b9
+    quote: "`dinventory` | int | Indicates if the inventory for the deal is dynamic, meaning sites or applications included in the deal may update after the deal is live where: `0` = undisclosed `1` = inventory will NOT update once the deal goes live `2` = inventory where this deal may run is updated dynamically. See implementation guidance for additional detail"
+options:
+  - id: warning-rule
+    summary: >-
+      A rule, at the should level: a deal that sends `inventory` with
+      `dinventory` other than 1 gets a warning.
+  - id: schema
+    summary: >-
+      The schema rejects `inventory` unless `dinventory` is 1.
+chosen: warning-rule
+rationale: >-
+  The sentence says should, so a deal that breaks it is still valid, and the
+  rule reports it as a warning. It is stated twice, in the Deal table and in
+  the guidance; the table's sentence carries the rule, and the guidance's
+  restates it.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L99"
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L241"
+feedback: >-
+  None needed beyond the level: say "should" or "must" in capitals, and
+  state it once.

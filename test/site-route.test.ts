@@ -4,14 +4,15 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { assetTokens, buildSite, fillTokens, checkSite } from "../src/site/build.ts";
 import { loadSiteInputs } from "../src/site/data.ts";
-import { mapLink } from "../src/site/pages.ts";
+import { mapLink } from "../src/site/route.ts";
 import { loadRoute, type RouteState } from "../src/site/route.ts";
 import { ROOT, SPEC } from "./helpers.ts";
 
 // The router as the site serves it, with its tokens filled from the profile.
 const INPUTS = loadSiteInputs(SPEC);
 const ROUTE = loadRoute(fillTokens(readFileSync(join(ROOT, "src", "site", "assets", "route.js")), assetTokens(INPUTS)).toString("utf8"));
-const SITE = buildSite([INPUTS]);
+// OpenProposal with the registry its schemas reference, whose pages its type map links.
+const SITE = buildSite([INPUTS, loadSiteInputs(join(ROOT, "specs", "adcom"))]);
 /** OpenProposal's pages are under its path on the site. */
 const OP = "openproposal/";
 

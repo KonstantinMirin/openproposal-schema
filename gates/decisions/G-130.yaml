@@ -1,0 +1,25 @@
+format: 1
+id: G-130
+date: 2026-10-28
+question: What changes in the gates when every spec's How it's built page gains design notes on integer codes and flags?
+decision: >-
+  Every spec's How it's built page gains a section, Design notes: codes and
+  flags, before How to reproduce it. It says why an integer code list is
+  `type: integer` and a `oneOf` of titled `const` branches rather than a
+  bare `enum`: a reader sees each code's name, and a generator can name SDK
+  constants from the titles deterministically. It says why a yes-or-no
+  field keeps the encoding of its source: a field copied from another IAB
+  standard keeps that standard's `0` | `1`, as `IntegerFlag`, and a flag a
+  specification defines for itself keeps the JSON boolean its text writes,
+  with the trade-off. The section's structure and reasoning are shared
+  (src/site/method.ts); each spec's site copy gives its own examples, so
+  the shared code names no specification. AdCOM's page no longer says a
+  closed list is an `enum` with its labels in the description, and
+  OpenProposal's emission rules say `oneOf` also holds an integer code
+  list's titled branches.
+rationale: >-
+  No check is relaxed: the site gates run unchanged, and the pages'
+  worked examples still come first among their code blocks. Only the site,
+  which no commit holds, changes; every committed output is unchanged.
+accepts:
+  - { gate: site-builds, fingerprint: 29345807cd194e21c7ab12ee71ae8b69f091a264fcd75b36cec1cefe1c3b49c7 }

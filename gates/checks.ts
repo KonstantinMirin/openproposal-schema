@@ -56,6 +56,46 @@ export const roundTripGate = defineGate<{ model: ModelDoc; ir: SpecIR; recorded:
       expect: 'the model renders "immutable"',
     },
     { name: "a recorded difference that no longer occurs", mutate: (i) => ({ ...i, recorded: { ...i.recorded, differences: [...i.recorded.differences, { ...i.recorded.differences[0]!, row: "no-such-row" }] } }), expect: "no longer differs" },
+    // The Deals API's tables: a code's label the model changed, and a default it dropped, render differently from the text.
+    {
+      name: "a Deals API code label the model changed",
+      spec: "dealsapi",
+      mutate: (i) => ({ ...i, model: withType(i.model, "PublisherCount", (t) => ({ ...(t as Extract<typeof t, { kind: "vocabulary" }>), terms: (t as Extract<typeof t, { kind: "vocabulary" }>).terms.map((x) => (x.value === 2 ? { ...x, annotation: "many publishers" } : x)) })) }),
+      expect: "`2` = many publishers",
+    },
+    {
+      name: "a property the model adds to a Deals API object",
+      spec: "dealsapi",
+      mutate: (i) => ({ ...i, model: withType(i.model, "Deal", (t) => {
+        const d = t as Extract<typeof t, { kind: "document" }>;
+        return { ...d, properties: { ...d.properties, region: { ...d.properties.name!, sources: [] } } };
+      }) }),
+      expect: "Deal.region",
+    },
+    {
+      name: "a Deals API property the model moves to another object",
+      spec: "dealsapi",
+      mutate: (i) => {
+        const cur = (i.model.types.find((t) => t.name === "Terms") as Extract<(typeof i.model.types)[number], { kind: "object" }>).properties.cur!;
+        const moved = withType(i.model, "Terms", (t) => {
+          const o = t as Extract<typeof t, { kind: "object" }>;
+          const { cur: _c, ...rest } = o.properties;
+          return { ...o, properties: rest };
+        });
+        return { ...i, model: withType(moved, "Deal", (t) => ({ ...(t as Extract<typeof t, { kind: "document" }>), properties: { ...(t as Extract<typeof t, { kind: "document" }>).properties, cur } })) };
+      },
+      expect: "field:object-terms:cur",
+    },
+    {
+      name: "a Deals API default the model dropped",
+      spec: "dealsapi",
+      mutate: (i) => ({ ...i, model: withType(i.model, "Terms", (t) => {
+        const o = t as Extract<typeof t, { kind: "object" }>;
+        const { default: _d, ...cur } = o.properties.cur!;
+        return { ...o, properties: { ...o.properties, cur } };
+      }) }),
+      expect: 'now the specification writes "string; default "USD"" and the model renders "string"',
+    },
   ],
 });
 

@@ -1,0 +1,25 @@
+# The as-written variant: the schemas with the change we propose switched
+# off. The switch names the departure record and the option of it the variant
+# takes, the form the text writes, and says how the variant reads the field.
+# Every point the text leaves open stays filled by its gap record, in both
+# variants. `npm run ci` checks that every departure has one switch, that
+# each retyped element is one its departure covers, and that the variant
+# differs from the schemas we propose only where a switch says.
+format: 1
+name: as-written
+description: >-
+  The schemas as the specification writes the one point our proposal
+  changes: a country code is any string, as the row types it, compared by
+  exact equality, since the codes "ISO-3166-3" names are of countries that
+  no longer exist. Every point the text leaves open is filled as in the
+  schemas we propose.
+primitives: []
+switches:
+  - decision: D-004
+    option: as-written
+    reads: >-
+      Each of a deal's `countries` is any string, as the row types it, a code
+      a receiver compares by exact equality, with no check that ISO 3166-1
+      assigns it.
+    replace:
+      - { type: CountryCode, with: ExternalId }

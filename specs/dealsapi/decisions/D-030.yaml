@@ -1,0 +1,47 @@
+format: 1
+id: D-030
+status: proposed
+kind: gap
+author: agent
+question: "What is the Example Scenarios table, the text's only example in a table?"
+covers:
+  - ir: concept:example-scenarios:1
+    digest: b9eced7bfa9352810a4ca9df715c83df872d093b8d4f689dc1eda44713da6ad3
+    quote: "Publisher packages their O&O inventory and data, and sells a deal to a buyer. No other party is or will be involved in the deal and the inventory will remain static throughout the term of the deal. | 4 | 3 | 1 | 1"
+  - ir: concept:example-scenarios:2
+    digest: 8dc30d2b55f9a40e7afb04b0a81a0d1d448188c95e8b09355c2a46a921dda8ac
+    quote: "Data company packages their data across multiple publishers, but does not charge a fee for the specific curation service. Data providers will not be changed, but inventory may be updated after the start of the deal. | 4 | 1 | 2 | 2"
+  - ir: concept:example-scenarios:3
+    digest: a678179bc83223fa97f3343208809b328afa0730ac54caa0dbca10df1b5fa899
+    quote: "Curation company charges a CPM fee to aggregate inventory across multiple publishers that they will add and remove as the deal is in flight to optimize deal performance. They have an optimization service, and work with additional data providers to increase addressability, and expect to add additional data partners throughout the flight. | 3 | 2 | 2 | 2"
+  - ir: concept:example-scenarios:4
+    digest: 0469da609bcb6aa579322a6b2ba4ad2eaf052db48a44d7358789866ded146650
+    quote: "Curation company works with inventory aggregation company that regularly adds new websites and charges a % of spend to optimize deals. They do not currently work with other data providers, but may layer them in based on deal performance. | 1 | 4 | 1 | 2"
+  - ir: concept:example-scenarios:5
+    digest: dc52a19ac66a13d1c14fd243b0640adedcd41d4b1f199975b7d33da5652bc48c
+    quote: "SSP pays a Curator a CPM to decorate inventory across the SSP universe that they do not pass on to the publishers. All inventory and data is subject to change. | 3 | 2 | 2 | 2"
+options:
+  - id: partial-deals
+    summary: >-
+      Each row is part of a deal: its `curationfee` column is
+      `curation.curfeetype`, and its `auxdata`, `pubcount`, and `dinventory`
+      columns are the deal's own. A row holds no `id`, `origin`, or `terms`,
+      so it is no whole deal, and each value it holds is checked against its
+      field's schema.
+  - id: informative
+    summary: >-
+      The table is prose: it names no payload.
+chosen: partial-deals
+rationale: >-
+  The columns name fields and the cells hold their codes, so each row writes
+  four values of one deal, which the examples check field by field. The
+  header `curationfee` names no field; it is `curfeetype`, the Curation
+  table's name. The scenario's description is the row's first cell.
+  Examples 1 and 2 of the guidance are prose that says which domain each
+  party's attribute names, `seller`, `curator`, and `origin`, so they show
+  roles, not a payload, and are informative.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L294"
+feedback: >-
+  Add a complete example deal, and a status response, in JSON, so
+  implementers can check their payloads against the text.

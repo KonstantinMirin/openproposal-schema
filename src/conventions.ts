@@ -230,10 +230,10 @@ export function keywordProblems(model: ModelDoc): string[] {
   return problems;
 }
 
-/** Type rules § 5: a property never adds a constraint beside its `$ref`; a slot carries a description at most, and so does every `$ref` in a filled schema. */
+/** Type rules § 5: a property never adds a constraint beside its `$ref`, only its description and the default its row states; a slot carries a description at most, and so does every `$ref` in a named type's filled schema. */
 export function besideReferenceProblems(model: ModelDoc): string[] {
   const problems: string[] = [];
-  const PROPERTY = new Set(["type", "presence", "condition", "cases", "marker", "description", "sources", "given"]);
+  const PROPERTY = new Set(["type", "presence", "condition", "cases", "marker", "description", "default", "sources", "given"]);
   for (const { where, schema } of schemasOf(model)) {
     walkSchemas(schema, (s, pointer) => {
       if (!("$ref" in s)) return;
@@ -259,9 +259,11 @@ export function besideReferenceProblems(model: ModelDoc): string[] {
 }
 
 /**
- * Type rules § 8: no `allOf` anywhere; every `oneOf` branch requires a
+ * Type rules § 8: no `allOf` anywhere; no `enum` that holds an integer
+ * (§ 6); every `oneOf` branch requires a
  * property whose schema is a `const` that names the branch, with a distinct
- * value per branch; `anyOf` only at the root of a copy whose template is a
+ * value per branch, except at the root of a primitive whose values are a few
+ * titled integer codes (§ 6); `anyOf` only at the root of a copy whose template is a
  * union, such as `CatalogRefOr`, or of a fallback union. Every union type
  * cites a decision record, which says why the specification leaves it
  * untagged, and has at least two branches.
@@ -269,12 +271,14 @@ export function besideReferenceProblems(model: ModelDoc): string[] {
 export function unionProblems(model: ModelDoc, constructors: Constructors): string[] {
   const problems: string[] = [];
   const unionShells = new Set(constructors.constructors.filter((c) => isMap(c.shell) && "anyOf" in c.shell).map((c) => c.name));
-  const check = (where: string, schema: unknown, rootAnyOf: boolean) =>
+  const check = (where: string, schema: unknown, rootAnyOf: boolean, rootCodes = false) =>
     walkSchemas(schema, (s, pointer) => {
       const at = `${where}${pointer ? ` at ${pointer}` : ""}`;
       if ("allOf" in s) problems.push(`${at}: "allOf"; objects are named and referenced whole, so no schema inherits from another (type rules § 8)`);
+      if (Array.isArray(s.enum) && s.enum.some((v) => Number.isInteger(v))) problems.push(`${at}: an enum holds an integer; a code is a titled const branch (type rules § 6)`);
       if ("anyOf" in s && !(pointer === "" && rootAnyOf)) problems.push(`${at}: "anyOf" where type rules § 8 allows none: only an open vocabulary and the untagged unions draft 1 requires`);
-      if ("oneOf" in s) {
+      // A primitive whose values are a few named codes is titled const branches at its root, which tag no union.
+      if ("oneOf" in s && !(pointer === "" && rootCodes && isTitledCodes(s))) {
         const branches = Array.isArray(s.oneOf) ? s.oneOf : [];
         const tags = branches.map((b) => tagOf(b));
         const missing = tags.findIndex((x) => x === null);
@@ -285,7 +289,7 @@ export function unionProblems(model: ModelDoc, constructors: Constructors): stri
         }
       }
     });
-  for (const { where, schema, type } of schemasOf(model)) check(where, schema, type.kind === "copy" && (type.fallback || unionShells.has(type.of.constructor)));
+  for (const { where, schema, type } of schemasOf(model)) check(where, schema, type.kind === "copy" && (type.fallback || unionShells.has(type.of.constructor)), type.kind === "primitive");
   for (const t of model.types) if (t.kind === "constructor") check(`kernel: constructor "${t.name}": shell`, t.shell, unionShells.has(t.name));
   for (const t of model.types) {
     if (t.kind !== "union") continue;
@@ -294,6 +298,15 @@ export function unionProblems(model: ModelDoc, constructors: Constructors): stri
   }
   return problems;
 }
+
+/** Whether a schema is an integer primitive's titled codes: `type: integer` and `oneOf` two or more titled integer consts and nothing else, as `IntegerFlag`'s `0` (No) and `1` (Yes) (type rules § 6). */
+export const isTitledCodes = (s: Record<string, unknown>): boolean =>
+  s.type === "integer" &&
+  Array.isArray(s.oneOf) &&
+  s.oneOf.length >= 2 &&
+  s.oneOf.every((b) => isMap(b) && Number.isInteger(b.const) && typeof b.title === "string" && b.title !== "" && Object.keys(b).every((k) => k === "const" || k === "title" || k === "description")) &&
+  new Set(s.oneOf.map((b) => (b as { const: number }).const)).size === s.oneOf.length &&
+  new Set(s.oneOf.map((b) => (b as { title: string }).title)).size === s.oneOf.length;
 
 /** The tag of a `oneOf` branch: a required property whose schema is a `const`, as `{ property, value }`, or null. */
 export function tagOf(branch: unknown): { property: string; value: unknown } | null {

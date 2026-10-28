@@ -15,7 +15,7 @@ import type { ProvenanceDoc } from "../provenance.ts";
 import { lockNames, named } from "./config.ts";
 import { buildOf, type SiteInputs } from "./data.ts";
 import { esc, inline, page } from "./html.ts";
-import { mapLink } from "./pages.ts";
+import { mapLink } from "./route.ts";
 import { renderQuote } from "./quote.ts";
 
 /** One list of the registry, as the page shows it. */

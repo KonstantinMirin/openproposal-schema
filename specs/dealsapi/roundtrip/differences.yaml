@@ -1,0 +1,88 @@
+# The cells where the attribute tables rendered from the Deals API's model
+# differ from the specification's. `npm run render` prints every difference;
+# each one here cites the decision record that makes the model differ there.
+# The round-trip gate in `npm run ci` fails on a difference not recorded
+# here, on a recorded one whose text changed, and on one that no longer
+# occurs.
+format: 1
+differences:
+  - table: table:object-deal:1
+    row: field:object-deal:id
+    column: Type
+    spec: "string; required"
+    model: "string, required"
+    decision: D-033
+    reason: >-
+      The `;` before what follows the type is the `,` the other rows write, which the rendered Type cells write throughout.
+  - table: table:object-deal:1
+    row: field:object-deal:name
+    column: Type
+    spec: "string, recommended"
+    model: "string"
+    decision: D-033
+    reason: >-
+      `recommended` makes the attribute optional, as type rules § 4 reads RECOMMENDED, and no schema keyword states it, so the rendered Type cell leaves it out.
+  - table: table:object-deal:1
+    row: field:object-deal:sellerstatus
+    column: Type
+    spec: "int, default 0, recommended"
+    model: "int, default 0"
+    decision: D-033
+    reason: >-
+      `recommended` makes the attribute optional, as type rules § 4 reads RECOMMENDED, and no schema keyword states it, so the rendered Type cell leaves it out.
+  - table: table:object-deal:1
+    row: field:object-deal:seller
+    column: Type
+    spec: "string, recommended"
+    model: "string"
+    decision: D-033
+    reason: >-
+      `recommended` makes the attribute optional, as type rules § 4 reads RECOMMENDED, and no schema keyword states it, so the rendered Type cell leaves it out.
+  - table: table:object-deal:1
+    row: field:object-deal:wseat
+    column: Type
+    spec: "string array, recommended"
+    model: "string array"
+    decision: D-033
+    reason: >-
+      `recommended` makes the attribute optional, as type rules § 4 reads RECOMMENDED, and no schema keyword states it, so the rendered Type cell leaves it out.
+  - table: table:object-terms:1
+    row: field:object-terms:cur
+    column: Type
+    spec: "string; default \"USD\""
+    model: "string, default \"USD\""
+    decision: D-033
+    reason: >-
+      The `;` before what follows the type is the `,` the other rows write, which the rendered Type cells write throughout.
+  - table: table:object-terms:1
+    row: field:object-terms:guar
+    column: Description
+    spec: "Indicates that the deal is of type guaranteed and the bidder must bid on the deal, where 0 = not a guaranteed deal, 1 = guaranteed deal."
+    model: "Indicates that the deal is of type guaranteed and the bidder must bid on the deal, where 0 = No, 1 = Yes."
+    decision: D-018
+    reason: >-
+      `guar` takes the integer flag, whose codes are titled No and Yes; the row's own words for them, not a guaranteed deal and guaranteed deal, stay in its description.
+  - table: table:object-inventory:1
+    row: field:object-inventory:inclinventory
+    column: Type
+    spec: "integer array"
+    model: "int array"
+    decision: D-033
+    reason: >-
+      `integer` and `int` name one JSON type, which the rendered Type cells write as `int`, as most rows do.
+  - table: table:object-inventory:1
+    row: field:object-inventory:devicetype
+    column: Type
+    spec: "integer array"
+    model: "int array"
+    decision: D-033
+    reason: >-
+      `integer` and `int` name one JSON type, which the rendered Type cells write as `int`, as most rows do.
+  - table: table:object-inventory:1
+    row: field:object-inventory:cattax
+    column: Type
+    spec: "integer"
+    model: "int"
+    decision: D-033
+    reason: >-
+      `integer` and `int` name one JSON type, which the rendered Type cells write as `int`, as most rows do.

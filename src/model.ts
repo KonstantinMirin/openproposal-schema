@@ -15,7 +15,7 @@
  * declarations doesn't change a byte of the output.
  */
 import { canonicalJson, sha256 } from "./canonical.ts";
-import { copyName, fieldOf, Instantiator, partSchema, renderType, slots, substitute, type Constructor, type Constructors, type Model as Templates } from "./constructors.ts";
+import { copyName, fieldOf, Instantiator, partSchema, pascalField, renderType, slots, substitute, type Constructor, type Constructors, type Model as Templates } from "./constructors.ts";
 import { inScopeDeclarations, inScopeEntries } from "./coverage.ts";
 import { citeText, indexElements, type Element } from "./elements.ts";
 import type { Presence as StatedPresence } from "./grammar/required.ts";
@@ -45,6 +45,8 @@ export interface ModelProperty {
   marker?: string;
   /** The row's description or meaning. */
   description?: string;
+  /** The default the specification states for it, as the Deals API's Type cell `string; default "USD"` does; a schema annotation, which a receiver reads when the member is absent. */
+  default?: string | number;
   /** The IR elements that state it. */
   sources: string[];
   /**
@@ -64,6 +66,8 @@ export interface ModelTerm {
   value: string | number;
   /** A code system's label, such as "Connected TV" for `3`. */
   annotation?: string;
+  /** The labels of a code the list gives twice, as the Deals API's tag gives `4` for "complete" and "archived", each of which the code means. */
+  meanings?: string[];
   sources: string[];
 }
 
@@ -277,6 +281,16 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
     if (types.has(t.name)) problems.push(`${where}: "${t.name}" is already defined in the model on lock "${lock}"`);
     else types.set(t.name, t);
   };
+  // A vocabulary's own vendor range, from a declaration or a type entry: it starts where `VendorCode` does, it is the
+  // vocabulary's only extension, and it makes the vocabulary open.
+  const vendorProblems = (where: string, vendor: { from: number } | undefined, extension: string | undefined, open: boolean): string[] => {
+    const from = kernel.primitives.find((p) => p.name === VENDOR_CODE)?.constraints.minimum;
+    return [
+      ...(vendor && from !== vendor.from ? [`${where}: reserves vendor codes from ${vendor.from}, but ${VENDOR_CODE} starts at ${from ?? "no minimum"}`] : []),
+      ...(vendor && extension ? [`${where}: gives both a vendor range and an extension, which can't both be its extension terms`] : []),
+      ...((vendor !== undefined || extension !== undefined) && !open ? [`${where}: has ${vendor ? "a vendor range" : "an extension"}, so it is open`] : []),
+    ];
+  };
   const base = (name: string, kind: Kind, module: string, sources: string[], decisions: string[]) => ({
     name,
     kind,
@@ -370,9 +384,7 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
         if (list?.vendor && vendorCode?.constraints.minimum !== list.vendor.from) problems.push(`${where}: ${list.standard} ${list.name} reserves vendor codes from ${list.vendor.from}, but ${VENDOR_CODE} starts at ${vendorCode?.constraints.minimum ?? "no minimum"}`);
         // The specification's own list: its vendor range, or the extension a decision gives, makes it open, and nothing else does.
         if (decl.vendor && list) problems.push(`${where}: gives both a list and its own vendor range; a list's vendor range is the list's`);
-        if (decl.vendor && vendorCode?.constraints.minimum !== decl.vendor.from) problems.push(`${where}: reserves vendor codes from ${decl.vendor.from}, but ${VENDOR_CODE} starts at ${vendorCode?.constraints.minimum ?? "no minimum"}`);
-        if (decl.vendor && decl.extension) problems.push(`${where}: gives both a vendor range and an extension, which can't both be its extension terms`);
-        if ((decl.vendor !== undefined || decl.extension !== undefined) && !decl.open) problems.push(`${where}: has ${decl.vendor ? "a vendor range" : "an extension"}, so it is open`);
+        problems.push(...vendorProblems(where, decl.vendor, decl.extension, decl.open ?? false));
         if (decl.extension !== undefined && !kernel.primitives.some((p) => p.name === decl.extension)) problems.push(`${where}: its extension "${decl.extension}" is no kernel primitive`);
         if (decl.labeled) labeled.add(decl.name);
         define({ ...b, kind: "vocabulary", open: decl.open ?? false, terms, ...(list ? { list: { name: list.name, standard: list.standard, url: list.url, ...(list.vendor ? { vendor: list.vendor } : {}), ...(list.registry ? { registry: list.registry } : {}) } } : {}), ...(decl.vendor ? { vendor: decl.vendor } : {}), ...(decl.extension ? { extension: decl.extension } : {}), ...(decl.labeled ? { labeled: true as const } : {}), ...(decl.description ? { description: decl.description } : {}) }, where);
@@ -399,7 +411,14 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
     switch (as.layer) {
       case "vocabulary": {
         const terms = e?.kind === "value_list" ? e.element.items.map((i) => ({ value: i.value, ...(i.annotation ? { annotation: i.annotation } : {}), sources: [id] })) : [];
-        define({ ...b, kind: "vocabulary", open: as.open ?? false, terms }, where);
+        // A list that reserves codes for vendors, as the Deals API's "values 500 and greater", is open to them, and to nothing else.
+        problems.push(...vendorProblems(where, as.vendor, undefined, as.open ?? false));
+        // A list of integer codes, each with its label, as the Deals API's `0` = deal is active, is a labeled list, as AdCOM's are: a code means its label.
+        const labeled = terms.length > 0 && terms.every((x) => INTEGER.test(x.value) && x.annotation !== undefined);
+        // A labeled list says what its codes are of: the attribute whose row lists them.
+        const host = e?.kind === "value_list" ? elements.get(e.element.host.split("#")[0]!) : undefined;
+        const description = labeled && host?.kind === "field" ? `The codes of \`${pascalField(host.element.owner)}.${host.element.names[0]!.path}\`, each with the label the text gives it` : undefined;
+        define({ ...b, kind: "vocabulary", open: as.open ?? false, terms, ...(as.vendor ? { vendor: as.vendor } : {}), ...(labeled ? { labeled: true as const } : {}), ...(description ? { description } : {}) }, where);
         break;
       }
       case "object":
@@ -417,6 +436,8 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
   const obligations: ModelDoc["obligations"] = [];
   const schemaStatements: ModelDoc["schema_statements"] = [];
   const examples: ModelDoc["examples"] = [];
+  /** Each column a table row writes as part of an example, with the member path it holds, which the object must have. */
+  const examplePaths: { where: string; object: string; column: string; path: string[] }[] = [];
   const counts = { informative: 0, rendered: 0 };
   const restated: { id: string; where: string; vocabulary: string }[] = [];
   const profileEntries: { id: string; where: string; profile: string; document: string; members?: Members; paths?: string[]; decisions: string[] }[] = [];
@@ -453,6 +474,8 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
           ...(condition && as.presence === "conditional" ? { condition } : {}),
           ...(markerOf(e) ? { marker: markerOf(e) } : {}),
           ...(description ? { description } : {}),
+          // The default its row states, as the Deals API's `cur` states "USD".
+          ...(e.kind === "field" && e.element.default !== undefined ? { default: e.element.default.value } : {}),
           sources: [id],
         };
         const named = fieldOf(id);
@@ -487,9 +510,28 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
       case "schema":
         schemaStatements.push({ ...statementOf(e, id, entry.source), in: as.in });
         break;
-      case "example":
+      case "example": {
+        // A row of a table headed by member names writes one value per column after the first, its prose: the member its
+        // header names, or the path the entry reads the header as, so the row is part of a value, as JSON.
+        if (e?.kind === "concept") {
+          const value: Record<string, unknown> = {};
+          const columns = e.element.columns.slice(1);
+          for (const c of columns) {
+            if (!/^[a-z][a-z0-9_]*$/.test(c.name)) problems.push(`${where}: the column "${c.name}" names no member, so the row's value has no place`);
+            const path = (as.columns?.[c.name] ?? c.name).split(".");
+            examplePaths.push({ where, object: as.object, column: c.name, path });
+            let at = value;
+            for (const k of path.slice(0, -1)) at = (at[k] ??= {}) as Record<string, unknown>;
+            at[path.at(-1)!] = /^-?(0|[1-9][0-9]*)$/.test(c.text) ? Number(c.text) : c.text;
+          }
+          for (const k of Object.keys(as.columns ?? {})) if (!columns.some((c) => c.name === k)) problems.push(`${where}: reads the column "${k}", which the row's table doesn't have`);
+          examples.push({ ...statementOf(e, id, entry.source), text: canonicalJson(value), object: as.object });
+          break;
+        }
+        if (as.columns) problems.push(`${where}: reads columns, which only a row of a table has, and the element is a ${e?.kind ?? "missing element"}`);
         examples.push({ ...statementOf(e, id, entry.source), object: as.object });
         break;
+      }
       case "profile":
         profileEntries.push({ id, where, profile: as.profile, document: as.document, ...(as.members ? { members: as.members } : {}), ...(as.reads ? { paths: as.reads.flatMap((r) => r.paths) } : {}), decisions: decisionsOf(entry.source) });
         break;
@@ -531,6 +573,11 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
     for (const term of t.terms) {
       const key = String(term.value);
       const first = seen.get(key);
+      // A list that gives one code twice, as the Deals API's tag gives `4` for "complete" and "archived", leaves the code both meanings.
+      if (first && term.annotation !== undefined && first.annotation !== undefined && first.annotation !== term.annotation && term.sources.some((x) => first.sources.includes(x))) {
+        first.meanings = [...(first.meanings ?? [first.annotation]), term.annotation];
+        first.annotation = `${first.annotation}, or ${term.annotation}`;
+      }
       if (first) first.sources = sorted([...first.sources, ...term.sources]);
       else seen.set(key, { ...term, value: typeof term.value === "string" && INTEGER.test(term.value) ? Number(term.value) : term.value, sources: [...term.sources] });
     }
@@ -859,6 +906,7 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
   // Co-presence (type rules § 3a): an object that carries a value whose concept requires a sibling, as money requires its
   // currency, requires the sibling with the value. A required value makes the sibling required; an optional one requires it
   // when present. A sibling the specification makes conditional keeps its condition, which says when the value is money.
+  // A sibling with a stated default is present in effect, as the Deals API's `cur` is "USD" when absent, so nothing requires it.
   const concepts = kernel.domains ? conceptOfType(kernel.domains) : new Map<string, never>();
   const conceptTypes = new Map((kernel.domains?.domains ?? []).flatMap((d) => d.concepts.map((c) => [c.name, c] as const)));
   for (const t of types.values()) {
@@ -906,7 +954,8 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
       t.properties[basis.member] = { ...value, cases };
       if (p.presence !== "required" && value.presence !== "required") dependent[basis.member] = [...(dependent[basis.member] ?? []), k];
       const sibling = own.requires ? t.properties[own.requires.member] : undefined;
-      if (!own.requires || !sibling) continue;
+      // A sibling with a stated default is present in effect, so no basis makes it conditional.
+      if (!own.requires || !sibling || sibling.default !== undefined) continue;
       if (others !== undefined) {
         problems.push(`${where}: its basis "${k}" reads it as ${own.name} for every other term, and ${own.name} requires its "${own.requires.member}", which no one term can make conditional`);
         continue;
@@ -920,7 +969,7 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
     for (const [k, p] of Object.entries(t.properties)) {
       const requires = p.type.kind === "named" ? concepts.get(p.type.name)?.concept.requires : undefined;
       const sibling = requires ? t.properties[requires.member] : undefined;
-      if (!requires || !sibling || sibling.presence === "conditional" || read.has(k)) continue;
+      if (!requires || !sibling || sibling.presence === "conditional" || sibling.default !== undefined || read.has(k)) continue;
       if (p.presence === "required") {
         if (sibling.presence !== "required") t.properties[requires.member] = { ...sibling, presence: "required" };
       } else dependent[k] = [...(dependent[k] ?? []), requires.member];
@@ -939,6 +988,20 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
   });
 
   const byIr = <T extends { ir: string }>(xs: T[]) => xs.sort((a, b) => (a.ir < b.ir ? -1 : a.ir > b.ir ? 1 : 0));
+  // A column a row writes holds a member its object has, at each step of its path.
+  for (const x of examplePaths) {
+    let at: ModelType | undefined = types.get(x.object);
+    for (const [n, k] of x.path.entries()) {
+      const props = at?.kind === "object" || at?.kind === "document" ? at.properties : undefined;
+      const p = props?.[k];
+      if (p === undefined) {
+        problems.push(`${x.where}: the column "${x.column}" holds ${x.path.slice(0, n + 1).join(".")}, which ${x.object} has no member for; read it as a member path under "columns"`);
+        break;
+      }
+      const ref = p.type.kind === "apply" && p.type.constructor === "List" ? p.type.arguments.T! : p.type;
+      at = ref.kind === "named" ? types.get(ref.name) : undefined;
+    }
+  }
   const model: ModelDoc = {
     format: 1,
     input: { lock, commit: ir.input.commit, blob: ir.input.blob, ir_sha256: sha256(canonicalJson(ir)) },

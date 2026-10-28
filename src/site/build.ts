@@ -33,6 +33,7 @@ import { registryPage } from "./registry.ts";
 import { ROOT_LINK } from "./html.ts";
 import { REPO_ROOT, specRoot } from "../repo.ts";
 import { loadSiteConfig, lockNames, named, type SiteConfig } from "./config.ts";
+import { stands } from "../mapping.ts";
 
 const ASSETS = join("src", "site", "assets");
 
@@ -147,9 +148,9 @@ export function buildSpecFiles(inputs: SiteInputs): { files: Map<string, Buffer>
   put("examples.html", examplesPage(inputs));
   put("downloads.html", filesPage(inputs, sets));
   put("decisions/index.html", decisionsIndex(inputs));
-  for (const d of inputs.decisions) if (d.status !== "superseded") put(`decisions/${d.id}.html`, decisionPage(inputs, d));
+  for (const d of inputs.decisions) if (stands(d)) put(`decisions/${d.id}.html`, decisionPage(inputs, d));
 
-  const live = inputs.decisions.filter((d) => d.status !== "superseded");
+  const live = inputs.decisions.filter((d) => stands(d));
   const main = inputs.builds.get(inputs.locks[0]!.name)!.get("as-written")!;
   const card: SpecCard = {
     spec: inputs.brand.spec,
@@ -274,6 +275,13 @@ function resolveRef(dir: string, ref: string): string {
   return target === "" || target === "." || target.endsWith("/") ? `${target === "." ? "" : target}index.html` : target;
 }
 
+/** Every `$ref` a schema holds, in document order. */
+function refsOf(schema: unknown, out: string[] = []): string[] {
+  if (Array.isArray(schema)) for (const x of schema) refsOf(x, out);
+  else if (schema !== null && typeof schema === "object") for (const [k, v] of Object.entries(schema)) if (k === "$ref" && typeof v === "string") out.push(v); else refsOf(v, out);
+  return out;
+}
+
 /** Each link a page has whose text is the root link's, with whether it sits in the page's site nav. */
 function rootLinks(html: string): { href: string; inNav: boolean }[] {
   const nav = /<nav aria-label="Site">([\s\S]*?)<\/nav>/.exec(html);
@@ -360,39 +368,72 @@ export function checkSite(site: Map<string, Buffer>, exported?: ExportCheck): st
       if (/^(https?:)?\/\//.test(m[2]!)) problems.push(`${path}: loads ${m[2]} from another origin`);
     }
     const dir = posix.dirname(path);
-    for (const m of text.matchAll(/\s(?:href|src)="([^"]+)"/g)) {
-      const ref = m[1]!.replace(/&amp;/g, "&");
-      // A link into the public repository names a path its export publishes, not only one the private tree holds.
-      if (exported?.repo && (ref === exported.repo || ref.startsWith(`${exported.repo}/`) || ref.startsWith(`${exported.repo}#`))) {
-        const problem = repoProblem(ref, exported);
-        if (problem) problems.push(`${path}: links ${ref}, ${problem}`);
+    for (const m of text.matchAll(/\s(?:href|src)="([^"]+)"/g)) checkLink(path, dir, m[1]!.replace(/&amp;/g, "&"));
+  }
+  // A type map's data names, for each reference across hosts, the registry page and file it opens, and the registry's schema, whose own references open the registry's pages: each a relative link to a file the site holds, the page an address its router reads unchanged at the vocabulary and lock the entry names.
+  for (const [path, data] of site) {
+    const m = /^((?:[^/]+\/)?)data\/[^/]+\.json$/.exec(path);
+    if (!m) continue;
+    const registry = (JSON.parse(data.toString("utf8")) as { registry?: Record<string, Partial<{ def: string; lock: string; map: string; href: string; file: string; schema: unknown }>> }).registry ?? {};
+    // The map page sits in the spec's folder, so its links resolve from there.
+    const dir = m[1]! === "" ? "." : m[1]!.slice(0, -1);
+    for (const [ref, t] of Object.entries(registry)) {
+      const where = `${path} (the reference ${ref})`;
+      const missing = (["def", "lock", "map", "href", "file"] as const).filter((k) => typeof t[k] !== "string");
+      if (missing.length > 0) {
+        problems.push(`${where}: names no ${missing.join(", ")}`);
         continue;
       }
-      // A link that starts with two slashes names another host, which a link on this site never means.
-      if (ref.startsWith("//")) {
-        problems.push(`${path}: links ${ref}, which names another host; a link within the site starts with one slash or none`);
-        continue;
+      const links = [t.href!, t.file!, t.map!];
+      // The registry's schema's own references to its vocabularies open the registry's type map too.
+      const route = routeOf(posix.dirname(resolveRef(dir, t.map!)) === "." ? "" : `${posix.dirname(resolveRef(dir, t.map!))}/`);
+      if (route) for (const inner of refsOf(t.schema)) {
+        const href = route.registryInnerHref({ map: t.map!, lock: t.lock! }, inner);
+        if (href !== null) links.push(href);
       }
-      if (/^[a-z][a-z0-9+.-]*:/i.test(ref) || ref.startsWith("#")) continue;
-      const hash = ref.split("#", 2)[1];
-      const resolved = resolveRef(dir, ref);
-      if (!site.has(resolved)) {
-        problems.push(`${path}: links ${ref}, which the site doesn't hold`);
-        continue;
+      for (const link of links) {
+        // The registry's page is on this site, so its link is a relative path; an absolute one, or a bare fragment, opens no registry page.
+        if (/^([a-z][a-z0-9+.-]*:|\/|#)/i.test(link)) problems.push(`${where}: opens ${link}, which isn't a relative link to a file within the site`);
+        else checkLink(where, dir, link);
       }
-      // A link into a spec's type map is an address its router reads unchanged, and names a type of the build it opens.
-      if ((resolved === "map.html" || resolved.endsWith("/map.html")) && hash !== undefined) {
-        const prefix = resolved.slice(0, -"map.html".length);
-        const route = routeOf(prefix);
-        if (!route) continue;
-        const p = route.parse(`#${hash}`);
-        if (!p.route) continue;
-        if (p.changes.length > 0) problems.push(`${path}: links the type map at #${hash}, which the router rewrites: ${p.changes.join("; ")}`);
-        const { type: name, lock, variant } = p.state;
-        const have = typesOf(prefix, lock, variant);
-        if (!have) problems.push(`${path}: links the type map on ${lock} ${variant}, which the site has no data for`);
-        else if (!have.has(name)) problems.push(`${path}: links the type map at "${name}", which ${lock} ${variant} doesn't hold`);
-      }
+      // The page opens the vocabulary and lock the entry names.
+      const hash = t.href!.split("#", 2)[1];
+      const p = route && hash !== undefined ? route.parse(`#${hash}`) : null;
+      if (!p || !p.route || p.state.type !== t.def || p.state.lock !== t.lock) problems.push(`${where}: opens ${t.href}, which isn't the registry's type map at ${t.def} on ${t.lock}`);
+    }
+  }
+  // One link of a page or a data file: into the public repository, a path its export publishes; within the site, a file it holds, and in a type map, an address its router reads unchanged that names a type of the build it opens.
+  function checkLink(path: string, dir: string, ref: string): void {
+    // A link into the public repository names a path its export publishes, not only one the private tree holds.
+    if (exported?.repo && (ref === exported.repo || ref.startsWith(`${exported.repo}/`) || ref.startsWith(`${exported.repo}#`))) {
+      const problem = repoProblem(ref, exported);
+      if (problem) problems.push(`${path}: links ${ref}, ${problem}`);
+      return;
+    }
+    // A link that starts with two slashes names another host, which a link on this site never means.
+    if (ref.startsWith("//")) {
+      problems.push(`${path}: links ${ref}, which names another host; a link within the site starts with one slash or none`);
+      return;
+    }
+    if (/^[a-z][a-z0-9+.-]*:/i.test(ref) || ref.startsWith("#")) return;
+    const hash = ref.split("#", 2)[1];
+    const resolved = resolveRef(dir, ref);
+    if (!site.has(resolved)) {
+      problems.push(`${path}: links ${ref}, which the site doesn't hold`);
+      return;
+    }
+    // A link into a spec's type map is an address its router reads unchanged, and names a type of the build it opens.
+    if ((resolved === "map.html" || resolved.endsWith("/map.html")) && hash !== undefined) {
+      const prefix = resolved.slice(0, -"map.html".length);
+      const route = routeOf(prefix);
+      if (!route) return;
+      const p = route.parse(`#${hash}`);
+      if (!p.route) return;
+      if (p.changes.length > 0) problems.push(`${path}: links the type map at #${hash}, which the router rewrites: ${p.changes.join("; ")}`);
+      const { type: name, lock, variant } = p.state;
+      const have = typesOf(prefix, lock, variant);
+      if (!have) problems.push(`${path}: links the type map on ${lock} ${variant}, which the site has no data for`);
+      else if (!have.has(name)) problems.push(`${path}: links the type map at "${name}", which ${lock} ${variant} doesn't hold`);
     }
   }
   return problems;

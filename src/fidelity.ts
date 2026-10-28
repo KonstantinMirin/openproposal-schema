@@ -57,6 +57,11 @@
  * - `example`: a YAML block the text writes under a field's name: each
  *   member's value as the block writes it is accepted, unless it holds a
  *   `<placeholder>`.
+ * - `default`: a value a row states the member takes when it is absent, as
+ *   the Deals API's "int, default 2": the schema's node for the member
+ *   carries it as its `default`, and a value of the member equal to it is
+ *   accepted. A reader that reads a row's Type cell as stating no default
+ *   gives the form with no value: the node carries no `default`.
  *
  * Each constraint gets a valid and an invalid vector, an optional member
  * two valid ones, built from a valid baseline of the root it sits in, and
@@ -100,7 +105,7 @@ import type { Kernel } from "./kernel.ts";
 import type { Lists } from "./lists.ts";
 import { conceptOfType } from "./domains.ts";
 import { pascalField } from "./constructors.ts";
-import { decisionsOf, inScope, type DecisionRecord, type MappingFile } from "./mapping.ts";
+import { decisionsOf, inScope, type DecisionRecord, type MappingFile, stands } from "./mapping.ts";
 import type { ModelDoc } from "./model.ts";
 import type { Rule, RulesDoc } from "./rules.ts";
 
@@ -108,7 +113,7 @@ type Schema = Record<string, unknown>;
 const isMap = (v: unknown): v is Schema => v !== null && typeof v === "object" && !Array.isArray(v);
 
 /** The forms the oracle reads. */
-export const FORMS = ["required", "optional", "conditional", "type", "values", "namespaced", "contains", "member", "empty", "example"] as const;
+export const FORMS = ["required", "optional", "conditional", "type", "values", "namespaced", "contains", "member", "empty", "example", "default"] as const;
 export type Form = (typeof FORMS)[number];
 
 /** Where a constraint sits: a root, then the path to the object that holds the member, then the member. */
@@ -132,7 +137,9 @@ export type Expectation =
   | { form: "values"; values: unknown[]; open: boolean; items: boolean; entries?: boolean; vendor?: number }
   /** Each example is a value, and each example without its namespace, the part after its first `/`, isn't. */
   | { form: "namespaced"; examples: string[]; items: boolean }
-  | { form: "example"; value: unknown };
+  | { form: "example"; value: unknown }
+  /** The value a row states the member takes when it is absent, which the schema writes as the member's `default`; with no `value`, the row states none, and the schema writes none. */
+  | { form: "default"; value?: unknown };
 
 /** One constraint the specification states, as the oracle reads it from the IR. */
 export type SpecConstraint = {
@@ -378,7 +385,7 @@ export function checkFidelity(input: FidelityInput): FidelityResult & { problems
 
   // A departure excuses a disagreement only on an element it covers on the lock, and only in a form that cover lists under `departs`.
   // A proposed departure excuses too, since none is accepted yet; the gate's line names each with its status.
-  const departures = decisions.filter((d) => d.kind === "departure" && d.status !== "superseded");
+  const departures = decisions.filter((d) => d.kind === "departure" && stands(d));
   const departureOf = (element: string, form: Form) => departures.find((d) => d.covers.some((c) => c.ir === element && inScope(c.locks, lock) && (c.departs ?? []).includes(form)));
   const ruledOf = new Map((input.ruled ?? []).map((r) => [r.constraint, r.rule]));
   const ruleById = new Map(rules.rules.map((r) => [r.id, r]));
@@ -686,6 +693,15 @@ export function checkFidelity(input: FidelityInput): FidelityResult & { problems
           const numeric = c.values.every((x) => typeof x === "number");
           const unlisted = numeric ? Math.max(...(c.values as number[])) + 1 : UNLISTED;
           expect(false, put(unlisted, false), `"${name}" ${how} the unlisted ${JSON.stringify(unlisted)}`);
+          // An integer code list is closed below its lowest code and between two codes it lists, as the Deals API's tag lists
+          // `sellerstatus` 0, 1, 2, and 4, and not 3.
+          if (numeric && (c.values as number[]).every((x) => Number.isInteger(x))) {
+            const codes = [...new Set(c.values as number[])].sort((a, b) => a - b);
+            const vendor = (y: number) => c.vendor !== undefined && y >= c.vendor;
+            const gap = codes.slice(1).map((x, k) => [codes[k]!, x] as const).find(([a, x]) => x - a > 1 && !vendor(a + 1));
+            if (gap) expect(false, put(gap[0] + 1, false), `"${name}" ${how} the unlisted ${gap[0] + 1}, between two listed codes,`);
+            if (codes[0]! >= 0) expect(false, put(codes[0]! - 1, false), `"${name}" ${how} the unlisted ${codes[0]! - 1}, below the listed codes,`);
+          }
           const values = c.entries ? child(memberAt, "additionalProperties") : c.items && memberAt.node.type === "array" ? child(memberAt, "items") : memberAt;
           const target = deref(values);
           reached.add(`${target.file}#${target.pointer}`);
@@ -707,6 +723,22 @@ export function checkFidelity(input: FidelityInput): FidelityResult & { problems
       case "example": {
         const written = tryInner({ [name]: c.value }, " with the example's value");
         if (written !== null) expect(true, written, `"${name}" as the example writes it, ${JSON.stringify(c.value)}`);
+        break;
+      }
+      case "default": {
+        // The member's own node, beside its `$ref`, carries the default, which a receiver fills in for an absent member.
+        const node = child(st.at(-1)!.object, "properties", name).node;
+        counts.default = (counts.default ?? 0) + 1;
+        if (!("value" in c)) {
+          if ("default" in node) disagree(`the row states no default, but the schema's "${name}" defaults to ${JSON.stringify(node.default)}`, false);
+          break;
+        }
+        if (!("default" in node)) disagree(`the stated default is ${JSON.stringify(c.value)}, but the schema's "${name}" states no default`, false);
+        else if (canonicalJson(node.default) !== canonicalJson(c.value)) disagree(`the stated default is ${JSON.stringify(c.value)}, but the schema's "${name}" defaults to ${JSON.stringify(node.default)}`, false);
+        else {
+          const at = tryInner({ [name]: c.value }, " with the default");
+          if (at !== null) expect(true, at, `"${name}" as its default, ${JSON.stringify(c.value)}`);
+        }
         break;
       }
     }

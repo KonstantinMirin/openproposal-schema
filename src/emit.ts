@@ -36,11 +36,13 @@
 import { posix } from "node:path";
 import { canonicalJson } from "./canonical.ts";
 import { fieldOf, Instantiator, type Constructor, type Model as Templates } from "./constructors.ts";
-import { KEYWORDS, tagOf, walkSchemas } from "./conventions.ts";
+import { isTitledCodes, KEYWORDS, tagOf, walkSchemas } from "./conventions.ts";
 import type { TypeRef } from "./mapping.ts";
 import { KERNEL_MODULE } from "./mapping-rules.ts";
 import type { SectionIds } from "./specs/plugin.ts";
-import { registryFileById } from "./imports.ts";
+import { Ajv2020 } from "ajv/dist/2020.js";
+import { installFormats } from "./formats.ts";
+import { registryFileById, withImports } from "./imports.ts";
 import { extensionOf, type ModelDoc, type ModelProperty, type ModelType } from "./model.ts";
 
 export const DIALECT = "https://json-schema.org/draft/2020-12/schema";
@@ -192,10 +194,10 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
   const inst = new Instantiator(templatesOf(model));
   const conditions = { expressed: [] as string[], left: [] as string[] };
 
-  /** A property: its type's schema, with its description beside it. */
+  /** A property: its type's schema, with its description and the default its row states beside it. */
   const propertySchema = (p: ModelProperty, key: string, where: string): Record<string, unknown> => {
     try {
-      return { ...inst.schemaOf(p.type, key), ...(p.description ? { description: p.description } : {}) };
+      return { ...inst.schemaOf(p.type, key), ...(p.description ? { description: p.description } : {}), ...(p.default !== undefined ? { default: p.default } : {}) };
     } catch (e) {
       problems.push(`${where}: property "${key}": ${(e as Error).message}`);
       return {};
@@ -338,7 +340,7 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
         // An open vocabulary whose core terms the specification doesn't list accepts namespaced terms only (D-041).
         if (t.open && values.length === 0) return { description: "No core terms are listed yet, so every term is namespaced.", $ref: "#/$defs/NamespacedTerm" };
         // An integer-coded vocabulary names each code: one titled const branch per code, and its extension as a branch of its own (type rules § 6).
-        if (type === "integer") return integerCoded(t, types);
+        if (type === "integer") return integerCoded(t, types, problems);
         return { ...(notes.length > 0 ? { description: notes.join("; ") } : {}), ...(t.open ? { anyOf: [core, { $ref: `#/$defs/${extensionOf(t)}` }] } : core) };
       }
       case "union": {
@@ -506,9 +508,10 @@ export function codeTitle(text: string): string {
  * a class the list groups codes by, as Feed Types' `AOD`, so those codes are
  * named by the text after it; a name still shared takes its code.
  */
-export function codeTitles(terms: readonly { value: unknown; annotation?: string }[]): string[] {
+export function codeTitles(terms: readonly { value: unknown; annotation?: string; meanings?: string[] }[]): string[] {
   const texts = terms.map((x) => x.annotation ?? String(x.value));
-  const first = texts.map(codeTitle);
+  // A code the list gives twice is named by each of its meanings, as "deal is complete or deal is archived".
+  const first = terms.map((x, n) => (x.meanings ? x.meanings.map(codeTitle).join(" or ") : codeTitle(texts[n]!)));
   const shared = (xs: string[]) => new Set(xs.filter((x, n) => xs.indexOf(x) !== n));
   const classes = shared(first);
   const second = texts.map((t, n) => (classes.has(first[n]!) && /^.{1,60}?:\s/.test(t) ? codeTitle(t.replace(/^.{1,60}?:\s/, "")) : first[n]!));
@@ -526,7 +529,7 @@ export function codeTitles(terms: readonly { value: unknown; annotation?: string
  * value matches one branch. The vocabulary keeps its title, the list it
  * comes from, and a short description.
  */
-function integerCoded(t: Extract<ModelType, { kind: "vocabulary" }>, types: Map<string, ModelType>): Record<string, unknown> {
+function integerCoded(t: Extract<ModelType, { kind: "vocabulary" }>, types: Map<string, ModelType>, problems: string[]): Record<string, unknown> {
   const vendor = t.vendor ?? t.list?.vendor;
   const codes = t.terms.map((x) => x.value as number);
   const titles = codeTitles(t.terms);
@@ -541,9 +544,13 @@ function integerCoded(t: Extract<ModelType, { kind: "vocabulary" }>, types: Map<
     const schema = ext?.kind === "primitive" ? (structuredClone(ext.schema) as Record<string, unknown>) : {};
     const { description, ...constraints } = schema;
     const inRange = codes.filter((c) => (typeof constraints.minimum !== "number" || c >= constraints.minimum) && (typeof constraints.maximum !== "number" || c <= constraints.maximum));
-    branches.push({ ...constraints, title: extensionOf(t).replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^(.)(.*)$/, (_, a: string, b: string) => a + b.toLowerCase()), ...(typeof description === "string" ? { description } : {}), ...(inRange.length > 0 ? { not: { enum: inRange } } : {}) });
+    // No enum holds an integer (type rules § 6): the one code the extension would also match is a `not` of its const; several, which no list has, are a problem.
+    if (inRange.length > 1) problems.push(`${t.module}: vocabulary "${t.name}": its extension ${extensionOf(t)} would also match the codes ${inRange.join(", ")}, and a branch leaves out one code, by a \`not\` of its const`);
+    const leave = inRange.length === 1 ? { not: { const: inRange[0] } } : {};
+    branches.push({ ...constraints, title: extensionOf(t).replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^(.)(.*)$/, (_, a: string, b: string) => a + b.toLowerCase()), ...(typeof description === "string" ? { description } : {}), ...leave });
   }
-  const title = /\bList:\s[^,;]+/.exec(t.description ?? "")?.[0] ?? t.list?.name;
+  // A list's title, or, for the specification's own labeled list, the vocabulary's name in words, as "Seller Deal Status".
+  const title = /\bList:\s[^,;]+/.exec(t.description ?? "")?.[0] ?? t.list?.name ?? (t.labeled ? t.name.replace(/([a-z])([A-Z])/g, "$1 $2") : undefined);
   const description = t.list ? `The codes of ${t.list.standard} ${t.list.name} (${t.list.url})` : (t.description ?? "").replace(/, each with its row's text/, "").replace(/\.$/, "");
   return { ...(title ? { title } : {}), ...(description ? { description } : {}), type: "integer", oneOf: branches };
 }
@@ -587,6 +594,8 @@ export function checkEmitted(files: EmittedFile[], model: ModelDoc, dir: string,
   const mayAnyOf = (t: ModelType | undefined) =>
     t !== undefined && ((t.kind === "vocabulary" && t.open) || t.kind === "union" || (t.kind === "copy" && (t.fallback || unionShells.has(t.of.constructor))));
 
+  // Each default beside a $ref, which must be a value of the type it references.
+  const defaults: { at: string; file: string; ref: string; value: unknown }[] = [];
   for (const f of files) {
     const s = f.schema;
     if (s.$schema !== DIALECT) problems.push(`${f.path}: "$schema" is ${JSON.stringify(s.$schema)}, not ${DIALECT}`);
@@ -625,12 +634,16 @@ export function checkEmitted(files: EmittedFile[], model: ModelDoc, dir: string,
       }
       if (pointer !== "" && ("$schema" in node || "$id" in node)) problems.push(`${at}: a nested "$schema" or "$id"; every file is one resource`);
       if ("$ref" in node) {
-        const extra = Object.keys(node).filter((k) => k !== "$ref" && k !== "description");
+        // Annotations may sit beside a $ref: the description, and the default a row states; a constraint may not.
+        const extra = Object.keys(node).filter((k) => k !== "$ref" && k !== "description" && k !== "default");
         if (extra.length > 0) problems.push(`${at}: ${extra.map((k) => `"${k}"`).join(", ")} beside a $ref; constraints live only on named types (type rules § 5)`);
+        if ("default" in node) defaults.push({ at, file: String(s.$id), ref: String(node.$ref), value: node.default });
         const problem = refProblem(String(node.$ref), f.path, byPath);
         if (problem) problems.push(`${at}: ${problem}`);
       }
       if ("allOf" in node) problems.push(`${at}: "allOf"; no schema inherits from another (type rules § 8)`);
+      // A code is a titled const branch wherever it sits, so no enum holds an integer (type rules § 6).
+      if (Array.isArray(node.enum) && node.enum.some((v) => Number.isInteger(v))) problems.push(`${at}: an enum holds the integer${node.enum.filter((v) => Number.isInteger(v)).length > 1 ? "s" : ""} ${node.enum.filter((v) => Number.isInteger(v)).join(", ")}; write each code as a titled const branch, or leave one out with a \`not\` of its const (type rules § 6)`);
       const root = roots.find(([p]) => p === pointer);
       // An integer-coded vocabulary names each code, so a bare enum of integers at a vocabulary's root fails (type rules § 6).
       if (root?.[2]?.kind === "vocabulary") {
@@ -639,7 +652,10 @@ export function checkEmitted(files: EmittedFile[], model: ModelDoc, dir: string,
       }
       // An integer-coded vocabulary that isn't a registry's is titled const branches, not another form such as an anyOf of consts.
       if (root?.[2] && isIntegerCoded(root[2]) && !(root[2].kind === "vocabulary" && root[2].list?.registry) && !(node.type === "integer" && Array.isArray(node.oneOf))) problems.push(`${at}: the integer-coded vocabulary "${root[2].name}" isn't type integer with titled const branches in a oneOf (type rules § 6)`);
-      if ("oneOf" in node && node.type === "integer" && root?.[2]?.kind === "vocabulary") {
+      if ("oneOf" in node && node.type === "integer" && root?.[2]?.kind === "primitive") {
+        // A primitive whose values are a few named codes, as IntegerFlag: titled integer consts, each once, and nothing else (type rules § 6).
+        if (!isTitledCodes(node) || Object.keys(node).some((k) => !["type", "oneOf", "description"].includes(k))) problems.push(`${at}: the primitive "${root[2].name}" is no titled codes: type integer and a oneOf of two or more titled integer consts, each code and title once, and nothing else (type rules § 6)`);
+      } else if ("oneOf" in node && node.type === "integer" && root?.[2]?.kind === "vocabulary") {
         // An integer-coded vocabulary: a titled const branch per code, and at most one titled integer branch for its extension, no branch matching another's value.
         const branches = (Array.isArray(node.oneOf) ? node.oneOf : []).filter(isMap);
         const consts = branches.filter((b) => "const" in b);
@@ -650,7 +666,7 @@ export function checkEmitted(files: EmittedFile[], model: ModelDoc, dir: string,
         // Each value matches exactly one branch: the extension leaves every code in its range to the code's own branch.
         for (const b of rest) {
           const inRange = consts.map((c) => c.const as number).filter((c) => (typeof b.minimum !== "number" || c >= b.minimum) && (typeof b.maximum !== "number" || c <= b.maximum));
-          const left = isMap(b.not) && Array.isArray(b.not.enum) ? (b.not.enum as unknown[]) : [];
+          const left = isMap(b.not) && "const" in b.not ? [b.not.const] : [];
           const both = inRange.filter((c) => !left.includes(c));
           if (both.length > 0) problems.push(`${at}: the extension branch also takes the code${both.length > 1 ? "s" : ""} ${both.join(", ")}, so ${both.length > 1 ? "they match" : "it matches"} two branches and fail${both.length > 1 ? "" : "s"} (type rules § 6)`);
         }
@@ -669,6 +685,18 @@ export function checkEmitted(files: EmittedFile[], model: ModelDoc, dir: string,
         if (!root || !mayAnyOf(root[2])) problems.push(`${at}: "anyOf" where type rules § 8 allows none: only at the root of an open vocabulary, a union, or a union copy`);
       }
     });
+  }
+  if (defaults.length > 0) {
+    // A default is a value its type accepts, or a receiver that applies it reads a value the schema rejects.
+    const ajv = new Ajv2020({ strict: false, allErrors: true });
+    installFormats(ajv);
+    for (const f of withImports(files)) if (!ajv.getSchema(String(f.schema.$id))) ajv.addSchema(f.schema);
+    for (const d of defaults) {
+      const ref = URL.canParse(d.ref, d.file) ? new URL(d.ref, d.file).href : d.ref;
+      const validate = ajv.getSchema(ref);
+      if (!validate) problems.push(`${d.at}: its default can't be checked, since its $ref ${d.ref} resolves to no schema`);
+      else if (!validate(d.value)) problems.push(`${d.at}: the default ${JSON.stringify(d.value)} is no value of the type its $ref names (${ajv.errorsText(validate.errors)})`);
+    }
   }
   return problems;
 }

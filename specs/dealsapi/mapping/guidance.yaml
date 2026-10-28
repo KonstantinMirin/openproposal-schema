@@ -1,0 +1,175 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: guidance
+sections: [ implementation-guidance, matching-bid-requests-to-deals, authorization, sending-and-receiving-information, deal-object-guidance, auxiliary-data, publisher-count, dynamic-inventory, terms-object-1, inventory-object-1, included-inventory, price-and-floor-guidance, origin-curator-and-seller, example-1, example-2, curation-object-1, curation-fee, example-scenarios ]
+types: []
+entries:
+  - ir: rule:matching-bid-requests-to-deals:fbadcee1
+    digest: 97aa0a899f44551e26104a2a5fbed67495d0071cf7021f26584cf9db4a7a680a
+    source: { decision: D-001 }
+    as: { role: informative }
+  - ir: rule:matching-bid-requests-to-deals:a165d6d3
+    digest: d1f610363456ebcd274e895a9cf1e67d59440716210873d2b99f4623a777ea01
+    source: { decision: D-001 }
+    as: { role: informative }
+  - ir: rule:matching-bid-requests-to-deals:c25bb816
+    digest: 26c2c056477f225ec1e82febee9f74e984448d723cdd9d046e4368121b0ff571
+    source: { decision: D-032 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:matching-bid-requests-to-deals:13ab19fc
+    digest: 14efa4041cd3ad9143b9ea575958c6814b4c7341074579fe6675c3b59c3fc2b7
+    source: { decision: D-026 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:matching-bid-requests-to-deals:a48a0c62
+    digest: 0de510d9aad2941927da4b834faa765b6a1a47e7b10d52e57b51245d8531ebbf
+    source: { decision: D-026 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:matching-bid-requests-to-deals:30bd062c
+    digest: e1086ddd22f051e03b6532000277cf3fc11b5d3bf196505790182d5ae5516260
+    source: { decision: D-032 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:matching-bid-requests-to-deals:8cd01d0a
+    digest: 9c4b2f4b4fbfd28640c66a97d0a5759fea1b89cc058e30fa03c434ca0084cdbd
+    source: { decision: D-032 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:authorization:6c7eb7db
+    digest: abe6e1f6553aaac90360d43c32f74dab08cb38d42b31284fff7ced00ac3537cb
+    source: { decision: D-032 }
+    as: { role: obligation, party: buyer }
+  - ir: rule:authorization:bb5fb360
+    digest: 47d4d816eca7615f544986911c80a79682f58302442992eab19a5db3a78cfacf
+    source: { decision: D-032 }
+    as: { role: obligation, party: buyer }
+  - ir: rule:sending-and-receiving-information:759bca86
+    digest: c7e452ca9967bfc81eba589196b0eb8d839c6dd0d8143abfbc16d45162befb41
+    source: { decision: D-001 }
+    as: { role: informative }
+  - ir: rule:sending-and-receiving-information:a8824341
+    digest: 1adaf16b178fa3de326213d98b4cb71c0092a83f708cdf68e46f8c3244f90af1
+    source: { decision: D-001 }
+    as: { role: informative }
+  - ir: rule:auxiliary-data:3020f0de
+    digest: 176f1b12cff99beb65db510c35da6f2f592255ecd7a8753bf5ca4fcbf590c567
+    source: { decision: D-032 }
+    as: { role: obligation, party: seller }
+  - ir: rule:auxiliary-data:bf4c5c99
+    digest: 96739fc3def87386bc52644a68bb6422e49a8f86757bf59af86d104a2e3dd308
+    source: { decision: D-032 }
+    as: { role: obligation, party: seller }
+  - ir: rule:auxiliary-data:212f573b
+    digest: 3a2a167ccc7b0834295b6cd35947b8c969312f9c8a6620c950d1907af81b8e72
+    source: { decision: D-001 }
+    as: { role: informative }
+  - ir: rule:auxiliary-data:436042a5
+    digest: 0ea9b0f012e4a791c48322642f352450bc2234d390ab453227d5d7de9664282e
+    source: { decision: D-032 }
+    as: { role: obligation, party: seller }
+  - ir: rule:publisher-count:d6dcb5e5
+    digest: 13598652560976343954136c87735f5c7a80dff6e83bd907dcf504faff8de2f7
+    source: { decision: D-001 }
+    as: { role: informative }
+  - ir: sentence:publisher-count:bef4f7d2
+    digest: 1ece1452daae5b8e9cb35f455355c8b76b8ceb96feb5e5d7c836f8942326f8a6
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:publisher-count:734470bd
+    digest: 48fdd24a313b7ff1e24d711c0da61cfa54cc7945569972aeeb8885b248187b80
+    source: { decision: D-032 }
+    as: { role: obligation, party: buyer }
+  - ir: sentence:publisher-count:42aeebcf
+    digest: f2ceb54e6327de6112816037763804125691231620c1a3b4a204c5c12b20ba7a
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:dynamic-inventory:0af8b640
+    digest: 901e9a716b59e2c89b45a5fcd43872e6cbf24408323b70e9410671a3a66f46f6
+    source: { decision: D-032 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:dynamic-inventory:ba0b17ed
+    digest: 593243cd3c3fa3f90c5392b043f93124195e287cd4f349f08fef1ee5ea1749b7
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:terms-object-1:647b6593
+    digest: e4b08754ebc34fe5523007e2fd84a060e9e66d1f30a39a9464535f296698db97
+    source: { decision: D-007 }
+    as: { role: rule, object: Terms }
+  - ir: rule:terms-object-1:fcbe8020
+    digest: 8d4fb46d02c74e5e90f2182fa3812628e69e160e833a2621ba989b8cfb5fdd48
+    source: { decision: D-001 }
+    as: { role: informative }
+  - ir: rule:inventory-object-1:1ff4e5fa
+    digest: 300117d6ff7b6c2a4ffd41c989eae5505c680b4854f05ceb66d78b0e159a73e6
+    source: { decision: D-015 }
+    as: { role: informative }
+  - ir: rule:included-inventory:c5adb5e0
+    digest: 7609c5bf58cf7fd60af3c3d357b16de1982a624588f5ece58908b4fad829e115
+    source: { decision: D-013 }
+    as: { role: informative }
+  - ir: sentence:included-inventory:b2124486
+    digest: 6086c4200b6fee9ef459e1b45de31db912ee60aa17a50053182606d0463f9642
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:origin-curator-and-seller:0cc548ed
+    digest: e20969bf0aed6ac9a1063ce074dfb75c100f182becab8b060f433f334fa3c395
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:origin-curator-and-seller:19027373
+    digest: 8b960b4ff1b574fff7e5d3bfea095b99e72fed42d0374d13727c482d06740e22
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:origin-curator-and-seller:4f4c7526
+    digest: 45591fad6a4f3af2a07369c0ba1f855e10f3eea2d14fe7e4f88e7d9988b2853c
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:origin-curator-and-seller:f0b8456f
+    digest: 4ac1a457dfa0c1d5c1eabf88f3d6cd0b17a31bac8e4da2516cd3a8f1bdb13856
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:example-1:7f955850
+    digest: 4eb252d43a58aee98bc59c43c05d6cec34f7b93f8a4787460d58a87a1b9e65b4
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:example-2:b3e88358
+    digest: 5fba7f836296b6a62a4b90064d1adaea55cc41480e0a1488aa23b404321a0f43
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:curation-fee:84cbb25a
+    digest: 646e869a9afac9865276d85a89819a18224b72b1f10c853de1725890f235bc74
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:curation-fee:b84e34fe
+    digest: c05ffefb3b2d4531c2490887ab0a86609d948d3abed90c3bddbb763809c6c42a
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:curation-fee:f82c1eb3
+    digest: 677e046b7ce47065af926539ecfbb3dd17fd377b1f7ffd113948c91fbebbdfb4
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: concept:example-scenarios:1
+    digest: b9eced7bfa9352810a4ca9df715c83df872d093b8d4f689dc1eda44713da6ad3
+    source: { decision: D-030 }
+    as: { role: example, object: Deal, columns: { curationfee: curation.curfeetype } }
+  - ir: concept:example-scenarios:2
+    digest: 8dc30d2b55f9a40e7afb04b0a81a0d1d448188c95e8b09355c2a46a921dda8ac
+    source: { decision: D-030 }
+    as: { role: example, object: Deal, columns: { curationfee: curation.curfeetype } }
+  - ir: rule:example-scenarios:b2ba9fd4
+    digest: 4ddceba952e5f4eb0c09d82e42ecdb7dd143c4411c573a91832c93a18eff4341
+    source: { decision: D-001 }
+    as: { role: informative }
+  - ir: concept:example-scenarios:3
+    digest: a678179bc83223fa97f3343208809b328afa0730ac54caa0dbca10df1b5fa899
+    source: { decision: D-030 }
+    as: { role: example, object: Deal, columns: { curationfee: curation.curfeetype } }
+  - ir: concept:example-scenarios:4
+    digest: 0469da609bcb6aa579322a6b2ba4ad2eaf052db48a44d7358789866ded146650
+    source: { decision: D-030 }
+    as: { role: example, object: Deal, columns: { curationfee: curation.curfeetype } }
+  - ir: rule:example-scenarios:47eab074
+    digest: afecf3017eae42128dc60488e8de37365707f88930f43acb7dbcfdae867536b2
+    source: { decision: D-001 }
+    as: { role: informative }
+  - ir: concept:example-scenarios:5
+    digest: dc52a19ac66a13d1c14fd243b0640adedcd41d4b1f199975b7d33da5652bc48c
+    source: { decision: D-030 }
+    as: { role: example, object: Deal, columns: { curationfee: curation.curfeetype } }

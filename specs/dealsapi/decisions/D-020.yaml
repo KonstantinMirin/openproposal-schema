@@ -1,0 +1,47 @@
+format: 1
+id: D-020
+status: proposed
+kind: gap
+author: agent
+question: "What does a guaranteed deal do with `units` and `totalcost`, which \"should be provided\" if the deal is guaranteed?"
+covers:
+  - ir: rule:object-terms:ab3aa10d
+    digest: 157d667ffd56816a8c0fef50497af79cf91e4a845a234c4330648f9b3e2e1b51
+    quote: "If the deal is guaranteed, this number should be provided."
+  - ir: rule:object-terms:1267dc65
+    digest: f8fcf07f9ff22f939fddbbbfc2c61058d7377f5a6a6b43b361ad5d94f027c059
+    quote: "If the deal is guaranteed, this value should be provided."
+  - ir: rule:object-terms:eb7dd0c3
+    digest: d61e85757a55a322a376fb5b456ac9cb026204f90a25796361c2a768d3d51951
+    quote: "If the deal is not guaranteed this may be omitted."
+  - ir: rule:object-terms:eb7dd0c3-2
+    digest: 612e13dfa6ce65af179a0550fe6d2ba079a610824b2b0f27b29b3d7439b4caee
+    quote: "If the deal is not guaranteed this may be omitted."
+  - ir: field:object-terms:units
+    digest: e9a8fe666cbf1b98dc9f22407b967fe7368d45ad3d3b0d5c75ea8ab993a9b2a8
+    quote: "`units` | int | Number of units (impressions) over the specified start and end date of the deal. If the deal is guaranteed, this number should be provided. If the deal is not guaranteed this may be omitted."
+  - ir: field:object-terms:totalcost
+    digest: d99b424a4b4835aa25da211b0ddc98b0b34b83535b9a62fde60a50ba06494fb6
+    quote: "`totalcost` | float | The total cost over the specified start and end date of the deal. If the deal is guaranteed, this value should be provided. If the deal is not guaranteed this may be omitted. See Implementation Guidance for additional detail"
+  - ir: field:object-terms:guar
+    digest: 372ad02a0bfed4c5e8dca1c18389f2ccccefa680f7850c8a8664e06eb7b81219
+    quote: "`guar` | int | Indicates that the deal is of type guaranteed and the bidder must bid on the deal, where 0 = not a guaranteed deal, 1 = guaranteed deal."
+options:
+  - id: warning-rules
+    summary: >-
+      Two rules, at the should level: a deal whose `guar` is 1 and that
+      sends no `units`, or no `totalcost`, gets a warning; the "may be
+      omitted" sentences are informative.
+  - id: schema
+    summary: >-
+      The schema requires `units` and `totalcost` when `guar` is 1.
+chosen: warning-rules
+rationale: >-
+  Each sentence says should, so a guaranteed deal that lacks one is still
+  valid, and its rule warns. The "may be omitted" sentences only say what
+  the others leave open for a deal that isn't guaranteed.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L115"
+feedback: >-
+  Write the level in capitals, and say whether a guaranteed deal without
+  `units` or `totalcost` is valid.

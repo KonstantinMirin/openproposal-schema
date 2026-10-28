@@ -257,9 +257,19 @@ export function compareLocks(input: CompareInput): ComparisonDoc {
 
   // The schema, as the release differ sees it.
   const tree = (files: EmittedFile[]) => Object.fromEntries(files.map((f) => [f.path, f.schema]));
+  // A rule's vectors name their schema by `$id`, which holds the lock's schema directory, so the locks compare by the file's path in it.
+  const byPath = (rules: RulesDoc, files: EmittedFile[]): RulesDoc => {
+    const paths = new Map(files.map((f) => [String(f.schema.$id), f.path]));
+    const local = (id: string) => {
+      const [file, fragment] = id.split("#");
+      const path = paths.get(file!);
+      return path === undefined ? id : `${path}${fragment !== undefined ? `#${fragment}` : ""}`;
+    };
+    return { ...rules, rules: rules.rules.map((r) => (r.vectors.schema === undefined ? r : { ...r, vectors: { ...r.vectors, schema: local(r.vectors.schema) } })) };
+  };
   const changes: ComparisonDoc["changes"] = [
     ...diffModels(base.model, lock.model).map((c) => ({ ...c, view: "model" as const })),
-    ...diffRules(base.rules, lock.rules, base.model).map((c) => ({ ...c, view: "rules" as const })),
+    ...diffRules(byPath(base.rules, base.files), byPath(lock.rules, lock.files), base.model).map((c) => ({ ...c, view: "rules" as const })),
     ...diffFiles(tree(base.files), tree(lock.files)).map((c) => ({ ...c, view: "files" as const })),
   ];
 
@@ -441,6 +451,7 @@ export function renderComparisonMarkdown(doc: ComparisonDoc): string {
   const kinds = (es: ElementEntry[]) => ELEMENT_KINDS.filter((k) => es.some((e) => e.kind === k));
   push("## Specification elements", "", `Elements by IR ID. An element is changed when its digest differs: a table row's source bytes, or any other element's content.`, "");
   push(`### Added (${doc.elements.added.length})`, "");
+  if (doc.elements.added.length === 0) push("None.", "");
   for (const k of kinds(doc.elements.added)) {
     const es = doc.elements.added.filter((e) => e.kind === k);
     push(`#### ${k} (${es.length})`, "", ...table(["ID", "Text"], es.map((e) => [code(e.id), e.text])));

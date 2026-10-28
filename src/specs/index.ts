@@ -8,6 +8,7 @@ import { repoRoot } from "../lock.ts";
 import { loadProfile, schemaIdsOf, type SpecProfile } from "../profile.ts";
 import type { SchemaNames } from "../emit.ts";
 import { adcom } from "./adcom/index.ts";
+import { dealsapi } from "./dealsapi/index.ts";
 import { openproposal } from "./openproposal/index.ts";
 import type { ConstraintReader } from "../fidelity.ts";
 import type { RoundTripNotation } from "../render.ts";
@@ -15,7 +16,7 @@ import { checksOf, type Check } from "../rule-checks.ts";
 import type { SpecPlugin } from "./plugin.ts";
 
 /** Each plugin under src/specs/, built from its spec's profile. */
-export const PLUGINS: Readonly<Record<string, (profile: SpecProfile) => SpecPlugin>> = { adcom, openproposal };
+export const PLUGINS: Readonly<Record<string, (profile: SpecProfile) => SpecPlugin>> = { adcom, dealsapi, openproposal };
 
 /** A spec folder's profile and, for a specification read from its text, its plugin. */
 export interface Spec {

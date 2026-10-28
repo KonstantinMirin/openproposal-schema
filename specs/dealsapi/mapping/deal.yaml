@@ -1,0 +1,377 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: deal
+sections: [ deal-api-specification, object-deal, object-terms, object-inventory, object-curation ]
+types:
+  - name: Deal
+    kind: document
+    ir: field:object-deal:id
+    source: { rule: document-owner }
+  - name: Terms
+    kind: object
+    ir: field:object-terms:startdate
+    source: { rule: held-object }
+    open: false
+  - name: Inventory
+    kind: object
+    ir: field:object-inventory:inclinventory
+    source: { rule: held-object }
+    open: false
+  - name: DeviceType
+    kind: vocabulary
+    ir: field:object-inventory:devicetype
+    source: { decision: D-027 }
+    open: false
+    terms: [ "1", "2", "3", "4", "5", "6", "7", "8" ]
+    list: { name: "List: Device Types" }
+  - name: CategoryTaxonomy
+    kind: vocabulary
+    ir: field:object-inventory:cattax
+    source: { decision: D-027 }
+    open: true
+    terms: [ "1", "2", "3", "4", "5", "6", "7", "8", "9" ]
+    list: { name: "List: Category Taxonomies" }
+  - name: Curation
+    kind: object
+    ir: field:object-curation:curator
+    source: { rule: held-object }
+    open: false
+entries:
+  - ir: field:object-deal:id
+    digest: aaddfa0cb70710aabb5451db0b5e92e7742131f02f5f813adb9ec840edf64da9
+    source: { rule: domain-row }
+    as: { role: property, object: Deal, type: { kind: named, name: ExternalId }, presence: required }
+  - ir: field:object-deal:name
+    digest: aafbf8178f16173d1bb333bc69b942832a17100d282908c02d766ca4442dd0e7
+    source: { rule: domain-row }
+    as: { role: property, object: Deal, type: { kind: named, name: Text }, presence: optional }
+  - ir: rule:object-deal:9aa65446
+    digest: a3755507a4d8044f36d82bdc040d6ff7d9a10537bbd7d86b15ec6860d050f0c6
+    source: { decision: D-032 }
+    as: { role: obligation, party: seller }
+  - ir: rule:object-deal:cc4670a1
+    digest: a98a804cceade0fd5d9d7699cb3e76fc7c8ac42817390b3243d1d7a7dad5c558
+    source: { decision: D-001 }
+    as: { role: informative }
+  - ir: field:object-deal:created
+    digest: edccdff06879d2e97652451b19dc5a523065afac87cdadf68497a78d1d010aed
+    source: { rule: domain-row }
+    as: { role: property, object: Deal, type: { kind: named, name: UtcTimestamp }, presence: optional }
+  - ir: field:object-deal:sellerstatus
+    digest: 0c8cf640c2946620c962742b4ddebacad40140806db8b1e55a56ac71589d4d9f
+    locks: [ main ]
+    source: { rule: enum-row }
+    as: { role: property, object: Deal, type: { kind: named, name: SellerDealStatus }, presence: optional }
+  - ir: field:object-deal:sellerstatus
+    digest: f0e4ad2d2887a9470561d01d475d46b227084719a3bcc3442e60d9005d445f83
+    locks: [ tag-1.0-202602 ]
+    source: { rule: enum-row }
+    as: { role: property, object: Deal, type: { kind: named, name: SellerDealStatus }, presence: optional }
+  - ir: field:object-deal:sellerstatus#description/values:1
+    digest: dd529e414958473bad788115a191289a0d211501f0494a03faccba4da5d71cf9
+    locks: [ main ]
+    source: { decision: D-031 }
+    as: { role: type, name: SellerDealStatus, layer: vocabulary, open: false }
+  - ir: field:object-deal:sellerstatus#description/values:1
+    digest: 5ce582edd21c71a68d1eb059567e90aa167f7c8e007db7316a5ff8d2bfc494c8
+    locks: [ tag-1.0-202602 ]
+    source: { decisions: [ D-010, D-031 ] }
+    as: { role: type, name: SellerDealStatus, layer: vocabulary, open: false }
+  - ir: field:object-deal:origin
+    digest: ce99360cea2bbe7a1ce0062398ecda06b2329079842d82cca3fc60bf41fa6a47
+    source: { rule: domain-row }
+    as: { role: property, object: Deal, type: { kind: named, name: Domain }, presence: required }
+  - ir: field:object-deal:seller
+    digest: 340feab53f097fa9b7675d9a9ee782b92c911a70cbc87d953d9454ae7236741d
+    source: { rule: domain-row }
+    as: { role: property, object: Deal, type: { kind: named, name: Domain }, presence: optional }
+  - ir: rule:object-deal:60d8bec5
+    digest: f0aa4dc3ed22c30df5c8aeb65d76b6559a78fd930012ff28dfa56a0cdc7da19f
+    source: { decision: D-001 }
+    as: { role: informative }
+  - ir: field:object-deal:desc
+    digest: 9e98c8164cc05f0999a8fe6d5ffefaf8b0807ba21750e1875ba69cc5740f6410
+    source: { rule: domain-row }
+    as: { role: property, object: Deal, type: { kind: named, name: Text }, presence: optional }
+  - ir: rule:object-deal:5e652de0
+    digest: 54096569218ba72f98e4f31ef1179f78c604e9047a0efd4cf794767b900c0813
+    source: { decision: D-022 }
+    as: { role: rule, object: Deal }
+  - ir: field:object-deal:wseat
+    digest: d2802374ec07a59552e98a2ac62cdaccc6bd829b27c3d73dc70288c2440257aa
+    source: { rule: domain-row }
+    as:
+      role: property
+      object: Deal
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ExternalId } } }
+      presence: optional
+  - ir: rule:object-deal:8540a232
+    digest: a56e4671aa673d0435b3b9b34066ea331070150478b426c2c10b00f4f24d446b
+    source: { decision: D-032 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:object-deal:c221f2e9
+    digest: 34e2b9506040e8a69c1ee546c635ff4fc9f6fdba9162d4aa343b9eb09674a540
+    source: { decision: D-016 }
+    as: { role: rule, object: Deal }
+  - ir: field:object-deal:bseat
+    digest: 601e1c992da55aa364a39079a713fa6073dcdf00613b08a66ab7851958b1cb56
+    source: { rule: domain-row }
+    as:
+      role: property
+      object: Deal
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ExternalId } } }
+      presence: optional
+  - ir: rule:object-deal:8540a232-2
+    digest: ffa7e486838f6ecfe5641f7704813df302cc3f091dab68beaa98eec8e59c240b
+    source: { decision: D-032 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:object-deal:c221f2e9-2
+    digest: d096a73a6178528533b5dc2f5fcba04a87e97ca96d11c2670eb9daeaec9eeeea
+    source: { decision: D-016 }
+    as: { role: informative }
+  - ir: field:object-deal:adtypes
+    digest: 8f0369b4d12f77930e955ee5ef4ef0618d59216027769aeed806c9bbc9029877
+    source: { rule: enum-row }
+    as:
+      role: property
+      object: Deal
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: AdType } } }
+      presence: optional
+  - ir: field:object-deal:adtypes#description/values:1
+    digest: c450f513d0156df7705444e2842eafed98660ec654150c96fd98ce98e8edb20f
+    source: { decisions: [ D-014, D-028, D-031 ] }
+    as: { role: type, name: AdType, layer: vocabulary, open: false }
+  - ir: field:object-deal:auxdata
+    digest: a54bc5be4e3e90af39d7552efc830d21622de6949cd0989680631fe215260bbe
+    source: { rule: enum-row }
+    as: { role: property, object: Deal, type: { kind: named, name: AuxiliaryData }, presence: optional }
+  - ir: field:object-deal:auxdata#description/values:1
+    digest: 1696a768464c77ab21183bc64e468c588005fc08c129745a5b6824803385ce00
+    source: { decision: D-031 }
+    as: { role: type, name: AuxiliaryData, layer: vocabulary, open: false }
+  - ir: field:object-deal:pubcount
+    digest: d53a10a4a88794de1888b57e6938f196337c685a492bb08110f916a93483884e
+    source: { rule: enum-row }
+    as: { role: property, object: Deal, type: { kind: named, name: PublisherCount }, presence: optional }
+  - ir: field:object-deal:pubcount#description/values:1
+    digest: 193f92539017a3974502dd533b45b4ecd2317ca3fd69713ea6e63131a4cb5c6a
+    source: { decision: D-031 }
+    as: { role: type, name: PublisherCount, layer: vocabulary, open: false }
+  - ir: field:object-deal:dinventory
+    digest: 37ba973c0e2b1da392bf2e11fb03546f9327680c3fccc14b9c43ad01859894b9
+    source: { rule: enum-row }
+    as: { role: property, object: Deal, type: { kind: named, name: DynamicInventory }, presence: optional }
+  - ir: field:object-deal:dinventory#description/values:1
+    digest: 512446407269bd50f54a8aae594fedc2142ca885fa5716df4a591b20c7873e5b
+    source: { decision: D-031 }
+    as: { role: type, name: DynamicInventory, layer: vocabulary, open: false }
+  - ir: rule:object-deal:341e94b4
+    digest: c4d277d1b9bc31755cfc97e32b61a425cfbf16d2269a9542210a5bb0d5398ea8
+    source: { decision: D-001 }
+    as: { role: informative }
+  - ir: field:object-deal:terms
+    digest: 234f134f13604c3f69380cebe949555d4d9a93c6f85e8ad15351e40af4585b59
+    source: { rule: held-object-field }
+    as: { role: property, object: Deal, type: { kind: named, name: Terms }, presence: required }
+  - ir: field:object-deal:inventory
+    digest: 0c5af0dd15314d1dacc4b7e547dfd1fc83d2cd33ca84f8277fb4d1ebbb862608
+    source: { rule: held-object-field }
+    as: { role: property, object: Deal, type: { kind: named, name: Inventory }, presence: optional }
+  - ir: rule:object-deal:1ff4e5fa
+    digest: 6c1111d87370844130ee3a365a285cbd7ff28e7a11bea1c93f53fac5d211920d
+    source: { decision: D-015 }
+    as: { role: rule, object: Deal }
+  - ir: field:object-deal:curation
+    digest: 0c064e9b4c80eefd545851d380b771959a44f3d519ecb3c0b3f999a84b2a3905
+    source: { rule: held-object-field }
+    as: { role: property, object: Deal, type: { kind: named, name: Curation }, presence: optional }
+  - ir: field:object-deal:ext
+    digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+    source: { decision: D-021 }
+    as: { role: property, object: Deal, type: { kind: named, name: Ext }, presence: optional }
+  - ir: field:object-terms:startdate
+    digest: 85cee5c323064ae0d44601eb24a57193a06b0a3879007fb20de0438a49bc431a
+    source: { rule: domain-row }
+    as: { role: property, object: Terms, type: { kind: named, name: UtcTimestamp }, presence: optional }
+  - ir: field:object-terms:enddate
+    digest: 387ca29773be1a3d68d1bcb46828acd2358f734e8fdef410b3cdef98fb144af4
+    source: { rule: domain-row }
+    as: { role: property, object: Terms, type: { kind: named, name: UtcTimestamp }, presence: optional }
+  - ir: rule:object-terms:5c3134f5
+    digest: 0c525e45c48b0b9a60f1058a01f98288229799f362e3c50da10f6bfcbbf6b82a
+    source: { decision: D-003 }
+    as: { role: obligation, party: seller }
+  - ir: field:object-terms:countries
+    digest: 2163f6ca4661e298607dfcb0835a31140673ce8edde999f59c94ea2df16fdb2b
+    source: { rule: domain-row }
+    as:
+      role: property
+      object: Terms
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: CountryCode } } }
+      presence: optional
+  - ir: field:object-terms:dealfloor
+    digest: 4884dfb2518a4b08a4ba8ea197f13ab31af115ad8fc6b33e403f3ad44ca50b05
+    source: { rule: domain-row }
+    as: { role: property, object: Terms, type: { kind: named, name: Amount }, presence: optional }
+  - ir: rule:object-terms:ac924378
+    digest: d08a00bffe5b434a15e00fb5d4261232ee506a5682075ef05eb3abfbff2cbdc7
+    source: { decision: D-007 }
+    as: { role: informative }
+  - ir: field:object-terms:cur
+    digest: b5e0a9eb31eac74f657557986f97aae80b5be5963393228c78cf24e65fc31c61
+    source: { rule: domain-row }
+    as: { role: property, object: Terms, type: { kind: named, name: CurrencyCode }, presence: optional }
+  - ir: field:object-terms:guar
+    digest: 372ad02a0bfed4c5e8dca1c18389f2ccccefa680f7850c8a8664e06eb7b81219
+    source: { rule: domain-row }
+    as: { role: property, object: Terms, type: { kind: named, name: IntegerFlag }, presence: optional }
+  - ir: field:object-terms:guar#description/values:1
+    digest: 584d720948c8a2c5dab263f30a35800290486e35f3f220f77c6335170af6f77f
+    source: { rule: restated-value-list }
+    as: { role: schema, in: IntegerFlag }
+  - ir: rule:object-terms:10cce23d
+    digest: e2c3c36778700b9ac9b81bd4cc052f7d8e5e4215701e4e24d7bbfe482553f264
+    source: { decision: D-018 }
+    as: { role: obligation, party: buyer }
+  - ir: field:object-terms:pricetype
+    digest: 23f820410859f9fc1c37fac093d06257fa086ab3e6ba61d25c91b78f1d60cba9
+    source: { rule: enum-row }
+    as: { role: property, object: Terms, type: { kind: named, name: PriceType }, presence: optional }
+  - ir: field:object-terms:pricetype#description/values:1
+    digest: 474f321e54bd54eab1921d7b09104a0348d398494a579ae6c3640eed98654d41
+    source: { decisions: [ D-009, D-031 ] }
+    as:
+      role: type
+      name: PriceType
+      layer: vocabulary
+      open: true
+      vendor: { from: 500, label: Exchange-specific auction types }
+  - ir: field:object-terms:units
+    digest: e9a8fe666cbf1b98dc9f22407b967fe7368d45ad3d3b0d5c75ea8ab993a9b2a8
+    source: { rule: domain-row }
+    as: { role: property, object: Terms, type: { kind: named, name: Count }, presence: optional }
+  - ir: rule:object-terms:ab3aa10d
+    digest: 157d667ffd56816a8c0fef50497af79cf91e4a845a234c4330648f9b3e2e1b51
+    source: { decision: D-020 }
+    as: { role: rule, object: Terms }
+  - ir: rule:object-terms:eb7dd0c3
+    digest: d61e85757a55a322a376fb5b456ac9cb026204f90a25796361c2a768d3d51951
+    source: { decision: D-020 }
+    as: { role: informative }
+  - ir: field:object-terms:totalcost
+    digest: d99b424a4b4835aa25da211b0ddc98b0b34b83535b9a62fde60a50ba06494fb6
+    source: { rule: domain-row }
+    as: { role: property, object: Terms, type: { kind: named, name: Amount }, presence: optional }
+  - ir: rule:object-terms:1267dc65
+    digest: f8fcf07f9ff22f939fddbbbfc2c61058d7377f5a6a6b43b361ad5d94f027c059
+    source: { decision: D-020 }
+    as: { role: rule, object: Terms }
+  - ir: rule:object-terms:eb7dd0c3-2
+    digest: 612e13dfa6ce65af179a0550fe6d2ba079a610824b2b0f27b29b3d7439b4caee
+    source: { decision: D-020 }
+    as: { role: informative }
+  - ir: field:object-terms:ext
+    digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+    source: { decision: D-021 }
+    as: { role: property, object: Terms, type: { kind: named, name: Ext }, presence: optional }
+  - ir: field:object-inventory:inclinventory
+    digest: bb02493c6c76dcd01e09607847e4344f199f6e978bdc683f9d49e0171e10e631
+    source: { rule: enum-row }
+    as:
+      role: property
+      object: Inventory
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: IncludedInventory } } }
+      presence: optional
+  - ir: field:object-inventory:inclinventory#description/values:1
+    digest: 96b041c3c80699d7935cc53fe8d9c0282179d17bba1086ae658e57bce9588d15
+    source: { decisions: [ D-014, D-031 ] }
+    as: { role: type, name: IncludedInventory, layer: vocabulary, open: false }
+  - ir: field:object-inventory:devicetype
+    digest: f28b832f472525a0929387afa28ef897954d5378eb463912610e0ae4d07d9b49
+    source: { decision: D-027 }
+    as:
+      role: property
+      object: Inventory
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: DeviceType } } }
+      presence: optional
+  - ir: field:object-inventory:sellerids
+    digest: fd8b923ff3aeb9c7ac6c293a840c28165315d62dda90e0e8ff95737c47764ba6
+    source: { rule: domain-row }
+    as:
+      role: property
+      object: Inventory
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ExternalId } } }
+      presence: optional
+  - ir: rule:object-inventory:2b2c54b3
+    digest: c1e63cf5444fd85c48f4952c08b497e603aff6a4595f0416fc844f239230c8b9
+    source: { decision: D-022 }
+    as: { role: rule, object: Inventory }
+  - ir: rule:object-inventory:476d1ead
+    digest: 0655c3a43349b9debfd171190821d80d95c3ee8c0e6c9b229016016ed7b928e9
+    source: { decision: D-024 }
+    as: { role: informative }
+  - ir: rule:object-inventory:81ab0b3a
+    digest: 839cf61993f70a2572439e02156571e5a5367f29cd6564d39e490d787dcd5c00
+    source: { decision: D-032 }
+    as: { role: obligation, party: seller }
+  - ir: field:object-inventory:sitedomains
+    digest: de6ddbd885bf947a9fc3fd819ff72501645828f9cdf1e68654b4a5512bf03475
+    source: { rule: domain-row }
+    as:
+      role: property
+      object: Inventory
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Domain } } }
+      presence: optional
+  - ir: rule:object-inventory:658daf9f
+    digest: d2bb2cdea2408dfaf6bb61dae037f35cfa943df1f37f22373e5e53d95dbf129f
+    source: { decision: D-024 }
+    as: { role: informative }
+  - ir: field:object-inventory:appbundles
+    digest: 771b52f9b47e459f73dc14c5ae7e81b200a388848c0d64398bda2509166f910f
+    source: { rule: domain-row }
+    as:
+      role: property
+      object: Inventory
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ExternalId } } }
+      presence: optional
+  - ir: rule:object-inventory:6b8d396b
+    digest: 75d927bd0e95f0cf023009d3b9e705a572ab652c9d581551843d0bce5f289ed4
+    source: { decision: D-024 }
+    as: { role: informative }
+  - ir: field:object-inventory:cat
+    digest: 63b3ef5441314652c6531a76cba2bc222e9fdcd444456851d372bdaeff7a6c46
+    source: { rule: domain-row }
+    as:
+      role: property
+      object: Inventory
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ExternalId } } }
+      presence: optional
+  - ir: field:object-inventory:cattax
+    digest: ae0fd641c1a0a516c0ade07a25a9ab9f9df146bdb50d3f1e404c0e3877c5860e
+    source: { decision: D-027 }
+    as: { role: property, object: Inventory, type: { kind: named, name: CategoryTaxonomy }, presence: optional }
+  - ir: field:object-inventory:ext
+    digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+    source: { decision: D-021 }
+    as: { role: property, object: Inventory, type: { kind: named, name: Ext }, presence: optional }
+  - ir: field:object-curation:curator
+    digest: 526328206505761bd3a8da9bf7a66e2af9fe4ec6cbe02fbfce0db4484aae11c4
+    source: { rule: domain-row }
+    as: { role: property, object: Curation, type: { kind: named, name: Domain }, presence: optional }
+  - ir: field:object-curation:cdealid
+    digest: a0cb0fca2b0ff05d740f29c78047f83c14fd83b5e45c53a6421e7e0df768de75
+    source: { rule: domain-row }
+    as: { role: property, object: Curation, type: { kind: named, name: ExternalId }, presence: optional }
+  - ir: field:object-curation:curfeetype
+    digest: ebecc92b7d1c65164f063024324d9bd47109ee72c36cb1e85c15797062b0b499
+    source: { rule: enum-row }
+    as: { role: property, object: Curation, type: { kind: named, name: CurationFeeType }, presence: optional }
+  - ir: field:object-curation:curfeetype#description/values:1
+    digest: 74ab661b0a825540109857897ab7331f22f55d875d7da723b8839f16245613b3
+    source: { decisions: [ D-012, D-031 ] }
+    as: { role: type, name: CurationFeeType, layer: vocabulary, open: false }
+  - ir: field:object-curation:ext
+    digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+    source: { decision: D-021 }
+    as: { role: property, object: Curation, type: { kind: named, name: Ext }, presence: optional }

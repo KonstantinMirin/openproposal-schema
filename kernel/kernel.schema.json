@@ -44,7 +44,7 @@
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" }
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*([-.][a-z0-9]+)*$" }
         },
         "decision": {
           "description": "The decision record behind a constraint the sources don't state.",
@@ -89,8 +89,13 @@
         "properties": {
           "constraints": {
             "type": "object",
-            "propertyNames": { "enum": ["minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum"] }
+            "propertyNames": { "enum": ["minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum", "oneOf"] }
           }
+        },
+        "if": { "properties": { "constraints": { "type": "object", "properties": { "oneOf": true }, "required": ["oneOf"] } } },
+        "then": {
+          "description": "An integer primitive whose values are a few named codes states only them: titled const branches, and no range beside them.",
+          "properties": { "type": { "const": "integer" }, "constraints": { "type": "object", "propertyNames": { "const": "oneOf" } } }
         }
       }
     },
@@ -119,6 +124,17 @@
           "minItems": 2,
           "uniqueItems": true,
           "items": { "type": "string", "minLength": 1 }
+        },
+        "oneOf": {
+          "description": "The codes of an integer primitive, each a titled const branch, as an integer-coded vocabulary writes its codes (type rules § 6): a primitive whose values are a few integers, each with a name, such as `IntegerFlag`'s `0` (No) and `1` (Yes).",
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["const", "title"],
+            "properties": { "const": { "type": "integer" }, "title": { "type": "string", "minLength": 1 }, "description": { "type": "string", "minLength": 1 } }
+          }
         }
       }
     },
@@ -225,7 +241,7 @@
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" }
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*([-.][a-z0-9]+)*$" }
         }
       }
     },
@@ -244,7 +260,7 @@
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" }
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*([-.][a-z0-9]+)*$" }
     },
     "decisionId": {
       "type": "string",

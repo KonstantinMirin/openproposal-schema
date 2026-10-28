@@ -571,7 +571,7 @@ const generic = (c: Constructor): Extract<TypeRef, { kind: "apply" }> => ({
  * - every vector gets its verdict from Ajv as an asserting 2020-12 validator,
  *   and the schema accepts every rule vector, so a rule adds what the schema
  *   can't; a rule's ID names its owner and is unique;
- * - every design source and decision exists, and no decision is superseded.
+ * - every design source and decision exists, and no decision is superseded or withdrawn.
  */
 export function checkConstructors(root: string, model: Model, decisions: DecisionRecord[]): string[] {
   const problems: string[] = [];

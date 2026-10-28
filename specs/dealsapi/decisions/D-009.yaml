@@ -1,0 +1,29 @@
+format: 1
+id: D-009
+status: proposed
+kind: gap
+author: agent
+question: "Which codes may `pricetype` take beyond 0 to 3, when the text says \"Exchange-specific auction types can be defined using values 500 and greater\"?"
+covers:
+  - ir: field:object-terms:pricetype#description/values:1
+    digest: 474f321e54bd54eab1921d7b09104a0348d398494a579ae6c3640eed98654d41
+    quote: "`0` (Dynamic (ie. auction type will be provided by `request.at` attribute in OpenRTB Bid Request)) | `1` (First Price) | `2` (Second Price Plus) | `3` (Fixed Price)"
+options:
+  - id: vendor-500
+    summary: >-
+      Any integer of 500 or more, an exchange's own auction type, beside the
+      codes 0 to 3; no code from 4 to 499.
+  - id: closed
+    summary: >-
+      Only 0 to 3: the sentence permits exchanges to define more but doesn't
+      add them to the list.
+chosen: vendor-500
+rationale: >-
+  The sentence reserves 500 and up for exchanges' own auction types, as
+  AdCOM's lists reserve 500 and up for vendors, so a receiver must accept
+  such a code and may not know it. Codes from 4 to 499 stay unassigned.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L114"
+feedback: >-
+  None needed: the range is clear. A list of the codes exchanges use would
+  help a receiver read them.

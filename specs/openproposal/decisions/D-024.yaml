@@ -81,7 +81,8 @@ rationale: >-
   `PlaybackMethod`, and `ApiFramework`, whose rows name some codes "such as".
   The first two are closed; List: API Frameworks also reserves the codes
   from 500 for vendors, so `ApiFramework` is open to a `VendorCode`.
-  `reward`, `instl`, and `skip` are flags (D-039).
+  `reward`, `instl`, and `skip` are flags, the integers `0` (no) and `1`
+  (yes), as AdCOM 1.0 writes them.
 evidence:
   - examples/line-item-display.yaml (properties, audiences, buyer_supplied)
   - examples/line-item-ctv.yaml (properties with apps)

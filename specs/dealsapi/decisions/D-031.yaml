@@ -1,0 +1,64 @@
+format: 1
+id: D-031
+status: proposed
+kind: gap
+author: agent
+question: "What is each of the Deals API's own code lists called?"
+covers:
+  - ir: field:object-deal:sellerstatus#description/values:1
+    digest: dd529e414958473bad788115a191289a0d211501f0494a03faccba4da5d71cf9
+    quote: "`0` (deal is active) | `1` (deal is paused) | `2` (deal is pending) | `3` (deal is complete (ie. selling scomplete (ie. selling system shows deal has completed)) | `4` (deal is archived (cannot be active again))"
+    locks: [main]
+  - ir: field:object-deal:sellerstatus#description/values:1
+    digest: 5ce582edd21c71a68d1eb059567e90aa167f7c8e007db7316a5ff8d2bfc494c8
+    quote: "`0` (deal is active) | `1` (deal is paused) | `2` (deal is pending) | `4` (deal is complete (ie. selling scomplete (ie. selling system shows deal has completed)) | `4` (deal is archived (cannot be active again))"
+    locks: [tag-1.0-202602]
+  - ir: field:object-deal:adtypes#description/values:1
+    digest: c450f513d0156df7705444e2842eafed98660ec654150c96fd98ce98e8edb20f
+    quote: "`1` (Banner) | `2` (Video) | `3` (Audio) | `4` (Native)"
+  - ir: field:object-deal:auxdata#description/values:1
+    digest: 1696a768464c77ab21183bc64e468c588005fc08c129745a5b6824803385ce00
+    quote: "`0` (undisclosed) | `1` (yes, at start of deal and will not be modified) | `2` (yes and subject to change after start of deal) | `3` (no and will not be modified) | `4` (no and subject to change after start of deal)"
+  - ir: field:object-deal:pubcount#description/values:1
+    digest: 193f92539017a3974502dd533b45b4ecd2317ca3fd69713ea6e63131a4cb5c6a
+    quote: "`0` (undisclosed) | `1` (single publisher) | `2` (multi-publisher)"
+  - ir: field:object-deal:dinventory#description/values:1
+    digest: 512446407269bd50f54a8aae594fedc2142ca885fa5716df4a591b20c7873e5b
+    quote: "`0` (undisclosed) | `1` (inventory will NOT update once the deal goes live) | `2` (inventory where this deal may run is updated dynamically.)"
+  - ir: field:object-terms:pricetype#description/values:1
+    digest: 474f321e54bd54eab1921d7b09104a0348d398494a579ae6c3640eed98654d41
+    quote: "`0` (Dynamic (ie. auction type will be provided by `request.at` attribute in OpenRTB Bid Request)) | `1` (First Price) | `2` (Second Price Plus) | `3` (Fixed Price)"
+  - ir: field:object-inventory:inclinventory#description/values:1
+    digest: 96b041c3c80699d7935cc53fe8d9c0282179d17bba1086ae658e57bce9588d15
+    quote: "`1` (site) | `2` (app) | `3` (dooh) | `4` (audio) | `5` (endemic) | `6` (other)"
+  - ir: field:object-curation:curfeetype#description/values:1
+    digest: 74ab661b0a825540109857897ab7331f22f55d875d7da723b8839f16245613b3
+    quote: "`0` (undisclosed) | `1` (percentage of spend) | `2` (flat fee) | `3` (CPM) | `4` (no fee is paid for curation services)"
+  - ir: field:object-buyerstatus:status#description/values:1
+    digest: 5b918970fa29b9656907c682521a48643bcd46a2062c468d61731738435c0ddc
+    quote: "`0` (pending approval) | `1` (buyer has approved (ie. non PG deal is ready for bid requests)) | `2` (buyer has rejected) | `3` (ready to serve (ie. deal is in a campaign - ready to receive bid requests, relevant especially for PG deals)) | `4` (active (i.e. deal is actively serving impressions)) | `5` (paused) | `6` (complete (ie. buying system shows deal has completed))"
+options:
+  - id: by-meaning
+    summary: >-
+      After what its codes are, as the text names them: a seller's deal
+      status, an ad type, auxiliary data, a publisher count, dynamic
+      inventory, a price type, included inventory, a curation fee type, and
+      a buyer's deal status.
+  - id: by-field
+    summary: >-
+      After the field's name as written, such as `sellerstatus` and
+      `curfeetype`.
+chosen: by-meaning
+rationale: >-
+  A list is named for what its values are (type rules § 6), and the text
+  names most of them in its headings and labels: Auxiliary Data, Publisher
+  Count, Dynamic Inventory, Included Inventory, "Deal Price Type", the
+  curation fee type. So the vocabularies are SellerDealStatus, AdType,
+  AuxiliaryData, PublisherCount, DynamicInventory, PriceType,
+  IncludedInventory, CurationFeeType, and BuyerDealStatus, the two statuses
+  told apart by the system they are kept in.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L88"
+feedback: >-
+  Name each code list in the text, so that every implementation uses the
+  same names for them.

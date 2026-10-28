@@ -16,8 +16,8 @@
       "$ref": "#/$defs/decisionId"
     },
     "status": {
-      "description": "`proposed` until a human accepts it; `filed` once it is raised with the working group; `superseded` when a later record replaces it. A release fails on a `proposed` record.",
-      "enum": ["proposed", "accepted", "filed", "superseded"]
+      "description": "`proposed` until a human accepts it; `filed` once it is raised with the working group; `superseded` when a later record replaces it; `withdrawn` when its owner drops it and no record replaces it, so the reading it chose is no longer ours and nothing may cite it. A superseded or withdrawn record stays, unchanged but for its status and the `superseded_by` or `withdrawn` it gains, so its history is kept. A release fails on a `proposed` record.",
+      "enum": ["proposed", "accepted", "filed", "superseded", "withdrawn"]
     },
     "kind": {
       "description": "`gap`: the specification leaves the point open, and the decision chooses a reading. `departure`: the specification settles the point, in its text or in the form its examples write, and the decision proposes a change. An example that follows the specification but not a departure is a finding of the departure, and its reason says that the example follows the text.",
@@ -79,6 +79,16 @@
       "description": "The record that replaces this one. Required when `status` is `superseded`.",
       "$ref": "#/$defs/decisionId"
     },
+    "withdrawn": {
+      "description": "Why and when the record was withdrawn. Required when `status` is `withdrawn`, and only then.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date", "reason"],
+      "properties": {
+        "date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+        "reason": { "type": "string", "minLength": 40 }
+      }
+    },
     "sets_aside": {
       "description": "The types the decision gives a field whose structure the specification doesn't state, such as an open vocabulary with no core terms, each with the field that holds it. The duplication and value-list gates set aside exactly these: a type of no structure that no record lists fails, and so does a listed type that is gone, has a structure, or isn't the field's.",
       "type": "array",
@@ -103,6 +113,12 @@
       "description": "Only a departure lists, on a cover, the forms it departs from.",
       "if": { "properties": { "kind": { "const": "gap" } } },
       "then": { "properties": { "covers": { "type": "array", "items": { "type": "object", "properties": { "departs": false } } } } }
+    },
+    {
+      "description": "A withdrawn record says why and when, and no other record does.",
+      "if": { "properties": { "status": { "const": "withdrawn" } } },
+      "then": { "properties": { "withdrawn": true }, "required": ["withdrawn"] },
+      "else": { "not": { "properties": { "withdrawn": true }, "required": ["withdrawn"] } }
     }
   ],
   "else": {
@@ -136,14 +152,14 @@
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" }
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*([-.][a-z0-9]+)*$" }
         },
         "departs": {
-          "description": "For a departure: the constraint forms of this element that it changes, as the fidelity gate reads them from the specification (`required`, `optional`, `conditional`, `type`, `values`, `contains`, `member`, `empty`, `example`). The gate lets the schema disagree with this element's constraint of a listed form, and with no other, and fails a listed form that excuses no disagreement on a lock the cover applies to, so a departure about one element's type excuses neither its presence nor another element it covers.",
+          "description": "For a departure: the constraint forms of this element that it changes, as the fidelity gate reads them from the specification (`required`, `optional`, `conditional`, `type`, `values`, `contains`, `member`, `empty`, `example`, `default`). The gate lets the schema disagree with this element's constraint of a listed form, and with no other, and fails a listed form that excuses no disagreement on a lock the cover applies to, so a departure about one element's type excuses neither its presence nor another element it covers.",
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "enum": ["required", "optional", "conditional", "type", "values", "contains", "member", "empty", "example"] }
+          "items": { "enum": ["required", "optional", "conditional", "type", "values", "contains", "member", "empty", "example", "default"] }
         }
       }
     },

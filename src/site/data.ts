@@ -27,7 +27,9 @@ import { TYPE_EXAMPLES_FILE, typeExamplesDirOf, type TypeExamplesDoc } from "../
 import { checkVariantDiff, loadVariant, type Variant, type VariantDifference } from "../variant.ts";
 import type { VariantReport } from "../variant-report.ts";
 import { sourceInfo, type SourceInfo } from "./sources.ts";
-import { REPO_ROOT } from "../repo.ts";
+import { registryFiles } from "../imports.ts";
+import { REPO_ROOT, specRoot } from "../repo.ts";
+import { mapLink } from "./route.ts";
 import { pluginOf, specOf } from "../specs/index.ts";
 import { brandOf, loadSiteConfig, type SiteBrand, type SiteConfig } from "./config.ts";
 
@@ -58,6 +60,8 @@ export interface BuildData {
   sources: Record<string, SourceInfo>;
   /** Each integer-coded vocabulary's codes with their names, as its schema titles them (type rules § 6). */
   codes: Record<string, { value: number; title: string }[]>;
+  /** Each registry vocabulary an emitted schema references across hosts, by the `$ref` (src/imports.ts). */
+  registry: Record<string, RegistryTarget>;
   decisions: Record<string, { kind: string; number: number | null; question: string }>;
   /** Where this lock's two builds differ, each with the departure that makes the difference. */
   differences: VariantDifference[];
@@ -171,6 +175,63 @@ export function sourceInfos(inputs: SiteInputs, lock: SpecLock, ids: Iterable<st
   return out;
 }
 
+/**
+ * A registry vocabulary a spec's schema references, as the type map shows it:
+ * the registry's name, the vocabulary's name there, the type map's page of
+ * it at the lock the spec imports, under the registry's own name for it,
+ * which may not be the spec's, its schema file on the site, and its schema,
+ * each path from the spec's folder.
+ */
+export interface RegistryTarget {
+  spec: string;
+  short: string;
+  def: string;
+  lock: string;
+  map: string;
+  href: string;
+  file: string;
+  schema: unknown;
+}
+
+/** Every absolute `$ref` a schema holds. */
+function crossRefs(schema: unknown, out: Set<string> = new Set()): Set<string> {
+  if (Array.isArray(schema)) for (const s of schema) crossRefs(s, out);
+  else if (schema !== null && typeof schema === "object") {
+    for (const [k, v] of Object.entries(schema)) {
+      if (k === "$ref" && typeof v === "string" && /^https?:\/\//.test(v)) out.add(v);
+      else crossRefs(v, out);
+    }
+  }
+  return out;
+}
+
+/**
+ * Each `$ref` across hosts that the emitted schemas hold, resolved to the
+ * registry vocabulary it names, at the lock of the registry the spec's
+ * profile imports. Throws on one that names no file or vocabulary of an
+ * imported registry, so the type map never shows a reference it can't open.
+ */
+export function registryTargets(root: string, emitted: BuildData["emitted"]): Record<string, RegistryTarget> {
+  const refs = [...new Set(Object.values(emitted).flatMap((e) => [...crossRefs(e.schema)]))].sort();
+  if (refs.length === 0) return {};
+  const imports = specOf(root).profile.imports ?? [];
+  const files = imports.flatMap((imp) => registryFiles(imp).map((f) => ({ imp, f, base: specOf(specRoot(imp.spec)).profile })));
+  const out: Record<string, RegistryTarget> = {};
+  for (const ref of refs) {
+    const [id, fragment = ""] = ref.split("#", 2) as [string, string?];
+    const hit = files.find((x) => x.f.schema.$id === id);
+    if (!hit) throw new Error(`a schema references ${ref}, which is no registry file the profile imports; it imports ${imports.length === 0 ? "none" : files.map((x) => `${x.imp.spec} at ${x.imp.lock}: ${String(x.f.schema.$id)}`).join(", ")}`);
+    const def = /^\/\$defs\/([A-Za-z0-9]+)$/.exec(fragment)?.[1];
+    const schema = def === undefined ? undefined : ((hit.f.schema.$defs ?? {}) as Record<string, unknown>)[def];
+    if (def === undefined || schema === undefined) throw new Error(`a schema references ${ref}, which names no vocabulary under $defs of ${id}`);
+    const prefix = `../${hit.imp.spec}/`;
+    const schemaBase = hit.base.names.schema_base;
+    if (!id.startsWith(schemaBase)) throw new Error(`the registry file ${id} isn't under its spec's $id base ${schemaBase}, so the site serves it nowhere`);
+    out[ref] = { spec: hit.imp.spec, short: hit.base.names.short, def, lock: hit.imp.lock, map: `${prefix}map.html`, href: `${prefix}${mapLink("", def, hit.imp.lock, "as-written")}`, file: `${prefix}${id.slice(schemaBase.length)}`, schema };
+  }
+  return out;
+}
+
 /** What the type map reads of one build. */
 export function buildData(inputs: SiteInputs, lock: SpecLock, slug: VariantSlug): BuildData {
   const b = inputs.builds.get(lock.name)!.get(slug)!;
@@ -213,6 +274,7 @@ export function buildData(inputs: SiteInputs, lock: SpecLock, slug: VariantSlug)
     domains: domainsOf(b.kernel, inputs.variant),
     sources: sourceInfos(inputs, lock, sourcesOf(b.model)),
     codes: Object.fromEntries(b.model.types.flatMap((t) => (t.kind === "vocabulary" && isIntegerCoded(t) ? [[t.name, ((titles) => t.terms.map((x, n) => ({ value: x.value as number, title: titles[n]! })))(codeTitles(t.terms))]] : []))),
+    registry: registryTargets(root, emitted),
     decisions,
     differences,
     added: addedTypes(inputs, lock, slug),

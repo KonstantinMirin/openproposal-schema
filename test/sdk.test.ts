@@ -207,3 +207,18 @@ test("the TypeScript extension registry keys validators by URI and digest", asyn
   assert.throws(() => r.register("https://examplepub.example/ext/viewability/1", "sha256:abc", validate), /isn't a SHA-256 digest/);
   assert.throws(() => r.register("viewability", digest, validate), /isn't an absolute URI/);
 });
+
+test("an integer primitive written as titled codes is an enum of its codes to the SDKs, and a oneOf that isn't titled codes is a keyword they don't know", () => {
+  const { sdk, problems } = buildSdkModel(PRS, OP_NAMES.short);
+  assert.deepEqual(problems, []);
+  const flag = sdk.types.get("IntegerFlag");
+  assert.deepEqual(flag && "scalar" in flag ? flag.scalar : null, { json: "integer", enum: [0, 1] });
+  const swap = (schema: Record<string, unknown>) => ({ ...PRS, types: PRS.types.map((t) => (t.name === "IntegerFlag" && t.kind === "primitive" ? { ...t, schema } : t)) }) as ModelDoc;
+  for (const bad of [
+    { type: "string", oneOf: [{ const: 0, title: "No" }, { const: 1, title: "Yes" }] },
+    { type: "integer", oneOf: [{ const: 0 }, { const: 1, title: "Yes" }] },
+    { type: "integer", oneOf: [{ const: 0, title: "No" }, { const: 0, title: "Yes" }] },
+    { type: "integer", oneOf: [{ const: 0, title: "No" }, { const: 1, title: "No" }] },
+    { type: "integer", oneOf: [{ const: 0, title: "No", minimum: 0 }, { const: 1, title: "Yes" }] },
+  ]) assert.match(buildSdkModel(swap(bad), OP_NAMES.short).problems.join("\n"), /the SDK emitters don't know the keyword "oneOf" on a scalar/, JSON.stringify(bad));
+});

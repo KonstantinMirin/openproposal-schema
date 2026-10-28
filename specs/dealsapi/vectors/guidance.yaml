@@ -1,0 +1,17 @@
+# Rule vectors for the Implementation Guidance. Regenerate a digest with
+# `npm run cite -- --lock specs/dealsapi/spec-input/spec-lock.yaml
+# --all-locks <rule ID>`.
+format: 1
+module: guidance
+rules:
+  # A fixed-price deal, `pricetype` 3, sends `dealfloor`; a missing `pricetype` is 2 (D-007).
+  - rule: rule:terms-object-1:647b6593
+    digest: e4b08754ebc34fe5523007e2fd84a060e9e66d1f30a39a9464535f296698db97
+    decision: D-007
+    valid:
+      - { value: { pricetype: 3, dealfloor: 2.5 } }
+      - { value: { pricetype: 1 } }
+      - { value: {} }
+    invalid:
+      - { value: { pricetype: 3 } }
+      - { value: { pricetype: 3, guar: 1, units: 1000000, totalcost: 5000 } }

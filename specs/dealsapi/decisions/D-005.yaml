@@ -1,0 +1,36 @@
+format: 1
+id: D-005
+status: proposed
+kind: gap
+author: agent
+question: "What currency is `cur` in, when the text calls it the \"Bid currency\"?"
+covers:
+  - ir: field:object-terms:cur
+    digest: b5e0a9eb31eac74f657557986f97aae80b5be5963393228c78cf24e65fc31c61
+    quote: "`cur` | string; default \"USD\" | Bid currency using ISO-4217 alpha codes."
+  - ir: field:object-terms:dealfloor
+    digest: 4884dfb2518a4b08a4ba8ea197f13ab31af115ad8fc6b33e403f3ad44ca50b05
+    quote: "`dealfloor` | float | Minimum bid for impressions for this deal expressed in CPM. Unless `pricetype` is Fixed, this should be used as guidance to buyers. See Implementation Guidance for additional detail"
+  - ir: field:object-terms:totalcost
+    digest: d99b424a4b4835aa25da211b0ddc98b0b34b83535b9a62fde60a50ba06494fb6
+    quote: "`totalcost` | float | The total cost over the specified start and end date of the deal. If the deal is guaranteed, this value should be provided. If the deal is not guaranteed this may be omitted. See Implementation Guidance for additional detail"
+options:
+  - id: deal-money
+    summary: >-
+      The currency of the deal's money, `dealfloor` and `totalcost`, which
+      every buyer's bid on the deal is in.
+  - id: bid-only
+    summary: >-
+      The currency a bidder bids in, which says nothing of what `dealfloor`
+      and `totalcost` are in.
+chosen: deal-money
+rationale: >-
+  `dealfloor` and `totalcost` are sums of money and name no currency of
+  their own, and `cur` is the one currency the terms carry, so it is theirs,
+  as OpenRTB writes `bidfloor` with `bidfloorcur`. Read as the bid's alone,
+  the deal's money would have no currency at all.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L112"
+feedback: >-
+  Say that `cur` is the currency of `dealfloor` and `totalcost`, not only of
+  a bid, as OpenRTB's `bidfloorcur` is of `bidfloor`.

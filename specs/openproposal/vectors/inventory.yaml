@@ -11,10 +11,10 @@ rules:
     sources: [key:5.2.2:placement.plcmt]
     valid:
       - value: { channel: video, placement: { plcmt: 1 } }
-      - value: { channel: display, placement: { instl: true } }
+      - value: { channel: display, placement: { instl: 1 } }
       - value: { channel: display }
     invalid:
-      - value: { channel: video, placement: { skip: true } }
+      - value: { channel: video, placement: { skip: 1 } }
       - value: { channel: video }
 
   # Each `environments.available[]` value matches an impression of the line item's `channel`.

@@ -1,0 +1,15 @@
+# Rule vectors for the BuyerSeat and BuyerStatus tables. Regenerate a digest
+# with `npm run cite -- --lock specs/dealsapi/spec-input/spec-lock.yaml
+# --all-locks <rule ID>`.
+format: 1
+module: buyer-seat
+rules:
+  # A status response's `id` is the pushed deal's `id`, the vector's context (D-026).
+  - rule: rule:object-buyerseat:be619ed4
+    digest: 86ea2e48e965aab405c043acad4199e9b53e8c1ebff4a5db745978740a2edbb4
+    decision: D-026
+    valid:
+      - { value: { id: d-1001, version: "1.0" }, context: { Deal.id: d-1001 } }
+    invalid:
+      - { value: { id: d-1002, version: "1.0" }, context: { Deal.id: d-1001 } }
+      - { value: { id: D-1001, version: "1.0" }, context: { Deal.id: d-1001 } }

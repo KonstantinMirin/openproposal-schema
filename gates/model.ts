@@ -29,6 +29,25 @@ export const modelResolves = defineGate<ResolveInput>({
     return { problems: r.problems, note: `${r.model.types.length} types, ${r.model.rules.length} rules, ${r.model.obligations.length} obligations` };
   },
   fixtures: [
+    // A table row read as part of a value: each column it reads by a decision is one its table has.
+    {
+      name: "an example row that reads a column its table doesn't have",
+      spec: "dealsapi",
+      mutate: (i) => ({ ...i, mappings: i.mappings.map((m) => ({ ...m, entries: m.entries.map((e) => (e.ir === "concept:example-scenarios:1" ? { ...e, as: { role: "example" as const, object: "Deal", columns: { curationfee: "curation.curfeetype", datafee: "curation.datafee" } } } : e)) })) as MappingFile[] }),
+      expect: 'reads the column "datafee", which the row\'s table doesn\'t have',
+    },
+    {
+      name: "an example row whose column names no member of its object",
+      spec: "dealsapi",
+      mutate: (i) => ({ ...i, mappings: i.mappings.map((m) => ({ ...m, entries: m.entries.map((e) => (e.ir === "concept:example-scenarios:1" ? { ...e, as: { role: "example" as const, object: "Deal" } } : e)) })) as MappingFile[] }),
+      expect: 'the column "curationfee" holds curationfee, which Deal has no member for',
+    },
+    {
+      name: "columns read off an element that is no table row",
+      spec: "dealsapi",
+      mutate: (i) => ({ ...i, mappings: i.mappings.map((m) => ({ ...m, entries: m.entries.map((e) => (e.ir === "sentence:example-1:7f955850" ? { ...e, as: { role: "example" as const, object: "Deal", columns: { seller: "seller" } } } : e)) })) as MappingFile[] }),
+      expect: "reads columns, which only a row of a table has, and the element is a sentence",
+    },
     {
       name: "a property of an object nobody defines",
       mutate: (i) => ({ ...i, mappings: JSON.parse(JSON.stringify(i.mappings).replace(/("ir":"field:5\.6:min_spend".*?"object":)"LineItem"/, '$1"NoSuchObject"')) as MappingFile[] }),
@@ -143,6 +162,8 @@ export const unions = defineGate<ConventionInput>({
   check: convention("unions"),
   fixtures: [
     { name: "an allOf", mutate: (i) => ({ ...i, model: withType(i.model, "Amount", (t) => ({ ...t, schema: { allOf: [(t as Extract<ModelType, { kind: "primitive" }>).schema] } }) as ModelType) }), expect: '"allOf"' },
+    { name: "an enum that holds an integer", mutate: (i) => ({ ...i, model: withType(i.model, "Count", (t) => ({ ...t, schema: { type: "integer", enum: [1, 2] } }) as ModelType) }), expect: "an enum holds an integer; a code is a titled const branch" },
+    { name: "a primitive's oneOf that isn't titled codes", lock: "with-open-prs", mutate: (i) => ({ ...i, model: withType(i.model, "IntegerFlag", (t) => ({ ...t, schema: { type: "integer", oneOf: [{ const: 0 }, { const: 1, title: "Yes" }] } }) as ModelType) }), expect: "oneOf branch 0 has no required property with a \"const\" value" },
     { name: "a union with no decision", mutate: (i) => ({ ...i, model: { ...i.model, types: i.model.types.map((t) => (t.kind === "union" ? { ...t, decisions: [] } : t)) } }), expect: "cites no decision record" },
   ],
 });

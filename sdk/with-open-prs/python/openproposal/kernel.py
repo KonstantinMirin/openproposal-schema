@@ -97,8 +97,17 @@ Identifier = TypeAliasType("Identifier", Annotated[str, Strict()])
 """The identity of a record a party mints, such as a proposal or a line item, written as any string, as the specification types it. The text states no form, so a receiver compares two identities by exact string equality."""
 
 
-IntegerFlag = TypeAliasType("IntegerFlag", Annotated[int, BeforeValidator(rt.integral), Strict(), Field(ge=0, le=1)])
-"""A yes or no, written as the integer `0` (no) or `1` (yes), as AdCOM 1.0 and OpenRTB 2.6 write the flag of the same name."""
+IntegerFlag = TypeAliasType("IntegerFlag", Annotated[Literal[0, 1], BeforeValidator(rt.integer_term)])
+"""A yes or no written as an integer, `0` for no and `1` for yes, as AdCOM 1.0 and OpenRTB 2.6 write their flags, such as a placement's `instl`. A receiver reads it as a flag, never as a count, and a field that takes it keeps the integer its text writes."""
+
+
+class IntegerFlags:
+    """The terms of `IntegerFlag`, as constants."""
+
+    __slots__ = ()
+
+    CODE_0: Final = 0
+    CODE_1: Final = 1
 
 
 Measure = TypeAliasType("Measure", Annotated[float, Strict(), Field(ge=0)])

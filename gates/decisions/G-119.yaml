@@ -1,0 +1,47 @@
+format: 1
+id: G-119
+date: 2026-10-28
+question: What changes in the gates to close the gaps an independent review of D-039's withdrawal found?
+decision: >-
+  An example finding, an undecided check, and a round-trip difference
+  accepted any decision record that exists as their excuse, so a withdrawn
+  or superseded one still excused them; each now fails on a record that no
+  longer stands, as a mapping entry does. The kernel-load gate fails a kernel
+  file whose titled codes carry a range, the output check fails a
+  primitive's titled codes with a range beside them or one title twice, and
+  the conventions fail a primitive's oneOf that isn't titled codes, with
+  four fixtures; tests hold `isTitledCodes` to its eight ways of failing,
+  the SDK model to an enum of IntegerFlag's codes and to an error for any
+  other oneOf, and a withdrawn record to naming no record that replaces it.
+  The variant test that checked a conversion the vectors no longer need now
+  checks D-041's. `IntegerFlag` also cites AdCOM 1.0's DisplayPlacement at
+  its pinned commit, where it writes `instl` "where 0 = no, 1 = yes". The
+  README no longer says D-039 holds, and counts the domain file's 11 domains,
+  25 concepts, and 2 shared structures; type rules § 8 lists a primitive's
+  titled codes among the forms `oneOf` takes. The SDKs' constant names for
+  titled codes wait for the SDK emitter, filed as follow-up work. The test
+  suite holds 516 tests, and MIN_TESTS is 516.
+rationale: >-
+  Three checks are stricter and four fixtures are new; nothing is relaxed.
+  No output changes but the kernel's IntegerFlag source list, which no
+  schema carries.
+accepts:
+  - { gate: comparison, fingerprint: 93f80a76326b2b5fc6006407e8afe339f00429c5686083b31a5a6fb81d59faf9 }
+  - { gate: convention-unions, fingerprint: ad7143b7ebd1f81b0057ac886e315a558a3c6e69076b7f3064ab2a7b909e3ccd }
+  - { gate: examples-validate, fingerprint: 7d75e0fbb13664a08ccb88e85ffa0e2ceafc1ba84819910302bded747e88e692 }
+  - { gate: extraction, fingerprint: 477eb008dc107fb46a16baad72bfa8792ea2348be96e979c5855039c999ce792 }
+  - { gate: feedback, fingerprint: 4ca7d716da54ebd0ce606af1dc73b336d5b9d4b13dbf03ad05c7d42de7cc32f8 }
+  - { gate: fidelity, fingerprint: e288f1c48c61aaa57cf50ae92b18a3854e83fbd9269147db992dfeb03ec395cb }
+  - { gate: field-examples, fingerprint: 8fb1c76f383764546b6505b26c1a9f7b3897ea9cee123448127b18ecfda1323e }
+  - { gate: guard, fingerprint: a265db0d62752c2d42a5c0002e8c17ad77e3dd206ec48102737a38b013bd61c6 }
+  - { gate: kernel-load, fingerprint: 27780cd3e7057794ba56bb842e858d3fc98fc7d0ee663fe69d73d49f9a96571b }
+  - { gate: npm-test, fingerprint: 1518a9965d1e579252305ebf68fe6b447c14ae350275ef139fda622eeae35eea }
+  - { gate: record-wording, fingerprint: 278034906c5e91cc7f5487f33dc4f988ac9b0af04d27e6fd40cdcb981d15ffac }
+  - { gate: round-trip, fingerprint: 97b5fa0af16046239e5fd68eee880835750a5427aa27014ed6149c60afe92a4c }
+  - { gate: rule-checks, fingerprint: c88ae5942f76298e39ea1b36600822ed0ab136a19305fd186bc58ec46bf66def }
+  - { gate: schemas-conventions, fingerprint: 1481a579b4246e0e577408d213f61ecc9519d5276289c857d9687e8ac89eded1 }
+  - { gate: site-builds, fingerprint: 2805961859860e7c153d3e6e384fe66af9e46a7eb7861cc66483e3e520eb1a8c }
+  - { gate: spec-profile, fingerprint: cdffb0f8653e370f84971e134cf7140b8bab353413805e4e6847a8455681f728 }
+  - { gate: type-examples-generate, fingerprint: 0fc81eafbdd202a626c0d29c237e77c28d96efe2b0685eee2563f007147d5e7d }
+  - { gate: type-examples-valid, fingerprint: 48668bb43d3b6fc485708397da1c8dce6084b4bde29e8ca1cad9a80ad5b36487 }
+  - { gate: variant-examples, fingerprint: 4f06c0b59e7092bce34ebc35c14539d9c1c7d1f3168c8477f80dfc7a016e0501 }

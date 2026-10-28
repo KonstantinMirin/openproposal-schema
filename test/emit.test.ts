@@ -362,3 +362,27 @@ test("a frequency cap's period says its terms spell OpenDirect's codes, which ar
     assert.match(period.description, /The codes of OpenDirect 2\.1 Line\.frequencyinterval \(https:/);
   }
 });
+
+test("a stated default is a property's schema annotation, satisfies the money its currency sits beside, and must be a value of its type", () => {
+  // A price entry's currency, given a stated default as the Deals API's `cur` has one, as a fixture.
+  const withDefault = (value: string) => {
+    const i = structuredClone(ir("ir"));
+    const f = i.fields.find((x) => x.id === "field:5.6:pricing[].currency")!;
+    f.default = { raw: JSON.stringify(value), value };
+    return resolveModel({ ir: i, lock: "main", mappings: MAPPINGS, decisions: DECISIONS, kernel: KERNEL, constructors: CONSTRUCTORS }).model;
+  };
+  const entryOf = (m: ModelDoc) => m.types.find((t) => t.name === "PricingEntry") as Extract<ModelDoc["types"][number], { kind: "object" }>;
+  // Without a default, each money member present requires the currency; with one, nothing does.
+  assert.ok(Object.values(entryOf(MAIN).dependent_required ?? {}).some((xs) => xs.includes("currency")));
+  const model = withDefault("USD");
+  assert.equal(entryOf(model).properties.currency!.default, "USD");
+  assert.ok(!Object.values(entryOf(model).dependent_required ?? {}).some((xs) => xs.includes("currency")), "a stated default satisfies the money's currency");
+  const emitted = emitSchemas(model, MAIN_DIR, OP_SCHEMA);
+  const currency = (defOf(emitted.files, "modules/commercial/1/commercial.json", "PricingEntry").properties as Record<string, Record<string, unknown>>).currency!;
+  assert.deepEqual(Object.keys(currency).sort(), ["$ref", "default", "description"]);
+  assert.equal(currency.default, "USD");
+  assert.deepEqual(checkEmitted(emitted.files, model, MAIN_DIR, OP_SCHEMA.base!), []);
+  // A default the type rejects fails the output check.
+  const bad = emitSchemas(withDefault("usd"), MAIN_DIR, OP_SCHEMA);
+  assert.match(checkEmitted(bad.files, withDefault("usd"), MAIN_DIR, OP_SCHEMA.base!).join("\n"), /PricingEntry\/properties\/currency: the default "usd" is no value of the type its \$ref names/);
+});

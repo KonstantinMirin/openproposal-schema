@@ -1,0 +1,35 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: overview
+sections: [ front, front/table-of-contents, introduction, goals, what-it-is, what-it-isnt, considerations ]
+types: []
+entries:
+  - ir: rule:what-it-isnt:6dd81df9
+    digest: 43f9ab2fd8f6d7471b80436e1ebfb91e6a2cada1bb77d3aceaefc8e73c372ab1
+    source: { decision: D-032 }
+    as: { role: obligation, party: buyer }
+  - ir: rule:what-it-isnt:ffac85fa
+    digest: 6d4605f1e87af3fd0397b41605a70c44a1e567f463cd32371f4201ade94fb21e
+    source: { decision: D-001 }
+    as: { role: informative }
+  - ir: rule:considerations:0177440b
+    digest: a6ccc6f26a8d7ce4341228dcb98aed29f0b8ae9a0800db9140abc3f2493f9a96
+    source: { decision: D-032 }
+    as: { role: obligation, party: buyer }
+  - ir: rule:considerations:0e9898a0
+    digest: 944c51e5df14eb944560c2426d944adffbe5e73833e509c10e21942ef72bd8f0
+    source: { decision: D-032 }
+    as: { role: obligation, party: buyer }
+  - ir: rule:considerations:e67e066e
+    digest: 556f614f44e7ea4fe20e1c9efdcc309531d5751658f328d085725802c7094a1d
+    source: { decision: D-032 }
+    as: { role: obligation, party: buyer }
+  - ir: rule:considerations:4fbe8443
+    digest: 3e98b7d96b28ce6549828984e1267819ecb8ecef4fc924055e6809226684934e
+    source: { decision: D-032 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:considerations:5f88e3d1
+    digest: 1c8c2b407bae83b31f6ce4a1b84ea589923343f9719ae22c14e62042e21cdeed
+    source: { decision: D-032 }
+    as: { role: obligation, party: buyer }

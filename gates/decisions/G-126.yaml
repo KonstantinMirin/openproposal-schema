@@ -1,0 +1,73 @@
+format: 1
+id: G-126
+date: 2026-10-28
+question: What changes in the gates when the Deals API reaches every stage, with its scenario rows as examples, its corpus, its type examples, its round trip, its release manifests, and its lock comparison?
+decision: >-
+  The Deals API's profile names no stage, so every gate runs on it. An
+  example entry for a row of a table whose columns after the first are
+  headed by member names, as the Example Scenarios, may read a column whose
+  header names no member as a member path, `columns`, as D-030 reads
+  `curationfee` as `curation.curfeetype`; the model writes the row as part
+  of a value, each column's code at its member, the first column, the
+  row's prose, left out, and fails on a column whose header or read path
+  names no member of the object at some step, on a read column the table
+  doesn't have, and on columns read off an element that is no table row. The plugin's round-trip notation renders
+  each attribute table from the model: the attribute's name, its Type cell,
+  the JSON type in the text's words with `default` and `required`, and each
+  code list in its Description cell from the property's vocabulary or
+  titled codes, a code the list gives twice once per meaning, with the
+  row's prose kept; a row pairs only with its own object's property, so a
+  property the model moves to another object shows, and a property of the
+  object that cites no row is a row the text lacks, rendered at the end.
+  The ten cells where it differs from the text are
+  recorded: nine Type cells whose wording D-033 reads, `integer` beside
+  `int`, a `;` beside a `,`, and `recommended`, and `guar`'s codes, which
+  D-018 types as the integer flag. Seven fixtures cover the new checks: an
+  example row that reads a column its table lacks, one whose column names
+  no member of its object, columns read off an element that is no table
+  row, a code label the model changed, a default it dropped, a property it
+  adds to an object, and one it moves to another. The test suite holds 530
+  tests, and MIN_TESTS is 530.
+rationale: >-
+  No check is relaxed: the Deals API's outputs now meet every gate the
+  other specs do, and the round trip compares every attribute row and code
+  list of the text, and every property of each object. OpenProposal's and AdCOM's outputs are unchanged.
+accepts:
+  - { gate: comparison, fingerprint: ce13614dd6d8df6e92804ac9bc374588fdcaac84de455e2abd3826fdcba955c4 }
+  - { gate: constructors-applied, fingerprint: 0e814141ee4715efa4577e51174ea04be5597d8453a24e4e98b87e19d50737fd }
+  - { gate: convention-beside-reference, fingerprint: 73cd441b7fbb0e7267d9e137b8acc0b72cbdb1fafb310cfd3c02a929d205a776 }
+  - { gate: convention-inline, fingerprint: 7af0940de77f668cbcbd2f82092b1b533ce0a50dfa687f3f20a4ebf71ece5c88 }
+  - { gate: convention-keywords, fingerprint: 13cf213fb87accc6d4c3a4dda432339b88916bf448b547e3fc0c8e4a3cba44d7 }
+  - { gate: convention-layers, fingerprint: ce844717839643962178a9c87ad8122d583964c41f8cd869197c9dc5b575964c }
+  - { gate: convention-lists, fingerprint: 1f06ce76480485addede43226df444c95d7ba019befbccdef335d4e83acb7adc }
+  - { gate: convention-modules, fingerprint: 0d42d68649a1492d112d75b35f0b0c27e975f9e43dcb0409da656da44adbb094 }
+  - { gate: convention-unions, fingerprint: 54f38376b6b4712dc9d11d3eb0f8fb9caca2f6a920af7df89f978a01545fd39a }
+  - { gate: duplication-kernel, fingerprint: 71a8c269f791704c5aee1d9571e75bfbbfd9e8bffdaec2ca9c2e15dd44667ef1 }
+  - { gate: examples-validate, fingerprint: a8357d9ad3282ec3845b68d83ae2f536010530184070c3a98b3539d4f79d2f52 }
+  - { gate: extraction, fingerprint: fb31aaf71334660776238275dd0c5f497e0d655a65646571487d3568ab8685fc }
+  - { gate: feedback, fingerprint: a2056adadfd03f8a45a46962550d66866289c649cda6178f7c51e88a991cd557 }
+  - { gate: fidelity, fingerprint: d35066bba46d842c582da5c59ec976fa0352330e416064d5f183a1f59cd31cfc }
+  - { gate: field-examples, fingerprint: 9e7e26b3555c52ab644c5dd2801238ff32301a8d187c82579d17ec8c95c1b152 }
+  - { gate: map-drift, fingerprint: e744548244527042ca4254979b7f4c6542b28661d2dbf264d933d4a8cacb9662 }
+  - { gate: mapping-bijection, fingerprint: 1984c91e686737eda75068843c1f1716b8270fbecbd632b2f8037a5d42edf11e }
+  - { gate: mapping-constructors, fingerprint: eed4aadb03860486de4133ab8bfdff449f3c6fe336c8bbfb4852ce337d13aefa }
+  - { gate: mapping-current, fingerprint: 642f45336ff35e4d69d7baddf04aeecab0830cc944a4bcd84a8edf758e037f88 }
+  - { gate: mapping-load, fingerprint: 8bbd4d701e41dffb325e126eb6a36d8e965563f626dec8a9e339ae93e2e984ad }
+  - { gate: mapping-location, fingerprint: c8db445bae443d17c063b1d503f0132048745a62bf45a89b72e2f4e9f4543675 }
+  - { gate: mapping-names, fingerprint: 08e108570d480c630661fffb7e41ec4a8e5a3ca8b419b4781843ac2e9a4a29cc }
+  - { gate: mapping-rules, fingerprint: 4ea07ff3e56593c63512166e6fed79b02c371636af348fe32b11620c5bb0257c }
+  - { gate: mapping-sources, fingerprint: 61f1b95b0611da6dddd3d667c7bc0b03a82fb8379258bfb62648c3617cbd4ac3 }
+  - { gate: model-resolves, fingerprint: 970135905e37e2e0ca31e84e67207866dbd80ff8af990fc6172091008b6c2b84 }
+  - { gate: modules-depends, fingerprint: 70533b131da602faa2b01ff0075260667a6705a8a0f5a05a4e912a64cfe6999f }
+  - { gate: nesting, fingerprint: e190c21811af5c2264e28a5a16544d632cd855c01650c867865448d92d5f1fd9 }
+  - { gate: npm-test, fingerprint: 005dd05e3b8b8d14914f44ba727e9414f532688b70ab9320782d5ba34d04b04b }
+  - { gate: record-wording, fingerprint: 892a9cd40f4e6533ec1db1de4b599f8267ed39796c119a364459df9ae54d69ea }
+  - { gate: round-trip, fingerprint: 2fdba0295397ff49edcd16a11f889fc27909ef0f201e931389494229413f8114 }
+  - { gate: rule-checks, fingerprint: aa499346a87168cd4d200ab9d76279dc711d01a88a03bbefb237f77a75b9902d }
+  - { gate: site-builds, fingerprint: 02490ef6ec1075a6162d5b451fe5c5cd3a696ecb0bfc3355aa28bedddffa0edc }
+  - { gate: spec-profile, fingerprint: 495b253359009160e6367b6e1118459a72603f5a0a99acffbbae7a6f49ffc2aa }
+  - { gate: type-examples-generate, fingerprint: 8fda17e7d90b76f15bc35f7a9606a30d301ab01ddf9b5862eecb6d6d96342df3 }
+  - { gate: type-examples-valid, fingerprint: 4d03dcf982718b871da51de3cdaba1a9326fa90caf469451c06e39159e25aee4 }
+  - { gate: variant-check, fingerprint: d07a0b5e15da21e40ac5e8b4f16ed2893cbafe54940f8ae43677a4b5c1d8036e }
+  - { gate: variant-diff, fingerprint: 2ba31b92bdfb1eedbdfbc25cd87027cf10966957bdd65a6cf8d0ae01d151a827 }
+  - { gate: variant-examples, fingerprint: af0bc3ca29518c5b827430ed384f03cc7f3fc8a4849d1af1634cffda215c3177 }

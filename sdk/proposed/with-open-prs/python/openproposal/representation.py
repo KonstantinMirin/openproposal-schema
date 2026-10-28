@@ -14,7 +14,7 @@ from .commercial import CostMethod
 from .execution import TransactionMechanism, TransactionMechanismSelection
 from .guarantees import CommittedMetricsEntry
 from .inventory import ContentDetail, Environment, PlcmtSubtype
-from .kernel import Amount, CatalogRefOr, Count, CurrencyCode, FormatId, Selectable, Text, Timestamp, Uuid
+from .kernel import Amount, CatalogRefOr, Count, CurrencyCode, FormatId, IntegerFlag, Selectable, Text, Timestamp, Uuid
 from .line_item import Channel
 from .proposal import LinkedExecution
 
@@ -45,13 +45,13 @@ class LineItemSummaryPricingEntry(rt.Closed):
 class LineItemSummaryPlacement(rt.Closed):
     """The `LineItemSummaryPlacement` object of the `representation` module."""
 
-    instl: Optional[rt.Boolean] = None
+    instl: Optional[IntegerFlag] = None
     """`0` (no) | `1` (yes). The ad is interstitial or full screen"""
     plcmt: Optional[PlcmtSubtype] = None
     """One value from List: Plcmt Subtypes - Video: Instream (1), Accompanying Content (2), Interstitial (3), No Content/Standalone (4), Pause (5), Screensaver (6), Overlay (7), Squeezeback (8), In-scene (9)"""
-    reward: Optional[rt.Boolean] = None
+    reward: Optional[IntegerFlag] = None
     """`0` (no) | `1` (yes). The user receives a reward for viewing the ad"""
-    skip: Optional[rt.Boolean] = None
+    skip: Optional[IntegerFlag] = None
     """Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad"""
 
 

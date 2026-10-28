@@ -46,6 +46,8 @@ class Extractor {
   private stack: Section[] = [];
   private label: { label: string; identifier: string | null } | null = null;
   private rowsSeen = 0;
+  /** An anchor written as a block of its own, as `<a name="object-deal"></a>`, which the next block, a heading, takes. */
+  private pendingAnchor: { name: string; line: number } | null = null;
   /** What the plugin's readers see of the extraction. */
   private readonly ctx: ExtractContext;
 
@@ -107,6 +109,7 @@ class Extractor {
       const node = nodes[i]!;
       // An HTML table is one table, though a blank line inside it splits it into several HTML blocks.
       if (node.type === "html" && opensTable(node.value)) {
+        if (this.pendingAnchor !== null) throw new ExtractError(`the anchor "${this.pendingAnchor.name}" on its own line is followed by a table, not by the heading it names`, this.pendingAnchor.line);
         let j = i;
         while (!closesTable((nodes[j] as { value?: string }).value ?? "")) {
           const next = nodes[j + 1];
@@ -125,12 +128,22 @@ class Extractor {
 
   // ----- Blocks -----
 
-  private block(node: RootContent): void {
+  private block(node: RootContent, top = true): void {
+    // An anchor block names the heading right after it; any other block after it leaves the anchor naming nothing.
+    if (this.pendingAnchor !== null && node.type !== "heading") throw new ExtractError(`the anchor "${this.pendingAnchor.name}" on its own line is followed by a ${node.type}, not by the heading it names`, this.pendingAnchor.line);
     switch (node.type) {
       case "heading":
         return this.heading(node);
-      case "paragraph":
+      case "paragraph": {
+        // An anchor on a line of its own, `<a name="…"></a>`, which CommonMark reads as a paragraph of two inline tags, names the heading that follows.
+        const anchor = anchorOnly(node.children, line(node));
+        if (anchor !== null) {
+          if (!top) throw new ExtractError(`the anchor "${anchor}" on its own line sits inside a list or a quote, where no heading follows it`, line(node));
+          this.pendingAnchor = { name: anchor, line: line(node) };
+          return;
+        }
         return this.paragraph(node.children);
+      }
       case "list":
         return this.list(node);
       case "blockquote":
@@ -152,14 +165,14 @@ class Extractor {
   private list(node: List): void {
     for (const item of node.children) {
       for (const child of item.children) {
-        if (child.type === "paragraph" || child.type === "list" || child.type === "code") this.block(child);
+        if (child.type === "paragraph" || child.type === "list" || child.type === "code") this.block(child, false);
         else throw new ExtractError(`unsupported list item content "${child.type}"`, line(child));
       }
     }
   }
 
   private blockquote(node: Blockquote): void {
-    for (const child of node.children) this.block(child);
+    for (const child of node.children) this.block(child, false);
   }
 
   private heading(node: Heading): void {
@@ -168,6 +181,9 @@ class Extractor {
     const at = line(node);
     // The anchor a heading writes for itself, as `<a name="list_devicetypes"></a>`, which links name.
     const names = node.children.flatMap((c) => (c.type === "html" ? [...c.value.matchAll(/<a\s[^>]*\bname\s*=\s*"([^"]+)"/gi)].map((m) => m[1]!) : []));
+    // An anchor block before the heading names it, as an anchor inside it does; a heading named both ways has two names.
+    if (this.pendingAnchor !== null) names.unshift(this.pendingAnchor.name);
+    this.pendingAnchor = null;
     if (names.length > 1) throw new ExtractError(`a heading with ${names.length} anchors: ${names.join(", ")}`, at);
     const head = this.front.sectionOf({ text, depth: node.depth, anchor, name: names[0] ?? null }, this.section);
     if (head.kind === "title") {
@@ -526,7 +542,7 @@ class Extractor {
       for (let k = 2; this.ids.has(id); k++) id = `${base}-${k}`;
       return id;
     };
-    for (const s of splitSentences(tokens)) {
+    for (const s of splitSentences(tokens, this.front.abbreviations)) {
       const keywords = this.front.keywords(s.prose);
       const identifiers: string[] = [];
       for (const c of s.codes) {
@@ -562,6 +578,7 @@ class Extractor {
   // ----- Finalize -----
 
   private finalize(): void {
+    if (this.pendingAnchor !== null) throw new ExtractError(`the anchor "${this.pendingAnchor.name}" on its own line ends the text, with no heading after it`, this.pendingAnchor.line);
     const typed =
       this.ir.fields.length +
       this.ir.keys.length +
@@ -616,7 +633,7 @@ class Extractor {
       ),
       fields: this.ir.fields.length,
       field_names: this.ir.fields.reduce((sum, f) => sum + f.names.length, 0),
-      fields_by_marker: tally(this.ir.fields, (f) => f.marker),
+      fields_by_marker: tally(this.ir.fields.filter((f) => f.marker !== undefined), (f) => f.marker!),
       fields_by_owner: tally(this.ir.fields, (f) => f.owner),
       keys: this.ir.keys.length,
       keys_by_layout: tally(this.ir.keys, (k) => k.layout),
@@ -665,6 +682,22 @@ function line(node: Node): number {
   return node.position?.start.line ?? 0;
 }
 
+/**
+ * The name of an anchor a paragraph holds and nothing else, as `<a
+ * name="object-deal"></a>`, by its `name` or its `id`, quoted either way or
+ * bare; null for any other paragraph. Fails an anchor that names nothing, or
+ * names itself twice, so no anchor is dropped.
+ */
+function anchorOnly(children: readonly { type: string; value?: string }[], at: number): string | null {
+  const parts = children.filter((c) => !(c.type === "text" && (c.value ?? "").trim() === ""));
+  if (parts.length !== 2 || parts.some((p) => p.type !== "html")) return null;
+  const [open, close] = parts.map((p) => (p.value ?? "").trim());
+  if (!/^<a\b[^>]*>$/i.test(open!) || !/^<\/a\s*>$/i.test(close!)) return null;
+  const names = [...open!.matchAll(/\s(?:name|id)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/gi)].map((m) => m[1] ?? m[2] ?? m[3]!);
+  if (names.length !== 1 || names[0]!.trim() === "") throw new ExtractError(`an anchor on its own line, ${open}, names ${names.length === 0 ? "nothing" : names.length > 1 ? `itself ${names.length} times` : "nothing"}; it needs one name or id`, at);
+  return names[0]!;
+}
+
 function emptyHosted(): Hosted {
   return { value_lists: [], inline_objects: [], statements: [] };
 }
@@ -688,7 +721,8 @@ export function classifyCode(value: string): Pick<CodeSpan, "kind" | "lhs" | "rh
   if (/^-?\d+(\.\d+)?$/.test(value) || ["true", "false", "null"].includes(value)) return { kind: "literal", lhs: null, rhs: null };
   if (IDENTIFIER_PATH.test(value)) return { kind: "path", lhs: null, rhs: null };
   if (TIME_FORMAT.test(value)) return { kind: "other", lhs: null, rhs: null };
-  const m = /^(\S+?)\s*(?:=|:)\s*([A-Za-z0-9_][\w.-]*)$/.exec(value);
+  // The right-hand side is a value, or values joined by commas, as `inclinventory.adtype=1,2`.
+  const m = /^(\S+?)\s*(?:=|:)\s*([A-Za-z0-9_][\w.-]*(?:,[A-Za-z0-9_][\w.-]*)*)$/.exec(value);
   if (m && IDENTIFIER_PATH.test(m[1]!)) return { kind: "expression", lhs: m[1]!, rhs: m[2]! };
   return { kind: "other", lhs: null, rhs: null };
 }

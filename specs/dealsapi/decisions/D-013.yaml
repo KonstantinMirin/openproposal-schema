@@ -1,0 +1,37 @@
+format: 1
+id: D-013
+status: proposed
+kind: gap
+author: agent
+question: "Which field does `inclinventory.adtype=1,2` name, when `inclinventory` has no member `adtype`?"
+covers:
+  - ir: sentence:included-inventory:b2124486
+    digest: 6086c4200b6fee9ef459e1b45de31db912ee60aa17a50053182606d0463f9642
+    quote: "For example, `inclinventory.adtype=1,2` means the deal is inclusive of both banner and video ads."
+  - ir: rule:included-inventory:c5adb5e0
+    digest: 7609c5bf58cf7fd60af3c3d357b16de1982a624588f5ece58908b4fad829e115
+    quote: "Implementers should expect to see ORTB bid requests using either `imp.banner` or `imp.video` once the deal is in flight."
+  - ir: field:object-deal:adtypes
+    digest: 8f0369b4d12f77930e955ee5ef4ef0618d59216027769aeed806c9bbc9029877
+    quote: "`adtypes` | int array | The format of the ad creative(s) supported by the inventory in the deal: `1` = Banner `2` = Video `3` = Audio `4` = Native If this is empty or missing, the deal is assumed to apply to all types of ad creative."
+options:
+  - id: adtypes
+    summary: >-
+      `adtypes`, whose codes 1 and 2 are banner and video, as the sentence
+      describes.
+  - id: inclinventory
+    summary: >-
+      `inclinventory`, whose codes 1 and 2 are site and app.
+chosen: adtypes
+rationale: >-
+  The sentence says the expression "means the deal is inclusive of both
+  banner and video ads", which are `adtypes`' codes 1 and 2;
+  `inclinventory`'s 1 and 2 are site and app. So the example names
+  `adtypes`. The lint reports `inclinventory.adtype` as a name that resolves
+  to nothing. The following sentence, which tells implementers what bid
+  requests to expect, is informative.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L248"
+feedback: >-
+  Write the example as `adtypes=1,2`: `inclinventory` has no member
+  `adtype`, and its codes 1 and 2 are site and app.

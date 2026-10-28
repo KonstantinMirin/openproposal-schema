@@ -50,16 +50,16 @@ test("a fingerprint changes with a helper of another file, a configuration file,
 });
 
 test("an exemption path with * segments names every spec's file, and one that matches nothing throws", () => {
-  assert.deepEqual(filesMatching("specs/*/ir/exceptions.yaml", disk), ["specs/adcom/ir/exceptions.yaml", "specs/openproposal/ir/exceptions.yaml"]);
+  assert.deepEqual(filesMatching("specs/*/ir/exceptions.yaml", disk), ["specs/adcom/ir/exceptions.yaml", "specs/dealsapi/ir/exceptions.yaml", "specs/openproposal/ir/exceptions.yaml"]);
   assert.ok(filesMatching("specs/*/decisions/*.yaml", disk).includes("specs/openproposal/decisions/D-001.yaml"));
   assert.deepEqual(filesMatching("kernel/domains.yaml", disk), ["kernel/domains.yaml"], "a plain path is itself");
   const second = overlay({}, { ...disk, list: (dir) => [...disk.list(dir), ...(dir === "specs" ? ["specs/other/ir/exceptions.yaml"] : [])] });
-  assert.deepEqual(filesMatching("specs/*/ir/exceptions.yaml", second), ["specs/adcom/ir/exceptions.yaml", "specs/openproposal/ir/exceptions.yaml", "specs/other/ir/exceptions.yaml"], "another spec's file joins");
+  assert.deepEqual(filesMatching("specs/*/ir/exceptions.yaml", second), ["specs/adcom/ir/exceptions.yaml", "specs/dealsapi/ir/exceptions.yaml", "specs/openproposal/ir/exceptions.yaml", "specs/other/ir/exceptions.yaml"], "another spec's file joins");
   assert.throws(() => filesMatching("specs/*/ir/no-such.yaml", disk), /specs\/\*\/ir\/no-such\.yaml matches no file/);
   const g = REGISTRY.find((r) => r.gate.id === "extraction")!;
   const fp = (src = disk) => fingerprint(g.gate, g.file, g.name, src);
   assert.notEqual(fp(), fp(overlay({ "specs/openproposal/ir/exceptions.yaml": (x) => `${x}# a change\n` })), "a spec's exception registry is part of the fingerprint");
-  assert.throws(() => fp(overlay({ "specs/openproposal/ir/exceptions.yaml": null, "specs/adcom/ir/exceptions.yaml": null })), /matches no file/, "a registry gone from every spec fails the fingerprint");
+  assert.throws(() => fp(overlay({ "specs/openproposal/ir/exceptions.yaml": null, "specs/adcom/ir/exceptions.yaml": null, "specs/dealsapi/ir/exceptions.yaml": null })), /matches no file/, "a registry gone from every spec fails the fingerprint");
 });
 
 test("a fixture passes only when the gate fails with the expected message", async () => {

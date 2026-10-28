@@ -32,7 +32,22 @@ export interface RegistryRef {
 export interface SpecImport {
   spec: string;
   lock: string;
+  /** Where the text cites the registry in a form the agreement would refuse, each with the decision that reads it. */
+  allowances?: ImportAllowance[];
 }
+
+/**
+ * A citation of a registry the text writes in a form the registry agreement
+ * refuses, read as the decision record says: a list it names other than as
+ * the registry titles it, as the Deals API's "List: Device Type" for AdCOM's
+ * List: Device Types (`cites` and `means`), or links into the registry's
+ * text at a branch, not at the pinned commit (`links_at`). The decision must
+ * stand and cover the row the citation sits in.
+ */
+export type ImportAllowance = ({ decision: string; cites: string; means: string } | { decision: string; links_at: string }) & {
+  /** The locks whose text the allowance reads; without it, every lock's. */
+  locks?: string[];
+};
 
 /** The file of a registry's lists, under its schema directory. */
 const LISTS_FILE = posix.join("modules", "lists", "1", "lists.json");

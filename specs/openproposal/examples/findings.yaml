@@ -601,33 +601,6 @@ findings:
       writes `30d`. We propose an ISO 8601 duration for every length of time,
       `P30D` here.
   - example: examples/line-item-rewarded-video.yaml
-    path: /placement/instl
-    kind: invalid
-    value: 1
-    locks: [with-open-prs]
-    decisions: [D-039]
-    reason: >-
-      The example follows the text, which writes `instl` as AdCOM's `0` or `1`:
-      it writes `1`. We propose a JSON boolean for every flag, `true` here.
-  - example: examples/line-item-rewarded-video.yaml
-    path: /placement/reward
-    kind: invalid
-    value: 1
-    locks: [with-open-prs]
-    decisions: [D-039]
-    reason: >-
-      The example follows the text, which writes `reward` as AdCOM's `0` or `1`:
-      it writes `1`. We propose a JSON boolean for every flag, `true` here.
-  - example: examples/line-item-rewarded-video.yaml
-    path: /placement/skip
-    kind: invalid
-    value: 0
-    locks: [with-open-prs]
-    decisions: [D-039]
-    reason: >-
-      The example follows the text, which writes `skip` as AdCOM's `0` or `1`:
-      it writes `0`. We propose a JSON boolean for every flag, `false` here.
-  - example: examples/line-item-rewarded-video.yaml
     path: /properties/available/0
     kind: invalid
     value: {"id":"puzzle-pack","name":"Puzzle game pack"}

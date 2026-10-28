@@ -255,23 +255,23 @@ entries:
   - ir: key:5.2.2:placement.reward
     digest: 81dad5cb11e58c90e15a2d623375ffdf8e31217948a200d10e6d5cbdac120042
     locks: [ with-open-prs ]
-    source: { decision: D-039 }
-    as: { role: property, object: Placement, type: { kind: boolean }, presence: optional }
+    source: { rule: domain-row }
+    as: { role: property, object: Placement, type: { kind: named, name: IntegerFlag }, presence: optional }
   - ir: key:5.2.2:placement.reward#meaning/values:1
     digest: a1ee2de06115664b61cd55dd1806c6f7bf19446b7c9a49840198ae8c461aeddd
     locks: [ with-open-prs ]
-    source: { decision: D-039 }
-    as: { role: schema, in: Placement }
+    source: { rule: restated-value-list }
+    as: { role: schema, in: IntegerFlag }
   - ir: key:5.2.2:placement.instl
     digest: 2334f8c26628f80ae242e03e2b5556817cb4958765bb2036951355997119b8a7
     locks: [ with-open-prs ]
-    source: { decision: D-039 }
-    as: { role: property, object: Placement, type: { kind: boolean }, presence: optional }
+    source: { rule: domain-row }
+    as: { role: property, object: Placement, type: { kind: named, name: IntegerFlag }, presence: optional }
   - ir: key:5.2.2:placement.instl#meaning/values:1
     digest: 5fe7e04e0c8cca1273e43e89848fcf392ca02a6409f65ef91bd28a28dfd53d35
     locks: [ with-open-prs ]
-    source: { decision: D-039 }
-    as: { role: schema, in: Placement }
+    source: { rule: restated-value-list }
+    as: { role: schema, in: IntegerFlag }
   - ir: key:5.2.2:placement.plcmt
     digest: bfb50cd7c0a3028f0a69f338b91e05496e8d19d3c8e48422480bead6fe17b125
     locks: [ with-open-prs ]
@@ -280,13 +280,13 @@ entries:
   - ir: key:5.2.2:placement.skip
     digest: 17938cd996b69f208a2d9cb397eb1cc84b4b21a0568d9f251d76c70a470ba483
     locks: [ with-open-prs ]
-    source: { decision: D-039 }
-    as: { role: property, object: Placement, type: { kind: boolean }, presence: optional }
+    source: { rule: domain-row }
+    as: { role: property, object: Placement, type: { kind: named, name: IntegerFlag }, presence: optional }
   - ir: key:5.2.2:placement.skip#meaning/values:1
     digest: 1294ccc918818f88289d69bf7d0350045b6612ced1e557420ff93721dfe91c75
     locks: [ with-open-prs ]
-    source: { decision: D-039 }
-    as: { role: schema, in: Placement }
+    source: { rule: restated-value-list }
+    as: { role: schema, in: IntegerFlag }
   - ir: key:5.2.2:placement.skipafter
     digest: 7eb11e62931be7a67537c85a3e6e1609978155b48c0219644d3998f796a1c36d
     locks: [ with-open-prs ]

@@ -15,10 +15,12 @@ import { TYPE_EXAMPLES_FILE, typeExamplesDirOf, type TypeExamplesDoc } from "../
 import { lockNames, named } from "../../site/config.ts";
 import { buildOf, sourceInfos, type SiteInputs } from "../../site/data.ts";
 import { esc, inline, page } from "../../site/html.ts";
-import { pipelineFigure } from "../../site/method.ts";
+import { DESIGN_NOTES_TOC, designNotes, pipelineFigure } from "../../site/method.ts";
 import { ENUM_DRIFT_DIR, ENUM_DRIFT_FILES, type EnumDriftDoc } from "../../enum-drift.ts";
-import { mapLink, repoLink } from "../../site/pages.ts";
+import { repoLink } from "../../site/pages.ts";
+import { mapLink } from "../../site/route.ts";
 import type { SiteCopy } from "../../site/copy.ts";
+import { stands } from "../../mapping.ts";
 
 const short = (sha: string) => sha.slice(0, 7);
 const commitUrl = (lock: SpecLock) => `${lock.upstream}/commit/${lock.commit}`;
@@ -37,7 +39,7 @@ function facts(inputs: SiteInputs) {
   const objects = ir.sections.filter((s) => /^(Object|Abstract Class):/.test(s.title));
   const codes = vocabularies.reduce((n, t) => n + (t.kind === "vocabulary" ? t.terms.length : 0), 0);
   const vendor = vocabularies.filter((t) => t.kind === "vocabulary" && t.vendor !== undefined).length;
-  const live = inputs.decisions.filter((d) => d.status !== "superseded");
+  const live = inputs.decisions.filter((d) => stands(d));
   return {
     lock,
     ir,
@@ -88,7 +90,7 @@ ${enumDriftSection(inputs)}
     <h2>What it leaves for later</h2>
     <p>${b.short} also defines ${f.objects} objects, such as <code>Ad</code> and <code>Device</code>, with ${f.attributes} attribute rows. The pipeline extracts every one of those rows, so a decision can quote them, but it doesn't map the objects yet (${dec("D-003")}): the schemas hold the lists alone. The records on the objects' known inconsistencies, such as how the protocol buffer definitions type a timestamp or a flag, quote the rows they rest on already.</p>
     <h2>How to read a vocabulary</h2>
-    <p>A closed list is an <code>enum</code> of its codes, as List: Device Types is. A list with a <code>500+</code> row is open: <code>anyOf</code> its codes and a vendor's code of 500 or more. A code's label is in the vocabulary's description. ${f.primitives.length > 0 ? `The kernel holds the ${plural(f.primitives.length, "type", "types")} the lists need, ${f.primitives.map((p) => `<a href="${mapLink("", p, f.lock.name, "as-written")}"><code>${esc(p)}</code></a>`).join(" and ")}.` : ""}</p>
+    <p>Each list is <code>type: integer</code> and a <code>oneOf</code> of one titled <code>const</code> branch per code, as List: Device Types gives <code>3</code> the title "Connected TV". A list with a <code>500+</code> row is open: one more branch takes a vendor's code of 500 or more. ${f.primitives.length > 0 ? `The kernel holds the ${plural(f.primitives.length, "type", "types")} the lists need, ${f.primitives.map((p) => `<a href="${mapLink("", p, f.lock.name, "as-written")}"><code>${esc(p)}</code></a>`).join(" and ")}.` : ""}</p>
   </div>
   <div>
     <h2>Inputs</h2>
@@ -163,6 +165,7 @@ function methodPage(inputs: SiteInputs): string {
     ["verification", "Verification"],
     ["inputs", "The two inputs"],
     ["example", "One list, end to end"],
+    DESIGN_NOTES_TOC,
     ["reproduce", "How to reproduce it"],
   ];
   const body = `<div class="wrap method">
@@ -195,7 +198,7 @@ ${pipelineFigure()}
 
 <section id="emission">
 <h2>What a list becomes</h2>
-<p>A closed list is an <code>enum</code> of its integer codes. An open one is <code>anyOf</code> the codes and its extension: ${t("VendorCode")}, an integer of at least 500, for a vendor range, or ${t("MediaOffset")}, a whole number of seconds, for the start delay. Each code's label goes in the vocabulary's description, as <code>\`3\`: Connected TV</code>, so a reader of the schema alone sees what each code means.</p>
+<p>A list is <code>type: integer</code> and a <code>oneOf</code> of one <code>const</code> branch per code, titled with the code's name, so a reader of the schema alone sees what each code means. An open list adds one branch for its extension: an integer of at least 500 for a vendor range, as ${t("VendorCode")} is, or, for the start delay, a whole number of seconds other than <code>0</code>, as ${t("MediaOffset")} is. The <a href="#design">design notes</a> say why.</p>
 </section>
 
 <section id="verification">
@@ -223,6 +226,8 @@ ${pipelineFigure()}
 <li><h3>The example value</h3><p>A vocabulary's example is one of its codes. <a href="${m(vocab.name, "example")}">See it in the type map</a>.</p>${json(example)}</li>
 </ol>
 </section>
+
+${designNotes({ codes: `Every list here is integer codes, such as <code>3</code> for Connected TV in List: Device Types.`, flags: `The registry maps lists only, so no flag appears here yet; when the objects are mapped, a flag such as <code>instl</code> keeps the <code>0</code> | <code>1</code> the text writes.` })}
 
 <section id="reproduce">
 <h2>How to reproduce it</h2>

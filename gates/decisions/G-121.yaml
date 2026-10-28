@@ -1,0 +1,39 @@
+format: 1
+id: G-121
+date: 2026-10-28
+question: What changes in the gates to close the gaps an independent review of the Deals API's value domains found?
+decision: >-
+  A model property carried its stated default, but no schema did, so a
+  currency whose default satisfied the money beside it left the money with
+  no currency in the schema. The emitter now writes a property's `default`
+  beside its `$ref`, an annotation the output check allows there beside the
+  description, and the output check fails a default that the type its
+  `$ref` names rejects, as it fails any constraint beside a reference; a
+  fixture covers it, and a test follows a default from the IR through the
+  model, where it satisfies the currency, to the schema. A basis no longer
+  makes a defaulted sibling conditional. An integer extension that would
+  match several codes is now a problem the emitter reports, not an
+  exception. `CountryCode`'s rule reads every code ISO 3166-1 assigns,
+  territories too, with Antarctica valid and the retired Netherlands
+  Antilles invalid among its vectors, and `Ext` rejects null. The kernel's
+  OpenRTB links name the anchors the text writes. LICENSE leaves
+  kernel/sources/ to its files' own terms, and NOTICE keeps the iso-codes
+  file's copyright line. The type rules list every domain and say how a
+  specification that names an extension point uses `Ext`. The test suite
+  holds 517 tests, and MIN_TESTS is 517.
+rationale: >-
+  The output check gains one check, and the emitter writes an annotation
+  the specification states; nothing is relaxed. No OpenProposal or AdCOM
+  property states a default, so their schemas don't change.
+accepts:
+  - { gate: comparison, fingerprint: bcec63086d5f8a699d11da0c12f6fc3da15d6829eca9ae0ca0c55cfc51904442 }
+  - { gate: duplication-kernel, fingerprint: bbd88e7efed2ca961ee2432ac2d8a11b29710d3f7b38255a3523ee2b75e68b43 }
+  - { gate: duplication-model, fingerprint: f141e77696ec5eca8d763ea946b6b5cd94a293d3f6b89da86c4fd9bd1aa7acc9 }
+  - { gate: fidelity, fingerprint: a5cd9b9fe072e2639ec558fe3c868c086d748a583b7db42bc75645790c321daa }
+  - { gate: model-resolves, fingerprint: 6e106352d77948fed80b669184d3699c3b9cbb05d5e613714cb1beb7608a97d1 }
+  - { gate: npm-test, fingerprint: 8104335b0ef41df492fe9a2693ca102a148866b3dd87e365de975f961d0b19d8 }
+  - { gate: schemas-conventions, fingerprint: 60af9653db0e595d6ff78a50d2f6f38f51a900a00eee5a38fa88b03ed38d092b }
+  - { gate: schemas-emit, fingerprint: 7a542354b2eeef3dd263da0da597c5cfd0797a00a85bd78fa6d91b2817f3d3af }
+  - { gate: sdk-generate, fingerprint: 6830655edbc2fff456b60e641e593353375bc8fd6191cebd45d1fc342d7b4740 }
+  - { gate: site-builds, fingerprint: 59ded352d0e1b3a979744d955891777e6a1e162b48465e5e2f6722a3e1c3c5e0 }
+  - { gate: variant-diff, fingerprint: 4114250a9efcaef9fcf1e43cd623f002201f26173f5c9e8487c5765505c9dd1b }

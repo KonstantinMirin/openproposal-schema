@@ -38,7 +38,6 @@
       "status": "proposed"
     },
     {
-      "feedback": "Write `placement.reward`, `instl`, and `skip` as JSON booleans, as every other flag of the specification is. Say they mean what the AdCOM fields of the same name mean. AdCOM 1.0 and OpenRTB 2.6 write these flags as the integers `0` and `1`. A seller that builds a bid request writes `true` as `1` and `false` as `0`, and reads them back the same way.",
       "id": "D-039",
       "kind": "departure",
       "locks": [
@@ -46,18 +45,10 @@
       ],
       "number": 41,
       "question": "How is a two-valued flag written where § 5.2.2 copies an AdCOM `0` | `1` integer?",
-      "reading": "A JSON boolean, as every other flag of the specification is.",
-      "rests_on": [
-        "key:5.2.2:placement.instl",
-        "key:5.2.2:placement.instl#meaning/values:1",
-        "key:5.2.2:placement.reward",
-        "key:5.2.2:placement.reward#meaning/values:1",
-        "key:5.2.2:placement.skip",
-        "key:5.2.2:placement.skip#meaning/values:1",
-        "rule:5.2.2:463dfafd",
-        "sentence:5.2.2:4076adca"
-      ],
-      "status": "proposed"
+      "reading": "",
+      "rests_on": [],
+      "status": "withdrawn",
+      "withdrawn": "§ 5.2.2's keys follow AdCOM 1.0, which writes `reward`, `instl`, and `skip` as `0` (no) or `1` (yes). The schemas keep those integers."
     },
     {
       "feedback": "Write every length of time as an ISO 8601 duration, as `hold_duration` is. That covers a production option's `lead_time`, a reporting option's `cadence`, `availability`'s `granularity`, and a measurement source's `attribution_window`. It also covers `placement.skipafter` and `refresh.min_interval_s`. The examples write \"10 business days\" and `0` for a lead time. They write `daily` for a cadence and `30d` for an attribution window, which are `P1D` and `P30D` as durations. § 5.2.2 writes `skipafter` and `min_interval_s` as integer seconds, because AdCOM 1.0 and OpenRTB 2.6 write `skipafter` and `minint` that way. A seller that builds a bid request converts each duration to whole seconds, such as `PT5S` to `5`. The `_s` in `min_interval_s` names the unit, which a duration carries, so rename the key `min_interval`. Business days need a calendar the specification doesn't define, so a lead time in business days needs one too.",
@@ -1596,60 +1587,6 @@
         "/measurement_source/included/0"
       ],
       "reason": "The example follows the text, which gives a measurement source option no `id`: `included[]` names the option by its `vendor`, `IAS`, which no option of `available[]` carries as its `id`. We propose an `id` on every object option, a UUID as for every ID a party mints, so that `included[]` names the option by that UUID.",
-      "severity": "error"
-    },
-    {
-      "causes": [
-        "departure"
-      ],
-      "decisions": [
-        "D-039"
-      ],
-      "example": "examples/line-item-rewarded-video.yaml",
-      "kind": "invalid",
-      "locks": [
-        "with-open-prs"
-      ],
-      "paths": [
-        "/placement/instl"
-      ],
-      "reason": "The example follows the text, which writes `instl` as AdCOM's `0` or `1`: it writes `1`. We propose a JSON boolean for every flag, `true` here.",
-      "severity": "error"
-    },
-    {
-      "causes": [
-        "departure"
-      ],
-      "decisions": [
-        "D-039"
-      ],
-      "example": "examples/line-item-rewarded-video.yaml",
-      "kind": "invalid",
-      "locks": [
-        "with-open-prs"
-      ],
-      "paths": [
-        "/placement/reward"
-      ],
-      "reason": "The example follows the text, which writes `reward` as AdCOM's `0` or `1`: it writes `1`. We propose a JSON boolean for every flag, `true` here.",
-      "severity": "error"
-    },
-    {
-      "causes": [
-        "departure"
-      ],
-      "decisions": [
-        "D-039"
-      ],
-      "example": "examples/line-item-rewarded-video.yaml",
-      "kind": "invalid",
-      "locks": [
-        "with-open-prs"
-      ],
-      "paths": [
-        "/placement/skip"
-      ],
-      "reason": "The example follows the text, which writes `skip` as AdCOM's `0` or `1`: it writes `0`. We propose a JSON boolean for every flag, `false` here.",
       "severity": "error"
     },
     {
@@ -5340,42 +5277,6 @@
       "row": "field:5.2:properties",
       "spec": "`available[]` of `{ id, name, domains, apps, supported_formats }`, `included[]`, `pricing`, `max_select`. Each property MUST carry `domains`, `apps` or both",
       "table": "table:5.2:1"
-    },
-    {
-      "column": "Meaning",
-      "decision": "D-039",
-      "locks": [
-        "with-open-prs"
-      ],
-      "model": "`false` | `true`. The ad is interstitial or full screen",
-      "reason": "A yes-or-no value is a JSON boolean, as every other flag of the specification is; the row copies AdCOM's `0` and `1`.",
-      "row": "key:5.2.2:placement.instl",
-      "spec": "`0` (no) | `1` (yes). The ad is interstitial or full screen",
-      "table": "table:5.2.2:1"
-    },
-    {
-      "column": "Meaning",
-      "decision": "D-039",
-      "locks": [
-        "with-open-prs"
-      ],
-      "model": "`false` | `true`. The user receives a reward for viewing the ad",
-      "reason": "A yes-or-no value is a JSON boolean, as every other flag of the specification is; the row copies AdCOM's `0` and `1`.",
-      "row": "key:5.2.2:placement.reward",
-      "spec": "`0` (no) | `1` (yes). The user receives a reward for viewing the ad",
-      "table": "table:5.2.2:1"
-    },
-    {
-      "column": "Meaning",
-      "decision": "D-039",
-      "locks": [
-        "with-open-prs"
-      ],
-      "model": "Video or audio. `false` | `true`. The placement lets the user skip the ad",
-      "reason": "A yes-or-no value is a JSON boolean, as every other flag of the specification is; the row copies AdCOM's `0` and `1`.",
-      "row": "key:5.2.2:placement.skip",
-      "spec": "Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad",
-      "table": "table:5.2.2:1"
     },
     {
       "column": "Description",

@@ -1,0 +1,32 @@
+format: 1
+id: D-029
+status: proposed
+kind: gap
+author: agent
+question: "What does `sellerstatus` mean when absent, when the cell says both \"default 0\" and \"recommended\"?"
+covers:
+  - ir: field:object-deal:sellerstatus
+    digest: 0c8cf640c2946620c962742b4ddebacad40140806db8b1e55a56ac71589d4d9f
+    quote: "`sellerstatus` | int, default 0, recommended | Status of the deal in the sellers system where: `0` = deal is active `1` = deal is paused `2` = deal is pending `3` = deal is complete (ie. selling scomplete (ie. selling system shows deal has completed) `4` = deal is archived (cannot be active again)"
+    locks: [main]
+  - ir: field:object-deal:sellerstatus
+    digest: f0e4ad2d2887a9470561d01d475d46b227084719a3bcc3442e60d9005d445f83
+    quote: "`sellerstatus` | int, default 0, recommended | Status of the deal in the sellers system where: `0` = deal is active `1` = deal is paused `2` = deal is pending `4` = deal is complete (ie. selling scomplete (ie. selling system shows deal has completed) `4` = deal is archived (cannot be active again)"
+    locks: [tag-1.0-202602]
+options:
+  - id: default-0
+    summary: >-
+      An absent `sellerstatus` is 0, deal is active; recommended means a
+      sender should send it, which a payload can't be checked for.
+  - id: no-default
+    summary: >-
+      No default: recommended means a sender should send it.
+chosen: default-0
+rationale: >-
+  The cell states both, and they don't conflict: a sender should send
+  `sellerstatus`, and a receiver reads an absent one as 0, active. The
+  schema states the default and leaves the field optional.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L88"
+feedback: >-
+  None needed: the default settles it.

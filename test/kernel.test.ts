@@ -35,7 +35,7 @@ test("the kernel defines each primitive the type rules name, once", () => {
     KERNEL.primitives.map((p) => p.name).sort(),
     [
       "Amount", "CatalogRef", "Count", "CurrencyCode", "DayName", "Digest", "Domain", "Duration",
-      "ExternalId", "FormatId", "Fraction", "Measure", "NamespacedTerm", "PercentChange",
+      "ExternalId", "FormatId", "Fraction", "IntegerFlag", "Measure", "NamespacedTerm", "PercentChange",
       "PriceAdjustment", "Text", "TimeOfDay", "TimeZone", "Timestamp", "Url", "Uuid", "VendorCode",
     ],
   );

@@ -1,0 +1,36 @@
+format: 1
+id: D-018
+status: proposed
+kind: gap
+author: agent
+question: "How is `guar` written, and what does a missing `guar` mean?"
+covers:
+  - ir: field:object-terms:guar
+    digest: 372ad02a0bfed4c5e8dca1c18389f2ccccefa680f7850c8a8664e06eb7b81219
+    quote: "`guar` | int | Indicates that the deal is of type guaranteed and the bidder must bid on the deal, where 0 = not a guaranteed deal, 1 = guaranteed deal."
+  - ir: rule:object-terms:10cce23d
+    digest: e2c3c36778700b9ac9b81bd4cc052f7d8e5e4215701e4e24d7bbfe482553f264
+    quote: "Indicates that the deal is of type guaranteed and the bidder must bid on the deal, where 0 = not a guaranteed deal, 1 = guaranteed deal."
+options:
+  - id: integer-flag
+    summary: >-
+      The integer 0 or 1, as the row writes "where 0 = not a guaranteed
+      deal, 1 = guaranteed deal", each code named, with no default: a
+      missing `guar` states nothing.
+  - id: default-0
+    summary: >-
+      The integer 0 or 1, with 0 as the default, since a deal that says
+      nothing isn't guaranteed.
+chosen: integer-flag
+rationale: >-
+  The row types `guar` int and gives its two codes, so it is the integer
+  flag AdCOM and OpenRTB write, 0 or 1, and every other value fails. It is
+  the same kind of flag as an OpenRTB key such as `instl`, so the schema
+  shares one type, whose two codes are named No and Yes; the row's own
+  words, not a guaranteed deal and guaranteed deal, stay in its description.
+  The text gives no default, so none is assumed. The row's "the bidder must
+  bid on the deal" binds the buyer, an obligation.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L113"
+feedback: >-
+  Give `guar` a default, or say what a missing `guar` means.

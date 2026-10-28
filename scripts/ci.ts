@@ -271,8 +271,8 @@
  *     file git tracks under `feedback/` is one the report writes. A spec
  *     whose profile names no feedback target has no report yet, and
  *     optional-outputs fails where git tracks any file under its
- *     `feedback/`. Every spec's decision records, whatever their
- *     status but superseded, keep each question, chosen answer, and
+ *     `feedback/`. Every spec's decision records that still stand,
+ *     neither superseded nor withdrawn, keep each question, chosen answer, and
  *     feedback in the specification owners' terms (record-wording): no
  *     document or record of this repository and no type name the
  *     specification never writes.
@@ -1224,7 +1224,9 @@ async function checkVariantOutputGates(variants: VariantBuilds[], vectors: Vecto
         await gate(O.typeExamplesCommitted, { file, want: teWant, committed, regenerate: "npm run type-examples" }, at);
         if (committed !== null) await gate(O.typeExamplesValid, { doc: JSON.parse(committed.toString("utf8")) as TypeExamplesDoc, model: b.model, files: emitted.files, schemaDir, codes, ruleChecks: ruleChecks() }, at);
       }
-      // SDK types.
+      // SDK types, and their parity on the corpus, for a spec whose profile names SDK packages, as for its proposed build
+      // (optional-outputs); the Deals API's schemas come first.
+      if (!NAMES.sdk) continue;
       const sdkDir = sdkDirOf(lock.ir_dir, b.variant);
       if (!(await gate(S.sdkGenerate, { model: b.model, dir: sdkDir, schemaDir, names: NAMES, schemaNames: specSchemaNames() }, at))) continue;
       const sdk = emitSdk(b.model, sdkDir, schemaDir, NAMES, specSchemaNames());
@@ -1361,7 +1363,7 @@ async function checkSpec(): Promise<Kernel | null> {
       // The records' text for the specification's owners, before any report renders it.
       if (loaded && models.size === locks.length) await gate(P.recordWording, { decisions: loaded.decisions, names: internalTypeNames([...models].map(([l, m]) => ({ model: m, ir: committedIr(l) }))) });
       else skipped(P.recordWording, "the models didn't resolve on every lock");
-      if (!reaches(through, "outputs")) {
+      if (!reaches(through, "schemas")) {
         record(`${posix.basename(SPEC)}: pipeline stage`, true, `the profile says the spec has reached "${through}", so the gates of its outputs don't run on it yet, and the spec-profile gate holds it to no output file`);
         return kernel;
       }
@@ -1372,6 +1374,10 @@ async function checkSpec(): Promise<Kernel | null> {
       await checkFidelityGates(models, rules, kernel, loaded);
       // Every spec that isn't a registry agrees with the registries on this site wherever it cites one of their lists.
       if (specOf(SPEC).profile.site?.registry !== true) await checkAgreementGates(models, variants);
+      if (!reaches(through, "outputs")) {
+        record(`${posix.basename(SPEC)}: pipeline stage`, true, `the profile says the spec has reached "${through}", so the gates of its other outputs, its corpus, type examples, examples, round trip, release, and comparison, don't run on it yet, and the spec-profile gate holds it to no such file`);
+        return kernel;
+      }
       await checkCorpusGates(models, rules, kernel, locks);
       await checkTypeExampleGates(models, kernel, locks, variantFiles);
       // A spec whose profile names no SDK packages or no feedback target has no SDK types or report to check, unless it has, or owns, such outputs (optional-outputs).

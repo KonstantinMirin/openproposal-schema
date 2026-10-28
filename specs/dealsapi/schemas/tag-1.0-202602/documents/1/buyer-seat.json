@@ -1,0 +1,33 @@
+{
+  "$id": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/buyer-seat.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The Deals API `BuyerSeat` document.",
+  "properties": {
+    "buyerstatus": {
+      "description": "Information about the buying seat where the Deal will be trafficked",
+      "items": {
+        "$ref": "../../modules/buyer-seat/1/buyer-seat.json#/$defs/BuyerStatus"
+      },
+      "type": "array"
+    },
+    "ext": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Ext",
+      "description": "Placeholder for deal-specific extensions"
+    },
+    "id": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/ExternalId",
+      "description": "A unique identifier for the deal as passed in the initial push that this response is referring to. This should always be the same id as `deal.id`"
+    },
+    "version": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/ExternalId",
+      "description": "Version of the Deal API in use"
+    }
+  },
+  "required": [
+    "id",
+    "version"
+  ],
+  "title": "BuyerSeat",
+  "type": "object"
+}

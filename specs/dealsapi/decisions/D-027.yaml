@@ -1,0 +1,36 @@
+format: 1
+id: D-027
+status: proposed
+kind: gap
+author: agent
+question: "Which AdCOM list do `devicetype` and `cattax` take, when the text links List: Device Type and List: Category Taxonomies on AdCOM's `main`?"
+covers:
+  - ir: field:object-inventory:devicetype
+    digest: f28b832f472525a0929387afa28ef897954d5378eb463912610e0ae4d07d9b49
+    quote: "`devicetype` | integer array | The general type of device. Refer to List: Device Type in AdCOM 1.0"
+  - ir: field:object-inventory:cattax
+    digest: ae0fd641c1a0a516c0ade07a25a9ab9f9df146bdb50d3f1e404c0e3877c5860e
+    quote: "`cattax` | integer | The taxonomy in use for the cat attribute. Refer to List: Category Taxonomies."
+options:
+  - id: pinned-registry
+    summary: >-
+      AdCOM 1.0's List: Device Types and List: Category Taxonomies, at the
+      commit this site's registry pins, by reference to the registry's
+      lists, so the schema copies none of their codes.
+  - id: latest
+    summary: >-
+      Whatever AdCOM's `main` holds when the deal is read, as the links
+      point.
+chosen: pinned-registry
+rationale: >-
+  The links point at AdCOM's `main`, which changes inside 1.0, so the codes
+  a deal may send would move with it. The schema takes both lists from the
+  registry at its pinned commit, by reference, and the link's "Device Type"
+  names the list AdCOM titles Device Types, whose anchor it links.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L127"
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#list_devicetypes"
+feedback: >-
+  Link AdCOM at a release or a commit, so a deal's `devicetype` and `cattax`
+  codes don't change when AdCOM's `main` does; and write the list's title,
+  "List: Device Types".

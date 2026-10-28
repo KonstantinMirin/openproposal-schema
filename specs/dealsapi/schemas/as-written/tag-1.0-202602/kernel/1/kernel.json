@@ -1,0 +1,68 @@
+{
+  "$defs": {
+    "Amount": {
+      "description": "A sum of money or a price per unit of a cost method, never negative, such as a budget, a minimum spend, or a CPM. It is in the currency of the `currency` member of the object that carries it, and the cost method says what a rate is per.",
+      "minimum": 0,
+      "type": "number"
+    },
+    "Count": {
+      "description": "A whole number of things, never negative and at most 2^53 − 1, such as impressions, options, or a proposal's revisions, which its `version` counts.",
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "CurrencyCode": {
+      "description": "An ISO 4217 alphabetic currency code, such as `USD`.",
+      "pattern": "^[A-Z]{3}$",
+      "type": "string"
+    },
+    "Domain": {
+      "description": "A domain name, written as lowercase A-labels with at least two labels, a top-level label that starts with a letter, and no trailing dot, such as `examplepub.example`.",
+      "maxLength": 253,
+      "pattern": "^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]([a-z0-9-]{0,61}[a-z0-9])?$",
+      "type": "string"
+    },
+    "Ext": {
+      "additionalProperties": true,
+      "description": "An object for members the specification leaves to the parties to define, such as the Deals API's `ext` on each of its objects. It takes any members, and a receiver keeps the ones it doesn't know.",
+      "type": "object"
+    },
+    "ExternalId": {
+      "description": "The identity of a record, a code, or a version that another system or list defines, such as a registry entry, a DSP seat, a geo code, a content category, a published document's version, or a field of the specification, named by its path as the specification's tables write it, carried as that system writes it. A receiver compares it by exact string equality and doesn't parse it; the field's description names where it comes from.",
+      "type": "string"
+    },
+    "IntegerFlag": {
+      "description": "A yes or no written as an integer, `0` for no and `1` for yes, as AdCOM 1.0 and OpenRTB 2.6 write their flags, such as a placement's `instl`. A receiver reads it as a flag, never as a count, and a field that takes it keeps the integer its text writes.",
+      "oneOf": [
+        {
+          "const": 0,
+          "title": "No"
+        },
+        {
+          "const": 1,
+          "title": "Yes"
+        }
+      ],
+      "type": "integer"
+    },
+    "Text": {
+      "description": "Prose for people and agents to read. A receiver doesn't parse it or compare it.",
+      "type": "string"
+    },
+    "UtcTimestamp": {
+      "description": "A point in time in UTC, written as an RFC 3339 date-time whose offset is zero, such as `2026-11-02T00:00:00Z`, for a specification that says its timestamps are UTC. It follows `Timestamp`'s grammar, with an offset of `Z`, `z`, or `+00:00`, a time in UTC, or `-00:00`, a time in UTC whose local offset is unknown (RFC 3339 section 4.3), and never another, so a value whose offset isn't zero is no UTC timestamp. A receiver compares two of them as instants, not as strings.",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}[Tt][0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?([Zz]|[+-]00:00)$",
+      "type": "string"
+    },
+    "VendorCode": {
+      "description": "A code that an AdCOM 1.0 list reserves for vendors, 500 or more, as List API Frameworks reserves \"500+ Vendor-specific codes\". It extends a vocabulary of the list's codes.",
+      "minimum": 500,
+      "type": "integer"
+    }
+  },
+  "$id": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/tag-1.0-202602/kernel/1/kernel.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The Deals API kernel: the primitives and the parts that constructor copies share.",
+  "title": "kernel"
+}

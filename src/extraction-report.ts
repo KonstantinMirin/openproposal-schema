@@ -9,7 +9,10 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { SpecIR } from "./ir-types.ts";
 import { FINDING_KINDS, type Finding } from "./lint.ts";
+import type { Layout } from "./layouts.ts";
 import { loadLock } from "./lock.ts";
+import { lockFiles } from "./repo.ts";
+import { LEVEL_ORDER } from "./sentences.ts";
 
 export const EXTRACTION_REPORT = join("docs", "extraction-report.md");
 
@@ -162,14 +165,99 @@ export function reportBlocks([main, prs]: [ReportLock, ReportLock]): Record<stri
 const BLOCK = /<!-- generated:([a-z-]+) -->\n([\s\S]*?)\n<!-- \/generated:\1 -->/g;
 
 /** The report with each generated block rewritten; it throws on a block it can't render, and on a block the report lacks. */
-export function renderExtractionReport(text: string, blocks: Record<string, string>): string {
+export function renderExtractionReport(text: string, blocks: Record<string, string>, file: string = EXTRACTION_REPORT): string {
   const seen = new Set<string>();
   const out = text.replace(BLOCK, (_, name: string) => {
     const body = blocks[name];
-    if (body === undefined) throw new Error(`${EXTRACTION_REPORT}: no block "${name}" is generated`);
+    if (body === undefined) throw new Error(`${file}: no block "${name}" is generated`);
     seen.add(name);
     return `<!-- generated:${name} -->\n${body}\n<!-- /generated:${name} -->`;
   });
-  for (const name of Object.keys(blocks)) if (!seen.has(name)) throw new Error(`${EXTRACTION_REPORT}: the report has no block "${name}"`);
+  for (const name of Object.keys(blocks)) if (!seen.has(name)) throw new Error(`${file}: the report has no block "${name}"`);
   return out;
+}
+
+/** A spec's own extraction report, beside OpenProposal's: `docs/<spec>-extraction-report.md`. */
+export const specReportFile = (spec: string): string => join("docs", `${spec}-extraction-report.md`);
+
+/** A spec's locks as the report reads them, the default first, from their committed IR and findings. */
+export function specReportLocks(root: string): (ReportLock & { ir: SpecIR })[] {
+  return lockFiles(root).map((file) => {
+    const lock = loadLock(file);
+    const ir = JSON.parse(readFileSync(join(root, lock.ir_dir, "spec-ir.json"), "utf8")) as SpecIR;
+    const findings = (JSON.parse(readFileSync(join(root, lock.ir_dir, "findings.json"), "utf8")) as { findings: Finding[] }).findings;
+    return { name: lock.name, counts: ir.counts, findings, ir };
+  });
+}
+
+/**
+ * The blocks of a spec's own extraction report, for any spec read from its
+ * text: its tables by layout, with each layout's header as its plugin lists
+ * it; its elements; its statements by strongest keyword; its findings by
+ * kind; and each finding beside the rows that state no presence, which the
+ * report counts by owner. Each count is per lock.
+ */
+export function specReportBlocks(locks: readonly (ReportLock & { ir: SpecIR })[], layouts: readonly Layout[]): Record<string, string> {
+  const cs = locks.map((l) => l.counts as unknown as Record<string, unknown>);
+  const head = (label: string) => [`| ${label} | ${locks.map((l) => `\`${l.name}\``).join(" | ")} |`, `| :--- |${locks.map(() => " ---: |").join("")}`];
+  const row = (label: string, f: (c: Record<string, unknown>, i: number) => string) => `| ${label} | ${cs.map((c, i) => f(c, i)).join(" | ")} |`;
+  const used = new Set(cs.flatMap((c) => Object.keys(c.tables_by_layout as object)));
+  for (const l of used) if (!layouts.some((x) => x.id === l)) throw new Error(`the plugin lists no layout "${l}"`);
+  const header = (l: Layout) => l.header.map((h) => (typeof h === "string" ? h : "`…`")).join(" \\| ");
+  const tables = [
+    "### Tables by layout",
+    "",
+    `| Layout | Header | ${locks.map((l) => `\`${l.name}\` tables / rows`).join(" | ")} |`,
+    `| :--- | :--- |${locks.map(() => " ---: |").join("")}`,
+    ...layouts.map((l) => `| \`${l.id}\` | ${header(l)} | ${cs.map((c) => `${by(c, "tables_by_layout", l.id)} / ${by(c, "table_rows_by_layout", l.id)}`).join(" | ")} |`),
+    `| **Total** | | ${cs.map((c) => `**${num(c, "tables")} / ${num(c, "table_rows")}**`).join(" | ")} |`,
+  ];
+  const owners = [...new Set(locks.flatMap((l) => l.ir.fields.map((f) => f.owner)))];
+  const elements = [
+    "### Elements",
+    "",
+    ...head("Element"),
+    row("Sections", (c) => `${num(c, "sections")}`),
+    row(`Field rows, by owner (${owners.map((o) => `\`${o}\``).join(", ")})`, (c) => `${num(c, "fields")} (${owners.map((o) => by(c, "fields_by_owner", o)).join(", ")})`),
+    row("Field rows whose Type cell states a default", (_, i) => `${locks[i]!.ir.fields.filter((f) => f.default !== undefined).length}`),
+    row("Field rows that state their presence: required / recommended", (_, i) => ["REQUIRED", "RECOMMENDED"].map((lv) => locks[i]!.ir.fields.filter((f) => f.presence?.kind === "clauses" && f.presence.clauses[0]!.level === lv).length).join(" / ")),
+    row("Key rows", (c) => `${num(c, "keys")}`),
+    row("Value definitions", (c) => `${num(c, "definitions")}`),
+    row("Other table rows, as examples", (c) => `${num(c, "concepts")}`),
+    row("Value lists: in table cells / in prose", (c) => ["table_cell", "prose"].map((o) => by(c, "value_lists_by_origin", o)).join(" / ")),
+    row("Rows that cite another standard's list (\"List: …\")", (_, i) => `${locks[i]!.ir.fields.filter((f) => /\bList:\s/.test(f.description.text)).length}`),
+    row("RFC 2119 sentences in the body", (c) => `${num(c, "statements_body")}`),
+    row("Other prose sentences that name an identifier (code span)", (c) => `${num(c, "sentences")}`),
+    row("Code spans", (c) => `${num(c, "code_spans")}`),
+    row("Fenced code blocks", (c) => `${num(c, "code_blocks")}`),
+  ];
+  const levels = ["### RFC 2119 sentences by strongest keyword", "", ...head("Level"), ...LEVEL_ORDER.filter((lv) => cs.some((c) => by(c, "statements_by_level", lv) > 0)).map((lv) => row(lv, (c) => `${by(c, "statements_by_level", lv)}`))];
+  const verdictOf = (f: Finding) => f.disposition?.verdict ?? "open";
+  const cell = (fs: Finding[]) => {
+    const open = fs.filter((f) => verdictOf(f) === "open").length;
+    return fs.length > open ? `${open} (+${fs.length - open})` : `${open}`;
+  };
+  const kinds = FINDING_KINDS.filter((k) => locks.some((l) => l.findings.some((f) => f.kind === k)));
+  const findings = [
+    "### Findings by kind",
+    "",
+    "Each cell shows open findings, plus findings with a verdict in brackets. A `presence_unstated` finding is one per owner; the rows it names are counted below it.",
+    "",
+    ...head("Kind"),
+    ...kinds.map((k) => row(`\`${k}\``, (_, i) => cell(locks[i]!.findings.filter((f) => f.kind === k)))),
+    row("Rows that state no presence (`presence_unstated`)", (_, i) => `${locks[i]!.findings.filter((f) => f.kind === "presence_unstated").reduce((n, f) => n + f.subjects.length, 0)}`),
+    row("**Total**", (_, i) => `**${cell(locks[i]!.findings)}**`),
+  ];
+  // Each finding but the per-owner presence ones, with the locks it is on.
+  const ids = [...new Set(locks.flatMap((l) => l.findings.filter((f) => f.kind !== "presence_unstated").map((f) => f.id)))].sort();
+  const first = (id: string) => locks.flatMap((l) => l.findings.filter((f) => f.id === id))[0]!;
+  // A message two findings share, as each object's `ext` row gives, names the rows it is about.
+  const messages = ids.map((id) => first(id).message);
+  const list = ids.map((id) => {
+    const on = locks.filter((l) => l.findings.some((f) => f.id === id));
+    const f = first(id);
+    const shared = messages.filter((m) => m === f.message).length > 1;
+    return `- ${code(f.kind)}, ${on.length === locks.length ? "on every lock" : `on ${series(on.map((l) => code(l.name)))} only`}${verdictOf(f) === "open" ? "" : ` (${verdictOf(f)})`}: ${f.message}${shared ? ` (${series(f.subjects.map(code))})` : ""}`;
+  });
+  return { counts: [...tables, "", "Every row of every table produced a typed record. No layout was unknown.", "", ...elements, "", ...levels, "", ...findings].join("\n"), findings: list.join("\n") };
 }

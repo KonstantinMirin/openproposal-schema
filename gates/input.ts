@@ -61,6 +61,12 @@ export const extraction = defineGate<{ lock: SpecLock; bytes: Buffer; exceptions
     // AdCOM's HTML tables hold only the tags a table and its cells use.
     { name: "an HTML table cell with a tag the reader doesn't know", spec: "adcom", mutate: (i) => ({ ...i, bytes: Buffer.from(i.bytes.toString("utf8").replace("<td>Vendor-specific codes.</td>", "<td><span>Vendor-specific</span> codes.</td>")) }), expect: "unsupported HTML tag <span> in a table cell" },
     { name: "an HTML table with no </table>", spec: "adcom", mutate: (i) => ({ ...i, bytes: Buffer.from(i.bytes.toString("utf8").replace(/<\/table>\s*\n\s*### List: {2}Volume Normalization Modes/, "\n### List:  Volume Normalization Modes")) }), expect: "no </table>" },
+    // The Deals API's anchors name the headings after them, its Type cells state a base type and qualifiers, and its attribute tables sit under an Object: heading.
+    { name: "an anchor on its own line that names no heading", spec: "dealsapi", mutate: (i) => ({ ...i, bytes: Buffer.from(i.bytes.toString("utf8").replace('<a name="goals"></a>\n## Goals\n', '<a name="goals"></a>\n\nGoals.\n')) }), expect: 'the anchor "goals" on its own line is followed by a paragraph' },
+    { name: "a Type cell with a qualifier the grammar doesn't know", spec: "dealsapi", mutate: (i) => ({ ...i, bytes: Buffer.from(i.bytes.toString("utf8").replace("| `created` | string |", "| `created` | string, optional |")) }), expect: 'the qualifier "optional" is none of required, recommended, or default' },
+    { name: "a profile's document whose section describes another object", spec: "dealsapi", mutate: (i) => ({ ...i, bytes: Buffer.from(i.bytes.toString("utf8").replace("## Object: Deal\n", "## Object: Deals\n")) }), expect: 'the profile names the document Deal at the section "object-deal", which describes the object Deals' },
+    { name: "an anchor on its own line that names nothing", spec: "dealsapi", mutate: (i) => ({ ...i, bytes: Buffer.from(i.bytes.toString("utf8").replace('<a name="goals"></a>', '<a class="goals"></a>')) }), expect: 'an anchor on its own line, <a class="goals">, names nothing' },
+    { name: "an attribute table outside an Object: section", spec: "dealsapi", mutate: (i) => ({ ...i, bytes: Buffer.from(i.bytes.toString("utf8").replace("## Object: Curation\n", "## Curation\n")) }), expect: 'table layout "attribute" belongs in an Object: section' },
   ],
 });
 
@@ -133,7 +139,8 @@ export const specProfile = defineGate<ProfileCheckInput>({
     { name: "a text front end with no plugin", mutate: (i) => ({ ...i, text: null }), expect: "no plugin reads the text" },
     { name: "a spec that says it has reached only its input, and holds its IR", mutate: (i) => ({ ...i, profile: { ...i.profile, through: "input" as const } }), expect: 'says the spec has reached "input", and it holds ir, which the "extract" stage writes' },
     { name: "a file in the spec's folder that no stage writes", mutate: (i) => ({ ...i, entries: [...i.entries, "notes"] }), expect: "the spec's folder holds notes, which no stage of the pipeline writes and no gate reads" },
-    { name: "a spec that says it has reached its model, and holds its schemas", mutate: (i) => ({ ...i, profile: { ...i.profile, through: "model" as const } }), expect: 'it holds schemas, which the "outputs" stage writes' },
+    { name: "a spec that says it has reached its model, and holds its schemas", mutate: (i) => ({ ...i, profile: { ...i.profile, through: "model" as const } }), expect: 'it holds schemas, which the "schemas" stage writes' },
+    { name: "a spec that says it has reached its schemas, and holds its corpus", mutate: (i) => ({ ...i, profile: { ...i.profile, through: "schemas" as const } }), expect: 'it holds corpus, which the "outputs" stage writes' },
     { name: "a spec with locks called a schema set", mutate: (i) => ({ ...i, profile: { ...i.profile, front_end: "schemas" as const }, text: null }), expect: "which no gate would check" },
     // The feedback's table is the profile's data now, so the gate holds it to every lint kind, as the table's type once did.
     { name: "a lint kind the feedback places in no row", mutate: (i) => ({ ...i, findingKinds: [...i.findingKinds, "a_new_kind"] }), expect: 'the feedback places the lint kind "a_new_kind" in no row' },

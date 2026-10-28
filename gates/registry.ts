@@ -23,6 +23,9 @@ const withLine = (i: AgreementInput, from: string, to: string): AgreementInput =
   if (!i.text.some((l) => l.includes(from))) throw new Error(`the text doesn't write "${from}"`);
   return { ...i, text: i.text.map((l) => l.split(from).join(to)) };
 };
+const DEALS = "dealsapi";
+/** The Deals API's input with one definition of its deal module changed. */
+const deal = (i: AgreementInput, def: string, change: (s: Record<string, unknown>) => Record<string, unknown>): AgreementInput => ({ ...i, files: i.files.map((f) => (f.path !== "modules/deal/1/deal.json" ? f : { ...f, schema: { ...f.schema, $defs: { ...(f.schema.$defs as object), [def]: change((f.schema.$defs as Record<string, Record<string, unknown>>)[def]!) } } })) });
 const inventory = (i: AgreementInput, def: string, schema: Record<string, unknown>): AgreementInput => ({ ...i, files: i.files.map((f) => (f.path !== "modules/inventory/1/inventory.json" ? f : { ...f, schema: { ...f.schema, $defs: { ...(f.schema.$defs as object), [def]: schema } } })) });
 
 export const registryAgreement = defineGate<AgreementInput>({
@@ -50,6 +53,17 @@ export const registryAgreement = defineGate<AgreementInput>({
     { name: "a citation of a registry the spec doesn't import", spec: OP, lock: PRS, mutate: (i) => ({ ...i, registries: i.registries.map((r) => ({ ...r, imported: false })) }), expect: "cites List: API Frameworks of adcom, a registry its profile doesn't import" },
     { name: "a link to an anchor the registry's text doesn't have", spec: OP, lock: PRS, mutate: (i) => withLine(i, "#list_apiframeworks", "#list_apiframework"), expect: "links adcom's text at #list_apiframework, which names no section of it" },
     { name: "a link by a slug GitHub doesn't give the heading", spec: OP, lock: PRS, mutate: (i) => withLine(i, "#list_apiframeworks", "#list-api-frameworks"), expect: "links adcom's text at #list-api-frameworks, which names no section of it" },
+    // The Deals API's citations that D-027 reads: an allowance excuses only a row its decision covers, and one that excuses nothing fails.
+    { name: "a list name the registry doesn't title, with no allowance", spec: DEALS, mutate: (i) => ({ ...i, allowances: (i.allowances ?? []).filter((a) => !("cites" in a)) }), expect: 'cites "List: Device Type", which no registry on this site titles' },
+    { name: "a link at the registry's main, with no allowance", spec: DEALS, mutate: (i) => ({ ...i, allowances: (i.allowances ?? []).filter((a) => !("links_at" in a)) }), expect: "line 127 links adcom's text at main, not at 26c59ba" },
+    { name: "an allowance whose decision doesn't cover the row", spec: DEALS, mutate: (i) => ({ ...i, decisions: (i.decisions ?? []).map((d) => (d.id === "D-027" ? { ...d, covers: d.covers.filter((c) => c.ir !== "field:object-inventory:devicetype") } : d)) }), expect: 'cites "List: Device Type", which no registry on this site titles' },
+    { name: "an allowance that excuses no citation", spec: DEALS, mutate: (i) => ({ ...i, allowances: [...(i.allowances ?? []), { decision: "D-027", cites: "List: Device Kinds", means: "List: Device Types", registry: "adcom" }] }), expect: 'the allowance of D-027 for adcom, "List: Device Kinds" as List: Device Types, excuses no citation on this lock' },
+    { name: "a links_at allowance whose decision doesn't cover the line", spec: DEALS, mutate: (i) => ({ ...i, decisions: (i.decisions ?? []).map((d) => (d.id === "D-027" ? { ...d, covers: d.covers.filter((c) => c.ir !== "field:object-inventory:cattax") } : d)) }), expect: "line 132 links adcom's text at main, not at 26c59ba" },
+    { name: "an allowance on another lock than the text's", spec: DEALS, mutate: (i) => ({ ...i, allowances: (i.allowances ?? []).map((a) => ("cites" in a ? { ...a, locks: ["tag-1.0-202602"] } : a)) }), expect: 'cites "List: Device Type", which no registry on this site titles' },
+    { name: "an allowance whose decision no longer stands", spec: DEALS, mutate: (i) => ({ ...i, decisions: (i.decisions ?? []).map((d) => (d.id === "D-027" ? { ...d, stands: false } : d)) }), expect: "an allowance for adcom cites D-027, which no longer stands" },
+    // A vocabulary of the spec's own labeled list is no copy for its codes alone, but is one where its titles are the registry's labels.
+    { name: "an own labeled list titled with a registry list's labels", spec: DEALS, mutate: (i) => deal(i, "IncludedInventory", (s) => ({ ...s, oneOf: (s.oneOf as Record<string, unknown>[]).map((b) => ({ ...b, title: i.registries.find((r) => r.spec === "adcom")!.lists.find((l) => l.name === "List: Expandable Directions")!.codes.find((c) => c.code === b.const)?.label ?? b.title })) })), expect: "at /$defs/IncludedInventory copies the codes of AdCOM 1.0 List: Expandable Directions" },
+    { name: "an own labeled list that names a registry's list", spec: DEALS, mutate: (i) => deal(i, "IncludedInventory", (s) => ({ ...s, description: "The codes of AdCOM 1.0 List: Expandable Directions" })), expect: "at /$defs/IncludedInventory copies the codes of AdCOM 1.0 List: Expandable Directions" },
     { name: "a link at another commit than the pinned lock's", spec: OP, lock: PRS, mutate: (i) => withLine(i, "26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#list_apiframeworks", "master/AdCOM%20v1.0%20FINAL.md#list_apiframeworks"), expect: "links adcom's text at master, not at 26c59ba, the commit of the lock \"main\" the spec pins" },
   ],
 });

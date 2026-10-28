@@ -71,6 +71,10 @@ const PLCMT_RULE = "rule:5.2:f3d3f9e8";
 
 const COMMERCIAL = "modules/commercial/1/commercial.json";
 const ADCOM_LISTS = "modules/lists/1/lists.json";
+const DEAL = "modules/deal/1/deal.json";
+/** A Deals API object's schema with one property's node changed. */
+const withProperty = (files: EmittedFile[], def: string, name: string, change: (s: Record<string, unknown>) => Record<string, unknown>): EmittedFile[] =>
+  withDef(files, DEAL, def, (s) => ({ ...s, properties: { ...(s.properties as Record<string, Record<string, unknown>>), [name]: change((s.properties as Record<string, Record<string, unknown>>)[name]!) } }));
 const PROPOSAL = "modules/proposal/1/proposal.json";
 const LINE_ITEM = "documents/1/line-item.json";
 const TIME_ZONE = "field:5.5:time_zone#conditional@line_item.time_zone";
@@ -115,6 +119,18 @@ export const fidelity = defineGate<FidelityInput & { expected: ExpectedFile; nam
     return { problems, note: `${fidelityNote(r)}; ${listed.size} disagreements expected under ${[...new Set([...listed.values()].map((e) => e.owner))].join(", ") || "no task"}` };
   },
   fixtures: [
+    // The Deals API's Type cells: a default the schema drops, changes, or adds, a code a list loses or gains, a required attribute left
+    // optional, a bare cell's attribute made required, and an empty list rejected disagree.
+    { name: "a stated default the schema drops", spec: "dealsapi", mutate: (i) => ({ ...i, files: withProperty(i.files, "Terms", "cur", ({ default: _d, ...s }) => s) }), expect: 'the stated default is "USD", but the schema\'s "cur" states no default' },
+    { name: "a stated default the schema changes", spec: "dealsapi", mutate: (i) => ({ ...i, files: withProperty(i.files, "Terms", "pricetype", (s) => ({ ...s, default: 0 })) }), expect: 'the stated default is 2, but the schema\'s "pricetype" defaults to 0' },
+    { name: "a Deals API list's vocabulary that lost a code", spec: "dealsapi", mutate: (i) => ({ ...i, files: withDef(i.files, DEAL, "PublisherCount", (s) => withBranches(s, (b) => b.filter((x) => x.const !== 2))) }), expect: '"pubcount" as the listed 2 is valid, but the schema rejects it' },
+    { name: "a default the text doesn't state", spec: "dealsapi", mutate: (i) => ({ ...i, files: withProperty(i.files, "Terms", "guar", (s) => ({ ...s, default: 0 })) }), expect: 'the row states no default, but the schema\'s "guar" defaults to 0' },
+    { name: "a required attribute left optional", spec: "dealsapi", mutate: (i) => ({ ...i, files: withDocument(i.files, "documents/1/deal.json", (s) => ({ ...s, required: (s.required as string[]).filter((x) => x !== "origin") })) }), expect: '"origin" absent is invalid, but the schema accepts it' },
+    { name: "a bare cell's attribute made required", spec: "dealsapi", mutate: (i) => ({ ...i, files: withDef(i.files, "modules/buyer-seat/1/buyer-seat.json", "BuyerStatus", (s) => ({ ...s, required: ["status"] })) }), expect: '"status" absent is valid, but the schema rejects it' },
+    { name: "a list whose empty value the text accepts, rejected", spec: "dealsapi", mutate: (i) => ({ ...i, files: withDocument(i.files, "documents/1/deal.json", (s) => ({ ...s, properties: { ...(s.properties as Record<string, unknown>), adtypes: { ...((s.properties as Record<string, Record<string, unknown>>).adtypes), minItems: 1 } } })) }), expect: '"adtypes" empty is valid, but the schema rejects it' },
+    { name: "the tag's sellerstatus taking the code 3 it doesn't list", spec: "dealsapi", lock: "tag-1.0-202602", mutate: (i) => ({ ...i, files: withDef(i.files, DEAL, "SellerDealStatus", (s) => withBranches(s, (b) => [...b.slice(0, 3), { const: 3, title: "Three" }, ...b.slice(3)])) }), expect: '"sellerstatus" as the unlisted 3, between two listed codes, is invalid, but the schema accepts it' },
+    { name: "a Deals API list that takes a code below its lowest", spec: "dealsapi", mutate: (i) => ({ ...i, files: withDef(i.files, DEAL, "AdType", (s) => withBranches(s, (b) => [{ const: 0, title: "Zero" }, ...b])) }), expect: '"adtypes" listing the unlisted 0, below the listed codes, is invalid, but the schema accepts it' },
+    { name: "a Deals API list that lost its vendor range", spec: "dealsapi", mutate: (i) => ({ ...i, files: withDef(i.files, DEAL, "PriceType", (s) => withBranches(s, (b) => b.filter((x) => "const" in x))) }), expect: '"pricetype" as the vendor code 500 is valid, but the schema rejects it' },
     // AdCOM's lists: the oracle reads each list's rows alone, so a vocabulary that loses a code, gains one, or loses its vendor range disagrees.
     { name: "an AdCOM list's vocabulary that lost a code", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "DeviceType", (s) => withBranches(s, (b) => b.filter((x) => x.const !== 8))) }), expect: "8 (the code 8) is valid, but DeviceType's schema rejects it" },
     { name: "an AdCOM list's vocabulary that gained a code", spec: "adcom", mutate: (i) => ({ ...i, files: withDef(i.files, ADCOM_LISTS, "DeviceType", (s) => withBranches(s, (b) => [...b, { const: 9, title: "Nine" }])) }), expect: "9 (a code no row names) is invalid, but DeviceType's schema accepts it" },
@@ -278,22 +294,22 @@ export const fidelity = defineGate<FidelityInput & { expected: ExpectedFile; nam
       expect: "no-such-constraint is no longer left to",
     },
     {
-      name: "a departure's form moved from the value list to its row",
+      name: "a departure's form moved from the code block to another of its elements",
       lock: "with-open-prs",
-      mutate: (i) => ({ ...i, decisions: i.decisions.map((d) => (d.id === "D-039" ? { ...d, covers: d.covers.map((c) => (c.ir === "key:5.2.2:placement.reward#meaning/values:1" ? { ...c, departs: undefined } : c.ir === "key:5.2.2:placement.reward" ? { ...c, departs: ["values"] } : c)) } : d)) }),
-      expect: '"reward" as the listed 0 is valid, but the schema rejects it',
+      mutate: (i) => ({ ...i, decisions: i.decisions.map((d) => (d.id === "D-037" ? { ...d, covers: d.covers.map((c) => (c.ir === "code:5.6.3:1" ? { ...c, departs: undefined } : c.ir === "field:5.10:correlation_id" ? { ...c, departs: ["example"] } : c)) } : d)) }),
+      expect: 'code:5.6.3:1#example@line_item.requires.all_of[]: "all_of" as the example writes it',
     },
     {
       name: "a departure's form that excuses no disagreement",
       lock: "with-open-prs",
-      mutate: (i) => ({ ...i, decisions: i.decisions.map((d) => (d.id === "D-039" ? { ...d, covers: d.covers.map((c) => (c.ir === "key:5.2.2:placement.reward#meaning/values:1" ? { ...c, departs: ["values", "type"] } : c)) } : d)) }),
-      expect: 'D-039: departs from the type form of key:5.2.2:placement.reward#meaning/values:1 on lock "with-open-prs", but no disagreement of that form occurs there',
+      mutate: (i) => ({ ...i, decisions: i.decisions.map((d) => (d.id === "D-037" ? { ...d, covers: d.covers.map((c) => (c.ir === "code:5.6.3:1" ? { ...c, departs: ["example", "type"] } : c)) } : d)) }),
+      expect: 'D-037: departs from the type form of code:5.6.3:1 on lock "with-open-prs", but no disagreement of that form occurs there',
     },
     {
       name: "a departure no longer recorded as one",
       lock: "with-open-prs",
-      mutate: (i) => ({ ...i, decisions: i.decisions.map((d) => (d.id === "D-039" ? { ...d, kind: "gap" } : d)) }),
-      expect: '"reward" as the listed 0 is valid, but the schema rejects it',
+      mutate: (i) => ({ ...i, decisions: i.decisions.map((d) => (d.id === "D-037" ? { ...d, kind: "gap" } : d)) }),
+      expect: 'code:5.6.3:1#example@line_item.requires.all_of[]: "all_of" as the example writes it',
     },
     {
       name: "a path the summary MUST contain left optional, and listed nowhere",

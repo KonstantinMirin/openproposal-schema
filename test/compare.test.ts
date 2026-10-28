@@ -41,6 +41,8 @@ test("a lock compared with itself shows no change", async () => {
     conditions: { added: [], removed: [] },
   });
   assert.deepEqual(doc.base.counts, doc.lock.counts);
+  // Every empty section says so, the added elements' included.
+  assert.match(renderComparisonMarkdown(doc), /## Specification elements\n\n[^\n]*\n\n### Added \(0\)\n\nNone\.\n\n### Removed \(0\)/);
 });
 
 test("the open PRs' comparison lists their fields, decisions, and findings", async () => {
@@ -60,4 +62,22 @@ test("the open PRs' comparison lists their fields, decisions, and findings", asy
   // The renderings are functions of the document.
   assert.equal(renderComparison(doc), renderComparison(compareLocks({ base: main, lock: prs, decisions: INPUT.decisions, ...RECORDED })));
   assert.match(renderComparisonMarkdown(doc), /^# Lock comparison: `with-open-prs` against `main`\n/);
+});
+
+test("a rule's vectors compare by the schema file they name, not by the lock's schema directory in its $id", async () => {
+  const [main, prs] = await Promise.all([build("spec-lock.yaml"), build("with-open-prs.lock.yaml")]);
+  // The with-open-prs lock writes its schemas under schemas/with-open-prs/, so every rule's vectors name another $id.
+  const rule = "rule:4.1:8e9aacb8";
+  const ids = [main, prs].map((b) => b.rules.rules.find((r) => r.id === rule)!.vectors.schema);
+  assert.notEqual(ids[0], ids[1]);
+  const changed = (doc: ReturnType<typeof compareLocks>) => doc.changes.filter((c) => c.view === "rules" && c.member === rule);
+  assert.deepEqual(changed(compareLocks({ base: main, lock: prs, decisions: INPUT.decisions, ...RECORDED })), []);
+  // A vector the lock changes still shows.
+  const edited = { ...prs, rules: { ...prs.rules, rules: prs.rules.rules.map((r) => (r.id === rule ? { ...r, vectors: { ...r.vectors, valid: r.vectors.valid.slice(1) } } : r)) } };
+  assert.deepEqual(changed(compareLocks({ base: main, lock: edited, decisions: INPUT.decisions, ...RECORDED })).map((c) => c.detail), [`the rule ${rule} changes its vectors`]);
+  // So does a vector schema that names another file or another definition.
+  for (const schema of [ids[1]!.replace(/documents\/1\/[a-z-]+\.json/, "documents/1/line-item.json"), `${ids[1]!.split("#")[0]}#/$defs/Other`]) {
+    const moved = { ...prs, rules: { ...prs.rules, rules: prs.rules.rules.map((r) => (r.id === rule ? { ...r, vectors: { ...r.vectors, schema } } : r)) } };
+    assert.deepEqual(changed(compareLocks({ base: main, lock: moved, decisions: INPUT.decisions, ...RECORDED })).map((c) => c.detail), [`the rule ${rule} changes its vectors`], schema);
+  }
 });

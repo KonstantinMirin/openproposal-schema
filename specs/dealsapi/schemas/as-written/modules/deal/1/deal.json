@@ -1,0 +1,349 @@
+{
+  "$defs": {
+    "AdType": {
+      "description": "The codes of `Deal.adtypes`, each with the label the text gives it",
+      "oneOf": [
+        {
+          "const": 1,
+          "title": "Banner"
+        },
+        {
+          "const": 2,
+          "title": "Video"
+        },
+        {
+          "const": 3,
+          "title": "Audio"
+        },
+        {
+          "const": 4,
+          "title": "Native"
+        }
+      ],
+      "title": "Ad Type",
+      "type": "integer"
+    },
+    "AuxiliaryData": {
+      "description": "The codes of `Deal.auxdata`, each with the label the text gives it",
+      "oneOf": [
+        {
+          "const": 0,
+          "title": "undisclosed"
+        },
+        {
+          "const": 1,
+          "title": "yes, at start of deal and will not be modified"
+        },
+        {
+          "const": 2,
+          "title": "yes and subject to change after start of deal"
+        },
+        {
+          "const": 3,
+          "title": "no and will not be modified"
+        },
+        {
+          "const": 4,
+          "title": "no and subject to change after start of deal"
+        }
+      ],
+      "title": "Auxiliary Data",
+      "type": "integer"
+    },
+    "CategoryTaxonomy": {
+      "$ref": "https://adtechspec.noetis.dev/adcom/schemas/modules/lists/1/lists.json#/$defs/CategoryTaxonomy",
+      "description": "The codes of AdCOM 1.0 List: Category Taxonomies (https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#list_categorytaxonomies), as the AdCOM 1.0 registry defines them"
+    },
+    "Curation": {
+      "additionalProperties": false,
+      "properties": {
+        "cdealid": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId",
+          "description": "Unique identifier for the deal in the Curators namespace."
+        },
+        "curator": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Domain",
+          "description": "Canonical domain of the business entity that did the packaging of inventory, technology and/or data. Most often, this will be the seller of the deal."
+        },
+        "curfeetype": {
+          "$ref": "#/$defs/CurationFeeType",
+          "description": "Fee type being applied for curation of the deal: `0` = undisclosed `1` = percentage of spend `2` = flat fee `3` = CPM `4` = no fee is paid for curation services See Implementation Guidance for additional detail"
+        },
+        "ext": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Ext",
+          "description": "Placeholder for deal-specific extensions"
+        }
+      },
+      "type": "object"
+    },
+    "CurationFeeType": {
+      "description": "The codes of `Curation.curfeetype`, each with the label the text gives it",
+      "oneOf": [
+        {
+          "const": 0,
+          "title": "undisclosed"
+        },
+        {
+          "const": 1,
+          "title": "percentage of spend"
+        },
+        {
+          "const": 2,
+          "title": "flat fee"
+        },
+        {
+          "const": 3,
+          "title": "CPM"
+        },
+        {
+          "const": 4,
+          "title": "no fee is paid for curation services"
+        }
+      ],
+      "title": "Curation Fee Type",
+      "type": "integer"
+    },
+    "DeviceType": {
+      "$ref": "https://adtechspec.noetis.dev/adcom/schemas/modules/lists/1/lists.json#/$defs/DeviceType",
+      "description": "The codes of AdCOM 1.0 List: Device Types (https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#list_devicetypes), as the AdCOM 1.0 registry defines them"
+    },
+    "DynamicInventory": {
+      "description": "The codes of `Deal.dinventory`, each with the label the text gives it",
+      "oneOf": [
+        {
+          "const": 0,
+          "title": "undisclosed"
+        },
+        {
+          "const": 1,
+          "title": "inventory will NOT update once the deal goes live"
+        },
+        {
+          "const": 2,
+          "description": "inventory where this deal may run is updated dynamically.",
+          "title": "inventory where this deal may run is updated dynamically"
+        }
+      ],
+      "title": "Dynamic Inventory",
+      "type": "integer"
+    },
+    "IncludedInventory": {
+      "description": "The codes of `Inventory.inclinventory`, each with the label the text gives it",
+      "oneOf": [
+        {
+          "const": 1,
+          "title": "site"
+        },
+        {
+          "const": 2,
+          "title": "app"
+        },
+        {
+          "const": 3,
+          "title": "dooh"
+        },
+        {
+          "const": 4,
+          "title": "audio"
+        },
+        {
+          "const": 5,
+          "title": "endemic"
+        },
+        {
+          "const": 6,
+          "title": "other"
+        }
+      ],
+      "title": "Included Inventory",
+      "type": "integer"
+    },
+    "Inventory": {
+      "additionalProperties": false,
+      "properties": {
+        "appbundles": {
+          "description": "An array containing one or more bundle/package name(s) of the app. An empty list implies the deal may run across many unspecified bundles/package(s)",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          },
+          "type": "array"
+        },
+        "cat": {
+          "description": "Array of IAB Tech Lab content categories included in the deal. The taxonomy to be used is defined by the cattax field.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          },
+          "type": "array"
+        },
+        "cattax": {
+          "$ref": "#/$defs/CategoryTaxonomy",
+          "description": "The taxonomy in use for the cat attribute. Refer to List: Category Taxonomies."
+        },
+        "devicetype": {
+          "description": "The general type of device. Refer to List: Device Type in AdCOM 1.0",
+          "items": {
+            "$ref": "#/$defs/DeviceType"
+          },
+          "type": "array"
+        },
+        "ext": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Ext",
+          "description": "Placeholder for deal-specific extensions"
+        },
+        "inclinventory": {
+          "description": "High-level information about the kind of inventory included in the deal: `1` = site `2` = app `3` = dooh `4` = audio `5` = endemic `6` = other If this is empty or missing, the deal is assumed to apply to all types of inventory",
+          "items": {
+            "$ref": "#/$defs/IncludedInventory"
+          },
+          "type": "array"
+        },
+        "sellerids": {
+          "description": "The identifier associated with the seller or reseller account within the advertising system. If used, the values in this attribute must contain the same value used in transactions (i.e. OpenRTB bid requests) in the field specified by the SSP/exchange. An empty list implies the deal may runs across all sellers. Typically, in OpenRTB, this is `publisher.id`. For OpenDirect it is typically the publisher's organization ID. Should be limited to 64 characters in length.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          },
+          "type": "array"
+        },
+        "sitedomains": {
+          "description": "An array containing one or more site domain(s). An empty list implies the deal may run across many unspecified site domain(s).",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Domain"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "PriceType": {
+      "description": "The codes of `Terms.pricetype`, each with the label the text gives it",
+      "oneOf": [
+        {
+          "const": 0,
+          "title": "Dynamic (ie. auction type will be provided by `request.at` attribute in OpenRTB Bid Request)"
+        },
+        {
+          "const": 1,
+          "title": "First Price"
+        },
+        {
+          "const": 2,
+          "title": "Second Price Plus"
+        },
+        {
+          "const": 3,
+          "title": "Fixed Price"
+        },
+        {
+          "description": "Exchange-specific auction types",
+          "minimum": 500,
+          "title": "Vendor-specific",
+          "type": "integer"
+        }
+      ],
+      "title": "Price Type",
+      "type": "integer"
+    },
+    "PublisherCount": {
+      "description": "The codes of `Deal.pubcount`, each with the label the text gives it",
+      "oneOf": [
+        {
+          "const": 0,
+          "title": "undisclosed"
+        },
+        {
+          "const": 1,
+          "title": "single publisher"
+        },
+        {
+          "const": 2,
+          "title": "multi-publisher"
+        }
+      ],
+      "title": "Publisher Count",
+      "type": "integer"
+    },
+    "SellerDealStatus": {
+      "description": "The codes of `Deal.sellerstatus`, each with the label the text gives it",
+      "oneOf": [
+        {
+          "const": 0,
+          "title": "deal is active"
+        },
+        {
+          "const": 1,
+          "title": "deal is paused"
+        },
+        {
+          "const": 2,
+          "title": "deal is pending"
+        },
+        {
+          "const": 3,
+          "description": "deal is complete (ie. selling scomplete (ie. selling system shows deal has completed)",
+          "title": "deal is complete"
+        },
+        {
+          "const": 4,
+          "title": "deal is archived (cannot be active again)"
+        }
+      ],
+      "title": "Seller Deal Status",
+      "type": "integer"
+    },
+    "Terms": {
+      "additionalProperties": false,
+      "properties": {
+        "countries": {
+          "description": "An array of country codes in which the deal is available, where country code is a string using ISO-3166-3. If this is empty or missing, the deal is assumed to apply to all countries.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          },
+          "type": "array"
+        },
+        "cur": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/CurrencyCode",
+          "default": "USD",
+          "description": "Bid currency using ISO-4217 alpha codes."
+        },
+        "dealfloor": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount",
+          "description": "Minimum bid for impressions for this deal expressed in CPM. Unless `pricetype` is Fixed, this should be used as guidance to buyers. See Implementation Guidance for additional detail"
+        },
+        "enddate": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/UtcTimestamp",
+          "description": "UTC timestamp in seconds in ISO-8601 of when the deal ends. Evergreen or always on deals should leave this field blank."
+        },
+        "ext": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Ext",
+          "description": "Placeholder for deal-specific extensions"
+        },
+        "guar": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/IntegerFlag",
+          "description": "Indicates that the deal is of type guaranteed and the bidder must bid on the deal, where 0 = not a guaranteed deal, 1 = guaranteed deal."
+        },
+        "pricetype": {
+          "$ref": "#/$defs/PriceType",
+          "default": 2,
+          "description": "Deal Price Type where: `0` = Dynamic (ie. auction type will be provided by `request.at` attribute in OpenRTB Bid Request) `1` = First Price `2` = Second Price Plus `3` = Fixed Price Exchange-specific auction types can be defined using values 500 and greater."
+        },
+        "startdate": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/UtcTimestamp",
+          "description": "UTC timestamp in seconds in ISO-8601 of when the deal starts"
+        },
+        "totalcost": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount",
+          "description": "The total cost over the specified start and end date of the deal. If the deal is guaranteed, this value should be provided. If the deal is not guaranteed this may be omitted. See Implementation Guidance for additional detail"
+        },
+        "units": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Count",
+          "description": "Number of units (impressions) over the specified start and end date of the deal. If the deal is guaranteed, this number should be provided. If the deal is not guaranteed this may be omitted."
+        }
+      },
+      "type": "object"
+    }
+  },
+  "$id": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The Deals API `deal` module: its 10 vocabularies and 3 objects.",
+  "title": "deal"
+}

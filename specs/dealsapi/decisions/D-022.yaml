@@ -1,0 +1,37 @@
+format: 1
+id: D-022
+status: proposed
+kind: gap
+author: agent
+question: "Is `desc` at most 250 characters, and each `sellerids` value at most 64, when the text says \"strongly recommended\" and \"Should be limited\"?"
+covers:
+  - ir: rule:object-deal:5e652de0
+    digest: 54096569218ba72f98e4f31ef1179f78c604e9047a0efd4cf794767b900c0813
+    quote: "It is strongly recommended to keep this field to 250 characters or less."
+  - ir: rule:object-inventory:2b2c54b3
+    digest: c1e63cf5444fd85c48f4952c08b497e603aff6a4595f0416fc844f239230c8b9
+    quote: "Should be limited to 64 characters in length."
+  - ir: field:object-deal:desc
+    digest: 9e98c8164cc05f0999a8fe6d5ffefaf8b0807ba21750e1875ba69cc5740f6410
+    quote: "`desc` | string | Short description for the deal to help the receiver locate the deal once it has been sent. It is strongly recommended to keep this field to 250 characters or less."
+  - ir: field:object-inventory:sellerids
+    digest: fd8b923ff3aeb9c7ac6c293a840c28165315d62dda90e0e8ff95737c47764ba6
+    quote: "`sellerids` | string array | The identifier associated with the seller or reseller account within the advertising system. If used, the values in this attribute must contain the same value used in transactions (i.e. OpenRTB bid requests) in the field specified by the SSP/exchange. An empty list implies the deal may runs across all sellers. Typically, in OpenRTB, this is `publisher.id`. For OpenDirect it is typically the publisher's organization ID. Should be limited to 64 characters in length."
+options:
+  - id: warning-rules
+    summary: >-
+      Two rules, at the should level: a longer value gets a warning and
+      stays valid.
+  - id: max-length
+    summary: >-
+      The schema rejects a longer value.
+chosen: warning-rules
+rationale: >-
+  Both sentences recommend a limit, so a longer value is still valid, and
+  each rule warns. A schema limit would reject what the text allows.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L91"
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L128"
+feedback: >-
+  Say whether the limits are hard: "at most 250 characters" and "at most 64
+  characters" would let a receiver reject longer values.

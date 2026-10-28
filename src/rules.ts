@@ -32,7 +32,7 @@ import { canonicalJson } from "./canonical.ts";
 import { elementDigest, indexElements, type Element } from "./elements.ts";
 import { baseOf, type EmittedFile, schemaIdOf } from "./emit.ts";
 import type { SpecIR } from "./ir-types.ts";
-import { inScope, readYaml, type DecisionRecord, type TypeRef } from "./mapping.ts";
+import { inScope, readYaml, type DecisionRecord, type TypeRef, stands, retired } from "./mapping.ts";
 import { compileSchema } from "./pipeline.ts";
 import type { ModelDoc, ModelType } from "./model.ts";
 import { REPO_ROOT } from "./repo.ts";
@@ -316,7 +316,7 @@ export function emitRules(input: RulesInput): { doc: RulesDoc; problems: string[
       if (v.decision !== undefined) {
         const d = byId.get(v.decision);
         if (!d) problems.push(`${where}: cites decision "${v.decision}", which doesn't exist`);
-        else if (d.status === "superseded") problems.push(`${where}: cites "${d.id}", which is superseded by "${d.superseded_by}"`);
+        else if (!stands(d)) problems.push(`${where}: cites "${d.id}", which is ${retired(d)}`);
         else if (!d.covers.some((c) => c.ir === v.rule && inScope(c.locks, lock))) problems.push(`${where}: cites "${d.id}", which doesn't cover "${v.rule}" on lock "${lock}"`);
         else r.decisions = sorted([...r.decisions, d.id]);
       }

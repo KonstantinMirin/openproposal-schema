@@ -372,7 +372,7 @@ type Placement struct {
 	// Api: Values from List: API Frameworks that every impression supports, such as MRAID 3.0 (6), OMID 1.0 (7) and SIMID 1.1 (9)
 	Api List[ApiFramework] `json:"api,omitzero"`
 	// Instl: `0` (no) | `1` (yes). The ad is interstitial or full screen
-	Instl *bool `json:"instl,omitempty"`
+	Instl *IntegerFlag `json:"instl,omitempty"`
 	// Playmethod: Video or audio. Values from List: Playback Methods in use, such as Initiates without any specific user interaction with Sound On (1), Initiates without any specific user interaction Sound Off by Default (2), Initiates on Click with Sound On (3) and Continuous Playback (7)
 	Playmethod List[PlaybackMethod] `json:"playmethod,omitzero"`
 	// Plcmt: One value from List: Plcmt Subtypes - Video: Instream (1), Accompanying Content (2), Interstitial (3), No Content/Standalone (4), Pause (5), Screensaver (6), Overlay (7), Squeezeback (8), In-scene (9)
@@ -380,9 +380,9 @@ type Placement struct {
 	// Refresh: `{ min_interval_s }`: minimum seconds a creative renders before the slot refreshes
 	Refresh *Refresh `json:"refresh,omitempty"`
 	// Reward: `0` (no) | `1` (yes). The user receives a reward for viewing the ad
-	Reward *bool `json:"reward,omitempty"`
+	Reward *IntegerFlag `json:"reward,omitempty"`
 	// Skip: Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad
-	Skip *bool `json:"skip,omitempty"`
+	Skip *IntegerFlag `json:"skip,omitempty"`
 	// Skipafter: When `skip` is `1`: seconds the ad plays before the placement enables skipping
 	Skipafter *Duration `json:"skipafter,omitempty"`
 }
@@ -398,7 +398,7 @@ func (Placement) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[List[ApiFramework]](x, member(at, "api"), errs)
 	}
 	if x, ok := m["instl"]; ok {
-		validateBool(x, member(at, "instl"), errs)
+		validateAs[IntegerFlag](x, member(at, "instl"), errs)
 	}
 	if x, ok := m["playmethod"]; ok {
 		validateAs[List[PlaybackMethod]](x, member(at, "playmethod"), errs)
@@ -410,10 +410,10 @@ func (Placement) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[Refresh](x, member(at, "refresh"), errs)
 	}
 	if x, ok := m["reward"]; ok {
-		validateBool(x, member(at, "reward"), errs)
+		validateAs[IntegerFlag](x, member(at, "reward"), errs)
 	}
 	if x, ok := m["skip"]; ok {
-		validateBool(x, member(at, "skip"), errs)
+		validateAs[IntegerFlag](x, member(at, "skip"), errs)
 	}
 	if x, ok := m["skipafter"]; ok {
 		validateAs[Duration](x, member(at, "skipafter"), errs)

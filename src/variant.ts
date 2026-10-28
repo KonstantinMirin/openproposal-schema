@@ -18,7 +18,7 @@ import { join, posix } from "node:path";
 import { canonicalJson } from "./canonical.ts";
 import { renderType, type Constructors } from "./constructors.ts";
 import type { Kernel, Primitive } from "./kernel.ts";
-import { inScope, readYaml, type DecisionRecord, type Declaration, type MappingEntry, type MappingFile, type Members, type TypeRef } from "./mapping.ts";
+import { inScope, readYaml, type DecisionRecord, type Declaration, type MappingEntry, type MappingFile, type Members, type TypeRef, stands } from "./mapping.ts";
 import type { ModelDoc, ModelProperty, ModelType } from "./model.ts";
 import { compileSchema } from "./pipeline.ts";
 import type { Vector, VectorFile } from "./rules.ts";
@@ -342,7 +342,7 @@ function vectorType(model: ModelDoc, rule: string): string | undefined {
 
 /**
  * Checks a variant against the decision records, independently of a lock:
- * every departure that isn't superseded has exactly one switch and every
+ * every departure that stands has exactly one switch and every
  * switch names a departure; each switch takes one of its record's options
  * and never the chosen one; a replaced type is a type its record introduces
  * (a primitive that cites it or a type its record sets aside); each retyped
@@ -352,7 +352,7 @@ function vectorType(model: ModelDoc, rule: string): string | undefined {
 export function checkVariant(variant: Variant, decisions: DecisionRecord[], kernel: Kernel, mappings: MappingFile[]): string[] {
   const problems: string[] = [];
   const where = variant.file;
-  const departures = decisions.filter((d) => d.kind === "departure" && d.status !== "superseded");
+  const departures = decisions.filter((d) => d.kind === "departure" && stands(d));
   const byId = new Map(decisions.map((d) => [d.id, d]));
   for (const d of departures) {
     const n = variant.switches.filter((s) => s.decision === d.id).length;
@@ -360,7 +360,7 @@ export function checkVariant(variant: Variant, decisions: DecisionRecord[], kern
   }
   for (const s of variant.switches) {
     const d = byId.get(s.decision);
-    if (!d || d.kind !== "departure" || d.status === "superseded") {
+    if (!d || d.kind !== "departure" || !stands(d)) {
       problems.push(`${where}: a switch names ${s.decision}, which is no departure record in force; a gap stays filled in every variant`);
       continue;
     }

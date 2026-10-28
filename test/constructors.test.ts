@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { isTitledCodes } from "../src/conventions.ts";
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -183,7 +184,8 @@ test("a copy uses only standard 2020-12 keywords and no union keyword but anyOf"
       for (const [k, x] of Object.entries(v)) {
         keys.add(k);
         if (k !== "properties" && k !== "dependentSchemas" && k !== "$defs") walk(x);
-        else Object.values(x as object).forEach(walk);
+        // A primitive the copy references whose schema is titled codes, as IntegerFlag, is the kernel's, not the copy's.
+        else Object.values(x as object).filter((d) => !(k === "$defs" && isTitledCodes(d as Record<string, unknown>))).forEach(walk);
       }
     }
   };

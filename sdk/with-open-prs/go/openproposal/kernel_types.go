@@ -276,17 +276,21 @@ func (Identifier) ValidateValue(v any, at string, errs *Errors) {
 	stringValue(v, at, errs)
 }
 
-// IntegerFlag: A yes or no, written as the integer `0` (no) or `1` (yes), as AdCOM 1.0 and OpenRTB 2.6 write the flag of the same name.
+// IntegerFlag: A yes or no written as an integer, `0` for no and `1` for yes, as AdCOM 1.0 and OpenRTB 2.6 write their flags, such as a placement's `instl`. A receiver reads it as a flag, never as a count, and a field that takes it keeps the integer its text writes.
 type IntegerFlag int64
+
+// IntegerFlag0 is the term 0.
+const IntegerFlag0 IntegerFlag = 0
+
+// IntegerFlag1 is the term 1.
+const IntegerFlag1 IntegerFlag = 1
+
+var termsIntegerFlag = []any{json.Number("0"), json.Number("1")}
 
 // ValidateValue implements Value.
 func (IntegerFlag) ValidateValue(v any, at string, errs *Errors) {
-	r, ok := integerValue(v, at, errs)
-	if !ok {
-		return
-	}
-	checkMinimum(r, "0", false, at, errs)
-	checkMaximum(r, "1", false, at, errs)
+	integerValue(v, at, errs)
+	checkEnum(v, at, errs, termsIntegerFlag...)
 }
 
 // UnmarshalJSON decodes an integer written in any JSON spelling, such as 1.0 or 1e3.

@@ -43,7 +43,7 @@ export const variantCheck = defineGate<{ variant: Variant; decisions: DecisionRe
     note: `${i.variant.switches.length} departures switched off: ${i.variant.switches.map((s) => `${s.decision} as ${s.option}`).join(", ")}`,
   }),
   fixtures: [
-    { name: "a switch that takes the chosen option", mutate: (i) => ({ ...i, variant: withSwitch(i.variant, "D-039", (s) => ({ ...s, option: "boolean" })) }), expect: 'takes "boolean", the option the schemas we propose take' },
+    { name: "a switch that takes the chosen option", mutate: (i) => ({ ...i, variant: withSwitch(i.variant, "D-040", (s) => ({ ...s, option: "duration" })) }), expect: 'takes "duration", the option the schemas we propose take' },
     { name: "a departure with no switch", mutate: (i) => ({ ...i, variant: withSwitch(i.variant, "D-042", () => null) }), expect: "departure D-042 has 0 switches" },
     {
       name: "a retype of an element the departure doesn't cover",

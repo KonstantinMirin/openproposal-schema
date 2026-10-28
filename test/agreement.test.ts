@@ -18,7 +18,8 @@ const inputs = allLocks(SPEC).map((lock) => {
 
 test("OpenProposal pins AdCOM once, at main, and agrees with its registry on both locks", () => {
   assert.deepEqual(CONTEXT.registries.map((r) => [r.spec, r.lock, r.imported, r.lists.length]), [["adcom", "main", true, 42]]);
-  assert.deepEqual(CONTEXT.pins, [{ spec: "openproposal", registry: "adcom", lock: "main" }]);
+  // The Deals API pins the same lock of AdCOM.
+  assert.deepEqual(CONTEXT.pins, [{ spec: "dealsapi", registry: "adcom", lock: "main" }, { spec: "openproposal", registry: "adcom", lock: "main" }]);
   for (const i of inputs) assert.deepEqual(checkAgreement(i), [], i.lock);
 });
 

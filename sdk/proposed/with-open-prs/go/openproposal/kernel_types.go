@@ -242,6 +242,33 @@ func (Fraction) ValidateValue(v any, at string, errs *Errors) {
 	checkMaximum(r, "1", false, at, errs)
 }
 
+// IntegerFlag: A yes or no written as an integer, `0` for no and `1` for yes, as AdCOM 1.0 and OpenRTB 2.6 write their flags, such as a placement's `instl`. A receiver reads it as a flag, never as a count, and a field that takes it keeps the integer its text writes.
+type IntegerFlag int64
+
+// IntegerFlag0 is the term 0.
+const IntegerFlag0 IntegerFlag = 0
+
+// IntegerFlag1 is the term 1.
+const IntegerFlag1 IntegerFlag = 1
+
+var termsIntegerFlag = []any{json.Number("0"), json.Number("1")}
+
+// ValidateValue implements Value.
+func (IntegerFlag) ValidateValue(v any, at string, errs *Errors) {
+	integerValue(v, at, errs)
+	checkEnum(v, at, errs, termsIntegerFlag...)
+}
+
+// UnmarshalJSON decodes an integer written in any JSON spelling, such as 1.0 or 1e3.
+func (n *IntegerFlag) UnmarshalJSON(data []byte) error {
+	i, err := decodeInteger(data)
+	if err != nil {
+		return err
+	}
+	*n = IntegerFlag(i)
+	return nil
+}
+
 // Measure: What a metric that isn't a rate measures, a number never negative and not always whole, such as 1,200,000 audience impacts for DOOH or a modelled audience of 14.2 impacts per play.
 type Measure float64
 

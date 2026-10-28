@@ -2,7 +2,7 @@
 
 # The as-written variant
 
-The schemas as the specification and its examples write the points our proposals change: opaque string IDs, the integers 0 and 1 for AdCOM's flags, spans as the text or its examples write them, bare terms where the text lists none, calendar dates for a flight, and options with only the members the text lists. Every point the text leaves open is filled as in the schemas we propose.
+The schemas as the specification and its examples write the points our proposals change: opaque string IDs, spans as the text or its examples write them, bare terms where the text lists none, calendar dates for a flight, and options with only the members the text lists. Every point the text leaves open is filled as in the schemas we propose.
 
 ## The specification's example failures
 
@@ -12,7 +12,7 @@ A failure is one location in one example. A gap's failure, where an example disa
 |---|---|---|---|---|---|
 | `main` | proposed | 58 | 55 | 5 | 53 |
 | `main` | as-written | 10 | 10 | 5 | 5 |
-| `with-open-prs` | proposed | 92 | 88 | 10 | 82 |
+| `with-open-prs` | proposed | 89 | 85 | 10 | 79 |
 | `with-open-prs` | as-written | 16 | 16 | 10 | 6 |
 
 ## The switches
@@ -75,24 +75,6 @@ On `with-open-prs`:
 | `Requires` | `all_of` | replaced | `List<Uuid>` | `List<Identifier>` |
 | `Requires` | `any_of` | replaced | `List<Uuid>` | `List<Identifier>` |
 | `Uuid` |  | replaced | `Uuid` | `Identifier` |
-
-### D-039: How is a two-valued flag written where § 5.2.2 copies an AdCOM `0` | `1` integer?
-
-- Proposed (`boolean`): A JSON boolean, as every other flag of the specification is.
-- as-written (`integer`): The integers `0` and `1`, as § 5.2.2, AdCOM 1.0, and OpenRTB 2.6 write them.
-
-`placement.reward`, `instl`, and `skip` are the integers `0` (no) and `1` (yes), as § 5.2.2 and AdCOM 1.0 write them.
-
-On `with-open-prs`:
-
-| Type | Member | Change | Proposed | as-written |
-|---|---|---|---|---|
-| `LineItemSummaryPlacement` | `instl` | retyped | `boolean` | `IntegerFlag` |
-| `LineItemSummaryPlacement` | `reward` | retyped | `boolean` | `IntegerFlag` |
-| `LineItemSummaryPlacement` | `skip` | retyped | `boolean` | `IntegerFlag` |
-| `Placement` | `instl` | retyped | `boolean` | `IntegerFlag` |
-| `Placement` | `reward` | retyped | `boolean` | `IntegerFlag` |
-| `Placement` | `skip` | retyped | `boolean` | `IntegerFlag` |
 
 ### D-040: How is a length of time written where the specification or its examples write it as prose, a word, or a count of seconds?
 

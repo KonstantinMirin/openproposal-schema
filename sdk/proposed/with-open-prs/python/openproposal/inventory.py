@@ -10,7 +10,7 @@ from pydantic import AfterValidator, BeforeValidator, Field, Strict
 from typing_extensions import TypeAliasType
 
 from . import _runtime as rt
-from .kernel import CatalogRefOr, Domain, Duration, ExternalId, FormatId, NamespacedTerm, Selectable, Text, Url, Uuid, VendorCode
+from .kernel import CatalogRefOr, Domain, Duration, ExternalId, FormatId, IntegerFlag, NamespacedTerm, Selectable, Text, Url, Uuid, VendorCode
 
 class ContentDetail(rt.Open):
     """The `ContentDetail` object of the `inventory` module. It is open, so it keeps the members it doesn't name. The shows, series, sections, and network verticals the line item's inventory holds. The specification states no members, so the object accepts any."""
@@ -218,7 +218,7 @@ class Placement(rt.Closed):
 
     api: Optional[list[ApiFramework]] = None
     """Values from List: API Frameworks that every impression supports, such as MRAID 3.0 (6), OMID 1.0 (7) and SIMID 1.1 (9)"""
-    instl: Optional[rt.Boolean] = None
+    instl: Optional[IntegerFlag] = None
     """`0` (no) | `1` (yes). The ad is interstitial or full screen"""
     playmethod: Optional[list[PlaybackMethod]] = None
     """Video or audio. Values from List: Playback Methods in use, such as Initiates without any specific user interaction with Sound On (1), Initiates without any specific user interaction Sound Off by Default (2), Initiates on Click with Sound On (3) and Continuous Playback (7)"""
@@ -226,9 +226,9 @@ class Placement(rt.Closed):
     """One value from List: Plcmt Subtypes - Video: Instream (1), Accompanying Content (2), Interstitial (3), No Content/Standalone (4), Pause (5), Screensaver (6), Overlay (7), Squeezeback (8), In-scene (9)"""
     refresh: Optional[Refresh] = None
     """`{ min_interval_s }`: minimum seconds a creative renders before the slot refreshes"""
-    reward: Optional[rt.Boolean] = None
+    reward: Optional[IntegerFlag] = None
     """`0` (no) | `1` (yes). The user receives a reward for viewing the ad"""
-    skip: Optional[rt.Boolean] = None
+    skip: Optional[IntegerFlag] = None
     """Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad"""
     skipafter: Optional[Duration] = None
     """When `skip` is `1`: seconds the ad plays before the placement enables skipping"""

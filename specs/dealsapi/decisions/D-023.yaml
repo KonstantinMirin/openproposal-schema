@@ -1,0 +1,32 @@
+format: 1
+id: D-023
+status: proposed
+kind: gap
+author: agent
+question: "What does a deal's `cat` mean without `cattax`, which \"defines\" the taxonomy?"
+covers:
+  - ir: field:object-inventory:cat
+    digest: 63b3ef5441314652c6531a76cba2bc222e9fdcd444456851d372bdaeff7a6c46
+    quote: "`cat` | string array | Array of IAB Tech Lab content categories included in the deal. The taxonomy to be used is defined by the cattax field."
+  - ir: field:object-inventory:cattax
+    digest: ae0fd641c1a0a516c0ade07a25a9ab9f9df146bdb50d3f1e404c0e3877c5860e
+    quote: "`cattax` | integer | The taxonomy in use for the cat attribute. Refer to List: Category Taxonomies."
+options:
+  - id: description
+    summary: >-
+      The descriptions say that `cattax` names `cat`'s taxonomy; no rule is
+      stated, since no sentence of the text requires `cattax` with `cat`.
+  - id: default-1
+    summary: >-
+      `cattax` defaults to 1, as OpenRTB 2.6 defaults it.
+chosen: description
+rationale: >-
+  The text says only that the taxonomy "is defined by the cattax field",
+  with no keyword, so the schema states no rule; each description says what
+  the other means. OpenRTB 2.6 defaults `cattax` to 1, IAB Content Category
+  Taxonomy 1.0, which the Deals API doesn't say.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L131"
+feedback: >-
+  Say whether `cattax` is required with `cat`, or give it a default, as
+  OpenRTB 2.6 defaults it to 1.

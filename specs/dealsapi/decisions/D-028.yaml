@@ -1,0 +1,27 @@
+format: 1
+id: D-028
+status: proposed
+kind: gap
+author: agent
+question: "Is `adtypes` its own list, though it restates OpenRTB 2.6's `Bid.mtype` codes without citing them?"
+covers:
+  - ir: field:object-deal:adtypes#description/values:1
+    digest: c450f513d0156df7705444e2842eafed98660ec654150c96fd98ce98e8edb20f
+    quote: "`1` (Banner) | `2` (Video) | `3` (Audio) | `4` (Native)"
+options:
+  - id: own
+    summary: >-
+      Its own list, with the codes and labels the row writes.
+  - id: cite
+    summary: >-
+      OpenRTB 2.6's `mtype` list, by reference.
+chosen: own
+rationale: >-
+  The codes and labels match OpenRTB 2.6's `Bid.mtype`, 1 Banner, 2 Video, 3
+  Audio, 4 Native, but the text doesn't cite it, so the list is its own, and
+  a change to either won't show in the other.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/1debba8001f40eb14597102dec3205afddf811d4/2.6.md#objectbid"
+feedback: >-
+  Cite OpenRTB 2.6's `Bid.mtype` for `adtypes`, or say it is a separate
+  list.

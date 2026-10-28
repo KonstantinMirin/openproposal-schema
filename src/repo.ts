@@ -43,12 +43,12 @@ export function specNames(root: string = REPO_ROOT): string[] {
 /** A lock file's name: the default lock, `spec-lock.yaml`, or any other `<name>.lock.yaml`. */
 export const isLockFile = (f: string): boolean => f === DEFAULT_LOCK_NAME || f.endsWith(".lock.yaml");
 
-/** The lock files under a spec folder's `spec-input/`, by absolute path, sorted, so the default lock comes first. */
+/** The lock files under a spec folder's `spec-input/`, by absolute path: the default lock first, whatever the others are named, then the others sorted. */
 export function lockFiles(specDir: string): string[] {
   const dir = join(specDir, "spec-input");
   return readdirSync(dir)
     .filter(isLockFile)
-    .sort()
+    .sort((a, b) => (a === DEFAULT_LOCK_NAME ? -1 : b === DEFAULT_LOCK_NAME ? 1 : a < b ? -1 : a > b ? 1 : 0))
     .map((f) => join(dir, f));
 }
 

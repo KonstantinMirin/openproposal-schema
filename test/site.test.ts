@@ -18,7 +18,9 @@ import { ROOT, SPEC } from "./helpers.ts";
 const CONFIG = loadSiteConfig();
 const INPUTS = loadSiteInputs(SPEC, CONFIG);
 const TREE = exportTree();
-const SITE = buildSite([INPUTS], CONFIG, TREE);
+const ADCOM = loadSiteInputs(join(ROOT, "specs", "adcom"), CONFIG);
+/** OpenProposal's pages, with the registry its schemas reference, whose pages its type map links. */
+const SITE = buildSite([INPUTS, ADCOM], CONFIG, TREE);
 /** OpenProposal's pages are under its path on the site. */
 const OP = "openproposal/";
 const at = (path: string) => SITE.files.get(`${OP}${path}`)!;
@@ -59,7 +61,9 @@ test("an open-PRs element links the PR that wrote its line, or says why it can't
 
 test("the site builds clean, with a page per decision record and every schema at its $id path", () => {
   assert.deepEqual(SITE.problems, []);
-  for (const d of INPUTS.decisions) assert.ok(SITE.files.has(`${OP}decisions/${d.id}.html`), d.id);
+  // Each record that stands has a page; a withdrawn one, as D-039, has none.
+  for (const d of INPUTS.decisions) assert.equal(SITE.files.has(`${OP}decisions/${d.id}.html`), d.status !== "withdrawn" && d.status !== "superseded", d.id);
+  assert.ok(!SITE.files.has(`${OP}decisions/D-039.html`));
   const kernel = JSON.parse(SITE.files.get(OP + "schemas/as-written/kernel/1/kernel.json")!.toString("utf8")) as { $id: string };
   assert.equal(kernel.$id, "https://openproposal.noetis.dev/schemas/as-written/kernel/1/kernel.json");
 });
@@ -129,7 +133,7 @@ test("a spec with no departures and no feedback yet gets no variant switch, and 
   assert.match(switches("map", INPUTS), /aria-label="Variant"/);
   const groups = decisionGroups(one);
   assert.deepEqual(groups.map((g) => g.title), ["Points the text leaves open", "Changes we propose"]);
-  assert.equal(groups.flatMap((g) => g.decisions).length, INPUTS.decisions.filter((d) => d.status !== "superseded").length);
+  assert.equal(groups.flatMap((g) => g.decisions).length, INPUTS.decisions.filter((d) => d.status !== "superseded" && d.status !== "withdrawn").length);
 });
 
 test("git ignores no source, gate, script, test, or tool file", () => {
@@ -212,7 +216,9 @@ test("the whole site gives AdCOM, a registry of lists with no departures and no 
   assert.doesNotMatch(at("map.html"), /aria-label="Variant"/);
   assert.match(at("decisions/index.html"), /Points the text leaves open/);
   assert.match(at("examples.html"), /<td data-label="Example"><code>1<\/code><\/td>/);
-  assert.match(at("registry.html"), /4 of them are cited by another specification on this site/);
+  // OpenProposal cites four lists, and the Deals API Device Types, which OpenProposal cites too, and Category Taxonomies.
+  assert.match(at("registry.html"), /5 of them are cited by another specification on this site/);
+  assert.match(at("registry.html"), /href="\.\.\/dealsapi\/map\.html#!\/type\/CategoryTaxonomy\?lock=main&variant=as-written/);
   assert.match(at("registry.html"), /href="\.\.\/openproposal\/map\.html#!\/type\/ApiFramework\?lock=with-open-prs&variant=as-written/);
   // A line of a merged text is linked where its PR or main wrote it, and named by the line the link opens at.
   assert.match(at("registry.html"), /blob\/[0-9a-f]{40}\/spec\/openproposal-3\.0\.md\?plain=1#L(\d+)">L\1<\/a>/);
@@ -273,4 +279,78 @@ test("every spec's page links back to the site's root once, AdCOM's too, and the
     assert.deepEqual(links, [`${"../".repeat(p.split("/").length - 1)}index.html`], p);
   }
   for (const p of pages.filter((x) => !x.includes("/"))) assert.doesNotMatch(SITE.files.get(p)!.toString("utf8"), /All specifications/, p);
+});
+
+test("a registry vocabulary's reference opens the registry's own page of it, by the registry's name, and the site's check holds a data file's registry links", async () => {
+  const { buildData, registryTargets } = await import("../src/site/data.ts");
+  const lock = INPUTS.locks.find((l) => l.name === "with-open-prs")!;
+  const data = buildData(INPUTS, lock, "as-written");
+  const ref = "https://adtechspec.noetis.dev/adcom/schemas/modules/lists/1/lists.json#/$defs/PlcmtSubtypeVideo";
+  // OpenProposal names it PlcmtSubtype; the link opens AdCOM's PlcmtSubtypeVideo at the lock OpenProposal imports.
+  assert.equal((data.emitted.PlcmtSubtype!.schema as { $ref: string }).$ref, ref);
+  const t = data.registry[ref]!;
+  assert.deepEqual({ ...t, schema: undefined }, { spec: "adcom", short: "AdCOM", def: "PlcmtSubtypeVideo", lock: "main", map: "../adcom/map.html", href: "../adcom/map.html#!/type/PlcmtSubtypeVideo?lock=main&variant=as-written&view=schema", file: "../adcom/schemas/modules/lists/1/lists.json", schema: undefined });
+  // The schema shown is the registry's, with each code's name.
+  assert.deepEqual(((t.schema as { oneOf: { const?: number; title: string }[] }).oneOf).map((b) => [b.const, b.title]).slice(0, 2), [[1, "Instream"], [2, "Accompanying Content"]]);
+  assert.deepEqual(Object.keys(data.registry).sort(), ["ApiFramework", "PlaybackMethod", "PlcmtSubtypeVideo"].map((d) => ref.replace("PlcmtSubtypeVideo", d)));
+  // The main lock references no registry.
+  assert.deepEqual(buildData(INPUTS, INPUTS.locks[0]!, "as-written").registry, {});
+  // A reference to a file or a vocabulary the imported registry doesn't hold fails the build.
+  assert.throws(() => registryTargets(SPEC, { X: { file: "x", schema: { $ref: ref.replace("lists.json", "nope.json") } } }), /which is no registry file the profile imports; it imports adcom at main: https:\/\/adtechspec\.noetis\.dev\/adcom\/schemas\/modules\/lists\/1\/lists\.json, adcom at main: .*kernel\.json/);
+  assert.throws(() => registryTargets(SPEC, { X: { file: "x", schema: { $ref: ref.replace("PlcmtSubtypeVideo", "Nope") } } }), /names no vocabulary under \$defs/);
+  // The site's check: each registry link of a data file is a relative link to a page and a type, or a file, the site holds.
+  const key = `${OP}data/with-open-prs.as-written.json`;
+  const broken = (f: (r: Record<string, { href: string; file: string }>) => void) => {
+    const files = new Map(SITE.files);
+    const doc = JSON.parse(files.get(key)!.toString("utf8")) as { registry: Record<string, { href: string; file: string }> };
+    f(doc.registry);
+    files.set(key, Buffer.from(JSON.stringify(doc)));
+    return checkSite(files).join("\n");
+  };
+  assert.equal(broken(() => {}), "");
+  assert.match(broken((r) => (r[ref]!.href = r[ref]!.href.replace("PlcmtSubtypeVideo", "PlcmtSubtype"))), /data\/with-open-prs\.as-written\.json \(the reference .*PlcmtSubtypeVideo\): links the type map at "PlcmtSubtype", which main as-written doesn't hold/);
+  assert.match(broken((r) => (r[ref]!.file = "../adcom/schemas/nope.json")), /links \.\.\/adcom\/schemas\/nope\.json, which the site doesn't hold/);
+  assert.match(broken((r) => (r[ref]!.href = "https://adtechspec.noetis.dev/adcom/map.html")), /opens https:\/\/adtechspec\.noetis\.dev\/adcom\/map\.html, which isn't a relative link to a file within the site/);
+  assert.match(broken((r) => (r[ref]!.href = "../adcom/map.html#!/type/PlcmtSubtypeVideo?lock=upstream")), /which the router rewrites/);
+  // A bare fragment, a missing link, a page at another vocabulary or lock than the entry names, and a broken link inside the registry's schema each fail.
+  assert.match(broken((r) => (r[ref]!.href = "#!/type/Nope?lock=main&variant=as-written&view=schema")), /opens #!\/type\/Nope.*which isn't a relative link to a file within the site/);
+  assert.match(broken((r) => delete (r[ref] as Partial<typeof t>).file), /\(the reference .*PlcmtSubtypeVideo\): names no file/);
+  assert.match(broken((r) => (r[ref]!.href = r[ref]!.href.replace("PlcmtSubtypeVideo", "ApiFramework"))), /opens \.\.\/adcom\/map\.html#!\/type\/ApiFramework.*which isn't the registry's type map at PlcmtSubtypeVideo on main/);
+  assert.match(broken((r) => ((r[ref] as unknown as { schema: unknown }).schema = { $ref: "#/$defs/Nope" })), /links \.\.\/adcom\/map\.html#!\/type\/Nope\?lock=main&variant=as-written&view=schema, which main as-written doesn't hold|links the type map at "Nope", which main as-written doesn't hold/);
+  assert.equal(broken((r) => ((r[ref] as unknown as { schema: unknown }).schema = { oneOf: [{ $ref: "#/$defs/ApiFramework" }] })), "");
+  // The router opens a registry reference at the registry's page, another absolute one nowhere, and leaves a reference within the spec's schemas to the map.
+  const { loadRoute } = await import("../src/site/route.ts");
+  const route = loadRoute(SITE.files.get(`${OP}assets/route.js`)!.toString("utf8"));
+  assert.equal(route.registryHref(data.registry, ref), t.href);
+  assert.equal(route.registryHref(data.registry, "http://example.com/x.json#/$defs/A"), null);
+  assert.equal(route.registryHref(data.registry, "#/$defs/Channel"), undefined);
+  assert.equal(route.registryHref(undefined, "#/$defs/Channel"), undefined);
+  assert.equal(route.registryInnerHref(t, "#/$defs/DeviceType"), "../adcom/map.html#!/type/DeviceType?lock=main&variant=as-written&view=schema");
+  assert.equal(route.registryInnerHref(t, "../../kernel/1/kernel.json#/$defs/VendorCode"), null);
+  // An http reference across hosts is a reference across hosts too.
+  assert.throws(() => registryTargets(SPEC, { X: { file: "x", schema: { $ref: ref.replace("https:", "http:") } } }), /which is no registry file the profile imports/);
+  // The type map reads the registry's link for a reference across hosts, and shows the registry's schema under the spec's.
+  const js = SITE.files.get(`${OP}assets/map.js`)!.toString("utf8");
+  assert.match(js, /var across = window\.MapRoute\.registryHref\(B\.registry, ref\);\n\s+if \(across !== undefined\) return across;/);
+  assert.match(js, /refHref: function \(ref\) \{ return window\.MapRoute\.registryInnerHref\(reg, ref\); \}/);
+  assert.match(js, /if \(reg\) registryPanel\(host, reg\);/);
+});
+
+test("the whole site gives the Deals API every page, both variants, and the AdCOM registry's lists it cites, and its root card counts one proposal as one", () => {
+  const all = buildSite(undefined, CONFIG, TREE);
+  assert.deepEqual(all.problems, []);
+  const at = (p: string) => all.files.get(`dealsapi/${p}`)?.toString("utf8") ?? "";
+  for (const p of ["index.html", "how-it-is-built.html", "map.html", "examples.html", "decisions/index.html", "decisions/D-004.html", "decisions/D-033.html", "downloads.html", "data/main.as-written.json", "data/main.proposals.json", "data/tag-1.0-202602.as-written.json", "data/tag-1.0-202602.proposals.json", "schemas/documents/1/deal.json", "schemas/as-written/documents/1/deal.json"]) assert.ok(all.files.has(`dealsapi/${p}`), p);
+  assert.match(at("map.html"), /aria-label="Variant"/);
+  // The landing page names the push body and the status response in that order, and the one change it proposes.
+  assert.match(at("index.html"), /<code>Deal<\/code><\/a>, the push body, and <a[^>]*><code>BuyerSeat<\/code><\/a>, the status response/);
+  assert.match(at("index.html"), /The change we propose/);
+  assert.match(at("index.html"), /href="\.\.\/adcom\/registry\.html"/);
+  // The worked example follows `sellerstatus` to its vocabulary.
+  assert.match(at("how-it-is-built.html"), /field:object-deal:sellerstatus/);
+  assert.match(at("how-it-is-built.html"), /SellerDealStatus/);
+  const root = all.files.get("index.html")!.toString("utf8");
+  assert.match(root, /href="dealsapi\/index\.html"/);
+  assert.match(root, /<b>1<\/b> change proposed/);
+  assert.match(root, /<b>5<\/b> changes proposed/);
 });

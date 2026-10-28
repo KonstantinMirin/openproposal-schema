@@ -1,0 +1,43 @@
+# The Deals API profile (specs/spec.schema.json): how the pipeline reads the
+# IAB Tech Lab Deals API 1.0 (the Deal Sync API) and what it produces from it.
+# The readers are in src/specs/dealsapi/. Its text cites AdCOM's Device Types
+# and Category Taxonomies lists, which it takes from the AdCOM registry on
+# this site.
+format: 1
+id: dealsapi
+title: Deals API 1.0
+upstream: https://github.com/IABTechLab/deal-api
+front_end: text
+plugin: dealsapi
+statements: any-case
+# The documents: the push body, `Object: Deal`, and the status response,
+# `Object: BuyerSeat`. Every other object's rows are an object a document's
+# attribute holds, as `terms` holds `Object: Terms`.
+documents:
+  - { owner: deal, document: Deal, section: object-deal }
+  - { owner: buyer_seat, document: BuyerSeat, section: object-buyerseat }
+# The registry whose code lists the text cites, at the lock its profile pins:
+# AdCOM's Device Types and Category Taxonomies at main, 26c59ba (src/imports.ts).
+imports:
+  - spec: adcom
+    lock: main
+    # The text cites AdCOM's List: Device Types as "List: Device Type" and
+    # links both lists at AdCOM's main, which D-027 reads as the registry's
+    # lists at the pinned commit.
+    allowances:
+      - { decision: D-027, cites: "List: Device Type", means: "List: Device Types" }
+      - { decision: D-027, links_at: main }
+# Its pages on the public site (src/site/; specs/site.yaml gives the site).
+site:
+  # The type map opens at the deal, the push body.
+  default_type: Deal
+  locks:
+    main: { label: main, short: main, where: on main, aliases: [ upstream ] }
+    tag-1.0-202602: { label: Tag 1.0-202602, short: tag 1.0-202602, where: at the tag 1.0-202602, aliases: [ tag ] }
+# The names the outputs carry. The Deals API has no SDK types yet (schemas
+# first), and its schemas' $ids start on the multi-spec site's host.
+names:
+  short: Deals API
+  edition: "1.0"
+  release: main of 2026-05-26
+  schema_base: "https://adtechspec.noetis.dev/dealsapi/"

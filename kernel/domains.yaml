@@ -71,7 +71,7 @@ domains:
         sources:
           standards:
             - name: OpenRTB 2.6, Object Imp (`bidfloor` and `bidfloorcur`)
-              url: https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/2.6.md#3.2.4
+              url: https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/2.6.md#objectimp
       - name: price-adjustment
         meaning: A signed change to a price or a sum of money, such as the change an option makes to the CPM or a flat surcharge or discount.
         type: PriceAdjustment
@@ -89,6 +89,16 @@ domains:
           standards:
             - name: ISO 4217, Codes for the representation of currencies
               url: https://www.iso.org/iso-4217-currency-codes.html
+  - name: place
+    description: Where something is or runs, named by a code another standard keeps.
+    concepts:
+      - name: country
+        meaning: A country, named by its ISO 3166-1 alpha-3 code, such as `USA`, as OpenRTB 2.6 writes `geo.country`.
+        type: CountryCode
+        sources:
+          standards:
+            - name: ISO 3166-1, Codes for the representation of names of countries (alpha-3)
+              url: https://www.iso.org/iso-3166-country-codes.html
   - name: ratio
     description: Proportions and relative changes.
     concepts:
@@ -108,7 +118,7 @@ domains:
         meaning: What a metric that isn't a rate measures, never negative and not always whole, such as audience impacts or a modelled audience a seller commits to; a rate metric's value is a fraction instead.
         type: Measure
   - name: time
-    description: Time has four concepts. A point in time and a span need no clock. A daypart window is calendar time, read on the line item's clock, which the time zone names. A frequency cap's period is a term of a vocabulary, `FrequencyCapPeriod`, not a span; it is a calendar period on that clock, such as a day from midnight to midnight, or the whole flight, which runs between two points in time (D-044).
+    description: Time has five concepts. A point in time, a point in time written in UTC, and a span need no clock. A daypart window is calendar time, read on the line item's clock, which the time zone names. A frequency cap's period is a term of a vocabulary, `FrequencyCapPeriod`, not a span; it is a calendar period on that clock, such as a day from midnight to midnight, or the whole flight, which runs between two points in time (D-044).
     concepts:
       - name: instant
         meaning: A point in time, such as the end of an offer window, the expiry of a hold, or the start of a flight.
@@ -117,6 +127,15 @@ domains:
           standards:
             - name: RFC 3339, Date and Time on the Internet (date-time)
               url: https://www.rfc-editor.org/rfc/rfc3339
+      - name: utc-instant
+        meaning: A point in time that the specification says is written in UTC, such as when a deal was created, starts, or ends.
+        type: UtcTimestamp
+        sources:
+          standards:
+            - name: RFC 3339, Date and Time on the Internet (section 5.6, date-time, whose offset `Z` is UTC)
+              url: https://www.rfc-editor.org/rfc/rfc3339#section-5.6
+            - name: RFC 3339, section 4.3, Unknown Local Offset Convention (`-00:00`, a time in UTC whose local offset is unknown)
+              url: https://www.rfc-editor.org/rfc/rfc3339#section-4.3
       - name: duration
         meaning: A length of time, such as how long a hold runs, an attribution window, or a production lead time.
         type: Duration
@@ -167,12 +186,25 @@ domains:
           standards:
             - name: AdCOM 1.0, List Start Delay Modes (>0 Mid-Roll, the value the start delay in seconds)
               url: https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#list_startdelaymodes
+  - name: extension
+    description: Members a specification leaves to the parties to define.
+    concepts:
+      - name: extension
+        meaning: An object for members the specification doesn't define, which the parties agree on, such as the Deals API's `ext`, a "placeholder for deal-specific extensions". A receiver keeps the members it doesn't know, and checks only that the value is an object.
+        type: Ext
   - name: flag
-    description: Values with two states.
+    description: Values with two states. A flag a text writes as a boolean is a JSON boolean; a flag it writes as the integers `0` and `1`, as AdCOM 1.0 and OpenRTB 2.6 write theirs and the Deals API's `guar` copies them, keeps the integer, which validates differently, so it is a concept of its own.
     concepts:
       - name: flag
         meaning: A yes or no, written as a JSON boolean.
         type: boolean
+      - name: integer-flag
+        meaning: A yes or no written as an integer, `0` for no and `1` for yes, as AdCOM 1.0 and OpenRTB 2.6 write a flag such as a placement's `instl` or a deal's `guar`.
+        type: IntegerFlag
+        sources:
+          standards:
+            - name: OpenRTB 2.6, Object Imp (`instl`, `rwdd`, and the other integer flags)
+              url: https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/2.6.md#objectimp
 shared_structures:
   - concepts: [external-id, text]
     reason: >-
@@ -183,6 +215,14 @@ shared_structures:
       or a code comes from, a registry, a list, a publisher, or the
       specification's own field tables, doesn't change how it is processed,
       so it is the field's description, not a type of its own.
+  - concepts: [currency, country]
+    reason: >-
+      Each is three capital letters, and a receiver processes each
+      differently. It reads a currency code as the currency of the money
+      beside it, from ISO 4217's list; it reads a country code as a place a
+      deal runs, from ISO 3166-1's list, and never as money. Some codes name
+      both, as `CHE` is Switzerland and the WIR Euro, so each is checked
+      against its own list.
   - concepts: [amount, measure]
     reason: >-
       Each is a number that is never negative, and a receiver processes each

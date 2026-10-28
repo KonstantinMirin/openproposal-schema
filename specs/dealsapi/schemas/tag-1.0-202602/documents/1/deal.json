@@ -1,0 +1,93 @@
+{
+  "$id": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/deal.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The Deals API `Deal` document.",
+  "properties": {
+    "adtypes": {
+      "description": "The format of the ad creative(s) supported by the inventory in the deal: `1` = Banner `2` = Video `3` = Audio `4` = Native If this is empty or missing, the deal is assumed to apply to all types of ad creative.",
+      "items": {
+        "$ref": "../../modules/deal/1/deal.json#/$defs/AdType"
+      },
+      "type": "array"
+    },
+    "auxdata": {
+      "$ref": "../../modules/deal/1/deal.json#/$defs/AuxiliaryData",
+      "description": "Indicates if there is non-publisher data (i.e. a non-publisher data layer) applied in this package with an associated fee where: `0` = undisclosed `1` = yes, at start of deal and will not be modified `2` = yes and subject to change after start of deal `3` = no and will not be modified `4` = no and subject to change after start of deal See implementation guidance for additional detail"
+    },
+    "bseat": {
+      "description": "Block list of buyer seats (e.g., advertisers, agencies) restricted from bidding on this impression. IDs of seats and knowledge of the buyer's customers to which they refer must be coordinated between bidders and the exchange a priori. At most, only one of `wseat` and `bseat` should be used in the same request. Omission of both implies no seat restrictions.",
+      "items": {
+        "$ref": "../../kernel/1/kernel.json#/$defs/ExternalId"
+      },
+      "type": "array"
+    },
+    "created": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/UtcTimestamp",
+      "description": "UTC timestamp in seconds in ISO-8601 of when the deal was created in the Origin system"
+    },
+    "curation": {
+      "$ref": "../../modules/deal/1/deal.json#/$defs/Curation",
+      "description": "Information about the curation package if applicable. See Object: Curation for additional detail."
+    },
+    "desc": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Text",
+      "description": "Short description for the deal to help the receiver locate the deal once it has been sent. It is strongly recommended to keep this field to 250 characters or less."
+    },
+    "dinventory": {
+      "$ref": "../../modules/deal/1/deal.json#/$defs/DynamicInventory",
+      "description": "Indicates if the inventory for the deal is dynamic, meaning sites or applications included in the deal may update after the deal is live where: `0` = undisclosed `1` = inventory will NOT update once the deal goes live `2` = inventory where this deal may run is updated dynamically. See implementation guidance for additional detail"
+    },
+    "ext": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Ext",
+      "description": "Placeholder for deal-specific extensions"
+    },
+    "id": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/ExternalId",
+      "description": "A unique identifier for the direct deal in origin's namespace."
+    },
+    "inventory": {
+      "$ref": "../../modules/deal/1/deal.json#/$defs/Inventory",
+      "description": "Information about the inventory included in the deal. This object should only be included when the deal is for a static set of sites or applications (`dinventory=1`). See Object: Inventory for additional detail"
+    },
+    "name": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Text",
+      "description": "Name of the deal as created in the origin system. Note: This name may be displayed to the buyer. The person inputting the deal into the `origin` system should consider that when setting up the deal."
+    },
+    "origin": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Domain",
+      "description": "The advertising system domain of the business entity that will receive bid responses for the deal, typically the SSP hosting the API."
+    },
+    "pubcount": {
+      "$ref": "../../modules/deal/1/deal.json#/$defs/PublisherCount",
+      "description": "Indicates if there is more than one publishing company: `0` = undisclosed `1` = single publisher `2` = multi-publisher See implementation guidance for additional detail"
+    },
+    "seller": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Domain",
+      "description": "Canonical domain of the business entity who sold the deal. This may be the same as the origin or curator, but it also could be any intermediate seller. See Implementation Guidance for additional detail"
+    },
+    "sellerstatus": {
+      "$ref": "../../modules/deal/1/deal.json#/$defs/SellerDealStatus",
+      "default": 0,
+      "description": "Status of the deal in the sellers system where: `0` = deal is active `1` = deal is paused `2` = deal is pending `4` = deal is complete (ie. selling scomplete (ie. selling system shows deal has completed) `4` = deal is archived (cannot be active again)"
+    },
+    "terms": {
+      "$ref": "../../modules/deal/1/deal.json#/$defs/Terms",
+      "description": "Terms of the deal. See Object: Terms for additional detail"
+    },
+    "wseat": {
+      "description": "Allowed list of buyer seats (e.g., advertisers, agencies) allowed to bid on this impression. IDs of seats and knowledge of the buyer's customers to which they refer must be coordinated between bidders and the exchange a priori. At most, only one of `wseat` and `bseat` should be used in the same request. Omission of both implies no seat restrictions.",
+      "items": {
+        "$ref": "../../kernel/1/kernel.json#/$defs/ExternalId"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "origin",
+    "terms"
+  ],
+  "title": "Deal",
+  "type": "object"
+}

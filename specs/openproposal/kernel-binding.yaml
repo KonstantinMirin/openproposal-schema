@@ -141,6 +141,7 @@ primitives:
         - ir: key:5.6.2:hold_status.hold_expires_at
           digest: d298da40613999b40a53bab56e17f7c8af9488207a3755391ce3c368a2556cb8
           quote: "`hold_expires_at` | Absolute timestamp, set when the hold is granted"
+  - { name: UtcTimestamp, absent: true }
   - name: Duration
     decision: D-001
     sources:
@@ -177,6 +178,18 @@ primitives:
         - ir: field:5.5:daypart
           digest: b34d1818bf80b3e5947f9902057ac882707ef3a893fc370c97efc81487d64080
           quote: "`daypart` | Object | settable | `allowed[]` of `{ days[], start, end }`: `days[]` from `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`, HH:MM civil time, `end` exclusive, up to `24:00`"
+          locks: [with-open-prs]
+  - name: IntegerFlag
+    locks: [with-open-prs]
+    sources:
+      spec:
+        - ir: key:5.2.2:placement.reward#meaning/values:1
+          digest: a1ee2de06115664b61cd55dd1806c6f7bf19446b7c9a49840198ae8c461aeddd
+          quote: "`0` (no) | `1` (yes)"
+          locks: [with-open-prs]
+        - ir: rule:5.2.2:463dfafd
+          digest: eee71b1ff54c633f884713ce121e5b82ef4ecc041de54921c9ab66336402c469
+          quote: Each key takes an integer, except `playmethod[]` and `api[]`, which take arrays of integers, and `refresh`, an object whose `min_interval_s` is a REQUIRED integer.
           locks: [with-open-prs]
   - name: TimeZone
     locks: [with-open-prs]
@@ -225,6 +238,8 @@ primitives:
           locks: [with-open-prs]
   # AdCOM's start delays, which OpenProposal's text doesn't write.
   - { name: MediaOffset, absent: true }
+  # The Deals API's country codes, which OpenProposal's text doesn't write.
+  - { name: CountryCode, absent: true }
 constructors:
   - name: Selectable
     sources:
@@ -383,6 +398,7 @@ parts:
               locks: [with-open-prs]
           decision: D-004
           decision_locks: [main]
+  - { name: Ext, absent: true }
 domains:
   - name: identity
     concepts:
@@ -670,6 +686,7 @@ domains:
             - ir: key:5.6.1:commitment.flight_end
               digest: d3bd830cbe989315172dc25dcb1f42bdb93752cfa4f6f0112d4fca784f286345
               quote: "`flight_end` | REQUIRED | The buyer's campaign end. Distinct from `valid_until`"
+      - { name: utc-instant, absent: true }
       - name: duration
         sources:
           spec:
@@ -714,7 +731,24 @@ domains:
             - ir: key:5.6.2:hold_status.hold_available
               digest: 201a73f56ae7a6f7c81671b5a989999e5e68f5a5e75b72046ea852d93480867c
               quote: "`hold_available` | Whether this line item may be held"
+      - name: integer-flag
+        sources:
+          spec:
+            - ir: key:5.2.2:placement.reward
+              digest: 81dad5cb11e58c90e15a2d623375ffdf8e31217948a200d10e6d5cbdac120042
+              quote: "`reward` | OPTIONAL | `0` (no) | `1` (yes). The user receives a reward for viewing the ad | `Placement.reward`, `imp.rwdd`"
+              locks: [with-open-prs]
+            - ir: key:5.2.2:placement.instl
+              digest: 2334f8c26628f80ae242e03e2b5556817cb4958765bb2036951355997119b8a7
+              quote: "`instl` | OPTIONAL | `0` (no) | `1` (yes). The ad is interstitial or full screen | `DisplayPlacement.instl`, `imp.instl`"
+              locks: [with-open-prs]
+            - ir: key:5.2.2:placement.skip
+              digest: 17938cd996b69f208a2d9cb397eb1cc84b4b21a0568d9f251d76c70a470ba483
+              quote: "`skip` | OPTIONAL | Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad | `VideoPlacement.skip`, `AudioPlacement.skip`, `video.skip`"
+              locks: [with-open-prs]
   - { name: media, absent: true }
+  - { name: place, absent: true }
+  - { name: extension, absent: true }
 homonyms:
   - member: basis
     decision: D-013
@@ -744,5 +778,6 @@ bases:
 shared_structures:
   - concepts: [external-id, text]
     decisions: [D-024, D-025, D-027]
+  - { concepts: [currency, country], absent: true }
   - concepts: [amount, measure]
     decisions: [D-005, D-036]

@@ -28,36 +28,6 @@ differences:
       with `[]`;
       the inline object writes them without it, though the App identity table
       is headed `apps[]`.
-  - table: table:5.2.2:1
-    row: key:5.2.2:placement.reward
-    column: Meaning
-    locks: [with-open-prs]
-    spec: "`0` (no) | `1` (yes). The user receives a reward for viewing the ad"
-    model: "`false` | `true`. The user receives a reward for viewing the ad"
-    decision: D-039
-    reason: >-
-      A yes-or-no value is a JSON boolean, as every other flag of the
-      specification is; the row copies AdCOM's `0` and `1`.
-  - table: table:5.2.2:1
-    row: key:5.2.2:placement.instl
-    column: Meaning
-    locks: [with-open-prs]
-    spec: "`0` (no) | `1` (yes). The ad is interstitial or full screen"
-    model: "`false` | `true`. The ad is interstitial or full screen"
-    decision: D-039
-    reason: >-
-      A yes-or-no value is a JSON boolean, as every other flag of the
-      specification is; the row copies AdCOM's `0` and `1`.
-  - table: table:5.2.2:1
-    row: key:5.2.2:placement.skip
-    column: Meaning
-    locks: [with-open-prs]
-    spec: "Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad"
-    model: "Video or audio. `false` | `true`. The placement lets the user skip the ad"
-    decision: D-039
-    reason: >-
-      A yes-or-no value is a JSON boolean, as every other flag of the
-      specification is; the row copies AdCOM's `0` and `1`.
   - table: table:5.4:1
     row: field:5.4:production
     column: Description

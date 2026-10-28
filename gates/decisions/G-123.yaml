@@ -1,0 +1,66 @@
+format: 1
+id: G-123
+date: 2026-10-28
+question: What changes in the gates when the review of the Deals API's mapping narrows the lock-name pattern, the labeled-list rule, and the vendor and held-object checks, and gives the kernel a UTC timestamp?
+decision: >-
+  Only a lock name may hold a dot. G-122 widened the token pattern of every
+  format it touched, so a module, a rule, a decision option, a concept, a
+  variant, and a vectors module took a dot too; each keeps the hyphen-only
+  token again, and the lock lists keep the dotted pattern, the vectors
+  format through a `lockName` it adds. G-122's claim that each widened
+  pattern admits a lock name or a part's form held for the lock lists only.
+  Mapping rule `restated-value-list` reads a labeled list as a primitive's
+  titled codes only where its labels are the titles, in any case, as `0`
+  (no) | `1` (yes) are `IntegerFlag`'s, or where the kernel binding cites
+  the list's row for the primitive's concept, as the Deals API's `guar`;
+  the codes alone say nothing, so a list `0` = undisclosed, `1` = single
+  publisher is no flag, and a list that labels any of its codes is read by
+  its labels. G-122 said OpenProposal and AdCOM hold no labeled
+  lists; OpenProposal's with-open-prs text holds four, its three flags,
+  which the labels and the binding both match, and `linked_execution`'s,
+  of strings. A specification's own vendor range is checked the same way
+  from a type entry as from a declaration: it starts where `VendorCode`
+  does, it is the vocabulary's only extension, and it makes the vocabulary
+  open. An attribute holds another object's rows only where it is an
+  object or a list of objects, never a union with another type. The kernel
+  gains `UtcTimestamp`, the time domain's concept `utc-instant`, an RFC 3339
+  date-time whose offset is zero, for a specification that says its
+  timestamps are UTC, as the Deals API's `created`, `startdate`, and
+  `enddate`; OpenProposal and AdCOM bind it as absent. The reference
+  oracle rejects its leap second as it rejects `Timestamp`'s, so gap OG-1
+  lists both. Two gate fixtures'
+  expected messages are what the rules check reports, and one fixture
+  covers the labeled flag. The type rules say a property may carry the
+  default its row states beside its `$ref`. The test suite holds 524 tests,
+  and MIN_TESTS is 524.
+rationale: >-
+  Each check is stricter or, for the patterns, back to what it was before
+  G-122; none is relaxed. The resolved models of OpenProposal and AdCOM on
+  every lock are byte-identical, and so are their committed outputs; the
+  new type leaves both specs' kernels, as their bindings say.
+accepts:
+  - { gate: comparison, fingerprint: 7ff6a8e03c6fd6237198aed8256ddd601dac2214eede8435b8fffa85b557ef24 }
+  - { gate: duplication-kernel, fingerprint: 781581a64db17c634035e68dddb628c0cbcea3790d3ffe9c5532bcb77e0e97f3 }
+  - { gate: duplication-model, fingerprint: c9c1511d167e8c98274c3a839668da7e8ffd0d8057908b4123df92d12cc05a40 }
+  - { gate: examples-validate, fingerprint: fb1ae55705f3da8da20926a6414be0b8e26ac788787b3e2a45f9b7d50195cd3a }
+  - { gate: extraction, fingerprint: f900127fef85d84645144352cbf694fab129359f7c9766a8d87b442daa1ec1ce }
+  - { gate: feedback, fingerprint: 70f3b6de8fe1275b3e1b2197c761d74df4780e96cf5d5fb70f105008914b7054 }
+  - { gate: fidelity, fingerprint: 563b27d02529ed94268bde2ef4a6fa7232e9e4027186732e27a7c49363552360 }
+  - { gate: field-examples, fingerprint: 2a5def6029bebfe7cac05298a1e93ad58f5b93a685cc3924d2a72564f061dbe3 }
+  - { gate: kernel-engines, fingerprint: 82d18b1b726746efb893a26b9348ed1b3f9af2c879c80dd0cd44552aa2ebeab6 }
+  - { gate: map-drift, fingerprint: a4dac708cdd9facefae10de7abd336dd2d3e2fcb124f63ca97e101ec7ba228b8 }
+  - { gate: mapping-bijection, fingerprint: 66f05b032aad309608e260254f65e928ec35f608b58bf5cf77dc6c751cf8f42d }
+  - { gate: mapping-location, fingerprint: 89f2717e6774468b3c8d2fa6e082dbf9194bf952076f4fe2ac60c1b070fe1cb8 }
+  - { gate: mapping-rules, fingerprint: c42e64f18f7ac2d3bdf91bf2185d73efb1a244f8668a62c47d8c9c6f68adf11a }
+  - { gate: model-resolves, fingerprint: ae31f359c4244a19536a2eab4f21a7844a75aa0a57af87b02c4e3e7b24591ba9 }
+  - { gate: npm-test, fingerprint: 76eb8fed788edda0131db0442d181a0a1dd2528a237d13faa39b03e8f0608891 }
+  - { gate: record-wording, fingerprint: 00910849f7d857b228e7638d7df04c1c675952b78baf9db97857b4b39b332276 }
+  - { gate: round-trip, fingerprint: 14ba6c384668cd3a93add94b321457c614e29215043a3df574c90b97ad025552 }
+  - { gate: rule-checks, fingerprint: 17d46e555986423757a12e3a5cc5e1b3f46f78ec3ff2e14497bc31a26a199531 }
+  - { gate: site-builds, fingerprint: 72bf529032119dec7174319393c5ff4cf6f4b96d2f446079b2564dce44ffa2cc }
+  - { gate: spec-profile, fingerprint: 917efdf9737dd5834052ac18988d09dbecbc62db5a36ab4132f1538771d0ebdb }
+  - { gate: type-examples-generate, fingerprint: 75983bb298f918ff22e8c0eb23a399fb79d68f4bb7e1a380fef5931d4f8efc30 }
+  - { gate: type-examples-valid, fingerprint: 4945922094832ec20467d09ccc1ab9d56e63bb8b20e67c49eac8c0455b95369a }
+  - { gate: variant-diff, fingerprint: f0f30b03b22fecde0ac73c00a2eb5cf907aa9e0f3cb9b829813767eb06ca7a97 }
+  - { gate: variant-examples, fingerprint: 9ac4f46b5f297bb1163692f7ff3051e523715f2044b1ba38a19b3909e1ab1bfc }
+  - { gate: variant-load, fingerprint: 93d8576a892601d2a5e56fce620e4bec43e70a7f33333c854be2b82660584e2d }

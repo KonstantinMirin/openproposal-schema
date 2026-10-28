@@ -1,0 +1,39 @@
+format: 1
+id: D-016
+status: proposed
+kind: gap
+author: agent
+question: "May a deal send both `wseat` and `bseat`, when \"At most, only one of `wseat` and `bseat` should be used in the same request\"?"
+covers:
+  - ir: rule:object-deal:c221f2e9
+    digest: 34e2b9506040e8a69c1ee546c635ff4fc9f6fdba9162d4aa343b9eb09674a540
+    quote: "At most, only one of `wseat` and `bseat` should be used in the same request."
+  - ir: rule:object-deal:c221f2e9-2
+    digest: d096a73a6178528533b5dc2f5fcba04a87e97ca96d11c2670eb9daeaec9eeeea
+    quote: "At most, only one of `wseat` and `bseat` should be used in the same request."
+  - ir: field:object-deal:wseat
+    digest: d2802374ec07a59552e98a2ac62cdaccc6bd829b27c3d73dc70288c2440257aa
+    quote: "`wseat` | string array, recommended | Allowed list of buyer seats (e.g., advertisers, agencies) allowed to bid on this impression. IDs of seats and knowledge of the buyer's customers to which they refer must be coordinated between bidders and the exchange a priori. At most, only one of `wseat` and `bseat` should be used in the same request. Omission of both implies no seat restrictions."
+  - ir: field:object-deal:bseat
+    digest: 601e1c992da55aa364a39079a713fa6073dcdf00613b08a66ab7851958b1cb56
+    quote: "`bseat` | string array | Block list of buyer seats (e.g., advertisers, agencies) restricted from bidding on this impression. IDs of seats and knowledge of the buyer's customers to which they refer must be coordinated between bidders and the exchange a priori. At most, only one of `wseat` and `bseat` should be used in the same request. Omission of both implies no seat restrictions."
+options:
+  - id: warning-rule
+    summary: >-
+      A rule, at the should level: a deal that sends both gets a warning;
+      "the same request" reads as the same deal.
+  - id: schema
+    summary: >-
+      The schema rejects a deal that sends both.
+chosen: warning-rule
+rationale: >-
+  The sentence, copied from OpenRTB's `BidRequest`, speaks of a
+  request; in the Deals API the push is the deal, so it reads as one deal.
+  It says should, so the rule warns. It is written twice, in each row;
+  `wseat`'s carries the rule, and `bseat`'s restates it.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L92"
+  - "https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/1debba8001f40eb14597102dec3205afddf811d4/2.6.md#objectbidrequest"
+feedback: >-
+  Say "in the same deal" for the Deals API, since the push carries one deal,
+  and write the level in capitals.

@@ -20,7 +20,7 @@ export type Members = Record<string, { type: TypeRef; presence: Presence; descri
 
 export type Target =
   | { role: "property"; object: string; type: TypeRef; presence: Presence }
-  | { role: "type"; name: string; layer: "primitive" | "constructor" | "vocabulary" | "object" | "document"; open?: boolean; members?: Members; module?: "kernel" }
+  | { role: "type"; name: string; layer: "primitive" | "constructor" | "vocabulary" | "object" | "document"; open?: boolean; members?: Members; module?: "kernel"; vendor?: { from: number; label: string } }
   | { role: "members"; object: string; members: Members }
   | { role: "same"; name: string }
   | { role: "term"; vocabulary: string }
@@ -28,7 +28,7 @@ export type Target =
   | { role: "obligation"; party: "seller" | "buyer" | "consumer" | "implementation" }
   | { role: "schema"; in: string }
   | { role: "informative" }
-  | { role: "example"; object: string }
+  | { role: "example"; object: string; columns?: Record<string, string> }
   | { role: "profile"; profile: string; document: string; members?: Members; reads?: { item: string; paths: string[] }[] }
   | { role: "rendered" };
 
@@ -98,7 +98,7 @@ export interface Cover {
 export interface DecisionRecord {
   format: 1;
   id: string;
-  status: "proposed" | "accepted" | "filed" | "superseded";
+  status: "proposed" | "accepted" | "filed" | "superseded" | "withdrawn";
   /** `gap`: the specification leaves the point open. `departure`: it settles the point, and the decision proposes a change. */
   kind: "gap" | "departure";
   author: string;
@@ -111,10 +111,18 @@ export interface DecisionRecord {
   feedback?: string;
   issue?: string;
   superseded_by?: string;
+  /** Why and when its owner withdrew it, for a `withdrawn` record. */
+  withdrawn?: { date: string; reason: string };
   /** The types the decision names whose structure the specification doesn't state, which the duplication and value-list gates set aside. */
   sets_aside?: { type: string; field: string; ir: string; locks?: string[] }[];
   file: string;
 }
+
+/** Whether a record still stands: neither superseded by another nor withdrawn. A record that doesn't stand shapes nothing, and nothing may cite it. */
+export const stands = (d: Pick<DecisionRecord, "status">): boolean => d.status !== "superseded" && d.status !== "withdrawn";
+
+/** Why a record no longer stands, for a message about a citation of it: "superseded by D-…" or "withdrawn". */
+export const retired = (d: Pick<DecisionRecord, "status" | "superseded_by">): string => (d.status === "superseded" ? `superseded by "${d.superseded_by}"` : "withdrawn");
 
 const MAPPING_SCHEMA = join("mapping", "mapping.schema.json");
 const DECISION_SCHEMA = join("decisions", "decision.schema.json");
@@ -243,7 +251,7 @@ export function typesIn(x: Target | Declaration): TypeRef[] {
  *   the element's current digest (otherwise it is stale);
  * - every cover's quote is the element's current text;
  * - no element has two in-scope entries;
- * - each decision an entry cites exists, isn't superseded, and covers the
+ * - each decision an entry cites exists, stands, and covers the
  *   entry's element, so a change to that element makes the decision stale
  *   too;
  * - a declaration's element exists and is current through its entry, and a
@@ -276,7 +284,7 @@ export function checkMapping(ir: SpecIR, lock: string, mappings: MappingFile[], 
     checkCovers(d.file, d.covers, elements, lock, problems);
   }
 
-  /** Checks that each decision a source cites exists, isn't superseded, and covers `ir` on the lock. */
+  /** Checks that each decision a source cites exists, stands, and covers `ir` on the lock. */
   const cited = (where: string, source: Source, ir: string | undefined) => {
     for (const id of decisionsOf(source)) {
       const d = byId.get(id);
@@ -284,7 +292,7 @@ export function checkMapping(ir: SpecIR, lock: string, mappings: MappingFile[], 
         problems.push(`${where}: cites decision "${id}", which doesn't exist`);
         continue;
       }
-      if (d.status === "superseded") problems.push(`${where}: cites "${d.id}", which is superseded by "${d.superseded_by}"`);
+      if (!stands(d)) problems.push(`${where}: cites "${d.id}", which is ${retired(d)}`);
       if (ir === undefined) problems.push(`${where}: cites "${d.id}" but names no IR element for it to cover; give the declaration an "ir"`);
       else if (!d.covers.some((c) => c.ir === ir && inScope(c.locks, lock))) problems.push(`${where}: cites "${d.id}", which doesn't cover "${ir}" on lock "${lock}"`);
     }
@@ -297,7 +305,7 @@ export function checkMapping(ir: SpecIR, lock: string, mappings: MappingFile[], 
       const d = byId.get(m.deferred.decision);
       const where = `${m.file}: deferred`;
       if (!d) problems.push(`${where}: cites decision "${m.deferred.decision}", which doesn't exist`);
-      else if (d.status === "superseded") problems.push(`${where}: cites "${d.id}", which is superseded by "${d.superseded_by}"`);
+      else if (!stands(d)) problems.push(`${where}: cites "${d.id}", which is ${retired(d)}`);
       else if (!d.covers.some((c) => inScope(c.locks, lock) && m.sections.includes(elements.get(c.ir)?.element.loc.section ?? ""))) problems.push(`${where}: cites "${d.id}", which covers no element of the module's sections on lock "${lock}"`);
     }
     for (const entry of m.entries) {

@@ -1,0 +1,50 @@
+format: 1
+id: G-117
+date: 2026-10-28
+question: What changes in the gates to close the gaps an independent review of the Deals API's extraction found?
+decision: >-
+  An anchor on a line of its own was read only as `<a name="…"></a>`, so
+  another spelling became an empty paragraph and its heading took a slug
+  for its ID unseen. It is now read by its `name` or `id`, quoted either way
+  or bare, beside other attributes, and an anchor that names nothing, names
+  itself twice, or sits in a list or a quote fails. An expression whose
+  values are joined by commas is checked value by value. A row's owner is a
+  name its table defines, so `deal.id` resolves. A Type cell's default must
+  be a value of its base, and a cell with a code span, a link, or HTML
+  fails. A code line may follow a lead that ends in a colon, and a label in
+  prose may hold an abbreviation's period. A plugin may list the
+  abbreviations its text writes mid-sentence, whose period ends no
+  sentence; the Deals API lists "i.e." and "e.g.", so its line 128 statement
+  is one sentence. The Deals API's plugin holds the profile's documents to
+  the text: each names the section of its object, no attribute holds it, and
+  every other object is one an attribute holds. The extraction report
+  counts the two rows that cite AdCOM's lists, and says why Implementation
+  Guidance is body, not a part of its own, and how sentences that use a
+  keyword in its ordinary sense are read: extraction keeps every sentence
+  with a keyword, 54 per lock, and the mapping reads each, as for AdCOM.
+  G-116 said no check was relaxed for an existing spec; the IR schema did
+  loosen the field owner's enum and make the marker optional, which
+  OpenProposal's row reader still enforces, so its IR is unchanged. Two
+  extraction fixtures run on the Deals API's text, an anchor that names
+  nothing and a document whose section describes another object. The test
+  suite holds 511 tests, and MIN_TESTS is 511.
+rationale: >-
+  Each change fails a form that was read wrong or dropped, or reads one the
+  text writes; the lint resolves one name more and checks one value list
+  more finely. AdCOM's and OpenProposal's IR and findings are unchanged.
+accepts:
+  - { gate: comparison, fingerprint: 27f7e0ea13c3f0e51892b0241611b191ed8932ca1e115ae0136d097abb6dcd15 }
+  - { gate: examples-validate, fingerprint: af378b6433a94f04b5d45518ce5b2c06984b259ee5c1a6aff87b0cecd8361df9 }
+  - { gate: extraction, fingerprint: 292722d4a68964aeefc29a7e89e92395965728b8f52dbbc2d49110afddf1a5d5 }
+  - { gate: feedback, fingerprint: 832f57dd33a8bc6c1c01e230aa3c9129acc373648eb20c1d5ff9eb12b6aaedd5 }
+  - { gate: fidelity, fingerprint: 2b2e21499c9508e90763578470223361323159f9e23e2f2a90702b39145f2612 }
+  - { gate: field-examples, fingerprint: 7aaabd67ec87569b0316db791a780c365b8e096b350f92dd9085773f06821300 }
+  - { gate: npm-test, fingerprint: e4140271796164db873090f01c2d768832beb02bda663e7d9e5dcc08f29337e1 }
+  - { gate: record-wording, fingerprint: 424c5c6f117d9dcac0de291f066af990de5f13b3b02a28585800f89c7eb81a9e }
+  - { gate: round-trip, fingerprint: 4143fbae4300b160da6aa6ab70e02a03383bd12c1b44ae5d57ed5fe9b72ae821 }
+  - { gate: rule-checks, fingerprint: 9eee2e5e8f63df03d427a0a8928490e63888b3bd75a18a9dc48e763f8ac4db90 }
+  - { gate: site-builds, fingerprint: f3cc81098543ba3c0021804d7eef3cbb7369eea68dd3459eb25407b6901af99c }
+  - { gate: spec-profile, fingerprint: e5bfca089c9cb6c9e4dd5a3c063bde2a59e30bcbc12a1f2f784666e9a98c8067 }
+  - { gate: type-examples-generate, fingerprint: 5ab842b2948cfe0d6c712ea1a51cdf2db19842f693479aba2c38c04806955465 }
+  - { gate: type-examples-valid, fingerprint: 75eefd66c872349c974d1cfcfd569c668dcef8a4b4d294415cde216521da85b7 }
+  - { gate: variant-examples, fingerprint: f1b5233b5c16fd5aa8cb47b01feec81dd569cc14a71f875f3f5fafaa72cf8824 }

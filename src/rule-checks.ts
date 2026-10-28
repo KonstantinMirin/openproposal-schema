@@ -54,6 +54,7 @@ export type Check = (value: unknown, ctx: CheckContext) => Violation[] | null;
 /** The rules that rest on a list another body keeps, with the name `kernel/lists.yaml` gives the list. */
 export const PINNED: Record<string, string> = {
   "kernel:CurrencyCode:assigned": "ISO 4217",
+  "kernel:CountryCode:assigned": "ISO 3166-1 alpha-3",
   "kernel:TimeZone:listed": "IANA time zone database",
 };
 
@@ -130,6 +131,8 @@ const minutesOf = (x: unknown): number | null => {
 export const CHECKS: Record<string, Check> = {
   // ISO 4217 List One, at its pinned publication: the alphabetic codes it assigns now.
   "kernel:CurrencyCode:assigned": listed("kernel:CurrencyCode:assigned", /^[A-Z]{3}$/, "no code ISO 4217 assigns"),
+  // ISO 3166-1, as the iso-codes project lists it at its pinned release: the alpha-3 codes of the countries it assigns.
+  "kernel:CountryCode:assigned": listed("kernel:CountryCode:assigned", /^[A-Z]{3}$/, "no alpha-3 code ISO 3166-1 assigns"),
   // The IANA time zone database, at its pinned release: the names of its zones and links; `viewer_local` is the text's own.
   "kernel:TimeZone:listed": listed("kernel:TimeZone:listed", /^[A-Z][A-Za-z0-9_+-]*(\/[A-Za-z0-9_+-]+)*$/, "no zone the IANA time zone database lists", ["viewer_local"]),
   "constructor:Selectable:options-named": (v) => {

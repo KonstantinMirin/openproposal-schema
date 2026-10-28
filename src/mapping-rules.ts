@@ -15,7 +15,8 @@ import type { Constructors } from "./constructors.ts";
 import type { Element } from "./elements.ts";
 import type { Field, IrObjectForm, Key, SpecIR, Table } from "./ir-types.ts";
 import { BOOLEAN, conceptOfRow } from "./domains.ts";
-import type { Kernel } from "./kernel.ts";
+import { listedValues, type Kernel } from "./kernel.ts";
+import { heldOwnerOf } from "./owners.ts";
 import type { Declaration, MappingEntry, Presence, Target, TypeRef } from "./mapping.ts";
 
 /** What a rule may read: one lock's IR, the kernel, and the in-scope mapping on that lock. */
@@ -131,6 +132,9 @@ export function restatesPart(form: IrObjectForm, shell: Record<string, unknown>)
 }
 
 const scalarOf = (f: Field): string | null => (f.type.parsed.kind === "scalar" ? f.type.parsed.name : null);
+/** Whether a field's type is the scalar named, or a list of it, as each plugin's type grammar parses its Type cell: OpenProposal's `Array[String]` and the Deals API's `string array` alike. */
+const isScalar = (f: Field, ...names: string[]): boolean => f.type.parsed.kind === "scalar" && names.includes(f.type.parsed.name);
+const isListOf = (f: Field, ...names: string[]): boolean => f.type.parsed.kind === "array" && f.type.parsed.items.kind === "scalar" && names.includes(f.type.parsed.items.name);
 
 const property = (ir: SpecIR, e: Element, type: TypeRef): Target | null => {
   if (e.kind !== "field" && e.kind !== "key") return null;
@@ -232,8 +236,12 @@ export const ENTRY_RULES: EntryRule[] = [
   },
   {
     id: "concept-row",
-    says: "A row of the § 1.1 concept table names a downstream standard, and carries no field, key, value, or marker.",
-    derive: (e) => (e.kind === "concept" ? { role: "informative" } : null),
+    says: "A row of the § 1.1 concept table names a downstream standard, and carries no field, key, value, or marker; a row of a table whose columns after the first are each headed by a member's name, as the Deals API's Example Scenarios, writes values of those members, which a decision reads.",
+    derive: (e, ctx) => {
+      if (e.kind !== "concept") return null;
+      const header = tableOf(ctx.ir, e.element)?.header ?? [];
+      return header.length > 1 && header.slice(1).every((h) => /^[a-z][a-z0-9_]*$/.test(h)) ? null : { role: "informative" };
+    },
   },
   {
     id: "marker-term",
@@ -267,16 +275,27 @@ export const ENTRY_RULES: EntryRule[] = [
   },
   {
     id: "restated-value-list",
-    says: "A value list with the same values, in the same order, as a vocabulary another entry defines restates it; one with a kernel primitive's `enum`, such as a daypart window's days and `DayName`, is what the primitive's schema expresses.",
+    says: "A value list with the same values, in the same order, and the same labels where both label them, as a vocabulary another entry defines restates it; one with a kernel primitive's `enum` or titled codes, such as a daypart window's days and `DayName`, or `0` (no) | `1` (yes) and `IntegerFlag`, is what the primitive's schema expresses, where an unlabeled list has its codes, and a labeled one its titles or a row the kernel binding cites for the primitive's concept.",
     derive: (e, ctx) => {
       if (e.kind !== "value_list") return null;
       const values = canonicalJson(e.element.items.map((i) => i.value));
-      const same = ctx.ir.value_lists.filter((v) => v.id !== e.element.id && canonicalJson(v.items.map((i) => i.value)) === values);
+      // Two lists that both label their codes, as the Deals API's `0` = undisclosed, restate each other only with the same labels: the codes alone say nothing.
+      const labeled = (v: typeof e.element) => v.items.every((i) => i.annotation !== null);
+      const same = ctx.ir.value_lists.filter((v) => v.id !== e.element.id && canonicalJson(v.items.map((i) => i.value)) === values && (!labeled(v) || !labeled(e.element) || canonicalJson(v.items.map((i) => i.annotation)) === canonicalJson(e.element.items.map((i) => i.annotation))));
       const defined = same.flatMap((v) => {
         const as = ctx.entries.get(v.id)?.as;
         return as?.role === "type" && as.layer === "vocabulary" ? [as.name] : [];
       });
-      const listed = ctx.kernel.primitives.filter((p) => Array.isArray(p.constraints.enum) && canonicalJson(p.constraints.enum.map(String)) === values).map((p) => p.name);
+      // A labeled list restates a primitive's titled codes only where its labels are the titles, as `0` (no) | `1` (yes) are
+      // `IntegerFlag`'s, or where the kernel binding cites its row for the primitive's concept, as the Deals API's `guar`:
+      // `0` = undisclosed, `1` = single publisher has the codes and is no flag.
+      const row = e.element.host.split("#")[0]!;
+      const bound = (p: (typeof ctx.kernel.primitives)[number]) => ctx.kernel.domains !== undefined && conceptOfRow(ctx.kernel.domains, row)?.type === p.name;
+      const titled = (p: (typeof ctx.kernel.primitives)[number]) => p.constraints.oneOf !== undefined && canonicalJson(p.constraints.oneOf.map((b) => b.title.toLowerCase())) === canonicalJson(e.element.items.map((i) => (i.annotation ?? "").toLowerCase()));
+      // A list that labels any of its codes is read by its labels, so a half-labeled list doesn't fall back on its codes alone.
+      const someLabel = e.element.items.some((i) => i.annotation !== null);
+      const fits = (p: (typeof ctx.kernel.primitives)[number]) => !someLabel || bound(p) || titled(p);
+      const listed = ctx.kernel.primitives.filter((p) => listedValues(p) !== null && canonicalJson(listedValues(p)!.map(String)) === values && fits(p)).map((p) => p.name);
       if (defined.length + listed.length !== 1) return null;
       return defined.length === 1 ? { role: "same", name: defined[0]! } : { role: "schema", in: listed[0]! };
     },
@@ -330,13 +349,20 @@ export const ENTRY_RULES: EntryRule[] = [
   },
   {
     id: "domain-row",
-    says: "A String, Number, Integer, or Array[String] field, or a key row with no value list or inline object, that exactly one concept of the domain model cites has the concept's type, or a list of it where the row is a list.",
+    says: "A String, Number, Integer, or Array[String] field, or a key row with no inline object, whose only value lists restate the concept's type, that exactly one concept of the domain model cites has the concept's type, or a list of it where the row is a list.",
     derive: (e, ctx) => {
       if (e.kind !== "field" && e.kind !== "key") return null;
-      if (e.kind === "field" && !["String", "Number", "Integer", "Array[String]"].includes(e.element.type.raw)) return null;
-      if (e.kind === "key" && (e.element.value_lists.length > 0 || e.element.inline_objects.length > 0)) return null;
+      if (e.kind === "field" && !isScalar(e.element, "String", "Number", "Integer") && !isListOf(e.element, "String")) return null;
+      if (e.kind === "key" && e.element.inline_objects.length > 0) return null;
       const c = ctx.kernel.domains ? conceptOfRow(ctx.kernel.domains, e.element.id) : null;
       if (c === null) return null;
+      // A key's value list may only restate the type's own values, as `0` (no) | `1` (yes) restates `IntegerFlag`'s codes.
+      if (e.element.value_lists.length > 0) {
+        const own = ctx.kernel.primitives.find((p) => p.name === c.type);
+        const codes = own ? listedValues(own) : null;
+        const restates = (id: string) => codes !== null && canonicalJson(ctx.ir.value_lists.find((v) => v.id === id)?.items.map((i) => i.value) ?? []) === canonicalJson(codes.map(String));
+        if (!e.element.value_lists.every(restates)) return null;
+      }
       const type: TypeRef = c.type === BOOLEAN ? { kind: "boolean" } : named(c.type);
       const array = e.kind === "field" ? e.element.type.parsed.kind === "array" : e.element.key.path.endsWith("[]");
       return property(ctx.ir, e, array ? list(type) : type);
@@ -344,13 +370,14 @@ export const ENTRY_RULES: EntryRule[] = [
   },
   {
     id: "enum-row",
-    says: "An Enum field, or a key, whose row holds exactly one value list has the vocabulary that list defines.",
+    says: "An Enum field, an Integer field or a list of integers, or a key, whose row holds exactly one value list has the vocabulary that list defines, or a list of it for a list.",
     derive: (e, ctx) => {
       if (e.kind !== "field" && e.kind !== "key") return null;
-      if (e.kind === "field" && scalarOf(e.element) !== "Enum") return null;
+      if (e.kind === "field" && !isScalar(e.element, "Enum", "Integer") && !isListOf(e.element, "Integer")) return null;
       if (e.element.value_lists.length !== 1 || e.element.inline_objects.length > 0) return null;
       const name = typeNameOf(ctx, e.element.value_lists[0]!);
-      return name === null ? null : property(ctx.ir, e, named(name));
+      if (name === null) return null;
+      return property(ctx.ir, e, e.kind === "field" && isListOf(e.element, "Integer") ? list(named(name)) : named(name));
     },
   },
   {
@@ -358,14 +385,14 @@ export const ENTRY_RULES: EntryRule[] = [
     says: "An Object field, an Array[Object] field, or a key whose row holds exactly one inline object, not an option of `available[]`, has that object, or a list of it for an array.",
     derive: (e, ctx) => {
       if (e.kind !== "field" && e.kind !== "key") return null;
-      if (e.kind === "field" && ["selectable", "settable", "mixed"].includes(e.element.marker)) return null;
+      if (e.kind === "field" && ["selectable", "settable", "mixed"].includes(e.element.marker ?? "")) return null;
       if (e.element.inline_objects.length !== 1) return null;
       const o = ctx.ir.inline_objects.find((x) => x.id === e.element.inline_objects[0]);
       if (!o || o.anchor !== null) return null;
       const name = typeNameOf(ctx, o.id);
       if (name === null) return null;
       const array = e.kind === "field" ? e.element.type.parsed.kind === "array" : e.element.key.path.endsWith("[]");
-      if (e.kind === "field" && e.element.type.raw !== (array ? "Array[Object]" : "Object")) return null;
+      if (e.kind === "field" && !(array ? isListOf(e.element, "Object") : isScalar(e.element, "Object"))) return null;
       return property(ctx.ir, e, array ? list(named(name)) : named(name));
     },
   },
@@ -373,17 +400,27 @@ export const ENTRY_RULES: EntryRule[] = [
     id: "keyed-object-field",
     says: "An Object field, not marked selectable or settable, that a key table describes has the object that the table describes.",
     derive: (e, ctx) => {
-      if (e.kind !== "field" || e.element.type.raw !== "Object" || ["selectable", "settable"].includes(e.element.marker)) return null;
+      if (e.kind !== "field" || !isScalar(e.element, "Object") || ["selectable", "settable"].includes(e.element.marker ?? "")) return null;
       const table = ctx.ir.tables.find((t) => t.parent?.field === e.element.id && t.layout.startsWith("key-"));
       if (!table || e.element.inline_objects.length > 0) return null;
       return property(ctx.ir, e, named(pascalField(e.element.names[0]!.path)));
     },
   },
   {
+    id: "held-object-field",
+    says: "An object field, or a list of objects, whose name is another owner's object, as the Deals API's `terms` names `Object: Terms` and `buyerstatus` names `Object: BuyerStatus`, has that object, or a list of it.",
+    derive: (e, ctx) => {
+      if (e.kind !== "field") return null;
+      const held = heldOwnerOf(ctx.ir, e.element);
+      if (held === null) return null;
+      return property(ctx.ir, e, isListOf(e.element, "Object") ? list(named(documentOf(held))) : named(documentOf(held)));
+    },
+  },
+  {
     id: "sub-field-array",
     says: "An Array[Object] field whose items have rows of their own, and no inline object, is a list of its `<Field>Entry` object.",
     derive: (e, ctx) => {
-      if (e.kind !== "field" || e.element.type.raw !== "Array[Object]" || e.element.inline_objects.length > 0) return null;
+      if (e.kind !== "field" || !isListOf(e.element, "Object") || e.element.inline_objects.length > 0) return null;
       const path = e.element.names[0]!.path;
       if (!ctx.ir.fields.some((f) => f.names[0]!.path.startsWith(`${path}.`))) return null;
       return property(ctx.ir, e, list(named(`${pascalField(path)}Entry`)));
@@ -418,14 +455,25 @@ export const DECLARATION_RULES: DeclarationRule[] = [
   },
   {
     id: "document-owner",
-    says: "The owners of the field rows are the documents, such as `Proposal` and `LineItem`, each declared at its first field row.",
+    says: "The owners of the field rows are the documents, such as `Proposal` and `LineItem`, each declared at its first field row, but an owner another owner's field holds, which is an object.",
     derive: (ctx) => {
       const out: Declaration[] = [];
-      for (const owner of ownersOf(ctx.ir)) {
+      const held = new Set(ctx.ir.fields.flatMap((f) => heldOwnerOf(ctx.ir, f) ?? []));
+      for (const owner of ownersOf(ctx.ir).filter((o) => !held.has(o))) {
         const first = ctx.ir.fields.find((f) => f.owner === owner)!;
         out.push({ name: documentOf(owner), kind: "document", ir: first.id, source: { rule: "document-owner" } });
       }
       return out;
+    },
+  },
+  {
+    id: "held-object",
+    says: "An owner of field rows that another owner's field holds, as `Object: Terms` is the Deals API's `terms`, is a closed object named after it, declared at its first row.",
+    derive: (ctx) => {
+      const held = new Set(ctx.ir.fields.flatMap((f) => heldOwnerOf(ctx.ir, f) ?? []));
+      return ownersOf(ctx.ir)
+        .filter((o) => held.has(o))
+        .map((owner) => ({ name: documentOf(owner), kind: "object" as const, ir: ctx.ir.fields.find((f) => f.owner === owner)!.id, source: { rule: "held-object" }, open: false }));
     },
   },
   {
@@ -446,7 +494,7 @@ export const DECLARATION_RULES: DeclarationRule[] = [
     derive: (ctx) =>
       ctx.ir.fields.flatMap((f) => {
         const path = f.names[0]!.path;
-        if (f.type.raw !== "Array[Object]" || !ctx.ir.fields.some((g) => g.names[0]!.path.startsWith(`${path}.`))) return [];
+        if (!isListOf(f, "Object") || !ctx.ir.fields.some((g) => g.names[0]!.path.startsWith(`${path}.`))) return [];
         return [{ name: `${pascalField(path)}Entry`, kind: "object" as const, ir: f.id, source: { rule: "sub-field-object" }, open: false }];
       }),
   },

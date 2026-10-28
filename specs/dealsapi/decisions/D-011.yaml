@@ -1,0 +1,30 @@
+format: 1
+id: D-011
+status: proposed
+kind: gap
+author: agent
+question: "What does the status response's `version` hold, when the text says \"Version of the Deal API in use\" and the `sellerstatus` codes changed twice after the 1.0 tag while it stayed 1.0?"
+covers:
+  - ir: field:object-buyerseat:version
+    digest: 5d8347a4aab6be0ffe130b75daacb6b2f8256fb276f5650f58178098ce88baec
+    quote: "`version` | string, required | Version of the Deal API in use"
+options:
+  - id: as-written
+    summary: >-
+      The version string as the receiving system writes it, such as `1.0`,
+      compared exactly and never parsed.
+  - id: semver
+    summary: >-
+      A semantic version, `major.minor.patch`, which a receiver can order.
+chosen: as-written
+rationale: >-
+  The text gives no form, and the published version stays "1.0" across the
+  three changes since the tag, two of which renumbered `sellerstatus`. A version string
+  compared as written is all a receiver can rely on, and a build names its
+  lock's commit for the rest.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L161"
+feedback: >-
+  Version the errata: "1.0" now names texts whose `sellerstatus` codes
+  differ. A patch number, or a date, in `version` would let a receiver know
+  which codes the other side reads.

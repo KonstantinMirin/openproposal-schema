@@ -68,10 +68,16 @@ export interface Field extends Hosted {
   owner: string;
   names: FieldPath[];
   name_cell: string;
+  /** The type as the Type cell writes it, without what the cell states beside it, and as the plugin parses it. */
   type: { raw: string; parsed: TypeExpr };
-  marker: string;
+  /** The whole Type cell, for a text whose Type cell also states the presence and the default, as the Deals API's `int, default 0, recommended`. */
+  type_cell?: string;
+  /** The default the Type cell states, as written and as a value. */
+  default?: { raw: string; value: string | number };
+  /** The mutability marker, for a text whose field rows carry one (`features.markers` in the profile). */
+  marker?: string;
   description: Text;
-  /** From a description sentence that starts with REQUIRED, RECOMMENDED or OPTIONAL. */
+  /** The presence the row states: in a description sentence that starts with REQUIRED, RECOMMENDED, or OPTIONAL, or in the Type cell. */
   presence: Presence | null;
   digest: string;
   loc: Loc;

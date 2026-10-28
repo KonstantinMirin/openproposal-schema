@@ -1,0 +1,199 @@
+{
+  "base": {
+    "blob": "c2dc7944d257036aa6dbbe70ca084c4f6670da8e",
+    "commit": "3028ddcb8d5faea44bdab272aeaa9be6b5980f81",
+    "counts": {
+      "decisions": 24,
+      "elements.concept": 5,
+      "elements.field": 46,
+      "elements.sentence": 13,
+      "elements.statement": 54,
+      "elements.value_list": 10,
+      "findings.conditions": 0,
+      "findings.examples": 0,
+      "findings.round_trip": 10,
+      "findings.spec": 27,
+      "findings.spec_open": 27,
+      "properties": 46,
+      "rules": 10,
+      "schema_files": 5,
+      "statements.example": 5,
+      "statements.obligation": 24,
+      "statements.rule": 8,
+      "statements.schema": 1,
+      "types.constructor": 1,
+      "types.document": 2,
+      "types.object": 4,
+      "types.part": 1,
+      "types.primitive": 10,
+      "types.vocabulary": 11
+    },
+    "ir_sha256": "cc49f43b22fae88b0fb9dcd25134ae0f271e8ee749e75a8a744d95f6ba1f0423",
+    "lock": "main"
+  },
+  "changes": [
+    {
+      "change": "description",
+      "class": "annotation",
+      "detail": "Deal.sellerstatus's description changes",
+      "member": "sellerstatus",
+      "type": "Deal",
+      "view": "model"
+    },
+    {
+      "change": "removed-term",
+      "class": "breaking",
+      "detail": "SellerDealStatus drops 3",
+      "member": "3",
+      "type": "SellerDealStatus",
+      "view": "model"
+    },
+    {
+      "change": "description",
+      "class": "annotation",
+      "detail": "SellerDealStatus 4's label changes",
+      "member": "4",
+      "type": "SellerDealStatus",
+      "view": "model"
+    },
+    {
+      "change": "narrowed-schema",
+      "class": "breaking",
+      "detail": "modules/deal/1/deal.json#/$defs/SellerDealStatus: oneOf changed",
+      "member": "SellerDealStatus",
+      "type": "modules/deal/1/deal.json",
+      "view": "files"
+    }
+  ],
+  "decisions": {
+    "added": [
+      {
+        "id": "D-010",
+        "question": "What does `sellerstatus` code 4 mean on the tag 1.0-202602, where it is both \"deal is complete\" and \"deal is archived\"?",
+        "status": "proposed"
+      }
+    ],
+    "removed": [],
+    "reread": [
+      {
+        "elements": [
+          "field:object-deal:sellerstatus#description/values:1"
+        ],
+        "id": "D-031",
+        "question": "What is each of the Deals API's own code lists called?",
+        "status": "proposed"
+      }
+    ]
+  },
+  "elements": {
+    "added": [],
+    "changed": [
+      {
+        "id": "field:object-deal:sellerstatus",
+        "kind": "field",
+        "text": "`sellerstatus` | int, default 0, recommended | Status of the deal in the sellers system where: `0` = deal is active `1` = deal is paused `2` = deal is pending `4` = deal is complete (ie. selling scomplete (ie. selling system shows deal has completed) `4` = deal is archived (cannot be active again)",
+        "was": "`sellerstatus` | int, default 0, recommended | Status of the deal in the sellers system where: `0` = deal is active `1` = deal is paused `2` = deal is pending `3` = deal is complete (ie. selling scomplete (ie. selling system shows deal has completed) `4` = deal is archived (cannot be active again)"
+      },
+      {
+        "id": "field:object-deal:sellerstatus#description/values:1",
+        "kind": "value_list",
+        "text": "`0` (deal is active) | `1` (deal is paused) | `2` (deal is pending) | `4` (deal is complete (ie. selling scomplete (ie. selling system shows deal has completed)) | `4` (deal is archived (cannot be active again))",
+        "was": "`0` (deal is active) | `1` (deal is paused) | `2` (deal is pending) | `3` (deal is complete (ie. selling scomplete (ie. selling system shows deal has completed)) | `4` (deal is archived (cannot be active again))"
+      }
+    ],
+    "removed": []
+  },
+  "findings": {
+    "conditions": {
+      "added": [],
+      "removed": []
+    },
+    "examples": {
+      "added": [],
+      "removed": []
+    },
+    "round_trip": {
+      "added": [],
+      "changed": [],
+      "removed": []
+    },
+    "spec": {
+      "added": [
+        {
+          "id": "value_list_duplicate_code:field:object-deal:sellerstatus#description/values:1:4",
+          "kind": "value_list_duplicate_code",
+          "message": "The value list gives `4` 2 times, as \"deal is complete (ie. selling scomplete (ie. selling system shows deal has completed)\" and as \"deal is archived (cannot be active again)\", so a value of `4` doesn't say which it means.",
+          "verdict": "open"
+        },
+        {
+          "id": "value_set_subset:0 | 1 | 2 | 4",
+          "kind": "value_set_subset",
+          "message": "The value set 0 | 1 | 2 | 4 is a strict subset of 0 | 1 | 2 | 3 | 4; and of 0 | 1 | 2 | 3 | 4 | 5 | 6.",
+          "verdict": "open"
+        }
+      ],
+      "changed": [
+        {
+          "id": "value_set_duplicate:0 | 1 | 2 | 3 | 4",
+          "kind": "value_set_duplicate",
+          "message": "The value set 0 | 1 | 2 | 3 | 4 is declared 2 times.",
+          "verdict": "open",
+          "was": "The value set 0 | 1 | 2 | 3 | 4 is declared 3 times."
+        },
+        {
+          "id": "value_set_subset:0 | 1",
+          "kind": "value_set_subset",
+          "message": "The value set 0 | 1 is a strict subset of 0 | 1 | 2 | 4; and of 0 | 1 | 2 | 3 | 4; and of 0 | 1 | 2; and of 0 | 1 | 2 | 3; and of 0 | 1 | 2 | 3 | 4 | 5 | 6.",
+          "verdict": "open",
+          "was": "The value set 0 | 1 is a strict subset of 0 | 1 | 2 | 3 | 4; and of 0 | 1 | 2; and of 0 | 1 | 2 | 3; and of 0 | 1 | 2 | 3 | 4 | 5 | 6."
+        },
+        {
+          "id": "value_set_subset:0 | 1 | 2",
+          "kind": "value_set_subset",
+          "message": "The value set 0 | 1 | 2 is a strict subset of 0 | 1 | 2 | 4; and of 0 | 1 | 2 | 3 | 4; and of 0 | 1 | 2 | 3; and of 0 | 1 | 2 | 3 | 4 | 5 | 6.",
+          "verdict": "open",
+          "was": "The value set 0 | 1 | 2 is a strict subset of 0 | 1 | 2 | 3 | 4; and of 0 | 1 | 2 | 3; and of 0 | 1 | 2 | 3 | 4 | 5 | 6."
+        }
+      ],
+      "removed": []
+    }
+  },
+  "format": 1,
+  "lock": {
+    "blob": "f675232c0e0d57b77ce1fc34b74baa2e42bc700a",
+    "commit": "938a5d1fdb5705ae53b2584c90b9eb325b71a96b",
+    "counts": {
+      "decisions": 25,
+      "elements.concept": 5,
+      "elements.field": 46,
+      "elements.sentence": 13,
+      "elements.statement": 54,
+      "elements.value_list": 10,
+      "findings.conditions": 0,
+      "findings.examples": 0,
+      "findings.round_trip": 10,
+      "findings.spec": 29,
+      "findings.spec_open": 29,
+      "properties": 46,
+      "rules": 10,
+      "schema_files": 5,
+      "statements.example": 5,
+      "statements.obligation": 24,
+      "statements.rule": 8,
+      "statements.schema": 1,
+      "types.constructor": 1,
+      "types.document": 2,
+      "types.object": 4,
+      "types.part": 1,
+      "types.primitive": 10,
+      "types.vocabulary": 11
+    },
+    "ir_sha256": "0004948ea36a5aea758bfc7f9d18e01f0e9290b6e185c4422e14fc62dcef7d79",
+    "lock": "tag-1.0-202602"
+  },
+  "statements": {
+    "added": [],
+    "moved": [],
+    "removed": []
+  }
+}

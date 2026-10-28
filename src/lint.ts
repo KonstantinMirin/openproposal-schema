@@ -1,6 +1,7 @@
 import { stripArrays } from "./grammar/path.ts";
 import { typeMentions } from "./grammar/type-expr.ts";
 import type { Field, IrObjectForm, Loc, SpecIR, ValueList } from "./ir-types.ts";
+import { heldOwnerOf } from "./owners.ts";
 import type { SectionIds } from "./specs/plugin.ts";
 
 /** Every kind of finding the lint reports. Findings are data; none of them fails the build. */
@@ -21,6 +22,7 @@ export const FINDING_KINDS = [
   "name_reused_with_different_values",
   "value_set_duplicate",
   "value_set_subset",
+  "value_list_duplicate_code",
   "unresolved_identifier",
   "array_suffix_mismatch",
   "expression_value_unknown",
@@ -135,7 +137,7 @@ function appendixA(ir: SpecIR, add: Add): void {
     const pairs: [string, string, string][] = [
       ["section", section.heading, row.section_cell],
       ["type", f.type.raw, row.type.raw],
-      ["marker", f.marker, row.marker],
+      ["marker", f.marker ?? "", row.marker],
     ];
     for (const [attr, body, appendix] of pairs) {
       if (body === appendix) continue;
@@ -184,7 +186,8 @@ function appendixB(ir: SpecIR, add: Add): void {
   const expected = new Map<string, string[]>();
   for (const f of ir.fields) {
     const l = labelCount.get(label(f))! > 1 ? `${label(f)} (${ownerLabel(f.owner)})` : label(f);
-    expected.set(f.marker, [...(expected.get(f.marker) ?? []), l]);
+    const marker = f.marker ?? "";
+    expected.set(marker, [...(expected.get(marker) ?? []), l]);
   }
   for (const [marker, fields] of expected) {
     const row = b.rows.find((r) => r.marker === marker);
@@ -337,6 +340,23 @@ function duplicates(ir: SpecIR, add: Add): void {
 }
 
 function valueSets(ir: SpecIR, add: Add): void {
+  // A list that gives one value twice, as a code with two meanings, leaves a receiver unable to tell which it means.
+  for (const v of ir.value_lists) {
+    const seen = new Map<string, (string | null)[]>();
+    for (const i of v.items) seen.set(i.value, [...(seen.get(i.value) ?? []), i.annotation]);
+    for (const [value, annotations] of seen) {
+      if (annotations.length < 2) continue;
+      const meanings = annotations.filter((a): a is string => a !== null);
+      add({
+        id: `value_list_duplicate_code:${v.id}:${value}`,
+        kind: "value_list_duplicate_code",
+        message: `The value list gives \`${value}\` ${annotations.length} times${meanings.length > 0 ? `, as ${meanings.map((m) => `"${m}"`).join(" and as ")}` : ""}, so a value of \`${value}\` doesn't say which it means.`,
+        subjects: [v.id],
+        locs: [v.loc],
+        details: { value, annotations },
+      });
+    }
+  }
   const groups = new Map<string, ValueList[]>();
   for (const v of ir.value_lists) groups.set(setKey(v), [...(groups.get(setKey(v)) ?? []), v]);
   for (const [key, lists] of groups) {
@@ -389,6 +409,9 @@ function buildUniverse(ir: SpecIR): Universe {
         put(names, s.name, { kind: last ? "field" : "field_parent", id: f.id, written: s.name + (s.array ? "[]" : ""), table: true });
       });
       put(paths, n.path, { kind: "field", id: f.id, written: n.path, table: true });
+      // A row's owner is a name its table defines, so a path through it, as the Deals API's `deal.id`, resolves.
+      put(names, f.owner, { kind: "field_parent", id: f.id, written: f.owner, table: true });
+      put(paths, `${f.owner}.${n.path}`, { kind: "field", id: f.id, written: `${f.owner}.${n.path}`, table: true });
     }
   }
   for (const k of ir.keys) {
@@ -501,7 +524,8 @@ function identifiers(ir: SpecIR, u: Universe, add: Add): void {
           }
         }
       }
-      if (!known.has(c.rhs!)) push(badValue, c.value, () => ({ locs: [], hosts: [], known: [...known].sort() }), c.loc, c.host);
+      // An expression may set its member to values joined by commas, as `inclinventory.adtype=1,2`, each a value the member takes.
+      if (!c.rhs!.split(",").every((v) => known.has(v))) push(badValue, c.value, () => ({ locs: [], hosts: [], known: [...known].sort() }), c.loc, c.host);
     }
   }
   for (const [name, e] of unresolved) {
@@ -564,7 +588,8 @@ function structure(ir: SpecIR, add: Add): void {
         details: { description: f.description.text },
       });
     }
-    if (!typeIsObject || hasObject || parented.has(f.id) || hasSubRows) continue;
+    // A field that holds another owner's rows, as the Deals API's `terms` holds `Object: Terms`, has their structure.
+    if (!typeIsObject || hasObject || parented.has(f.id) || hasSubRows || heldOwnerOf(ir, f) !== null) continue;
     if (f.marker === "selectable" || f.marker === "settable") {
       if (hasValues) continue;
       add({
@@ -608,7 +633,8 @@ function musts(ir: SpecIR, u: Universe, add: Add): void {
 function markersAndPresence(ir: SpecIR, add: Add, numbered: boolean): void {
   const defined = new Set(ir.markers.map((m) => m.marker));
   const undefinedUses = new Map<string, Field[]>();
-  for (const f of ir.fields) if (!defined.has(f.marker)) undefinedUses.set(f.marker, [...(undefinedUses.get(f.marker) ?? []), f]);
+  // A field row of a text with no markers carries none, so it uses no undefined one.
+  for (const f of ir.fields) if (f.marker !== undefined && !defined.has(f.marker)) undefinedUses.set(f.marker, [...(undefinedUses.get(f.marker) ?? []), f]);
   for (const [marker, fields] of undefinedUses) {
     add({
       id: `marker_undefined:${marker}`,

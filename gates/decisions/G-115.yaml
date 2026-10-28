@@ -1,0 +1,47 @@
+format: 1
+id: G-115
+date: 2026-10-28
+question: What changes in the gates to close the gaps an independent review of the Deals API's locks found?
+decision: >-
+  `lockFiles` sorted a spec's lock files by name and relied on
+  `spec-lock.yaml` sorting first, so a lock named, say,
+  `release-1.lock.yaml` would have become a spec's default unseen. The
+  default lock now comes first whatever the others are named, and a test
+  holds it with locks that sort before it. The Deals API's test now also
+  pins the introduction's word that the tag spells otherwise. G-113 left out
+  why the profile reads keywords in any case: the Deals API's text holds no
+  RFC 2119 keyword in capitals and states no convention, and writes 28
+  "should", 19 "may", 6 "required", 5 "must", and 5 "recommended" in
+  lowercase, which a decision of the spec's records once its model is
+  mapped. The profile's comment now says the spec will take AdCOM's lists
+  once its model is mapped, and the NOTICE keeps AdCOM's paragraphs
+  together. The lock of the tag keeps the name `tag-1.0-202602`, which the
+  task names; no spec imports the Deals API, so no import's lock pattern
+  reads it.
+rationale: >-
+  Every gate that reads a spec's locks reaches `lockFiles`, so each is
+  fingerprinted anew; the order of every spec's locks today is unchanged,
+  so no output changes.
+accepts:
+  - { gate: comparison, fingerprint: eea738e5c5751d731ed4a4367a132dfbf87f4f6084c539a296f71ceb3cc0edb6 }
+  - { gate: corpus-generates, fingerprint: de4a230182b56272e585c7b207dd34f98587a2da17794967f64d9aac3980042b }
+  - { gate: corpus-isolation, fingerprint: 7506caf435d05750493a8131c2b6a446696c690f1ed18f42d443d87f186568ff }
+  - { gate: corpus-labels, fingerprint: f3d112b6847cd317f6bd55e81a8ec09d7162361d1789c82163cc07ae273cddfd }
+  - { gate: examples-oracle, fingerprint: 1fb88821061ea031382e6dbbf317e85735be439469879ee774a304559c8f183e }
+  - { gate: examples-validate, fingerprint: 41d3403f0742e3cf364bafe524af5d3e3caa2c38c186afc49615751fd8a5ee8e }
+  - { gate: fidelity, fingerprint: 42376595f571487fcd0ef710b900b7ab3164fd07c853883218d5b2cf68d38964 }
+  - { gate: field-examples, fingerprint: 3e76523e49698a9c592f0c933e4ebfb8b1d74efc091d7365a591dade0a606ad6 }
+  - { gate: kernel-load, fingerprint: b42e638f52be7b993d1cee740283f55e28068da9ef0904f20f09c0204a4363a5 }
+  - { gate: npm-test, fingerprint: 3f648c84893ac947e48605d61c24972f44011867f640505f4dcdbab66738f9bb }
+  - { gate: plain-generates, fingerprint: 64a7896bd625315fb740499f43c73a2a427f3c638fb4d06eb882685b6da1073a }
+  - { gate: release-breaking, fingerprint: dd2e15a6bc711baa8156956a9918c9e89d9d2160f71a32fa24bd181a872e98a7 }
+  - { gate: release-breaking-corpus, fingerprint: 68723a593b0bb468bde9e5f33e55ae1aed2468f646369c0b4ad2f19fad48c9ae }
+  - { gate: release-builds, fingerprint: d59b28a9a307f92a54c954f7b024c8e8aedcbdd99786218466a8cb8eeb4ff126 }
+  - { gate: rule-vectors, fingerprint: e21639be8986a4cd24d3a0bc8f4cbaf430d7f7048e5f0267c67675fe99c91c30 }
+  - { gate: schemas-ajv, fingerprint: db59020f7d59673190dc339b17e344c615c15ecb106952c625d33f62819016c5 }
+  - { gate: schemas-conventions, fingerprint: 6bf75e92dfbf0fd632a7baa000309374c62fac28cb21ca2b799b7f9adc38ce2e }
+  - { gate: schemas-oracle, fingerprint: 2ceb3778ce25b85d9a2b3213d9175e9876c15a69dc722ceddc66312dd6fbe23c }
+  - { gate: site-builds, fingerprint: 44c27ac57292c340c292b21694286cdefcb3e2d4aa96fb2f70cb719ed34601d8 }
+  - { gate: type-examples-generate, fingerprint: 80bb20c0cfa54e520ee310e52f885c1bdcf92bea4ad395fae66c23c254dede30 }
+  - { gate: type-examples-valid, fingerprint: 0c783c5d614e82e3a186240a2185060aa1f9905b500f88878adbd7598bb7bfaf }
+  - { gate: variant-examples, fingerprint: 900318b1546623a7e9df2a83932637cbb65c350cc477c75a1c0fa8367966e13f }

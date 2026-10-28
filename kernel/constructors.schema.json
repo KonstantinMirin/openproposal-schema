@@ -203,8 +203,8 @@
         },
         "required": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/member" } },
         "additionalProperties": {
-          "description": "`false` for an object with fixed members, or a slot for the values of a map.",
-          "anyOf": [{ "const": false }, { "$ref": "#/$defs/slot" }]
+          "description": "`false` for an object with fixed members, a slot for the values of a map, or `true` for a part that takes any members, as `Ext`, the object a specification leaves to its parties.",
+          "anyOf": [{ "const": false }, { "const": true }, { "$ref": "#/$defs/slot" }]
         },
         "propertyNames": { "$ref": "#/$defs/slot" },
         "minProperties": { "type": "integer", "minimum": 1 },

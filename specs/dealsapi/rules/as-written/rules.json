@@ -1,0 +1,522 @@
+{
+  "format": 1,
+  "input": {
+    "blob": "c2dc7944d257036aa6dbbe70ca084c4f6670da8e",
+    "commit": "3028ddcb8d5faea44bdab272aeaa9be6b5980f81",
+    "lock": "main"
+  },
+  "rules": [
+    {
+      "applies_to": [
+        "CurrencyCode"
+      ],
+      "decisions": [],
+      "id": "kernel:CurrencyCode:assigned",
+      "owner": "CurrencyCode",
+      "severity": "error",
+      "sources": [],
+      "standard": {
+        "name": "ISO 4217, Codes for the representation of currencies",
+        "url": "https://www.iso.org/iso-4217-currency-codes.html"
+      },
+      "statement": "A CurrencyCode MUST be an alphabetic code that ISO 4217 currently assigns.",
+      "vectors": {
+        "invalid": [
+          {
+            "value": "ABC"
+          },
+          {
+            "value": "QQQ"
+          }
+        ],
+        "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/kernel/1/kernel.json#/$defs/CurrencyCode",
+        "type": "CurrencyCode",
+        "valid": [
+          {
+            "value": "USD"
+          },
+          {
+            "value": "JPY"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "BuyerSeat.id"
+      ],
+      "decisions": [
+        "D-026"
+      ],
+      "id": "rule:object-buyerseat:be619ed4",
+      "level": "SHOULD",
+      "owner": "BuyerSeat",
+      "severity": "warning",
+      "sources": [
+        "field:object-buyerseat:id",
+        "rule:object-buyerseat:be619ed4"
+      ],
+      "statement": "This should always be the same id as `deal.id`",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "Deal.id": "d-1001"
+            },
+            "value": {
+              "id": "d-1002",
+              "version": "1.0"
+            }
+          },
+          {
+            "context": {
+              "Deal.id": "d-1001"
+            },
+            "value": {
+              "id": "D-1001",
+              "version": "1.0"
+            }
+          }
+        ],
+        "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/documents/1/buyer-seat.json",
+        "type": "BuyerSeat",
+        "valid": [
+          {
+            "context": {
+              "Deal.id": "d-1001"
+            },
+            "value": {
+              "id": "d-1001",
+              "version": "1.0"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Deal.inventory"
+      ],
+      "decisions": [
+        "D-015"
+      ],
+      "id": "rule:object-deal:1ff4e5fa",
+      "level": "SHOULD",
+      "owner": "Deal",
+      "severity": "warning",
+      "sources": [
+        "field:object-deal:inventory",
+        "rule:object-deal:1ff4e5fa"
+      ],
+      "statement": "This object should only be included when the deal is for a static set of sites or applications (`dinventory=1`).",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "dinventory": 2,
+              "id": "d-1001",
+              "inventory": {
+                "sitedomains": [
+                  "examplepub.com"
+                ]
+              },
+              "origin": "examplessp.com",
+              "terms": {}
+            }
+          },
+          {
+            "value": {
+              "dinventory": 0,
+              "id": "d-1001",
+              "inventory": {},
+              "origin": "examplessp.com",
+              "terms": {}
+            }
+          },
+          {
+            "value": {
+              "id": "d-1001",
+              "inventory": {},
+              "origin": "examplessp.com",
+              "terms": {}
+            }
+          }
+        ],
+        "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/documents/1/deal.json",
+        "type": "Deal",
+        "valid": [
+          {
+            "value": {
+              "dinventory": 1,
+              "id": "d-1001",
+              "inventory": {
+                "sitedomains": [
+                  "examplepub.com"
+                ]
+              },
+              "origin": "examplessp.com",
+              "terms": {}
+            }
+          },
+          {
+            "value": {
+              "dinventory": 2,
+              "id": "d-1001",
+              "origin": "examplessp.com",
+              "terms": {}
+            }
+          },
+          {
+            "value": {
+              "id": "d-1001",
+              "origin": "examplessp.com",
+              "terms": {}
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Deal.desc"
+      ],
+      "decisions": [
+        "D-022"
+      ],
+      "id": "rule:object-deal:5e652de0",
+      "level": "RECOMMENDED",
+      "owner": "Deal",
+      "severity": "warning",
+      "sources": [
+        "field:object-deal:desc",
+        "rule:object-deal:5e652de0"
+      ],
+      "statement": "It is strongly recommended to keep this field to 250 characters or less.",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "desc": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "id": "d-1001",
+              "origin": "examplessp.com",
+              "terms": {}
+            }
+          },
+          {
+            "value": {
+              "desc": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀",
+              "id": "d-1001",
+              "origin": "examplessp.com",
+              "terms": {}
+            }
+          }
+        ],
+        "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/documents/1/deal.json",
+        "type": "Deal",
+        "valid": [
+          {
+            "value": {
+              "desc": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "id": "d-1001",
+              "origin": "examplessp.com",
+              "terms": {}
+            }
+          },
+          {
+            "value": {
+              "desc": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀",
+              "id": "d-1001",
+              "origin": "examplessp.com",
+              "terms": {}
+            }
+          },
+          {
+            "value": {
+              "id": "d-1001",
+              "origin": "examplessp.com",
+              "terms": {}
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Deal.wseat"
+      ],
+      "decisions": [
+        "D-016"
+      ],
+      "id": "rule:object-deal:c221f2e9",
+      "level": "SHOULD",
+      "owner": "Deal",
+      "severity": "warning",
+      "sources": [
+        "field:object-deal:wseat",
+        "rule:object-deal:c221f2e9"
+      ],
+      "statement": "At most, only one of `wseat` and `bseat` should be used in the same request.",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "bseat": [
+                "seat-2"
+              ],
+              "id": "d-1001",
+              "origin": "examplessp.com",
+              "terms": {},
+              "wseat": [
+                "seat-1"
+              ]
+            }
+          },
+          {
+            "value": {
+              "bseat": [],
+              "id": "d-1001",
+              "origin": "examplessp.com",
+              "terms": {},
+              "wseat": []
+            }
+          }
+        ],
+        "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/documents/1/deal.json",
+        "type": "Deal",
+        "valid": [
+          {
+            "value": {
+              "id": "d-1001",
+              "origin": "examplessp.com",
+              "terms": {},
+              "wseat": [
+                "seat-1"
+              ]
+            }
+          },
+          {
+            "value": {
+              "bseat": [
+                "seat-2"
+              ],
+              "id": "d-1001",
+              "origin": "examplessp.com",
+              "terms": {}
+            }
+          },
+          {
+            "value": {
+              "id": "d-1001",
+              "origin": "examplessp.com",
+              "terms": {}
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Inventory.sellerids"
+      ],
+      "decisions": [
+        "D-022"
+      ],
+      "id": "rule:object-inventory:2b2c54b3",
+      "level": "SHOULD",
+      "owner": "Inventory",
+      "severity": "warning",
+      "sources": [
+        "field:object-inventory:sellerids",
+        "rule:object-inventory:2b2c54b3"
+      ],
+      "statement": "Should be limited to 64 characters in length.",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "sellerids": [
+                "pub-1",
+                "sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"
+              ]
+            }
+          },
+          {
+            "value": {
+              "sellerids": [
+                "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀"
+              ]
+            }
+          }
+        ],
+        "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/Inventory",
+        "type": "Inventory",
+        "valid": [
+          {
+            "value": {
+              "sellerids": [
+                "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+                "pub-2"
+              ]
+            }
+          },
+          {
+            "value": {
+              "sellerids": []
+            }
+          },
+          {
+            "value": {
+              "sellerids": [
+                "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Terms.totalcost"
+      ],
+      "decisions": [
+        "D-020"
+      ],
+      "id": "rule:object-terms:1267dc65",
+      "level": "SHOULD",
+      "owner": "Terms",
+      "severity": "warning",
+      "sources": [
+        "field:object-terms:totalcost",
+        "rule:object-terms:1267dc65"
+      ],
+      "statement": "If the deal is guaranteed, this value should be provided.",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "guar": 1,
+              "units": 1000000
+            }
+          }
+        ],
+        "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/Terms",
+        "type": "Terms",
+        "valid": [
+          {
+            "value": {
+              "guar": 1,
+              "totalcost": 5000,
+              "units": 1000000
+            }
+          },
+          {
+            "value": {
+              "guar": 0,
+              "units": 1000000
+            }
+          },
+          {
+            "value": {}
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Terms.units"
+      ],
+      "decisions": [
+        "D-020"
+      ],
+      "id": "rule:object-terms:ab3aa10d",
+      "level": "SHOULD",
+      "owner": "Terms",
+      "severity": "warning",
+      "sources": [
+        "field:object-terms:units",
+        "rule:object-terms:ab3aa10d"
+      ],
+      "statement": "If the deal is guaranteed, this number should be provided.",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "guar": 1,
+              "totalcost": 5000
+            }
+          }
+        ],
+        "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/Terms",
+        "type": "Terms",
+        "valid": [
+          {
+            "value": {
+              "guar": 1,
+              "totalcost": 5000,
+              "units": 1000000
+            }
+          },
+          {
+            "value": {
+              "guar": 0
+            }
+          },
+          {
+            "value": {}
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Terms"
+      ],
+      "decisions": [
+        "D-007"
+      ],
+      "id": "rule:terms-object-1:647b6593",
+      "level": "MUST",
+      "owner": "Terms",
+      "severity": "error",
+      "sources": [
+        "rule:terms-object-1:647b6593"
+      ],
+      "statement": "Price attribute must be provided if the deal is a fixed price deal, especially if it's a programmatic guaranteed deal, but otherwise can be used as pricing guidance or not provided at all if there is no pricing guidance (for example, for a Run-of-Exchange deal where there is no pricing guidance)",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "pricetype": 3
+            }
+          },
+          {
+            "value": {
+              "guar": 1,
+              "pricetype": 3,
+              "totalcost": 5000,
+              "units": 1000000
+            }
+          }
+        ],
+        "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/as-written/modules/deal/1/deal.json#/$defs/Terms",
+        "type": "Terms",
+        "valid": [
+          {
+            "value": {
+              "dealfloor": 2.5,
+              "pricetype": 3
+            }
+          },
+          {
+            "value": {
+              "pricetype": 1
+            }
+          },
+          {
+            "value": {}
+          }
+        ]
+      }
+    }
+  ]
+}

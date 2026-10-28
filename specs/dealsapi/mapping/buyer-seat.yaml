@@ -1,0 +1,56 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: buyer-seat
+sections: [ receiver-endpoint, object-buyerseat, object-buyerstatus ]
+types:
+  - name: BuyerSeat
+    kind: document
+    ir: field:object-buyerseat:version
+    source: { rule: document-owner }
+  - name: BuyerStatus
+    kind: object
+    ir: field:object-buyerstatus:buyerseatid
+    source: { rule: held-object }
+    open: false
+entries:
+  - ir: field:object-buyerseat:version
+    digest: 5d8347a4aab6be0ffe130b75daacb6b2f8256fb276f5650f58178098ce88baec
+    source: { rule: domain-row }
+    as: { role: property, object: BuyerSeat, type: { kind: named, name: ExternalId }, presence: required }
+  - ir: field:object-buyerseat:id
+    digest: 5c05c04b0c154b57aed8809bba4a456224e9f73ee22cbc43f894abe5a06cb316
+    source: { rule: domain-row }
+    as: { role: property, object: BuyerSeat, type: { kind: named, name: ExternalId }, presence: required }
+  - ir: rule:object-buyerseat:be619ed4
+    digest: 86ea2e48e965aab405c043acad4199e9b53e8c1ebff4a5db745978740a2edbb4
+    source: { decision: D-026 }
+    as: { role: rule, object: BuyerSeat }
+  - ir: field:object-buyerseat:buyerstatus
+    digest: 5038fc294dbe88abe4cb2e9ca459b2fd103038dec958ed846f5fcbaa959350bf
+    source: { rule: held-object-field }
+    as:
+      role: property
+      object: BuyerSeat
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: BuyerStatus } } }
+      presence: optional
+  - ir: field:object-buyerseat:ext
+    digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+    source: { decision: D-021 }
+    as: { role: property, object: BuyerSeat, type: { kind: named, name: Ext }, presence: optional }
+  - ir: field:object-buyerstatus:buyerseatid
+    digest: 2ae010783c34370a10304479cc9eef7d4b338ba61f035c1d234a907165ef3517
+    source: { rule: domain-row }
+    as: { role: property, object: BuyerStatus, type: { kind: named, name: ExternalId }, presence: optional }
+  - ir: field:object-buyerstatus:status
+    digest: 67c40cf27fbe1bff3aaa5a6d84e98c469e1f6ae0dc7006d060bf4100d6c78310
+    source: { rule: enum-row }
+    as: { role: property, object: BuyerStatus, type: { kind: named, name: BuyerDealStatus }, presence: optional }
+  - ir: field:object-buyerstatus:status#description/values:1
+    digest: 5b918970fa29b9656907c682521a48643bcd46a2062c468d61731738435c0ddc
+    source: { decision: D-031 }
+    as: { role: type, name: BuyerDealStatus, layer: vocabulary, open: false }
+  - ir: field:object-buyerstatus:ext
+    digest: d77fd0190a84fd80548a33546659284d5320efe14c9aee797814d7b647b28f0c
+    source: { decision: D-021 }
+    as: { role: property, object: BuyerStatus, type: { kind: named, name: Ext }, presence: optional }

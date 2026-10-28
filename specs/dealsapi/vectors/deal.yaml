@@ -1,0 +1,72 @@
+# Rule vectors for the Deal, Terms, Inventory, and Curation tables. Regenerate
+# a digest with `npm run cite -- --lock specs/dealsapi/spec-input/spec-lock.yaml
+# --all-locks <rule ID>`.
+format: 1
+module: deal
+rules:
+  # `desc`: "keep this field to 250 characters or less", counted in characters, so 250
+  # emoji, which are 500 UTF-16 units, keep it (D-022).
+  - rule: rule:object-deal:5e652de0
+    digest: 54096569218ba72f98e4f31ef1179f78c604e9047a0efd4cf794767b900c0813
+    decision: D-022
+    valid:
+      - { value: { id: d-1001, origin: examplessp.com, terms: {}, desc: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" } }
+      - { value: { id: d-1001, origin: examplessp.com, terms: {}, desc: "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀" } }
+      - { value: { id: d-1001, origin: examplessp.com, terms: {} } }
+    invalid:
+      - { value: { id: d-1001, origin: examplessp.com, terms: {}, desc: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" } }
+      - { value: { id: d-1001, origin: examplessp.com, terms: {}, desc: "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀" } }
+  # At most one of `wseat` and `bseat` in one deal (D-016).
+  - rule: rule:object-deal:c221f2e9
+    digest: 34e2b9506040e8a69c1ee546c635ff4fc9f6fdba9162d4aa343b9eb09674a540
+    decision: D-016
+    valid:
+      - { value: { id: d-1001, origin: examplessp.com, terms: {}, wseat: [seat-1] } }
+      - { value: { id: d-1001, origin: examplessp.com, terms: {}, bseat: [seat-2] } }
+      - { value: { id: d-1001, origin: examplessp.com, terms: {} } }
+    invalid:
+      - { value: { id: d-1001, origin: examplessp.com, terms: {}, wseat: [seat-1], bseat: [seat-2] } }
+      - { value: { id: d-1001, origin: examplessp.com, terms: {}, wseat: [], bseat: [] } }
+  # `inventory` only while `dinventory` is 1 (D-015).
+  - rule: rule:object-deal:1ff4e5fa
+    digest: 6c1111d87370844130ee3a365a285cbd7ff28e7a11bea1c93f53fac5d211920d
+    decision: D-015
+    valid:
+      - { value: { id: d-1001, origin: examplessp.com, terms: {}, dinventory: 1, inventory: { sitedomains: [examplepub.com] } } }
+      - { value: { id: d-1001, origin: examplessp.com, terms: {}, dinventory: 2 } }
+      - { value: { id: d-1001, origin: examplessp.com, terms: {} } }
+    invalid:
+      - { value: { id: d-1001, origin: examplessp.com, terms: {}, dinventory: 2, inventory: { sitedomains: [examplepub.com] } } }
+      - { value: { id: d-1001, origin: examplessp.com, terms: {}, dinventory: 0, inventory: {} } }
+      - { value: { id: d-1001, origin: examplessp.com, terms: {}, inventory: {} } }
+  # A guaranteed deal's `units` (D-020).
+  - rule: rule:object-terms:ab3aa10d
+    digest: 157d667ffd56816a8c0fef50497af79cf91e4a845a234c4330648f9b3e2e1b51
+    decision: D-020
+    valid:
+      - { value: { guar: 1, units: 1000000, totalcost: 5000 } }
+      - { value: { guar: 0 } }
+      - { value: {} }
+    invalid:
+      - { value: { guar: 1, totalcost: 5000 } }
+  # A guaranteed deal's `totalcost` (D-020).
+  - rule: rule:object-terms:1267dc65
+    digest: f8fcf07f9ff22f939fddbbbfc2c61058d7377f5a6a6b43b361ad5d94f027c059
+    decision: D-020
+    valid:
+      - { value: { guar: 1, units: 1000000, totalcost: 5000 } }
+      - { value: { guar: 0, units: 1000000 } }
+      - { value: {} }
+    invalid:
+      - { value: { guar: 1, units: 1000000 } }
+  # Each `sellerids` value at most 64 characters (D-022).
+  - rule: rule:object-inventory:2b2c54b3
+    digest: c1e63cf5444fd85c48f4952c08b497e603aff6a4595f0416fc844f239230c8b9
+    decision: D-022
+    valid:
+      - { value: { sellerids: ["ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss", pub-2] } }
+      - { value: { sellerids: [] } }
+      - { value: { sellerids: ["😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀"] } }
+    invalid:
+      - { value: { sellerids: [pub-1, "sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"] } }
+      - { value: { sellerids: ["😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀"] } }

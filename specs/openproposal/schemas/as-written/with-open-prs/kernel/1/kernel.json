@@ -131,9 +131,17 @@
       "type": "string"
     },
     "IntegerFlag": {
-      "description": "A yes or no, written as the integer `0` (no) or `1` (yes), as AdCOM 1.0 and OpenRTB 2.6 write the flag of the same name.",
-      "maximum": 1,
-      "minimum": 0,
+      "description": "A yes or no written as an integer, `0` for no and `1` for yes, as AdCOM 1.0 and OpenRTB 2.6 write their flags, such as a placement's `instl`. A receiver reads it as a flag, never as a count, and a field that takes it keeps the integer its text writes.",
+      "oneOf": [
+        {
+          "const": 0,
+          "title": "No"
+        },
+        {
+          "const": 1,
+          "title": "Yes"
+        }
+      ],
       "type": "integer"
     },
     "Measure": {

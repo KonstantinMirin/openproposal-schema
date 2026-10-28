@@ -17,9 +17,10 @@ import { TYPE_EXAMPLES_FILE, typeExamplesDirOf, type TypeExamplesDoc } from "../
 import { named } from "../../site/config.ts";
 import { decisionNumbers, sourceInfos, type SiteInputs } from "../../site/data.ts";
 import { esc, inline, page } from "../../site/html.ts";
-import { pipelineFigure } from "../../site/method.ts";
-import { mapLink } from "../../site/pages.ts";
+import { DESIGN_NOTES_TOC, designNotes, pipelineFigure } from "../../site/method.ts";
+import { mapLink } from "../../site/route.ts";
 import type { SiteCopy } from "../../site/copy.ts";
+import { stands } from "../../mapping.ts";
 
 const short = (sha: string) => sha.slice(0, 7);
 const commitUrl = (lock: SpecLock, sha: string) => `${lock.upstream}/commit/${sha}`;
@@ -27,8 +28,8 @@ const prUrl = (lock: SpecLock, pr: number) => `${lock.upstream}/pull/${pr}`;
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
 function counts(inputs: SiteInputs) {
-  const gaps = inputs.decisions.filter((d) => d.kind === "gap" && d.status !== "superseded").length;
-  const departures = inputs.decisions.filter((d) => d.kind === "departure" && d.status !== "superseded").length;
+  const gaps = inputs.decisions.filter((d) => d.kind === "gap" && stands(d)).length;
+  const departures = inputs.decisions.filter((d) => d.kind === "departure" && stands(d)).length;
   return { gaps, departures, total: gaps + departures };
 }
 
@@ -159,8 +160,8 @@ export function methodPage(inputs: SiteInputs): string {
   const model = build.model;
   const ir = inputs.irs.get(lock.name)!;
   const counts = ir.counts as Record<string, number>;
-  const gaps = inputs.decisions.filter((d) => d.kind === "gap" && d.status !== "superseded").length;
-  const departures = inputs.decisions.filter((d) => d.kind === "departure" && d.status !== "superseded").length;
+  const gaps = inputs.decisions.filter((d) => d.kind === "gap" && stands(d)).length;
+  const departures = inputs.decisions.filter((d) => d.kind === "departure" && stands(d)).length;
   const domains = inputs.kernel.domains?.domains ?? [];
   const concepts = domains.reduce((n, d) => n + d.concepts.length, 0);
   let byRule = 0;
@@ -204,6 +205,7 @@ export function methodPage(inputs: SiteInputs): string {
     ["variants", "Variants and inputs"],
     ["sdk", "The SDK types"],
     ["example", "One field, end to end"],
+    DESIGN_NOTES_TOC,
     ["reproduce", "How to reproduce it"],
   ];
 
@@ -287,7 +289,7 @@ ${pipelineFigure()}
 <p>The emitter turns the model into JSON Schema 2020-12. The schemas use standard keywords only, so any validator reads them the same way.</p>
 <ul>
 <li>No custom keywords: no <code>x-</code> keys, no <code>discriminator</code>, and no <code>$dynamicRef</code>.</li>
-<li><code>oneOf</code> only for a tagged union, where every branch has a required <code>const</code> member that names it.</li>
+<li><code>oneOf</code> only for a tagged union, where every branch has a required <code>const</code> member that names it, and for an integer code list, one titled <code>const</code> per code (see the <a href="#design">design notes</a>).</li>
 <li><code>anyOf</code> for an open vocabulary, and for the untagged unions the draft requires, such as the choice between an inline value and a <code>catalog_ref</code>. Our feedback lists each untagged union as a place where the specification should add a tag.</li>
 <li><code>if</code> / <code>then</code> for a condition, such as a currency that is required when <code>basis</code> is <code>spend</code>, and <code>dependentRequired</code> for a member another member requires.</li>
 <li>No <code>allOf</code>: objects are named and referenced whole, so no schema inherits from another.</li>
@@ -349,6 +351,8 @@ ${pipelineFigure()}
 <li><h3>The example value</h3><p>The type examples take each value from the specification's own examples where the schema accepts it${exampleFile ? `, here <code>${esc(exampleFile)}</code>` : ""}. <a href="${m(EXAMPLE.document, "example")}">See it in <code>LineItem</code>'s example</a>.</p>${json({ [EXAMPLE.field]: value })}</li>
 </ol>
 </section>
+
+${designNotes({ codes: `With the open PRs, the placement keys this specification copies from AdCOM 1.0 take integer codes, such as <code>plcmt</code>'s <code>1</code> for Instream.`, flags: `With the open PRs, § 5.2.2's <code>reward</code>, <code>instl</code>, and <code>skip</code> copy AdCOM's <code>0</code> | <code>1</code>, so they are <code>IntegerFlag</code>. A flag this specification defines for itself, such as <code>hold_available</code>, stays the JSON boolean its text writes.` })}
 
 <section id="reproduce">
 <h2>How to reproduce it</h2>

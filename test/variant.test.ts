@@ -109,8 +109,12 @@ test("the rule vectors are converted to the written forms, and a withheld member
   const vectors = loadVectors(join(SPEC, VECTORS_DIR));
   const r = PRS_WRITTEN.vectors(vectors);
   assert.deepEqual(r.problems, []);
-  const entry = r.vectors.flatMap((f) => f.rules).find((e) => e.rule === "rule:5.2:f3d3f9e8")!;
-  assert.ok(JSON.stringify(entry.valid).includes('"instl":1'), "true is 1 as written");
+  // D-041's conversion: a namespaced basis is the bare term the text writes.
+  const entry = r.vectors.flatMap((f) => f.rules).find((e) => e.rule === "rule:5.7:4994173c")!;
+  const source = vectors.flatMap((f) => f.rules).find((e) => e.rule === "rule:5.7:4994173c")!;
+  assert.match(JSON.stringify(source), /"basis":"measure\.example:impressions"/, "the vectors write the namespaced term");
+  assert.match(JSON.stringify(entry), /"basis":"impressions"/, "the namespaced term is the bare term as written");
+  assert.doesNotMatch(JSON.stringify(entry), /measure\.example:impressions/);
   const omid = r.vectors.flatMap((f) => f.rules).find((e) => e.rule === "rule:5.2.2:f9a1a6d5")!;
   assert.doesNotMatch(JSON.stringify(omid.valid), /"id":/, "a measurement source carries no id as written");
   const metrics = r.vectors.flatMap((f) => f.rules).find((e) => e.rule === "rule:5.7:4994173c")!;

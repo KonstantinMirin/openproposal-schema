@@ -145,7 +145,8 @@ rationale: >-
   states them: `CostMethod`, `PlcmtSubtype`, `ExclusionType`, `Enforcement`,
   `Metric`, and `ExternalReferenceRole`. A list that restates another, such as
   the store platforms twice, is the same vocabulary, `StorePlatform`. The
-  three `0` | `1` lists of § 5.2.2 are flags, not a vocabulary (D-039).
+  three `0` | `1` lists of § 5.2.2 are flags, not a vocabulary: the
+  integers `0` (no) and `1` (yes) that AdCOM 1.0 writes.
 feedback: >-
   Name each value list once, as a type, so that schemas and SDKs share one
   name for it. The `status`, `type`, and `basis` fields each carry two or more

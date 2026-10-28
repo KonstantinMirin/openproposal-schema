@@ -1,0 +1,31 @@
+format: 1
+id: D-006
+status: proposed
+kind: gap
+author: agent
+question: "Must a deal that sends `dealfloor` or `totalcost` also send `cur`, when `cur` defaults to \"USD\"?"
+covers:
+  - ir: field:object-terms:cur
+    digest: b5e0a9eb31eac74f657557986f97aae80b5be5963393228c78cf24e65fc31c61
+    quote: "`cur` | string; default \"USD\" | Bid currency using ISO-4217 alpha codes."
+options:
+  - id: default-satisfies
+    summary: >-
+      No: `cur` absent is "USD", so the money always has a currency; the
+      schema states the default and requires nothing more.
+  - id: require
+    summary: >-
+      Yes: every money value carries its currency beside it, so `cur` is
+      required with `dealfloor` or `totalcost`, and its default is never
+      used.
+chosen: default-satisfies
+rationale: >-
+  The text gives `cur` a default, so a deal that leaves it out is in US
+  dollars, and its money is never without a currency. Requiring `cur` anyway
+  would reject deals the text allows. The schema writes `default: "USD"`,
+  which a receiver reads when `cur` is absent.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L112"
+feedback: >-
+  None needed: the default settles it. A receiver must apply "USD" when
+  `cur` is absent, so the text could say so beside the default.

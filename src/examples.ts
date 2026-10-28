@@ -39,7 +39,7 @@ import { baseOf, schemaIdOf } from "./emit.ts";
 import { ORACLE_REQUIREMENTS, pinnedOracle } from "./engines.ts";
 import { materializeExamples } from "./fetch.ts";
 import type { SpecLock } from "./lock.ts";
-import { inScope, readYaml, type DecisionRecord } from "./mapping.ts";
+import { inScope, readYaml, retired, stands, type DecisionRecord } from "./mapping.ts";
 import { exampleFilesOf } from "./mapping-rules.ts";
 import type { ModelDoc, ModelType } from "./model.ts";
 import { compileSchema } from "./pipeline.ts";
@@ -636,6 +636,7 @@ export function checkFindings(failures: Failure[], recorded: FindingsFile, lock:
     for (const id of r.decisions) {
       const decision = decisions.find((d) => d.id === id);
       if (!decision) problems.push(`${recorded.file}: ${keyOf(f)} cites "${id}", which is no decision record`);
+      else if (!stands(decision)) problems.push(`${recorded.file}: ${keyOf(f)} cites "${id}", which is ${retired(decision)}`);
       else if (f.elements.length > 0 && !decision.covers.some((c) => inScope(c.locks, lock) && f.elements.includes(c.ir))) {
         problems.push(`${recorded.file}: ${keyOf(f)} cites ${id}, which covers none of ${f.elements.join(", ")} on lock "${lock}"`);
       }
@@ -672,6 +673,7 @@ export function checkUndecided(undecided: Undecided[], recorded: FindingsFile, l
     for (const id of r.decisions) {
       const decision = decisions.find((d) => d.id === id);
       if (!decision) problems.push(`${recorded.file}: undecided ${keyOf(u)} cites "${id}", which is no decision record`);
+      else if (!stands(decision)) problems.push(`${recorded.file}: undecided ${keyOf(u)} cites "${id}", which is ${retired(decision)}`);
       else if (!decision.covers.some((c) => inScope(c.locks, lock) && u.elements.includes(c.ir))) problems.push(`${recorded.file}: undecided ${keyOf(u)} cites ${id}, which covers none of ${u.elements.join(", ")} on lock "${lock}"`);
     }
   }

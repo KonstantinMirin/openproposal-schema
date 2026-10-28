@@ -1,0 +1,16 @@
+format: 1
+id: G-129
+date: 2026-10-28
+question: What changes in the gates when D-039's withdrawal reason is shortened to two sentences for the posted report?
+decision: >-
+  D-039's withdrawal reason now reads "§ 5.2.2's keys follow AdCOM 1.0,
+  which writes `reward`, `instl`, and `skip` as `0` (no) or `1` (yes). The
+  schemas keep those integers.", two sentences each under 26 words, as the
+  filing rule asks. The feedback test pins the reason whole. Only the
+  Withdrawn line of item 41 in OpenProposal's details.md and its
+  feedback.json change; comment.md, whose item 41 lists the question, is
+  unchanged.
+rationale: >-
+  No check changes; the test that reads the reason now pins its text.
+accepts:
+  - { gate: npm-test, fingerprint: ee51582e28fa8b34785eacbc6fa26b834910c63f0401bbbbbed26526dca54696 }

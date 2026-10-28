@@ -42,7 +42,7 @@
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/token" }
+          "items": { "$ref": "#/$defs/lockName" }
         },
         "decision": {
           "description": "The decision record behind the vectors' reading of the rule. It must cover the rule's element.",
@@ -118,6 +118,11 @@
     "token": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "lockName": {
+      "description": "A lock's name, which may hold a dot where its tag does, as `tag-1.0-202602`.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*([-.][a-z0-9]+)*$"
     }
   }
 }

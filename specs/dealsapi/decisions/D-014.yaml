@@ -1,0 +1,31 @@
+format: 1
+id: D-014
+status: proposed
+kind: gap
+author: agent
+question: "Are `adtypes`' and `inclinventory`'s codes kept as written, though both name audio and `inclinventory` names an undefined \"endemic\"?"
+covers:
+  - ir: field:object-deal:adtypes#description/values:1
+    digest: c450f513d0156df7705444e2842eafed98660ec654150c96fd98ce98e8edb20f
+    quote: "`1` (Banner) | `2` (Video) | `3` (Audio) | `4` (Native)"
+  - ir: field:object-inventory:inclinventory#description/values:1
+    digest: 96b041c3c80699d7935cc53fe8d9c0282179d17bba1086ae658e57bce9588d15
+    quote: "`1` (site) | `2` (app) | `3` (dooh) | `4` (audio) | `5` (endemic) | `6` (other)"
+options:
+  - id: as-written
+    summary: >-
+      Both lists keep their codes and labels as written, each its own list.
+  - id: merge
+    summary: >-
+      Audio is one kind, so one list holds it, and endemic is left out until
+      it is defined.
+chosen: as-written
+rationale: >-
+  The lists answer different questions, the creative's format and the
+  inventory's kind, so each keeps its codes; a deal may say audio in both.
+  "Endemic" stays code 5 with its label, since the schema can't define it.
+evidence:
+  - "https://github.com/IABTechLab/deal-api/blob/3028ddcb8d5faea44bdab272aeaa9be6b5980f81/deal1.0.md#L126"
+feedback: >-
+  Define "endemic" in `inclinventory`, and say how audio in `inclinventory`
+  relates to audio in `adtypes`.

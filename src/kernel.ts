@@ -5,7 +5,7 @@ import { installFormats } from "./formats.ts";
 import type { NamedStructure } from "./duplication.ts";
 import { indexElements } from "./elements.ts";
 import type { SpecIR } from "./ir-types.ts";
-import { checkCovers, readYaml, type Cover, type DecisionRecord, type MappingFile } from "./mapping.ts";
+import { checkCovers, readYaml, type Cover, type DecisionRecord, type MappingFile, stands, retired } from "./mapping.ts";
 import { compileSchema } from "./pipeline.ts";
 import { loadDomains, type Domains } from "./domains.ts";
 import { checkListCopies } from "./list-copies.ts";
@@ -27,7 +27,12 @@ export interface Constraints {
   exclusiveMinimum?: number;
   exclusiveMaximum?: number;
   enum?: string[];
+  /** An integer primitive's codes, each a titled const branch, as `IntegerFlag`'s `0` (No) and `1` (Yes). */
+  oneOf?: { const: number; title: string; description?: string }[];
 }
+
+/** The values a primitive lists, its `enum`'s strings or its titled codes, or null for one that lists none. */
+export const listedValues = (p: Pick<Primitive, "constraints">): (string | number)[] | null => p.constraints.enum ?? p.constraints.oneOf?.map((b) => b.const) ?? null;
 
 export interface KernelRule {
   id: string;
@@ -243,13 +248,13 @@ export function designCheck(root: string, problems: string[]): (where: string, s
   };
 }
 
-/** Returns a check that a cited decision exists and isn't superseded. Each failure is pushed to `problems`. */
+/** Returns a check that a cited decision exists and stands. Each failure is pushed to `problems`. */
 export function decisionCheck(decisions: DecisionRecord[], problems: string[]): (where: string, id: string) => void {
   const byId = new Map(decisions.map((d) => [d.id, d]));
   return (where, id) => {
     const d = byId.get(id);
     if (!d) problems.push(`${where}: cites decision "${id}", which doesn't exist`);
-    else if (d.status === "superseded") problems.push(`${where}: cites "${d.id}", which is superseded by "${d.superseded_by}"`);
+    else if (!stands(d)) problems.push(`${where}: cites "${d.id}", which is ${retired(d)}`);
   };
 }
 
@@ -271,7 +276,7 @@ export function kernelStructures(kernel: Kernel): NamedStructure[] {
  * - every rule's ID names its own primitive and is unique, and the schema
  *   accepts all of a rule's vectors, so the rule adds what the schema can't;
  * - each design source names an existing heading of an existing document;
- * - a decision cited by a primitive or a rule exists and isn't superseded.
+ * - a decision cited by a primitive or a rule exists and stands.
  *
  * The duplication gate runs separately, on `kernelStructures`.
  */
