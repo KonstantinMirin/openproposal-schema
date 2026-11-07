@@ -1,0 +1,157 @@
+{
+  "$defs": {
+    "Agreement": {
+      "additionalProperties": false,
+      "properties": {
+        "agreement_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "The agreement's id"
+        },
+        "agreement_type": {
+          "$ref": "#/$defs/AgreementAgreementType",
+          "description": "Core terms: `upfront` | `annual` | `master_services`. A receiver that doesn't know the term still reads the `agreement`"
+        },
+        "document": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/DocumentRef",
+          "description": "The agreement, where the parties pin it"
+        },
+        "parties": {
+          "description": "The agreement's parties",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Party"
+          },
+          "type": "array"
+        },
+        "term": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Interval",
+          "description": "When the agreement runs"
+        }
+      },
+      "required": [
+        "agreement_id"
+      ],
+      "type": "object"
+    },
+    "AgreementAgreementType": {
+      "anyOf": [
+        {
+          "enum": [
+            "upfront",
+            "annual",
+            "master_services"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "Billing": {
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "invoice_period": {
+            "const": "cycle"
+          }
+        },
+        "required": [
+          "invoice_period"
+        ]
+      },
+      "properties": {
+        "cycle_length": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Duration",
+          "description": "How long each `cycle` period runs, such as `P28D` (4 weeks)"
+        },
+        "delivering_party": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Party",
+          "description": "Who delivers. Absent: the `seller`"
+        },
+        "invoice_period": {
+          "$ref": "#/$defs/BillingInvoicePeriod",
+          "description": "The invoice period (§ 5.7.1). Core terms: `month` (default) | `cycle`"
+        },
+        "invoicing_party": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Party",
+          "description": "Who invoices. Absent: the `seller`"
+        },
+        "payment_terms": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "The payment terms, such as `net 30`"
+        },
+        "time_zone": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/IanaZone",
+          "description": "The clock for a `month` invoice period. Absent: `UTC`"
+        }
+      },
+      "then": {
+        "required": [
+          "cycle_length"
+        ]
+      },
+      "type": "object"
+    },
+    "BillingInvoicePeriod": {
+      "anyOf": [
+        {
+          "enum": [
+            "month",
+            "cycle"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "ExternalReference": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "The id"
+        },
+        "namespace": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "The namespace of the id in that system"
+        },
+        "reference_type": {
+          "$ref": "#/$defs/ExternalReferenceReferenceType",
+          "description": "What the id names. Core terms: `order` | `line` | `agreement` | `deal`. `order`: the order that books the line item, such as an OpenDirect Order or an IO. `line`: the line in that order, such as an OpenDirect Line. `agreement`: a buyer-held agreement id. `deal`: the deal ID that bid requests carry, with `system` set to `deal_origin`. It is the Deals API `id` and the OpenRTB 2.6 `Deal.id`, whether `deal_origin` assigned it or accepted it from the seller. An ID that bid requests don't carry, such as the origin's internal record ID, is not a `deal` entry. A receiver that doesn't know the term ignores the entry"
+        },
+        "system": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "The system that holds the id"
+        }
+      },
+      "required": [
+        "id",
+        "reference_type",
+        "system"
+      ],
+      "type": "object"
+    },
+    "ExternalReferenceReferenceType": {
+      "anyOf": [
+        {
+          "enum": [
+            "order",
+            "line",
+            "agreement",
+            "deal"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/modules/settlement/1/settlement.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `settlement` module: the vocabularies, objects, unions, and constructor copies of § 5.10.",
+  "title": "settlement"
+}

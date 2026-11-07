@@ -8,9 +8,11 @@ covers:
   - ir: field:4.2:specifications
     digest: 2557955239ae4bfb7f4a786063ac4250508c2541bc86198ff12bf1a00c56b0f0
     quote: "`specifications` | String/Object | seller-set | Structured detail at media-kit depth"
+    locks: [main, with-open-prs]
   - ir: field:5.4:materials_due
     digest: cfa54510f53148d77ef0133fffea985d275148ab926796713470f40d9827f5b2
     quote: "`materials_due` | Timestamp/Offset | requestable | Deadline for creative to land. A buyer MAY request a later date"
+    locks: [main, with-open-prs]
 options:
   - id: union
     summary: "Either type: an untagged union (`anyOf`) of the two named types, with Offset read as an ISO 8601 duration."

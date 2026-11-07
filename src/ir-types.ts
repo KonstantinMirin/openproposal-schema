@@ -77,7 +77,9 @@ export interface Field extends Hosted {
   /** The mutability marker, for a text whose field rows carry one (`features.markers` in the profile). */
   marker?: string;
   description: Text;
-  /** The presence the row states: in a description sentence that starts with REQUIRED, RECOMMENDED, or OPTIONAL, or in the Type cell. */
+  /** The Required cell as written and parsed, for a layout with a Required column, as the stack's field tables. */
+  required?: { raw: string; parsed: Presence };
+  /** The presence the row states: in its Required cell, in a description sentence that starts with REQUIRED, RECOMMENDED, or OPTIONAL, or in the Type cell. */
   presence: Presence | null;
   digest: string;
   loc: Loc;
@@ -91,6 +93,10 @@ export interface Key extends Hosted {
   meaning: Text;
   /** The type cell as written, where the layout has a type column, as AdCOM's attribute tables do. */
   type?: Text;
+  /** The type cell as the plugin's type grammar parses it, where the layout parses its type column, as the stack's key tables do. */
+  type_expr?: TypeExpr;
+  /** The mutability marker, where the layout has a marker column, as the stack's `… | Meaning | Mutability`. */
+  marker?: string;
   /** The external-standard mapping column, where the table has one. */
   mapping: (Text & { column: string }) | null;
   digest: string;
@@ -223,6 +229,8 @@ export interface AppendixARow {
   section_cell: string;
   section_number: string | null;
   type: { raw: string; parsed: TypeExpr | null };
+  /** The Required cell as written, for an appendix with a Required column, as the stack's. */
+  required?: string;
   marker: string;
   digest: string;
   loc: Loc;

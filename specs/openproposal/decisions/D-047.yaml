@@ -8,27 +8,35 @@ covers:
   - ir: key:3.1:included[]
     digest: 8ec666d51bf96c60f03793156f832384d83126b7e98f3112259b423bc624b78b
     quote: "`included[]` | REQUIRED | Which options are in the base rate. MAY be empty"
+    locks: [main, with-open-prs]
   - ir: key:3.1:pricing
     digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
     quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+    locks: [main, with-open-prs]
   - ir: field:5.4:production
     digest: 0168284e2ec3d43c2249add202b7c657a7a4b37fe78ccfbf2cee694a3e76d199
     quote: "`production` | Object | selectable | Custom units. `available[]` of build options with `pricing` and `lead_time`; `{ custom_unit, build_owner, lead_time, cost }`"
+    locks: [main, with-open-prs]
   - ir: field:5.4:production#description/object:1
     digest: 00eb00879b4a550444376e9812df5389c4a7066a43b48982f04bc6f35974f62d
     quote: "{ custom_unit, build_owner, lead_time, cost }"
+    locks: [main, with-open-prs]
   - ir: field:5.7:measurement_source
     digest: b2908c3f817bef4cc596a8e15af373e8098053d36c37d34231eadae3e4351be5
     quote: "`measurement_source` | Object | selectable | `available[]` of `{ vendor, attribution_window, qualifier }` with `pricing`. Lets a buyer transact in its own currency"
+    locks: [main, with-open-prs]
   - ir: field:5.7:measurement_source#description/object:1
     digest: 7213fd41321c72d119261e7a84890af68599b6801c2fc5cef92127295fb4ed22
     quote: "{ vendor, attribution_window, qualifier }"
+    locks: [main, with-open-prs]
   - ir: field:5.7:reporting
     digest: a3b05974750ac1c85b48f1edc5b0d8413d6ee3782abf19663dcc88605c30830e
     quote: "`reporting` | Object | selectable | `available[]` of `{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency }` with `pricing`"
+    locks: [main, with-open-prs]
   - ir: field:5.7:reporting#description/object:1
     digest: 15b343617f534633524b7226be5e3f1d36fa7042fd26aa52c5fde05bc1e50adb
     quote: "{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency }"
+    locks: [main, with-open-prs]
 options:
   - id: add-id
     summary: Yes. Each of these options carries `id`, required, beside the members the text lists, and `included[]` and the `pricing` keys name the option by it.

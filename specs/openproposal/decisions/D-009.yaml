@@ -10,9 +10,11 @@ covers:
     quote: |-
       catalog_ref: "<seller_namespace>/<collection>/<entry_id>@<version>"
       example:     "examplepub/audiences/smb-decision-makers@3"
+    locks: [main, with-open-prs]
   - ir: rule:2.2:3916a8f2
     digest: 511cade5dc52dec990f091f7293a343392bae81a91404e3a81983b040edf9315
     quote: References MUST be version-pinned.
+    locks: [main, with-open-prs]
 options:
   - id: delimiters-only
     summary: Any characters except the delimiters `/` and `@`, a space, and control characters; each part non-empty.

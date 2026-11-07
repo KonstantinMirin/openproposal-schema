@@ -30,6 +30,7 @@ differences:
       is headed `apps[]`.
   - table: table:5.4:1
     row: field:5.4:production
+    locks: [main, with-open-prs]
     column: Description
     spec: "Custom units. `available[]` of build options with `pricing` and `lead_time`; `{ custom_unit, build_owner, lead_time, cost }`"
     model: "Custom units. `available[]` of build options with `pricing` and `lead_time`; `{ custom_unit, build_owner, lead_time, cost, id }`"
@@ -40,6 +41,7 @@ differences:
       it.
   - table: table:5.7:1
     row: field:5.7:measurement_source
+    locks: [main, with-open-prs]
     column: Description
     spec: "`available[]` of `{ vendor, attribution_window, qualifier }` with `pricing`. Lets a buyer transact in its own currency"
     model: "`available[]` of `{ vendor, attribution_window, qualifier, id }` with `pricing`. Lets a buyer transact in its own currency"
@@ -50,6 +52,7 @@ differences:
       it.
   - table: table:5.7:1
     row: field:5.7:reporting
+    locks: [main, with-open-prs]
     column: Description
     spec: "`available[]` of `{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency }` with `pricing`"
     model: "`available[]` of `{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency, id }` with `pricing`"

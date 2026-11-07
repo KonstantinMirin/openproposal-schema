@@ -169,6 +169,8 @@ function unionParts(name: string, recv: string, branches: Expr[], ctx: Ctx, type
     if (b.k === "param") return "Value";
     if (b.k === "ref") return b.name;
     if (b.k === "apply") return b.copy ?? b.template;
+    // A list branch, as the stack's `ExclusionList` is a list of entries or a `DocumentRef`, is the field `List`.
+    if (b.k === "list") return "List";
     ctx.problems.push(`go: ${ctx.where}: a union branch ${goType(b)} is no named type, copy, or parameter`);
     return "Invalid";
   });
@@ -279,7 +281,10 @@ function declaration(t: SdkType, ctx: Ctx, consts: Set<string>): string {
         t.open && t.values.length === 0
           ? `\tvalidateAs[NamespacedTerm](v, at, errs)`
           : t.open
-        ? `\tvalidateAnyOf(v, at, errs, func(v any, at string, errs *Errors) { checkEnum(v, at, errs, terms${t.name}...) }, validateAs[${t.extension}])`
+        ? // gofmt keeps a function literal on one line while its signature and body fit in 100 columns, so a long name breaks it.
+          `checkEnum(v, at, errs, terms${t.name}...)`.length + "func(v any, at string, errs *Errors)".length > 100
+          ? `\tvalidateAnyOf(v, at, errs, func(v any, at string, errs *Errors) {\n\t\tcheckEnum(v, at, errs, terms${t.name}...)\n\t}, validateAs[${t.extension}])`
+          : `\tvalidateAnyOf(v, at, errs, func(v any, at string, errs *Errors) { checkEnum(v, at, errs, terms${t.name}...) }, validateAs[${t.extension}])`
         : `\tcheckEnum(v, at, errs, terms${t.name}...)`;
       return `${comment(docText)}type ${t.name} ${base}
 ${enumConsts(t.name, t.values, ctx, consts)}

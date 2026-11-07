@@ -1,0 +1,645 @@
+# OpenProposal 3.0 — Example: Proposal (spec § 6.1)
+# Illustrative only. Seller names and rates are fictional.
+proposal_id:       "examplepub-us-q4-2026-omni"
+version:           2
+spec_version:      "3.0"
+seller:            { domain: "examplepub.example", legal_name: "Example Publisher US",
+                     registry_id: "reg:examplepub-digital" }   # OPTIONAL: an attestation (§ 2.2)
+type:              standard
+proposal_template_id: "examplepub-q4-omni-template"   # seller-side; buyers never resolve it
+status:            published
+offer_window:      { start: "2026-10-01T00:00:00Z", end: "2026-12-31T23:59:59Z" }
+
+# Version 1 stays retrievable, unchanged (§ 4.1.3).
+negotiation_history:
+  - { version: 1, actor: seller, action: published, paths: [],
+      at: "2026-09-22T09:00:00Z" }
+  - { version: 2, actor: seller, action: published,
+      paths: [{ line_item_id: "business-daily-display", pointer: "/creative_delivery" }],
+      at: "2026-10-03T14:12:40Z" }
+
+description: >
+  Cross-channel Example Publisher US package spanning display, video, audio,
+  and CTV. Business and financial audience skew, weekday-heavy delivery.
+media_kit_detail: >
+  Display across two business-news sites; rewarded video in a pack of puzzle
+  games; audio on a music stream; CTV via weather and sports app inventory.
+  First-party B2B and investor audiences available with clean-room activation.
+best_for:          ["B2B", "financial services", "high-income reach"]
+not_suitable_for:  ["youth", "endemic gaming"]
+seasonality_notes: "Earnings weeks carry materially higher engagement."
+
+ext:
+  examplepub.example: { package_code: "OMNI-Q4-2026" }
+
+# Each line item below is also an extract in its own file, examples/line-item-*.yaml.
+# The DOOH and podcast examples are not here: they show a buyer's composed record
+# (§ 4.1.1) of a line item issued to it (§ 4.3).
+line_items:
+  # OpenProposal 3.0 — Example: Audio line item (spec § 6.4)
+  - line_item_id:   "streaming-audio"
+    status:         published
+    channel:        audio
+    properties:     { available: [{ id: "tune-stream", name: "Tune Stream",
+                                    domains: ["tune-stream.example"],
+                                    apps: [{ store: apple_app_store, bundle: "000003",
+                                             developer_domain: "tune-stream.example" }],
+                                    child_audience: general, seller_relationship: owner,
+                                    seller_accounts: [{ asi: "ssp-a.example", sid: "pub-5001" }] }],
+                      included: ["tune-stream"] }
+    placement:      { feed: 1 }                 # Music streaming service (1) (§ 5.2.2)
+    environments:   { available: ["web_mobile", "app_mobile"],
+                      included:  ["web_mobile", "app_mobile"] }
+    formats:        { available: ["audio/host-read-30s", "audio/produced-30s"],
+                      included: ["audio/produced-30s"],
+                      deltas: { "audio/host-read-30s": { delta_cpm: 9.00 } } }
+    format_specs:                           # seller-defined: no spec_ref; values illustrative
+      "audio/host-read-30s":
+        spec:
+          asset:           script           # the buyer supplies a script, not an audio file
+          read_length_s:   30
+          language:        en
+          delivery:        pre_recorded
+          script_approval: { rounds: 2, lead_time: "P5D" }
+          voice:           human_only
+          pronunciation_guide: accepted
+      "audio/produced-30s":
+        spec:
+          asset:           audio_file
+          duration:        { nominal_s: 30, tolerance_ms: 500 }
+
+    production:
+      available:    [{ id: "seller_built", built_by: seller, lead_time: "P14D" },
+                     { id: "buyer_supplied", built_by: buyer, lead_time: "P0D" }]
+      included:     ["buyer_supplied"]
+      deltas:       { seller_built: { delta_flat: 12000.00 } }
+
+    markets:                               # priced by market (§ 5.5)
+      available:    ["US", "CA", "GB"]
+      included:     ["US"]
+      deltas:       { "CA": { delta_cpm: 1.50 }, "GB": { delta_cpm: 3.00 } }
+      max_select:   3
+
+    frequency_cap:  { count: { min: 1, max: 6, default: 3 }, period: day, per: listener }
+    time_zone:      viewer_local
+
+    pricing:
+      - { pricing_id: "audio-cpm-usd", cost_method: CPM, list_rate: 18.00, min_rate: 15.84,
+          price_valid_until: "2026-12-15T23:59:59Z", currency: USD,
+          price_type: 3 }                  # Fixed Price
+
+    commitment_bounds: { spend: { min: 5000.00 } }
+
+    cancellation_policy:
+      available:
+        - id: "stepped-fee"
+          notice_duration: "P0D"
+          max_share: 1
+          fees:
+            - { before_reference: "P60D", calculation: none }
+            - { before_reference: "P30D", calculation: cancelled, share: 0.25 }
+            - { before_reference: "P7D",  calculation: cancelled, share: 0.50 }
+            - { before_reference: "P0D",  calculation: cancelled, share: 1.00 }
+      included:     ["stepped-fee"]
+      max_select:   1
+
+    exclusivity:
+      available:
+        - id: "auto-pod"
+          scope: category
+          categories: { taxonomy: 8, ids: ["1551"] }   # Ad Product Taxonomy 2.0: Vehicles
+          competitors: ["competitor-auto.example"]
+          separation: pod
+        - { id: "sole-stream", scope: sole, separation: inventory }
+      included:     []                                 # no exclusivity in the base rate
+      deltas:       { "auto-pod": { delta_cpm: 4.00 }, "sole-stream": { delta_flat: 25000.00 } }
+      max_select:   1
+
+    committed_metrics: [{ metric: completion_rate, level: 0.92, direction: at_least }]
+    measurement_source:
+      available:    [{ id: seller-measured, measured_by: seller }]
+      included:     ["seller-measured"]
+    controlling_measurement:
+      available:    [{ id: seller-count, counted_by: seller,
+                       discrepancy_threshold: 0.10, final_after: "P30D" }]
+      included:     ["seller-count"]
+      max_select:   1
+    visibility:        public
+    transaction_mechanism:
+      available:  [{ id: preferred_deal, delivery_type: non_guaranteed }]
+      included:   ["preferred_deal"]
+      max_select: 1
+    serving_mode:      dai
+    deal_origin:       "ssp-a.example"
+
+  # OpenProposal 3.0 — Example: Live event series line item (spec § 6.11)
+  # Illustrative only. If the series ends in five games, Games 6 and 7 deliver
+  # nothing and a selected Game 7 delta_flat is not owed. The commitment still
+  # applies across the games that air (§ 5.2.9).
+  - line_item_id:   "playoffs-2026-ctv"
+    status:         published
+    channel:        ctv
+    properties:
+      available:
+        - id: "sports-app"
+          apps:
+            - { store: roku_channel_store, bundle: "000001",
+                store_url: "https://channelstore.roku.com/details/000001/sports-app",
+                developer_domain: "sports-app.example" }
+          child_audience: general
+          seller_relationship: owner
+          seller_accounts: [{ asi: "ssp-a.example", sid: "pub-2001" }]
+      included: ["sports-app"]
+    programs:                     # the content the line item serves within (§ 5.2.9)
+      available:
+        - id: "series-g1"
+          content:
+            series: "Playoffs 2026"
+            title: "Team A vs Team B, Game 1"
+            network: { id: "example-network", name: "Example Network" }
+            live: 1               # scheduled broadcast
+            realtime: 1           # happening in real time, so a replay does not match
+          schedule: { scheduledstart: "2026-12-01T00:00:00Z", scheduledend: "2026-12-01T03:00:00Z",
+                      flexibleend: 1, eventstatus: 1 }   # flexible end; scheduled
+        - id: "series-g2"
+          content:
+            series: "Playoffs 2026"
+            title: "Team A vs Team B, Game 2"
+            network: { id: "example-network", name: "Example Network" }
+            live: 1               # scheduled broadcast
+            realtime: 1           # happening in real time, so a replay does not match
+          schedule: { scheduledstart: "2026-12-03T00:00:00Z", scheduledend: "2026-12-03T03:00:00Z",
+                      flexibleend: 1, eventstatus: 1 }   # flexible end; scheduled
+        - id: "series-g3"
+          content:
+            series: "Playoffs 2026"
+            title: "Team A vs Team B, Game 3"
+            network: { id: "example-network", name: "Example Network" }
+            live: 1               # scheduled broadcast
+            realtime: 1           # happening in real time, so a replay does not match
+          schedule: { scheduledstart: "2026-12-05T00:00:00Z", scheduledend: "2026-12-05T03:00:00Z",
+                      flexibleend: 1, eventstatus: 1 }   # flexible end; scheduled
+        - id: "series-g4"
+          content:
+            series: "Playoffs 2026"
+            title: "Team A vs Team B, Game 4"
+            network: { id: "example-network", name: "Example Network" }
+            live: 1               # scheduled broadcast
+            realtime: 1           # happening in real time, so a replay does not match
+          schedule: { scheduledstart: "2026-12-07T00:00:00Z", scheduledend: "2026-12-07T03:00:00Z",
+                      flexibleend: 1, eventstatus: 1 }   # flexible end; scheduled
+        - id: "series-g5"
+          content:
+            series: "Playoffs 2026"
+            title: "Team A vs Team B, Game 5"
+            network: { id: "example-network", name: "Example Network" }
+            live: 1               # scheduled broadcast
+            realtime: 1           # happening in real time, so a replay does not match
+          schedule: { scheduledstart: "2026-12-09T00:00:00Z", scheduledend: "2026-12-09T03:00:00Z",
+                      flexibleend: 1, eventstatus: 2 }   # flexible end; tentative
+        - id: "series-g6"
+          content:
+            series: "Playoffs 2026"
+            title: "Team A vs Team B, Game 6"
+            network: { id: "example-network", name: "Example Network" }
+            live: 1               # scheduled broadcast
+            realtime: 1           # happening in real time, so a replay does not match
+          schedule: { scheduledstart: "2026-12-11T00:00:00Z", scheduledend: "2026-12-11T03:00:00Z",
+                      flexibleend: 1, eventstatus: 2 }   # flexible end; tentative
+        - id: "series-g7"
+          content:
+            series: "Playoffs 2026"
+            title: "Team A vs Team B, Game 7"
+            network: { id: "example-network", name: "Example Network" }
+            live: 1               # scheduled broadcast
+            realtime: 1           # happening in real time, so a replay does not match
+          schedule: { scheduledstart: "2026-12-13T00:00:00Z", scheduledend: "2026-12-13T03:00:00Z",
+                      flexibleend: 1, eventstatus: 2 }   # flexible end; tentative
+      included:     ["series-g1", "series-g2", "series-g3", "series-g4"]
+      deltas:       { "series-g7": { delta_flat: 5000.00 } }   # in the committed pricing entry's currency
+      max_select:   7
+    environments:   { available: ["ctv"], included: ["ctv"] }
+    placement:      { plcmt: 1, ssai: 3 }      # Instream (1); all server-side (3) (§ 5.2.2)
+    formats:        { available: ["ctv/instream-30s"], included: ["ctv/instream-30s"] }
+    format_specs:
+      "ctv/instream-30s":
+        spec_ref: "registry.example/ctv/instream-30s@1"
+        spec:         { duration: { nominal_s: 30, tolerance_ms: 500 } }
+
+    pricing:
+      - { pricing_id: "playoffs-cpm-usd", cost_method: CPM, list_rate: 60.00, price_type: 3,
+          price_valid_until: "2026-11-25T23:59:59Z", currency: USD }
+
+    commitment_bounds: { spend: { min: 50000.00 } }
+    controlling_measurement:
+      available:    [{ id: seller-count, counted_by: seller,
+                       discrepancy_threshold: 0.10, final_after: "P30D" }]
+      included:     ["seller-count"]
+      max_select:   1
+
+    shortfall_remedy:  { available: ["makegood", "credit"], included: ["makegood"] }
+    visibility:        public
+    transaction_mechanism:
+      available:  [{ id: programmatic_guaranteed, delivery_type: guaranteed }]
+      included:   ["programmatic_guaranteed"]
+      max_select: 1
+    serving_mode:      dai
+    deal_origin:       "ssp-a.example"
+
+  # OpenProposal 3.0 — Example: CTV line item (spec § 6.3)
+  - line_item_id:   "weather-app-ctv"
+    status:         published
+    channel:        ctv
+    properties:
+      available:
+        - id: "weather-app"
+          child_audience: general
+          apps:
+            - { store: roku_channel_store, bundle: "000000",
+                store_url: "https://channelstore.roku.com/details/000000/weather-app",
+                developer_domain: "weather-app.example" }
+          seller_relationship: owner
+          seller_accounts: [{ asi: "ssp-a.example", sid: "pub-1001" }]
+      included: ["weather-app"]
+    environments:   { available: ["ctv"], included: ["ctv"] }
+    placement:      { plcmt: 1, ssai: 3 }      # Instream (1); all server-side (3) (§ 5.2.2)
+    break_position:                                # where in the stream, priced (§ 5.2.3)
+      available:
+        - { id: "midroll-any",  delay: -1, slotinpod: 0, maxseq: 4 }   # Generic Mid-Roll (-1), Any ad in the pod (0)
+        - { id: "preroll",      delay: 0,  slotinpod: 0 }              # Pre-Roll (0), Any ad in the pod (0)
+        - { id: "first-in-pod", delay: -1, slotinpod: 1, maxseq: 4 }   # Generic Mid-Roll (-1), First ad in the pod (1)
+      included:     ["midroll-any"]
+      deltas:       { "preroll": { delta_cpm: 4.00 }, "first-in-pod": { delta_cpm: 9.00 } }
+      max_select:   1
+    formats:        { available: ["ctv/instream-15s", "ctv/instream-30s", "ctv/instream-6s"],
+                      included: ["ctv/instream-15s"],
+                      deltas: { "ctv/instream-30s": { delta_cpm: 8.00 } } }
+    format_specs:
+      "ctv/instream-15s":
+        spec_ref: "registry.example/ctv/instream-15s@1"
+        spec:                                   # copied from version 1; values illustrative
+          duration:    { nominal_s: 15, tolerance_ms: 500 }
+          source:      vast_mezzanine
+          mezzanine:   { required_for: [ssai], min_resolution: "1920x1080" }
+          loudness:    { standard: atsc_a85, target: -24, tolerance_db: 2 }
+          creative_id: { universal_ad_id: required }
+      "ctv/instream-30s":
+        spec_ref: "registry.example/ctv/instream-30s@1"
+        spec:        { duration: { nominal_s: 30, tolerance_ms: 500 } }
+      "ctv/instream-6s":                        # seller-defined: no spec_ref
+        spec:        { asset: video_file, duration: { nominal_s: 6, tolerance_ms: 250 } }
+    creative_delivery: { method: seller_hosted, protocols: [13], secure_required: true }   # VAST 4.2 (13)
+
+    frequency_cap:  { count: { min: 1, max: 4, default: 3 }, period: day, per: household }
+    time_zone:      viewer_local
+    accepted_exclusions:                   # what this seller can enforce (§ 5.5)
+      types:
+        domains:  { enforcement: pre_serve, max_entries: 5000 }
+        keywords: { enforcement: best_effort, max_entries: 500 }
+
+    pricing:
+      - { pricing_id: "ctv-pa-cpm-usd", cost_method: CPM, list_rate: 45.00, min_rate: 39.60,
+          price_valid_until: "2026-12-01T23:59:59Z", currency: USD,
+          price_type: 1 }                  # First Price
+
+    commitment_bounds: { spend: { min: 25000.00 } }
+
+    cancellation_policy:
+      available:
+        - { id: "notice-30d", notice_duration: "P30D", max_share: 1, fees: [{ calculation: none }] }
+        - { id: "notice-14d", notice_duration: "P14D", max_share: 1, fees: [{ calculation: none }] }
+        - { id: "notice-48h", notice_duration: "PT48H", max_share: 1,
+            fees: [{ calculation: cancelled, share: 0.10 }] }
+      included:     ["notice-30d"]
+      deltas:       { "notice-14d": { delta_fraction: 0.03 }, "notice-48h": { delta_fraction: 0.06 } }
+      max_select:   1
+
+    hold_terms:     { available: false }   # private_auction: no inventory reserved
+
+    committed_metrics: [{ metric: completion_rate, level: 0.95, direction: at_least }]
+    measurement_source:
+      available:    [{ id: seller-measured, measured_by: seller }]
+      included:     ["seller-measured"]
+    controlling_measurement:
+      available:    [{ id: seller-count, counted_by: seller,
+                       discrepancy_threshold: 0.10, final_after: "P30D" }]
+      included:     ["seller-count"]
+      max_select:   1
+    visibility:        public
+    transaction_mechanism:
+      available:  [{ id: private_auction, delivery_type: non_guaranteed }]
+      included:   ["private_auction"]
+      max_select: 1
+    serving_mode:      dai
+    deal_origin:       "ssp-a.example"
+
+    # Inspecting this line item's VAST creative is subject to § 5.4.1.
+
+  # OpenProposal 3.0 — Example: Display line item, fully worked (spec § 6.2)
+  # Shows selectable audiences with per-option pricing, pricing alternatives in two
+  # currencies, cancellation options, and settable bounds.
+  - line_item_id:   "business-daily-display"
+    status:         published
+    channel:        display
+
+    properties:
+      available:
+        - id: "business-daily"
+          domains: ["business-daily.example"]
+          child_audience: general
+          seller_relationship: owner
+          seller_accounts: [{ asi: "ssp-a.example", sid: "pub-1001" }]
+        - id: "markets-weekly"
+          domains: ["markets-weekly.example"]
+          child_audience: general
+          seller_relationship: owner
+          seller_accounts: [{ asi: "ssp-a.example", sid: "pub-1001" }]
+      included:     ["business-daily"]
+      deltas:       { markets-weekly: { delta_cpm: 2.00 } }
+      max_select:   2
+
+    environments:
+      available:    ["web_desktop", "web_mobile"]
+      included:     ["web_desktop", "web_mobile"]
+
+    audiences:
+      available:
+        - id: "smb-decision-makers"
+          name: "SMB decision makers"
+          taxonomy: 4
+          sensitive_categories: []
+          data_label:
+            provider_name: "Business Daily Media"
+            provider_domain: "business-daily.example"
+            provider_email: "data@business-daily.example"
+            audience_name: "SMB decision makers"
+            audience_id: 10451
+            taxonomy_id_list: "26"             # Director/Managerial
+            audience_criteria: "Registered readers who declared a managerial role at a small or mid-sized business at sign-up"
+            audience_precision_levels: ["Individual"]
+            audience_scope: "Single domain / App"
+            originating_domain: "business-daily.example"
+            audience_size: 2600000
+            id_types: ["Platform ID"]
+            geocode_list: "USA"
+            privacy_compliance_mechanisms: ["USPrivacy", "GPC"]
+            privacy_policy_url: "https://business-daily.example/privacy"
+            iab_techlab_compliant: "No"
+            data_sources: ["Web Usage"]
+            audience_inclusion_methodology: ["Declared"]
+            audience_expansion: "No"
+            device_expansion: "No"
+            audience_refresh: "Daily"
+            lookback_window: "Monthly"
+            onboarder_match_keys: ["N/A"]
+            onboarder_audience_expansion: "N/A"
+            onboarder_device_expansion: "N/A"
+            onboarder_audience_precision_level: ["N/A"]
+        - id: "hnw-investors"
+          name: "High-net-worth investors"
+          taxonomy: 4
+          sensitive_categories: []
+          data_label:
+            provider_name: "Business Daily Media"
+            provider_domain: "business-daily.example"
+            provider_email: "data@business-daily.example"
+            audience_name: "High-net-worth investors"
+            audience_id: 10452
+            taxonomy_id_list: "190"            # Demographic | Personal Finance | $1,000,000+
+            audience_criteria: "Readers of markets coverage, modeled from subscribers who declared personal affluence over $1,000,000"
+            audience_precision_levels: ["Browser"]
+            audience_scope: "Cross-domain within O&O"
+            originating_domain: "N/A (Cross-domain, Offline)"
+            audience_size: 1100000
+            id_types: ["Cookie ID"]
+            geocode_list: "USA"
+            privacy_compliance_mechanisms: ["USPrivacy", "GPC"]
+            privacy_policy_url: "https://business-daily.example/privacy"
+            iab_techlab_compliant: "No"
+            data_sources: ["Web Usage", "Online Survey"]
+            audience_inclusion_methodology: ["Modeled"]
+            audience_expansion: "Yes"
+            device_expansion: "No"
+            audience_refresh: "Weekly"
+            lookback_window: "Quarterly"
+            onboarder_match_keys: ["N/A"]
+            onboarder_audience_expansion: "N/A"
+            onboarder_device_expansion: "N/A"
+            onboarder_audience_precision_level: ["N/A"]
+        - id: "cfo-finance-leaders"
+          name: "CFOs and finance leaders"
+          taxonomy: 4
+          excludable: true
+          sensitive_categories: []
+          data_label:
+            provider_name: "Business Daily Media"
+            provider_domain: "business-daily.example"
+            provider_email: "data@business-daily.example"
+            audience_name: "CFOs and finance leaders"
+            audience_id: 10453
+            taxonomy_id_list: "26,270"         # Director/Managerial; Business Accounting & Finance
+            audience_criteria: "Registered readers who declared a finance director or CFO role at sign-up"
+            audience_precision_levels: ["Individual"]
+            audience_scope: "Single domain / App"
+            originating_domain: "business-daily.example"
+            audience_size: 480000
+            id_types: ["Platform ID"]
+            geocode_list: "USA"
+            privacy_compliance_mechanisms: ["USPrivacy", "GPC"]
+            privacy_policy_url: "https://business-daily.example/privacy"
+            iab_techlab_compliant: "No"
+            data_sources: ["Web Usage"]
+            audience_inclusion_methodology: ["Declared"]
+            audience_expansion: "No"
+            device_expansion: "No"
+            audience_refresh: "Daily"
+            lookback_window: "Monthly"
+            onboarder_match_keys: ["N/A"]
+            onboarder_audience_expansion: "N/A"
+            onboarder_device_expansion: "N/A"
+            onboarder_audience_precision_level: ["N/A"]
+      included:     ["smb-decision-makers"]
+      deltas:       { "hnw-investors":       { delta_cpm: 4.00 },
+                      "cfo-finance-leaders": { delta_cpm: 6.50 } }
+      max_select:   2
+      combine:      { available: [any, all], included: [any], max_select: 1 }   # the buyer's selected[] can change it
+
+    addressable_scale:                    # asserted; recomputed on selection
+      quantity: 3200000
+      unit:     device
+      window:   { start: "2026-10-05T00:00:00Z", end: "2026-12-31T23:59:59Z" }
+
+    activation_route:
+      available:    ["seller_side", "clean_room"]
+      included:     ["seller_side"]
+      deltas:       { clean_room: { delta_cpm: 1.50 } }
+
+    buyer_supplied:
+      segments_allowed:    true
+      suppression_allowed: true
+      expected_match_rate: 0.65
+
+    formats:
+      available:    ["display/300x250", "display/728x90", "display/970x250"]
+      included:     ["display/300x250"]
+      deltas:       { "display/970x250": { delta_cpm: 3.00 } }
+
+    format_specs:                           # copied from version 1; values illustrative
+      "display/300x250":
+        spec_ref: "registry.example/display/300x250@1"
+        spec:         { w: 300, h: 250 }
+      "display/728x90":
+        spec_ref: "registry.example/display/728x90@1"
+        spec:         { w: 728, h: 90 }
+      "display/970x250":
+        spec_ref: "registry.example/display/970x250@1"
+        spec:         { w: 970, h: 250 }
+
+    creative_delivery: { method: buyer_hosted, other_protocols: [javascript_tag], secure_required: true }
+    materials_due:     { before_start: "P1D" }
+
+    geo:
+      allowed:      ["US-NY", "US-CA", "US-IL", "US-TX"]
+      default:      { include: ["US-NY", "US-CA", "US-IL", "US-TX"] }
+    device:         { allowed: [1, 2, 4, 5], default: { include: [1, 2] } }   # AdCOM 1.0 Device Types; 1 covers 4 and 5
+    daypart:
+      allowed:      [{ days: [monday, tuesday, wednesday, thursday, friday], start: "06:00", before: "22:00" }]
+      default:      { include: [{ days: [monday, tuesday, wednesday, thursday, friday], start: "06:00", before: "22:00" }] }
+    frequency_cap:  { count: { min: 1, max: 5, default: 3 }, period: day, per: device }
+    time_zone:      "America/New_York"
+
+    accepted_exclusions:                   # what this seller can enforce (§ 5.5)
+      types:
+        domains:    { enforcement: pre_serve, max_entries: 5000 }
+        categories: { enforcement: pre_serve }
+        keywords:   { enforcement: best_effort, max_entries: 500 }
+
+    pricing:
+      - pricing_id:        "bd-cpm-usd"
+        cost_method:       CPM
+        list_rate:         24.00
+        min_rate:          21.00
+        price_valid_until: "2026-11-15T23:59:59Z"
+        currency:          USD
+        price_type:        3              # Fixed Price
+      - pricing_id:        "bd-cpm-eur"
+        cost_method:       CPM
+        list_rate:         22.00
+        price_valid_until: "2026-11-15T23:59:59Z"
+        currency:          EUR
+        price_type:        3              # Fixed Price
+
+    cancellation_policy:
+      available:
+        - { id: "notice-14d", notice_duration: "P14D", max_share: 1, fees: [{ calculation: none }] }
+        - { id: "notice-7d", notice_duration: "P7D", max_share: 1, fees: [{ calculation: none }] }
+      included:     ["notice-14d"]
+      deltas:       { "notice-7d": { delta_fraction: 0.02 } }
+      max_select:   1
+
+    commitment_bounds: { spend: { min: 10000.00, max: 500000.00 },
+                         earliest_start: "2026-10-05T00:00:00Z", latest_end: "2026-12-31T23:59:59Z" }
+
+    hold_terms:     { available: true, duration: "P7D" }
+
+    committed_metrics:
+      - { metric: viewable_rate, level: 0.70, direction: at_least }
+      - { metric: ivt_rate,      level: 0.05, direction: at_most }
+    measurement_source:
+      available:    [{ id: ias, measured_by: "integralads.com" },
+                     { id: dv, measured_by: "doubleverify.com" }]
+      included:     ["ias"]
+      max_select:   1
+    controlling_measurement:              # whose count is invoiced
+      available:
+        - { id: seller-count, counted_by: seller,
+            discrepancy_threshold: 0.10, final_after: "P10D" }
+        - { id: buyer-3pas, counted_by: buyer, qualifier: "Buyer ad server A",
+            discrepancy_threshold: 0.10, final_after: "P15D" }
+      included:     ["seller-count"]
+      max_select:   1
+    shortfall_remedy: { available: ["makegood", "credit"], included: ["makegood"] }
+    reporting:
+      available:    [{ id: daily-aggregate, report_type: aggregate, cadence: day, delivery_method: api },
+                     { id: daily-log-level, report_type: log_level, cadence: day, delivery_method: s3 }]
+      included:     ["daily-aggregate"]
+      deltas:       { daily-log-level: { delta_flat: 2500.00 } }
+
+    visibility:            registry_gated
+    required_credentials:  [{ credential_type: iab_registry, issuer: "registry.iabtechlab.ai" }]
+    terms_refs:
+      - { url: "https://examplepub.example/legal/io-terms-2026.pdf",
+          digest: "sha256:83e44f6fa723c35fef1b3528b16cc13a8a19ee34a32b658f6d3cc243ce12592e", version: "2026.1" }
+
+    transaction_mechanism:
+      available:
+        - { id: programmatic_guaranteed, delivery_type: guaranteed }
+        - { id: preferred_deal, delivery_type: non_guaranteed }
+      included:   ["programmatic_guaranteed"]
+      max_select: 1
+    deal_origin:            "adserver.example"
+    buyer_requirements:     { seats_expected: true,
+                              allowed_dsps: ["dsp-a.example", "dsp-b.example"] }
+    billing:                { invoicing_party: { domain: "examplepub-billing.example",
+                                                 legal_name: "Example Publisher Billing LLC" },
+                              payment_terms: "net 30", invoice_period: month,
+                              time_zone: "America/New_York" }
+
+    ext:
+      examplepub.example: { placement_code: "BD-ROS-300x250-Q4" }
+
+  # OpenProposal 3.0 — Example: Rewarded video line item (spec § 6.7)
+  # Illustrative only. In-app rewarded video across a pack of puzzle games.
+  - line_item_id:   "puzzle-games-rewarded"
+    status:         published
+    channel:        video
+    properties:     { available: [{ id: "puzzle-pack", name: "Puzzle game pack",
+                                    apps: [{ store: apple_app_store, bundle: "000002",
+                                             developer_domain: "puzzle-games.example" }],
+                                    child_audience: general, seller_relationship: owner,
+                                    seller_accounts: [{ asi: "ssp-a.example", sid: "pub-4001" }] }],
+                      included: ["puzzle-pack"] }
+    environments:   { available: ["app_mobile"], included: ["app_mobile"] }
+    placement:                             # every impression of this line item (§ 5.2)
+      reward:       1
+      instl:        1
+      plcmt:        3                      # Interstitial (3)
+      ssai:         1                      # all client-side (1)
+      skip:         0                      # watched to the end for the reward
+      playmethod:   [3]                    # Initiates on Click with Sound On (3)
+      api:          [6, 7]                 # MRAID 3.0 (6), OMID 1.0 (7)
+    formats:        { available: ["video/30s"], included: ["video/30s"] }
+    format_specs:
+      "video/30s":                         # seller-defined: no spec_ref
+        spec:        { asset: video_file, duration: { nominal_s: 30, tolerance_ms: 500 } }
+    creative_delivery: { method: buyer_hosted, protocols: [13], secure_required: true }   # VAST 4.2 (13)
+
+    frequency_cap:  { count: { min: 1, max: 3, default: 2 }, period: day, per: device }
+    time_zone:      viewer_local
+
+    pricing:
+      - { pricing_id: "rewarded-cpm-usd", cost_method: CPM, list_rate: 22.00, min_rate: 19.50, price_type: 3,
+          price_valid_until: "2026-12-01T23:59:59Z", currency: USD }
+
+    commitment_bounds: { spend: { min: 10000.00 } }
+
+    committed_metrics:
+      - { metric: completion_rate, level: 0.95, direction: at_least }
+      - { metric: viewable_rate,   level: 0.90, direction: at_least }
+    measurement_source:                    # third-party vendors run through OMID 1.0 (7)
+      available:    [{ id: ias, measured_by: "integralads.com" },
+                     { id: dv, measured_by: "doubleverify.com" }]
+      included:     ["ias"]
+      max_select:   1
+    controlling_measurement:
+      available:    [{ id: seller-count, counted_by: seller,
+                       discrepancy_threshold: 0.10, final_after: "P30D" }]
+      included:     ["seller-count"]
+      max_select:   1
+    visibility:     public
+
+    transaction_mechanism:
+      available:  [{ id: preferred_deal, delivery_type: non_guaranteed }]
+      included:   ["preferred_deal"]
+      max_select: 1
+    deal_origin:           "ssp-a.example"

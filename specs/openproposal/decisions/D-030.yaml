@@ -8,9 +8,11 @@ covers:
   - ir: block:5.6.2:1/values:1
     digest: c4f05bca19873a07f8a165ff6a69d25967eec96b3611c0dba1accd7c5c24b3fb
     quote: "`expired` | `released` | `converted`"
+    locks: [main, with-open-prs]
   - ir: rule:4.1:8e9aacb8
     digest: 089fde20d5aa0c8c4d3ea3675f3ba09cf81f4d4a9615d0a627bee1cb3f823dba
     quote: Entries MUST NOT be edited or removed
+    locks: [main, with-open-prs]
   - ir: rule:4.1:fae6ebab
     digest: 6029b960f5e992bfd132ecadad927d812706780f56e4c5922571174dec942040
     quote: "`proposal_template_id` MUST NOT be required for a buyer to transact."
@@ -73,6 +75,7 @@ covers:
   - ir: rule:5.7:4994173c
     digest: 49df828c767ca4a88396c5d0d566a026506a90ae23eec522d12849b159e6aff6
     quote: Seller declares a ceiling; a buyer MAY request above it
+    locks: [main, with-open-prs]
   - ir: rule:5.8:59a01393
     digest: aac0652bc71ae2e1eb1544ac8cbd25d20ebb31022cfcae8997d55c54c49ad99a
     quote: "`terms_ref` MUST be hash-pinned and frozen at `agreed`."
@@ -84,6 +87,7 @@ covers:
   - ir: rule:5.9:d510ffe5
     digest: 61ff19d5ae93ecb1e7f406a252372f580d729d5c6575604bfff596ffaf8a77b0
     quote: A seller MAY offer the same inventory through more than one
+    locks: [main, with-open-prs]
 options:
   - id: by-subject
     summary: >-

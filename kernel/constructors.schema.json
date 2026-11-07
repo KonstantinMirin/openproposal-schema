@@ -29,6 +29,8 @@
       "required": ["name", "description", "parameters", "naming", "shell", "sources", "vectors"],
       "properties": {
         "name": { "$ref": "#/$defs/name" },
+        "edition": { "description": "An edition of the type that one lock's text defines in another form, under the same name, as the stack's `Digest`. The spec's binding publishes it on its locks, where it stands in for the type without an edition.", "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "locks": { "description": "The locks the item is published on, which the spec's binding gives; every lock when absent.", "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
         "description": {
           "description": "The published description of every copy: what a value means, for someone who receives a payload.",
           "type": "string",
@@ -84,6 +86,8 @@
       "required": ["name", "description", "concept", "shell", "sources", "vectors"],
       "properties": {
         "name": { "$ref": "#/$defs/name" },
+        "edition": { "description": "An edition of the type that one lock's text defines in another form, under the same name, as the stack's `Digest`. The spec's binding publishes it on its locks, where it stands in for the type without an edition.", "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "locks": { "description": "The locks the item is published on, which the spec's binding gives; every lock when absent.", "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
         "description": {
           "description": "The published description.",
           "type": "string",

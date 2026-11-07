@@ -1,3 +1,4 @@
+import { constructorEditionsOn, kernelEditionsOn } from "../editions.ts";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { parseArgs } from "node:util";
@@ -36,12 +37,15 @@ function main(): number {
       : allLocks(specDir);
   const mappings = loadMappings(join(specDir, "mapping"));
   const decisions = loadDecisions(join(specDir, "decisions"));
-  const kernel = loadKernel(root, specDir);
-  const constructors = loadConstructors(root, specDir);
+  const kernelAll = loadKernel(root, specDir);
+  const constructorsAll = loadConstructors(root, specDir);
   const recorded = loadDifferences(join(specDir, DIFFERENCES_FILE));
 
   let failed = false;
   for (const lock of locks) {
+    // Each lock sees its own editions of the kernel's types (src/editions.ts).
+    const kernel = kernelEditionsOn(kernelAll, lock.name);
+    const constructors = constructorEditionsOn(constructorsAll, lock.name);
     const ir = JSON.parse(readFileSync(join(specDir, lock.ir_dir, "spec-ir.json"), "utf8"));
     const { model, problems } = resolveModel({ ir, lock: lock.name, mappings, decisions, kernel, constructors });
     if (problems.length > 0) {

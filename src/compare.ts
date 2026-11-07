@@ -27,6 +27,7 @@
  * The JSON form is canonical, every list sorted, and the markdown is a
  * function of it, so the report is a function of the two locks' pipelines.
  */
+import { constructorEditionsOn, kernelEditionsOn } from "./editions.ts";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { canonicalJson } from "./canonical.ts";
@@ -82,7 +83,10 @@ export interface BuildInput {
  * problem is a stage that didn't run clean; the build is then null.
  */
 export async function buildLock(lock: SpecLock, input: BuildInput): Promise<{ build: LockBuild | null; problems: string[] }> {
-  const { root, mappings, decisions, kernel, constructors, vectors } = input;
+  const { root, mappings, decisions, vectors } = input;
+  // Each lock sees its own editions of the kernel's types (src/editions.ts).
+  const kernel = kernelEditionsOn(input.kernel, lock.name);
+  const constructors = constructorEditionsOn(input.constructors, lock.name);
   const ir = JSON.parse(readFileSync(join(root, lock.ir_dir, "spec-ir.json"), "utf8")) as SpecIR;
   const findings = JSON.parse(readFileSync(join(root, lock.ir_dir, "findings.json"), "utf8")) as FindingsDoc;
   const resolved = resolveModel({ ir, lock: lock.name, mappings, decisions, kernel, constructors });

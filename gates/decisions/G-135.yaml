@@ -1,0 +1,46 @@
+format: 1
+id: G-135
+date: 2026-10-28
+question: What changes in the gates when the proto target's independent review is answered?
+decision: >-
+  Each finding of the review of G-131 to G-134 is fixed, with a fixture or
+  a test. enum-drift-target holds the proto file to the codes alone: a
+  number in a vendor range or a positive-number row is a value the target
+  doesn't write, so it is extra (fixtures: a vendor's code 500, a media
+  offset 15). proto-schema-only now fails a module the emitter reaches that
+  loads a module by a computed name (a template literal, a concatenation,
+  require, or createRequire), imports a package, or imports node:fs
+  anywhere but the schema tree's reader; it allows node:path alone
+  (fixtures for each). Its run copies the target's code and the tracked
+  schemas/ to a folder outside the repository, with a package.json that
+  says only that its modules are ES modules, and runs there, so the
+  emitter can't reach the rest of the tree by a relative path; a run that
+  fails names its error (fixture). The CLI
+  refuses an --out that holds the schema tree or any file that isn't a
+  proto file, since it replaces the folder whole; the emitter refuses a
+  package that isn't lowercase dotted words ending in a version; a file's
+  name is the document's in lower_snake_case; comments wrap at the style
+  guide's 80 columns, and each enum's source and the file's $id stand on a
+  line of their own. The proto folder's name and reader move to
+  src/targets/layout.ts, where an SDK target's will go, and the drift
+  report, the site, and the CI script import them there. The target rules
+  record that a code 0 under its own name departs from the style guide and
+  buf lint, that a titled two-valued flag is an enum too, the
+  CODE_<code> name of a title with no letter or digit, and why a file's
+  folders are its package. The suite holds 541 tests. The awkward names
+  the titles give are spec feedback, filed as ops-pvd.49, not patched in
+  the target.
+rationale: >-
+  Every changed check is stricter: the drift target gate fails values it
+  passed, and the schema-only gate fails imports it passed. The
+  regenerated proto file changes only in its comments' wrapping and its
+  header; its enums, names, and numbers are unchanged. The drift report's
+  totals for adcom-proto and Prebid are unchanged.
+accepts:
+  - { gate: enum-drift-sources, fingerprint: dadb604169e53c27d065a1dc1ffef6271fb2e5d8fdc375d43b49397819891d99 }
+  - { gate: enum-drift-target, fingerprint: e3f60fa332fc1751dc0fbb67d050ab347d2b2c8b3b649c3e76bfcadbed58143e }
+  - { gate: guard, fingerprint: 72d4723247fcbb85f810e991b56f998294896b6fbfd576d58aa8f7d0344834ef }
+  - { gate: npm-test, fingerprint: f8ad91eaf419c034a5d0de80c150781702f51ed1eebfe5c436d779dd2a5cfaca }
+  - { gate: proto-builds, fingerprint: 2e0c8b418650b2a586cd263300c43617d0d0bee37bb44b722cb84297a2eb9394 }
+  - { gate: proto-schema-only, fingerprint: b65c18dd7260b7c0e1ea5d909f4c8592bc911d3c2d378431f3e119c70319ecd5 }
+  - { gate: site-builds, fingerprint: 2c3a529c02892cc7b00388a91a71b4d4c9643d0511d61867ed5f3a2fae0acb0e }

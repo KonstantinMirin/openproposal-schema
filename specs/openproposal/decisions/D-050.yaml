@@ -1,0 +1,57 @@
+format: 1
+id: D-050
+status: proposed
+kind: gap
+author: agent
+question: "How do the stack's § 3.1 `Selectable[T]` and § 3.2 `Settable[T]`, `Narrowing[T]`, and `SettableRange[T]` map, where the kernel's `Selectable` and `Settable` hold other keys?"
+covers:
+  - ir: sentence:3.1:0a88d171
+    digest: d240277ff38d441f3857a947a9acac5af9b28c25c4a084f2c5ed346d4a3188ce
+    quote: Every field marked `selectable` is a `Selectable[T]`, or a named type that holds its keys, where `T` is the option type.
+    locks: [with-our-stack]
+  - ir: key:3.1:Selectable.selected[]
+    digest: c3543a69287e07596310a03ae02b51233274d1ee59a37d760eed584222c61b8b
+    quote: "`selected[]` | OPTIONAL | The buyer's choice, by option id"
+    locks: [with-our-stack]
+  - ir: key:3.1:Selectable.deltas
+    digest: 4700416237f4a50c06b55fc36d2f452b0e233bbc1df246421eb972e901716d8b
+    quote: "`deltas` | OPTIONAL | The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta"
+    locks: [with-our-stack]
+  - ir: key:3.1:Delta.delta_fraction
+    digest: 17f30605db1f38b66ff005598b7d60b6bdd839394eabac1b2343af4b612b8731
+    quote: "`delta_fraction` | OPTIONAL | Multiplies the rate of any entry by 1 plus this value. `0.20` is 20 percent more"
+    locks: [with-our-stack]
+  - ir: sentence:3.2:f5da1fc4
+    digest: d7261d9e23038123e25f0b19bd4997d3c117b174efd03c3dfa67d79f39863ecd
+    quote: A field marked `settable` declares its bounds in one of two forms, and the buyer writes one key, `value`.
+    locks: [with-our-stack]
+  - ir: key:3.2:Settable.default
+    digest: b03e032bcc72363f6c1aa4ecfb0dc143a22d48f5c11fee45938de7f412ffb7ed
+    quote: "`default` | REQUIRED | In effect when `value` is absent"
+    locks: [with-our-stack]
+  - ir: key:3.2:Narrowing.include[]
+    digest: bd426b77c0a4b508cd2dce247b84c7f79964c97482716ac06927372d5cedc327
+    quote: "`include[]` | REQUIRED | Each entry MUST be covered by an `allowed[]` entry"
+    locks: [with-our-stack]
+  - ir: key:3.2:SettableRange.default
+    digest: d97d76912df4bb5ee849fc1802f93de600b0a3abae90401672b3282d10fd998e
+    quote: "`default` | REQUIRED | In effect when `value` is absent, between the bounds"
+    locks: [with-our-stack]
+options:
+  - id: text-constructors
+    summary: "Constructors with the keys the stack's tables list: editions of `Selectable` and `Settable` on the stack's lock, and `Narrowing`, `SettableRange`, and the part `Delta`, which exist only there."
+  - id: kernel-constructors
+    summary: "The kernel's `Selectable` and `Settable` on every lock."
+chosen: text-constructors
+rationale: >-
+  The stack's `Selectable` has `available[]`, `included[]`, `selected[]`,
+  `deltas`, and `max_select`, with options named by id; its `Settable` has
+  `allowed[]`, a `default`, and a `value`, each a `Narrowing` of `include[]`
+  and `exclude[]`; and `SettableRange` holds the keys of `Range[T]` with a
+  `default` and a `value`. The kernel's constructors hold `pricing` and no
+  `selected[]`, `default`, or `value`, which the other locks' texts write.
+  Constructors of the stack's own shape, published on its lock alone, give
+  each field the keys its text lists, and `Range[T]` is the kernel's, whose
+  keys and rule the stack's § 2.2 states the same way.
+feedback: >-
+  None needed. § 3.1 and § 3.2 define each key.

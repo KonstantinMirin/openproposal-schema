@@ -1,0 +1,77 @@
+# Optional extractor input: upstream `main` plus the open PRs of the with-open-prs lock,
+# plus our stack of 17 PRs, #137 to #152 and #154, at the stack's tip.
+# The stack is one branch, op30-packages on github.com/KonstantinMirin/OpenProposal: each
+# of our PRs is a commit range on top of the one before it, and the first starts from
+# the with-open-prs integration tip, 292bb51, so every head that lock merges is an
+# ancestor of `commit`. `merge_order` lists those 14 heads, then our 17 in stack order.
+# #137's live head, acecc8e, adds one CHANGELOG line on top of e47cbf5; the stack carries
+# e47cbf5, so that is the head listed here. The specification's text is the same at both.
+# The stack exists in a fork, so the lock carries a snapshot of the specification and
+# examples/ at `commit`, which `npm run fetch -- --lock
+# specs/openproposal/spec-input/with-our-stack.lock.yaml --snapshot` writes from the clone;
+# CI runs every gate from it.
+name: with-our-stack
+upstream: https://github.com/IABTechLab/OpenProposal
+base: 44dfaaf618736219426c311ec997b6d37e94b950
+commit: a4adff3efb85564d84a4439b27f554123feefd41
+path: spec/openproposal-3.0.md
+blob: 179980bae43c78855432408cd6c6609109963d22
+ir_dir: ir/with-our-stack
+required: false
+# The example files at `commit`, by path, with their git blob SHAs.
+examples:
+  examples/line-item-audio.yaml: 6ee444617dbcca19d8288c206e0d2d7fffa84c73
+  examples/line-item-ctv-bonus.yaml: c565027206afb0582d7eab75bf96490cedd96a29
+  examples/line-item-ctv-live-series.yaml: faef09f597423d4abae306d28d3c2647a5583d8a
+  examples/line-item-ctv.yaml: 09b2a204233843cacfce358975c5eb3b81d397c9
+  examples/line-item-display.yaml: d217632790bf1e35196c8837876d9c60a204640c
+  examples/line-item-dooh.yaml: 728bc1b316ce307c84f41a37b9c3e880cb361a9b
+  examples/line-item-podcast-embedded.yaml: 6b0a76a7dbb161b67ca33dbfd4bef7cbceb877e2
+  examples/line-item-rewarded-video.yaml: 8213c7d01d7f7f31963d68963d7746ccc7479cd6
+  examples/manifest.json: 55639c287c87705a5cebc725b5820f57dfaf6084
+  examples/proposal-agreed.yaml: f5ff285341da125cc94b86feb701e171a459d5c3
+  examples/proposal-issued.yaml: 2f2ba4fb085757cfefc1319399e848d81c249aaa
+  examples/proposal-package.yaml: 69e2c1c52227cfd63ae1cd21906d2cb3a5754bb1
+  examples/proposal.yaml: fd37b713ec4afece07a84fcaa59cbdc932a6e982
+# The day on which our 17 heads below were their PRs' live heads, checked with
+# `gh pr view N -R IABTechLab/OpenProposal --json headRefOid`. The first 14 are the
+# with-open-prs lock's heads, live on 2026-10-26; by 2026-11-07, #17, #18, #70, and #73
+# had moved on, and the stack still carries the heads listed here.
+heads_on: "2026-11-07"
+merge_order:
+  - { pr: 17, head: dc0e37c8890b1ad6f197fd4a9418b7b231fab454 }
+  - { pr: 18, head: ff53dc5a7d436ac42995f9842394369901e9eb70 }
+  - { pr: 70, head: ecec3d74f484dbb4ea4404fb7fe847cbbd94aafe }
+  - { pr: 73, head: 74a25448baf9e38048a5bd417b4372d46faaa77f }
+  - { pr: 117, head: e51ee17d2c74d166dd75c3da29698de4e8a998fa }
+  - { pr: 71, head: 63712c0683b1f67e032450f7400979be60b5cde4 }
+  - { pr: 72, head: 208f0c2c2aa1fe7551b2adbcc2489ed649ca70b7 }
+  - { pr: 74, head: 7a8938579c6339b3c397ab6e40d2b47e1860e195 }
+  - { pr: 75, head: b88e9a0719180303917efdf59d20ba1769172d27 }
+  - { pr: 76, head: 8e1f614a5c0546e88d993ed239ffcdc71b395a78 }
+  - { pr: 118, head: 395ca8357533843450083d1676b6cc6cab2c87c0 }
+  - { pr: 119, head: 0125d5549c4cc1790bd3ab847e8d5826b66de82d }
+  - { pr: 120, head: 81de4d827440cc42d8e027d5f88843e8da109bdd }
+  - { pr: 123, head: 9783ec87d102ccb60c106f4b6782650aa1f0a249 }
+  - { pr: 137, head: e47cbf566fd6e4d5c0a36c1bedda630775513a76 }
+  - { pr: 138, head: a4b458480533df0ac2f4b16e9b446d80e51e1d6e }
+  - { pr: 139, head: 0b204045a85b40c03ba4c4c9d5f2d69b56f33352 }
+  - { pr: 140, head: ba259e89c054e5daa02f8795df819ddf49a1c1d1 }
+  - { pr: 141, head: f2591e192c0c93f2fa98f6a31e00118142082ac3 }
+  - { pr: 142, head: e9ac2cee774fecf756d5a26306bccb13a2525de8 }
+  - { pr: 143, head: ed74d0cf83f009900ba022856e7a45fa1fbfba53 }
+  - { pr: 144, head: 915f709844cfa9816bf599d479d58da718cc8f23 }
+  - { pr: 145, head: fc9afb6a6b0ca990552c3b7f083370840a212d66 }
+  - { pr: 146, head: d3bd5a734e16c29b8b93f933e413450b4b597c70 }
+  - { pr: 147, head: 51348bffe2ce6acfd59db82920a0ee7ac5ea7d5c }
+  - { pr: 148, head: 89f0c3d34c3414e2c2968756009006c9848e5731 }
+  - { pr: 149, head: 08ce130f6a33b2545d0e769d5b2bc884f35d10e7 }
+  - { pr: 150, head: f8fd2bd4a2e5d6c9dc9ccb7c5a6a64330ad36f75 }
+  - { pr: 151, head: 436e0c8a9477d9909b565bcfdbcd04b3939efe77 }
+  - { pr: 152, head: c862abe1473b1317cfdc877a2c03d87a0b8665b1 }
+  - { pr: 154, head: a4adff3efb85564d84a4439b27f554123feefd41 }
+# The git tree SHA of examples/ at `commit`, which pins the directory's listing.
+examples_tree: 4b76c8cdf8c090b9495238cd088b5453d20e381f
+sources:
+  - git: ../../vendor/OpenProposal-stack
+  - snapshot: spec-input/snapshots/with-our-stack

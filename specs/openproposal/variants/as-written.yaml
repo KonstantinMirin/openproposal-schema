@@ -32,9 +32,11 @@ primitives:
         - ir: field:4.1:proposal_id
           digest: fb8604e60eabfa2db105b17ca562af8ba2f20784907dcce349772ce83054088d
           quote: "`proposal_id` | String | immutable | Unique identity for the proposal object"
+          locks: [main, with-open-prs]
         - ir: field:5.1:line_item_id
           digest: 60cd2aeea40121597f5e2b0725417665bc560c9b677000d3dfbc432d1c88c969
           quote: "`line_item_id` | String | immutable | Identity within the proposal"
+          locks: [main, with-open-prs]
     vectors:
       valid: [ "examplepub-us-q4-2026-omni", "business-daily-display", "7c9e6679-7425-40de-944b-e07fc1f90ae7", "" ]
       invalid: [ 42, true, null, [ "business-daily-display" ] ]
@@ -51,9 +53,11 @@ primitives:
         - ir: field:5.3:audiences#description/object:1
           digest: 0a7d355ab5dcb787717d01988764dcca8895bdc0b1252de9e8269ad516e7ac6b
           quote: "{ id, name, taxonomy_ref, provenance, addressable_scale }"
+          locks: [main, with-open-prs]
         - ir: field:5.7:reporting#description/object:1
           digest: 15b343617f534633524b7226be5e3f1d36fa7042fd26aa52c5fde05bc1e50adb
           quote: "{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency }"
+          locks: [main, with-open-prs]
     vectors:
       valid: [ "modeled", "seller_reported", "vast_4_2", "daily", "30d" ]
       invalid: [ "", "examplepub.example:mrc", "two words", "trailing_", "_leading", "a__b", 7 ]
@@ -70,6 +74,7 @@ primitives:
         - ir: key:5.6.1:commitment.flight_start
           digest: f55507bcfbcdffa24a4949e12e1e59a92cef3e9b56f23e47b59e6b8c20f0d4fb
           quote: "`flight_start` | REQUIRED | The buyer's campaign start. Distinct from `valid_from`"
+          locks: [main, with-open-prs]
       standards:
         - name: RFC 3339, Date and Time on the Internet (full-date)
           url: https://www.rfc-editor.org/rfc/rfc3339#section-5.6
@@ -88,10 +93,10 @@ switches:
       every object option, which `included[]` and the `pricing` keys name it
       by.
     replace:
-      - { type: Uuid, with: Identifier }
+      - { type: Uuid, with: Identifier, locks: [ main, with-open-prs ] }
     rewrite:
-      - { in: Selectable, from: "the UUID the seller mints for it", to: "the identity the seller mints for it" }
-      - { in: Selectable, from: "so `K` is `Uuid`, the identity", to: "so `K` is the type of that `id`, the identity" }
+      - { in: Selectable, from: "the UUID the seller mints for it", to: "the identity the seller mints for it", locks: [ main, with-open-prs ] }
+      - { in: Selectable, from: "so `K` is `Uuid`, the identity", to: "so `K` is the type of that `id`, the identity", locks: [ main, with-open-prs ] }
   - decision: D-040
     option: as-written
     reads: >-
@@ -103,10 +108,10 @@ switches:
       write them. `hold_duration`, which the text writes as an ISO 8601
       duration, stays one.
     retype:
-      - { ir: "field:5.4:production#description/object:1", member: lead_time, from: Duration, to: Text }
-      - { ir: "field:5.7:reporting#description/object:1", member: cadence, from: Duration, to: BareTerm }
-      - { ir: "field:5.6:availability#description/object:1", member: granularity, from: Duration, to: BareTerm }
-      - { ir: "field:5.7:measurement_source#description/object:1", member: attribution_window, from: Duration, to: BareTerm }
+      - { ir: "field:5.4:production#description/object:1", member: lead_time, from: Duration, to: Text, locks: [ main, with-open-prs ] }
+      - { ir: "field:5.7:reporting#description/object:1", member: cadence, from: Duration, to: BareTerm, locks: [ main, with-open-prs ] }
+      - { ir: "field:5.6:availability#description/object:1", member: granularity, from: Duration, to: BareTerm, locks: [ main, with-open-prs ] }
+      - { ir: "field:5.7:measurement_source#description/object:1", member: attribution_window, from: Duration, to: BareTerm, locks: [ main, with-open-prs ] }
       - { ir: key:5.2.2:placement.skipafter, from: Duration, to: Count, locks: [ with-open-prs ] }
       - { ir: "key:5.2.2:placement.refresh#meaning/object:1", member: min_interval_s, from: Duration, to: Count, locks: [ with-open-prs ] }
   - decision: D-041
@@ -119,14 +124,14 @@ switches:
       `committed_metrics[]`'s `basis`, `reporting`'s `delivery_mechanism`,
       and, on `main`, an external reference's `role`.
     replace:
-      - { type: AssetApprovalStatus, with: BareTerm }
-      - { type: AvailabilityBasis, with: BareTerm }
-      - { type: AvailabilityUnit, with: BareTerm }
-      - { type: CreativeDeliveryProtocol, with: BareTerm }
+      - { type: AssetApprovalStatus, with: BareTerm, locks: [ main, with-open-prs ] }
+      - { type: AvailabilityBasis, with: BareTerm, locks: [ main, with-open-prs ] }
+      - { type: AvailabilityUnit, with: BareTerm, locks: [ main, with-open-prs ] }
+      - { type: CreativeDeliveryProtocol, with: BareTerm, locks: [ main, with-open-prs ] }
       - { type: ExternalReferenceRole, with: BareTerm, locks: [ main ] }
-      - { type: MeasurementBasis, with: BareTerm }
-      - { type: Provenance, with: BareTerm }
-      - { type: ReportingDeliveryMechanism, with: BareTerm }
+      - { type: MeasurementBasis, with: BareTerm, locks: [ main, with-open-prs ] }
+      - { type: Provenance, with: BareTerm, locks: [ main, with-open-prs ] }
+      - { type: ReportingDeliveryMechanism, with: BareTerm, locks: [ main, with-open-prs ] }
     convert:
       - { from: "measure.example:impressions", to: impressions }
   - decision: D-042
@@ -136,11 +141,11 @@ switches:
       such as `2026-10-06`, as the examples write them. The text names no
       time zone that reads them.
     retype:
-      - { ir: key:5.6.1:commitment.flight_start, from: Timestamp, to: CalendarDate }
-      - { ir: key:5.6.1:commitment.flight_end, from: Timestamp, to: CalendarDate }
+      - { ir: key:5.6.1:commitment.flight_start, from: Timestamp, to: CalendarDate, locks: [ main, with-open-prs ] }
+      - { ir: key:5.6.1:commitment.flight_end, from: Timestamp, to: CalendarDate, locks: [ main, with-open-prs ] }
     rewrite:
-      - { in: Timestamp, from: ", the start of a flight included", to: "" }
-      - { in: FrequencyCapPeriod, from: "between two Timestamps", to: "between two calendar dates" }
+      - { in: Timestamp, from: ", the start of a flight included", to: "", locks: [ main, with-open-prs ] }
+      - { in: FrequencyCapPeriod, from: "between two Timestamps", to: "between two calendar dates", locks: [ main, with-open-prs ] }
   - decision: D-047
     option: as-written
     reads: >-
@@ -151,28 +156,33 @@ switches:
     findings:
       - example: examples/line-item-audio.yaml
         path: /production/available/0/id
+        locks: [main, with-open-prs]
         kind: undefined_key
         value: seller_built
         reason: The example gives a production option an `id`, which the text doesn't list among its members.
       - example: examples/line-item-audio.yaml
         path: /production/available/1/id
+        locks: [main, with-open-prs]
         kind: undefined_key
         value: buyer_supplied
         reason: The example gives a production option an `id`, which the text doesn't list among its members.
       - example: examples/line-item-display.yaml
         path: /measurement_source/included/0
+        locks: [main, with-open-prs]
         kind: rule
         rule: constructor:Selectable:options-named
         value: IAS
         reason: As written, a measurement source has no `id`, so `included[]` can't name it; the example names it by its `vendor`.
       - example: examples/line-item-display.yaml
         path: /reporting/included/0
+        locks: [main, with-open-prs]
         kind: rule
         rule: constructor:Selectable:options-named
         value: aggregate
         reason: As written, a reporting option has no `id`, so `included[]` can't name it; the example names it by its `feed_type`.
       - example: examples/line-item-display.yaml
         path: /reporting/pricing/log_level
+        locks: [main, with-open-prs]
         kind: rule
         rule: constructor:Selectable:options-named
         value: { delta_flat: 2500 }

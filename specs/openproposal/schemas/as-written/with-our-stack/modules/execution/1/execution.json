@@ -1,0 +1,149 @@
+{
+  "$defs": {
+    "BuyerRequirements": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_dsps": {
+          "description": "The DSPs that may receive the deal (§ 5.8), each by its primary domain, as `SeatRef.dsp` (§ 2.2)",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/RegistrableDomain"
+          },
+          "type": "array"
+        },
+        "seat_owner": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Party",
+          "description": "The legal entity that owns the seats. Absent: the `buyer`"
+        },
+        "seats": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SeatRef",
+          "description": "The buyer's seats on the deal, as the Deals API 1.0 `wseat`"
+        },
+        "seats_expected": {
+          "description": "The seller asks the buyer to supply `seats`",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "DeliveryType": {
+      "enum": [
+        "guaranteed",
+        "share_of_voice",
+        "non_guaranteed"
+      ],
+      "type": "string"
+    },
+    "LineItemServingMode": {
+      "anyOf": [
+        {
+          "enum": [
+            "dai",
+            "scheduled",
+            "embedded"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "LineItemSovBasis": {
+      "enum": [
+        "impressions",
+        "loop_time"
+      ],
+      "type": "string"
+    },
+    "MechanismOption": {
+      "additionalProperties": false,
+      "properties": {
+        "delivery_type": {
+          "$ref": "#/$defs/DeliveryType",
+          "description": "What the seller promises under this mechanism. The value on the mechanism in effect (§ 3.1) applies to the line item"
+        },
+        "id": {
+          "$ref": "#/$defs/TransactionMechanism",
+          "description": "The mechanism, which is the option id (§ 3.1)"
+        }
+      },
+      "required": [
+        "delivery_type",
+        "id"
+      ],
+      "type": "object"
+    },
+    "RetentionRange": {
+      "additionalProperties": false,
+      "description": "A range of values from `min` to `max`, with at least one bound, such as the time an ad stays in the content the seller distributes.",
+      "minProperties": 1,
+      "properties": {
+        "max": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Duration"
+        },
+        "min": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Duration"
+        }
+      },
+      "type": "object"
+    },
+    "TransactionMechanism": {
+      "enum": [
+        "direct_io",
+        "programmatic_guaranteed",
+        "preferred_deal",
+        "private_auction"
+      ],
+      "type": "string"
+    },
+    "TransactionMechanismSelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, `selected[]` the buyer's choice, which replaces it, and `deltas` the price of each option outside `included[]`, each by option id.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "#/$defs/MechanismOption"
+          },
+          "type": "array"
+        },
+        "deltas": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Delta"
+          },
+          "description": "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta.",
+          "propertyNames": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "object"
+        },
+        "included": {
+          "description": "The options in the base rate, by option id.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "The most options that may be in effect."
+        },
+        "selected": {
+          "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "available",
+        "included"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/modules/execution/1/execution.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `execution` module: the vocabularies, objects, unions, and constructor copies of § 5.9.",
+  "title": "execution"
+}

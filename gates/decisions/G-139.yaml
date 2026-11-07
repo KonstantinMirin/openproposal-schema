@@ -1,0 +1,111 @@
+format: 1
+id: G-139
+date: 2026-11-07
+question: What changes in the gates when a third lock, with-our-stack, reads the final text of the 17-PR stack, with kernel editions of the types its text defines in other forms?
+decision: >-
+  The kernel holds the stack's own forms of `Digest`, `Url`, `Duration`,
+  `Domain`, `Amount`, `NamespacedTerm`, and `FormatId`, and of `Selectable`,
+  `Settable`, `Range`, `List`, and `Map`, as editions its binding publishes
+  on the stack lock alone (src/editions.ts). Each gate that reads the kernel
+  reads the view of the lock it checks: the kernel checks, duplication,
+  domain sources, constructor sources and applications, the corpus, the
+  rule checks, and the SDK parity run on each lock's view, and the
+  duplication gate checks the twins of each view and that every shared
+  structure names a concept some lock's type represents. The fixtures that
+  named the first Selectable or the first rule of the first vectors file
+  name every Selectable, and the first rule the fixture's lock reads. The stack's readers, mapping rules, and model
+  are inert on the other locks: their IR, mapping, models, schemas, rules,
+  corpus, type examples, SDKs, release, round trip, examples, comparison,
+  and feedback are byte-identical. The feedback profile's `locks` names the
+  locks the report reads, and each other lock has a report of its own; the
+  feedback gate runs on each report with its own layout. A lint line's
+  section skips fenced code. The fidelity readers place a selectable row's
+  values in `available[]` and read a map field's example whole. The examples
+  gate gives a rule check the values that hold the checked value, by their
+  types. The plain-generator exemptions add PG-16 to PG-22 for the stack and
+  scope PG-6 to the old locks and PG-15 to the open PRs and the stack.
+rationale: >-
+  No check on the old locks is weaker: each view of the kernel is the
+  kernel those locks read before, and every new path runs only where a lock
+  publishes an edition or the stack's text writes a form the old texts
+  don't. The tests read each lock's view and pass on every lock. The
+  concept `geo-code`, which G-016 retired, is back: the stack's § 5.5 writes
+  a `GeoCode` type of its own, which only the stack lock publishes.
+concepts: [geo-code]
+accepts:
+  - { gate: committed-files, fingerprint: 1e1563d476d4fc50f63e923df7e963fb8a7799911bb77eb2b5e8414db17567e4 }
+  - { gate: comparison, fingerprint: 74305363aac522d2f962b8ba23448d746bfb6f53a2a32f59e234cab6408ae589 }
+  - { gate: constructor-sources, fingerprint: d10e8229ceef8a0a980c4dcc820ded3b048caee8a1a2b5ea2c4bc95542fa357a }
+  - { gate: constructors-applied, fingerprint: 0fec2287fa2d7619d4db96499affd60db4a08f920cc66c3cc40f541e835ec9ef }
+  - { gate: constructors-check, fingerprint: 2ab7e3fb97d63a20b3aa3436c73711f5c1330973372263baffad8f978bfc468c }
+  - { gate: constructors-load, fingerprint: 0ef4f3796d76bc76bf033da2f837510998fb8ef11efb139cce5bbc0862d8bca4 }
+  - { gate: convention-beside-reference, fingerprint: 46f9e14e0e2ab5a7144008d7b9fd65f2c9e70e836bb5bc846e2a2af2cc6c7a39 }
+  - { gate: convention-inline, fingerprint: ee71d8f52ecc3138cc8776bb6d622a290c619a5a5900f4f575752a4b597dd736 }
+  - { gate: convention-keywords, fingerprint: 7128b466d3a7a93ec97904b62d6e4c477149efcfa0f18ffc34fc594f81a0d343 }
+  - { gate: convention-layers, fingerprint: b245733f72b30e48afbd23666ac52a0bb8ba102cf1d64bdc9d244e2cee97b782 }
+  - { gate: convention-lists, fingerprint: 1edd1064f336874b6f232294b2e9098f1d922d9746a3f9abfa50b109e8ede851 }
+  - { gate: convention-modules, fingerprint: 1af3e1f896cd72b674378d46f97004e895a14ecfd4e77bd83b8bd39274393def }
+  - { gate: convention-unions, fingerprint: 6f59f23ad38943b9f44b95ebb8739f78f336c1706c4e5e7909b0d8eae6e35536 }
+  - { gate: corpus-generates, fingerprint: d9cefeb1a5db0a245f71f5bc9000b2fef9364cd4dcdb058a71a4d4e9a8aeb77e }
+  - { gate: corpus-isolation, fingerprint: 34a3078f7aebf9dee311347a2197dbbd1cd8a532660e77cb888ac726693b1c30 }
+  - { gate: corpus-labels, fingerprint: 7e0f4ca9d8b14930827ea71d10c3ac2bab4468ab97e25a5393b4c38e4449b333 }
+  - { gate: domain-sources, fingerprint: 5d7b18f45fee10ba3eb943ff863a3f1f297cee0c5d43542a33c09c3fe5212bd2 }
+  - { gate: domains-homonyms, fingerprint: b6fa053618aeb3718c62533d90932754f1ba46a30f48dca692ca524c08f2cc3a }
+  - { gate: domains-properties, fingerprint: 4c0f9b02798a601499a5effe096d5e6d228c6ae80166ac614dd10b4f76e95750 }
+  - { gate: domains-used, fingerprint: 12b7056153490af6d5e0b1c6c1505c34adf751b9c08f412d8df73d7d448412f6 }
+  - { gate: duplication-kernel, fingerprint: 41ffe348d50a5531342f1a1e68e191ca12e8ecfc5f488eba0d534b9fac1e55e9 }
+  - { gate: duplication-model, fingerprint: 4a6c8b4fa5d0993da422f36606977eb00f76edc7670c633e72318c91fa4aba3b }
+  - { gate: enum-drift-sources, fingerprint: b9fead8cde629c97c74092cb54a4bc3d43db6ea694ad283f17b2e1db56d02d20 }
+  - { gate: examples-listing, fingerprint: 9ff88ff8a693e73d67015c956b8bdcbce5c8aa12a203210bd1f9bd83590591af }
+  - { gate: examples-oracle, fingerprint: febc0ddcab57dce10e0ce5576347cb67146aac758af86eb79040500c406bc3d9 }
+  - { gate: examples-validate, fingerprint: ed716b7347d98a540668b0c3c15c819f2910b83d9f8eb64410d6debf354bebc0 }
+  - { gate: extraction, fingerprint: 8f9bcc98263458db3649ebbcfd576acbdd72f21addcfc558d10760a39ec27093 }
+  - { gate: feedback, fingerprint: 501e7fbd7722082f8a7f2d4d8d3b90e1dc49b53e1b52ec6cac446968300ede3e }
+  - { gate: fidelity, fingerprint: c4db7ce7ac56f6d436b4b8e6a89cb6ad52058957e26222cdb97b19f62f8e929a }
+  - { gate: field-examples, fingerprint: cfcee0882442950a9ca895fa40b24794277dad1fc58a2e424034605e96556c35 }
+  - { gate: frozen-releases, fingerprint: bc16af1bf9438e08606973c793f40a7b3d6cf3eeaa7cb6955cf01cb0557b4f09 }
+  - { gate: frozen-reviewed, fingerprint: bcb5c49e32a8be7c235df099f482a927366623bdc4a5f2739aff278a667ef3bc }
+  - { gate: guard, fingerprint: 3eeeb02f6d58a70bbb381dd470a63f7fec37ba25dcef702701b19489c57ad086 }
+  - { gate: kernel-check, fingerprint: d449dde5ac222017265dc74dc32da72be2e8a537259c693ba6ce04a47e20134e }
+  - { gate: kernel-engines, fingerprint: 7bb9d49319430a185a881ff1c3b36b634581da2275235309a8c4243b6cb60fd2 }
+  - { gate: kernel-load, fingerprint: c3ced2cbbfd4542dfc17555fa232f2c3b838216a977ea6cc1a71d49c550d89cc }
+  - { gate: kernel-sources, fingerprint: c5c01ece4567ec1f841b03895ffffee367acb805c4c09229f07e9c5123a442ea }
+  - { gate: map-drift, fingerprint: 91d2913111d7d862ec100914d30dde797c266596288a2bf06fd19fda1d8f5827 }
+  - { gate: mapping-bijection, fingerprint: d4ec86a22b5fea88572c2e951eb8831a37f886736cacd9243b965614e6f5c880 }
+  - { gate: mapping-constructors, fingerprint: 01d521dfc801c4de52ce3bd70e0cabfb81b56399a12ff1d724cbda4b4721c328 }
+  - { gate: mapping-current, fingerprint: a6246e6f34b06cb6f43f377ce17bc6ba0bb7e240e38cd906e303a5ee11388fdc }
+  - { gate: mapping-load, fingerprint: bd996570cce33025e35fc7eab34b41fb78c26b0d9bf20cb706c1663c36377bb6 }
+  - { gate: mapping-location, fingerprint: 286364b7352f47e4a956aeb6b497d8e9452d2139e32534b36502b5176280c41a }
+  - { gate: mapping-names, fingerprint: 0f7a619c5a466124ddd15ba34e339915a7fad22bbfc558d2908e9c96ad971591 }
+  - { gate: mapping-rules, fingerprint: 96448c14180240e5702fcf5cf8cd2de354dd97948c0dd6f32cfdd57b86ddfc7d }
+  - { gate: mapping-sources, fingerprint: dea3b28b8124350c1e8a621c9207e135968ebc738d285c4edce3ac5a1ad9cdb7 }
+  - { gate: model-resolves, fingerprint: 44b7f4ff96dcd403253f64b92e4c813bcef50c07149f1deafcea5446cb6be4c7 }
+  - { gate: modules-depends, fingerprint: c294c5279a4f1ae3367881dc3e616e6098dedece073a51af9f067297d5e43fd2 }
+  - { gate: nesting, fingerprint: 4e5589443b41fc45c5bac19131489ce7bc4e4c80d6d35fe5c72dcb5d4c64127e }
+  - { gate: npm-test, fingerprint: 701b0613996a9fafd6b4c80a12bd7f1eab5b940216767f6df27717d6e74c3bdf }
+  - { gate: plain-exemptions-file, fingerprint: 7c31f46ea1c74c620be1e1146703e669cdb7cfc57bd5a8790b7e2110d1a42127 }
+  - { gate: plain-generates, fingerprint: 02abc0d462f1b7d31dbe94dd3d11e1374b3c9b06e857b40f470ff3d320f73657 }
+  - { gate: plain-parity, fingerprint: dd8d46dad04df7115397c62d1af35e7235c5ed2fb467fb783010ec8c0fc4ffc2 }
+  - { gate: record-wording, fingerprint: 16dcc977fdab241e2e6df90025c6fa4715fa15b28fedbab3ebf64182f2561157 }
+  - { gate: registry-agreement, fingerprint: 5fa638153de08a9346cbd558ec16a32a8d46ac85c33317dd808c1701e7a8cc0a }
+  - { gate: release-breaking, fingerprint: b36d69fe6b716e72b802d095aa97c5e481d45ae53eddd7465cec01445091015d }
+  - { gate: release-breaking-corpus, fingerprint: 07aae222da2ed321ba5bf020150309d71a285cf5fc65f3da6372942c97130854 }
+  - { gate: release-builds, fingerprint: 441b63b769f469a6bebfdb130158dde9af71b1382ec742c0c583459e04384935 }
+  - { gate: release-digests, fingerprint: 1185e2389ae7f448fc5607b342bfd5e4b76311e37be0a42eb8de44efae5daea3 }
+  - { gate: round-trip, fingerprint: 0e32a9b3604f29c4a79818bab2bc5057896fbf2e19f7b75adf8a028f26509e01 }
+  - { gate: rule-checks, fingerprint: b6807be08ae86678f9b418fe296c45a6b1f1b86764c1cb0a5c1f1f1fd8c30197 }
+  - { gate: rule-vectors, fingerprint: 70e6be9aee46b8075b82dc122798e5b904bfe57a0256e8b43c118a23ac085cb1 }
+  - { gate: rules-emit, fingerprint: fa358ff825b2f552e35263331d065845849679f9d31864b7c4b2102f1006eb41 }
+  - { gate: schemas-ajv, fingerprint: 387a07a5da6a6a88be192805d4a028c8748908eed96bda8f35f89e342f254914 }
+  - { gate: schemas-conventions, fingerprint: dd9b39142997a8dff19ee2a9961c6510a842704199ad108533e259dbb7982853 }
+  - { gate: schemas-emit, fingerprint: cde3e86cb09989083afaa1d22e9306317a86bdec8cba8901b6bb3335301b5cd8 }
+  - { gate: schemas-oracle, fingerprint: ca817061036f619e41765342efd9bd8f42fcddc5fe1aa16f454b336b13d30e1e }
+  - { gate: sdk-generate, fingerprint: 1808d039412348767fdebe4cccf89a2d30ab17757b2694d697f9318622950bf3 }
+  - { gate: site-builds, fingerprint: 9d4f8dfe5bcb12279d54ec828d2c8aa9f75133d2782e0402a9da032e082b1251 }
+  - { gate: spec-profile, fingerprint: 06301bed268dadd4dceeb1d41095acdcc0967d76b5c2cdc53c12304a4c5bd239 }
+  - { gate: type-examples-generate, fingerprint: 79a081ed891d97317a71bfb8497d7e2c7de9724932e8a2249ac53c411ecbf6ee }
+  - { gate: type-examples-valid, fingerprint: 59cc7a4780944d4aa39d693715679fc72ebac1b800e644873e3658f6df737b84 }
+  - { gate: variant-check, fingerprint: 88c6c9dcf4acd9e1165773e12bf2503a7aef16ea2d4342ade2e3ba3b085dc6da }
+  - { gate: variant-diff, fingerprint: 5111048df9861b4bcf8e93e970639f8a1c0c0bac59892e8ad19ca4cdb1b5bf96 }
+  - { gate: variant-examples, fingerprint: 366596aa954afc06b7cc2794242c888146c3aabef69eedb8303e6cd6949a8b32 }
+  - { gate: variant-load, fingerprint: 047cc28d57f1b562e4f1081f51e050f9e2ed9b547b7e344ac3e4df860db67027 }

@@ -8,9 +8,11 @@ covers:
   - ir: field:5.7:committed_metrics[]
     digest: 2c123e829ef892456b09671dfd52243f1bef0db8b067aa9c5d184dc07411caf5
     quote: "`committed_metrics[]` | Array[Object] | requestable | `{ metric, value, basis }` tuples — `viewable_rate` for display, `completion_rate` for video/audio/CTV, an audience-modelled metric for DOOH. Seller declares a ceiling; a buyer MAY request above it"
+    locks: [main, with-open-prs]
   - ir: field:5.9:buyer_requirements
     digest: 19ff019961864951f5579cc6142cb0153f9749584c53a78823d8ff2abcb71c4c
     quote: "`buyer_requirements` | Object | mixed | `{ seat_required, dsp_allowed[] }` are seller-set; `{ dsp_seat_id, dsp_id, seat_owner_entity }` are supplied"
+    locks: [main, with-open-prs]
   - ir: field:5.10:external_references[]
     digest: 315c9cae8347b00baa3267037c8775e9c10e059dd224d92625ae98909a2eb3fc
     quote: "`external_references[]` | Array[Object] | derived | `{ system, namespace, id, role }`. Replaces platform-specific key names. A buyer-owned reference such as a Prisma `io_id` is supplied"
@@ -22,18 +24,23 @@ covers:
   - ir: field:4.1:negotiation_history[]#description/object:1
     digest: 4e6fe4bb14cccd020b8d8e903fb098ce6de02c4a07e3c93fe9e1730709c4503d
     quote: "{ version, actor: buyer | seller, action: proposed | countered | accepted | declined | withdrawn, fields_changed[], at }"
+    locks: [main, with-open-prs]
   - ir: field:5.7:committed_metrics[]#description/object:1
     digest: 349c5917c07f1ded607f6a670f1be40b172938f6bf694e543bf0a189b6dfe255
     quote: "{ metric, value, basis }"
+    locks: [main, with-open-prs]
   - ir: field:5.7:measurement_source#description/object:1
     digest: 7213fd41321c72d119261e7a84890af68599b6801c2fc5cef92127295fb4ed22
     quote: "{ vendor, attribution_window, qualifier }"
+    locks: [main, with-open-prs]
   - ir: field:5.7:reporting#description/object:1
     digest: 15b343617f534633524b7226be5e3f1d36fa7042fd26aa52c5fde05bc1e50adb
     quote: "{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency }"
+    locks: [main, with-open-prs]
   - ir: field:5.8:required_credentials[]#description/object:1
     digest: 51ac831bb1eb05acb0c47847addae4a80e19323e55d30338e231872df19d2bf7
     quote: "{ type: iab_registry | dsp_seat | custom, scheme: api_key | oauth2_client_credentials | jwt_keypair | oidc_federated | none, issuer, id_required }"
+    locks: [main, with-open-prs]
   - ir: field:5.8:terms_ref#description/object:1
     digest: 51d70daf01993e106693752a529bed2816a32dc1328eb9ce9b846e1a0422c5d8
     quote: "{ url, sha256, version }"
@@ -41,12 +48,15 @@ covers:
   - ir: field:5.9:buyer_requirements#description/object:1
     digest: 0b6228bc154412978d5350265f2b047a7788de634feb88e9eb3a5e7fa1b0d417
     quote: "{ seat_required, dsp_allowed[] }"
+    locks: [main, with-open-prs]
   - ir: field:5.9:buyer_requirements#description/object:2
     digest: c3237ee1a6dc26edc444e2a846bb5d73fcaca808322b78b0e4634b08547adb7b
     quote: "{ dsp_seat_id, dsp_id, seat_owner_entity }"
+    locks: [main, with-open-prs]
   - ir: field:5.10:external_references[]#description/object:1
     digest: b2b42bebd68eb2c875768df427a1cc02157d6b00c3b38861b6a3867b272132f3
     quote: "{ system, namespace, id, role }"
+    locks: [main, with-open-prs]
   - ir: field:5.10:agreement_ref#description/object:1
     digest: 9398197aa43f595b95bc73e5042b9264499fc283b4c11ec5deb7572fe6f9a16d
     quote: "{ agreement_id, parties[], type: upfront | annual | master_services | other, valid_from, valid_until }"
@@ -54,6 +64,7 @@ covers:
   - ir: field:5.10:billing#description/object:1
     digest: 14e76c6d0000d0f7ec089bc36155c29a8d0225e9e070cd19954462053ef17317
     quote: "{ supplier_id, billing_supplier_id, payment_terms, invoicing_party }"
+    locks: [main, with-open-prs]
 options:
   - id: as-listed
     summary: Each member takes the schema type or value list its meaning names.

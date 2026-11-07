@@ -15,10 +15,10 @@ import { loadDecisions, loadMappings } from "../src/mapping.ts";
 import { resolveModel, type ModelDoc } from "../src/model.ts";
 import { codesOf } from "../src/rule-checks.ts";
 import { checkFieldExamples, checkTypeExamples, generateTypeExamples, renderTypeExamples, specValues, typeExamplesDirOf, type SpecExamples, type TypeExamplesDoc, type ValueSources } from "../src/type-examples.ts";
-import { OP_SCHEMA, ROOT, RULE_CHECKS, SPEC } from "./helpers.ts";
+import { oldConstructors, oldKernel, OP_SCHEMA, ROOT, RULE_CHECKS, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT, SPEC);
-const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const KERNEL = oldKernel(loadKernel(ROOT, SPEC));
+const CONSTRUCTORS = oldConstructors(loadConstructors(ROOT, SPEC));
 const MAPPINGS = loadMappings(join(SPEC, "mapping"));
 const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 const CODES = codesOf(loadLists(ROOT));

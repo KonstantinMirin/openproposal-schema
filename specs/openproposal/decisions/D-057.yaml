@@ -1,0 +1,719 @@
+format: 1
+id: D-057
+status: proposed
+kind: gap
+author: agent
+question: "Which of the stack's RFC 2119 statements outside the tables does a schema check, and which bind a party?"
+covers:
+  - ir: rule:1.1:d539a004
+    digest: 2ffd43033b56acdf914ddd6ba08939c998e7f7d2f9babc326fa89d5114d46744
+    quote: OPTIONAL.
+    locks: [with-our-stack]
+  - ir: rule:2:ddbf85da
+    digest: 9b8cf6b2997e52990b2dcac03bf8e5a5cddc2d3855eafb9051b87e6b9feaee65
+    quote: A buyer MAY select and commit any subset of a proposal's `line_items[]`.
+    locks: [with-our-stack]
+  - ir: rule:2.1:568d4699
+    digest: 1d0a1e4074849669561e9040826a916395cfaea0b2c0a0fc964417e7145bbdd0
+    quote: A full fetch MUST return it, except for line items and packages the requester may not read (§ 5.8).
+    locks: [with-our-stack]
+  - ir: rule:2.1:5072813c
+    digest: 832ce0230a46b8eb8419bc867ed657b68fbff5dbedd926bd3030ef609efbc253
+    quote: A manifest entry holds it (§ 2.3), and a response over the message binding (§ 1.2) MAY carry it.
+    locks: [with-our-stack]
+  - ir: rule:2.2:ef4efcb1
+    digest: e36dd7069ba76486f483ec13fe1ec89a5d12675e8da01dee33df55611e04e497
+    quote: Its row MAY narrow the type for that field, by requiring a key the type leaves OPTIONAL or by limiting the values or count the type allows, and says so.
+    locks: [with-our-stack]
+  - ir: rule:2.2:df0340d2
+    digest: ec6dc16d2d8357e94f96a381873955f7251c1a29a92ab5342d9ad440a8ffc4e3
+    quote: Producers MUST write this form.
+    locks: [with-our-stack]
+  - ir: rule:2.2:1e8acd47
+    digest: 4f57a2a0fa77f16f43eceb142f8cc63de4abd44a33ea2fcf4cf58baa977317a1
+    quote: Consumers MUST compare byte for byte and MUST NOT normalize a value before comparing it.
+    locks: [with-our-stack]
+  - ir: rule:2.2:32c53f84
+    digest: 46ddd5951d89aaa54a6a5e8eaee4b2ba3055f080cbaac43b113d8bf5de1f632b
+    quote: Anyone MAY define an extension term.
+    locks: [with-our-stack]
+  - ir: rule:2.2:c3db85f7
+    digest: 1d21fef93239ef46c0b52aa0a6cd169c281c285f60d9dbe8ac679367da5c0aa2
+    quote: For a `channel` (§ 5.1.1) or `cost_method` (§ 5.6.5) term, these effects are a MUST.
+    locks: [with-our-stack]
+  - ir: rule:2.2:9c143862
+    digest: 3867dbbd0a70b305c0542a0c7d64cb22d066f524eb4bf22a0df5b513d0d0bacf
+    quote: A field MAY state another effect.
+    locks: [with-our-stack]
+  - ir: rule:2.2:b0cdbdd1
+    digest: 7c133fe8cd0dcfed95651cf884957240971a08f6e34f2d822d6261ad75bef680
+    quote: It MAY need authentication
+    locks: [with-our-stack]
+  - ir: rule:2.2:3d1eff57
+    digest: 1b351bcf86ecbebae10b8fdb70e974a67c0d217786376269343860ecd7e39a19
+    quote: An absent or unresolvable `registry_id` MUST NOT make a document malformed, and a consumer MUST ignore a resolved entry whose verified domain is not `domain`.
+    locks: [with-our-stack]
+  - ir: rule:2.3:8d420e7d
+    digest: 47897a6abedcfb890595b29a22e9e493aae6f29de22f82cae19b4cd25b36e979
+    quote: A seller MAY publish `https://<seller.domain>/.well-known/openproposal.json`, a `ProposalManifest`.
+    locks: [with-our-stack]
+  - ir: rule:2.3:9c46c162
+    digest: 834639f14da3b21efc5611ee043e48477db2530a86c2af6ef18f0cbb6a04e286
+    quote: At least one of `ETag` and `Last-Modified` is REQUIRED, so buyers can poll cheaply.
+    locks: [with-our-stack]
+  - ir: rule:2.3:59a4ca91
+    digest: 2b3e46e91c56afcfd2d7706ed0b92fd09dacb18ff6e94be7876ed6fd315a55e0
+    quote: Manifest entries MUST match the current version of each proposal.
+    locks: [with-our-stack]
+  - ir: rule:2.3:86c05e36
+    digest: bbec4c1a9e7e8771e928e27ce0af5a704c2072ba0f2b6e67b43481ea09005dbf
+    quote: A seller that limits concurrent holds SHOULD declare the limit in `hold_limits`.
+    locks: [with-our-stack]
+  - ir: rule:2.3:cad085e3
+    digest: 3879afc4af120ba21e40feac98e707c5afc332be6667f6320b305773da099d1d
+    quote: A seller that declares `per_advertiser` MAY decline a hold request whose `requested_terms` names no advertiser.
+    locks: [with-our-stack]
+  - ir: rule:2.4:c17390d3
+    digest: 6c5b6adde0cea45a9b26b8b1a92dadfe424c73685c6fb4b6fe1b865c5a639c0b
+    quote: A party that rejects a request MUST return `errors[]`, one or more `ErrorObject`s.
+    locks: [with-our-stack]
+  - ir: rule:2.4:bd6cd209
+    digest: 1cfa18b83f2bac0ab1a968a76fce993268e151e2759acbba2313ef639f7280bc
+    quote: A receiver SHOULD NOT parse it
+    locks: [with-our-stack]
+  - ir: rule:2.5:b7667a2c
+    digest: dd3a70e21a2e8dcd7595dea466b3c94f5f404802732f745b50d830e734c3f4e6
+    quote: The proposal, each line item, and each `change_requests[]` entry (§ 4.4) MAY carry `ext`, an `Ext`.
+    locks: [with-our-stack]
+  - ir: rule:2.5:95586079
+    digest: d761c83cb5753c150eef74407be237f1d1e0cf90f0840e49033197eb4f603f8d
+    quote: Each key MUST be a `Domain` that its owner controls, and each value is an object that the owner defines.
+    locks: [with-our-stack]
+  - ir: rule:2.5:54a97cce
+    digest: 616b1e284dd760594568cadbfecb852bd2bc4f9e1cfb71d40413b621bc170ddc
+    quote: A seller's own entries MUST use its `seller.domain` as the key.
+    locks: [with-our-stack]
+  - ir: rule:2.5:f02c39d6
+    digest: 25bf8839068c755195be54131b58fd02003e3f3115613e24aeb21eb350e7341e
+    quote: An `ext` entry MUST NOT change the meaning of a field this specification defines.
+    locks: [with-our-stack]
+  - ir: rule:2.5:84b68ec7
+    digest: 9543d2a862b7d80be20ce01e08d2764a412d6b32b12c23471cd87de3f5e32e54
+    quote: A term the counterparty must understand to transact MUST NOT be an `ext` entry; it is a field or a vocabulary term.
+    locks: [with-our-stack]
+  - ir: rule:2.5:d8749eb6
+    digest: 94f05e57f3153a4ffa209da1fec9302eeb408ddad94666ce096277fbbf89e75e
+    quote: A receiver MUST ignore an `ext` entry it does not understand, and MUST NOT reject a document because of it.
+    locks: [with-our-stack]
+  - ir: rule:2.5:7eb6b4bc
+    digest: a69e6177dd822dbb6a4cbf9570efb0e68cb33f89eeb2c7fb3ab6c6472ce77237
+    quote: It MUST keep `ext` unchanged when it stores or forwards the document.
+    locks: [with-our-stack]
+  - ir: rule:2.5:c97afe58
+    digest: 18979da39e00db73a55cd16e07fd6de084488f7babed97a1844e3c940be3ce29
+    quote: Apart from an unknown term (§ 2.2), a receiver MAY skip a whole line item it cannot read, without assenting to it.
+    locks: [with-our-stack]
+  - ir: rule:2.5:7bd50d5a
+    digest: a1e738dc7ca5df24ae18ef1534586f6b13f8522889f544cea6f73cf05a22fd88
+    quote: It MUST NOT keep a line item after removing fields from it.
+    locks: [with-our-stack]
+  - ir: rule:2.6:6f3c4fcc
+    digest: 8112fbcaae72dfa0381049a8e16859c1f7056a99b47f3154102cd0117b944797
+    quote: A key table has the columns Key, Type, Required, and Meaning, and MAY add a last column that names a source standard.
+    locks: [with-our-stack]
+  - ir: rule:2.8:2bb38cac
+    digest: 7b403c99e8fc9226d723474e2b62590bda82e817ad02368e70a740bce800922c
+    quote: "Signing is OPTIONAL: § 4.1.2 states what a signature shows, and `agreed` never depends on one."
+    locks: [with-our-stack]
+  - ir: rule:2.8:1a572833
+    digest: 0bf63c496b8a523331e7c92f6fda51430c09d8592f65328a6a879074ef5eb3c7
+    quote: A party that cannot verify a response MAY refuse to write its own entry (§ 4.1.2)
+    locks: [with-our-stack]
+  - ir: rule:3:e5ff81ed
+    digest: c13252b8934b84a3fe7175a9c96a970a5223e3b7aed4f26ab7df606162db9035
+    quote: The seller sets it and MAY revise it while the `status` of the object that carries it is `draft`, `published` or `under_review`.
+    locks: [with-our-stack]
+  - ir: rule:3:07a16404
+    digest: ed8ad42a32962db5a2597a6f2336258629c6a0c2e6c66cfac526a78cc6fa5cb1
+    quote: "`selectable`, `settable` and `supplied` fields MUST resolve without a round trip — everything needed to validate and price them is declared in the proposal."
+    locks: [with-our-stack]
+  - ir: rule:3:e1b586de
+    digest: 25cac71ef0c5a520424bc5ec06b73dbd1d1671706c2280f07ef6dc90c84877b3
+    quote: The buyer MUST NOT alter the keys the seller declares beside them.
+    locks: [with-our-stack]
+  - ir: rule:3.1:bfffacdf
+    digest: 705cdabdb624bd15e1d51d39445a32e68b2d7c9c3364e2beedeca3da9ca4e77f
+    quote: An object option's id is its REQUIRED `id`, unique in the field.
+    locks: [with-our-stack]
+  - ir: rule:3.1:99ddc11e
+    digest: 12b91f33953a643a5ea560c72f0b6025855b7adb72aea37ba0eb1b97b8975e21
+    quote: An option priced only by `delta_cpm` MUST NOT resolve against any other entry.
+    locks: [with-our-stack]
+  - ir: rule:3.2:9277e83b
+    digest: b1ab848b6c192faf9512d7b88287356b19240fb2e8cd07b08018c3ed9fa6803e
+    quote: Each entry MUST be covered by an `allowed[]` entry
+    locks: [with-our-stack]
+  - ir: rule:3.2:4659b1d4
+    digest: 778a9db0e5ccb7906aa5a5906bae3d8994a11c41a8afe60fbf794ee27371114e
+    quote: Each entry MUST be covered by an `include[]` entry
+    locks: [with-our-stack]
+  - ir: rule:3.3:1c0f3417
+    digest: 0a37d096bbbb2bb303ba890d28c9cdb3d17461a180bb3924d15f1c8c9f355e1a
+    quote: Because audiences, properties, formats, and `markets` are `selectable`, and a `settable` targeting `value` and buyer `exclusions` (§ 5.5) narrow delivery, `addressable_scale` and `availability` MUST be recomputed against the buyer's actual selection, values, and exclusions.
+    locks: [with-our-stack]
+  - ir: rule:3.3:810028b3
+    digest: 168d930b407ed6f72e5e840950bb2604f118be892ae634454b7f76d786c4f27a
+    quote: "`availability` MUST also be recomputed against the `break_position` and `programs` options in effect."
+    locks: [with-our-stack]
+  - ir: rule:3.3:de17ca68
+    digest: 161bc9df600531d946b437d5e5d8ca90e525f3949c47136be2f730c37f6040a6
+    quote: "`line_item_id` is REQUIRED here"
+    locks: [with-our-stack]
+  - ir: rule:4.1:ce1d9648
+    digest: 78b338bdf7b4bee50907bdfe614694ced549764abc13dc72cead247ddc252886
+    quote: The offered terms of a frozen version MUST NOT change; a change to them creates version `n+1`.
+    locks: [with-our-stack]
+  - ir: rule:4.1:b1f3c197
+    digest: 34aaac9abe19603f636fa41bf1b51998c2e9ca4745bc79df4b6ad517318dfeb4
+    quote: "`legal_name` is REQUIRED here"
+    locks: [with-our-stack]
+  - ir: rule:4.1:b1f3c197-2
+    digest: ad1ac9da6dd24b90f0fb1d6d840c647266a6f8803045cb50780c4a460668005a
+    quote: "`legal_name` is REQUIRED here"
+    locks: [with-our-stack]
+  - ir: rule:4.1:8e9aacb8
+    digest: ff37aeb1ba84d151e43e278564e7de10cbcf52ae2f9cccb0f38b0191ac573247
+    quote: Entries MUST NOT be edited or removed
+    locks: [with-our-stack]
+  - ir: rule:4.1:d401d65e
+    digest: 8a2eb18c5cd8e5b96a5903a2542e487bac8991b62a28a1a8fdc878e6901f6f26
+    quote: Entries MUST NOT be edited or removed.
+    locks: [with-our-stack]
+  - ir: rule:4.1:ff8838af
+    digest: 4f52ba69650c864c333bc14f7fe814db4d8ba8c5afd6d94df32d1e9056aa277a
+    quote: MAY be empty
+    locks: [with-our-stack]
+  - ir: rule:4.1:fae6ebab
+    digest: 9ab8f55b64b8d35d9b76de90e0207486bc671e1bd846dd0ea1701c9da007be1a
+    quote: "`proposal_template_id` MUST NOT be required for a buyer to transact."
+    locks: [with-our-stack]
+  - ir: rule:4.1:4311c613
+    digest: b5979e26d5c685062eb0ea9dd7b054ba7b8d20c7eb45ff74b3d45056ef075542
+    quote: A seller MUST NOT name a domain it does not control.
+    locks: [with-our-stack]
+  - ir: rule:4.1:9d47bb1c
+    digest: 4962e152924581675b2bf6bb0289222e18e886f56ed636396dcfa7c86dc8a153
+    quote: A selling entity that controls several registrable domains SHOULD use the same `seller.domain` for every proposal it publishes as one seller; a seller that publishes proposals under several domains holds an Agent Registry entry for each, or the entry does not apply.
+    locks: [with-our-stack]
+  - ir: rule:4.1.1:e95eca3f
+    digest: 0094bc8f8b869bc24c45badb4cb62162353a0c38d061c288444eb5e872cec738
+    quote: Strings, `Instant` values included, are hashed as that value; a party MUST NOT trim, normalize, or reformat a value it did not write.
+    locks: [with-our-stack]
+  - ir: rule:4.1.1:6e3d2c89
+    digest: a4eced90b997d6c4d28db7e51e09b74f4641d0af099cb94ac709f3b871ac9a76
+    quote: A producer MUST NOT write a Number that this serialization does not reproduce as the numeric value written; a Number with at most 15 significant digits inside the range of a double always does, and a document containing one that does not is invalid for this section.
+    locks: [with-our-stack]
+  - ir: rule:4.1.1:e93caddf
+    digest: c3de0f370a6bd2da02352372e894c929f8dafe8d938d5ea949a6343206259e02
+    quote: A receiving party MUST recompute `record_digest` and compare it byte-for-byte before relying on a live `commitment` entry, over the line items as they stand plus the writes its `commit` carries (§ 5.6.1), or on a matching pair, from its agreed record (§ 4.1.2).
+    locks: [with-our-stack]
+  - ir: rule:4.1.2:527c9881
+    digest: 451abbcc3afc2a441dce3577af85a734a2f688a513087ccca80fec5d0d07afaf
+    quote: MUST be non-empty
+    locks: [with-our-stack]
+  - ir: rule:4.1.2:d5a6e326
+    digest: 8d84d6e26e3c4f1ed6fd50871d124dccef18acd62bfaa7af19033a2831ad585e
+    quote: The seller MUST NOT interpret it (§ 5.6.1)
+    locks: [with-our-stack]
+  - ir: rule:4.1.2:0006fe1d
+    digest: 7793fc15e0fefb0ec9b39dbf9f8ce7f705c8da81769688db5a06f7ec7acdcf48
+    quote: Its `line_item_ids[]` MUST name line items whose `commitment` object (§ 5.6.1) is populated in the record, and on their own MUST meet the package rules (§ 4.1.4).
+    locks: [with-our-stack]
+  - ir: rule:4.1.2:c9ce18dd
+    digest: 8c00feda546efd02d92d57b6068d426acdda5961383e42d074c5a58488aafc5d
+    quote: An entry that is not live stays in `assent[]`, and the line items it names MAY appear in a new `commitment` entry.
+    locks: [with-our-stack]
+  - ir: rule:4.1.2:dc1eb3b2
+    digest: 83bc4a9d3c0d7a0c0397dbae7f428b3b50972494286b155c637ab835d5695f67
+    quote: A line item MUST NOT be named by more than one live `commitment` entry, nor by more than one `acceptance` entry.
+    locks: [with-our-stack]
+  - ir: rule:4.1.2:a855dcd7
+    digest: a3ce6e90057cbfbbf92b9791066100075feed6a32cb62ee997cfcff3388b6cab
+    quote: Every `seller-set`, `selectable`, `settable`, and `requestable` value of it and its `pricing[].agreed_rate` MUST remain as in the version `assent[]` names.
+    locks: [with-our-stack]
+  - ir: rule:4.1.2:b3c1ac3b
+    digest: f393f55a23f7c5d66538a25a2a908b2af4aa0bd7d35fb57260139a2d98a05dc1
+    quote: The evidence is OPTIONAL.
+    locks: [with-our-stack]
+  - ir: rule:4.1.2:9a7a80e3
+    digest: 2c7fc4e8ca9617f8cc592c95816a8b00d437ec47f46fb1f020d7d9aa1eadc71d
+    quote: Within the limits on a decline (§ 4.3.2, § 5.6.1), a party MAY refuse to write its own entry for any reason, including a counterparty message it cannot verify.
+    locks: [with-our-stack]
+  - ir: rule:4.1.3:fb70b3cb
+    digest: 60fcb1887f427c7b421f3448509c170666612fbf8921d73ca3ac3064fa06cafb
+    quote: "The following are not offered terms and MAY change without a new version: `status` (proposal and line item), `assent[]`, `negotiation_history[]`, `change_requests[]`, `availability`, `addressable_scale`, `hold`, `external_references[]`, `assets[].approval_status`, a `built_by: seller` entry of `assets[]`; `best_for[]`, `not_suitable_for[]`, and `seasonality_notes`, which are advisory (§ 4.2); `pricing[].min_rate`, which is a hint; `buyer_supplied.expected_match_rate`, which is the seller's stated expectation; every value the buyer writes (a `BuyerWrites` value, `commitment`, any other `supplied` field, and a `requestable` ask); and every `derived` value computed from a buyer's writes (`pricing[].agreed_rate`, `commitment.derived_units`)."
+    locks: [with-our-stack]
+  - ir: rule:4.1.3:dd69dac7
+    digest: 3ba4c1077f2856bb1942f8145bec99a246e3514bcad8982680e5b5dc6b7b028d
+    quote: A seller MAY edit a proposal in place only while its current version is not yet frozen (§ 4.1).
+    locks: [with-our-stack]
+  - ir: rule:4.1.3:e06c57e1
+    digest: 43392f1f110005df6198890fcbf269c68790233cb10cf726a8fa9b9a22e8500b
+    quote: A line item that appears in a frozen version MUST NOT be removed from the proposal or moved to another package; it leaves the shelf by its `status` (§ 5.1), which is a lifecycle change.
+    locks: [with-our-stack]
+  - ir: rule:4.1.3:03718402
+    digest: 092cc55c0ada2fda38f021420c13e82af3269b0c45e7623e6f71579d27b5ea0c
+    quote: "Each change to the offered terms of a frozen version MUST create version `n+1` and MUST append exactly one `negotiation_history[]` entry carrying that `version`, with `actor: seller` and `paths[]` naming every offered-terms field whose value differs from version `n`."
+    locks: [with-our-stack]
+  - ir: rule:4.1.3:862b74db
+    digest: 3ff132fb956552d2cf2a570951b4636228dfdd0a112020dbd5cd21a513adaf30
+    quote: A seller MUST keep every version that a `negotiation_history[]` or `assent[]` entry names retrievable by `(proposal_id, version)` for as long as the proposal is retrievable.
+    locks: [with-our-stack]
+  - ir: rule:4.1.4:d0dd8213
+    digest: e9e7b958ad6cff756d28ad747ed60d26a1559c8547d1dc53403346aa3df18d50
+    quote: A `commit` that names a line item in a package's `line_items[]` MUST name all of them.
+    locks: [with-our-stack]
+  - ir: rule:4.1.4:24987106
+    digest: 1e4a93b54defdd90df838969830a6024324a44963a339750993823a3562f50c5
+    quote: A `commit` that names an add-on MUST name every line item in its package's `line_items[]` and meet each of the package's `min_commitments[]`.
+    locks: [with-our-stack]
+  - ir: rule:4.1.4:759b4d1f
+    digest: 9aa19d6dc8581fc0b966993bb5af9c54f3d165b8acd8565f8da3994abb0220cd
+    quote: A seller MUST reject a `commit` that breaks either rule with `not_committable` (§ 2.4).
+    locks: [with-our-stack]
+  - ir: rule:4.1.4:7d683b70
+    digest: c53afc967c1d7d2675219077935e812c71974852bb2841aa0eca59c972925f34
+    quote: This check MUST be deterministic.
+    locks: [with-our-stack]
+  - ir: rule:4.1.4:e6117ad4
+    digest: bb90e7fff20f4294c077493a28596ca29a005df1d28923c112910b560551ff95
+    quote: It asks for a change those options don't give, and the seller MAY decline it unless `terms_refs[]` (§ 5.8) gives it.
+    locks: [with-our-stack]
+  - ir: rule:4.3.1:344cb94d
+    digest: 93450941ac85f97c706d212a8260a6e97380b2a614c1a14bce219b75afcbacd0
+    quote: A `counter` of `pricing[].list_rate` MAY also change `included[]`, with `paths[]` naming both
+    locks: [with-our-stack]
+  - ir: rule:4.3.2:4825c8da
+    digest: 63cab315e04772a46d16a682943f4ad70b37c51095af8f81424f77c554bf81d7
+    quote: While it holds, a seller revision MUST NOT change that entry, `pricing_id` included, and MUST NOT end it sooner by moving `offer_window.end`.
+    locks: [with-our-stack]
+  - ir: rule:4.3.2:131efb6c
+    digest: 4c1a07084adfec99dbdb6ac5a25649be2f083e563069418cf38acf3df6079359
+    quote: A `grant` or `counter` of a `request` on that entry MAY lower its `list_rate` or widen its `unit_bounds`.
+    locks: [with-our-stack]
+  - ir: rule:4.3.2:72de0cc2
+    digest: b3e5253083c356e414d080e0995c14216afa5acf7c5a6ff6c73a0c5dfda2acb9
+    quote: "The seller of an issued proposal MUST answer a resolved `commit` under it that arrives while the entry holds, on or after `offer_window.start`, and passes the checks of § 5.6.1 and any authority check the seller applies (§ 5.8): accept it, or decline it on an allowed ground."
+    locks: [with-our-stack]
+  - ir: rule:4.3.2:d044b92c
+    digest: c27be7604c1620e42e0676ad54b1d047914dc8d1c7347763aa66eda23d9c1733
+    quote: "The answer MUST come before the entry stops holding: otherwise silence works as a decline on no ground."
+    locks: [with-our-stack]
+  - ir: rule:4.3.2:29fded3f
+    digest: 16c549cb668a3f1a9d745136f42388d6bfae910c52b7e37fac05a1ee16043c90
+    quote: A seller MAY revise a line item while an ask is open or a hold runs.
+    locks: [with-our-stack]
+  - ir: rule:4.3.2:31f66e42
+    digest: 864666506dea509244909c707f725d31c02a0e1c21662702a1495e7ca3738fd5
+    quote: An ask it makes stale ends (rule 1), and the seller MUST release a `held` hold it makes stale or re-offer it at the new `version`, where `hold.status` stays `held`.
+    locks: [with-our-stack]
+  - ir: rule:4.3.2:84b5ebab
+    digest: 52279a09a58e49b6d84610422a63b069554beccb6c2dd5c40c9e473fb347e765
+    quote: "A `commit` MUST NOT carry a `requestable` ask: `accept` makes no new `version`, so another value takes a separate `request`."
+    locks: [with-our-stack]
+  - ir: rule:4.3.4:6f1237a1
+    digest: 5013f24cebf8be0327b24dbb500ec6a3454dce6a5e8bf6288de7da5e57e001bc
+    quote: "`status` unchanged; a later `commit` under that entry is rejected (§ 5.6.1), and the seller SHOULD `publish` or `withdraw`"
+    locks: [with-our-stack]
+  - ir: rule:4.3.4:e97d564c
+    digest: 932a8c574fccbf94d2563201e0cde29a38efd3311b1bd49946b177ec15e27afc
+    quote: "`hold.valid_until` MUST NOT exceed `offer_window.end` or the earliest `pricing[].price_valid_until`."
+    locks: [with-our-stack]
+  - ir: rule:4.4:de17ca68
+    digest: 4a5a11808fec6593d07ce8ce79497090890238e94013a83502285c800c899c4d
+    quote: "`line_item_id` is REQUIRED here"
+    locks: [with-our-stack]
+  - ir: rule:5.1.1:4c696214
+    digest: ab88ec95de375dc5ecf7232ba94151304d31d147589c8c6f900f8dc38d42c9e3
+    quote: The seller MUST serve a line item only on impressions of its `channel`.
+    locks: [with-our-stack]
+  - ir: rule:5.2.1:cc42a1f8
+    digest: e997800cb64e5db5c061617420685bd24d85ac97cc51c170f34d36526154e37d
+    quote: Each `environments.available[]` value MUST match at least one impression to which 5.1.1 gives the line item's `channel`.
+    locks: [with-our-stack]
+  - ir: rule:5.2.2:6f05ff6d
+    digest: 31d2e287d2e57e3c6c2b5aef3c3d4ff9d28cf0abb7ad31708c7a1a990fda7b39
+    quote: The seller MUST NOT deliver the line item to an impression that does not match a key that is present.
+    locks: [with-our-stack]
+  - ir: rule:5.2.2:871e9967
+    digest: dc17c8c4801d7dd95aa299f8d41b1de10459f40d46501daaa75759cee3f1c0b1
+    quote: Unless `api[]` includes OMID 1.0 (7), a line item whose `committed_metrics[]` includes `viewable_rate` and whose `environments.available[]` includes `app_mobile` or `ctv` SHOULD NOT offer a `measurement_source` option whose `measured_by` is not `seller`.
+    locks: [with-our-stack]
+  - ir: rule:5.2.3:b5b384f4
+    digest: f0a0485ed927c79a3e7369ada0bca1c72749991e633eca1ace28a3029a57dcae
+    quote: "A declared option is a delivery term: with an option in effect, the seller MUST serve the line item only into impressions that match one, and when the line item executes over OpenRTB 2.6, a bid request that offers its deal MUST carry `imp.video` or `imp.audio` values that match one."
+    locks: [with-our-stack]
+  - ir: rule:5.2.3:eb0e5f3b
+    digest: 3efec115b69253f5bcfadf499e784de9fdf7140f1347524fcb5d7726cfd24113
+    quote: A seller MUST NOT declare `slotinpod` 1, 2, or -1 unless it can guarantee that slot.
+    locks: [with-our-stack]
+  - ir: rule:5.2.6:b4fc58b5
+    digest: 3deed6fd0563e1c2000b4f4f7c0dd20a127dd6e0ee1b77803fcb165a8c977105
+    quote: Each `seller_accounts[]` entry MUST be a record in the governing file.
+    locks: [with-our-stack]
+  - ir: rule:5.2.6:a1d575ff
+    digest: d5bd6abecc7e932113ffa3d0c2735ed0a554992f5a14b6e732d8e2ffab7a60b9
+    quote: A seller MUST NOT state a relationship its governing file, where one exists, does not support.
+    locks: [with-our-stack]
+  - ir: rule:5.2.6:0cb2d370
+    digest: f64dc327698595f0c97a57b1d07bbfba632893a56a1e55d9191ebce8f7065fc7
+    quote: A consumer that checks MUST use this table, and confirms that sellers.json at `asi` lists `sid` as a `seller_id`, with `domain` equal to `seller.domain` where the entry carries `domain`.
+    locks: [with-our-stack]
+  - ir: rule:5.2.7:d85c61b6
+    digest: 03789619c9af53abce7a668783c35c29fd8ec5721df0a51318370fbf9f48823c
+    quote: A line item with a `directed` entry in `properties.available[]` SHOULD NOT carry `audiences`, and its `buyer_supplied.segments_allowed` and `suppression_allowed` SHOULD be false.
+    locks: [with-our-stack]
+  - ir: rule:5.2.7:166e9f13
+    digest: 2d207bea886a3f042fe1ddc2892a363320ad2caf32ef23c3ed8568d80b717a13
+    quote: Where that property's app store bars behavioral advertising (Apple's Kids Category, Google Play's Families policies), the line item MUST NOT carry `audiences`, and both flags MUST be false.
+    locks: [with-our-stack]
+  - ir: rule:5.2.8:66d19e2d
+    digest: 2d5bac8aee7212c4387915c87c3ac7e326a0d1e67a9344e41401cd26c47df625
+    quote: With `seller_allocated`, a buyer value MUST NOT name or exclude individual screens.
+    locks: [with-our-stack]
+  - ir: rule:5.2.9:28e8ca66
+    digest: 323e729f573c67f12cc4a1ebc66e7fbb1e6c2b4b0f40ab0d003c22e182122ecf
+    quote: With an option in effect, the seller MUST serve the line item only into impressions that match one.
+    locks: [with-our-stack]
+  - ir: rule:5.2.9:962abfb9
+    digest: 9fe9888d371a4da2fac6c392a2bb9fdfec1bc84510879ee7a26a2136646b4ce6
+    quote: When the line item executes over OpenRTB 2.6, the seller MUST send the matched option's `content` values in `site.content` or `app.content`, under OpenRTB 2.6's key names, such as `livestream` for `live` and `contentrating` for `rating`.
+    locks: [with-our-stack]
+  - ir: rule:5.2.9:775db74d
+    digest: 655694cd1b135a8ae279820285816e2d1f09a7969b5e1e85ca4e8cd5cdb2eb16
+    quote: An option whose `schedule.eventstatus` is tentative (`2`) MUST NOT be in `included[]`, and its entry in `deltas`, if any, MUST be `delta_flat`.
+    locks: [with-our-stack]
+  - ir: rule:5.3:7cdd61de
+    digest: b2ce5726603bdeaaf2541ff2261f895ec9d571a0d22b7b1ad609f9b80dc4e337
+    quote: "`included[]` MUST name exactly one option."
+    locks: [with-our-stack]
+  - ir: rule:5.3:7dce4112
+    digest: 2d24ca21abb2c207b9a63deca0fa6d3907a43da7147beb1576b58836d2fbea6f
+    quote: "`addressable_scale` and `availability` (§ 3.3) MUST be recomputed against conditions 1 and 3."
+    locks: [with-our-stack]
+  - ir: rule:5.4:c07c0dd1
+    digest: c0931f38e0359ee1670e6d952b88e4f3e1361d9b44425e8d5250115357f37fab
+    quote: Once the proposal leaves `draft`, every id in `formats.available[]` MUST have a `format_specs` entry.
+    locks: [with-our-stack]
+  - ir: rule:5.4:7f775a7d
+    digest: 74bc12f7b3c11a35dd2a39157c3b02e67bd997dcc65fdc45d052d9b7ca3da900
+    quote: When `spec_ref` is present, `spec` MUST equal the content of the version it names, and the format id SHOULD equal the `<collection>/<entry_id>` part of `spec_ref`.
+    locks: [with-our-stack]
+  - ir: rule:5.4:d81bbf40
+    digest: 1958b55e03198e024b5daac389b5fa6659c2b61f619a98bd612e9db18fabe06b
+    quote: A `spec` MAY hold `asset`, a `VocabularyTerm` (§ 2.2) that says what the buyer supplies for the format.
+    locks: [with-our-stack]
+  - ir: rule:5.4:28521712
+    digest: 787eee3e0919999fbb86c081e774aaca223380f8de57df03acedc8c21f58374e
+    quote: A `spec` MAY also hold `voice`, a `VocabularyTerm` that says whether a synthesized voice may read the ad.
+    locks: [with-our-stack]
+  - ir: rule:5.4.1:7adf48a7
+    digest: 486cba5a65bc0a2494820d6b65ec2747235c264b7522ed61e0fad3736b30193c
+    quote: An implementation performing inspection MUST NOT send any production notification.
+    locks: [with-our-stack]
+  - ir: rule:5.4.1:ef1a453e
+    digest: 702d93033d23514221f5798da4ee7b4e54dbc0908d10c8531ddf1197cffa7e04
+    quote: An implementation MAY retrieve creative documents, follow VAST wrappers and inspect referenced media as needed for its checks.
+    locks: [with-our-stack]
+  - ir: rule:5.4.1:52bc805d
+    digest: cfe16d22ffd2d0f2e3d49f049a28c178ca94159b3e8a0c1ebdd52c94fce755d2
+    quote: The inspector MUST NOT request a destination or redirect that sends a production notification; it MAY use a separate inspection URL or the receiving service's documented test mode under the conditions below.
+    locks: [with-our-stack]
+  - ir: rule:5.4.1:f25ad098
+    digest: d8b09c7544db3a170a7bf58a899ccad878888532880d67fcaff964de1df7a1fd
+    quote: A preview that executes creative or verification code MUST prevent that code from sending production notifications.
+    locks: [with-our-stack]
+  - ir: rule:5.4.1:11d3ac1e
+    digest: 7e3b3907d31559ccc90897194631f46013b0ec3b728f9a696294c52ebe81d7f3
+    quote: Synthetic events MAY be sent to test endpoints, or through a test mode that the receiving service documents as excluding those events from production measurement and delivery diagnostics.
+    locks: [with-our-stack]
+  - ir: rule:5.4.1:fbc60b60
+    digest: 2363f416b6b2353371d78c1593b13505592d6809025796a42fcac47619a1cc4a
+    quote: Inspection failures MUST be reported through diagnostics, without firing a production VAST `<Error>` or `verificationNotExecuted` URL.
+    locks: [with-our-stack]
+  - ir: rule:5.4.1:3a29e732
+    digest: 3f3cbe85c4ed9eeaea55c1c4b6b0874b78d5d5e83ff86d0c534628c1592a8911
+    quote: An implementation MUST NOT report a check that was skipped or could not finish as passed.
+    locks: [with-our-stack]
+  - ir: rule:5.5:9d06dca4
+    digest: 9d1fe98242211acd358c2d75d9dbc045903e7e4db63bbfac172cf49dc914f5cd
+    quote: A line item MUST NOT declare both `geo` and `markets`
+    locks: [with-our-stack]
+  - ir: rule:5.5:45e820f6
+    digest: d149719233313df7393d8beb32e9550de37a3157d22a568353d705a61b561712
+    quote: A seller MUST reject an entry whose `store` it doesn't know, rather than apply it across stores, with `validation`
+    locks: [with-our-stack]
+  - ir: rule:5.5:2e4a1b0c
+    digest: 05c0089b5af2fffecbe6aaa93d430268d2c73912cb971e3bde7e8a4543c75d73
+    quote: A buyer MUST NOT supply an exclusion type absent from `accepted_exclusions.types`.
+    locks: [with-our-stack]
+  - ir: rule:5.5:b03a5d5e
+    digest: 9654d32215f09dc064e96e19cf1242531f774a31d1dd9702c29275e53a093c20
+    quote: A seller MUST reject it deterministically rather than ignore it, with `not_offered`.
+    locks: [with-our-stack]
+  - ir: rule:5.5:7fdb152c
+    digest: e39f13885f79f944e556bb455fb0ff4b0976154fc7500742092a95171cae655b
+    quote: A seller MUST NOT present `best_effort` enforcement as a guarantee.
+    locks: [with-our-stack]
+  - ir: rule:5.5:b8445d68
+    digest: f47870ffdb275b3a95e4ef6ba15f13a3be44fe72a8b5ab88f1d16c5980e8cecb
+    quote: A seller MUST NOT disclose them to anyone but that buyer and the systems and vendors that enforce or verify them for this line item.
+    locks: [with-our-stack]
+  - ir: rule:5.6:6b704eb1
+    digest: 4f87454b18fa4d4115b85f13b8f103fb915640336c6efc416785bd32ddc565f7
+    quote: A revision MUST NOT reuse it for a different `cost_method`, `cost_parameters`, `currency`, or `transaction_mechanisms[]`
+    locks: [with-our-stack]
+  - ir: rule:5.6:6981b8a3
+    digest: 55cb86ba10bc1848795d8be4772c4f7ade556b9eb9ce73d84612220a12642d98
+    quote: For a core term, the vocabulary sets it, and a present value MUST match
+    locks: [with-our-stack]
+  - ir: rule:5.6:d1a0bbb2
+    digest: 64d9b57581ca322b768c58daf90c942f44828ac1861d4d10cab304bb3e12f9af
+    quote: A buyer MAY request another value, and a granted value is the `list_rate` of the next `version`
+    locks: [with-our-stack]
+  - ir: rule:5.6:dd42c497
+    digest: 1db991d6fd2a6df27fc4d856d5b57f028753a4c8ebb979708442e97034a77431
+    quote: A buyer MAY request another.
+    locks: [with-our-stack]
+  - ir: rule:5.6:ae808131
+    digest: 5e0a9b679d5c467abfca454bdbbf4f48edd81eb305d70d5831cdffad2a3d1e44
+    quote: The envelope inside which a buyer may commit, and a buyer MAY request another.
+    locks: [with-our-stack]
+  - ir: rule:5.6:317562fb
+    digest: 2c25bfa5a1728663ef907a95018c240b10541fe27cf3d8bd4d48bc5fb5d85e05
+    quote: The buyer commits under exactly one, the committed entry, named by `commitment.pricing_id`, or the only entry when that key is absent; it MUST cover the mechanism in effect.
+    locks: [with-our-stack]
+  - ir: rule:5.6:dd547abd
+    digest: 1988f5946707a1c02962b0748c47756e495a2b9665af49ec1ba2c04497a78ae4
+    quote: Two entries MUST NOT share `cost_method`, `cost_parameters`, `currency`, and a mechanism.
+    locks: [with-our-stack]
+  - ir: rule:5.6:6a84a96c
+    digest: bb7149c74c353702ba295315b687b23e1fa6a777bea280cb31858716ec1ea642
+    quote: MUST be `forecast` when the line item's `delivery_type` (§ 5.9) is `non_guaranteed`
+    locks: [with-our-stack]
+  - ir: rule:5.6.1:a9e897de
+    digest: d64204e518ff8d79ba37f06b97db2a7543141744f475cab740c1595d23f12651
+    quote: A seller MAY decline a resolved `commitment` with a `decline` entry; the buyer MAY recompose.
+    locks: [with-our-stack]
+  - ir: rule:5.6.1:d10d0271
+    digest: fd807b7df7e9287c367093528729fb41a5392c029aa2c245cb53dca26fc8419c
+    quote: A decline for lack of availability MUST state the `availability` of each line item it covers, recomputed against the buyer's composition; the seller's determination is authoritative.
+    locks: [with-our-stack]
+  - ir: rule:5.6.1:bee0b154
+    digest: e984279ec11d7e7f7c8fc407836770ab61688e607717a00536cb87319a59f107
+    quote: While a buyer's hold (§ 5.6.2) runs, the seller MUST NOT decline that buyer's `commitment` for lack of availability.
+    locks: [with-our-stack]
+  - ir: rule:5.6.1:d0b0661f
+    digest: de3ff477392965367729ccce58f8ee04d849c5a468730b10944e09ff922fce22
+    quote: A value equal to the entry's means the line items have not changed and the buyer read the same terms, so the seller MAY accept, at the `version` the entry names.
+    locks: [with-our-stack]
+  - ir: rule:5.6.1:e2d7680a
+    digest: d403160efdbea8a3abb66eebd49380f6ac79d07c0a3bf019cf9fc2108b9da517
+    quote: The seller MUST reject a new `commit` whose `record_digest` differs from the recomputed value, that is stale (§ 4.1.3), whose proposal is past `offer_window.end`, or where the committed entry is past its `price_valid_until`.
+    locks: [with-our-stack]
+  - ir: rule:5.6.1:255884a5
+    digest: 6d59ca6113b2a2f63af6d9e383b59d55345d3871b6026bf56f4f17354b4c135c
+    quote: The rejection MUST carry `expired` when `offer_window.end` or `price_valid_until` has passed, `stale_version` when the `commit` is stale, `not_committable` when a ground of that code applies (§ 2.4), and otherwise `record_mismatch`, so the buyer can fetch it again.
+    locks: [with-our-stack]
+  - ir: rule:5.6.1:a3c72e8a
+    digest: 7a50ff6687ae9619f9fd5c055a336a09ff43fb214d87c1d79c267c29271528fd
+    quote: "These checks MUST be deterministic: they depend only on the stored proposal, the `commit`, and the time the seller receives it."
+    locks: [with-our-stack]
+  - ir: rule:5.6.1:a9a58c00
+    digest: e5246901813cae4dec60e0055972c57c2db2409b1e114bdd23c026abc66214f7
+    quote: "For a replay from the same buyer of a `commit` the seller has already processed, with the same `idempotency_key` and an otherwise equal `Commit`, the seller MUST return the result as it now stands: the rejection, or the `CommitResult`."
+    locks: [with-our-stack]
+  - ir: rule:5.6.1:ad94cfb4
+    digest: f1cf5668d6d5b58f095c58989090375b2bac3d115b8f69a22fc663a5efdfc768
+    quote: It MUST NOT write a second `commitment` entry.
+    locks: [with-our-stack]
+  - ir: rule:5.6.1:82cb5af0
+    digest: 76c8f428a5b5ba4f2993caa91f7a25679fef1871d918734d1ae9acedcfc0579a
+    quote: Reusing an `idempotency_key` with a different `Commit` MUST return `idempotency_conflict` and MUST NOT write an entry or change a `commitment`.
+    locks: [with-our-stack]
+  - ir: rule:5.6.1:1d80425b
+    digest: 2b10b2e4ed675d1f1506ccd115e7d56c0aa964f7f1b7a2506832370fa8ab812b
+    quote: The seller MUST keep a rejection whose `retry` is not `same` at least until `offer_window.end`, or, on a proposal with no `offer_window.end`, for as long as it keeps the proposal.
+    locks: [with-our-stack]
+  - ir: rule:5.6.2:2e3103fc
+    digest: 4c2961cbb32011f1f134e733289aa5856c22e0a07a0dd4cee9d5a82f9faed9c7
+    quote: It MAY remain on `expired` and `released`
+    locks: [with-our-stack]
+  - ir: rule:5.6.2:3c2ac6dd
+    digest: 7386cb2f1c1651b3000b1abccd1e23592472a23f5fb57b5a8f86b8744ddb14ba
+    quote: "`hold_terms.available` MUST be `true`."
+    locks: [with-our-stack]
+  - ir: rule:5.6.2:59aeaf37
+    digest: ee74f22f1f4f6b5d975a276105aa43d5e622eedf8624adc6ee45ab4cff14eae4
+    quote: A seller's answer MUST set `status` to `held` or `declined`.
+    locks: [with-our-stack]
+  - ir: rule:5.6.2:6842bab9
+    digest: 1860d0a3b25e582cd0c8a573a09e108f8cde0a44b034e541a01bb4b7d5ff374b
+    quote: A repeated request while `requested` or `held` MUST NOT start a second hold.
+    locks: [with-our-stack]
+  - ir: rule:5.6.4:5a783437
+    digest: 7fb9b68359bd2e1a42ab009d49f6d0491260465ecfbe0576549d285a0b932be7
+    quote: Every impression count that settles or invoices the line item MUST use its multipliers, and a committed `impressions` level (§ 5.7.1) settles on that source's count.
+    locks: [with-our-stack]
+  - ir: rule:5.6.4:c940cf70
+    digest: 012b0c11f765239c5bd2f555b20320e2c56ded3eb7f816a32f8282f08cae79c4
+    quote: Impressions MUST be summed unrounded over each invoice period and rounded once.
+    locks: [with-our-stack]
+  - ir: rule:5.6.5:12747a05
+    digest: f6550f03252caa1697090da00a028f67d42ee5724f24376e5c3db2c1f9b9ebfc
+    quote: A seller's own extension terms MUST use its `seller.domain` as the `<domain>`.
+    locks: [with-our-stack]
+  - ir: rule:5.6.5:9a5cd215
+    digest: 0c0dbd6064e888f0706df2299eb77e87b9660fb73b48de2d8df6d45384f0714d
+    quote: The host of `cost_definition.url` MUST be the term's `<domain>` or a subdomain of it.
+    locks: [with-our-stack]
+  - ir: rule:5.6.5:f0fab0a8
+    digest: b02d7dac467cd6f757df4c8c5b6c2fc5c65d4b738cd0cce2bb3fb8f7a370901b
+    quote: "`agreed_rate` MUST NOT be negative."
+    locks: [with-our-stack]
+  - ir: rule:5.6.5:bdabfe4f
+    digest: 10de311a02c1e9a84949a50a51f97f0600184cdfc36e62ac72b4330d26b9658d
+    quote: When `commitment.basis` is `spend`, on an entry other than `FLAT` or `TIME`, `agreed_rate` MUST be greater than 0.
+    locks: [with-our-stack]
+  - ir: rule:5.6.5:1f53e407
+    digest: e8d43ee1e9ad08afe7a0e3d60c7451c9003becb1d82b20340358a305efdbeb72
+    quote: When `commitment.basis` is `spend`, `amount` is the seller total, on the same terms as `agreed_rate`, including `delta_flat` charges in effect (§ 3.1), which MUST NOT exceed it.
+    locks: [with-our-stack]
+  - ir: rule:5.6.5:5d5c5fc3
+    digest: e890a847444fe4fadd7704ab0f64de38b26a5a9d8788105f1567004f0bb2e0ca
+    quote: "`commitment.basis` MUST be `spend`, and `derived_units` is absent."
+    locks: [with-our-stack]
+  - ir: rule:5.6.5:d09c565b
+    digest: f86168eff00a835ca42a822cbdabdbad495f06d1793f9ac286bfe55b0d0a6066
+    quote: A receiver MUST treat an extension entry that breaks these rules as unavailable, not the line item as invalid.
+    locks: [with-our-stack]
+  - ir: rule:5.6.6:527c9881
+    digest: fcf876f2537f5dcb83010a55d2b04cec414c4375695b86d12607a8a6257c3f21
+    quote: MUST be non-empty
+    locks: [with-our-stack]
+  - ir: rule:5.6.7:650682d8
+    digest: 02e81b21b33160fe9cec2f04a746c05cb47e3b8857897b0fde5417a9dd231fd9
+    quote: A seller MUST decline a `commitment` whose term in effect conflicts with an accepted term on the same inventory and dates.
+    locks: [with-our-stack]
+  - ir: rule:5.6.7:69534567
+    digest: 0d60a2405eb78c5585dd6a128826df67c9e3217ce12cff61e7fa2942f388dbf2
+    quote: A seller MUST NOT preempt a line item that has no `preemption`, or for a reason that its `preemption` doesn't name.
+    locks: [with-our-stack]
+  - ir: rule:5.7:44693ff4
+    digest: 4fdac13f794b951768e50393483bc99afefb7162f42a2b025e754d038d6ad022
+    quote: A buyer MAY request a stricter `level`, one further in `direction`.
+    locks: [with-our-stack]
+  - ir: rule:5.7:13d06c59
+    digest: 686a127369ca4eb013f05a21cfc1522d1a7cf6ba8c570186881f61719ddee709
+    quote: A request MUST NOT change a tuple's `direction`
+    locks: [with-our-stack]
+  - ir: rule:5.7:dfffe633
+    digest: 884efa85c4476ee29c35e44f1a224350101c375f12366ebf4e1905ae80d6fcf4
+    quote: "`included[]` MUST name exactly one option"
+    locks: [with-our-stack]
+  - ir: rule:5.7.1:f7832319
+    digest: 142f347b9ee1055a0534b4db287be9a6bdf9e17705f301bc1219e2fa0a9cb1ae
+    quote: When `channel` is `dooh` and the line item counts impressions, `counted_by` MUST be the source of the line item's `delivery_counting.impression_multiplier`.
+    locks: [with-our-stack]
+  - ir: rule:5.7.1:f96c27c0
+    digest: d4c74c6bfc79e86db66ce38d65fa21a82a0b3ce961857d0ac80442f069a221dc
+    quote: When the `pricing[]` entry the buyer commits under has `cost_method` `CPP`, `counted_by` MUST be its `cost_parameters.rating_source`
+    locks: [with-our-stack]
+  - ir: rule:5.7.1:0a8e3bf2
+    digest: dfe7473da76bce6f000f82bd876248f1986fd1440f276a7bf17d68acfc3f512b
+    quote: When `none` is in effect, it MUST be the only option.
+    locks: [with-our-stack]
+  - ir: rule:5.7.1:5ea9f08c
+    digest: 482653530068f4dbc788f422c6e40e7aa208c1d23994a4f561841c3107ba44f3
+    quote: It means no remedy for any shortfall, and committed levels become targets, which an agent MUST NOT present as guaranteed.
+    locks: [with-our-stack]
+  - ir: rule:5.7.1:2911055a
+    digest: 5eac361e4b8d9b5b8cbbb7dbd5d6d7aca3ddfa290a50c6096e1fc17ad0365317
+    quote: The buyer MAY refuse a `makegood`, and the seller then offers the next.
+    locks: [with-our-stack]
+  - ir: rule:5.7.1:2d69f4d8
+    digest: 6652d2e2a7aa36f4536f1428a64333625c5b145000ba7ee205e5a1679d0d60af
+    quote: A makegood MUST NOT run past `commitment.flight.end` without the buyer's consent.
+    locks: [with-our-stack]
+  - ir: rule:5.7.1:364afa20
+    digest: 5c2f846cfc155857aef1d34a530a03557d5c8b658d6b802f3e525ca1dd9bc455
+    quote: A seller MAY offer that consent upfront in `remedy_terms`.
+    locks: [with-our-stack]
+  - ir: rule:5.8:3976e4c0
+    digest: d7dcabf6669181fdad3f92941ae11871c5e94cc990970e00c7bd6026a599d859
+    quote: "`eligible_buyers[]`, `eligible_seats[]`: `buyer.domain` MUST be in `eligible_buyers[]`, or `buyer_requirements.seats` MUST name at least one seat, each in an `eligible_seats[]` entry for its `dsp`."
+    locks: [with-our-stack]
+  - ir: rule:5.8:876ec9ff
+    digest: ec4d21fe317375d50cf5ee3aebe5063789aec798519845cf02cd4c1b5d817201
+    quote: "`buyer_requirements.allowed_dsps[]` (§ 5.9): when `buyer_requirements.seats` is present, its `dsp` MUST be in the list."
+    locks: [with-our-stack]
+  - ir: rule:5.8:dc23a761
+    digest: 53937fa677abddc66fce58d6c65d03656882adb1ef7f8875ffc3eb4ddfd870cd
+    quote: A consumer that does not know a `credential_type` MUST NOT treat the proposal or line item as invalid for that reason.
+    locks: [with-our-stack]
+  - ir: rule:5.8:0bdd8354
+    digest: bd58ed71509dc01bf64959a404b5569327e41cfd173a2d0422f6d0f5e89e5258
+    quote: It MUST treat that entry as unsatisfiable.
+    locks: [with-our-stack]
+  - ir: rule:5.9:5bfed285
+    digest: edf1f2056849891ffc277f4e8c785814d60417f2eae3e8623a2c6eee18f11de8
+    quote: A seller MAY offer the same inventory through more than one.
+    locks: [with-our-stack]
+  - ir: rule:5.9:395d178a
+    digest: 51db8748811b5568ecf7a953d431fdc85427b96b1fce3c620ad2d15b9608eea6
+    quote: An option's `delivery_type` MUST be one its row allows.
+    locks: [with-our-stack]
+  - ir: rule:5.9:ed367af9
+    digest: 58ed8baf9c411cd155db2f060a3792996f3037942635e3499d96bc9126e6bd9f
+    quote: "`episodes`, when present, MUST be `new`."
+    locks: [with-our-stack]
+  - ir: rule:5.9:f8f81606
+    digest: 15c83c8342c93c68532808ba61c9faef711ed13b643e96aca5a432ee80bf62c0
+    quote: "`geo`, `markets`, `device`, and `frequency_cap` MUST be absent."
+    locks: [with-our-stack]
+  - ir: rule:5.9:5b2d3b90
+    digest: 6aa6280c205a75d04a97dc0defde1321a716323580a28f35c8a0bdaead7b12cc
+    quote: "`daypart` bounds air time, not listening or viewing time, so `time_zone` MUST NOT be `viewer_local`."
+    locks: [with-our-stack]
+  - ir: rule:5.9:01b1b76d
+    digest: d48ca108f96d5e2be948893a78afb9695911088a512987932f6802b25b5b74e3
+    quote: "`transaction_mechanism.available[]` MUST hold only the `direct_io` option."
+    locks: [with-our-stack]
+  - ir: rule:5.10:24d8a5b3
+    digest: 9ee8a06ecca322e22d0723909fc03b1a2d36b4f49e6f85d06347dabf997c0999
+    quote: Once the deal exists in `deal_origin`, the seller MUST record its ID as one `deal` entry on the line item.
+    locks: [with-our-stack]
+  - ir: rule:5.10:57a4349f
+    digest: 9011e2cdbfcf10682e6c9a5c6eba736fbec4fb2d087e5aa3a9bf42ae9e288d86
+    quote: An entry is not a term and MAY be added after `agreed`
+    locks: [with-our-stack]
+  - ir: rule:8:14eecfaa
+    digest: 002d1b3a1d3b6980424d8115f1421874a6f3c359171f4dde0b30bb506a796e4c
+    quote: A buyer MAY refuse a sole or last `makegood`, and § 5.7.1 then points at `remedy_terms`, whose keys describe only a makegood.
+    locks: [with-our-stack]
+options:
+  - id: obligations
+    summary: "Each binds the party its subject names: a seller, a buyer, or a receiver, and otherwise every implementation; the conformance of a party's behavior is checked by its tests, not by a payload's schema. What a schema can check, each row's type and presence, its tables state, and the schemas take from them."
+  - id: rules
+    summary: "Each is a rule with test vectors."
+chosen: obligations
+rationale: >-
+  The stack states its payload forms in its tables, each row with its type and
+  its presence (§ 2.6), and its prose statements say what a party does: what a
+  seller publishes, records, or refuses, what a buyer writes, and how a
+  receiver compares, recomputes, or ignores. A statement that reads a payload
+  alone the tables already give, as a type's form or a key's presence. The
+  rest bind the party that acts, so each is an obligation on the party its
+  subject names.
+feedback: >-
+  None needed.

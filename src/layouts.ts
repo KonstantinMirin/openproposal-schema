@@ -20,6 +20,12 @@ export interface Layout {
   meaning?: string;
   /** For a key layout: the header of a column that gives the key's type, which the row keeps as written. */
   type?: string;
+  /** For a key layout with a type column: whether the plugin's type grammar (`TextFrontEnd.readTypeCell`) parses the cell, which the row then keeps parsed as well as written. */
+  typed?: boolean;
+  /** For a key layout: the header of a column that gives the key's mutability marker. */
+  marker?: string;
+  /** For a key layout: the header of the column that maps the key to an external standard; by default the fourth column of a layout with no type column. */
+  mapping?: string;
   /** Where the layout may appear; a match elsewhere fails extraction. */
   allowed: (section: Section) => boolean;
   allowedText: string;

@@ -8,18 +8,23 @@ covers:
   - ir: field:5.5:frequency_cap
     digest: f369947b6f5c84e82213fe929568d135b73b2daef366a6309fdf4f933fc2938b
     quote: "`frequency_cap` | Object | settable | `{ max: { min, max }, period, basis: device | household | listener }`. Basis matters: CTV typically caps at household, audio at listener"
+    locks: [main, with-open-prs]
   - ir: field:5.6:commitment_bounds
     digest: 3d6b55ccbb5761eb4f56168a6bebd5435000158fa03caecde0c15b1294351680
     quote: "`commitment_bounds` | Object | seller-set | The envelope inside which a buyer may commit: `{ min_impressions, max_impressions, min_budget, max_budget }`"
+    locks: [main, with-open-prs]
   - ir: field:5.6:commitment
     digest: a6b61b5855529925630d06290e44a856dea4dd6895a2e7a1db62361cc2587d3f
     quote: "`commitment` | Object | settable | The buyer's actual commitment. See 5.6.1"
+    locks: [main, with-open-prs]
   - ir: field:5.5:frequency_cap#description/object:1
     digest: adbcfc3ac2b7bc7c0bda1069751986267cf304dbafb4ee388d9c2f62b43ba305
     quote: "{ max: { min, max }, period, basis: device | household | listener }"
+    locks: [main, with-open-prs]
   - ir: rule:3.2:ee009430
     digest: b70f59e2c68b16af32a8ad7ee513de31c1f1bd7a3c1540f17ba556688780a7cf
     quote: "Every field marked `settable` MUST declare its bounds: either `allowed[]` (an enumerated set) or `min` / `max` (a numeric or date range)."
+    locks: [main, with-open-prs]
 options:
   - id: the-object
     summary: >-

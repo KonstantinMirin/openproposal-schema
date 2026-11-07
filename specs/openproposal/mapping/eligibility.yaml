@@ -3,26 +3,31 @@
 format: 1
 module: eligibility
 sections: [ "5.8" ]
-types: []
+types:
+  - name: LineItemVisibility
+    kind: vocabulary
+    ir: field:5.8:visibility#description/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: false
+    terms: [ public, registry_gated, named ]
+  - name: RequiredCredential
+    kind: object
+    ir: key:5.8:RequiredCredential.credential_type
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: RequiredCredentialCredentialType
+    kind: vocabulary
+    ir: key:5.8:RequiredCredential.credential_type#meaning/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: true
+    terms: [ iab_registry ]
 entries:
-  - ir: field:5.8:visibility
-    digest: b2a567ff0d509b7ce5d3ab397de07e2227a35e10519d11a4f7dfa646d6698864
-    source: { rule: enum-row }
-    as: { role: property, object: LineItem, type: { kind: named, name: Visibility }, presence: optional }
-  - ir: field:5.8:visibility#description/values:1
-    digest: 9c8f080eb7b26334d2f8e6a25a584e2b7862482d9461fc241a21750312474fdf
-    source: { decisions: [ D-013, D-014 ] }
-    as: { role: type, name: Visibility, layer: vocabulary, open: false }
-  - ir: "field:5.8:required_credentials[]"
-    digest: fac7964209ce21929491f958097d410e89a354c591f10b07c4e15265329ca3fd
-    source: { rule: inline-object-row }
-    as:
-      role: property
-      object: LineItem
-      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: RequiredCredentialsEntry } } }
-      presence: optional
   - ir: "field:5.8:required_credentials[]#description/object:1"
     digest: 51ac831bb1eb05acb0c47847addae4a80e19323e55d30338e231872df19d2bf7
+    locks: [ main, with-open-prs ]
     source: { decision: D-027 }
     as:
       role: type
@@ -36,14 +41,17 @@ entries:
         id_required: { type: { kind: boolean }, presence: optional }
   - ir: "field:5.8:required_credentials[]#description/object:1/scheme"
     digest: fe9a7ae41571f95511cb58c6e436f6c227752c2052a988371fd516937a6115db
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-013, D-014 ] }
     as: { role: type, name: CredentialScheme, layer: vocabulary, open: true }
   - ir: "field:5.8:required_credentials[]#description/object:1/type"
     digest: c18c4724c4b1468ef7cfd8a2450fd45fbc77a70a5f47a1c195f7d169e85a7f92
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-013, D-014 ] }
     as: { role: type, name: CredentialType, layer: vocabulary, open: false }
   - ir: "field:5.8:eligible_bidders[]"
     digest: 377ad11d09a2b66329d8d7f32f46f187f2d0ba5d06ac90980630554720456d9a
+    locks: [ main, with-open-prs ]
     source: { rule: domain-row }
     as:
       role: property
@@ -52,6 +60,7 @@ entries:
       presence: optional
   - ir: field:5.8:terms_acceptance_required
     digest: 0243a3b7686e677b229229ed525e3ceb6ac606d6e71bac139abf02de3260ceef
+    locks: [ main, with-open-prs ]
     source: { rule: scalar-field }
     as: { role: property, object: LineItem, type: { kind: boolean }, presence: optional }
   - ir: field:5.8:terms_ref
@@ -93,5 +102,219 @@ entries:
   - ir: sentence:5.8:986d7d0f
     digest: 81b2de689a9e5d35e4271762268c3fa1c9f55cb0fa9e18d35e1d4c565133435f
     locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.8:021bf6d9
+    digest: 945b560000fc4b6ae3ae370ef0e14441fbff6eb61a27d08adf687aee8a8f53d7
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.8:f47873bb
+    digest: d9561c376d001d85c7337017fb1dfb35755bbd3f6419ae671c8176055eb22ed3
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.8:2411dfc1
+    digest: 39ff59a60f409e5e4730f69997942d44b73aa5758143049e86f9e61de698cb66
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: field:5.8:visibility
+    digest: b2a567ff0d509b7ce5d3ab397de07e2227a35e10519d11a4f7dfa646d6698864
+    locks: [ main, with-open-prs ]
+    source: { rule: enum-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Visibility }, presence: optional }
+  - ir: field:5.8:visibility
+    digest: 9757c59b73a444554a8a011967da578eaf6154f874e760a94ec3c3223a5d82d5
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: LineItemVisibility }, presence: required }
+  - ir: field:5.8:visibility#description/values:1
+    digest: 9c8f080eb7b26334d2f8e6a25a584e2b7862482d9461fc241a21750312474fdf
+    locks: [ main, with-open-prs ]
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: Visibility, layer: vocabulary, open: false }
+  - ir: field:5.8:visibility#description/values:1
+    digest: 9c8f080eb7b26334d2f8e6a25a584e2b7862482d9461fc241a21750312474fdf
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: LineItemVisibility }
+  - ir: rule:5.8:373dbf11
+    digest: aeb5bc63088aaa866ff59011724765c191dc43eaec20006f0b8e72d0632a3a23
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: "field:5.8:required_credentials[]"
+    digest: fac7964209ce21929491f958097d410e89a354c591f10b07c4e15265329ca3fd
+    locks: [ main, with-open-prs ]
+    source: { rule: inline-object-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: RequiredCredentialsEntry } } }
+      presence: optional
+  - ir: "field:5.8:required_credentials[]"
+    digest: 63287cc8afd100a8565fe5ecdbc3fb519850cd33b186ce6b58fe0406b08e4b98
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: RequiredCredential } } }
+      presence: optional
+  - ir: rule:5.8:ae26d4ac
+    digest: c81d8fe61eadf22a2533e6e31a5faea7f86fcacc457cf49aed1a82a1cd6f0d3d
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: "field:5.8:eligible_buyers[]"
+    digest: fcb080416a0777109bf48264b90e81c5d69a23aac674f43657dd24ae3c615ac2
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: RegistrableDomain } } }
+      presence: optional
+  - ir: rule:5.8:ae26d4ac-2
+    digest: a7c906b0d208314cd514268059deb1ad4921eab44a5b2351a47dd1c0b1c22944
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: "field:5.8:eligible_seats[]"
+    digest: 19f8c6b4e4206d2d7a9385d92f0847d9a0a5c7a9d4b35e17c9ab5a39e3e6fa7e
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: SeatRef } } }
+      presence: optional
+  - ir: rule:5.8:ae26d4ac-3
+    digest: 361e0d74b6a68e80774ab5ad19c216c54ea4a0ea390ed3db37c1f524cc995cc5
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: "field:5.8:terms_refs[]"
+    digest: 94c62c665ae81e30821b80117396262546ccf30fbd9033475082e7f224c09b95
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: DocumentRef } } }
+      presence: optional
+  - ir: rule:5.8:ae26d4ac-4
+    digest: 53913dc47ba5e6d1d5230bac3aecb4a222bc5821163588d7fe4cdda41413f2ec
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: sentence:5.8:5f72435b
+    digest: 5b9082351061b19760740af3306256be38432918bfce9353e319ed4dcacdc027
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.8:86625df0
+    digest: 304a6c5947132a120ac4cfba48045c11a8db8d96a624dc4a2bc18030aa2a60cb
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.8:7536291d
+    digest: 4442115f7341c3179225529a0e07dab8675f19b03e919f09eeb6c261dcc130ee
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.8:46af5318
+    digest: 189cd364b106cbf93d3846c53eab2eecd6665473f81380714d5004777976da90
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.8:c219f50b
+    digest: f318de1af2d9a7ec9e1929889c363ca547fb9693a53d6ab2939aa688d89d2602
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.8:a4300adf
+    digest: 49b6208a5d1ec755e190a9b261134034f5daae53a8a0bafd554a57d8bea76c74
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.8:3b62d557
+    digest: 6ffe4a09ac89e2dcac1d2f9137cc1c54b1071c3fb5eb8e7a295802dff6dbad26
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.8:dcc71db0
+    digest: 9aa8936fae007a7a9f49df7b7d825090aa5b62fd0703bc6a0dc82284ea33e1e4
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.8:3976e4c0
+    digest: d7dcabf6669181fdad3f92941ae11871c5e94cc990970e00c7bd6026a599d859
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.8:876ec9ff
+    digest: ec4d21fe317375d50cf5ee3aebe5063789aec798519845cf02cd4c1b5d817201
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:5.8:e7bfc683
+    digest: bb6c0d4de73ad02f8c4ef3576f34d0f599ec2a188e961ce599778af8bc244f42
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.8:76d0a76a
+    digest: 5d9f5a24938e7f390b5390565f1a3b9d3301b230cdf1586139e0907e810c2db3
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.8:2398e570
+    digest: f8a4cabb4563812b7ede1c5c9576eee78787ce688caa38e80f69cf72b01f7624
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.8:RequiredCredential.credential_type
+    digest: dfc293c59daa7936a562adf05997c1867ff0d4cfc047d92a7a83ac596ea739c8
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: RequiredCredential
+      type: { kind: named, name: RequiredCredentialCredentialType }
+      presence: required
+  - ir: key:5.8:RequiredCredential.credential_type#meaning/values:1
+    digest: 214a2ddd26b0613c1602f3bf0c831fc30d007a3a6a8d5e7b2cab80a5f5fd34d1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: RequiredCredentialCredentialType }
+  - ir: rule:5.8:373dbf11-2
+    digest: b90a17ffc76c1ed3078e5354723fbc2ea5f6a83bd1606e8348d64955ca1db03f
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: RequiredCredential }
+  - ir: key:5.8:RequiredCredential.issuer
+    digest: 5ff8cc193c1644d6d22c70f44fe97917ddabd54aea631234cc2cc786f80b4d41
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: RequiredCredential, type: { kind: named, name: Domain }, presence: required }
+  - ir: rule:5.8:373dbf11-3
+    digest: 939c834b2c0d6c3d875aff0d6ae5aca9066b961b57067f4ca6dcac834d860653
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: RequiredCredential }
+  - ir: rule:5.8:dc23a761
+    digest: 53937fa677abddc66fce58d6c65d03656882adb1ef7f8875ffc3eb4ddfd870cd
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: consumer }
+  - ir: rule:5.8:0bdd8354
+    digest: bd58ed71509dc01bf64959a404b5569327e41cfd173a2d0422f6d0f5e89e5258
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:5.8:72703795
+    digest: 680d73ed4c42c77135812b2c1a9acb80f056b5c85d53a2bb868431a204b4b133
+    locks: [ with-our-stack ]
     source: { rule: prose-sentence }
     as: { role: informative }

@@ -1,0 +1,15 @@
+format: 1
+id: G-134
+date: 2026-10-28
+question: What changes in the gates when the workflow test counts the setup:proto step?
+decision: >-
+  The workflow's new `npm run setup:proto` step (G-131) moves `npm run ci`
+  from step 10 to step 11, so the toolchain test that adds
+  continue-on-error to it expects step 11. The test also asserts that a
+  workflow without the setup:proto step fails with "doesn't run: npm run
+  setup:proto".
+rationale: >-
+  No check is relaxed: the test pins one more failure, and the workflow
+  gate is unchanged.
+accepts:
+  - { gate: npm-test, fingerprint: b70c79a383c633dfc29dd8d7b7419facf3d601e1dad0431d589fc4f6c31a78d6 }

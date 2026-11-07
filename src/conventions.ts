@@ -92,7 +92,7 @@ export function layerProblems(model: ModelDoc): string[] {
  */
 export function moduleProblems(model: ModelDoc, mappings: MappingFile[]): string[] {
   const types = index(model);
-  const depends = new Map(mappings.map((m) => [m.module, new Set(m.depends ?? [])]));
+  const depends = new Map(mappings.map((m) => [m.module, new Set(dependsOn(m, model.input.lock))]));
   const problems = new Set<string>();
   for (const t of model.types) {
     for (const r of t.references) {
@@ -116,17 +116,37 @@ export function dependsProblems(models: ModelDoc[], mappings: MappingFile[]): st
   const problems: string[] = [];
   const modules = new Set(mappings.map((m) => m.module));
   const used = new Set<string>();
-  for (const model of models) for (const m of model.modules) for (const r of m.references) used.add(`${m.name}\u0000${r}`);
+  const usedOn = new Set<string>();
+  for (const model of models) for (const m of model.modules) for (const r of m.references) {
+    used.add(`${m.name}\u0000${r}`);
+    usedOn.add(`${model.input.lock}\u0000${m.name}\u0000${r}`);
+  }
   for (const m of mappings) {
-    for (const d of m.depends ?? []) {
-      if (d === m.module || d === KERNEL_MODULE || !modules.has(d)) problems.push(`${m.file}: "depends" lists "${d}", which is ${d === m.module ? "the module itself" : d === KERNEL_MODULE ? "the kernel, which every module may reference" : "no module"}`);
-      else if (!used.has(`${m.module}\u0000${d}`)) problems.push(`${m.file}: "depends" lists "${d}", but no type of "${m.module}" references a type of "${d}" on any lock; remove it`);
+    const listed: [string, string | null][] = [...(m.depends ?? []).map((d): [string, string | null] => [d, null]), ...Object.entries(m.lock_depends ?? {}).flatMap(([lock, ds]) => ds.map((d): [string, string | null] => [d, lock]))];
+    for (const [d, lock] of listed) {
+      const key = lock === null ? "depends" : `lock_depends.${lock}`;
+      if (d === m.module || d === KERNEL_MODULE || !modules.has(d)) problems.push(`${m.file}: "${key}" lists "${d}", which is ${d === m.module ? "the module itself" : d === KERNEL_MODULE ? "the kernel, which every module may reference" : "no module"}`);
+      // A lock with no model here, as in a check of the other locks alone, shows no use of its own.
+      else if (lock !== null && !models.some((x) => x.input.lock === lock)) continue;
+      else if (lock === null ? !used.has(`${m.module}\u0000${d}`) : !usedOn.has(`${lock}\u0000${m.module}\u0000${d}`)) problems.push(`${m.file}: "${key}" lists "${d}", but no type of "${m.module}" references a type of "${d}" on ${lock === null ? "any lock" : `lock "${lock}"`}; remove it`);
     }
   }
-  const graph = new Map(mappings.map((m) => [m.module, m.depends ?? []]));
-  for (const c of cycles([...graph.keys()], (n) => graph.get(n) ?? [])) problems.push(`the modules ${c.map((n) => `"${n}"`).join(", ")} depend on each other in a cycle; the module graph is a DAG (type rules § 3)`);
+  // The declared graph on each lock: every module's `depends`, and its `lock_depends` for that lock. Without models, the `depends` alone.
+  const locks = [...new Set(models.map((x) => x.input.lock))];
+  const seen = new Set<string>();
+  for (const lock of locks.length > 0 ? locks : [""]) {
+    const graph = new Map(mappings.map((m) => [m.module, dependsOn(m, lock)]));
+    for (const c of cycles([...graph.keys()], (n) => graph.get(n) ?? [])) {
+      const msg = `the modules ${c.map((n) => `"${n}"`).join(", ")} depend on each other in a cycle; the module graph is a DAG (type rules § 3)`;
+      if (!seen.has(msg)) problems.push(msg);
+      seen.add(msg);
+    }
+  }
   return problems;
 }
+
+/** The modules a module may reference on a lock: its `depends`, and its `lock_depends` for the lock. */
+export const dependsOn = (m: MappingFile, lock: string): string[] => [...new Set([...(m.depends ?? []), ...(m.lock_depends?.[lock] ?? [])])];
 
 /** Whether a type in a type position is named or inline as type rules § 4 allows. Returns the problem, or null. */
 function positionProblem(t: TypeRef, constructors: Constructors, template: boolean): string | null {
@@ -445,7 +465,8 @@ export function modelStructures(model: ModelDoc, kernel: Kernel, constructors?: 
         // In a labeled list a code says nothing by itself; its label is what it means, so two such lists of the same codes are one structure only with the same labels.
         return setAside.has(t.name) ? [] : named({ vocabulary: t.terms.map((x) => (t.labeled && x.annotation !== undefined ? [x.value, x.annotation] : x.value)), open: t.open });
       case "object":
-        return unstated(t) ? [] : named({ object: props(t.properties), open: t.open, includes: t.includes ?? null });
+        // A profile's projection restates part of the type it projects, by construction, so it is no second definition of anything.
+        return unstated(t) || t.projects !== undefined ? [] : named({ object: props(t.properties), open: t.open, includes: t.includes ?? null });
       case "document":
         return named({ document: props(t.properties) });
       case "profile":

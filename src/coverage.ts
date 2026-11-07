@@ -15,6 +15,7 @@ import { canonicalJson } from "./canonical.ts";
 import type { Constructors } from "./constructors.ts";
 import { indexElements } from "./elements.ts";
 import type { IrMember, IrObjectForm, SpecIR } from "./ir-types.ts";
+import { constructorEditionsOn, kernelEditionsOn } from "./editions.ts";
 import { kernelOn, type Kernel } from "./kernel.ts";
 import { inScope, type Declaration, type MappingEntry, type MappingFile, type Members, type TypeRef } from "./mapping.ts";
 import { DECLARATION_RULES, firstRule, objectOfField, objectOfKey, presenceOf, type RuleContext } from "./mapping-rules.ts";
@@ -49,7 +50,7 @@ export function ruleContext(ir: SpecIR, lock: string, mappings: MappingFile[], k
   const owners = sectionOwners(mappings, []);
   const entries = new Map([...inScopeEntries(mappings, lock)].map(([id, x]) => [id, x.entry]));
   const deferred = new Set(mappings.filter((m) => m.deferred).map((m) => m.module));
-  return { ir, elements: indexElements(ir), kernel, constructors, entries, moduleOf: (s) => owners.get(s), deferred: (s) => deferred.has(owners.get(s) ?? "") };
+  return { lock, declared: inScopeDeclarations(mappings, lock).map((d) => ({ name: d.decl.name, kind: d.decl.kind, ...(d.decl.terms ? { terms: d.decl.terms } : {}) })), ir, elements: indexElements(ir), kernel: kernelEditionsOn(kernel, lock), constructors: constructorEditionsOn(constructors, lock), entries, moduleOf: (s) => owners.get(s), deferred: (s) => deferred.has(owners.get(s) ?? "") };
 }
 
 export interface CoverageResult {
@@ -209,15 +210,16 @@ function definedTypes(kernel: Kernel, constructors: Constructors, mappings: Mapp
     if (first && !(first.layer === "profile" && t.layer === "profile")) problems.push(`${t.where}: "${name}" is already defined by ${first.where} on lock "${lock}"`);
     else defined.set(name, t);
   };
-  for (const p of kernelOn(kernel, lock).primitives) define(p.name, { layer: "primitive", where: kernel.file });
-  for (const c of constructors.constructors) define(c.name, { layer: "constructor", where: constructors.file });
-  for (const p of constructors.parts) define(p.name, { layer: "part", where: constructors.file });
+  for (const p of kernelOn(kernelEditionsOn(kernel, lock), lock).primitives) define(p.name, { layer: "primitive", where: kernel.file });
+  const onLock = constructorEditionsOn(constructors, lock);
+  for (const c of onLock.constructors) define(c.name, { layer: "constructor", where: constructors.file });
+  for (const p of onLock.parts) define(p.name, { layer: "part", where: constructors.file });
   for (const m of mappings) {
     for (const e of m.entries) {
       if (!inScope(e.locks, lock)) continue;
       const where = `${m.file}: entry "${e.ir}"`;
       if (e.as.role === "type") define(e.as.name, { layer: e.as.layer, where, ...(e.as.members ? { members: e.as.members } : {}) });
-      if (e.as.role === "profile") define(e.as.document + e.as.profile, { layer: "profile", where });
+      if (e.as.role === "profile") define(e.as.name ?? e.as.document + e.as.profile, { layer: "profile", where });
     }
     for (const d of m.types ?? []) if (inScope(d.locks, lock)) define(d.name, { layer: d.kind, where: `${m.file}: type "${d.name}"`, ...(d.members ? { members: d.members } : {}) });
   }
@@ -258,7 +260,7 @@ function referenceProblems(
     const as = entry.as;
     switch (as.role) {
       case "property":
-        need(where, as.object, ["object", "document"], "a property belongs to an object or a document");
+        need(where, as.object, ["object", "document", "profile"], "a property belongs to an object, a document, or a profile a key table adds keys to");
         typeNames(where, [as.type]);
         break;
       case "type":
@@ -286,6 +288,7 @@ function referenceProblems(
         break;
       case "example":
         need(where, as.object, ["object", "document"], "an example shows an object or a document");
+        for (const o of Object.values(as.files ?? {})) need(where, o, ["object", "document"], "an example shows an object or a document");
         break;
     }
   }

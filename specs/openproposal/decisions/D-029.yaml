@@ -8,6 +8,7 @@ covers:
   - ir: rule:2:7d544674
     digest: f9d6b0a316c889a452a8fb36043a826ada0c36bcca5a518a930d7c3124db1cff
     quote: Each line item MUST be fully self-contained.
+    locks: [main, with-open-prs]
   - ir: rule:2:4ae8f775
     digest: 7b7a4e9aec10b20c71883badcb8f72e9f7fc0febc0c9bf6588ad4b590843342f
     quote: A field on a line item MUST NOT inherit its value from the proposal or from a sibling line item.
@@ -18,6 +19,7 @@ covers:
   - ir: rule:2.1:948e2b02
     digest: d73007c4f00ee65f89f1ffebba4a24a699310dd4992410d26e3576b54575f9e0
     quote: A catalog response MAY return it.
+    locks: [main, with-open-prs]
   - ir: rule:2.1:8d97860b
     digest: 632004985ab089736510115823dea396e4e684cbde12b5634dca30006721708d
     quote: "`catalog_ref` values MUST remain unresolved in a summary."
@@ -41,12 +43,15 @@ covers:
   - ir: rule:2.2:fd522468
     digest: be340321c44102c82f5f20b58407e1e9ed924e72d7f55f3319260254a3ce77e7
     quote: A catalog entry MUST be immutable once referenced; a change creates a new version.
+    locks: [main, with-open-prs]
   - ir: rule:2.2:bee40541
     digest: 627150415ce7304bf760287e305b8acb2e3f5bea80e39915a21e894c93cf8356
     quote: References MUST resolve during discovery.
+    locks: [main, with-open-prs]
   - ir: rule:2.2:06ccee9f
     digest: 88f6179c8487ecb60b3f98de8b1ecbbec92e618a36e441133f4f4447957c23b7
     quote: When a proposal reaches status `agreed`, every `catalog_ref` MUST be replaced by its resolved value in the stored record, so the committed artifact is self-contained and immutable.
+    locks: [main, with-open-prs]
   - ir: rule:2.3:99777739
     digest: 406feb42eaa323b7ecfc76a14cc5018b0571b0ed8a54b9059f49d101885f4e65
     quote: A seller MAY publish `https://<seller domain>/.well-known/openproposal.json`.
@@ -62,15 +67,18 @@ covers:
   - ir: rule:3:e768cdf1
     digest: 3c544b90b62de71cdd52f67dddf236c12013bbd57b12c1df08fa2c6d157d2a11
     quote: The seller sets it and MAY revise it while status is `draft` or `published`.
+    locks: [main, with-open-prs]
   - ir: rule:3:82c2f1b0
     digest: c93849d9b729272b79ae20197ca3fb6b85ee5d953534963626ab24f32b6bd245
     quote: The buyer MAY ask for a value outside the declared space.
   - ir: rule:3:07a16404
     digest: b1a02508bff5df25c2d1cb2f135aafe1a1ad791e70b4fa4d1e4f55af5adbdde0
     quote: "`selectable`, `settable` and `supplied` fields MUST resolve without a round trip — everything needed to validate and price them is declared in the proposal."
+    locks: [main, with-open-prs]
   - ir: rule:3:b51cedb6
     digest: fde9bc5c8e7d5ea0efdf20ad2cda4220d910e865daeb0d98f67288ec2f1493f9
     quote: An unset `selectable` or `settable` field takes its declared `included[]` or default, and that default MUST be explicit in the proposal.
+    locks: [main, with-open-prs]
   - ir: rule:3.3:1acc7d0d
     digest: fb78ec803f2f53a2f4bd26ec2792b70c55172066eb018368fbd64844f2bee13c
     quote: Because audiences, properties, formats and, where it is selectable, `geo` are `selectable`, and buyer `exclusions` (§ 5.5) narrow delivery, `addressable_scale` and `availability` MUST be recomputed against the buyer's actual selection and exclusions.

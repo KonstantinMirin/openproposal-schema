@@ -8,6 +8,7 @@ covers:
   - ir: field:5.5:frequency_cap#description/object:1
     digest: adbcfc3ac2b7bc7c0bda1069751986267cf304dbafb4ee388d9c2f62b43ba305
     quote: "{ max: { min, max }, period, basis: device | household | listener }"
+    locks: [main, with-open-prs]
   - ir: sentence:5.5:bcaa431b
     digest: dd32a6368f87c6f3cc3b6ecb6ff87b8aa69d0332a9b99e1a2b7467f2c3ea5f00
     quote: Like the calendar Day of OpenDirect 2.1 `Line.frequencyinterval`, `frequency_cap.period` is a calendar period in `time_zone`; weeks start on Monday.

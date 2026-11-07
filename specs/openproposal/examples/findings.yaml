@@ -61,6 +61,7 @@ findings:
       every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
   - example: examples/line-item-audio.yaml
     path: /commitment/flight_end
+    locks: [main, with-open-prs]
     kind: invalid
     value: "2026-12-21"
     decisions: [D-042]
@@ -70,6 +71,7 @@ findings:
       point in time, such as `2026-12-21T00:00:00-05:00`.
   - example: examples/line-item-audio.yaml
     path: /commitment/flight_start
+    locks: [main, with-open-prs]
     kind: invalid
     value: "2026-10-06"
     decisions: [D-042]
@@ -79,6 +81,7 @@ findings:
       for every point in time, such as `2026-10-06T00:00:00-04:00`.
   - example: examples/line-item-audio.yaml
     path: /commitment/idempotency_key
+    locks: [main, with-open-prs]
     kind: invalid
     value: "agency-a-camp1-streaming-audio-a7c33e10"
     decisions: [D-037]
@@ -100,6 +103,7 @@ findings:
       `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
   - example: examples/line-item-audio.yaml
     path: /committed_metrics/0/basis
+    locks: [main, with-open-prs]
     kind: invalid
     value: "seller_reported"
     decisions: [D-041]
@@ -109,6 +113,7 @@ findings:
       specification lists its core terms, `seller_reported` among them.
   - example: examples/line-item-audio.yaml
     path: /correlation_id
+    locks: [main, with-open-prs]
     kind: invalid
     value: "ep-q4-2026-commitment/streaming-audio"
     decisions: [D-037]
@@ -119,6 +124,7 @@ findings:
       `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
   - example: examples/line-item-audio.yaml
     path: /line_item_id
+    locks: [main, with-open-prs]
     kind: invalid
     value: "streaming-audio"
     decisions: [D-037]
@@ -128,6 +134,7 @@ findings:
       a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
   - example: examples/line-item-audio.yaml
     path: /production/available/0/id
+    locks: [main, with-open-prs]
     kind: invalid
     value: "seller_built"
     decisions: [D-037]
@@ -138,6 +145,7 @@ findings:
       option's `id` included, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
   - example: examples/line-item-audio.yaml
     path: /production/available/0/lead_time
+    locks: [main, with-open-prs]
     kind: invalid
     value: "10 business days"
     decisions: [D-040]
@@ -148,6 +156,7 @@ findings:
       doesn't define yet.
   - example: examples/line-item-audio.yaml
     path: /production/available/1/id
+    locks: [main, with-open-prs]
     kind: invalid
     value: "buyer_supplied"
     decisions: [D-037]
@@ -158,6 +167,7 @@ findings:
       option's `id` included, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
   - example: examples/line-item-audio.yaml
     path: /production/available/1/lead_time
+    locks: [main, with-open-prs]
     kind: invalid
     value: "0"
     decisions: [D-040]
@@ -226,6 +236,7 @@ findings:
       every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
   - example: examples/line-item-ctv.yaml
     path: /commitment/flight_end
+    locks: [main, with-open-prs]
     kind: invalid
     value: "2026-12-21"
     decisions: [D-042]
@@ -235,6 +246,7 @@ findings:
       point in time, such as `2026-12-21T00:00:00-05:00`.
   - example: examples/line-item-ctv.yaml
     path: /commitment/flight_start
+    locks: [main, with-open-prs]
     kind: invalid
     value: "2026-10-06"
     decisions: [D-042]
@@ -244,6 +256,7 @@ findings:
       for every point in time, such as `2026-10-06T00:00:00-04:00`.
   - example: examples/line-item-ctv.yaml
     path: /commitment/idempotency_key
+    locks: [main, with-open-prs]
     kind: invalid
     value: "agency-a-camp1-weather-app-ctv-3b7e0d52"
     decisions: [D-037]
@@ -265,6 +278,7 @@ findings:
       `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
   - example: examples/line-item-ctv.yaml
     path: /committed_metrics/0/basis
+    locks: [main, with-open-prs]
     kind: invalid
     value: "seller_reported"
     decisions: [D-041]
@@ -274,6 +288,7 @@ findings:
       specification lists its core terms, `seller_reported` among them.
   - example: examples/line-item-ctv.yaml
     path: /correlation_id
+    locks: [main, with-open-prs]
     kind: invalid
     value: "ep-q4-2026-commitment/weather-app-ctv"
     decisions: [D-037]
@@ -284,6 +299,7 @@ findings:
       `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
   - example: examples/line-item-ctv.yaml
     path: /creative_delivery/protocol
+    locks: [main, with-open-prs]
     kind: invalid
     value: "vast_4_2"
     decisions: [D-041]
@@ -293,6 +309,7 @@ findings:
       specification lists its core terms, `vast_4_2` among them.
   - example: examples/line-item-ctv.yaml
     path: /line_item_id
+    locks: [main, with-open-prs]
     kind: invalid
     value: "weather-app-ctv"
     decisions: [D-037]
@@ -322,6 +339,7 @@ findings:
       a party mints, a catalog entry's `id` included.
   - example: examples/line-item-display.yaml
     path: /audiences/available/1
+    locks: [main, with-open-prs]
     kind: invalid
     value: {"id":"ep:hnw-investors","provenance":"modeled","addressable_scale":1100000}
     decisions: [D-037, D-041]
@@ -333,6 +351,7 @@ findings:
       namespaced terms in a field until the specification lists its core terms.
   - example: examples/line-item-display.yaml
     path: /audiences/available/2
+    locks: [main, with-open-prs]
     kind: invalid
     value: {"id":"ep:cfo-finance-leaders","provenance":"first_party","addressable_scale":480000}
     decisions: [D-037, D-041]
@@ -344,6 +363,7 @@ findings:
       namespaced terms in a field until the specification lists its core terms.
   - example: examples/line-item-display.yaml
     path: /buyer_supplied/suppression_list/match_method
+    locks: [main, with-open-prs]
     kind: undefined_key
     value: "ramp_id"
     decisions: [D-016]
@@ -354,6 +374,7 @@ findings:
       define.
   - example: examples/line-item-display.yaml
     path: /buyer_supplied/suppression_list/size
+    locks: [main, with-open-prs]
     kind: undefined_key
     value: 340000
     decisions: [D-016]
@@ -364,6 +385,7 @@ findings:
       define.
   - example: examples/line-item-display.yaml
     path: /buyer_supplied/suppression_list/source
+    locks: [main, with-open-prs]
     kind: undefined_key
     value: "advertiser_crm"
     decisions: [D-016]
@@ -374,6 +396,7 @@ findings:
       define.
   - example: examples/line-item-display.yaml
     path: /commitment/flight_end
+    locks: [main, with-open-prs]
     kind: invalid
     value: "2026-12-21"
     decisions: [D-042]
@@ -383,6 +406,7 @@ findings:
       point in time, such as `2026-12-21T00:00:00-05:00`.
   - example: examples/line-item-display.yaml
     path: /commitment/flight_start
+    locks: [main, with-open-prs]
     kind: invalid
     value: "2026-10-06"
     decisions: [D-042]
@@ -392,6 +416,7 @@ findings:
       for every point in time, such as `2026-10-06T00:00:00-04:00`.
   - example: examples/line-item-display.yaml
     path: /commitment/idempotency_key
+    locks: [main, with-open-prs]
     kind: invalid
     value: "agency-a-camp1-business-daily-display-8f42c1a9"
     decisions: [D-037]
@@ -413,6 +438,7 @@ findings:
       `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
   - example: examples/line-item-display.yaml
     path: /committed_metrics/0/basis
+    locks: [main, with-open-prs]
     kind: invalid
     value: "mrc"
     decisions: [D-041]
@@ -422,6 +448,7 @@ findings:
       lists its core terms, `mrc` among them.
   - example: examples/line-item-display.yaml
     path: /correlation_id
+    locks: [main, with-open-prs]
     kind: invalid
     value: "ep-q4-2026-commitment/business-daily-display"
     decisions: [D-037]
@@ -432,6 +459,7 @@ findings:
       `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
   - example: examples/line-item-display.yaml
     path: /creative_delivery/protocol
+    locks: [main, with-open-prs]
     kind: invalid
     value: "javascript_tag"
     decisions: [D-041]
@@ -441,6 +469,7 @@ findings:
       specification lists its core terms, `javascript_tag` among them.
   - example: examples/line-item-display.yaml
     path: /line_item_id
+    locks: [main, with-open-prs]
     kind: invalid
     value: "business-daily-display"
     decisions: [D-037]
@@ -450,6 +479,7 @@ findings:
       every ID a party mints, such as `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
   - example: examples/line-item-display.yaml
     path: /materials_due
+    locks: [main, with-open-prs]
     kind: invalid
     value: "2026-09-24"
     decisions: [D-017]
@@ -460,6 +490,7 @@ findings:
       date.
   - example: examples/line-item-display.yaml
     path: /measurement_source/available/0/attribution_window
+    locks: [main, with-open-prs]
     kind: invalid
     value: "30d"
     decisions: [D-040]
@@ -469,6 +500,7 @@ findings:
       `P30D` here.
   - example: examples/line-item-display.yaml
     path: /measurement_source/available/1/attribution_window
+    locks: [main, with-open-prs]
     kind: invalid
     value: "30d"
     decisions: [D-040]
@@ -478,6 +510,7 @@ findings:
       `P30D` here.
   - example: examples/line-item-display.yaml
     path: /properties/available/0
+    locks: [main, with-open-prs]
     kind: invalid
     value: {"id":"business-daily","domains":["business-daily.example"]}
     decisions: [D-037]
@@ -487,6 +520,7 @@ findings:
       ID a party mints, a catalog entry's `id` included.
   - example: examples/line-item-display.yaml
     path: /properties/available/1
+    locks: [main, with-open-prs]
     kind: invalid
     value: {"id":"markets-weekly","domains":["markets-weekly.example"]}
     decisions: [D-037]
@@ -496,6 +530,7 @@ findings:
       ID a party mints, a catalog entry's `id` included.
   - example: examples/line-item-display.yaml
     path: /reporting/available/0/cadence
+    locks: [main, with-open-prs]
     kind: invalid
     value: "daily"
     decisions: [D-040]
@@ -505,6 +540,7 @@ findings:
       here.
   - example: examples/line-item-display.yaml
     path: /reporting/available/0/delivery_mechanism
+    locks: [main, with-open-prs]
     kind: invalid
     value: "api"
     decisions: [D-041]
@@ -514,6 +550,7 @@ findings:
       field until the specification lists its core terms, `api` among them.
   - example: examples/line-item-display.yaml
     path: /reporting/available/1/cadence
+    locks: [main, with-open-prs]
     kind: invalid
     value: "daily"
     decisions: [D-040]
@@ -523,6 +560,7 @@ findings:
       here.
   - example: examples/line-item-display.yaml
     path: /reporting/available/1/delivery_mechanism
+    locks: [main, with-open-prs]
     kind: invalid
     value: "s3"
     decisions: [D-041]
@@ -645,6 +683,7 @@ findings:
       `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
   - example: examples/proposal.yaml
     path: /proposal_id
+    locks: [main, with-open-prs]
     kind: invalid
     value: "examplepub-us-q4-2026-omni"
     decisions: [D-037]
@@ -655,6 +694,7 @@ findings:
       `7c9e6679-7425-40de-944b-e07fc1f90ae7`.
   - example: examples/line-item-audio.yaml
     path: /production/included/0
+    locks: [main, with-open-prs]
     kind: invalid
     value: "buyer_supplied"
     decisions: [D-037]
@@ -665,6 +705,7 @@ findings:
       for every ID a party mints, so `included[]` names the option by that UUID.
   - example: examples/line-item-audio.yaml
     path: /production/pricing
+    locks: [main, with-open-prs]
     kind: invalid
     value: {"seller_built": {"delta_flat": 12000}}
     decisions: [D-037]
@@ -687,6 +728,7 @@ findings:
       option's `id` included, so `included[]` names the property by that UUID.
   - example: examples/line-item-ctv.yaml
     path: /properties/included/0
+    locks: [main, with-open-prs]
     kind: invalid
     value: "weather-app"
     decisions: [D-037]
@@ -697,6 +739,7 @@ findings:
       option's `id` included, so `included[]` names the property by that UUID.
   - example: examples/line-item-display.yaml
     path: /audiences/included/0
+    locks: [main, with-open-prs]
     kind: invalid
     value: "ep:smb-decision-makers"
     decisions: [D-037]
@@ -711,6 +754,7 @@ findings:
       text leaves open, listed with the examples that disagree with the text.
   - example: examples/line-item-display.yaml
     path: /audiences/pricing
+    locks: [main, with-open-prs]
     kind: invalid
     value: {"ep:hnw-investors": {"delta_cpm": 4}, "ep:cfo-finance-leaders": {"delta_cpm": 6.5}}
     decisions: [D-037]
@@ -722,6 +766,7 @@ findings:
       `id` included, so the `pricing` keys name each audience by that UUID.
   - example: examples/line-item-display.yaml
     path: /measurement_source/included/0
+    locks: [main, with-open-prs]
     kind: invalid
     value: "IAS"
     decisions: [D-037, D-047]
@@ -733,6 +778,7 @@ findings:
       `included[]` names the option by that UUID.
   - example: examples/line-item-display.yaml
     path: /properties/included/0
+    locks: [main, with-open-prs]
     kind: invalid
     value: "business-daily"
     decisions: [D-037]
@@ -743,6 +789,7 @@ findings:
       option's `id` included, so `included[]` names the property by that UUID.
   - example: examples/line-item-display.yaml
     path: /properties/pricing
+    locks: [main, with-open-prs]
     kind: invalid
     value: {"markets-weekly": {"delta_cpm": 2}}
     decisions: [D-037]
@@ -754,6 +801,7 @@ findings:
       UUID.
   - example: examples/line-item-display.yaml
     path: /reporting/included/0
+    locks: [main, with-open-prs]
     kind: invalid
     value: "aggregate"
     decisions: [D-037, D-047]
@@ -765,6 +813,7 @@ findings:
       `included[]` names the option by that UUID.
   - example: examples/line-item-display.yaml
     path: /reporting/pricing
+    locks: [main, with-open-prs]
     kind: invalid
     value: {"log_level": {"delta_flat": 2500}}
     decisions: [D-037, D-047]
@@ -798,6 +847,7 @@ findings:
       option's `id` included, so `included[]` names the property by that UUID.
   - example: examples/line-item-display.yaml
     path: /measurement_source/available/0
+    locks: [main, with-open-prs]
     kind: invalid
     value: {"vendor": "IAS", "attribution_window": "30d"}
     decisions: [D-047]
@@ -809,6 +859,7 @@ findings:
       option by it.
   - example: examples/line-item-display.yaml
     path: /measurement_source/available/1
+    locks: [main, with-open-prs]
     kind: invalid
     value: {"vendor": "DoubleVerify", "attribution_window": "30d"}
     decisions: [D-047]
@@ -820,6 +871,7 @@ findings:
       option by it.
   - example: examples/line-item-display.yaml
     path: /reporting/available/0
+    locks: [main, with-open-prs]
     kind: invalid
     value: {"feed_type": "aggregate", "cadence": "daily", "delivery_mechanism": "api"}
     decisions: [D-047]
@@ -830,6 +882,7 @@ findings:
       `pricing` keys name the option by it.
   - example: examples/line-item-display.yaml
     path: /reporting/available/1
+    locks: [main, with-open-prs]
     kind: invalid
     value: {"feed_type": "log_level", "cadence": "daily", "delivery_mechanism": "s3"}
     decisions: [D-047]
@@ -864,6 +917,7 @@ findings:
       option by it.
   - example: examples/line-item-display.yaml
     path: /audiences/included/0
+    locks: [main, with-open-prs]
     kind: rule
     rule: constructor:Selectable:options-named
     value: "ep:smb-decision-makers"
@@ -876,6 +930,7 @@ findings:
       the example should name it that way.
   - example: examples/line-item-display.yaml
     path: /measurement_source/included/0
+    locks: [main, with-open-prs]
     kind: rule
     rule: constructor:Selectable:options-named
     value: "IAS"
@@ -888,6 +943,7 @@ findings:
       `included[]` names the option by that UUID.
   - example: examples/line-item-display.yaml
     path: /reporting/included/0
+    locks: [main, with-open-prs]
     kind: rule
     rule: constructor:Selectable:options-named
     value: "aggregate"
@@ -900,6 +956,7 @@ findings:
       `included[]` names the option by that UUID.
   - example: examples/line-item-display.yaml
     path: /reporting/pricing/log_level
+    locks: [main, with-open-prs]
     kind: rule
     rule: constructor:Selectable:options-named
     value: {"delta_flat": 2500}
@@ -943,3 +1000,93 @@ undecided:
       item gives none. No field says whether its ads are video: its format ID
       `ctv/instream-15s` is namespaced by channel, the format registry has no
       `ctv/*` entries, and the text lists no delivery protocols.
+  - example: examples/line-item-audio.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    locks: [with-our-stack]
+    decisions: [D-060]
+    reason: >-
+      A line item alone shows no proposal, so whether `format_specs` is
+      REQUIRED, once the proposal has left `draft` and `formats` is present,
+      turns on a `status` the example doesn't show.
+  - example: examples/line-item-ctv.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    locks: [with-our-stack]
+    decisions: [D-060]
+    reason: >-
+      A line item alone shows no proposal, so whether `format_specs` is
+      REQUIRED, once the proposal has left `draft` and `formats` is present,
+      turns on a `status` the example doesn't show.
+  - example: examples/line-item-ctv-bonus.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    locks: [with-our-stack]
+    decisions: [D-060]
+    reason: >-
+      A line item alone shows no proposal, so whether `format_specs` is
+      REQUIRED, once the proposal has left `draft` and `formats` is present,
+      turns on a `status` the example doesn't show.
+  - example: examples/line-item-ctv-live-series.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    locks: [with-our-stack]
+    decisions: [D-060]
+    reason: >-
+      A line item alone shows no proposal, so whether `format_specs` is
+      REQUIRED, once the proposal has left `draft` and `formats` is present,
+      turns on a `status` the example doesn't show.
+  - example: examples/line-item-display.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    locks: [with-our-stack]
+    decisions: [D-060]
+    reason: >-
+      A line item alone shows no proposal, so whether `format_specs` is
+      REQUIRED, once the proposal has left `draft` and `formats` is present,
+      turns on a `status` the example doesn't show.
+  - example: examples/line-item-dooh.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    locks: [with-our-stack]
+    decisions: [D-060]
+    reason: >-
+      A line item alone shows no proposal, so whether `format_specs` is
+      REQUIRED, once the proposal has left `draft` and `formats` is present,
+      turns on a `status` the example doesn't show.
+  - example: examples/line-item-podcast-embedded.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    locks: [with-our-stack]
+    decisions: [D-060]
+    reason: >-
+      A line item alone shows no proposal, so whether `format_specs` is
+      REQUIRED, once the proposal has left `draft` and `formats` is present,
+      turns on a `status` the example doesn't show.
+  - example: examples/line-item-rewarded-video.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    locks: [with-our-stack]
+    decisions: [D-060]
+    reason: >-
+      A line item alone shows no proposal, so whether `format_specs` is
+      REQUIRED, once the proposal has left `draft` and `formats` is present,
+      turns on a `status` the example doesn't show.
+  - example: examples/line-item-podcast-embedded.yaml
+    path: /retention
+    rule: constructor:Range:duration-ordered
+    locks: [with-our-stack]
+    decisions: [D-062]
+    reason: >-
+      `retention` runs from `P90D` to `P1Y`. The minimum has more days and
+      the maximum more years, so whether `min` is greater than `max` turns
+      on the calendar the range starts on, which the text doesn't give.
+  - example: examples/line-item-podcast-embedded.yaml
+    path: /retention
+    rule: constructor:Range:ordered
+    locks: [with-our-stack]
+    decisions: [D-062]
+    reason: >-
+      `retention` runs from `P90D` to `P1Y`. The minimum has more days and
+      the maximum more years, so whether `min` is greater than `max` turns
+      on the calendar the range starts on, which the text doesn't give.

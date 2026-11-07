@@ -4,6 +4,7 @@ format: 1
 module: publication
 sections: [ "2.3" ]
 depends: [ proposal ]
+lock_depends: { with-our-stack: [ representation ] }
 types:
   - name: ProposalsEntry
     kind: object
@@ -19,6 +20,24 @@ types:
         description: "The proposal's revision number, its current `version`, which the entry MUST match."
       full_url: { type: { kind: named, name: Url }, presence: optional }
     description: "One proposal the manifest publishes: its Summary Representation, its `version`, and the `full_url` of its full record. The specification doesn't name the key that holds its line items' summaries, so the entry accepts members it doesn't name."
+  - name: ProposalManifest
+    kind: document
+    ir: key:2.3:ProposalManifest.generated_at
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+  - name: ManifestEntry
+    kind: object
+    ir: key:2.3:ManifestEntry.full_url
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+    includes: ProposalSummary
+  - name: HoldLimits
+    kind: object
+    ir: key:2.3:HoldLimits.per_buyer
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
 entries:
   - ir: rule:2.3:99777739
     digest: 406feb42eaa323b7ecfc76a14cc5018b0571b0ed8a54b9059f49d101885f4e65
@@ -58,16 +77,6 @@ entries:
     locks: [ with-open-prs ]
     source: { rule: prose-sentence }
     as: { role: informative }
-  - ir: sentence:2.3:329c49c5
-    digest: 3acbc648fb7348acf5250c15ca1563e923c12cf1195bbe459cff31decb2cea50
-    locks: [ with-open-prs ]
-    source: { rule: prose-sentence }
-    as: { role: informative }
-  - ir: rule:2.3:59a4ca91
-    digest: bcf386544a30e5ac27e19129df4cfefe990e46b1c9f0352f3965fe26503b7c41
-    locks: [ with-open-prs ]
-    source: { decision: D-029 }
-    as: { role: obligation, party: seller }
   - ir: sentence:2.3:4456a7fb
     digest: a12997a5b2692334538c88aba8b9d59398d7b8b92b182c7577e1e8050f89cf05
     locks: [ with-open-prs ]
@@ -76,5 +85,169 @@ entries:
   - ir: sentence:2.3:7c617825
     digest: 518a089c3a3bb7af426eb2060f60e85a1f1e23e7ba26783a2b3dd19ba0099b74
     locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:2.3:8d420e7d
+    digest: 47897a6abedcfb890595b29a22e9e493aae6f29de22f82cae19b4cd25b36e979
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:2.3:0183178d
+    digest: cecf8e007d9924c5957857439cc0121bee3c75907d0c8c423a8472a82a2b6df3
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:2.3:ProposalManifest.generated_at
+    digest: c2519f7822433bafa3a84e42b69564ba778e84bd8bbb2c9f517ce34dcef64775
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ProposalManifest, type: { kind: named, name: Instant }, presence: required }
+  - ir: rule:2.3:373dbf11
+    digest: 78e925a6ee61f6f78e70a8f3920322986feebc5b40c91eb86a723111d6083564
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ProposalManifest }
+  - ir: key:2.3:ProposalManifest.spec_version
+    digest: 646a83f545dd6a36e20c5d8f138509cf52c8f0f9ae57529a82ed7a13662c7e23
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ProposalManifest, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:2.3:373dbf11-2
+    digest: 44979e58f621c944022c259e6cea99e1c481cc16d1c2afff155120fa91b47194
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ProposalManifest }
+  - ir: "key:2.3:ProposalManifest.proposals[]"
+    digest: afbc37949cf795d3af2735c1b23d509af14f79f2de680c170cd4ac5962fed56c
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: ProposalManifest
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ManifestEntry } } }
+      presence: required
+  - ir: rule:2.3:373dbf11-3
+    digest: 031dc7063db993981824fde9b8d276166098f80fbb2cb0265b1614cd32ec0535
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ProposalManifest }
+  - ir: key:2.3:ProposalManifest.hold_limits
+    digest: fcee30087932f0b703b85c152a9de2b9080f5bd976ee80f39ffcf3c3a42b65ca
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ProposalManifest, type: { kind: named, name: HoldLimits }, presence: optional }
+  - ir: rule:2.3:ae26d4ac
+    digest: d0abd0b195faa9acdb843f41b8824a17946e11daa4627e12239e37765e56b030
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ProposalManifest }
+  - ir: sentence:2.3:a3e7aa8a
+    digest: 05bb7874bd4881cbd5bf932ce7f08698e2f41e46b432b4981dd93bf753fff2bd
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:2.3:ManifestEntry.full_url
+    digest: 055756e1cd0a30ddbadcdeeb9e7aab1c7aedb5c7717cbf25d65f9ad42c2ce0de
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ManifestEntry, type: { kind: named, name: Url }, presence: required }
+  - ir: rule:2.3:373dbf11-4
+    digest: 179f9c1db52b31eb7cfa3c8dafc13729ef4380a1fe95950b5e35d1c2e2eb1e17
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ManifestEntry }
+  - ir: rule:2.3:9c46c162
+    digest: 834639f14da3b21efc5611ee043e48477db2530a86c2af6ef18f0cbb6a04e286
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:2.3:b25c9490
+    digest: 74801841818e589a660c57f0e02f149d36dc96aa59b61b6791402b69efbd3848
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.3:329c49c5
+    digest: 3acbc648fb7348acf5250c15ca1563e923c12cf1195bbe459cff31decb2cea50
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.3:329c49c5
+    digest: 15c543d0452cea616dfaa66621cbce1e3846908e229a7dab3e7e4e927be2f42f
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.3:ce3b39d7
+    digest: d3f19d6e9ecabf63f08b0732be70a539ba3b7d871205b1be62c1e92707d727f1
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.3:28a63bdb
+    digest: 0e37c976fb169780adc6ec77c247b442b36898dabf5fb137f88ff804a8b6fded
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.3:ee9cad3c
+    digest: a5359695a03382497aface8542a4cf4f41031a1d1fbdf3be13ea7c1a578108e2
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:2.3:59a4ca91
+    digest: bcf386544a30e5ac27e19129df4cfefe990e46b1c9f0352f3965fe26503b7c41
+    locks: [ with-open-prs ]
+    source: { decision: D-029 }
+    as: { role: obligation, party: seller }
+  - ir: rule:2.3:59a4ca91
+    digest: 2b3e46e91c56afcfd2d7706ed0b92fd09dacb18ff6e94be7876ed6fd315a55e0
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:2.3:86c05e36
+    digest: bbec4c1a9e7e8771e928e27ce0af5a704c2072ba0f2b6e67b43481ea09005dbf
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:2.3:1b694b98
+    digest: 7a9d5ba592211f3dbff874f2ee6229ad96bab7488a1cb9f32e956b8bc0b3ef78
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:2.3:HoldLimits.per_buyer
+    digest: 432befca88b55ac2351b25ab24ae2ddb53632a58893c39ec4b5d55e0f08ff923
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: HoldLimits, type: { kind: named, name: PlainInteger }, presence: optional }
+  - ir: rule:2.3:ae26d4ac-2
+    digest: e5fc2270703c3e8620a9eb83d6915a31f7f8365ab6b4ded6b1628befc158cc80
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: HoldLimits }
+  - ir: key:2.3:HoldLimits.per_advertiser
+    digest: b07f2df0984b93ffbe9703c93a78894adc6f09d6e330091cd24f1824b608b75c
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: HoldLimits, type: { kind: named, name: PlainInteger }, presence: optional }
+  - ir: rule:2.3:ae26d4ac-3
+    digest: c21e7ff254bcf7fb7abfbdb03b5de7cddfbab8978e981d5871476c8eb495c35a
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: HoldLimits }
+  - ir: rule:2.3:cad085e3
+    digest: 3879afc4af120ba21e40feac98e707c5afc332be6667f6320b305773da099d1d
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:2.3:54eb4241
+    digest: 988971861266f4e5a7a5f38ebfe49384d7536ec7ec6d6b16e98922a5f9cee37f
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.3:232494bb
+    digest: 760abb8e1d59e7d1739523a3b0ed5d0ed222ca66c395fe8e9e5ef79d43ceee8c
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.3:2ff495fd
+    digest: 940346a130db1b9aa60a091520eed3cb81902b6ee3277b56ef64ec922bddcc89
+    locks: [ with-our-stack ]
     source: { rule: prose-sentence }
     as: { role: informative }

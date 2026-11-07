@@ -8,26 +8,32 @@ covers:
   - ir: key:3.1:available[]
     digest: e56c463d4043e1f551eae09af84db75ecf3185079f60194536361b619af55af5
     quote: "`available[]` | REQUIRED | The options the seller offers"
+    locks: [main, with-open-prs]
   - ir: key:3.1:pricing#meaning/object:1
     digest: 1d2ea6996d7c3bbf4808776d7399e4719b79687764674d92f08a885763ad61fe
     quote: "{ option_id: { delta_cpm | delta_flat | delta_pct } }"
+    locks: [main, with-open-prs]
   - ir: rule:2.2:696ee27b
     digest: 9b517ad2b69750533a5be0079e02aaf389a5e013eceb9c55d4f37b9bb2c67388
     quote: A field MUST carry either an inline value or a `catalog_ref`, never both.
+    locks: [main, with-open-prs]
   - ir: rule:3:d5ed9b66
     digest: 8ee5c176f11c87b1a19b1e7d35fdd893497044ef77aec2ec4063f1e9b242d0de
     quote: Each option MAY carry a price delta.
   - ir: rule:3.2:ee009430
     digest: b70f59e2c68b16af32a8ad7ee513de31c1f1bd7a3c1540f17ba556688780a7cf
     quote: "Every field marked `settable` MUST declare its bounds: either `allowed[]` (an enumerated set) or `min` / `max` (a numeric or date range)."
+    locks: [main, with-open-prs]
   - ir: rule:3.2:4f3b0a9c
     digest: 07c583d4952414b695fe884dd3b8b2257e046904bec68931d240feef4ad28988
     quote: A field marked `settable` that carries a bare value and no bounds MUST be treated as `seller-set`.
+    locks: [main, with-open-prs]
   - ir: code:2.2:1
     digest: 5b0b87b43dbc9c1a24ed8f3e2bd71d22c5d790a6f786b980bd554f64a71436a0
     quote: |-
       catalog_ref: "<seller_namespace>/<collection>/<entry_id>@<version>"
       example:     "examplepub/audiences/smb-decision-makers@3"
+    locks: [main, with-open-prs]
 options:
   - id: defining-type
     summary: >-

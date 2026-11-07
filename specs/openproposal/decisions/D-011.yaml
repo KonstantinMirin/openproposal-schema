@@ -8,9 +8,11 @@ covers:
   - ir: rule:3.2:ee009430
     digest: b70f59e2c68b16af32a8ad7ee513de31c1f1bd7a3c1540f17ba556688780a7cf
     quote: "Every field marked `settable` MUST declare its bounds: either `allowed[]` (an enumerated set) or `min` / `max` (a numeric or date range)."
+    locks: [main, with-open-prs]
   - ir: field:5.5:frequency_cap#description/object:1
     digest: adbcfc3ac2b7bc7c0bda1069751986267cf304dbafb4ee388d9c2f62b43ba305
     quote: "{ max: { min, max }, period, basis: device | household | listener }"
+    locks: [main, with-open-prs]
 options:
   - id: one-or-both-ordered
     summary: A range gives one bound or both, never neither, and `min` is at most `max`.

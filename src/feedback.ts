@@ -65,6 +65,25 @@ export type GroupId = FeedbackProfile["groups"][number]["id"];
 export type RuleId = string;
 
 /** A spec's feedback target and layout, from its profile. Throws when the profile gives none. */
+/** The builds each report reads, as `reportBuilds` groups them, for a spec with or without a feedback target. */
+export function reportGroups<B extends { lock: { name: string } }>(fb: Pick<FeedbackProfile, "locks"> | undefined, builds: B[]): { dir: string; builds: B[] }[] {
+  const shared = fb?.locks === undefined ? builds : builds.filter((b) => fb.locks!.includes(b.lock.name));
+  return [{ dir: "", builds: shared }, ...builds.filter((b) => !shared.includes(b)).map((b) => ({ dir: b.lock.name, builds: [b] }))];
+}
+
+/**
+ * The builds each report reads: the report the profile's `locks` name, from
+ * `feedback/`, and a report of its own for each other lock, from
+ * `feedback/<lock>/`, keyed by the directory below the report's root, "" for
+ * the shared one. Each keeps the builds' order, the default lock first.
+ */
+export function reportBuilds<B extends { lock: { name: string } }>(fb: FeedbackProfile, builds: B[]): { dir: string; builds: B[]; profile: FeedbackProfile; own?: true }[] {
+  const shared = reportGroups(fb, builds)[0]!.builds;
+  // A lock's own report takes the headline the profile gives it, and makes no suggestion.
+  const own = (b: B) => ({ ...fb, headline: fb.reports?.[b.lock.name]?.headline ?? fb.headline, suggestion: { ...fb.suggestion, items: [] } });
+  return [{ dir: "", builds: shared, profile: fb }, ...builds.filter((b) => !shared.includes(b)).map((b) => ({ dir: b.lock.name, builds: [b], profile: own(b), own: true as const }))];
+}
+
 export function feedbackOf(spec: string): FeedbackProfile {
   const { profile } = specOf(spec);
   if (!profile.feedback) throw new Error(`${profile.file}: gives no feedback target`);
@@ -291,6 +310,8 @@ export interface FeedbackInput {
   recordedDifferences: DifferencesFile;
   /** The feedback layout, for a test that changes it; else the default lock's spec profile gives it. */
   profile?: FeedbackProfile;
+  /** A lock's own report (`reportBuilds`): it places a decision whose covers name its lock though no model or rule cites it, and leaves the others to the report on the profile's locks. */
+  own?: true;
 }
 
 const cmp = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
@@ -339,19 +360,21 @@ export function groupDecisions(input: Pick<FeedbackInput, "kernel" | "constructo
     ["types", typed],
     ["statements", placed],
     ["readings", decisionIds(input.vectors.map((v) => v.rules))],
+    // A decision only the binding's homonyms cite says which members are one concept, a question of the types.
+    ["types", new Set((input.kernel.domains?.homonyms ?? []).map((h) => h.decision))],
   ];
   const out = new Map<string, GroupId>();
   for (const [group, ids] of stages) for (const id of ids) if (!out.has(id)) out.set(id, group);
   return out;
 }
 
-function lockSide(b: LockBuild, ourPrs: readonly number[]): LockSide {
+function lockSide(b: LockBuild, ourPrs: readonly number[], own?: { label?: string; phrase?: string }): LockSide {
   const order = (b.lock.merge_order ?? []) as { pr?: number; head?: string; branch?: string }[];
   const prs = order.flatMap((o) => (typeof o.pr === "number" ? [o.pr] : []));
   return {
     name: b.lock.name,
-    label: b.lock.merge_order === null ? `\`${b.lock.name}\`` : "With the open PRs",
-    phrase: b.lock.merge_order === null ? `on \`${b.lock.name}\`` : "with the open PRs",
+    label: own?.label ?? (b.lock.merge_order === null ? `\`${b.lock.name}\`` : "With the open PRs"),
+    phrase: own?.phrase ?? (b.lock.merge_order === null ? `on \`${b.lock.name}\`` : "with the open PRs"),
     commit: b.lock.commit,
     blob: b.lock.blob,
     upstream: b.lock.upstream,
@@ -421,6 +444,9 @@ export function internalTypeNames(builds: Pick<LockBuild, "model" | "ir">[]): Se
     // An object a heading names, as AdCOM's `Object: Content`, and every key path a table writes, are names the text writes.
     for (const tb of b.ir.tables) if (tb.parent?.identifier) for (const w of tb.parent.identifier.match(/[A-Za-z][A-Za-z0-9]*/g) ?? []) written.add(w);
     for (const k of b.ir.keys) for (const w of k.key.path.match(/[A-Za-z][A-Za-z0-9]*/g) ?? []) written.add(w);
+    // A key's Type cell and a definition table's names, as the stack's `Measurer` and `HttpsUrl`, are names the text writes too.
+    for (const k of b.ir.keys) for (const w of k.type?.text.match(/[A-Za-z][A-Za-z0-9]*/g) ?? []) written.add(w);
+    for (const d of b.ir.definitions) for (const w of d.value.match(/[A-Za-z][A-Za-z0-9]*/g) ?? []) written.add(w);
   }
   return new Set(builds.flatMap((b) => b.model.types.map((t) => t.name)).filter((n) => !written.has(n)));
 }
@@ -483,7 +509,9 @@ export function buildFeedback(input: FeedbackInput): { doc: FeedbackDoc; problem
   const { builds } = input;
   // The report follows up on the issue the specification's profile names, the spec of the default lock.
   const fb = input.profile ?? feedbackOf(repoRoot(builds[0]!.lock));
-  const locks = builds.map((b) => lockSide(b, fb.prs));
+  const locks = builds.map((b) => lockSide(b, fb.prs, fb.reports?.[b.lock.name]));
+  // The locks the profile's other reports read: its locks, and each lock with a report of its own, but this report's.
+  const elsewhere = new Set([...(fb.locks ?? []), ...Object.keys(fb.reports ?? {})].filter((l) => !builds.some((b) => b.lock.name === l)));
   const lockNames = locks.map((l) => l.name);
   const lockOrder = (xs: Iterable<string>) => [...new Set(xs)].sort((a, b) => lockNames.indexOf(a) - lockNames.indexOf(b));
   if (new Set(locks.map((l) => l.label)).size !== locks.length) problems.push(`two locks get one label: ${locks.map((l) => l.label).join(", ")}`);
@@ -511,6 +539,8 @@ export function buildFeedback(input: FeedbackInput): { doc: FeedbackDoc; problem
   for (const id of [...cited.keys()].sort()) if (!records.has(id)) problems.push(`the model cites ${id}, which has no decision record`);
   for (const d of [...input.decisions].sort((a, b) => cmp(a.id, b.id))) {
     // A change we proposed and withdrew keeps its place, and so its number, which the posted report gave it; it states no change.
+    // A decision whose every cover names only locks another report reads, as the stack's own, is that report's.
+    if (d.covers.length > 0 && d.covers.every((c) => c.locks !== undefined && c.locks.every((l) => elsewhere.has(l)))) continue;
     if (d.status === "withdrawn" && d.kind === "departure") {
       const reason = (d.withdrawn?.reason ?? "").replace(/\s+/g, " ").trim();
       internal(`${d.id}'s withdrawal`, reason);
@@ -521,7 +551,9 @@ export function buildFeedback(input: FeedbackInput): { doc: FeedbackDoc; problem
     }
     if (d.status === "withdrawn") problems.push(`${d.id}: a withdrawn open point has no group to keep its number in; the report keeps only a withdrawn change in its place`);
     if (!stands(d)) continue;
-    const on = lockOrder(cited.get(d.id) ?? []);
+    const named = input.own ? builds.filter((b) => d.covers.some((c) => c.locks?.includes(b.lock.name))).map((b) => b.lock.name) : [];
+    if (input.own && (cited.get(d.id) ?? []).length === 0 && named.length === 0) continue;
+    const on = lockOrder([...(cited.get(d.id) ?? []), ...named]);
     const group = groupOf.get(d.id);
     if (on.length === 0 || (group === undefined && d.kind === "gap")) {
       problems.push(`${d.id}: no lock's model or rules cite it, so the report has no place for it; supersede it, withdraw it, or cite it`);
@@ -1044,7 +1076,15 @@ export function checkLineLinks(doc: FeedbackDoc, details: string, spec: string):
   // The numbered section each line is under: the nearest numbered heading above it; an unnumbered heading keeps its parent's.
   const sectionAt: string[] = [];
   let current = "";
+  // A `#` line inside a fenced code block, as a YAML comment, is no heading.
+  let fence: string | null = null;
   specLines.forEach((l, i) => {
+    const f = /^\s*(`{3,}|~{3,})/.exec(l);
+    if (f) fence = fence === null ? f[1]! : l.trim().startsWith(fence) ? null : fence;
+    if (fence !== null || f) {
+      sectionAt[i] = current;
+      return;
+    }
     const m = /^#{1,6}\s+(\d+(?:\.\d+)*)\.?\s/.exec(l);
     if (m) current = m[1]!;
     else if (/^#{1,6}\s/.test(l) && /^#{1,2}\s/.test(l)) current = "";
@@ -1314,14 +1354,17 @@ export function renderDetails(doc: FeedbackDoc, fb: FeedbackProfile): string {
     }
   }
 
-  push(
-    `## ${fb.suggestion.title}`,
-    "",
-    fb.suggestion.lead,
-    "",
-    ...fb.suggestion.items.map((x, i) => `${i + 1}. ${x.replace(/\{(D-\d+)\}/g, (_, id: string) => String(number(id) ?? id))}`),
-    "",
-  );
+  // A lock's own report makes no suggestion: the report on the profile's locks makes it.
+  if (fb.suggestion.items.length > 0) {
+    push(
+      `## ${fb.suggestion.title}`,
+      "",
+      fb.suggestion.lead,
+      "",
+      ...fb.suggestion.items.map((x, i) => `${i + 1}. ${x.replace(/\{(D-\d+)\}/g, (_, id: string) => String(number(id) ?? id))}`),
+      "",
+    );
+  }
 
   const problem = (kind: string) => (kind === "undefined_key" ? "key not defined" : kind === "load" ? "doesn't load" : kind === "rule" ? "breaks a rule" : "invalid");
   // One row per place: the failures at one location of one example, on the same locks, such as a value the schema

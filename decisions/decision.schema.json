@@ -66,6 +66,13 @@
       "type": "array",
       "items": { "type": "string", "minLength": 1 }
     },
+    "names": {
+      "description": "Short names the decision gives codes of a list whose rows give none an implementation can use, by the IR element of each code's row, which the record covers. Each names the code's branch in the schema in place of the name its row gives, and the row stays its description. Only a record that stands names a code.",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^def:" },
+      "additionalProperties": { "type": "string", "minLength": 1, "maxLength": 48, "pattern": "^[A-Za-z0-9][^\\n:]*$" }
+    },
     "feedback": {
       "description": "What the specification should say instead, for the implementation feedback to the working group.",
       "type": "string",

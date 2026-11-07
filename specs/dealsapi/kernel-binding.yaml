@@ -133,6 +133,24 @@ primitives:
   - { name: MediaOffset, absent: true }
   - { name: CatalogRef, absent: true }
   - { name: Digest, absent: true }
+  - { name: Digest, edition: stack, absent: true }
+  - { name: Url, edition: stack, absent: true }
+  - { name: Duration, edition: stack, absent: true }
+  - { name: Domain, edition: stack, absent: true }
+  - { name: Amount, edition: stack, absent: true }
+  - { name: NamespacedTerm, edition: stack, absent: true }
+  - { name: RegistrableDomain, absent: true }
+  - { name: HttpsUrl, absent: true }
+  - { name: Instant, absent: true }
+  - { name: EntryRef, absent: true }
+  - { name: FractionDelta, absent: true }
+  - { name: FieldPointer, absent: true }
+  - { name: IanaZone, absent: true }
+  - { name: GeoCode, absent: true }
+  - { name: PlainString, absent: true }
+  - { name: PlainInteger, absent: true }
+  - { name: PlainNumber, absent: true }
+  - { name: FormatId, edition: stack, absent: true }
 constructors:
   - { name: Selectable, absent: true }
   - { name: Settable, absent: true }
@@ -148,6 +166,13 @@ constructors:
           digest: 5038fc294dbe88abe4cb2e9ca459b2fd103038dec958ed846f5fcbaa959350bf
           quote: "`buyerstatus` | object array | Information about the buying seat where the Deal will be trafficked"
   - { name: Map, absent: true }
+  - { name: Range, edition: stack, absent: true }
+  - { name: List, edition: stack, absent: true }
+  - { name: Map, edition: stack, absent: true }
+  - { name: Selectable, edition: stack, absent: true }
+  - { name: Settable, edition: stack, absent: true }
+  - { name: Narrowing, absent: true }
+  - { name: SettableRange, absent: true }
 parts:
   - name: Ext
     sources:
@@ -173,6 +198,8 @@ parts:
   - { name: PriceDelta, absent: true }
   - { name: CatalogReference, absent: true }
   - { name: DaypartWindow, absent: true }
+  - { name: Delta, absent: true }
+  - { name: ClockWindow, absent: true }
 domains:
   - name: identity
     concepts:
@@ -223,6 +250,7 @@ domains:
             - ir: field:object-deal:desc
               digest: 9e98c8164cc05f0999a8fe6d5ffefaf8b0807ba21750e1875ba69cc5740f6410
               quote: "`desc` | string | Short description for the deal to help the receiver locate the deal once it has been sent. It is strongly recommended to keep this field to 250 characters or less."
+      - { name: plain-string, absent: true }
   - name: network
     concepts:
       - { name: url, absent: true }
@@ -241,6 +269,8 @@ domains:
             - ir: field:object-inventory:sitedomains
               digest: de6ddbd885bf947a9fc3fd819ff72501645828f9cdf1e68654b4a5512bf03475
               quote: "`sitedomains` | string array | An array containing one or more site domain(s). An empty list implies the deal may run across many unspecified site domain(s)."
+      - { name: registrable-domain, absent: true }
+      - { name: https-url, absent: true }
   - name: money
     concepts:
       - name: amount
@@ -272,6 +302,7 @@ domains:
             - ir: field:object-terms:countries
               digest: 2163f6ca4661e298607dfcb0835a31140673ce8edde999f59c94ea2df16fdb2b
               quote: "`countries` | string array | An array of country codes in which the deal is available, where country code is a string using ISO-3166-3. If this is empty or missing, the deal is assumed to apply to all countries."
+      - { name: geo-code, absent: true }
   - { name: ratio, absent: true }
   - name: quantity
     concepts:
@@ -282,6 +313,8 @@ domains:
               digest: e9a8fe666cbf1b98dc9f22407b967fe7368d45ad3d3b0d5c75ea8ab993a9b2a8
               quote: "`units` | int | Number of units (impressions) over the specified start and end date of the deal. If the deal is guaranteed, this number should be provided. If the deal is not guaranteed this may be omitted."
       - { name: measure, absent: true }
+      - { name: plain-integer, absent: true }
+      - { name: plain-number, absent: true }
   - name: time
     concepts:
       - { name: instant, absent: true }
@@ -300,6 +333,9 @@ domains:
       - { name: duration, absent: true }
       - { name: daypart-window, absent: true }
       - { name: time-zone, absent: true }
+      - { name: canonical-instant, absent: true }
+      - { name: iana-zone, absent: true }
+      - { name: clock-window, absent: true }
   - name: term
     concepts:
       - { name: namespaced-term, absent: true }
@@ -337,6 +373,7 @@ domains:
             - ir: field:object-terms:guar
               digest: 372ad02a0bfed4c5e8dca1c18389f2ccccefa680f7850c8a8664e06eb7b81219
               quote: "`guar` | int | Indicates that the deal is of type guaranteed and the bidder must bid on the deal, where 0 = not a guaranteed deal, 1 = guaranteed deal."
+  - { name: option-pricing, absent: true }
 homonyms: []
 bases: []
 shared_structures:
@@ -345,3 +382,5 @@ shared_structures:
   - concepts: [currency, country]
     decisions: [D-004, D-005]
   - { concepts: [amount, measure], absent: true }
+  - { concepts: [domain-name, registrable-domain], absent: true }
+  - { concepts: [amount, plain-number], absent: true }

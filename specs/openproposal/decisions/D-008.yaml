@@ -8,12 +8,15 @@ covers:
   - ir: rule:3.1:f8b0c287
     digest: d60c77636afc33649141f8de560cbf2e0f599b124779ea89b069f9b08a9181cd
     quote: A field marked `selectable` that carries a bare value and no `available[]` MUST be treated as `seller-set`.
+    locks: [main, with-open-prs]
   - ir: rule:3.2:4f3b0a9c
     digest: 07c583d4952414b695fe884dd3b8b2257e046904bec68931d240feef4ad28988
     quote: A field marked `settable` that carries a bare value and no bounds MUST be treated as `seller-set`.
+    locks: [main, with-open-prs]
   - ir: rule:3:b51cedb6
     digest: fde9bc5c8e7d5ea0efdf20ad2cda4220d910e865daeb0d98f67288ec2f1493f9
     quote: An unset `selectable` or `settable` field takes its declared `included[]` or default, and that default MUST be explicit in the proposal.
+    locks: [main, with-open-prs]
 options:
   - id: one-option
     summary: A single value of the option type `T`, as the initial design proposed.

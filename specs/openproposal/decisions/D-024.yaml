@@ -44,9 +44,11 @@ covers:
   - ir: field:5.3:audiences#description/object:1
     digest: 0a7d355ab5dcb787717d01988764dcca8895bdc0b1252de9e8269ad516e7ac6b
     quote: "{ id, name, taxonomy_ref, provenance, addressable_scale }"
+    locks: [main, with-open-prs]
   - ir: field:5.3:buyer_supplied#description/object:1
     digest: d5cdd605af129db6ef8a658446a915a300cb4b1abe0f7ff6a2ae97f9fbb99f8f
     quote: "{ segments_allowed, suppression_allowed, match_rate_expected, segments[], suppression_list }"
+    locks: [main, with-open-prs]
 options:
   - id: as-listed
     summary: >-

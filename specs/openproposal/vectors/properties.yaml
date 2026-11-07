@@ -1,0 +1,65 @@
+# Rule vectors for the module `properties`. Regenerate a digest with
+# `npm run cite -- <rule ID>`.
+format: 1
+module: properties
+rules:
+
+  # `PropertyOption.venue_type` REQUIRED when `channel` is `dooh` (D-060).
+  - rule: rule:5.2.4:02c220b8
+    digest: 36a0f278ff22b7b0884cdcf91a0329776f1afa402cc3bc809cd5fbe427b70e49
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.2.4:PropertyOption.venue_type"]
+    valid:
+      - {"value": {"allocation": "all", "apps": [], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner", "domains": ["tune-stream.example", "business-daily.example"]}, "context": {"LineItem.channel": "display"}}
+      - {"value": {"allocation": "all", "apps": [], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner", "domains": ["tune-stream.example", "business-daily.example"], "venue_type": {"ids": ["1551"], "taxonomy": 8}}, "context": {"LineItem.channel": "dooh"}}
+    invalid:
+      - {"value": {"allocation": "all", "apps": [], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner", "domains": ["tune-stream.example", "business-daily.example"]}, "context": {"LineItem.channel": "dooh"}}
+
+  # `PropertyOption.screens[]` REQUIRED when `channel` is `dooh` and `allocation` is `all` (D-060).
+  - rule: rule:5.2.4:ea387bb0
+    digest: b4f0034f99cb878ea27381a7ebee200d694c9d61f8dd5ac17ce0e965fa32ac73
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.2.4:PropertyOption.screens[]"]
+    valid:
+      - {"value": {"allocation": "seller_allocated", "apps": [], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner", "domains": ["tune-stream.example", "business-daily.example"]}, "context": {"LineItem.channel": "dooh"}}
+      - {"value": {"allocation": "all", "apps": [], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner", "domains": ["tune-stream.example", "business-daily.example"], "screens": [{"lat": 40.7128, "lon": -74.006, "loop": {"length_s": 60, "slot_s": 10}, "movable": true, "operating_hours": [{"days": ["monday", "tuesday"], "start": "06:00", "before": "22:00"}], "screen_id": "np-001", "time_zone": "America/New_York"}]}, "context": {"LineItem.channel": "dooh"}}
+    invalid:
+      - {"value": {"allocation": "all", "apps": [], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner", "domains": ["tune-stream.example", "business-daily.example"]}, "context": {"LineItem.channel": "dooh"}}
+
+  # `PropertyOption.seller_accounts[]` REQUIRED when `seller_relationship` is `reseller`, or the line item offers a deal mechanism (§ 5.9) (D-060).
+  - rule: rule:5.2.4:45d0b1fa
+    digest: f6a772d5267d5c7610684eb86d845891ff8dc8e319afac9f68ced6f9887db120
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.2.4:PropertyOption.seller_accounts[]"]
+    valid:
+      - {"value": {"allocation": "all", "apps": [], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner", "domains": ["tune-stream.example", "business-daily.example"]}, "context": {"LineItem.transaction_mechanism": {"available": [], "included": []}}}
+    invalid:
+      - {"value": {"allocation": "all", "apps": [], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "reseller", "domains": ["tune-stream.example", "business-daily.example"]}}
+      - {"value": {"allocation": "all", "apps": [], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner", "domains": ["tune-stream.example", "business-daily.example"]}, "context": {"LineItem.transaction_mechanism": {"available": [{"id": "programmatic_guaranteed", "delivery_type": "guaranteed"}], "included": ["programmatic_guaranteed"]}}}
+
+  # `PropertyOption.apps[]` REQUIRED when `domains[]` is absent (D-060).
+  - rule: rule:5.2.4:65ca47c9
+    digest: 3e939a90f559a0366bc88b8bba0df06746919795c1bf990a3650f88becf90df3
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.2.4:PropertyOption.apps[]"]
+    valid:
+      - {"value": {"allocation": "all", "apps": [], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner", "domains": ["tune-stream.example", "business-daily.example"]}}
+      - {"value": {"allocation": "all", "apps": [{"bundle": "000003", "developer_domain": "tune-stream.example", "store": "apple_app_store", "store_url": "https://channelstore.roku.com/details/000001/sports-app"}], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner"}}
+    invalid:
+      - {"value": {"allocation": "all", "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner"}}
+
+  # `PropertyOption.domains[]` REQUIRED when `apps[]` is absent (D-060).
+  - rule: rule:5.2.4:c8e6720e
+    digest: deb08ee697e96fb13400d1957885fc09c540a6cdd4f200601491677cb92a6753
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.2.4:PropertyOption.domains[]"]
+    valid:
+      - {"value": {"allocation": "all", "apps": [], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner", "domains": ["tune-stream.example", "business-daily.example"]}}
+      - {"value": {"allocation": "all", "apps": [{"bundle": "000003", "developer_domain": "tune-stream.example", "store": "apple_app_store", "store_url": "https://channelstore.roku.com/details/000001/sports-app"}], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner"}}
+    invalid:
+      - {"value": {"allocation": "all", "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner"}}

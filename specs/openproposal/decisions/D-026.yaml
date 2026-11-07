@@ -8,12 +8,15 @@ covers:
   - ir: field:5.6:pricing[].cost_method
     digest: 91f19d1af64820acbb6d4eafa21c2cc664e9339516af84d59dff12212501f498
     quote: "`pricing[].cost_method` | Enum | seller-set | CPM, CPC, flat, etc."
+    locks: [main, with-open-prs]
   - ir: field:5.6:availability#description/object:1
     digest: 8a93eee2b91a74d8f7ce7fa00ed1af2b272702885b71d981fc562b711d8b40be
     quote: "{ unit, basis, as_of, granularity, type: forecast | reservable, quantity }"
+    locks: [main, with-open-prs]
   - ir: field:5.6:commitment_bounds#description/object:1
     digest: 3554f2d78be2145dbef1d127f3e38c57e531bc19965d5834eb2b995d0af016b8
     quote: "{ min_impressions, max_impressions, min_budget, max_budget }"
+    locks: [main, with-open-prs]
   - ir: key:5.6.3:requires.min_commitment[]#meaning/object:1
     digest: 42864a103fd4ba66991bdf1f48cb93772c0567a6c109abdeabac4591e0013699
     quote: "{ line_item_id, basis, amount, currency }"

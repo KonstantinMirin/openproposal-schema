@@ -1,8 +1,9 @@
 import { mkdirSync, readdirSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { buildLock, COMPARISON_DIR, compareLocks, DEFAULT_LOCK_FILE, renderComparison, renderComparisonMarkdown, type LockBuild } from "../compare.ts";
 import { loadConstructors } from "../constructors.ts";
+import { reportGroups } from "../feedback.ts";
 import { FINDINGS_FILE, loadFindings } from "../examples.ts";
 import { loadKernel } from "../kernel.ts";
 import { loadLock } from "../lock.ts";
@@ -11,6 +12,7 @@ import { DIFFERENCES_FILE, loadDifferences } from "../render.ts";
 import { loadVectors, VECTORS_DIR } from "../rules.ts";
 import { cliSpec } from "../builds.ts";
 import { REPO_ROOT } from "../repo.ts";
+import { specOf } from "../specs/index.ts";
 import { variantReportFiles } from "../variant-report.ts";
 
 /**
@@ -70,10 +72,20 @@ async function main(): Promise<number> {
     );
   }
   // Each variant's report: how it differs from the schemas we propose, and how many example failures each has.
-  const variants = await variantReportFiles([...builds.values()], input, recordedFindings);
+  // A lock with a report of its own has its variant reports in `comparison/<lock>/` (src/feedback.ts, reportGroups).
+  const variants = { files: new Map<string, string>(), reports: [] as Awaited<ReturnType<typeof variantReportFiles>>["reports"], problems: [] as string[] };
+  for (const g of reportGroups(specOf(specDir).profile.feedback, [...builds.values()])) {
+    const v = await variantReportFiles(g.builds, input, recordedFindings);
+    for (const [name, text] of v.files) variants.files.set(g.dir === "" ? name : `${g.dir}/${name}`, text);
+    variants.reports.push(...v.reports);
+    variants.problems.push(...v.problems);
+  }
   for (const p of variants.problems) console.error(`error: ${p}`);
   if (variants.problems.length > 0) return 1;
-  for (const [name, text] of variants.files) writeFileSync(join(out, name), text);
+  for (const [name, text] of variants.files) {
+    mkdirSync(dirname(join(out, name)), { recursive: true });
+    writeFileSync(join(out, name), text);
+  }
   for (const r of variants.reports) {
     const shown = out.startsWith(`${root}/`) ? out.slice(root.length + 1) : out;
     const counts = r.locks.map((l) => `${l.name}: ${l.examples.proposed.failures} example failures proposed, ${l.examples.variant.failures} ${r.variant}`).join("; ");

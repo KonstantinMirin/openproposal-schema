@@ -1,0 +1,44 @@
+# OpenProposal 3.0 — Example: Embedded podcast line item (spec § 6.10)
+# Illustrative only. A host read recorded into the episodes released in the flight.
+# A buyer's composed record (§ 4.1.1) of a line item issued to it (§ 4.3), before its
+# commit.
+line_item_id:   "show-x-host-read-baked"
+status:         published
+channel:        audio
+properties:     { available: [{ id: "show-x", name: "Show X", domains: ["show-x.example"],
+                                child_audience: general, seller_relationship: owner }],
+                  included: ["show-x"] }
+placement:      { feed: 3 }                 # Podcast (3) (§ 5.2.2)
+episodes:       new                         # required on a podcast feed (§ 5.2); new under embedded (§ 5.9)
+formats:        { available: ["audio/host-read-30s"], included: ["audio/host-read-30s"] }
+format_specs:
+  "audio/host-read-30s":                    # seller-defined: no spec_ref
+    spec:        { asset: script, read_length_s: 30, language: en }
+
+# no geo, device, or frequency_cap: everyone who downloads gets the read
+
+pricing:
+  - { pricing_id: "show-x-cpm-usd", cost_method: CPM, list_rate: 30.00, agreed_rate: 30.00,
+      price_valid_until: "2026-10-30T23:59:59Z", currency: USD,
+      unit_bounds: { min: 100000 } }
+
+controlling_measurement:                    # required under embedded; final_after ends post-flight counting (§ 5.9)
+  available:    [{ id: seller-count, counted_by: seller,
+                   discrepancy_threshold: 0.10, final_after: "P30D" }]
+  included:     ["seller-count"]
+  max_select:   1
+
+commitment:
+  basis:           units
+  amount:          400000                   # ad deliveries
+  flight: { start: "2026-11-02T00:00:00Z", end: "2026-11-30T23:59:59Z" }  # first episode released to last episode released
+  advertisers: [{ domain: "brand-a.example" }]
+
+visibility:            named
+eligible_buyers:       ["agency-a.example"]
+transaction_mechanism:
+  available:  [{ id: direct_io, delivery_type: guaranteed }]
+  included:   ["direct_io"]
+  max_select: 1
+serving_mode:          embedded
+retention:             { min: "P90D", max: "P1Y" }   # stays 90 days at least, gone within a year

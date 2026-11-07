@@ -1,0 +1,20 @@
+format: 1
+id: G-133
+date: 2026-10-28
+question: What changes in the gates when the site links a spec's proto files as an unofficial target?
+decision: >-
+  A spec's files page gains a card, Proto3 enums, tagged Unofficial target,
+  that links each file under the spec's proto/ in the public repository
+  and says the specification's owners don't publish them. The shared code
+  reads the files from the spec's folder, so it names no spec, and a spec
+  with no proto files shows no card. AdCOM's How it's built page adds one
+  sentence to its design note on integer codes: the proto file names each
+  value from its title, prefixed with its enum's name, as
+  `DEVICE_TYPE_CONNECTED_TV = 3`, read from the committed file, with a link
+  to it.
+rationale: >-
+  No check is relaxed: the site gates run unchanged, and each new link
+  names a tracked path under specs/, which the export publishes. Only the
+  site, which no commit holds, changes.
+accepts:
+  - { gate: site-builds, fingerprint: 9bf11318b630e9ea37bc98cdf4d7bfc7e1459a576f89d82b758c5fdf1511fd60 }

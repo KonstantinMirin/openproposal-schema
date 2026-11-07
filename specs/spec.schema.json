@@ -235,6 +235,21 @@
             }
           },
           "description": "The SDK packages, for a spec whose types the SDK emitters write; a spec without them has no SDK types."
+        },
+        "proto": {
+          "description": "The protocol buffer target (src/targets/proto.ts, docs/design/target-rules.md), for a spec whose integer-coded vocabularies it writes as proto3 enums under the spec's proto/; a spec without it has no proto files.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "package"
+          ],
+          "properties": {
+            "package": {
+              "description": "The proto package every file declares, lowercase dotted words ending in a version, the spec's folder name without its hyphens before it, as `com.example.ads.adcom.v1`; each file sits under the package's folders.",
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)*\\.v[0-9]+$"
+            }
+          }
         }
       }
     },
@@ -345,6 +360,19 @@
         "suggestion"
       ],
       "properties": {
+        "locks": {
+          "description": "The locks the report reads, the default first. Each other lock has a report of its own, under `feedback/<lock>/`, and its variant reports under `comparison/<lock>/`, so a lock added later leaves the report on these unchanged. All the spec's locks, when absent.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" }
+        },
+        "reports": {
+          "description": "For each lock with a report of its own: its headline. Such a report makes no suggestion; the report on `locks` makes it.",
+          "type": "object",
+          "propertyNames": { "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "additionalProperties": { "type": "object", "additionalProperties": false, "required": ["headline"], "properties": { "headline": { "type": "string", "minLength": 1 }, "label": { "description": "The lock's name in the report's tables, as \"With our stack\".", "type": "string", "minLength": 1 }, "phrase": { "description": "The lock in a sentence, as \"with our stack\".", "type": "string", "minLength": 1 } } }
+        },
         "issue": {
           "description": "The issue the comment follows up on.",
           "type": "string",

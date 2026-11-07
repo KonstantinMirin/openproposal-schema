@@ -4,14 +4,23 @@ format: 1
 module: representation
 sections: [ "2.1" ]
 depends: [ commercial, execution, guarantees, inventory, line-item, proposal ]
-types: []
+lock_depends: { with-our-stack: [ audience, eligibility, properties, targeting ] }
+types:
+  - name: PackageSummary
+    kind: object
+    ir: key:2.1:PackageSummary.package_id
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
 entries:
   - ir: rule:2.1:2e481f6f
     digest: 8e7174a9f45f226290f9d5125760d9e151c9d2301aa8b702e0e2758775ef543d
+    locks: [ main, with-open-prs ]
     source: { decision: D-028 }
     as: { role: profile, profile: Summary, document: LineItem }
   - ir: rule:2.1:948e2b02
     digest: d73007c4f00ee65f89f1ffebba4a24a699310dd4992410d26e3576b54575f9e0
+    locks: [ main, with-open-prs ]
     source: { decision: D-029 }
     as: { role: obligation, party: seller }
   - ir: sentence:2.1:5e6cb5f0
@@ -108,3 +117,128 @@ entries:
     locks: [ with-open-prs ]
     source: { decision: D-029 }
     as: { role: obligation, party: seller }
+  - ir: rule:2.1:568d4699
+    digest: 1d0a1e4074849669561e9040826a916395cfaea0b2c0a0fc964417e7145bbdd0
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:2.1:5072813c
+    digest: 832ce0230a46b8eb8419bc867ed657b68fbff5dbedd926bd3030ef609efbc253
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:2.1:b90d9a93
+    digest: 4124525477f94033397a33f1a30be02b2716349763b714153916f1974e2977b7
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.1:7ecd963f
+    digest: afa8dece4c268c0e7b9dc3d7d11946d48f39c22016ac079b8715da0d151737eb
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: code:2.1:1
+    digest: 56d53f6d5f8d25e268a274877d9eba3e55fba751ed00e4b558004e697b1b24d2
+    locks: [ with-our-stack ]
+    source: { decision: D-056 }
+    as: { role: profile, profile: Summary, document: LineItem }
+  - ir: sentence:2.1:bd68c3df
+    digest: a0be3b8926c4fd4494681fefcbcc61ef5fd47b44bebd0b59d841d0ea490bc2b8
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: code:2.1:2
+    digest: d70a5fe3c0c1773d24f7c2ff4297826e2678c0a3cb1876b8227bba04f8733c8e
+    locks: [ with-our-stack ]
+    source: { decision: D-056 }
+    as: { role: profile, profile: Summary, document: Proposal }
+  - ir: sentence:2.1:5ed82d3e
+    digest: 963f475b6c9b5f34b855575fffd80a0ffd8e7b186248fe6e5b39ea12b4510e81
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: "key:2.1:ProposalSummary.line_items[]"
+    digest: be252856b07cfe7830aa9bfc770b1630ec42de2814fe25a17a9e77b391670857
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: ProposalSummary
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: LineItemSummary } } }
+      presence: conditional
+  - ir: rule:2.1:57273714
+    digest: adf0d7497e860e482d85ebc00e688b4b653e03ccf004514ea96ffc82dd9e6621
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ProposalSummary }
+  - ir: "key:2.1:ProposalSummary.packages[]"
+    digest: 81ee1102e3e8b5968f1df00fa68ffd4a5eb2864e54e91b09f3bc93eba73b1307
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: ProposalSummary
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PackageSummary } } }
+      presence: conditional
+  - ir: rule:2.1:c0741f43
+    digest: 95240fb8eb776e2ee6920d6729ab5e631f48a1c2998fd503b11d56779c78357c
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ProposalSummary }
+  - ir: sentence:2.1:26c8e267
+    digest: 7992392a32e176e374dd91d05020743cecd2ecd20f80186d83ab912b22c91e32
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:2.1:PackageSummary.package_id
+    digest: 058b1cd4911479235cae91532329437a7c0d71171c11d2ef4a2a4051d4796680
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: PackageSummary, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:2.1:373dbf11
+    digest: 59dac86f63c4a6190440b1d4cec0d776794f4491b2d237106fca7f11b7a439e6
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: PackageSummary }
+  - ir: "key:2.1:PackageSummary.line_items[]"
+    digest: 1d6c0116126c75e532725f95415fefb73ce556354e03271ac9b9e4e31a498f51
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: PackageSummary
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: LineItemSummary } } }
+      presence: required
+  - ir: rule:2.1:373dbf11-2
+    digest: 14e4833ffd1885a7ffa62f44c04b3037fd5caa8fb54a0c4383d68d2cedf1a11d
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: PackageSummary }
+  - ir: "key:2.1:PackageSummary.add_ons[]"
+    digest: 31d867a8cc9519b75f23a6ca083705b08bde85a2ec2f2d5f5e2f9e7c28e63a29
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: PackageSummary
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: LineItemSummary } } }
+      presence: optional
+  - ir: rule:2.1:ae26d4ac
+    digest: 0304b53cb45c5568bdc929708ac1e26efaf8741bde30b82cfd1694b8173e543d
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: PackageSummary }
+  - ir: "key:2.1:PackageSummary.min_commitments[]"
+    digest: 8275671f8f527af78f4141b16ac57a36b2e34a63407d776a28d4a2a79fd91a59
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: PackageSummary
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: MinCommitment } } }
+      presence: optional
+  - ir: rule:2.1:ae26d4ac-2
+    digest: ded3f6f8ae597f866383b6a3eeee0958314a71bb1b58ea7f462be71cc9157eac
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: PackageSummary }

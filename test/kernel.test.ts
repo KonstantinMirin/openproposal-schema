@@ -8,9 +8,9 @@ import { checkKernelEngines, engineCases, loadOracleGaps, type Engines } from ".
 import { checkKernel, checkKernelNames, checkKernelSources, kernelStructures, loadKernel, patternPortability, vectorCases, type Kernel, type Primitive } from "../src/kernel.ts";
 import { sharedStructures } from "../src/domains.ts";
 import { loadDecisions, type MappingFile } from "../src/mapping.ts";
-import { ROOT, SPEC } from "./helpers.ts";
+import { oldKernel, oldShared, ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT, SPEC);
+const KERNEL = oldKernel(loadKernel(ROOT, SPEC));
 const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 const LOCKS: [string, SpecIR][] = [
   ["main", JSON.parse(readFileSync(join(SPEC, "ir", "spec-ir.json"), "utf8")) as SpecIR],
@@ -26,7 +26,7 @@ function withPrimitive(name: string, edit: (p: Primitive) => void): Kernel {
   return k;
 }
 
-const twins = (k: Kernel) => checkDuplication(kernelStructures(k), sharedStructures(k.domains), true);
+const twins = (k: Kernel) => checkDuplication(kernelStructures(k), oldShared(sharedStructures(k.domains)), true);
 const prim = (name: string) => KERNEL.primitives.find((p) => p.name === name)!;
 const body = (pattern: string) => pattern.replace(/^\^/, "").replace(/\$$/, "");
 

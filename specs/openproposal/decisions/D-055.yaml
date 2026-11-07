@@ -1,0 +1,34 @@
+format: 1
+id: D-055
+status: proposed
+kind: gap
+author: agent
+question: "Does each `role` of a § 4.1.2 `AssentEntry` make a type of its own?"
+covers:
+  - ir: key:4.1.2:AssentEntry.role
+    digest: 91231edb7cb2285c8501dbf72e43534dd6421d64aa73f3c1baaef2dee2bf2180
+    quote: "`role` | REQUIRED | `commitment` | `acceptance` | `withdrawal` | `decline`. It says what the entry does, and it implies the party"
+    locks: [with-our-stack]
+  - ir: key:4.1.2:AssentEntry.idempotency_key
+    digest: e507e674a3801585327a6dcc515e8b0d0d56fd69091e5cd0ab706fe1bb897cef
+    quote: "`idempotency_key` | REQUIRED when `role` is `commitment` | Buyer-generated, unique per `commit`, opaque, and scoped to one buyer and seller pair. The seller MUST NOT interpret it (§ 5.6.1)"
+    locks: [with-our-stack]
+  - ir: key:4.1.2:AssentEntry.ground
+    digest: d3b2799dd41fb5a23e26ae4f75dfa767a74f23d436190c180c738b88cbea01db
+    quote: "`ground` | REQUIRED when `role` is `decline` | Why the seller declined. Core terms: `availability` | `exclusivity` | `terms`, the grounds of § 4.3.2. Absent on any other entry. A receiver that doesn't know a term still reads the entry as a `decline`"
+    locks: [with-our-stack]
+options:
+  - id: one-object
+    summary: "One `AssentEntry` object, whose `idempotency_key` is required when `role` is `commitment` and whose `ground` is required when `role` is `decline`, as its rows state."
+  - id: variants
+    summary: "A type for each role, `commitment`, `acceptance`, `withdrawal`, and `decline`, joined in a union tagged by `role`."
+chosen: one-object
+rationale: >-
+  § 4.1.2 writes one key table for `AssentEntry`. `role` is an `Enum` that
+  "says what the entry does, and it implies the party", and two rows state
+  their presence by it: `idempotency_key` is REQUIRED when `role` is
+  `commitment`, and `ground` is REQUIRED when `role` is `decline` and absent
+  on any other entry. The text names no type per role, so the schema keeps one
+  object and states the two conditions on `role`.
+feedback: >-
+  None needed.

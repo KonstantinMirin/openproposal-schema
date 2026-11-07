@@ -1,4 +1,5 @@
 /** The gates on each lock's emitted schemas, rules, and conformance corpus. */
+import { inScope } from "../src/mapping.ts";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { checkCorpus, generateCorpus, oracleLabels, type CorpusDoc, type CorpusInput } from "../src/corpus.ts";
@@ -43,6 +44,12 @@ export const schemasEmit = defineGate<{ model: ModelDoc; dir: string; names: Sch
     return { problems: e.problems, note: `${e.files.length} files; ${c.expressed.length} conditions as if / then, ${c.left.length} left to the rules${c.left.length > 0 ? `: ${c.left.join("; ")}` : ""}` };
   },
   fixtures: [
+    {
+      name: "a decided code name that another code's name shares",
+      spec: "adcom",
+      mutate: (i) => ({ ...i, model: withType(i.model, "AgentType", (t) => (t.kind === "vocabulary" ? { ...t, terms: t.terms.map((x) => (x.value === 1 ? { ...x, title: "In-app impressions" } : x)) } : t)) }),
+      expect: 'vocabulary "AgentType": the name "In-app impressions" given to 1 is another code\'s name too',
+    },
     {
       name: "a property of a type the model doesn't define",
       mutate: (i) => ({ ...i, model: withType(i.model, "Commitment", (t) => ({ ...t, references: [...t.references.filter((r) => r !== "Amount"), "NoSuchType"] })) }),
@@ -147,8 +154,9 @@ export const rulesEmit = defineGate<RulesInput>({
     return { problems: r.problems, note: `${r.doc.rules.length} rules, ${r.doc.rules.reduce((n, x) => n + x.vectors.valid.length + x.vectors.invalid.length, 0)} vectors` };
   },
   fixtures: [
-    { name: "a rule's invalid vectors deleted", mutate: (i) => ({ ...i, vectors: i.vectors.map((f, n) => (n === 0 ? { ...f, rules: f.rules.map((r, k) => (k === 0 ? { ...r, invalid: [] } : r)) } : f)) }), expect: "every rule needs at least one of each" },
-    { name: "a vectors entry with a stale digest", mutate: (i) => ({ ...i, vectors: i.vectors.map((f, n) => (n === 0 ? { ...f, rules: f.rules.map((r, k) => (k === 0 ? { ...r, digest: "0".repeat(64) } : r)) } : f)) }), expect: "stale digest" },
+    // The first rule on the fixture's lock, of the first file that has one.
+    { name: "a rule's invalid vectors deleted", mutate: (i) => ({ ...i, vectors: i.vectors.map((f, n) => (n === i.vectors.findIndex((g) => g.rules.some((x) => inScope(x.locks, i.lock))) ? { ...f, rules: f.rules.map((r, k) => (k === f.rules.findIndex((x) => inScope(x.locks, i.lock)) ? { ...r, invalid: [] } : r)) } : f)) }), expect: "every rule needs at least one of each" },
+    { name: "a vectors entry with a stale digest", mutate: (i) => ({ ...i, vectors: i.vectors.map((f, n) => (n === i.vectors.findIndex((g) => g.rules.some((x) => inScope(x.locks, i.lock))) ? { ...f, rules: f.rules.map((r, k) => (k === f.rules.findIndex((x) => inScope(x.locks, i.lock)) ? { ...r, digest: "0".repeat(64) } : r)) } : f)) }), expect: "stale digest" },
   ],
 });
 

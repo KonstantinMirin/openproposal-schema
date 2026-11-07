@@ -21,8 +21,14 @@
  * codes the registry no longer tabulates. A code's version, as "4.3", or
  * `VAST_4_3` in a protocol buffer value's name, where the registry's label
  * and the enum's comment or name state different ones, is reported for a
- * reader to check; names are not otherwise compared, since every artifact
- * names codes its own way.
+ * reader to check.
+ *
+ * Where the spec has a target that writes its lists as enums, such as the
+ * proto files under `proto/` (src/targets/proto.ts), the report compares
+ * them with the registry too, and a gate holds them to it: no code missing,
+ * no value extra, and an enum for every list with codes. It then lists, for
+ * a reader and not as drift, each enum and value an artifact names other
+ * than the target does, the renames a user of the artifact would make.
  */
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
@@ -34,6 +40,8 @@ import { readYaml } from "./mapping.ts";
 import type { ModelDoc } from "./model.ts";
 import { compileSchema } from "./pipeline.ts";
 import { REPO_ROOT } from "./repo.ts";
+import { PROTO_DIR, protoFiles } from "./targets/layout.ts";
+import { typeUpperSnake } from "./targets/names.ts";
 
 export const ENUM_DRIFT_DIR = "enum-drift";
 export const ENUM_DRIFT_SOURCES = join(ENUM_DRIFT_DIR, "sources.yaml");
@@ -425,6 +433,120 @@ export interface EnumDriftDoc {
   sources: { id: string; title: string; upstream: string; commit: string; reader: Reader; folder: string; files: number }[];
   lists: { list: string; title: string; vocabulary: string | null; codes: number; vendor: number | null; drift: ListEnumDrift[] }[];
   totals: Record<string, { compared: number; noEnum: number; listsMissing: number; missing: number; listsExtra: number; extra: number; sentinels: number; narrow: number; versions: number; removedKept: number }>;
+  /** The spec's own enums, where it has a target that writes them, and each artifact's names against them; null where it has none. */
+  target: (TargetDrift & { names: NameDrift[] }) | null;
+}
+
+/**
+ * How one enum's values compare with one list's codes: the codes it lacks,
+ * the values no code, vendor range, or positive-number row covers, and its
+ * unset sentinel, a 0 named "unknown" or "unspecified" where the list has no
+ * code 0, which is neither. With `codesOnly`, as for the spec's own target,
+ * whose ranges are no values, a value in a range is extra too.
+ */
+export function codeDrift(r: RegistryList, def: EnumDef, codesOnly = false): Pick<ListEnumDrift, "missing" | "extra" | "sentinel"> {
+  const codes = new Set(r.codes.map((c) => c.value));
+  const covered = (v: number) => codes.has(v) || (!codesOnly && ((r.vendor !== null && v >= r.vendor) || (r.positive && v > 0)));
+  const have = new Set(def.values.map((v) => v.value));
+  const zero = def.values.find((v) => v.value === 0);
+  const sentinel = zero && !codes.has(0) && /(?:unknown|unspecified)$/i.test(zero.name) ? { value: 0, name: zero.name } : null;
+  const missing = r.codes.filter((c) => !have.has(c.value));
+  const extra = def.values.filter((v) => !covered(v.value) && !(sentinel && v.value === 0)).map((v) => ({ value: v.value, name: v.name, line: v.line }));
+  return { missing, extra, sentinel };
+}
+
+/** The folder of a spec's proto target, which the report compares as the spec's own enums (src/targets/layout.ts). */
+export const TARGET_DIR = PROTO_DIR;
+
+/** A spec's proto target files, by path under `TARGET_DIR`. */
+export const targetFiles = protoFiles;
+
+/** How each list compares with the target's enum of its vocabulary's name. */
+export interface TargetDrift {
+  files: string[];
+  lists: { list: string; enum: string | null; at: string | null; missing: ListEnumDrift["missing"]; extra: ListEnumDrift["extra"]; sentinel: ListEnumDrift["sentinel"] }[];
+  /** The target's enums that are no list's vocabulary. */
+  unpaired: string[];
+  totals: { compared: number; noEnum: number; missing: number; extra: number; values: number };
+}
+
+/**
+ * Compares each list with codes with the target's enum named as its
+ * vocabulary, each value numbered as its code, and no value in a vendor
+ * range or a positive-number row, which are no values. Throws on a line the
+ * proto reader can't read.
+ */
+export function compareTarget(lists: readonly RegistryList[], files: ReadonlyMap<string, Buffer>): { target: TargetDrift; defs: Map<string, EnumDef> } {
+  const defs = new Map<string, EnumDef>();
+  for (const [path, b] of [...files].sort(([a], [b]) => (a < b ? -1 : 1))) for (const d of readProtoEnums(b.toString("utf8"), path)) defs.set(d.name, d);
+  const coded = lists.filter((l) => l.vocabulary !== null);
+  const rows = coded.map((r) => {
+    const def = defs.get(r.vocabulary!);
+    if (!def) return { list: r.list, enum: null, at: null, missing: [], extra: [], sentinel: null };
+    // A range is no value of the target's enum, so a value in one is extra.
+    return { list: r.list, enum: def.name, at: `../${TARGET_DIR}/${def.file}#L${def.line}`, ...codeDrift(r, def, true) };
+  });
+  const named = new Set(coded.map((r) => r.vocabulary));
+  const target: TargetDrift = {
+    files: [...files.keys()].sort(),
+    lists: rows,
+    unpaired: [...defs.keys()].filter((n) => !named.has(n)).sort(),
+    totals: {
+      compared: rows.filter((x) => x.enum !== null).length,
+      noEnum: rows.filter((x) => x.enum === null).length,
+      missing: rows.reduce((n, x) => n + x.missing.length, 0),
+      extra: rows.reduce((n, x) => n + x.extra.length, 0),
+      values: [...defs.values()].reduce((n, d) => n + d.values.length, 0),
+    },
+  };
+  return { target, defs };
+}
+
+/** The problems of a target's comparison: a code missing, a value extra, a list with codes and no enum, or an enum of no list. */
+export function targetProblems(t: TargetDrift, lists: readonly RegistryList[]): string[] {
+  const title = (id: string) => lists.find((l) => l.list === id)?.title ?? id;
+  return [
+    ...t.lists.flatMap((x) => [
+      ...(x.enum === null ? [`${title(x.list)}: the target has no enum for the list`] : []),
+      ...x.missing.map((m) => `${title(x.list)}: the target's ${x.enum} lacks the code ${m.value}`),
+      ...x.extra.map((m) => `${title(x.list)}: the target's ${x.enum} holds ${m.name} = ${m.value}, which is no code of the list`),
+    ]),
+    ...t.unpaired.map((n) => `the target's enum ${n} is no list's vocabulary`),
+  ];
+}
+
+/** Where an artifact names an enum or a value other than the target does. */
+export interface NameDrift {
+  list: string;
+  source: string;
+  /** The artifact's enum and the target's, which differ or not. */
+  enum: { theirs: string; ours: string };
+  /** The numbers both hold whose values the two name differently, the unset value included, and every number both hold. */
+  values: { value: number; theirs: string; ours: string }[];
+  shared: number[];
+  /** How many of those values the artifact names as the target does but for the target's prefix, the enum's name in UPPER_SNAKE. */
+  prefixOnly: number;
+}
+
+/** Each artifact's names against the target's, for every list both have an enum for. */
+export function compareNames(lists: readonly RegistryList[], sources: EnumDriftSources, enums: Map<string, Map<string, EnumDef>>, target: Map<string, EnumDef>): NameDrift[] {
+  const out: NameDrift[] = [];
+  for (const r of lists) {
+    const ours = r.vocabulary === null ? undefined : target.get(r.vocabulary);
+    if (!ours) continue;
+    const entry = sources.lists.find((l) => l.list === r.list);
+    for (const s of sources.sources) {
+      const name = entry?.enums[s.id] ?? null;
+      const theirs = name === null ? undefined : enums.get(s.id)?.get(name);
+      if (!theirs) continue;
+      const mine = new Map(ours.values.map((v) => [v.value, v.name]));
+      const both = theirs.values.filter((v) => mine.has(v.value));
+      const prefix = `${typeUpperSnake(ours.name)}_`;
+      const differ = both.filter((v) => v.name !== mine.get(v.value));
+      out.push({ prefixOnly: differ.filter((v) => mine.get(v.value) === `${prefix}${v.name}`).length, list: r.list, source: s.id, enum: { theirs: theirs.name, ours: ours.name }, values: both.filter((v) => v.name !== mine.get(v.value)).map((v) => ({ value: v.value, theirs: v.name, ours: mine.get(v.value)! })), shared: both.map((v) => v.value) });
+    }
+  }
+  return out;
 }
 
 /** The blob link of a source's file at its commit, at a line. */
@@ -436,7 +558,7 @@ const lineLink = (s: EnumDriftSource, file: string, line: number) => `${s.upstre
  * out, names an enum the source doesn't define, or leaves one of a source's
  * enums unnamed.
  */
-export function compareEnumDrift(input: { sources: EnumDriftSources; ir: SpecIR; model: ModelDoc; files: Map<string, Map<string, Buffer>> }): { doc: EnumDriftDoc; problems: string[] } {
+export function compareEnumDrift(input: { sources: EnumDriftSources; ir: SpecIR; model: ModelDoc; files: Map<string, Map<string, Buffer>>; target?: Map<string, Buffer> }): { doc: EnumDriftDoc; problems: string[] } {
   const { sources, ir, model } = input;
   const problems: string[] = [];
   const lists = registryLists(ir, model);
@@ -480,18 +602,12 @@ export function compareEnumDrift(input: { sources: EnumDriftSources; ir: SpecIR;
       problems.push(`${where}: leaves out the list ${r.list}, ${r.title}`);
       continue;
     }
-    const codes = new Set(r.codes.map((c) => c.value));
-    const covered = (v: number) => codes.has(v) || (r.vendor !== null && v >= r.vendor) || (r.positive && v > 0);
     const drift: ListEnumDrift[] = sources.sources.map((s) => {
       const name = entry.enums[s.id] ?? null;
       const def = name === null ? undefined : enums.get(s.id)!.get(name);
       if (!def) return { source: s.id, enum: null, at: null, missing: [], extra: [], sentinel: null, narrow: null, versions: [] };
       const have = new Map(def.values.map((v) => [v.value, v]));
-      // An unset sentinel: a 0 named "unknown", where the list has no code 0.
-      const zero = have.get(0);
-      const sentinel = zero && !codes.has(0) && /unknown$/i.test(zero.name) ? { value: 0, name: zero.name } : null;
-      const missing = r.codes.filter((c) => !have.has(c.value));
-      const extra = def.values.filter((v) => !covered(v.value) && !(sentinel && v.value === 0)).map((v) => ({ value: v.value, name: v.name, line: v.line }));
+      const { missing, extra, sentinel } = codeDrift(r, def);
       let narrow: ListEnumDrift["narrow"] = null;
       if (def.type !== null) {
         const [lo, hi] = goRange(def.type);
@@ -532,6 +648,15 @@ export function compareEnumDrift(input: { sources: EnumDriftSources; ir: SpecIR;
       removedKept: rows.filter(({ l, d }) => l.vocabulary === null && d.enum !== null).length,
     };
   }
+  let target: EnumDriftDoc["target"] = null;
+  if (input.target !== undefined && input.target.size > 0) {
+    try {
+      const t = compareTarget(lists, input.target);
+      target = { ...t.target, names: compareNames(lists, sources, enums, t.defs) };
+    } catch (e) {
+      problems.push(`${TARGET_DIR}: ${(e as Error).message}`);
+    }
+  }
   const lock = model.input;
   return {
     doc: {
@@ -540,12 +665,45 @@ export function compareEnumDrift(input: { sources: EnumDriftSources; ir: SpecIR;
       sources: sources.sources.map((s) => ({ id: s.id, title: s.title, upstream: s.upstream, commit: s.commit, reader: s.reader, folder: s.folder, files: readFiles(s, input.files.get(s.id) ?? new Map()).length })),
       lists: out,
       totals,
+      target,
     },
     problems,
   };
 }
 
 export const renderEnumDrift = (doc: EnumDriftDoc): string => canonicalJson(doc);
+
+/** How the report names the spec's own proto files. */
+const TARGET_TITLE = "This repository's proto";
+
+/** The names section: for a reader, each enum and value an artifact names other than the target does. */
+function renderNames(lines: string[], doc: EnumDriftDoc, t: NonNullable<EnumDriftDoc["target"]>): void {
+  const titleOf = (id: string) => doc.sources.find((s) => s.id === id)!.title;
+  const cell = (x: string) => `\`${x}\``;
+  lines.push("## Names", "");
+  lines.push(`For a reader, not as drift: each enum and value an artifact names other than ${TARGET_TITLE.toLowerCase()} does, which a user of the artifact would rename to move to it. The proto files name each enum as its vocabulary, and each value the enum's name, then the code's title, in UPPER_SNAKE, so a name differs wherever an artifact names a list or a code its own way, or leaves out the enum's prefix. Values are compared by number, for the numbers both hold, the unset value included.`, "");
+  lines.push("| | " + doc.sources.map((s) => s.title).join(" | ") + " |", "|---|" + doc.sources.map(() => "---").join("|") + "|");
+  const per = (f: (ns: NameDrift[]) => number) => doc.sources.map((s) => String(f(t.names.filter((n) => n.source === s.id))));
+  lines.push(`| Enums compared | ${per((ns) => ns.length).join(" | ")} |`);
+  lines.push(`| Enums named otherwise | ${per((ns) => ns.filter((n) => n.enum.theirs !== n.enum.ours).length).join(" | ")} |`);
+  lines.push(`| Values compared | ${per((ns) => ns.reduce((k, n) => k + n.shared.length, 0)).join(" | ")} |`);
+  lines.push(`| Values named otherwise | ${per((ns) => ns.reduce((k, n) => k + n.values.length, 0)).join(" | ")} |`);
+  lines.push(`| Of them, named the same but for the enum's prefix | ${per((ns) => ns.reduce((k, n) => k + n.prefixOnly, 0)).join(" | ")} |`);
+  for (const l of doc.lists) {
+    const ns = t.names.filter((n) => n.list === l.list);
+    const ours = t.lists.find((x) => x.list === l.list)?.enum;
+    if (!ours || ns.every((n) => n.enum.theirs === n.enum.ours && n.values.length === 0)) continue;
+    const ids = doc.sources.map((s) => s.id).filter((id) => ns.some((n) => n.source === id));
+    lines.push("", `### ${l.title}`, "", `| Code | ${TARGET_TITLE} | ${ids.map(titleOf).join(" | ")} |`, `|---|---|${ids.map(() => "---").join("|")}|`);
+    lines.push(`| enum | ${cell(ours)} | ${ids.map((id) => cell(ns.find((n) => n.source === id)!.enum.theirs)).join(" | ")} |`);
+    const codes = [...new Set(ns.flatMap((n) => n.values.map((v) => v.value)))].sort((a, b) => a - b);
+    for (const c of codes) {
+      const mine = ns.flatMap((n) => n.values.filter((v) => v.value === c))[0]!.ours;
+      lines.push(`| \`${c}\` | ${cell(mine)} | ${ids.map((id) => { const n = ns.find((x) => x.source === id)!; const v = n.values.find((x) => x.value === c); return v ? cell(v.theirs) : n.shared.includes(c) ? "same" : "no value"; }).join(" | ")} |`);
+    }
+  }
+  lines.push("");
+}
 
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 const codeList = (xs: number[]) => xs.join(", ");
@@ -557,19 +715,35 @@ export function renderEnumDriftMarkdown(doc: EnumDriftDoc, registry: { name: str
   lines.push(`# Enum drift of ${registry.name}'s code lists`, "");
   lines.push(`Generated by \`npm run enum-drift\` from \`enum-drift/sources.yaml\`; don't edit it by hand. It compares each list of ${registry.name}, as the registry holds it on \`${doc.input.lock}\` (commit \`${s7(doc.input.commit)}\`), code by code with the enum each artifact below defines for it:`, "");
   for (const s of doc.sources) lines.push(`- **${s.title}**, [${s.upstream.replace(/^https:\/\/github\.com\//, "")}](${s.upstream}) at [\`${s7(s.commit)}\`](${s.upstream}/tree/${s.commit}): ${plural(s.files, `${s.reader === "proto" ? ".proto" : "Go"} file`)} of [\`${s.folder}/\`](${s.upstream}/tree/${s.commit}/${s.folder}) read.`);
-  lines.push("", "Only codes are compared. A code the registry holds and an enum lacks is missing; a value an enum holds that the list doesn't, and that no vendor range or positive-number row covers, is extra. An enum's 0 named \"unknown\", where the list has no code 0, is its unset sentinel and is neither. Where a code's label and the enum's comment, or a protocol buffer value's name, state different versions, the report lists both for a reader to check.", "");
-  lines.push("## Totals", "", "| | " + doc.sources.map((s) => s.title).join(" | ") + " |", "|---|" + doc.sources.map(() => "---").join("|") + "|");
-  const row = (label: string, f: (t: EnumDriftDoc["totals"][string]) => string) => lines.push(`| ${label} | ${doc.sources.map((s) => f(doc.totals[s.id]!)).join(" | ")} |`);
-  row("Lists with codes compared", (t) => String(t.compared));
-  row("Lists with codes and no enum", (t) => String(t.noEnum));
-  row("Codes missing", (t) => `${t.missing}, in ${plural(t.listsMissing, "list")}`);
-  row("Values extra", (t) => `${t.extra}, in ${plural(t.listsExtra, "list")}`);
-  row("Enums with an unset sentinel", (t) => String(t.sentinels));
-  row("Integer types too narrow", (t) => String(t.narrow));
-  row("Codes whose versions differ", (t) => String(t.versions));
-  row("Enums of a list the registry no longer tabulates", (t) => String(t.removedKept));
+  lines.push("", "Only codes are compared here; the names section at the end lists names. A code the registry holds and an enum lacks is missing; a value an enum holds that the list doesn't, and that no vendor range or positive-number row covers, is extra. An enum's 0 named \"unknown\" or \"unspecified\", where the list has no code 0, is its unset sentinel and is neither. Where a code's label and the enum's comment, or a protocol buffer value's name, state different versions, the report lists both for a reader to check.", "");
+  const t = doc.target;
+  if (t) lines.push(`The spec's own proto files, ${t.files.map((f) => `[\`${TARGET_DIR}/${f}\`](../${TARGET_DIR}/${f})`).join(", ")}, which the proto target writes from the published schemas alone, are compared the same way, as **${TARGET_TITLE}**: each list with the enum named as its vocabulary.${t.totals.missing + t.totals.extra + t.totals.noEnum + t.unpaired.length === 0 ? " They hold every code at its own number and nothing else, so a field reads the same number in them as in any artifact that has the code." : ""}`, "");
+  const titles = [...doc.sources.map((s) => s.title), ...(t ? [TARGET_TITLE] : [])];
+  lines.push("## Totals", "", "| | " + titles.join(" | ") + " |", "|---|" + titles.map(() => "---").join("|") + "|");
+  const tLists = (f: (x: TargetDrift["lists"][number]) => number) => (t ? t.lists.filter((x) => f(x) > 0).length : 0);
+  const mine: Record<string, string> = t
+    ? {
+        compared: String(t.totals.compared),
+        noEnum: String(t.totals.noEnum),
+        missing: `${t.totals.missing}, in ${plural(tLists((x) => x.missing.length), "list")}`,
+        extra: `${t.totals.extra}, in ${plural(tLists((x) => x.extra.length), "list")}`,
+        sentinels: String(t.lists.filter((x) => x.sentinel !== null).length),
+        narrow: "0",
+        versions: "not compared",
+        removedKept: "0",
+      }
+    : {};
+  const row = (key: string, label: string, f: (t: EnumDriftDoc["totals"][string]) => string) => lines.push(`| ${label} | ${[...doc.sources.map((s) => f(doc.totals[s.id]!)), ...(t ? [mine[key]!] : [])].join(" | ")} |`);
+  row("compared", "Lists with codes compared", (t) => String(t.compared));
+  row("noEnum", "Lists with codes and no enum", (t) => String(t.noEnum));
+  row("missing", "Codes missing", (t) => `${t.missing}, in ${plural(t.listsMissing, "list")}`);
+  row("extra", "Values extra", (t) => `${t.extra}, in ${plural(t.listsExtra, "list")}`);
+  row("sentinels", "Enums with an unset sentinel", (t) => String(t.sentinels));
+  row("narrow", "Integer types too narrow", (t) => String(t.narrow));
+  row("versions", "Codes whose versions differ", (t) => String(t.versions));
+  row("removedKept", "Enums of a list the registry no longer tabulates", (t) => String(t.removedKept));
   lines.push("", "## By list", "");
-  lines.push("| List | Codes | " + doc.sources.map((s) => s.title).join(" | ") + " |", "|---|---|" + doc.sources.map(() => "---").join("|") + "|");
+  lines.push("| List | Codes | " + titles.join(" | ") + " |", "|---|---|" + titles.map(() => "---").join("|") + "|");
   for (const l of doc.lists) {
     const cells = l.drift.map((d) => {
       if (d.enum === null) return "no enum";
@@ -583,6 +757,15 @@ export function renderEnumDriftMarkdown(doc: EnumDriftDoc, registry: { name: str
       if (d.versions.length > 0) parts.push(`versions differ at ${codeList(d.versions.map((v) => v.value))}`);
       return `[\`${d.enum}\`](${d.at})${parts.length > 0 ? `: ${parts.join("; ")}` : ": agrees"}`;
     });
+    if (t) {
+      const x = t.lists.find((y) => y.list === l.list);
+      if (!x) cells.push("no codes");
+      else if (x.enum === null) cells.push("no enum");
+      else {
+        const parts = [...(x.missing.length > 0 ? [`missing ${codeList(x.missing.map((m) => m.value))}`] : []), ...(x.extra.length > 0 ? [`extra ${codeList(x.extra.map((m) => m.value))}`] : [])];
+        cells.push(`[\`${x.enum}\`](${x.at})${parts.length > 0 ? `: ${parts.join("; ")}` : ": agrees"}`);
+      }
+    }
     lines.push(`| ${l.title}${l.vocabulary ? ` (\`${l.vocabulary}\`)` : ""} | ${l.vocabulary === null ? "no table" : `${l.codes}${l.vendor !== null ? `, vendors' from ${l.vendor}` : ""}`} | ${cells.join(" | ")} |`);
   }
   const details = doc.lists.flatMap((l) => l.drift.filter((d) => d.missing.length + d.extra.length + d.versions.length > 0 || d.narrow).map((d) => ({ l, d })));
@@ -599,6 +782,7 @@ export function renderEnumDriftMarkdown(doc: EnumDriftDoc, registry: { name: str
       lines.push("");
     }
   } else lines.push("");
+  if (t) renderNames(lines, doc, t);
   return `${lines.join("\n").replace(/\n+$/, "")}\n`;
 }
 
@@ -608,7 +792,7 @@ export function renderEnumDriftMarkdown(doc: EnumDriftDoc, registry: { name: str
  * problems of the sources file. The registry's lock is the one the sources
  * file names.
  */
-export async function enumDriftFiles(spec: string, sources: EnumDriftSources = loadEnumDriftSources(spec), snapshots: Map<string, Map<string, Buffer>> = allSnapshotFiles(spec, sources)): Promise<{ files: Map<string, string>; doc: EnumDriftDoc; problems: string[] }> {
+export async function enumDriftFiles(spec: string, sources: EnumDriftSources = loadEnumDriftSources(spec), snapshots: Map<string, Map<string, Buffer>> = allSnapshotFiles(spec, sources), target: Map<string, Buffer> = targetFiles(spec)): Promise<{ files: Map<string, string>; doc: EnumDriftDoc; problems: string[] }> {
   const { allLocks, resolveBuild } = await import("./builds.ts");
   const { loadKernel } = await import("./kernel.ts");
   const { loadConstructors } = await import("./constructors.ts");
@@ -618,7 +802,7 @@ export async function enumDriftFiles(spec: string, sources: EnumDriftSources = l
   if (!lock) throw new Error(`${sources.file}: names the lock "${sources.lock}", which the spec doesn't have`);
   const build = resolveBuild({ root: spec, lock, mappings: loadMappings(join(spec, "mapping")), decisions: loadDecisions(join(spec, "decisions")), kernel: loadKernel(REPO_ROOT, spec), constructors: loadConstructors(REPO_ROOT, spec) });
   const problems = build.problems.map((p) => `${lock.name}: ${p}`);
-  const { doc, problems: compared } = compareEnumDrift({ sources, ir: build.ir, model: build.model, files: snapshots });
+  const { doc, problems: compared } = compareEnumDrift({ sources, ir: build.ir, model: build.model, files: snapshots, target });
   const names = specOf(spec).profile.names;
   const files = new Map([
     [ENUM_DRIFT_FILES.data, renderEnumDrift(doc)],

@@ -37,12 +37,21 @@ domains:
           standards:
             - name: FIPS 180-4, Secure Hash Standard (SHA-256)
               url: https://csrc.nist.gov/pubs/fips/180-4/upd1/final
+      - name: entry-ref
+        meaning: "A named entry at one exact version, such as a format or an audience a seller keeps in a named collection, whose content does not change."
+        type: EntryRef
+      - name: field-pointer
+        meaning: "A location in an object of the specification, as a JSON Pointer writes it."
+        type: FieldPointer
   - name: text
     description: Prose for people and agents to read, never parsed or compared.
     concepts:
       - name: text
         meaning: Prose, such as a description, a planning hint, or a party's name.
         type: Text
+      - name: plain-string
+        meaning: "A string the text types only as String, which the field that holds it gives its meaning."
+        type: PlainString
   - name: network
     description: Names and locations on the internet.
     concepts:
@@ -60,6 +69,12 @@ domains:
           standards:
             - name: RFC 1123, Requirements for Internet Hosts (host name syntax)
               url: https://www.rfc-editor.org/rfc/rfc1123
+      - name: registrable-domain
+        meaning: "The registrable domain of a business, which names it, as the Public Suffix List gives it."
+        type: RegistrableDomain
+      - name: https-url
+        meaning: "A location a client fetches over TLS, an absolute `https` URL."
+        type: HttpsUrl
   - name: money
     description: Sums of money and prices, and the currency they are in. Every money value is a bare number with a sibling `currency` in the same object, as OpenRTB writes `bidfloor` and `bidfloorcur`; a currency is never inherited from an enclosing object.
     concepts:
@@ -99,6 +114,9 @@ domains:
           standards:
             - name: ISO 3166-1, Codes for the representation of names of countries (alpha-3)
               url: https://www.iso.org/iso-3166-country-codes.html
+      - name: geo-code
+        meaning: "An area a line item runs in, a country, a subdivision of one, or an area an extension term names, such as a metro list."
+        type: GeoCode
   - name: ratio
     description: Proportions and relative changes.
     concepts:
@@ -108,6 +126,9 @@ domains:
       - name: percent-change
         meaning: A relative change to a price in percent, from −100 up.
         type: PercentChange
+      - name: fraction-delta
+        meaning: "A change to a rate as a fraction of it, greater than -1, so a rate it multiplies stays positive."
+        type: FractionDelta
   - name: quantity
     description: Numbers of things, which add up, never negative.
     concepts:
@@ -117,6 +138,12 @@ domains:
       - name: measure
         meaning: What a metric that isn't a rate measures, never negative and not always whole, such as audience impacts or a modelled audience a seller commits to; a rate metric's value is a fraction instead.
         type: Measure
+      - name: plain-integer
+        meaning: "A whole number the text types only as Integer, which the field that holds it gives its meaning."
+        type: PlainInteger
+      - name: plain-number
+        meaning: "A number the text types only as Number, which the field that holds it gives its meaning."
+        type: PlainNumber
   - name: time
     description: Time has five concepts. A point in time, a point in time written in UTC, and a span need no clock. A daypart window is calendar time, read on the line item's clock, which the time zone names. A frequency cap's period is a term of a vocabulary, `FrequencyCapPeriod`, not a span; it is a calendar period on that clock, such as a day from midnight to midnight, or the whole flight, which runs between two points in time (D-044).
     concepts:
@@ -158,6 +185,15 @@ domains:
           standards:
             - name: IANA Time Zone Database
               url: https://www.iana.org/time-zones
+      - name: canonical-instant
+        meaning: "A point in time written in UTC in whole seconds, so one instant has one written form and one digest input."
+        type: Instant
+      - name: iana-zone
+        meaning: "A time zone of the IANA time zone database."
+        type: IanaZone
+      - name: clock-window
+        meaning: "A repeating window of civil time on given days, from a first minute up to the first minute after it, read on the line item's clock, as the stack's `ClockWindow` writes it."
+        type: ClockWindow
   - name: term
     description: Terms of a vocabulary. A core term is spelled as the specification lists it, and an extension term is namespaced by its definer's domain.
     vocabularies: true
@@ -205,6 +241,12 @@ domains:
           standards:
             - name: OpenRTB 2.6, Object Imp (`instl`, `rwdd`, and the other integer flags)
               url: https://github.com/InteractiveAdvertisingBureau/openrtb2.x/blob/main/2.6.md#objectimp
+  - name: option-pricing
+    description: What an option outside those included in a selectable field's base rate costs, as the stack's § 3.1 writes it. It changes a rate, so it carries no currency of its own.
+    concepts:
+      - name: option-delta
+        meaning: "The price of one option outside those included in the base rate, as a change to a CPM rate, a fraction of any rate, or a charge outside the rate."
+        type: Delta
 shared_structures:
   - concepts: [external-id, text]
     reason: >-
@@ -230,3 +272,15 @@ shared_structures:
       and adds or compares it only with amounts in that currency; it reads a
       measure in what its metric counts, such as audience impacts, never
       as money, and compares it only with measures of the same metric.
+  - concepts: [domain-name, registrable-domain]
+    reason: >-
+      Each is a domain name written in the same form, and a receiver
+      processes each differently. It reads a registrable domain as the name of
+      a business, which the Public Suffix List makes registrable, and compares
+      two parties by it; it reads any other domain as a host or a site.
+  - concepts: [amount, plain-number]
+    reason: >-
+      Each is a number with no stated range, and a receiver processes each
+      differently. It reads an amount as money in the currency its entry
+      names, and adds or compares it only with amounts in that currency; it
+      reads a plain number as the field that holds it says.

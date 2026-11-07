@@ -14,6 +14,8 @@ import { REPO_ROOT } from "./repo.ts";
 export interface ListCode {
   code: string | number;
   label?: string;
+  /** For a list a registry spec on this site keeps, the code's name as the registry's schema titles it, which an importing spec's types name it by. */
+  title?: string;
 }
 
 export interface ExternalList {

@@ -28,7 +28,7 @@ export interface Violation {
 }
 
 /** How a range's bounds compare: numbers as numbers, and timestamps as instants. */
-export type Order = "number" | "instant";
+export type Order = "number" | "instant" | "duration";
 
 /**
  * What a check knows beside the value: the context a vector gives, whether
@@ -107,10 +107,25 @@ export function instantOf(x: unknown): number | null {
 
 /** A bound as its order compares it: a number as itself, a timestamp as its instant, and anything else, which the schema rejects, as nothing. */
 const bound = (x: unknown, order: Order): number | null => (order === "number" ? (typeof x === "number" ? x : null) : instantOf(x));
+/** A duration as its calendar part, in months, and its exact part, in seconds, or null for a value that isn't one. */
+const durationOf = (x: unknown): [number, number] | null => {
+  const m = typeof x === "string" ? /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/.exec(x) : null;
+  if (!m || x === "P" || String(x).endsWith("T")) return null;
+  const n = (i: number) => Number(m[i] ?? 0);
+  return [n(1) * 12 + n(2), ((n(3) * 7 + n(4)) * 24 + n(5)) * 3600 + n(6) * 60 + n(7)];
+};
 const ordered: Check = (v, ctx) => {
   if (!isMap(v) || !("min" in v) || !("max" in v)) return [];
   // The order is the parameter's: without it, two bounds can't be compared.
   if (ctx.order === undefined) return null;
+  if (ctx.order === "duration") {
+    // One duration is no greater than another when neither of its parts is (D-062); a pair neither bounds, as P1M and P30D, isn't ordered.
+    const [a, b] = [durationOf(v.min), durationOf(v.max)];
+    if (a === null || b === null) return [];
+    if (a[0] <= b[0] && a[1] <= b[1]) return [];
+    if (a[0] >= b[0] && a[1] >= b[1]) return [{ path: "", message: "`min` is more than `max`" }];
+    return null;
+  }
   const [min, max] = [bound(v.min, ctx.order), bound(v.max, ctx.order)];
   return min !== null && max !== null && min > max ? [{ path: "", message: "`min` is more than `max`" }] : [];
 };
@@ -149,6 +164,7 @@ export const CHECKS: Record<string, Check> = {
     return Object.keys(isMap(v.pricing) ? v.pricing : {}).flatMap((k) => (included.has(k) ? [{ path: `/pricing/${escape(k)}`, message: `prices ${JSON.stringify(k)}, which \`included[]\` holds` }] : []));
   },
   "constructor:Range:ordered": ordered,
+  "constructor:Range:duration-ordered": ordered,
   // A window's times compare as times of day; a value the schema rejects, such as `9:00`, compares as nothing.
   "kernel:DaypartWindow:ordered": (v) => {
     if (!isMap(v)) return [];
@@ -164,6 +180,7 @@ export function ordersOf(types: { name: string; kind: string; schema?: unknown }
     if (t.kind !== "primitive" || !isMap(t.schema)) continue;
     if (t.schema.type === "number" || t.schema.type === "integer") out.set(t.name, "number");
     else if (t.schema.type === "string" && t.schema.format === "date-time") out.set(t.name, "instant");
+    else if (t.schema.type === "string" && t.schema.format === "duration") out.set(t.name, "duration");
   }
   return out;
 }

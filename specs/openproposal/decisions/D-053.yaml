@@ -1,0 +1,99 @@
+format: 1
+id: D-053
+status: proposed
+kind: gap
+author: agent
+question: "How do the stack's `VocabularyTerm` rows and lists map: their term grammar, their names, and whether each is open?"
+covers:
+  - ir: def:2.2:VocabularyTerm
+    digest: 230b1f4131ea57db381354fb49edff8e0692b28a6969ba4ddf93a1288ce198b9
+    quote: "`VocabularyTerm` | String: a bare core term, or `<domain>:<term>` with `<domain>` a `Domain` the definer controls. A term is ASCII letters, digits, `_`, and `-` | See below"
+    locks: [with-our-stack]
+  - ir: sentence:2.6:99abd19a
+    digest: e787c897332e965334ed2bcb2f9797a379bcef7b5326c2ef4898733f46cd4648
+    quote: A `VocabularyTerm` field says so and lists its core terms, or points to other lists, whole or in part, and adds any others; every other list is closed, and in a row it opens the Meaning cell.
+    locks: [with-our-stack]
+  - ir: sentence:2.6:eed7c16f
+    digest: 6fa4eb51ede34a98867c96e577a4f785060cfac84b58579099bb8c0fd39b91fd
+    quote: "`Enum` is a closed list of strings, written in the row that uses it, and a generic never takes it: a list a generic takes has a name."
+    locks: [with-our-stack]
+  - ir: sentence:5.1.1:9cc50767
+    digest: d3688a4559ce23484af06f0ccc3500bf43b978dd8343bbccee6986ebef48f4e5
+    quote: "`MediaChannel` is a `VocabularyTerm` (§ 2.2) whose core terms are the rows of this table."
+    locks: [with-our-stack]
+  - ir: sentence:5.2.1:115c1106
+    digest: f0ad867407a399994ee6ea6eeba064b80232b4fab04a2f9b622c08eec59d78b6
+    quote: "`Environment` is a value of this table."
+    locks: [with-our-stack]
+  - ir: sentence:5.5:e5c3c930
+    digest: 389ab69e68457caadbafbe6ffcc1dbaacdb981576e825f6613f08621d7c768fb
+    quote: "`ExclusionType` is a `VocabularyTerm` (§ 2.2)."
+    locks: [with-our-stack]
+  - ir: block:5.5:3/values:1
+    digest: 4447b79b61a233db828617624f9f99db188243b3ece0026f6ca3b7c94fe5b9f2
+    quote: "`domains` | `apps` | `categories` | `keywords`"
+    locks: [with-our-stack]
+  - ir: key:5.7.1:ReportingOption.provided_metrics[]
+    digest: 88047001dce48e5657919eaef3bf8a878e81b6793adb1ab1b6217f761dd1f0d9
+    quote: "`provided_metrics[]` | OPTIONAL | The metrics a report holds. Core terms: the `unit` terms of § 5.6.5, and the Rate terms of the `metric` table (§ 5.7.1)"
+    locks: [with-our-stack]
+  - ir: key:5.3:AddressableScale.unit
+    digest: fa2c97686db26ca4215f46dd239b3916e9945e30c608f68389aaab939ecae0db
+    quote: "`unit` | REQUIRED | What `quantity` counts. Core terms: the `frequency_cap.per` terms (§ 5.5), and `person`. A receiver that doesn't know a term reads the figure as unstated"
+    locks: [with-our-stack]
+  - ir: field:5.6:renewal_right
+    digest: 48cf3d5378abf2c639e318431e2e929dc54b0cf7110d14a958166cf6bb6eff52
+    quote: "`renewal_right` | VocabularyTerm | seller-set | The current advertiser's right to the next cycle. Core term: `first_refusal`, the right to buy the next cycle before it opens up. Absent: no such right. It is not a place in a hold queue (`hold.position`)"
+    locks: [with-our-stack]
+  - ir: key:5.6.5:CostParameters.viewability_standard
+    digest: d213f91f3a635104e410c38f8b7a3a30e570fc1ba329d6b54df2766a43926bcc
+    quote: "`viewability_standard` | REQUIRED when `cost_method` is `CPMV` | The viewability standard that counts a unit. Core term: `mrc`, the MRC guidelines that `viewable_rate` cites (§ 5.7.1)"
+    locks: [with-our-stack]
+  - ir: key:5.6.5:CostParameters.demographic
+    digest: 28f394d87003c6ac615d1126a28769db077572b544dfde8a08a57ec31a6a4f7b
+    quote: "`demographic` | REQUIRED when `cost_method` is `CPP` | The rated demographic, such as `ratings.example:adults_25_54`. Its definition states whether co-viewers and impressions of unknown age count, or says `unknown`. This version lists no core terms"
+    locks: [with-our-stack]
+  - ir: key:5.6.5:CostParameters.action_type
+    digest: 83db4387a45bdbb90bb5b272125d57893b95f7b98aaa79113f504c819c8e577e
+    quote: "`action_type` | REQUIRED when `cost_method` is `CPA` | The kind of action counted, such as `shop.example:purchase`. This version lists no core terms"
+    locks: [with-our-stack]
+  - ir: key:5.6.7:Preemption.reason
+    digest: bc0a93257bec658de7e469bedfa0cdfadf4f3d74ddcce31acea4b16a165adcf5
+    quote: "`reason` | REQUIRED | What can preempt this line item. Core term: `exclusivity`, an exclusivity term the seller accepts later that holds, under its `separation` and `window`, where and when this line item delivers"
+    locks: [with-our-stack]
+  - ir: key:5.4:CreativeDelivery.other_protocols[]
+    digest: e056eb0c6535a4c59aae2838b7ce0b9a7677e8c93f83a4a83d3d6b095969134f
+    quote: "`other_protocols[]` | OPTIONAL | How a creative that list has no code for is delivered. Core term: `javascript_tag`, a tag whose script renders the ad. A receiver that doesn't know a term treats only that term as unavailable"
+    locks: [with-our-stack]
+  - ir: key:5.8:RequiredCredential.credential_type
+    digest: dfc293c59daa7936a562adf05997c1867ff0d4cfc047d92a7a83ac596ea739c8
+    quote: "`credential_type` | REQUIRED | What the buyer holds. Core term: `iab_registry`, an entry in the IAB Tech Lab Agent Registry"
+    locks: [with-our-stack]
+  - ir: field:5.7:shortfall_remedy#description/values:1
+    digest: a46ceeb424ccdb43840913451c071279ee6d106418132fa5df63c3872ffbff85
+    quote: "`makegood` | `credit` | `none`"
+    locks: [with-our-stack]
+  - ir: field:5.7:shortfall_remedy
+    digest: 699392b987c0cdab0b10b6c5ded1d0ae07e23407c6923c6e9cee166d3c7a8a88
+    quote: "`shortfall_remedy` | ShortfallRemedy | selectable | Core terms: `makegood` | `credit` | `none`. See `remedy_terms` in § 5.7.1. Nothing in effect: this line item states no remedy. Its committed levels stay guaranteed, because only `none` makes them targets"
+    locks: [with-our-stack]
+options:
+  - id: text-grammar
+    summary: "A term is ASCII letters, digits, `_`, and `-`, and an extension term is `<domain>:<term>`. A row's own list or the value table its key heads is a vocabulary named after the row's object and key, open for a `VocabularyTerm` and closed for an `Enum` or an `Integer`. `MediaChannel`, `ExclusionType`, and `Environment` keep the names the text gives them; `Environment` is closed, as it isn't a `VocabularyTerm`. A `VocabularyTerm` row that lists no core terms is an open list of its own, named the same way, whose terms their definers give. The options of `shortfall_remedy`, which its row says are `makegood`, `credit`, and `none`, are the list `Preemption.remedy` writes with the same terms, which § 2.6 says is written once."
+  - id: kernel-grammar
+    summary: "The kernel's term grammar, with no `-`."
+chosen: text-grammar
+rationale: >-
+  § 2.2 defines a `VocabularyTerm` as a bare core term or `<domain>:<term>`, a
+  term being ASCII letters, digits, `_`, and `-`, and § 2.6 says a
+  `VocabularyTerm` field lists its core terms, an `Enum` is a closed list
+  written in its row, and every other list is closed. A list the text doesn't
+  name takes the name of the row that writes it, its object's and its key's,
+  so `AssentEntry.role` is `AssentEntryRole`. `MediaChannel` and
+  `ExclusionType` are `VocabularyTerm`s by their own sentences, and
+  `Environment` is a value of its table.
+feedback: >-
+  None needed.
+sets_aside:
+  - { type: CostParametersDemographic, field: "pricing[].cost_parameters.demographic", ir: "key:5.6.5:CostParameters.demographic", locks: [ with-our-stack ] }
+  - { type: CostParametersActionType, field: "pricing[].cost_parameters.action_type", ir: "key:5.6.5:CostParameters.action_type", locks: [ with-our-stack ] }

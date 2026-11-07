@@ -12,16 +12,29 @@ import type { TypeExpr } from "../../grammar/type-expr.ts";
 import { collapse, plain, render, tokenize, type Token } from "../../markdown.ts";
 import type { DocumentOwner } from "../../profile.ts";
 import { splitSentences } from "../../sentences.ts";
-import type { ExtractContext, RowInput } from "../plugin.ts";
+import type { ExtractContext, Hosted, RowInput } from "../plugin.ts";
 import { parseTypeExpr } from "./type-cell.ts";
 
 /** The mutability markers a field row may carry. A row with any other marker fails extraction. */
-export const MARKERS = ["immutable", "seller-set", "selectable", "settable", "supplied", "requestable", "derived", "mixed"] as const;
+export const MARKERS = ["immutable", "seller-set", "selectable", "settable", "supplied", "requestable", "derived", "mixed", "lifecycle", "recorded", "asserted"] as const;
 
-/** A field row: its names, its Type cell, its marker, and its description, owned by the document whose section it sits in. */
+/** The cells of a row by its header's names: `cell("Type")`. A name the header lacks gives undefined. */
+const cellsByName = (input: RowInput) => (name: string): TableCell | undefined => {
+  const i = input.header.findIndex((h) => h.text === name);
+  return i < 0 ? undefined : input.cells[i];
+};
+
+/**
+ * A field row: its names, its Type cell, its marker, and its description,
+ * owned by the document whose section it sits in. Where the table has a
+ * Required column, as the stack's do, the row's presence is that cell's;
+ * otherwise it is its description's leading REQUIRED or OPTIONAL sentence.
+ */
 export function fieldRow(input: RowInput, ctx: ExtractContext, documents: readonly DocumentOwner[]): void {
   const { loc, digest } = input;
-  const [nameC, typeC, markerC, descC] = input.cells as [TableCell, TableCell, TableCell, TableCell];
+  const cell = cellsByName(input);
+  const [nameC, typeC, markerC, descC] = [cell("Field")!, cell("Type")!, cell("Mutability")!, cell("Description")!];
+  const requiredC = cell("Required");
   const names = ctx.nameCell(nameC, loc.line);
   const owner = documents.find((d) => d.section === ctx.section.id.split(/[./]/)[0])?.owner;
   if (!owner) throw new ExtractError(`no owner object for a field in § ${ctx.section.id}`, loc.line);
@@ -32,8 +45,18 @@ export function fieldRow(input: RowInput, ctx: ExtractContext, documents: readon
   if (!(MARKERS as readonly string[]).includes(marker)) {
     throw new ExtractError(`unknown mutability marker "${marker}"`, loc.line);
   }
+  let required: { raw: string; parsed: Presence } | undefined;
+  let requiredHosted: Hosted | null = null;
+  if (requiredC) {
+    const toks = tokenize(requiredC.children);
+    const raw = render(toks);
+    required = { raw, parsed: resolveWith(parsePresence(raw, MARKERS, loc.line), null, raw, loc.line) };
+    // The stack's Required cell states the row's presence, "REQUIRED when `role` is `commitment`", as a statement of its own.
+    requiredHosted = ctx.phrasing(`${id}#required`, "table_cell", toks, loc, { statements: true, structures: false });
+  }
   const descTokens = tokenize(descC.children);
   const hosted = ctx.phrasing(`${id}#description`, "table_cell", descTokens, loc);
+  if (requiredHosted) for (const k of ["value_lists", "inline_objects", "statements"] as const) hosted[k] = [...requiredHosted[k], ...hosted[k]];
   ctx.ir.fields.push({
     id,
     owner,
@@ -42,7 +65,8 @@ export function fieldRow(input: RowInput, ctx: ExtractContext, documents: readon
     type: { raw: typeRaw, parsed: parseTypeExpr(typeRaw, loc.line) },
     marker,
     description: ctx.cellText(descC),
-    presence: descriptionPresence(descTokens),
+    ...(required ? { required } : {}),
+    presence: required ? required.parsed : descriptionPresence(descTokens),
     ...hosted,
     digest,
     loc,
@@ -63,7 +87,9 @@ function descriptionPresence(tokens: Token[]): Presence | null {
 /** An Appendix A row: a field's names, its section, its type, and its marker, as the appendix restates them. */
 export function appendixARow(input: RowInput, ctx: ExtractContext): void {
   const { loc, digest, table } = input;
-  const [nameC, sectionC, typeC, markerC] = input.cells as [TableCell, TableCell, TableCell, TableCell];
+  const cell = cellsByName(input);
+  const [nameC, sectionC, typeC, markerC] = [cell("Field")!, cell("Section")!, cell("Type")!, cell("Marker")!];
+  const requiredC = cell("Required");
   const names = ctx.nameCell(nameC, loc.line);
   const sectionCell = plain(tokenize(sectionC.children));
   const typeRaw = plain(tokenize(typeC.children));
@@ -82,6 +108,7 @@ export function appendixARow(input: RowInput, ctx: ExtractContext): void {
     section_cell: sectionCell,
     section_number: /^(\d+(?:\.\d+)*)\s/.exec(sectionCell)?.[1] ?? null,
     type: { raw: typeRaw, parsed },
+    ...(requiredC ? { required: render(tokenize(requiredC.children)) } : {}),
     marker: plain(tokenize(markerC.children)),
     digest,
     loc,
@@ -161,7 +188,7 @@ function parseDistribution(ir: SpecIR, distribution: Token[][]): Distribution | 
     /Of (\d+) fields, (\d+) are touched by the buyer — (\d+) selectable, (\d+) settable, (\d+) supplied and (\d+) requestable\. The remaining (\d+) are/.exec(
       text,
     );
-  const b = /Only the (\d+) requestable fields require a round trip\. Everything else the buyer touches — (\d+) fields —/.exec(text);
+  const b = /Only the (\d+) requestable fields require a round trip(?: to resolve \(§ [\d.]+\))?\. Everything else the buyer touches — (\d+) fields —/.exec(text);
   if (!a || !b) return null;
   const n = (s: string | undefined) => Number(s);
   const section = ir.sections.find((s) => s.parent === "B" && s.title === "What the distribution says")!;

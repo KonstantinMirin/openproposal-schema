@@ -1,0 +1,39 @@
+{
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/package.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The OpenProposal `Package` document.",
+  "properties": {
+    "add_ons": {
+      "description": "Line items sold only with all of `line_items[]`, such as a bonus line item (§ 5.6.3)",
+      "items": {
+        "$ref": "line-item.json"
+      },
+      "type": "array"
+    },
+    "line_items": {
+      "description": "The line items sold only together. It holds at least one entry",
+      "items": {
+        "$ref": "line-item.json"
+      },
+      "type": "array"
+    },
+    "min_commitments": {
+      "description": "Thresholds a `commit` meets to include an add-on",
+      "items": {
+        "$ref": "../../modules/proposal/1/proposal.json#/$defs/MinCommitment"
+      },
+      "type": "array"
+    },
+    "package_id": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/PlainString",
+      "description": "Identity within the proposal"
+    }
+  },
+  "required": [
+    "line_items",
+    "package_id"
+  ],
+  "title": "Package",
+  "type": "object"
+}

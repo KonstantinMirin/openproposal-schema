@@ -19,6 +19,7 @@
  *   that holds it, `<Field>`, `<Field>Entry`, or `<Field>Option`, unless a
  *   decision it cites names it (type rules § 7).
  */
+import { takenFrom } from "./mapping-rules.ts";
 import { canonicalJson } from "./canonical.ts";
 import { pascalField } from "./constructors.ts";
 import { inScopeDeclarations, inScopeEntries } from "./coverage.ts";
@@ -135,6 +136,14 @@ export function checkSources(ir: SpecIR, lock: string, mappings: MappingFile[], 
   /** The element a type comes from, and every element its decisions cover on the lock. */
   const sourcesOf = (own: string | undefined, source: Source): Element[] => {
     const ids = new Set<string>(own === undefined ? [] : [own]);
+    // A row's vocabulary rests on its row too, and on the lists its row takes core terms from (the stack's § 2.6), as `AddressableScale.unit`
+    // takes the `frequency_cap.per` terms.
+    if (own !== undefined && "rule" in source && source.rule === "row-vocabulary") {
+      const row = elements.get(own.split("#")[0]!);
+      if (row) ids.add(row.element.id);
+      const text = row?.kind === "key" ? row.element.meaning.text : row?.kind === "field" ? row.element.description.text : "";
+      for (const id of takenFrom(ir, text).elements) ids.add(id);
+    }
     for (const id of decisionsOf(source)) for (const c of byId.get(id)?.covers ?? []) if (inScope(c.locks, lock)) ids.add(c.ir);
     return [...ids].flatMap((id) => (elements.has(id) ? [elements.get(id)!] : []));
   };
@@ -243,7 +252,7 @@ function profileFields(name: string, entries: ReturnType<typeof inScopeEntries>,
   const fields = new Set<string>();
   for (const [id, { entry }] of entries) {
     const as = entry.as;
-    if (as.role !== "profile" || as.document + as.profile !== name) continue;
+    if (as.role !== "profile" || (as.name ?? as.document + as.profile) !== name) continue;
     document = as.document;
     const e = elements.get(id);
     if (e?.kind === "identifier_list") for (const i of e.element.items) if (i.code) fields.add(i.text.split(".")[0]!.replaceAll("[]", ""));
@@ -296,7 +305,8 @@ function schemeName(holder: string, t: TypeRef, x: string): string | null {
  * `allowed[]`. An object that no field holds directly, such as a union
  * branch, follows no scheme, and neither does one the text names by its own
  * table's heading, as the Deals API's `Object: BuyerStatus`, which mapping rule
- * `held-object` declares. A decision the object cites may name it instead,
+ * `held-object` declares, or by a bold label over its key table, as the stack's
+ * "**`CancellationNotice`** keys:", which `key-table-object` declares. A decision the object cites may name it instead,
  * by writing the name as code.
  */
 function nameProblems(
@@ -317,9 +327,9 @@ function nameProblems(
   }
   for (const { decl } of declarations) addMembers(decl.members);
 
-  const objects: { name: string; where: string; source: Source }[] = [];
+  const objects: { name: string; where: string; source: Source; ir?: string }[] = [];
   for (const [id, { entry, file }] of entries) if (entry.as.role === "type" && entry.as.layer === "object") objects.push({ name: entry.as.name, where: `${file.file}: entry "${id}"`, source: entry.source });
-  for (const { decl, file } of declarations) if (decl.kind === "object") objects.push({ name: decl.name, where: `${file.file}: type "${decl.name}"`, source: decl.source });
+  for (const { decl, file } of declarations) if (decl.kind === "object") objects.push({ name: decl.name, where: `${file.file}: type "${decl.name}"`, source: decl.source, ir: decl.ir });
 
   const problems: string[] = [];
   const seen = new Set<string>();
@@ -328,6 +338,8 @@ function nameProblems(
     seen.add(o.name);
     // An object whose own table the text heads with its name, as `Object: BuyerStatus`, is named so; its holder's name is the text's too.
     if ("rule" in o.source && o.source.rule === "held-object") continue;
+    // So is an object whose key table the text labels with its name, as the stack's "**`CancellationNotice`** keys:".
+    if ("rule" in o.source && o.source.rule === "key-table-object" && /^[A-Z]/.test(o.name) && o.ir !== undefined && o.ir.startsWith("key:") && o.ir.split(":").slice(2).join(":").startsWith(`${o.name}.`)) continue;
     const expected = [...new Set(holders.flatMap((h) => schemeName(h.holder, h.type, o.name) ?? []))].sort();
     if (expected.length === 0 || (expected.length === 1 && expected[0] === o.name)) continue;
     const named = decisionsOf(o.source).some((id) => {

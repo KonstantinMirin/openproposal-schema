@@ -45,9 +45,17 @@ site:
   locks:
     main: { label: main, short: main, where: on main, aliases: [ upstream ] }
     with-open-prs: { label: With the open PRs, short: open PRs, where: with the open PRs, aliases: [ prs ] }
+    with-our-stack: { label: With our stack, short: our stack, where: with our 17-PR stack, aliases: [ stack ] }
 # The implementation feedback (src/feedback.ts): a follow-up on #121, which
 # proposed seven authoring rules for the specification.
 feedback:
+  # The report on main and the open PRs. The 17-PR stack has a report of its own, feedback/with-our-stack/.
+  locks: [main, with-open-prs]
+  reports:
+    with-our-stack:
+      headline: "OpenProposal 3.0 with our 17-PR stack: what generating the schemas had to decide"
+      label: With our stack
+      phrase: with our stack
   issue: "https://github.com/IABTechLab/OpenProposal/issues/121"
   gist: "https://gist.github.com/KonstantinMirin/3c4439731aec62dc68f7bd7eb447bbd2"
   prs:

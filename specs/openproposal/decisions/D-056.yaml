@@ -1,0 +1,110 @@
+format: 1
+id: D-056
+status: proposed
+kind: gap
+author: agent
+question: "What are the stack's `LineItemSummary`, `ProposalSummary`, and `BuyerWrites`, which a lead-in says list paths of a document?"
+covers:
+  - ir: sentence:2.1:7ecd963f
+    digest: afa8dece4c268c0e7b9dc3d7d11946d48f39c22016ac079b8715da0d151737eb
+    quote: "`LineItemSummary` lists these paths of a line item (§ 5):"
+    locks: [with-our-stack]
+  - ir: code:2.1:1
+    digest: 56d53f6d5f8d25e268a274877d9eba3e55fba751ed00e4b558004e697b1b24d2
+    quote: |-
+      line_item_id
+      channel
+      environments.available[]
+      episodes
+      programs.available[].id
+      programs.available[].content.series
+      programs.available[].content.title
+      placement.reward
+      placement.instl
+      placement.plcmt
+      placement.skip
+      placement.feed
+      break_position.available[].id
+      break_position.available[].delay
+      break_position.available[].slotinpod
+      properties.available[].id
+      properties.available[].name
+      properties.available[].domains[]
+      properties.available[].apps[].store
+      properties.available[].apps[].bundle
+      properties.available[].child_audience
+      properties.available[].seller_relationship
+      properties.available[].venue_type
+      audiences.available[].id
+      audiences.available[].name
+      formats.included[]
+      geo
+      markets
+      pricing[].pricing_id
+      pricing[].cost_method
+      pricing[].list_rate
+      pricing[].currency
+      pricing[].price_type
+      pricing[].unit_bounds
+      commitment_bounds
+      addressable_scale
+      committed_metrics[]
+      delivery_counting.impression_multiplier.impression_type
+      delivery_counting.impression_multiplier.source_type
+      required_credentials[]
+      buyer_requirements.allowed_dsps[]
+      transaction_mechanism.available[]
+    locks: [with-our-stack]
+  - ir: sentence:2.1:bd68c3df
+    digest: a0be3b8926c4fd4494681fefcbcc61ef5fd47b44bebd0b59d841d0ea490bc2b8
+    quote: "`ProposalSummary` lists these paths of a proposal (§ 4):"
+    locks: [with-our-stack]
+  - ir: code:2.1:2
+    digest: d70a5fe3c0c1773d24f7c2ff4297826e2678c0a3cb1876b8227bba04f8733c8e
+    quote: |-
+      proposal_id
+      version
+      seller.domain
+      seller.legal_name
+      description
+      offer_window
+    locks: [with-our-stack]
+  - ir: sentence:2.1:5ed82d3e
+    digest: 963f475b6c9b5f34b855575fffd80a0ffd8e7b186248fe6e5b39ea12b4510e81
+    quote: "`ProposalSummary` adds this key:"
+    locks: [with-our-stack]
+  - ir: sentence:3.4:5167ab36
+    digest: 9ded72c71e618e294c18b0bdd7f02db27e63f5dd3da6987f62609a06c4aefdef
+    quote: "`BuyerWrites` lists these paths, where `<selectable>` is a field marked `selectable`, and `<settable>` is a field marked `settable` other than `frequency_cap`:"
+    locks: [with-our-stack]
+  - ir: code:3.4:1
+    digest: dd4f5150930acb93b48eca8b807b7d685d9fbf891094a8b3422696097a675efc
+    quote: |-
+      <selectable>.selected[]
+      <settable>.value
+      audiences.excluded[]
+      audiences.combine.selected[]
+      frequency_cap.count.value
+      exclusions
+      buyer_requirements.seats
+      buyer_requirements.seat_owner
+    locks: [with-our-stack]
+  - ir: rule:3.4:8a37931e
+    digest: 137180560e78c77933e2313616c5d475a7b87798cbd80b7bfd9b07992a640c1c
+    quote: Every path is OPTIONAL.
+    locks: [with-our-stack]
+options:
+  - id: profiles
+    summary: "Profiles: each projects the paths its `text` block lists from the document, with the keys a table adds, and `BuyerWrites` reads `<selectable>` as each field marked `selectable` and `<settable>` as each marked `settable` but `frequency_cap`, every path optional."
+  - id: objects
+    summary: "Objects of their own, with keys restated."
+chosen: profiles
+rationale: >-
+  § 2.6 says a lead-in that reads "`X` lists these paths" is followed by a
+  `text` block with one path per line, and a table that "adds this key" gives
+  `X` those keys beside the listed paths. § 2.1 says a summary is a strict
+  path subset of the full object, and § 3.4 that `BuyerWrites` is a strict
+  path subset of the line item with every path optional. A profile projects
+  exactly those paths.
+feedback: >-
+  None needed.

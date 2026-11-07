@@ -5,10 +5,23 @@ module: line-item
 sections: [ "3.3", "5", "5.1", 5.1.1 ]
 depends: [ audience, commercial, creative, eligibility, execution, guarantees, inventory, settlement, targeting ]
 types:
+  - name: AvailabilityRead
+    kind: object
+    ir: key:3.3:AvailabilityRead.offer
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+    includes: BuyerWrites
   - name: LineItem
     kind: document
     ir: field:5.1:line_item_id
     source: { rule: document-owner }
+  - name: MediaChannel
+    kind: vocabulary
+    ir: sentence:5.1.1:9cc50767
+    locks: [ with-our-stack ]
+    source: { decision: D-053 }
+    open: true
 entries:
   - ir: rule:3.3:f58949fc
     digest: 6c93d77b27d0fbb964292425a405002f7b9149e94231de70ce970bb09038a5ae
@@ -20,18 +33,111 @@ entries:
     locks: [ with-open-prs ]
     source: { decision: D-029 }
     as: { role: obligation, party: seller }
-  - ir: field:5.1:line_item_id
-    digest: 60cd2aeea40121597f5e2b0725417665bc560c9b677000d3dfbc432d1c88c969
-    source: { rule: domain-row }
-    as: { role: property, object: LineItem, type: { kind: named, name: Uuid }, presence: optional }
-  - ir: field:5.1:status
-    digest: a17160d7d827de70558f79ec33b231f2ca899bcf91f5f38abb70447c36ab7627
-    source: { rule: enum-row }
-    as: { role: property, object: LineItem, type: { kind: named, name: LineItemStatus }, presence: optional }
+  - ir: rule:3.3:1c0f3417
+    digest: 0a37d096bbbb2bb303ba890d28c9cdb3d17461a180bb3924d15f1c8c9f355e1a
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:3.3:810028b3
+    digest: 168d930b407ed6f72e5e840950bb2604f118be892ae634454b7f76d786c4f27a
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:3.3:27f28f1d
+    digest: 119a453c82849f2d3188aff3758d9df555c8ae73be54be972ed033152f0cdcd3
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:3.3:c10596ed
+    digest: 7f6c2ce16fcce5be29577740b6413b0557e1ce02bb13b52656809ae161f76783
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:3.3:d6de45ae
+    digest: b3c97aac3f8d8a4f318830e8158e601c08ad9dfa82e4100b25bb6084f49fb730
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:3.3:f4451272
+    digest: 5bfd0225382dca71bd9f6dd5c9fd840671e541b229e93e3056008ceba702d454
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:3.3:AvailabilityRead.offer
+    digest: 78aef7276a2e4d5048f8abc76c37b349776a6d0cc36bf7bd9f0f8385d5daf268
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: AvailabilityRead, type: { kind: named, name: VersionRef }, presence: required }
+  - ir: rule:3.3:373dbf11
+    digest: cc44f7ffff0cde501343cf9045df402deb8f19a70fadd115687e6e2ad3539922
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: AvailabilityRead }
+  - ir: rule:3.3:de17ca68
+    digest: 161bc9df600531d946b437d5e5d8ca90e525f3949c47136be2f730c37f6040a6
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: key:3.3:AvailabilityRead.flight
+    digest: 774c5e1a9c547830d62d8878c1ddbd824b259eb51a73631b9f1e79e52f04c1e5
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: AvailabilityRead, type: { kind: named, name: Interval }, presence: required }
+  - ir: rule:3.3:373dbf11-2
+    digest: 796d245cd1a639892eb6eeed3cc7f4411235566e21742b1f166d6653128960f5
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: AvailabilityRead }
+  - ir: key:3.3:AvailabilityRead.pricing_id
+    digest: 825c08e7352e1922586f6582bc57945701072b2bca5579470075b658aa715e56
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: AvailabilityRead, type: { kind: named, name: PlainString }, presence: optional }
+  - ir: rule:3.3:ae26d4ac
+    digest: 37b55817e89455e2d32771718b37f9084d79ed819c5b275552730890ff3d1e31
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: AvailabilityRead }
   - ir: field:5.1:status#description/values:1
     digest: 3f71478ce1321fa0b10133011b802bd1163d99cb842c0d094a104a12651a5c93
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-013, D-014 ] }
     as: { role: type, name: LineItemStatus, layer: vocabulary, open: false }
+  - ir: field:5.1:channel#description/values:1
+    digest: 2c9675aecf427259e6868f7d5167ce62fa48654f11677aa0ecdd4e639deb0882
+    locks: [ main, with-open-prs ]
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: Channel, layer: vocabulary, open: true }
+  - ir: field:5.1:line_item_id
+    digest: 60cd2aeea40121597f5e2b0725417665bc560c9b677000d3dfbc432d1c88c969
+    locks: [ main, with-open-prs ]
+    source: { rule: domain-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Uuid }, presence: optional }
+  - ir: field:5.1:line_item_id
+    digest: 54da51504430aebaa335ae5a20fefa939f005cca07dcafe4cdd3bb747baf021d
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:5.1:373dbf11
+    digest: 948a562ecfd1c27791b8268461d15e8c914e8c1214b71ad46663375df8966382
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: field:5.1:status
+    digest: a17160d7d827de70558f79ec33b231f2ca899bcf91f5f38abb70447c36ab7627
+    locks: [ main, with-open-prs ]
+    source: { rule: enum-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: LineItemStatus }, presence: optional }
+  - ir: field:5.1:status
+    digest: e7a1e7fc2dd43484786c82fc9093b351cfb31efd936921a38b88d439d65c0901
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: LineItemStatus }, presence: required }
+  - ir: rule:5.1:373dbf11-2
+    digest: 912f883450acc5ecbf771274f5c942c1cd80bccb54f725de11926d8038e0d0f3
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
   - ir: field:5.1:channel
     digest: b60715fd356a24e39edc7fd59dc51c0c4a2acf9d9307cc68436bfaffc2b26405
     locks: [ main ]
@@ -42,55 +148,33 @@ entries:
     locks: [ with-open-prs ]
     source: { rule: enum-row }
     as: { role: property, object: LineItem, type: { kind: named, name: Channel }, presence: optional }
-  - ir: field:5.1:channel#description/values:1
-    digest: 2c9675aecf427259e6868f7d5167ce62fa48654f11677aa0ecdd4e639deb0882
-    source: { decisions: [ D-013, D-014 ] }
-    as: { role: type, name: Channel, layer: vocabulary, open: true }
-  - ir: sentence:5.1.1:5c446bbd
-    digest: 5294abaf1669cc6d9148c90f8872e807c68af3ed41d2c3697784e38f83da7fc3
-    locks: [ with-open-prs ]
-    source: { rule: prose-sentence }
-    as: { role: informative }
-  - ir: def:5.1.1:channel.dooh
-    digest: d1bba9102900730605a740d32cec363c8c2d382499eae2fc2768dccaeee80800
-    locks: [ with-open-prs ]
-    source: { rule: definition-term }
-    as: { role: term, vocabulary: Channel }
-  - ir: def:5.1.1:channel.audio
-    digest: 88a6c85592a38c9d19edb0df59c3e68ee0db38380e3dbdf7aeaced3a035ee092
-    locks: [ with-open-prs ]
-    source: { rule: definition-term }
-    as: { role: term, vocabulary: Channel }
-  - ir: def:5.1.1:channel.ctv
-    digest: 15f10806bc36998bac0012166cdf3b72ba89ad1d69c0511a60bb1183e5422d28
-    locks: [ with-open-prs ]
-    source: { rule: definition-term }
-    as: { role: term, vocabulary: Channel }
-  - ir: def:5.1.1:channel.native
-    digest: 1a2087aca42d3a776529870b8419b5b090f3026c122acb360db00e5a1cdedbbd
-    locks: [ with-open-prs ]
-    source: { rule: definition-term }
-    as: { role: term, vocabulary: Channel }
-  - ir: def:5.1.1:channel.video
-    digest: 68b21fd8ad5a7fea4a79c5ebac040b0e0d64223a912612abcd6292e8f9541b6e
-    locks: [ with-open-prs ]
-    source: { rule: definition-term }
-    as: { role: term, vocabulary: Channel }
-  - ir: def:5.1.1:channel.display
-    digest: c73de2743306b91a2f2f84087298bbf496c2fadf6a8ad2c5a394b4c4586b1854
-    locks: [ with-open-prs ]
-    source: { rule: definition-term }
-    as: { role: term, vocabulary: Channel }
-  - ir: rule:5.1.1:4c696214
-    digest: 7ac30a69a02052ba51a89307d9daf5c79947714c6c0a16312b6b018b3006bbd8
-    locks: [ with-open-prs ]
-    source: { decision: D-030 }
-    as: { role: obligation, party: seller }
-  - ir: sentence:5.1.1:f84d6159
-    digest: 3ef6e6b8bd579c16192ba3de76955cda98807bc57ebefc0e7a4144436754b55d
-    locks: [ with-open-prs ]
-    source: { rule: prose-sentence }
-    as: { role: informative }
+  - ir: field:5.1:channel
+    digest: f238dcbb62a5413240de2a29f590622682d582f8f8309999fe8b5b7abf5dc8b7
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: MediaChannel }, presence: required }
+  - ir: rule:5.1:373dbf11-3
+    digest: 622bdbcd4005cb070cac934df6eefad0063e5fef9782dd55dd808568ae294d28
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: field:5.1:ext
+    digest: 540b8e84417df279d1c2ab396287190a574fc1548ea7be0806b1e70b332c5694
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Map
+        arguments: { K: { kind: named, name: Domain }, V: { kind: named, name: OpenObject } }
+      presence: optional
+  - ir: rule:5.1:ae26d4ac
+    digest: 16ca532ae7daa9270197afea507f07dea1ca9859b99bfc52100cf335488466a5
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
   - ir: rule:5.1.1:ce115ccf
     digest: e08bbdb0049bcf108e99bf58469a37f95118b3e482634842ff9852bf1151393c
     locks: [ with-open-prs ]
@@ -99,5 +183,100 @@ entries:
   - ir: sentence:5.1.1:1156bb62
     digest: c86cee1d6223809708f0d974807b4507ee842b83b746a963d4afddc59906572a
     locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.1.1:5c446bbd
+    digest: 5294abaf1669cc6d9148c90f8872e807c68af3ed41d2c3697784e38f83da7fc3
+    locks: [ with-open-prs, with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: def:5.1.1:channel.dooh
+    digest: d1bba9102900730605a740d32cec363c8c2d382499eae2fc2768dccaeee80800
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Channel }
+  - ir: def:5.1.1:channel.dooh
+    digest: d1bba9102900730605a740d32cec363c8c2d382499eae2fc2768dccaeee80800
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: term, vocabulary: MediaChannel }
+  - ir: def:5.1.1:channel.audio
+    digest: 88a6c85592a38c9d19edb0df59c3e68ee0db38380e3dbdf7aeaced3a035ee092
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Channel }
+  - ir: def:5.1.1:channel.audio
+    digest: 88a6c85592a38c9d19edb0df59c3e68ee0db38380e3dbdf7aeaced3a035ee092
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: term, vocabulary: MediaChannel }
+  - ir: def:5.1.1:channel.ctv
+    digest: 15f10806bc36998bac0012166cdf3b72ba89ad1d69c0511a60bb1183e5422d28
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Channel }
+  - ir: def:5.1.1:channel.ctv
+    digest: 97dad39d5f32820b0162f83d2572c56f385a00632e1603638a41c7bfab11bcf3
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: term, vocabulary: MediaChannel }
+  - ir: def:5.1.1:channel.native
+    digest: 1a2087aca42d3a776529870b8419b5b090f3026c122acb360db00e5a1cdedbbd
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Channel }
+  - ir: def:5.1.1:channel.native
+    digest: 1a2087aca42d3a776529870b8419b5b090f3026c122acb360db00e5a1cdedbbd
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: term, vocabulary: MediaChannel }
+  - ir: def:5.1.1:channel.video
+    digest: 68b21fd8ad5a7fea4a79c5ebac040b0e0d64223a912612abcd6292e8f9541b6e
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Channel }
+  - ir: def:5.1.1:channel.video
+    digest: 68b21fd8ad5a7fea4a79c5ebac040b0e0d64223a912612abcd6292e8f9541b6e
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: term, vocabulary: MediaChannel }
+  - ir: def:5.1.1:channel.display
+    digest: c73de2743306b91a2f2f84087298bbf496c2fadf6a8ad2c5a394b4c4586b1854
+    locks: [ with-open-prs ]
+    source: { rule: definition-term }
+    as: { role: term, vocabulary: Channel }
+  - ir: def:5.1.1:channel.display
+    digest: c73de2743306b91a2f2f84087298bbf496c2fadf6a8ad2c5a394b4c4586b1854
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: term, vocabulary: MediaChannel }
+  - ir: sentence:5.1.1:9cc50767
+    digest: d3688a4559ce23484af06f0ccc3500bf43b978dd8343bbccee6986ebef48f4e5
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.1.1:4c696214
+    digest: 7ac30a69a02052ba51a89307d9daf5c79947714c6c0a16312b6b018b3006bbd8
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: obligation, party: seller }
+  - ir: rule:5.1.1:4c696214
+    digest: ab88ec95de375dc5ecf7232ba94151304d31d147589c8c6f900f8dc38d42c9e3
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:5.1.1:f84d6159
+    digest: 3ef6e6b8bd579c16192ba3de76955cda98807bc57ebefc0e7a4144436754b55d
+    locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.1.1:f84d6159
+    digest: 24dcff5c6f5405b9a096b57fd58877238ee30c28f5a299ee1e83dc18333fa6ce
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.1.1:d78ddddf
+    digest: e627a183ef190aeee64d2614dd1cb7192788e987a39b323ac69950c4737b3ea7
+    locks: [ with-our-stack ]
     source: { rule: prose-sentence }
     as: { role: informative }

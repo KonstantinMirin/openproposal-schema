@@ -63,6 +63,25 @@ export const modelResolves = defineGate<ResolveInput>({
       mutate: (i) => ({ ...i, constructors: { ...i.constructors, constructors: i.constructors.constructors.map((c) => ({ ...c, parameters: c.parameters.map((p) => (p.carries ? { ...p, carries: { member: p.carries.member, decision: p.carries.decision, description: p.carries.description } } : p)) })) } }),
       expect: "lists its members without `id`, so giving it one departs from the text",
     },
+    // A code's name its row doesn't give is a reading of the text, so the record that gives it quotes the row.
+    {
+      name: "a record that names a code whose row it doesn't quote",
+      spec: "adcom",
+      mutate: (i) => ({ ...i, decisions: i.decisions.map((d) => (d.id === "D-019" ? { ...d, names: { ...d.names, "def:list_agenttypes:2": "App ID" } } : d)) }),
+      expect: 'D-019: names def:list_agenttypes:2 "App ID", which the record doesn\'t cover',
+    },
+    {
+      name: "two records that name one code",
+      spec: "adcom",
+      mutate: (i) => ({ ...i, decisions: i.decisions.map((d) => (d.id === "D-021" ? { ...d, covers: [...d.covers, i.decisions.find((x) => x.id === "D-019")!.covers[0]!], names: { ...d.names, "def:list_agenttypes:1": "Web ID" } } : d)) }),
+      expect: 'D-021: names def:list_agenttypes:1 "Web ID", which D-019 names too',
+    },
+    {
+      name: "a record that names a row that is no code",
+      spec: "adcom",
+      mutate: (i) => ({ ...i, decisions: i.decisions.map((d) => (d.id === "D-019" ? { ...d, covers: [...d.covers, { ir: "def:list_agenttypes:500+", digest: "0".repeat(64), quote: "x" }], names: { ...d.names, "def:list_agenttypes:500+": "Vendor" } } : d)) }),
+      expect: 'D-019: names def:list_agenttypes:500+ "Vendor", which is no code\'s row',
+    },
     {
       name: "the departure that gives a listed option its id recorded as a gap",
       mutate: (i) => ({ ...i, decisions: i.decisions.map((d) => (d.id === "D-047" ? { ...d, kind: "gap" as const } : d)) }),

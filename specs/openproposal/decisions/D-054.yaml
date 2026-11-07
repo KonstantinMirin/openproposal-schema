@@ -1,0 +1,46 @@
+format: 1
+id: D-054
+status: proposed
+kind: gap
+author: agent
+question: "What are the § 2.2 types whose Form adds a value or a type to another, a line item's status, a time unit, and a measurer?"
+covers:
+  - ir: sentence:2.6:8e67c9dd
+    digest: e0eaeadd6fc1c2007c7896b9b30c0ccfc48941d7ec9467275d2b56fcccfb9496
+    quote: A Form that adds a value to a type reads `A `T`, or `b` `, and one that adds a second type reads `A `T`, or a `U` `.
+    locks: [with-our-stack]
+  - ir: def:2.2:LineItemStatus
+    digest: 62873d0eb36415ad42149f8e55c9f4a4a6166e29494fe5a70860213904b9dbcb
+    quote: "`LineItemStatus` | A `ProposalStatus`, or `sold_out` | A line item's `status`, moved as § 4.3.2 states"
+    locks: [with-our-stack]
+  - ir: def:2.2:ProposalStatus#form/values:1
+    digest: c38c42958062053c640d849423aa31a23b0e6957f77553ec24a10a7e76173e49
+    quote: "`draft` | `published` | `under_review` | `agreed` | `withdrawn` | `expired`"
+    locks: [with-our-stack]
+  - ir: def:2.2:TimeUnit
+    digest: 7b83133f5ed981b823af1ff9c73b1769d3549b12de14863b0ae1959883133524
+    quote: "`TimeUnit` | A `CalendarUnit`, or `flight` | `flight` is the whole of `commitment.flight`"
+    locks: [with-our-stack]
+  - ir: def:2.2:CalendarUnit#form/values:1
+    digest: c56def0779ff065afa3ccaebd068369b8ca6f8d9dd2e718319cb5424a33b7a82
+    quote: "`hour` | `day` | `week` | `month`"
+    locks: [with-our-stack]
+  - ir: def:2.2:Measurer
+    digest: 8803264dc804871c16d2837330a0f52398e88a9494eca43226ae1e19bd5b445a
+    quote: "`Measurer` | A `Side`, or a `RegistrableDomain` | Who counts or measures. A seller writes `seller`, never its own domain. Two values name one party only when they are equal byte for byte. A `qualifier` beside a value names a product or method of that party and is not compared"
+    locks: [with-our-stack]
+options:
+  - id: as-the-form-reads
+    summary: "A line item's status is a closed list of a proposal's statuses and `sold_out`; a time unit one of the calendar units and `flight`; and a measurer a union of a side and a registrable domain."
+  - id: open
+    summary: "Each is an open vocabulary."
+chosen: as-the-form-reads
+rationale: >-
+  § 2.6 says a Form that adds a value reads ``A `T`, or `b` `` and one that
+  adds a type reads ``A `T`, or a `U` ``. `LineItemStatus` is "A
+  `ProposalStatus`, or `sold_out`", `TimeUnit` "A `CalendarUnit`, or
+  `flight`", and `Measurer` "A `Side`, or a `RegistrableDomain`". The first
+  two add a value to a closed list, so they are closed lists; the third joins
+  two types, so it is a union.
+feedback: >-
+  None needed.

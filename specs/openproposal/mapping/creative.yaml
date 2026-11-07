@@ -3,66 +3,118 @@
 format: 1
 module: creative
 sections: [ "5.4", 5.4/creative-inspection-and-previews ]
+lock_sections: { with-our-stack: [ 5.4.1 ] }
 types:
   - name: Specs
     kind: object
     ir: field:5.4:specs
+    locks: [ main, with-open-prs ]
     source: { decision: D-016 }
     open: true
     description: "A format's specs, as the referenced format registry entry defines them; the specification hardcodes no shape per channel, so the object accepts any member."
   - name: ThirdPartyTags
     kind: object
     ir: field:5.4:third_party_tags
+    locks: [ main, with-open-prs ]
     source: { decision: D-016 }
     open: true
     description: "The third-party tag wrapper types and VAST versions the seller accepts. The specification states no members, so the object accepts any."
   - name: CreativeDeliveryProtocol
     kind: vocabulary
     ir: field:5.4:creative_delivery#description/object:1
+    locks: [ main, with-open-prs ]
     source: { decision: D-041 }
     open: true
   - name: AssetApprovalStatus
     kind: vocabulary
     ir: "field:5.4:assets[]#description/object:1"
+    locks: [ main, with-open-prs ]
     source: { decision: D-041 }
     open: true
   - name: MaterialsDue
     kind: union
     ir: field:5.4:materials_due
+    locks: [ main, with-open-prs ]
     source: { decision: D-017 }
     any_of: [ { kind: named, name: Timestamp }, { kind: named, name: Duration } ]
   - name: Approval
     kind: object
     ir: field:5.4:approval
+    locks: [ main, with-open-prs ]
     source: { decision: D-016 }
     open: true
     description: "The seller's creative review SLA and revision policy. The specification states no members, so the object accepts any."
+  - name: FormatSpec
+    kind: object
+    ir: key:5.4:FormatSpec.spec_ref
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: MaterialsDue
+    kind: object
+    ir: key:5.4:MaterialsDue.at
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: Asset
+    kind: object
+    ir: key:5.4:Asset.asset_id
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: AssetProvenance
+    kind: object
+    ir: key:5.4:AssetProvenance.synthetic
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: AssetProvenanceDisclosureMethod
+    kind: vocabulary
+    ir: "key:5.4:AssetProvenance.disclosure_methods[]#meaning/values:1"
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: true
+    terms: [ c2pa_manifest, watermark, audible_notice, visible_label ]
+  - name: CreativeDelivery
+    kind: object
+    ir: key:5.4:CreativeDelivery.method
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: CreativeDeliveryMethod
+    kind: vocabulary
+    ir: key:5.4:CreativeDelivery.method#meaning/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: true
+    terms: [ buyer_hosted, seller_hosted, api, platform_managed ]
+  - name: CreativeDeliveryOtherProtocol
+    kind: vocabulary
+    ir: "key:5.4:CreativeDelivery.other_protocols[]#meaning/values:1"
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: true
+    terms: [ javascript_tag ]
+  - name: ProductionOption
+    kind: object
+    ir: key:5.4:ProductionOption.id
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
 entries:
-  - ir: field:5.4:formats
-    digest: 2a8a55ef5666b057f31306cadf667fc01dff13e5cc5e009f00d3f649de375016
-    source: { decisions: [ D-018, D-019 ] }
-    as:
-      role: property
-      object: LineItem
-      type:
-        kind: apply
-        constructor: Selectable
-        arguments: { T: { kind: named, name: FormatId }, K: { kind: named, name: FormatId } }
-      presence: optional
   - ir: field:5.4:specs
     digest: f3fa67ecc797ea15ee4ad04313861161f3e8fcec742af3d24e4ab1f99f20273a
+    locks: [ main, with-open-prs ]
     source: { decision: D-016 }
     as: { role: property, object: LineItem, type: { kind: named, name: Specs }, presence: optional }
   - ir: field:5.4:third_party_tags
     digest: 7c3e68646af2fcaf101cdd07a8abe4fd7ec5a36eabd7ed4e06a71e0d8b626d80
+    locks: [ main, with-open-prs ]
     source: { decision: D-016 }
     as: { role: property, object: LineItem, type: { kind: named, name: ThirdPartyTags }, presence: optional }
-  - ir: field:5.4:creative_delivery
-    digest: 1e4d650fa9016a43489601a2d8953f727c770d01481f20d46c2d086949509a56
-    source: { rule: inline-object-row }
-    as: { role: property, object: LineItem, type: { kind: named, name: CreativeDelivery }, presence: optional }
   - ir: field:5.4:creative_delivery#description/object:1
     digest: 8d11a33a75a187ebd9affb849bab8593668de8189bf49460961af437a5c78c15
+    locks: [ main, with-open-prs ]
     source: { decision: D-025 }
     as:
       role: type
@@ -76,18 +128,12 @@ entries:
         endpoint: { type: { kind: named, name: Url }, presence: optional }
   - ir: field:5.4:creative_delivery#description/object:1/method
     digest: b7d0d2c4cac4d24771ed543d709be22d3e5211eecb074dca066161bd05a78187
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-013, D-014 ] }
     as: { role: type, name: CreativeDeliveryMethod, layer: vocabulary, open: true }
-  - ir: "field:5.4:assets[]"
-    digest: 255610ac92f7e4ac1d15edbfed7d3201c5d317b1271c033372175e9eed0b40b2
-    source: { rule: inline-object-row }
-    as:
-      role: property
-      object: LineItem
-      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: AssetsEntry } } }
-      presence: optional
   - ir: "field:5.4:assets[]#description/object:1"
     digest: e2ecbfe1e06380fb7c9966174c58ecc73d617563de6860287b1cd414bebcfff6
+    locks: [ main, with-open-prs ]
     source: { decision: D-025 }
     as:
       role: type
@@ -100,31 +146,9 @@ entries:
         url_or_tag: { type: { kind: named, name: Text }, presence: optional }
         submitted_at: { type: { kind: named, name: Timestamp }, presence: optional }
         approval_status: { type: { kind: named, name: AssetApprovalStatus }, presence: optional }
-  - ir: field:5.4:materials_due
-    digest: cfa54510f53148d77ef0133fffea985d275148ab926796713470f40d9827f5b2
-    source: { decision: D-017 }
-    as: { role: property, object: LineItem, type: { kind: named, name: MaterialsDue }, presence: optional }
-  - ir: rule:5.4:2eaa294f
-    digest: 61f09f4e064e43f2fa580ac4cbf4d7d5c34bd64f2539c58b40351900d38338fd
-    source: { decision: D-030 }
-    as: { role: rule, object: LineItem }
-  - ir: field:5.4:approval
-    digest: 099f711760829277a50ff8ea557e2d9131e53c929b364a23770815cbe7a074c8
-    source: { decision: D-016 }
-    as: { role: property, object: LineItem, type: { kind: named, name: Approval }, presence: optional }
-  - ir: field:5.4:production
-    digest: 0168284e2ec3d43c2249add202b7c657a7a4b37fe78ccfbf2cee694a3e76d199
-    source: { decisions: [ D-018, D-019 ] }
-    as:
-      role: property
-      object: LineItem
-      type:
-        kind: apply
-        constructor: Selectable
-        arguments: { T: { kind: named, name: ProductionOption }, K: { kind: named, name: Uuid } }
-      presence: optional
   - ir: field:5.4:production#description/object:1
     digest: 00eb00879b4a550444376e9812df5389c4a7066a43b48982f04bc6f35974f62d
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-019, D-025, D-040 ] }
     as:
       role: type
@@ -136,6 +160,623 @@ entries:
         build_owner: { type: { kind: named, name: Party }, presence: optional }
         lead_time: { type: { kind: named, name: Duration }, presence: optional }
         cost: { type: { kind: named, name: Amount }, presence: optional }
+  - ir: field:5.4:formats
+    digest: 2a8a55ef5666b057f31306cadf667fc01dff13e5cc5e009f00d3f649de375016
+    locks: [ main, with-open-prs ]
+    source: { decisions: [ D-018, D-019 ] }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: FormatId }, K: { kind: named, name: FormatId } }
+      presence: optional
+  - ir: field:5.4:formats
+    digest: 97f074e7283ce7c3cb2509b194a0989880e66ba5e32607c5c5e153d5a8e271b8
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: Selectable, arguments: { T: { kind: named, name: FormatId } } }
+      presence: optional
+  - ir: rule:5.4:ae26d4ac
+    digest: d74d6bcc77ac7a0e3dee1b25e05e8c407ffa9f91de21ebd9ced2c1a0a1339453
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: field:5.4:format_specs
+    digest: e1002f5a6ce64e7aab22acd2215df84e47e0bf49e0fc914d9765c2396556242d
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Map
+        arguments: { K: { kind: named, name: FormatId }, V: { kind: named, name: FormatSpec } }
+      presence: conditional
+  - ir: rule:5.4:3a677601
+    digest: 179391013b3fe6067fdac2f2d7dabe2586a3a9b7b4045826d22f0eb5f446d904
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: LineItem }
+  - ir: field:5.4:creative_delivery
+    digest: 1e4d650fa9016a43489601a2d8953f727c770d01481f20d46c2d086949509a56
+    locks: [ main, with-open-prs ]
+    source: { rule: inline-object-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: CreativeDelivery }, presence: optional }
+  - ir: field:5.4:creative_delivery
+    digest: d5ee9e5aae084a4b2b8866a197c1f6dec9528d4b967ab81e714c6ec8f006b980
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: CreativeDelivery }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-2
+    digest: 5962ee0a8ac3a8446ccfd3dfe97a8f0eec77773439e9214db7c32b37d1c670a1
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: "field:5.4:assets[]"
+    digest: 255610ac92f7e4ac1d15edbfed7d3201c5d317b1271c033372175e9eed0b40b2
+    locks: [ main, with-open-prs ]
+    source: { rule: inline-object-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: AssetsEntry } } }
+      presence: optional
+  - ir: "field:5.4:assets[]"
+    digest: 8f1377243d7866defed5363e7ce20fe1f20f39a45b0cdd6d8a57cb8700ce575a
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Asset } } }
+      presence: optional
+  - ir: rule:5.4:ae26d4ac-3
+    digest: dd54d60bdb145c1e7b404236c3e73db02c3c341869488b48805fe4d434b1538e
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: field:5.4:materials_due
+    digest: cfa54510f53148d77ef0133fffea985d275148ab926796713470f40d9827f5b2
+    locks: [ main, with-open-prs ]
+    source: { decision: D-017 }
+    as: { role: property, object: LineItem, type: { kind: named, name: MaterialsDue }, presence: optional }
+  - ir: field:5.4:materials_due
+    digest: 064b83cb3b9a78e5c3199d10be2050c55fff845ef38409275fae6f233e00d19e
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: MaterialsDue }, presence: optional }
+  - ir: rule:5.4:2eaa294f
+    digest: 61f09f4e064e43f2fa580ac4cbf4d7d5c34bd64f2539c58b40351900d38338fd
+    source: { decision: D-030 }
+    as: { role: rule, object: LineItem }
+  - ir: rule:5.4:ae26d4ac-4
+    digest: c9d45ae58ef6bc2016245c2dc26e180284aa040868b2c8dea8fa537d1995e222
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: field:5.4:approval
+    digest: 099f711760829277a50ff8ea557e2d9131e53c929b364a23770815cbe7a074c8
+    locks: [ main, with-open-prs ]
+    source: { decision: D-016 }
+    as: { role: property, object: LineItem, type: { kind: named, name: Approval }, presence: optional }
+  - ir: field:5.4:approval
+    digest: 99af7aa57b5240f96c95824540ea05ab9a2af3ee90927e17debd90e2cc714244
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: PlainString }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-5
+    digest: eca530b1ffeab339b4b8001b623f3a62d0e4e2c47a162d16d83cf723381f95f2
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: field:5.4:creative_policy
+    digest: fdeee2307d43e492a541ea41f73584ad82b2fb6445fbe983237205093b286996
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: PlainString }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-6
+    digest: dd5a7f4d65a74d9b726d7508749b544382056c874028a126b4e12cf42bf2b46a
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: field:5.4:production
+    digest: 0168284e2ec3d43c2249add202b7c657a7a4b37fe78ccfbf2cee694a3e76d199
+    locks: [ main, with-open-prs ]
+    source: { decisions: [ D-018, D-019 ] }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: ProductionOption }, K: { kind: named, name: Uuid } }
+      presence: optional
+  - ir: field:5.4:production
+    digest: f4e3bd3d8bd3950ce809c7d0cf015ac9701d7c3fe22c69a202b0071d42c5f16c
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: Selectable, arguments: { T: { kind: named, name: ProductionOption } } }
+      presence: optional
+  - ir: rule:5.4:ae26d4ac-7
+    digest: a87c55422c6d0de7514219d46c18cd2ef5da206e2ce84b97f3d249d86752ee74
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: sentence:5.4:75612a3e
+    digest: 05d8ff4481454a9e3746c619724bf506cef80e22376841d04065b3f9baf9caa9
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.4:c91aa765
+    digest: c5f81de50476142c0a097481dc52e3533ddeeb3c3f668d81d60dcdf3a405cbc5
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.4:FormatSpec.spec_ref
+    digest: ba4765a0dca73fdba7ffa92fb2d64d0b072e6308529050dccce34d9f3e4670b9
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: FormatSpec, type: { kind: named, name: EntryRef }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-8
+    digest: 38e4e96274fe8ba0d0315a288b3e9f695cdeba8eacc03e38ea0cdb18d3af277a
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: FormatSpec }
+  - ir: key:5.4:FormatSpec.spec
+    digest: d8784a32abebd527ce8396f0a800d576fc43f78ea95088e6e58be7c67414abd6
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: FormatSpec, type: { kind: named, name: OpenObject }, presence: required }
+  - ir: rule:5.4:373dbf11
+    digest: 25ec270238b5f4e9a8c6b5ea5d284225029d83d09dfb0cb9f89808e48a81a378
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: FormatSpec }
+  - ir: rule:5.4:c07c0dd1
+    digest: c0931f38e0359ee1670e6d952b88e4f3e1361d9b44425e8d5250115357f37fab
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.4:7f775a7d
+    digest: 74bc12f7b3c11a35dd2a39157c3b02e67bd997dcc65fdc45d052d9b7ca3da900
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:5.4:e971be47
+    digest: 5df20e75b926688d18550dafb6e11b07f764addd2cf735b2a1238e3e1acff717
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.4:d81bbf40
+    digest: 1958b55e03198e024b5daac389b5fa6659c2b61f619a98bd612e9db18fabe06b
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: block:5.4:4/values:1
+    digest: 6a9b8155781f0d5cae62ec361912d77688319c3949a31cbb655dcd39636b215a
+    locks: [ with-our-stack ]
+    source: { decision: D-058 }
+    as: { role: informative }
+  - ir: sentence:5.4:2fd61eda
+    digest: 08b4eca70b54edd7b393f3df596f4061ef9f69641e5504d369e8a12149310fb4
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.4:28521712
+    digest: 787eee3e0919999fbb86c081e774aaca223380f8de57df03acedc8c21f58374e
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: block:5.4:5/values:1
+    digest: 55440eaa89536a4f4671a1fc72a4cea3a29b68a8e05f3a1a7ba191334747ffe0
+    locks: [ with-our-stack ]
+    source: { decision: D-058 }
+    as: { role: informative }
+  - ir: sentence:5.4:d523872c
+    digest: 0a094b4353e0d2e202184aaf8440017e36a30cc6601f7d5e4fd4b406b675604a
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.4:729dfe04
+    digest: e88b5f0a669842761acefeddd37b0822978739dff790dd8cb6d8037a9db3b7c6
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.4:ddb46085
+    digest: 802dc55a9909377b7a336ed68697155c6326d76f2cdb56c2f3f7e5fa0dca97aa
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.4:MaterialsDue.at
+    digest: b578221f277f710c3a05044e89d5006998c3d4a396d577ce1e2e186c58f7b8ee
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: MaterialsDue, type: { kind: named, name: Instant }, presence: conditional }
+  - ir: rule:5.4:58ab1d09
+    digest: cf367adda092c8b84706c8a4e8880a5ade2150be85b355e013666fad47d243aa
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: MaterialsDue }
+  - ir: key:5.4:MaterialsDue.before_start
+    digest: 4fc1455a01dffca27f9df2a47fbab1e2d920ef0033fa2286d47b9b0b79728864
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: MaterialsDue, type: { kind: named, name: Duration }, presence: conditional }
+  - ir: rule:5.4:7a6f2ac4
+    digest: 5ba98f4787975291dbfde94c70dfbef4dad6d686fd41ff981709686ccaab795d
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: MaterialsDue }
+  - ir: sentence:5.4:a4fd0b15
+    digest: 65c80398ee8e04b03077501b1fb3cdb64b0ac5231ae4477c5a298cf5105e0fa0
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.4:Asset.asset_id
+    digest: 72b6febcdf7a17d7f0a15a9115d1696506f15cdf872aec8a02c72b1c496b1fc7
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Asset, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:5.4:373dbf11-2
+    digest: 02b6a6a22c51b80c348652827ae580744ea2f3fcc227f556c07944502e8c49b2
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Asset }
+  - ir: key:5.4:Asset.format_id
+    digest: d9a7251d32967092b04bbb3a611d639ce1bc28946a654bff2ac1b62cb27bb2de
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Asset, type: { kind: named, name: FormatId }, presence: required }
+  - ir: rule:5.4:373dbf11-3
+    digest: dc85e69e7ae408b067706e070af4f99b4bce463f73da32af43679c7abba6368c
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Asset }
+  - ir: key:5.4:Asset.url
+    digest: 2c75977918fb7225eb4cd6708a04826cb23321db44d40f6014803232afffe67a
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Asset, type: { kind: named, name: PlainString }, presence: conditional }
+  - ir: rule:5.4:e2c0968b
+    digest: 3b906c757f35dbd7821ee80e05e1a1a0982d19a7e0b190d141c563deeaef8bd7
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: Asset }
+  - ir: key:5.4:Asset.markup
+    digest: 1237f40e094ce62f23d5600b3d8d84150a17e30cab5fb5847da0fcc4bc8ddb45
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Asset, type: { kind: named, name: PlainString }, presence: conditional }
+  - ir: rule:5.4:45b02f49
+    digest: e7a0648c579d939c0bbb45a85074ab24d0c4d7ce307f475c91d9ad66f9dc518f
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: Asset }
+  - ir: key:5.4:Asset.submitted_at
+    digest: d8b3c09d603dfc0cdc5d824622b46395c7f37357a491dce1bd26b772b0f2cbd3
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Asset, type: { kind: named, name: Instant }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-9
+    digest: c426f6862486c747161cd224a02d011d90fbe2491215034452cb11357fb32a61
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Asset }
+  - ir: key:5.4:Asset.built_by
+    digest: 737d81f7d399ae95626426cca5d82053c48055126040fb090c1583973a49745c
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Asset, type: { kind: named, name: Side }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-10
+    digest: 45cc44372110e3cfc5f8056fcf896c9f821482a8aa9657c1b3eb363260deab01
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Asset }
+  - ir: key:5.4:Asset.provenance
+    digest: e93212ee2284092dbfd3ff6685ce85dabeb60df6c452ee4bceb9768d036e71d3
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Asset, type: { kind: named, name: AssetProvenance }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-11
+    digest: 115408259ab2996e05a1c8443375a1b54693033322e60fd8b8680c88b581047f
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Asset }
+  - ir: key:5.4:Asset.approval_status
+    digest: 0f698e499d127a87ac8039c01fe98caffe96e3d7b246a47e36304549da570bec
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Asset, type: { kind: named, name: ApprovalStatus }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-12
+    digest: 79cf914d0f788edb34f20b95424ab9cdd344388d2ac934e004b8eac56fa786dd
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Asset }
+  - ir: sentence:5.4:616bf86c
+    digest: 9d014468c047df736e704fa2d8b93f942cfc1a15b8010ba05f708e23aed13309
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.4:b97e051a
+    digest: 7787e4e03c0038d6605eaeb41c358f602d90055ed7defd686f98f374da060e5f
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.4:AssetProvenance.synthetic
+    digest: b7c77296d67b14f59d4763ec826ee55b876dc0ffeda0c4b420df7849ed98ba9a
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: AssetProvenance, type: { kind: boolean }, presence: required }
+  - ir: rule:5.4:373dbf11-4
+    digest: 3613d5703351c521461d9d52b75a7204d5ab05e762d2f52d66c52b7535273160
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: AssetProvenance }
+  - ir: key:5.4:AssetProvenance.generator
+    digest: 48832d25124cadc30aa81075808fd52ef10a514432ede7f3aa1196059835dbfd
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: AssetProvenance, type: { kind: named, name: PlainString }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-13
+    digest: 331a4ebf3b999de3b2ab48c725442ff76355bddd6caad4c86011e1fa495a88bc
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: AssetProvenance }
+  - ir: key:5.4:AssetProvenance.model_version
+    digest: dd368f60bccb8763b3c62cdfde7b11b5107b51ba932b4a7f849704198b6b5d20
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: AssetProvenance, type: { kind: named, name: PlainString }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-14
+    digest: 082f63f8b575d146c024861312406793374c47c4430d50e8042b18d1ea083b78
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: AssetProvenance }
+  - ir: key:5.4:AssetProvenance.voice_consent_ref
+    digest: b612d4a08601d62e0e04185e51ee05c44ad53015857fd7c9a4c41b289cc5e3ce
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: AssetProvenance, type: { kind: named, name: DocumentRef }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-15
+    digest: ad2fc2e599238c0e8dd13c0a4bb78cda3626be735944c5ed7e0996a1dcd2b1a3
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: AssetProvenance }
+  - ir: "key:5.4:AssetProvenance.disclosure_methods[]"
+    digest: c0486dde55ae5e9087b08427dcc5370dad2593286049202e87c7e0f4c7232744
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: AssetProvenance
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: AssetProvenanceDisclosureMethod } } }
+      presence: optional
+  - ir: "key:5.4:AssetProvenance.disclosure_methods[]#meaning/values:1"
+    digest: 144a3e07349f6d15c8a76e4e075d3210ee94e6eec7e0d1529c75feef24332960
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: AssetProvenanceDisclosureMethod }
+  - ir: rule:5.4:ae26d4ac-16
+    digest: 679dbca7cee1b19ffa1872bb34dab1a80f25e00efeb151dd5864eec0826d4e80
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: AssetProvenance }
+  - ir: key:5.4:AssetProvenance.content_digest
+    digest: d753191626ad61756156c7b17d73f8e5595d6b3c12345fafa2766f23bea42e77
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: AssetProvenance, type: { kind: named, name: Digest }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-17
+    digest: 9438fb47fb6a7044582bfc2683f3492bb3f245bd86907c51d84b59616a2537ed
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: AssetProvenance }
+  - ir: sentence:5.4:c44e00ea
+    digest: d446bde45bec12b258a73253f79350b10f0429230678c70b1718cef47b35d12d
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.4:CreativeDelivery.method
+    digest: 0f09ecb39c0e410960a6d035670e1d567bdd75f2cbe37199fcb55516fd4d1acf
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: CreativeDelivery
+      type: { kind: named, name: CreativeDeliveryMethod }
+      presence: required
+  - ir: key:5.4:CreativeDelivery.method#meaning/values:1
+    digest: 99f3ff7301158c3051558dd9e8deb459c307187d5085d303d7dc4beb933af655
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: CreativeDeliveryMethod }
+  - ir: rule:5.4:373dbf11-5
+    digest: 3d030f394198b97afad6dcf57ba65470656e10b1cd0d75a5b920a24bb4d79271
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: CreativeDelivery }
+  - ir: "key:5.4:CreativeDelivery.protocols[]"
+    digest: 70e34a9954bb3a5aaf406bb2894b90d7c4c5fd7add912301326d845e72eb43fa
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: CreativeDelivery
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PlainInteger } } }
+      presence: optional
+  - ir: rule:5.4:ae26d4ac-18
+    digest: 26cba82bfc23dff7473c4d1411dc8e7b4f4be66931b0c3c6ea336f5c58f1446e
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: CreativeDelivery }
+  - ir: "key:5.4:CreativeDelivery.other_protocols[]"
+    digest: e056eb0c6535a4c59aae2838b7ce0b9a7677e8c93f83a4a83d3d6b095969134f
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: CreativeDelivery
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: CreativeDeliveryOtherProtocol } } }
+      presence: optional
+  - ir: "key:5.4:CreativeDelivery.other_protocols[]#meaning/values:1"
+    digest: 938d4b965a9108520072223267d91cf825bb7ac14e6ebdd7d8cfe203d5616bd7
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: CreativeDeliveryOtherProtocol }
+  - ir: rule:5.4:ae26d4ac-19
+    digest: 3b45bea31b5b9fb7bfb13b91e9eb7969a3f308904ef9f36690c5826846451810
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: CreativeDelivery }
+  - ir: key:5.4:CreativeDelivery.secure_required
+    digest: 9f274139a8c5ba8384e272aa1e31e1a25b3c85551da3e0ac8dcb66dc76c4e5e6
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: CreativeDelivery, type: { kind: boolean }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-20
+    digest: 3e0f2cb7b0193c70265162c741f998150ccd2baefe183411d2e56f762f72c0df
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: CreativeDelivery }
+  - ir: key:5.4:CreativeDelivery.endpoint
+    digest: 34dcb3af949033cded0bd08a012e93b695500adb5fffe6afc5d50da1ddb5e3dd
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: CreativeDelivery, type: { kind: named, name: Url }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-21
+    digest: 89b9577375811c739d1719086e65090bf478a1f2305071b482e4f1b730eac239
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: CreativeDelivery }
+  - ir: sentence:5.4:e0fd874c
+    digest: fb2a41d1d77be254689d2c87cf9648406aa2a6356bcb80d56548a497e17cd4f3
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: def:5.4:method.buyer_hosted
+    digest: d0da92121268a43f1cc631a7bed340bf4e1b9b5af25667769491b9bb0e15f401
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: schema, in: CreativeDeliveryMethod }
+  - ir: def:5.4:method.seller_hosted
+    digest: f2a03cd29476f83b49d080614351c81fc24932f7aa21e5edaa68e7a6abe6e36e
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: schema, in: CreativeDeliveryMethod }
+  - ir: def:5.4:method.api
+    digest: c4892d70fb60eefc47168223bcef1a3445504c8b5ddb15c13468fe100e278e8d
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: schema, in: CreativeDeliveryMethod }
+  - ir: def:5.4:method.platform_managed
+    digest: 40601c2db2738d62a8458f9bd30ae2ff813aee8b927fcb3ed71ee755128b58f7
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: schema, in: CreativeDeliveryMethod }
+  - ir: sentence:5.4:af91a182
+    digest: 6abaf499a5502e08bbb32a825aa4254496516ed090254a1955a571c7fbb94312
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.4:cde5c3c6
+    digest: d8b5c30e0954501b0d2f538e231883e5ef7b4afa521691f0d343ce4ab2472d1c
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.4:ae170996
+    digest: 7d4d0e0fe95bf2066557150248d18791510b9b9db9cd631818a043f38362928f
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.4:ProductionOption.id
+    digest: 800219b4fb0ba124e44fdb19bf21d17cd73df66d9366503f851f0a540be0ab8a
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ProductionOption, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:5.4:373dbf11-6
+    digest: b78de1301de1f7d86f78688f0dbdff2a2251d38a57a037f549f45b4ee6e3e34d
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ProductionOption }
+  - ir: key:5.4:ProductionOption.custom_unit
+    digest: 888bbc2e34ce21245d2c8777e6af2dff5fbb679bb037c65be6390e127fe75255
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ProductionOption, type: { kind: named, name: PlainString }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-22
+    digest: 4a3df57c44716166703c83e50c22d4d96362d2a4c5191d449b9865af6258fceb
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ProductionOption }
+  - ir: key:5.4:ProductionOption.built_by
+    digest: 66c74965c9f528532664530c40ef8d72c85dbc055a935f288c59b076078dc676
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ProductionOption, type: { kind: named, name: Side }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-23
+    digest: b7d43409b7f3ca41dc9865fba9440dcc929b8b46fd28a34a8d705b09a2913759
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ProductionOption }
+  - ir: key:5.4:ProductionOption.lead_time
+    digest: ab97aa529733eb83f214cf48bc59c735d5a46245008579e63094a76f3874dabc
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ProductionOption, type: { kind: named, name: Duration }, presence: optional }
+  - ir: rule:5.4:ae26d4ac-24
+    digest: 6c28ad44a276b721d5c586dcfe012dd21a4e9e7225c5a06ecaa6d9749d02da54
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ProductionOption }
+  - ir: rule:5.4.1:7adf48a7
+    digest: 486cba5a65bc0a2494820d6b65ec2747235c264b7522ed61e0fad3736b30193c
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.4.1:ef1a453e
+    digest: 702d93033d23514221f5798da4ee7b4e54dbc0908d10c8531ddf1197cffa7e04
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:5.4.1:239a73ec
+    digest: 1e2d2ceff2435bfe711eaf5bcf86334264cc6734c43df456cff80e38b8786ca4
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.4.1:52bc805d
+    digest: cfe16d22ffd2d0f2e3d49f049a28c178ca94159b3e8a0c1ebdd52c94fce755d2
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.4.1:f25ad098
+    digest: d8b09c7544db3a170a7bf58a899ccad878888532880d67fcaff964de1df7a1fd
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.4.1:11d3ac1e
+    digest: 7e3b3907d31559ccc90897194631f46013b0ec3b728f9a696294c52ebe81d7f3
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.4.1:fbc60b60
+    digest: 2363f416b6b2353371d78c1593b13505592d6809025796a42fcac47619a1cc4a
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.4.1:3a29e732
+    digest: 3f3cbe85c4ed9eeaea55c1c4b6b0874b78d5d5e83ff86d0c534628c1592a8911
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
   - ir: rule:5.4/creative-inspection-and-previews:7adf48a7
     digest: 8452a8faf2195c447f82260dc615f1a16b6d4cb0848cfd98996886b0aac2cd7f
     locks: [ with-open-prs ]

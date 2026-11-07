@@ -285,7 +285,7 @@ class Extractor {
         case "marker":
           return this.markerRow(row, loc, digest);
         case "concept":
-          return this.conceptRow(row, header, loc, digest);
+          return this.conceptRow(row, table, header, loc, digest);
         default:
           if (GENERIC_ROWS.includes(kind) || !this.front.readRow) throw new ExtractError(`no reader for the row kind "${kind}" of layout "${layout.id}"`, rowLine);
           return this.front.readRow(kind, { row, cells: row.children, layout, table, header, loc, digest }, this.ctx);
@@ -303,6 +303,8 @@ class Extractor {
     const s = this.section;
     const object = layout.kind === "key" ? (this.front.objectOf?.(s) ?? null) : null;
     if (object !== null) return { via: "object", label: s.heading, identifier: object, ...base };
+    // A bold label that names a type, as the stack's "**`Commit`** keys:" under § 5.6.1 commitment, names the table's object even under a heading that names a field.
+    if (this.label?.identifier && /^[A-Z][A-Za-z0-9]*$/.test(this.label.identifier)) return { via: "label", label: this.label.label, identifier: this.label.identifier, ...base };
     if (s.number !== null && /^[a-z_][a-z0-9_]*$/.test(s.title)) {
       return { via: "heading", label: s.heading, identifier: s.title, ...base };
     }
@@ -326,7 +328,8 @@ class Extractor {
       const toks = tokenize(cells[ri]!.children);
       const raw = render(toks);
       required = { raw, parsed: resolveWith(parsePresence(raw, this.front.markers ?? [], loc.line), null, raw, loc.line) };
-      merge(hosted, this.phrasing(`${id}#required`, "table_cell", toks, loc, { statements: false, structures: false }));
+      // A typed layout's Required cell, as the stack's, states the key's presence as a statement of its own.
+      merge(hosted, this.phrasing(`${id}#required`, "table_cell", toks, loc, { statements: layout.typed === true, structures: false }));
     }
     const mi = col(layout.meaning ?? "Meaning");
     if (mi < 0) throw new ExtractError(`layout "${layout.id}" has no "${layout.meaning ?? "Meaning"}" column`, loc.line);
@@ -336,9 +339,25 @@ class Extractor {
     const ti = layout.type !== undefined ? col(layout.type) : -1;
     if (layout.type !== undefined && ti < 0) throw new ExtractError(`layout "${layout.id}" has no "${layout.type}" column`, loc.line);
     const type = ti >= 0 ? { type: this.cellText(cells[ti]!) } : {};
+    // A typed layout, as the stack's `Key | Type | Required | Meaning`, also keeps the type as the plugin's grammar parses it.
+    if (layout.typed && ti >= 0) {
+      if (!this.front.readTypeCell) throw new ExtractError(`layout "${layout.id}" parses its type column, and the plugin has no type grammar`, loc.line);
+      Object.assign(type, { type_expr: this.front.readTypeCell(plain(tokenize(cells[ti]!.children)), loc.line) });
+    }
+    // A layout that names a marker column, as the stack's `… | Meaning | Mutability`, keeps the key's marker, one the plugin lists.
+    let marker: { marker: string } | {} = {};
+    if (layout.marker !== undefined) {
+      const xi = col(layout.marker);
+      if (xi < 0) throw new ExtractError(`layout "${layout.id}" has no "${layout.marker}" column`, loc.line);
+      const m = plain(tokenize(cells[xi]!.children));
+      if (!(this.front.markers ?? []).includes(m)) throw new ExtractError(`unknown mutability marker "${m}"`, loc.line);
+      marker = { marker: m };
+    }
     let mapping: (Text & { column: string }) | null = null;
-    if (layout.type === undefined && layout.header.length > 3 && cells[3]) mapping = { column: header[3]!.text, ...this.cellText(cells[3]) };
-    this.ir.keys.push({ id, layout: layout.id, key, required, meaning: this.cellText(meaning), ...type, mapping, ...hosted, digest, loc });
+    const mc = layout.mapping !== undefined ? col(layout.mapping) : layout.type === undefined && layout.header.length > 3 ? 3 : -1;
+    if (layout.mapping !== undefined && mc < 0) throw new ExtractError(`layout "${layout.id}" has no "${layout.mapping}" column`, loc.line);
+    if (mc >= 0 && cells[mc]) mapping = { column: header[mc]!.text, ...this.cellText(cells[mc]) };
+    this.ir.keys.push({ id, layout: layout.id, key, required, meaning: this.cellText(meaning), ...type, ...marker, mapping, ...hosted, digest, loc });
   }
 
   private definitionRow(row: TableRow, layout: Layout, table: Table, header: RenderedHeader[], loc: Loc, digest: string): void {
@@ -368,8 +387,10 @@ class Extractor {
     this.ir.markers.push({ id, marker, meaning: this.cellText(meaningC), ...hosted, digest, loc });
   }
 
-  private conceptRow(row: TableRow, header: RenderedHeader[], loc: Loc, digest: string): void {
-    const id = `concept:${this.section.id}:${loc.row}`;
+  private conceptRow(row: TableRow, table: Table, header: RenderedHeader[], loc: Loc, digest: string): void {
+    // A section's first table of such rows numbers them by row; a later one, as the stack's § 1.1 has two, by its table's number and the row.
+    const first = this.ir.tables.find((t) => t.section === this.section.id && this.front.rowKind(this.front.layouts.find((l) => l.id === t.layout)!) === "concept");
+    const id = first === undefined || first.id === table.id ? `concept:${this.section.id}:${loc.row}` : `concept:${this.section.id}:${table.id.split(":").pop()}.${loc.row}`;
     this.claim(id, loc.line, "concept");
     const hosted = emptyHosted();
     const columns: Column[] = row.children.map((cell, i) => {

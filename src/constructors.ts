@@ -1,3 +1,4 @@
+import { constructorEditionsOn, editionViews, kernelEditionsOn } from "./editions.ts";
 import { join } from "node:path";
 import { canonicalJson } from "./canonical.ts";
 import type { NamedStructure } from "./duplication.ts";
@@ -54,6 +55,10 @@ export interface Sources {
 
 export interface Constructor {
   name: string;
+  /** An edition of the constructor that one lock's text defines in another form (src/editions.ts). */
+  edition?: string;
+  /** The locks the constructor is published on; every lock when absent. */
+  locks?: string[];
   description: string;
   parameters: Parameter[];
   naming: Naming;
@@ -77,6 +82,10 @@ export interface PartRule {
 
 export interface Part {
   name: string;
+  /** An edition of the part that one lock's text defines in another form (src/editions.ts). */
+  edition?: string;
+  /** The locks the part is published on; every lock when absent. */
+  locks?: string[];
   description: string;
   /** The concept of `kernel/domains.yaml` the part represents. */
   concept: string;
@@ -340,16 +349,16 @@ export function partStructures(c: Constructors): NamedStructure[] {
   return c.parts.map((p) => ({ name: p.name, structure: partSchema(p, c), concept: p.concept, where: c.file }));
 }
 
-const ORDERED_FORMATS = new Set(["date-time"]);
+const ORDERED_FORMATS = new Set(["date-time", "duration"]);
 
-/** Whether a primitive's values are ordered: a number or a date-time. */
+/** Whether a primitive's values are ordered: a number, a date-time, or a duration, which durations order where they bound each other. */
 const isOrdered = (p: Primitive) => p.type !== "string" || ORDERED_FORMATS.has(p.constraints.format ?? "");
 
 /** What an accepts kind admits, in words, for messages. */
 const ACCEPTS: Record<Exclude<Accepts, "any">, string> = {
   named: "a named type or a named copy",
   string: "a type whose values are strings",
-  ordered: "a primitive whose values are ordered (a number or a date-time)",
+  ordered: "a primitive whose values are ordered (a number, a date-time, or a duration)",
   unordered: "a named type or a named copy that isn't an ordered primitive, so it has no `min` / `max` range",
   closed: "a type whose values aren't objects, or are objects that reject the members they don't name, so a value can't carry both it and a `catalog_ref`",
 };
@@ -372,11 +381,14 @@ export interface MappedType {
 }
 
 /** The types the mapping defines, by name: each type entry and each declaration. */
-export function mappedTypes(mappings: MappingFile[]): Map<string, MappedType> {
+export function mappedTypes(mappings: MappingFile[], locks?: readonly string[]): Map<string, MappedType> {
   const types = new Map<string, MappedType>();
+  // Given locks, only the entries and declarations in scope on one of them, so a name another lock gives another type keeps its own.
+  const on = (l: string[] | undefined) => locks === undefined || l === undefined || l.some((x) => locks.includes(x));
   for (const m of mappings) {
-    for (const e of m.entries) if (e.as.role === "type") types.set(e.as.name, { layer: e.as.layer, ...(e.as.open === undefined ? {} : { open: e.as.open }) });
+    for (const e of m.entries) if (e.as.role === "type" && on(e.locks)) types.set(e.as.name, { layer: e.as.layer, ...(e.as.open === undefined ? {} : { open: e.as.open }) });
     for (const d of m.types ?? []) {
+      if (!on(d.locks)) continue;
       types.set(d.name, { layer: d.kind, ...(d.open === undefined ? {} : { open: d.open }), ...(d.any_of ? { anyOf: d.any_of } : {}) });
     }
   }
@@ -574,6 +586,12 @@ const generic = (c: Constructor): Extract<TypeRef, { kind: "apply" }> => ({
  * - every design source and decision exists, and no decision is superseded or withdrawn.
  */
 export function checkConstructors(root: string, model: Model, decisions: DecisionRecord[]): string[] {
+  // Each edition's view of the kernel holds one type of each name (src/editions.ts); the checks hold in every view.
+  const views = editionViews(model.kernel, model.constructors);
+  return [...new Set(views.flatMap((v) => checkConstructorsIn(root, v, decisions)))];
+}
+
+function checkConstructorsIn(root: string, model: Model, decisions: DecisionRecord[]): string[] {
   const problems: string[] = [];
   const { constructors: file } = model;
   const citesDecision = decisionCheck(decisions, problems);
@@ -759,6 +777,8 @@ export interface TypeUse {
   where: string;
   type: TypeRef;
   field: { field: string } | { problem: string };
+  /** The locks the entry or declaration is scoped to; none for every lock. */
+  locks?: string[];
 }
 
 /**
@@ -769,20 +789,20 @@ export interface TypeUse {
  */
 export function typeUses(mappings: MappingFile[]): TypeUse[] {
   const uses: TypeUse[] = [];
-  const members = (where: string, m: Members | undefined) => {
-    for (const [key, v] of Object.entries(m ?? {})) uses.push({ where: `${where}: member "${key}"`, type: v.type, field: { field: key } });
+  const members = (where: string, m: Members | undefined, locks?: string[]) => {
+    for (const [key, v] of Object.entries(m ?? {})) uses.push({ where: `${where}: member "${key}"`, type: v.type, field: { field: key }, ...(locks ? { locks } : {}) });
   };
   for (const m of mappings) {
     for (const e of m.entries) {
       const where = `${m.file}: entry "${e.ir}"`;
-      if (e.as.role === "property") uses.push({ where, type: e.as.type, field: fieldOf(e.ir) });
-      if (e.as.role === "type" || e.as.role === "members" || e.as.role === "profile") members(where, e.as.members);
+      if (e.as.role === "property") uses.push({ where, type: e.as.type, field: fieldOf(e.ir), ...(e.locks ? { locks: e.locks } : {}) });
+      if (e.as.role === "type" || e.as.role === "members" || e.as.role === "profile") members(where, e.as.members, e.locks);
     }
     for (const d of m.types ?? []) {
       const where = `${m.file}: type "${d.name}"`;
-      members(where, d.members);
+      members(where, d.members, d.locks);
       const field = d.ir === undefined ? { problem: `the declaration of "${d.name}" names no IR element` } : fieldOf(d.ir);
-      for (const t of d.any_of ?? []) uses.push({ where, type: t, field });
+      for (const t of d.any_of ?? []) uses.push({ where, type: t, field, ...(d.locks ? { locks: d.locks } : {}) });
     }
   }
   return uses;
@@ -796,14 +816,20 @@ export function typeUses(mappings: MappingFile[]): TypeUse[] {
  */
 function instantiateMapping(model: Model, mappings: MappingFile[]): { inst: Instantiator; problems: string[] } {
   const problems: string[] = [];
-  const layers = mappedTypes(mappings);
+  const all = mappedTypes(mappings);
   const inst = new Instantiator(model);
-  for (const { where, type: t, field } of typeUses(mappings)) {
-    const bad = applicationProblems(model, t, where, null, layers);
+  const views = new Map<string, Instantiator>();
+  for (const { where, type: t, field, locks } of typeUses(mappings)) {
+    // A use on some locks only is checked against the constructors those locks see, as the stack's own `Selectable`.
+    const seen = locks === undefined ? model : { kernel: kernelEditionsOn(model.kernel, locks[0]!), constructors: constructorEditionsOn(model.constructors, locks[0]!) };
+    const bad = applicationProblems(seen, t, where, null, locks === undefined ? all : mappedTypes(mappings, locks));
     problems.push(...bad);
-    if (bad.length > 0 || t.kind !== "apply" || nestingProblems(model, t, where).length > 0) continue;
+    if (bad.length > 0 || t.kind !== "apply" || nestingProblems(seen, t, where).length > 0) continue;
+    // Each edition view names its copies apart, so one view's copy doesn't clash with another's of the same name.
+    const editioned = seen !== model && [...seen.constructors.constructors, ...seen.constructors.parts].some((c) => c.edition !== undefined);
+    const into = editioned ? (views.get(locks![0]!) ?? views.set(locks![0]!, new Instantiator(seen)).get(locks![0]!)!) : inst;
     try {
-      inst.schemaOf(t, "field" in field ? field.field : undefined);
+      into.schemaOf(t, "field" in field ? field.field : undefined);
     } catch (err) {
       problems.push(`${where}: ${(err as Error).message}${"problem" in field ? ` (${field.problem})` : ""}`);
     }

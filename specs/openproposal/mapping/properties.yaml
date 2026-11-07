@@ -1,0 +1,525 @@
+# Written by `npm run map`. `depends`, and the entries and types that cite a decision record,
+# are kept as they are; every other entry and type is derived by a mapping rule (src/mapping-rules.ts).
+format: 1
+module: properties
+sections: []
+lock_sections: { with-our-stack: [ 5.2.4, 5.2.6, 5.2.7, 5.2.8 ] }
+types:
+  - name: PropertyOption
+    kind: object
+    ir: key:5.2.4:PropertyOption.id
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: PropertyOptionSellerRelationship
+    kind: vocabulary
+    ir: key:5.2.4:PropertyOption.seller_relationship#meaning/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: false
+    terms: [ owner, manager, inventory_partner, reseller ]
+  - name: PropertyOptionChildAudience
+    kind: vocabulary
+    ir: key:5.2.4:PropertyOption.child_audience#meaning/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: false
+    terms: [ directed, mixed, general ]
+  - name: PropertyOptionChildTreatment
+    kind: vocabulary
+    ir: key:5.2.4:PropertyOption.child_treatment#meaning/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: false
+    terms: [ excluded, contextual ]
+  - name: PropertyOptionAllocation
+    kind: vocabulary
+    ir: key:5.2.4:PropertyOption.allocation#meaning/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: false
+    terms: [ all, seller_allocated ]
+  - name: SellerAccount
+    kind: object
+    ir: key:5.2.6:SellerAccount.asi
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: Screen
+    kind: object
+    ir: key:5.2.8:Screen.screen_id
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: Loop
+    kind: object
+    ir: key:5.2.8:Loop.length_s
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: SyncGroup
+    kind: object
+    ir: key:5.2.8:SyncGroup.sync_group_id
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+entries:
+  - ir: sentence:5.2.4:c99219fe
+    digest: 26ca44b6abc8575c2a118d07bfb409d8c4496e37978a5d813dc48d5d561c4a69
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.4:05b0def3
+    digest: 9d4672ea146bb0e3566032e8357adb105770dc9d48a0976047e91efcf5b34e06
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.2.4:PropertyOption.id
+    digest: 800219b4fb0ba124e44fdb19bf21d17cd73df66d9366503f851f0a540be0ab8a
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: PropertyOption, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:5.2.4:373dbf11
+    digest: 462d29307e915aed2f8410772951cceb6cc63dd703a510a9ab26e40b5b63b2f8
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: PropertyOption }
+  - ir: key:5.2.4:PropertyOption.name
+    digest: aefb4736cbdcd31f60197621d4ec22376b9c2785f644b2b640625ae5a944f975
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: PropertyOption, type: { kind: named, name: PlainString }, presence: optional }
+  - ir: rule:5.2.4:ae26d4ac
+    digest: e96db53bd10e0831949c33875af5f708d192d56db434a93e894902f33f098dfc
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: PropertyOption }
+  - ir: "key:5.2.4:PropertyOption.domains[]"
+    digest: 4fdff00a813e8665185f332349816ea8b2696dd9b9dcf113195f430ca575de86
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: PropertyOption
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Domain } } }
+      presence: conditional
+  - ir: rule:5.2.4:c8e6720e
+    digest: deb08ee697e96fb13400d1957885fc09c540a6cdd4f200601491677cb92a6753
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: PropertyOption }
+  - ir: "key:5.2.4:PropertyOption.apps[]"
+    digest: 892321b9606c31abfc8bd376dfdcb9ad15769f4eecdcc51d5a80cbc54b5d4330
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: PropertyOption
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: App } } }
+      presence: conditional
+  - ir: rule:5.2.4:65ca47c9
+    digest: 3e939a90f559a0366bc88b8bba0df06746919795c1bf990a3650f88becf90df3
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: PropertyOption }
+  - ir: key:5.2.4:PropertyOption.seller_relationship
+    digest: fe9a100af8f0a9d8fc155171e6cc650b7088db5c5f21c19da97671f19ec3e022
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: PropertyOption
+      type: { kind: named, name: PropertyOptionSellerRelationship }
+      presence: required
+  - ir: key:5.2.4:PropertyOption.seller_relationship#meaning/values:1
+    digest: 7a14045589aa36be2a2ef790e75d3bdd670813c9846675f7ae55d5fc93782ea0
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: PropertyOptionSellerRelationship }
+  - ir: rule:5.2.4:373dbf11-2
+    digest: 70c519c2ad1bf85332babb12d453fe813dd38591c21651259918378deec81525
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: PropertyOption }
+  - ir: key:5.2.4:PropertyOption.inventory_partner_domain
+    digest: 1cab1da22cb3a7acb8a6292af02e8b6a09a38355ecd77a01a0bd39e26b775d60
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: PropertyOption, type: { kind: named, name: Domain }, presence: optional }
+  - ir: rule:5.2.4:ae26d4ac-2
+    digest: 1c6880291470a5d45bd8f724e573f398169fd73d322d92e69eb093e13f60b186
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: PropertyOption }
+  - ir: "key:5.2.4:PropertyOption.seller_accounts[]"
+    digest: 256753be657967d26034978299fe97b1043d3a29e9a8f580ff6ace3bb7034c4e
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: PropertyOption
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: SellerAccount } } }
+      presence: conditional
+  - ir: rule:5.2.4:45d0b1fa
+    digest: f6a772d5267d5c7610684eb86d845891ff8dc8e319afac9f68ced6f9887db120
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: PropertyOption }
+  - ir: key:5.2.4:PropertyOption.child_audience
+    digest: d321342846c62489ae050922b506d2a03e2e54c00ac3489b1eab520508907473
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: PropertyOption
+      type: { kind: named, name: PropertyOptionChildAudience }
+      presence: required
+  - ir: key:5.2.4:PropertyOption.child_audience#meaning/values:1
+    digest: 479fefbeb30424ed6397bb84ccf11ec82d3df88151a5bfecc765f41fd80c4560
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: PropertyOptionChildAudience }
+  - ir: rule:5.2.4:373dbf11-3
+    digest: 3214660b6ce85a5f6bbbde49cd4675c953c90bf98294572f847f1088c14d0ee1
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: PropertyOption }
+  - ir: key:5.2.4:PropertyOption.child_treatment
+    digest: 9e11b43fa712968290b15d18bc4ca7beefb3922d3480e6f1fcba55106555709d
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: PropertyOption
+      type: { kind: named, name: PropertyOptionChildTreatment }
+      presence: conditional
+  - ir: key:5.2.4:PropertyOption.child_treatment#meaning/values:1
+    digest: aee58921f997e9b863c99baee458d11c49b6aa4d07adda327619424eb965798b
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: PropertyOptionChildTreatment }
+  - ir: rule:5.2.4:74a51506
+    digest: 8f2a9bc9f40842622ccf6962b817328c6b5b9fc2635494c4511ac7960556550d
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: PropertyOption }
+  - ir: key:5.2.4:PropertyOption.venue_type
+    digest: 78f8494879de6e326402cd24af001372bbb228338900d5faec7042b25c257aad
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: PropertyOption, type: { kind: named, name: TaxonomyCodes }, presence: conditional }
+  - ir: rule:5.2.4:02c220b8
+    digest: 36a0f278ff22b7b0884cdcf91a0329776f1afa402cc3bc809cd5fbe427b70e49
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: PropertyOption }
+  - ir: key:5.2.4:PropertyOption.allocation
+    digest: 3037ffee92c9fdf2207f4d6413d268c9100217194a9290b197d19e0fbc2eba16
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: PropertyOption
+      type: { kind: named, name: PropertyOptionAllocation }
+      presence: optional
+  - ir: key:5.2.4:PropertyOption.allocation#meaning/values:1
+    digest: 8d78234e7ad3acd002d51a65907482ec0a318fe124fba721ca40fb712dda29f3
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: PropertyOptionAllocation }
+  - ir: rule:5.2.4:ae26d4ac-3
+    digest: 38e3578ac5d47d4133f5017c89fe2ff692b380b3fa2d32d9728487a795ae6b8f
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: PropertyOption }
+  - ir: key:5.2.4:PropertyOption.min_screens
+    digest: 93e3f3343327f296ec32c7983d4db27c4aa5f3b6484d318e07d79ab8bc400e68
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: PropertyOption, type: { kind: named, name: PlainInteger }, presence: optional }
+  - ir: rule:5.2.4:ae26d4ac-4
+    digest: 09e6351f3c3f4e6bbc816c7e9a41c81acdf712605c75a4e0ef8b0464511ce0cf
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: PropertyOption }
+  - ir: "key:5.2.4:PropertyOption.screens[]"
+    digest: c0de2413bae7a966c468ea5bd0f26c207ed20ff66dba549b71f9cee7053877e4
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: PropertyOption
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Screen } } }
+      presence: conditional
+  - ir: rule:5.2.4:ea387bb0
+    digest: b4f0034f99cb878ea27381a7ebee200d694c9d61f8dd5ac17ce0e965fa32ac73
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: PropertyOption }
+  - ir: key:5.2.4:PropertyOption.slots_per_loop
+    digest: c1ef2cfcaa1c5e3e422ce9322a06b154608963070934b356b76b68501e461fd4
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: PropertyOption, type: { kind: named, name: PlainInteger }, presence: optional }
+  - ir: rule:5.2.4:ae26d4ac-5
+    digest: 333b7b2f070ac6f261bcfcc08852dde14795f4922b25ba0e59801f568d442f33
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: PropertyOption }
+  - ir: "key:5.2.4:PropertyOption.sync_groups[]"
+    digest: cc8b8eb74683a3c4bece0eff7a4d599e5ac36b0540f3ea4de9d6f16e5269231b
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: PropertyOption
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: SyncGroup } } }
+      presence: optional
+  - ir: rule:5.2.4:ae26d4ac-6
+    digest: aaaeae753249361b57528bea6ad4860552628644441c3baa097b454007660dc0
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: PropertyOption }
+  - ir: sentence:5.2.6:d0ecb401
+    digest: 5dc89d7ba4b51d025c630bf8e4bf2fa597ff9f0511e2e2799e282e4d99f8fdf1
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.6:fce81ac9
+    digest: e9b111143a7d1ba9e527567226567c53fae0262c2886ae6dfc84ca3631977ca2
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.2.6:SellerAccount.asi
+    digest: ef0ae4395b34292d2ebe0ed8522bf825245df8fd51622282556d80cf904fb3d1
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: SellerAccount, type: { kind: named, name: Domain }, presence: required }
+  - ir: rule:5.2.6:373dbf11
+    digest: 64d758401b9809a3c3f26434f49f5f386db164d3a3649aaf6b0d514b523cec46
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: SellerAccount }
+  - ir: key:5.2.6:SellerAccount.sid
+    digest: b335ef6296e2bbb2ee52560b62cfee4749b4de01e872f80c0a1393df902b60ac
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: SellerAccount, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:5.2.6:373dbf11-2
+    digest: 9282f389c845bbb69a73a5754506fb9e82d5896cfc7905c058bb3b73c1ffe4f8
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: SellerAccount }
+  - ir: sentence:5.2.6:429fda90
+    digest: 668057a753edab2bc561a582e977721d9cccb9a18d658df7d14ce1c11b9cff89
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.6:6582ec27
+    digest: 8b22b9ae5d48529c2ab2ff59f8c852d0acb587385e22bdcda8ce713372e4d3e0
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: def:5.2.6:seller_relationship.owner
+    digest: 9925aaf44be46e4b388929af18e6a98c2b25641ea2c28144b3ecc912bbab3113
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: schema, in: PropertyOptionSellerRelationship }
+  - ir: def:5.2.6:seller_relationship.manager
+    digest: c38298abd2d91b842a48e1cd878b869c12de7ed0a980b3ffd22d2cd7913eb287
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: schema, in: PropertyOptionSellerRelationship }
+  - ir: def:5.2.6:seller_relationship.inventory_partner
+    digest: 9c89e465e102e32e1fb74425b3032f8f2a5158d34786a6583a816bb098a6f14d
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: schema, in: PropertyOptionSellerRelationship }
+  - ir: def:5.2.6:seller_relationship.reseller
+    digest: c45d8e61a9bb806685cd1b4928c4f170e156d3ee1bdab767e79372c75f7ebd5c
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: schema, in: PropertyOptionSellerRelationship }
+  - ir: rule:5.2.6:b4fc58b5
+    digest: 3deed6fd0563e1c2000b4f4f7c0dd20a127dd6e0ee1b77803fcb165a8c977105
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.2.6:a1d575ff
+    digest: d5bd6abecc7e932113ffa3d0c2735ed0a554992f5a14b6e732d8e2ffab7a60b9
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: seller }
+  - ir: rule:5.2.6:0cb2d370
+    digest: f64dc327698595f0c97a57b1d07bbfba632893a56a1e55d9191ebce8f7065fc7
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: consumer }
+  - ir: rule:5.2.7:d85c61b6
+    digest: 03789619c9af53abce7a668783c35c29fd8ec5721df0a51318370fbf9f48823c
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.2.7:166e9f13
+    digest: 2d207bea886a3f042fe1ddc2892a363320ad2caf32ef23c3ed8568d80b717a13
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:5.2.8:9760fc55
+    digest: 6f2df2cb4cd8071353afc1e6952fc82c0f4aba0a82bff544b9c2a4d245c896a4
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.8:39b7ecbf
+    digest: b4ce59a7cc26ebc9b7bde4e12d805bcf4667d231e2d7f3d07ced22a2887c6aad
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.2.8:Screen.screen_id
+    digest: 213b19f61f8ffdcd47bb69236f7e5ee7eba0ae414718c7ea7c0df09b6518ffdd
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Screen, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:5.2.8:373dbf11
+    digest: eb09e4eda4c908d25abd808f596fc42515bdff67f6868f7b1166cef070fd6d18
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Screen }
+  - ir: key:5.2.8:Screen.lat
+    digest: 9ac6304ee7aa0ec4a390dc4c03077613012db5e1e7eed39ab1bda2e9066507cd
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Screen, type: { kind: named, name: PlainNumber }, presence: optional }
+  - ir: rule:5.2.8:ae26d4ac
+    digest: 6534f1640702357958c730ddb1ac949b3859e33d0a78c693e32a53e79ed4dc04
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Screen }
+  - ir: key:5.2.8:Screen.lon
+    digest: 10e67863d301bb3d66871f970da46cda55a46e09138c9fbf90894cc8a51e2804
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Screen, type: { kind: named, name: PlainNumber }, presence: optional }
+  - ir: rule:5.2.8:ae26d4ac-2
+    digest: b348015bce8e77a865f169ee9409390a557bf8d48aca661683a0e8c39609432b
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Screen }
+  - ir: key:5.2.8:Screen.movable
+    digest: 12741af3f07daff4a53814869ab65595b4fa731554b405889c586b6807ce9a45
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Screen, type: { kind: boolean }, presence: optional }
+  - ir: rule:5.2.8:ae26d4ac-3
+    digest: 9be7b5b7707fb5dc320100933605b85acf5d1f17383bb4bf5c035c13bebc89d4
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Screen }
+  - ir: key:5.2.8:Screen.time_zone
+    digest: 3ff6012607b766df2a717a341e284efd9aa32f1efd19e1832c38b5188b1df4b7
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Screen, type: { kind: named, name: IanaZone }, presence: optional }
+  - ir: rule:5.2.8:ae26d4ac-4
+    digest: 13efbad1fe2f72a55af144d688f87cff64aefb4e24207eb138b948ff7b777083
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Screen }
+  - ir: "key:5.2.8:Screen.operating_hours[]"
+    digest: bdd8a5eeb7e183ee432dd6825a59b2d41033018b081a5267621aad6221550f6c
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: Screen
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ClockWindow } } }
+      presence: optional
+  - ir: rule:5.2.8:ae26d4ac-5
+    digest: ac8c8404f04f9d10039d3358209a2a8ec298a8fdbe304f600191e066102071ae
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Screen }
+  - ir: key:5.2.8:Screen.loop
+    digest: 5f51558a7c130701a82105937348df44ebaf71802e5f47313f20de805eb84637
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Screen, type: { kind: named, name: Loop }, presence: optional }
+  - ir: rule:5.2.8:ae26d4ac-6
+    digest: d8309e3440c9381ec2c9c1476648b8182c75db2c73c50ec64aca036b2198ea52
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Screen }
+  - ir: sentence:5.2.8:7e5eac5e
+    digest: e6f5d914646b61aee7d464c41e930f5d6ef47f1037bb8699d955e6d7771af8bf
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.2.8:Loop.length_s
+    digest: 03f786d87354b6f43ec9148b4ad8f3aefd822a11fe3b550ad9c9ab9880d4be70
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Loop, type: { kind: named, name: PlainInteger }, presence: required }
+  - ir: rule:5.2.8:373dbf11-2
+    digest: 829875641eda6bcbf697a3f93575c12d0e5cda33274e7c3f1cc8ae67449199ac
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Loop }
+  - ir: key:5.2.8:Loop.slot_s
+    digest: 7f545a560618e7a8978658d20632e28d186b174586a8429f571536a57f3b10ff
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Loop, type: { kind: named, name: PlainInteger }, presence: required }
+  - ir: rule:5.2.8:373dbf11-3
+    digest: b35e36502049d7615aeef7b75eb01602a4646ad89f6853a1f731399e71c18faa
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Loop }
+  - ir: sentence:5.2.8:78cd1d0d
+    digest: 4512ae4bf54a2351242236b47b282622ff755f34a9859edef0cb439c59f72e48
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.2.8:SyncGroup.sync_group_id
+    digest: fc91fbc712fc9021d871c5eac45f7a0f627e31bf0799dae74446814523ccf1c5
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: SyncGroup, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:5.2.8:373dbf11-4
+    digest: 552529363c3a75eabf05a9ea9718bdc3c81ccb77f4705cece99e97bcbdf2446a
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: SyncGroup }
+  - ir: "key:5.2.8:SyncGroup.screen_ids[]"
+    digest: 4be3d781489961f86a32e32ec057394c0e5d39beae3588af8fbc2869c021fdb7
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: SyncGroup
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PlainString } } }
+      presence: required
+  - ir: rule:5.2.8:373dbf11-5
+    digest: d91b68e3fad22a16bdfb645f34f6ab2cab81f0b54eb14cd988b7e0b397be7dee
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: SyncGroup }
+  - ir: key:5.2.8:SyncGroup.min_screens_per_play
+    digest: 34b819fe3becdcaafce433f66f1e7b47dab3de59bc35683dff262a57d771831b
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: SyncGroup, type: { kind: named, name: PlainInteger }, presence: required }
+  - ir: rule:5.2.8:373dbf11-6
+    digest: 36637ddfeacfa93133b681e32261b88bb17a02756bcebbb29a61e672838da63d
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: SyncGroup }
+  - ir: rule:5.2.8:66d19e2d
+    digest: 2d5bac8aee7212c4387915c87c3ac7e326a0d1e67a9344e41401cd26c47df625
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:5.2.8:0479a87f
+    digest: 9db668569b0ed7d7c2f594d4cd859c22e53b478f150565627485498fd2f19c83
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }

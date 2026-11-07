@@ -1,10 +1,11 @@
 /** The gates on the kernel: the primitives, the constructors and their parts, the value domains, and the duplication gate over every kernel type and copy. */
+import { constructorEditionsOn, editionViews, kernelEditionsOn } from "../src/editions.ts";
 import { checkApplied, checkConstructors, checkConstructorSources, checkMappingConstructors, checkNesting, copyStructures, loadConstructors, partStructures, typeUses, type Constructors, type Model } from "../src/constructors.ts";
 import { checkDomains, checkDomainSources, sharedStructures, type Domains, type KernelType } from "../src/domains.ts";
 import { checkDuplication } from "../src/duplication.ts";
 import { checkKernelEngines, ORACLE_GAPS, type OracleGaps } from "../src/engines.ts";
 import type { SpecIR } from "../src/ir-types.ts";
-import { checkKernel, checkKernelNames, checkKernelSources, kernelStructures, loadKernel, type Kernel, type Primitive } from "../src/kernel.ts";
+import { checkKernel, checkKernelNames, checkKernelSources, kernelOn, kernelStructures, loadKernel, type Kernel, type Primitive } from "../src/kernel.ts";
 import type { DecisionRecord, MappingFile } from "../src/mapping.ts";
 import { defineGate, ROOT } from "./harness.ts";
 
@@ -184,7 +185,7 @@ export const mappingConstructors = defineGate<{ model: Model; mappings: MappingF
   fixtures: [
     {
       name: "an application of a constructor that doesn't exist",
-      mutate: (i) => ({ ...i, mappings: JSON.parse(JSON.stringify(i.mappings).replace('"constructor":"Selectable"', '"constructor":"NoSuchConstructor"')) as MappingFile[] }),
+      mutate: (i) => ({ ...i, mappings: JSON.parse(JSON.stringify(i.mappings).replaceAll('"constructor":"Selectable"', '"constructor":"NoSuchConstructor"')) as MappingFile[] }),
       expect: "NoSuchConstructor",
     },
     {
@@ -218,7 +219,9 @@ export const constructorsApplied = defineGate<{ model: Model; mappings: MappingF
     {
       name: "Map unapplied once Selectable's shell no longer applies it, with the mapping's own maps dropped",
       mutate: (i) => {
-        const constructors = i.model.constructors.constructors.map((c) => (c.name === "Selectable" ? { ...c, shell: { ...c.shell, properties: { ...(c.shell.properties as object), pricing: { $model: { kind: "named", name: "PriceDelta" } } } } } : c));
+        // Each edition of Selectable, the stack's `deltas` as the kernel's `pricing`, stops applying Map.
+        const dropMap = (props: Record<string, unknown>) => Object.fromEntries(Object.entries(props).map(([k, v]) => [k, JSON.stringify(v).includes('"constructor":"Map"') ? { $model: { kind: "named", name: "PriceDelta" } } : v]));
+        const constructors = i.model.constructors.constructors.map((c) => (c.name === "Selectable" ? { ...c, shell: { ...c.shell, properties: dropMap({ ...(c.shell.properties as Record<string, unknown>), ...(c.edition === undefined ? { pricing: { $model: { kind: "named", name: "PriceDelta" } } } : {}) }) } } : c));
         const mappings = JSON.parse(JSON.stringify(i.mappings).replaceAll('"constructor":"Map"', '"constructor":"List"')) as MappingFile[];
         return { ...i, mappings, model: { ...i.model, constructors: { ...i.model.constructors, constructors } } };
       },
@@ -273,15 +276,27 @@ export const domainSources = defineGate<{ ir: SpecIR; lock: string; domains: Dom
 });
 
 /** The duplication gate's input: every named type of the kernel, the parts, and the mapping's copies. */
-export const duplicationKernel = defineGate<{ kernel: Kernel; model: Model | null; mappings: MappingFile[] }>({
+export const duplicationKernel = defineGate<{ kernel: Kernel; model: Model | null; mappings: MappingFile[]; locks?: string[] }>({
   id: "duplication-kernel",
   title: "duplication: each named type defined once, no structural twins unless their concepts share a structure the domain model declares",
   code: ["src/duplication.ts#checkDuplication", "src/kernel.ts#checkKernelNames", "src/kernel.ts#kernelStructures", "src/constructors.ts#copyStructures", "src/domains.ts#sharedStructures"],
   exemptions: ["kernel/domains.yaml#shared_structures", "specs/*/kernel-binding.yaml#shared_structures"],
   check: (i) => {
     const copies = i.model ? copyStructures(i.model, i.mappings) : [];
+    // Each lock's kernel holds one type of each name, its editions standing in for the types they share a name with (src/editions.ts), and the
+    // kernel is sound on each: two types no lock publishes together are no twins a receiver could confuse. With no locks, each edition's view.
+    const views: { kernel: Kernel; constructors: Model["constructors"] | null }[] = !i.model
+      ? [{ kernel: i.kernel, constructors: null }]
+      : i.locks && i.locks.length > 0
+        ? i.locks.map((l) => ({ kernel: kernelOn(kernelEditionsOn(i.kernel, l), l), constructors: constructorEditionsOn(i.model!.constructors, l) }))
+        : editionViews(i.kernel, i.model.constructors);
+    const shared = sharedStructures(i.kernel.domains);
+    const viewTypes = views.map((v) => [...kernelStructures(v.kernel), ...(v.constructors ? partStructures(v.constructors) : []), ...copies]);
+    const twins = [...new Set(views.flatMap((v, n) => [...checkDuplication(viewTypes[n]!, shared, false), ...checkKernelNames(v.kernel, i.mappings)]))];
+    // A shared structure names only concepts some type represents, on some lock.
+    const represented = new Set(viewTypes.flat().flatMap((t) => (t.concept ? [t.concept] : [])));
+    for (const x of shared.sets) for (const c of x.concepts) if (!represented.has(c)) twins.push(`${shared.file}: shared structure ${x.concepts.join(", ")}: no type represents "${c}"; remove it from the set`);
     const types = [...kernelStructures(i.kernel), ...(i.model ? partStructures(i.model.constructors) : []), ...copies];
-    const twins = [...checkDuplication(types, sharedStructures(i.kernel.domains), true), ...checkKernelNames(i.kernel, i.mappings)];
     const concepts = new Set(types.flatMap((t) => (t.concept ? [t.concept] : []))).size;
     return { problems: twins, note: `${types.length} named types, ${copies.length} of them copies; the kernel types represent ${concepts} concepts` };
   },

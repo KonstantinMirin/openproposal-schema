@@ -8,6 +8,7 @@ covers:
   - ir: field:5.4:production#description/object:1
     digest: 00eb00879b4a550444376e9812df5389c4a7066a43b48982f04bc6f35974f62d
     quote: "{ custom_unit, build_owner, lead_time, cost }"
+    locks: [main, with-open-prs]
   - ir: key:5.2.2:placement.skipafter
     digest: 7eb11e62931be7a67537c85a3e6e1609978155b48c0219644d3998f796a1c36d
     quote: "`skipafter` | OPTIONAL | When `skip` is `1`: seconds the ad plays before the placement enables skipping | `VideoPlacement.skipafter`, `AudioPlacement.skipafter`, `video.skipafter`"
@@ -21,12 +22,15 @@ covers:
   - ir: field:5.6:availability#description/object:1
     digest: 8a93eee2b91a74d8f7ce7fa00ed1af2b272702885b71d981fc562b711d8b40be
     quote: "{ unit, basis, as_of, granularity, type: forecast | reservable, quantity }"
+    locks: [main, with-open-prs]
   - ir: field:5.7:measurement_source#description/object:1
     digest: 7213fd41321c72d119261e7a84890af68599b6801c2fc5cef92127295fb4ed22
     quote: "{ vendor, attribution_window, qualifier }"
+    locks: [main, with-open-prs]
   - ir: field:5.7:reporting#description/object:1
     digest: 15b343617f534633524b7226be5e3f1d36fa7042fd26aa52c5fde05bc1e50adb
     quote: "{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency }"
+    locks: [main, with-open-prs]
   - ir: sentence:5.2.2:4076adca
     digest: d76efae93f99344c4c74e2fb1cffdc78993c5155838aa3038bcc720c01ac0b1b
     quote: Keys follow AdCOM 1.0 `Placement` and its `DisplayPlacement`, `VideoPlacement` and `AudioPlacement` subtypes, and the matching OpenRTB 2.6 `Imp` attributes.

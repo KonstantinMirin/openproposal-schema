@@ -11,14 +11,21 @@ import type { SpecIR } from "../src/ir-types.ts";
 import { loadKernel } from "../src/kernel.ts";
 import { loadDecisions, loadMappings } from "../src/mapping.ts";
 import { resolveModel, type ModelDoc, type ModelType } from "../src/model.ts";
-import { OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
+import { constructorEditionsOn, kernelEditionsOn } from "../src/editions.ts";
+import { oldConstructors, oldKernel, OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT, SPEC);
+const KERNEL = oldKernel(loadKernel(ROOT, SPEC));
 const DOMAINS = KERNEL.domains!;
-const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const CONSTRUCTORS = oldConstructors(loadConstructors(ROOT, SPEC));
 const MAPPINGS = loadMappings(join(SPEC, "mapping"));
 const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 const TYPES = kernelTypes(KERNEL.primitives, CONSTRUCTORS.parts, { kernel: KERNEL.file, constructors: CONSTRUCTORS.file });
+// The domain model is the kernel's, for every lock: its soundness reads every type, the stack's editions and its own types among them.
+const FULL_KERNEL = loadKernel(ROOT, SPEC);
+const FULL_CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const ALL_TYPES = kernelTypes(FULL_KERNEL.primitives, FULL_CONSTRUCTORS.parts, { kernel: FULL_KERNEL.file, constructors: FULL_CONSTRUCTORS.file });
+const STACK_IR = JSON.parse(readFileSync(join(SPEC, "ir", "with-our-stack", "spec-ir.json"), "utf8")) as SpecIR;
+const STACK_MODEL = resolveModel({ ir: STACK_IR, lock: "with-our-stack", mappings: MAPPINGS, decisions: DECISIONS, kernel: kernelEditionsOn(FULL_KERNEL, "with-our-stack"), constructors: constructorEditionsOn(FULL_CONSTRUCTORS, "with-our-stack") }).model;
 const ir = (dir: string) => JSON.parse(readFileSync(join(SPEC, dir, "spec-ir.json"), "utf8")) as SpecIR;
 const LOCKS: { lock: string; ir: SpecIR; model: ModelDoc; dir: string }[] = [
   ["main", "ir", "schemas"],
@@ -35,18 +42,20 @@ const domains = (edit: (d: Domains) => void): Domains => {
 const concept = (d: Domains, name: string) => d.domains.flatMap((x) => x.concepts).find((c) => c.name === name)!;
 
 test("the committed domain model is sound, current on both locks, and every lock's model obeys it", () => {
-  assert.deepEqual(checkDomains(DOMAINS, TYPES, DECISIONS), []);
+  assert.deepEqual(checkDomains(DOMAINS, ALL_TYPES, DECISIONS), []);
   for (const l of LOCKS) {
     assert.deepEqual(checkDomainSources(l.ir, l.lock, DOMAINS, TYPES), [], l.lock);
     assert.deepEqual(useProblems(l.model, l.lock, TYPES), [], l.lock);
     assert.deepEqual(propertyProblems(l.model, l.lock, DOMAINS, DECISIONS), [], l.lock);
   }
-  assert.deepEqual(homonymProblems(LOCKS.map((l) => l.model), DOMAINS), []);
+  // A homonym holds across every lock's model, the stack's too.
+  assert.deepEqual(homonymProblems([...LOCKS.map((l) => l.model), STACK_MODEL], DOMAINS), []);
 });
 
 test("time has four concepts, and every time value of every lock fits one", () => {
   const time = DOMAINS.domains.find((d) => d.name === "time")!;
-  assert.deepEqual(time.concepts.map((c) => c.type), ["Timestamp", "Duration", "DaypartWindow", "TimeZone"]);
+  // The stack's own time concepts, as its `Instant`, are the stack's; the other locks' are these four.
+  assert.deepEqual(time.concepts.filter((c) => TYPES.some((t) => t.name === c.type)).map((c) => c.type), ["Timestamp", "Duration", "DaypartWindow", "TimeZone"]);
   for (const l of LOCKS) {
     for (const t of l.model.types) {
       if (!("properties" in t)) continue;
@@ -143,10 +152,11 @@ test("the elements that lack a currency are listed, covered by the decision, and
 });
 
 test("a recurring member name with two concepts needs a homonym, and a homonym that no longer differs fails", () => {
-  const unlisted = homonymProblems(LOCKS.map((l) => l.model), domains((d) => (d.homonyms = d.homonyms.filter((h) => h.member !== "version"))));
+  const all = [...LOCKS.map((l) => l.model), STACK_MODEL];
+  const unlisted = homonymProblems(all, domains((d) => (d.homonyms = d.homonyms.filter((h) => h.member !== "version"))));
   assert.equal(unlisted.length, 1, unlisted.join("\n"));
-  assert.match(unlisted[0]!, /the member name "version" resolves to 2 concepts: count \(/);
-  const stale = homonymProblems(LOCKS.map((l) => l.model), domains((d) => d.homonyms.push({ member: "currency", decision: "D-036", reason: "Every currency is one concept." })));
+  assert.match(unlisted[0]!, /the member name "version" resolves to 3 concepts: count \(/);
+  const stale = homonymProblems(all, domains((d) => d.homonyms.push({ member: "currency", decision: "D-036", reason: "Every currency is one concept." })));
   assert.deepEqual(stale, [`${DOMAINS.file}: homonym "currency" resolves to one concept on every lock; remove it`]);
 });
 

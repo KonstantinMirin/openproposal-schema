@@ -1,0 +1,601 @@
+sentence:1:d4f75c7f	line 39	Custom proposal — built in response to a buyer's agent brief, referenced via `brief_id`.
+sentence:1.1:cb4f2630	line 43	Each line item lands in the one that the `transaction_mechanism` in effect (§ 5.9) maps to:
+sentence:1.1:f48a63ba	line 59	A line item agreed under a deal mechanism (§ 5.9) becomes a Deals API 1.0 `Deal`.
+sentence:1.1:195050a4	line 60	The system named by `deal_origin` (§ 5.9) pushes the `Deal` to the DSP named by `buyer_requirements.seats.dsp`.
+sentence:1.1:d174c622	line 62	The `Deal` takes these values from the agreed line item:
+sentence:1.1:ab9ea5e7	line 82	`commitment.flight.end` and `terms.enddate` are the flight's last second, inclusive.
+sentence:1.1:19a49a6f	line 83	The Deals API 1.0 doesn't say whether `enddate` is inclusive, so this mapping states it.
+sentence:1.1:fea40456	line 86	`terms.dealfloor` and `Deal.bidfloor` are prices per thousand impressions, so this table maps a `CPM` entry.
+sentence:1.1:cccd0b13	line 89	A `GeoCode` (§ 5.5) converts for the OpenRTB 2.6 `Geo` object: `country` takes the ISO 3166-1 alpha-3 code of the country, and `region` takes the part of an ISO 3166-2 code after the hyphen.
+sentence:1.1:ce5fac68	line 94	`terms.countries` takes the same alpha-3 code.
+sentence:1.1:3e5fab5c	line 95	The list names whole countries, so `US` minus `US-TX` sends `USA`, and `geo` in the agreed record holds the exclusion.
+sentence:1.1:698aed5b	line 96	The record holds no country for an extension term, so the system that pushes the `Deal` supplies the one the term lies in.
+sentence:1.1:a0db28a8	line 100	The line item's `status` ends at `agreed` (§ 5.1).
+sentence:1.1:72a6d2a7	line 100	After the push, the deal's state is the Deals API `sellerstatus` and, for each seat, `BuyerStatus.status`.
+sentence:1.1:80383fee	line 104	A `direct_io` line item that books in OpenDirect 2.1, and the reservation of a `programmatic_guaranteed` line item, become a `Line` in an `Order`.
+sentence:1.1:84b27048	line 107	OpenDirect says who acts: on the seller's OpenDirect server, the buyer adds the `Order` to its `Account`, adds the `Line`, and reserves or books it.
+sentence:1.1:d45352ed	line 108	The `Order` and `Line` take these values from the agreed line item:
+sentence:1.1:0602a8d2	line 121	Any other `cost_method`, and `TIME` with another `rate_unit`, has no `ratetype` and no mapping here.
+sentence:1.1:c0d148f6	line 122	A `direct_io` line item under one books in another order system, which its `order` entry names (§ 5.10), and changes there.
+sentence:1.1:50a44ede	line 123	OpenDirect's cap counts a unique user, so it has no key for `frequency_cap.per`.
+sentence:1.1:39b422a4	line 126	The record holds no value for `Order.name` and `Line.name`, or for `Order.accountid`, `Order.publisherid`, `Order.advertiserbrandid`, and `Line.productid`, which name the server's own `Account`, `Organization`, `AdvertiserBrand`, and `Product` resources.
+sentence:1.1:538c88cd	line 129	OpenDirect 2.1 has the buyer obtain those ids from the publisher and its server, and no key here says which `Product` a line item books.
+sentence:1.1:be04708a	line 130	The ids of the `Order` and the `Line` go in `external_references[]`, and the `Line`'s state is its `bookingstatus`.
+sentence:1.2:cfd91eea	line 136	It is also normative for the lifecycle of the object to its terminal statuses, and for what a section of this document says a request or response carries, such as `errors[]` (§ 2.4), an `AvailabilityRead` (§ 3.3), and a `Commit` and its `CommitResult` (§ 5.6.1).
+sentence:1.2:98f88619	line 143	It is not normative for replay semantics beyond the rule in § 5.6.1, for any lifecycle after `agreed`, or for how a message states the buyer's `Party`, the form of a brief, or how an issued proposal reaches the buyer.
+sentence:1.2:2f4d2cb6	line 148	The nearest artifact is the pre-release `iab-agentic-primitives` library, version 0.5.1.
+sentence:1.2:2679ed0d	line 152	Those messages carry no proposal, `Commit`, or `errors[]`, so they are a model for the binding, not the binding itself.
+sentence:1.2:eda8011b	line 176	A message signature proves an `https` origin.
+sentence:1.2:98c390c5	line 178	An `assent[]` entry travels in the body of a signed message, as optional evidence, and § 4.1.2 states when the signature attributes it to a party.
+sentence:1.2:83d4626f	line 182	After `agreed`.
+sentence:1.2:7efe631c	line 182	This specification's lifecycle ends at `agreed`.
+sentence:1.2:d651704b	line 182	The downstream standard executes against the agreed line item as baseline: the `VersionRef` (§ 2.2) that names the line item and the `version` of its agreed record (§ 4.1.2).
+sentence:1.2:97d28587	line 185	`external_references[]` (§ 5.10) holds the ids that join it to downstream systems.
+sentence:1.2:f197501a	line 186	The parties request and apply any change to its terms downstream, against the options selected in that record, `cancellation_policy` and `shortfall_remedy` included.
+sentence:1.2:e659a83b	line 188	A change is not a state or action of this object, and it changes no agreed term; `change_requests[]` (§ 4.4) records the request beside the agreed terms.
+sentence:1.2:711f0b8f	line 193	NOTE: The IAB Tech Lab `iab-agentic-primitives` repository defines a post-booking change request and its lifecycle (`ChangeRequest`, `ChangeRequestLifecycle`).
+sentence:1.2:55bcdf8f	line 196	`change_requests[]` (§ 4.4) takes the OpenDirect 2.1 fields, not that model.
+sentence:2:6d07fde0	line 214	The proposal supplies only identity, `spec_version`, the offer window, `version`, and its packages.
+sentence:2.1:b90d9a93	line 235	A summary's own table adds keys beside these paths: the `line_items[]` and `packages[]` of `ProposalSummary`, whose entries are summaries.
+sentence:2.1:7ecd963f	line 238	`LineItemSummary` lists these paths of a line item (§ 5):
+sentence:2.1:bd68c3df	line 285	`ProposalSummary` lists these paths of a proposal (§ 4):
+sentence:2.1:5ed82d3e	line 296	`ProposalSummary` adds this key:
+sentence:2.1:26c8e267	line 303	`PackageSummary` keys:
+sentence:2.2:f68cc64e	line 347	`VocabularyTerm` rules.
+sentence:2.2:a2848c31	line 347	A field that takes a `VocabularyTerm` lists its core terms.
+sentence:2.2:64220787	line 352	A term in an `Array[VocabularyTerm]` is not an entry of its own: it belongs to the option or entry that holds the array.
+sentence:2.2:842d76f9	line 359	`DocumentRef` pins a binding document.
+sentence:2.2:3efb5d1c	line 368	`VersionRef` locates an offer at a version.
+sentence:2.2:d3643f2d	line 368	A `proposal_id` is unique only within a `seller.domain` (§ 4.1): a `VersionRef` inside a proposal resolves against that proposal's `seller`, and one outside a proposal carries `seller_domain`.
+sentence:2.2:d8d6aa35	line 380	`Party` names a legal party.
+sentence:2.2:b76a4e3f	line 380	`domain` is the identifier, and `registry_id` is an attestation.
+sentence:2.2:d6dc8d5f	line 392	`SeatRef` names a buyer's seats.
+sentence:2.2:2e03f10f	line 399	`TaxonomyCodes` holds codes in one taxonomy.
+sentence:2.2:8ee95e46	line 399	Each field that holds it names the list `taxonomy` comes from and whether an id covers its descendants.
+sentence:2.2:ba9af762	line 407	`Interval` is an absolute window, with `end` later than `start`.
+sentence:2.2:929b2417	line 414	`Range` bounds a value of type `T`, written `Range[T]`.
+sentence:2.2:db4f2290	line 414	At least one bound is present, and `min` is no greater than `max`.
+sentence:2.3:0183178d	line 427	`ProposalManifest` keys:
+sentence:2.3:a3e7aa8a	line 436	`ManifestEntry` holds the keys of `ProposalSummary` (§ 2.1) and this one:
+sentence:2.3:b25c9490	line 444	Only shared proposals (§ 4.3) appear, and within them only line items whose `visibility` (§ 5.8) is `public` and whose `status` is `published`.
+sentence:2.3:329c49c5	line 446	`registry_gated` and `named` line items do not.
+sentence:2.3:ce3b39d7	line 446	A package appears only when every line item in its `line_items[]` does, with only the add-ons that do.
+sentence:2.3:28a63bdb	line 448	A buyer discards an entry whose `seller.domain` differs from the domain in the URL it requested, before any redirect.
+sentence:2.3:ee9cad3c	line 450	`full_url` returns only what the requester may read (§ 5.8), so a request with no authenticated identity gets only `public` line items.
+sentence:2.3:1b694b98	line 457	`HoldLimits` keys:
+sentence:2.3:54eb4241	line 467	The holds on the line items in a package's `line_items[]`, which move as a unit (§ 4.1.4), count as one.
+sentence:2.3:232494bb	line 470	A seller that declares `hold_limits` publishes the manifest even when `proposals[]` is empty.
+sentence:2.3:2ff495fd	line 477	Propose: fetch the Full Representation of shortlisted line items from `full_url`.
+sentence:2.4:a0e47988	line 487	A seller's decline of a resolved `commitment`, or of a hold, answers a valid request and is not an error.
+sentence:2.4:4c8c6422	line 491	`ErrorObject` keys:
+sentence:2.4:252a6c4d	line 501	Core codes: `validation` | `not_found` | `not_offered` | `unresolved_reference` | `not_committable` | `stale_version` | `expired` | `idempotency_conflict` | `not_eligible` | `record_mismatch`.
+sentence:2.4:0214afb3	line 518	An `ErrorObject` is open.
+sentence:2.4:17d27ddf	line 518	A receiver that does not recognize a code, or a key of the object, acts on `retry`.
+sentence:2.4:06766992	line 521	Informative: over HTTP, `validation`, `not_offered`, and `unresolved_reference` fit 400 Bad Request; `not_eligible` 403 Forbidden; `not_found` 404 Not Found; `not_committable`, `stale_version`, and `record_mismatch` 409 Conflict; `expired` 410 Gone; `idempotency_conflict` 422 Unprocessable Content.
+sentence:2.4:3dbcc7cd	line 525	An error with `retry: same` fits 503 Service Unavailable.
+sentence:2.5:64988413	line 545	In an object whose keys this specification lists, a key outside `ext` that it does not list is invalid.
+sentence:2.5:7b67929e	line 546	An object whose content another definition sets, such as a `FormatSpec`'s `spec` (§ 5.4), is unaffected, and so are the open objects `DocumentRef` (§ 2.2), `ErrorObject` (§ 2.4), and `CostParameters` (§ 5.6.5).
+sentence:2.5:fa9d3799	line 550	On the proposal and a line item, `ext` is part of the Full Representation and of the record frozen at `agreed` (§ 4.1.1), and a seller change to it is a revision.
+sentence:2.5:b603a40c	line 552	On a `change_requests[]` entry, it is outside the record, as the entry is (§ 4.4).
+sentence:2.6:3fd263ee	line 562	The key table of a `mixed` field adds Mutability as its last column.
+sentence:2.6:25be7a32	line 563	A row names one key, and a key that holds an array ends `[]`.
+sentence:2.6:42bbdf8d	line 564	The type of an object option in a `Selectable[T]` ends `Option`.
+sentence:2.6:8e67c9dd	line 570	A Form that adds a value to a type reads `A `T`, or `b` `, and one that adds a second type reads `A `T`, or a `U` `.
+sentence:2.6:f02bc9c8	line 575	A Required cell is `REQUIRED`, `OPTIONAL`, `RECOMMENDED`, or `REQUIRED when <condition>`.
+sentence:2.6:4c78d105	line 578	A lead-in may limit its table's keys instead, with `holds exactly one key` or `At least one <noun> is present`.
+sentence:2.6:44d6e818	line 581	A Type cell holds `String`, `Integer`, `Number`, `Boolean`, `Enum`, `Object`, a shared type (§ 2.2), a type its section names, or a named key table.
+sentence:2.6:44e7479b	line 583	`Array[T]`, `Map[K, V]`, `Range[T]`, `Selectable[T]` (§ 3.1), `Settable[T]`, `Narrowing[T]`, and `SettableRange[T]` (§ 3.2) take other types.
+sentence:2.6:e89f0125	line 584	`T`, `K`, and `V` stand for a type's arguments, and a Type cell inside that type's table may name them.
+sentence:2.6:eed7c16f	line 586	`Enum` is a closed list of strings, written in the row that uses it, and a generic never takes it: a list a generic takes has a name.
+sentence:2.6:357883db	line 587	A closed list of integers written in a row has Type `Integer`.
+sentence:2.6:0897aa20	line 588	`Object` holds keys that another definition sets.
+sentence:2.6:d59b9029	line 588	A lead-in that reads "`X` holds the keys of `Y`" gives `X` every key of `Y`, with the rules `Y` states on them, and the rows of its own table.
+sentence:2.6:3cbc8bd4	line 590	The keys sit flat in `X`, and `X` doesn't repeat them.
+sentence:2.6:da67ca31	line 590	`Y` may take a type, such as `Range[T]`.
+sentence:2.6:b3e1306d	line 591	A lead-in that adds "each `<marker>`" gives the composed keys that marker.
+sentence:2.6:d95e1c21	line 591	A lead-in that reads "`X` lists these paths" is followed by a `text` block with one path per line.
+sentence:2.6:5fb76023	line 592	The first segment of a path is a key of `X`, and later segments nest as they do in the object `X` is a subset of.
+sentence:2.6:31294941	line 594	A segment written `<name>` stands for what the lead-in says.
+sentence:2.6:6cf7220f	line 594	A key table led in by "`X` adds this key" or "`X` adds these keys" follows that block and gives `X` those keys beside the listed paths.
+sentence:2.6:d665f5fa	line 598	A list is written once, as ``a` \| `b``, or ``a`` alone when it has one value, or as the first column of a value table the text names as the list.
+sentence:2.6:99abd19a	line 600	A `VocabularyTerm` field says so and lists its core terms, or points to other lists, whole or in part, and adds any others; every other list is closed, and in a row it opens the Meaning cell.
+sentence:2.6:be6f6cf1	line 607	An array named by a noun is plural, except the mass nouns `assent[]`, `pricing[]`, `evidence[]`, `verification[]`, and `negotiation_history[]`, and a name another standard spells, such as `playmethod[]`.
+sentence:2.6:f0f5d5dd	line 609	A name that isn't a noun keeps its form, such as `available[]`, `include[]`, `best_for[]`, and `all_of[]`.
+sentence:2.6:440c7082	line 610	The suffix `_ref` is reserved for `DocumentRef` and `EntryRef`.
+sentence:2.6:c1e43a8d	line 611	A Boolean flag may end `_allowed` or `_required`, and a list never does.
+sentence:2.6:d7d7d5d5	line 615	A list taken from another standard keeps that standard's spelling and names it, such as `ApprovalStatus`.
+sentence:2.6:94459332	line 616	A list built on another standard's list follows its case and names it: `cost_method` is upper case, like OpenDirect 2.1 `Line.ratetype`, and § 1.1 maps it to that list.
+sentence:2.6:1336ad16	line 620	A key from another standard keeps that standard's values, as `IntegerFlag` does.
+sentence:2.6:a174d0b2	line 623	`none` is a value only where it has its own meaning or the key is required.
+sentence:2.6:0403e4c8	line 626	Prose names a field by its full table path, such as `properties.available[].apps[].store`.
+sentence:2.6:c38945dc	line 629	A value that points into a document is a `FieldPointer`.
+sentence:2.7:0a2ab4b6	line 635	Agents that can spend read this object, and much of it is text the counterparty wrote: `description`, `media_kit_detail`, `best_for[]`, `not_suitable_for[]`, `seasonality_notes`, `approval`, `creative_policy`, `ext` values, a `FormatSpec`'s `spec`, a change request's `comments`, an error's `detail`, and the document behind a `DocumentRef`.
+sentence:2.7:900a1170	line 643	A document names URLs its author chose: `proposals[].full_url`, a `DocumentRef`'s `url`, an `Asset`'s `url`, a `CreativeDelivery`'s `endpoint`, and an `App`'s `store_url`.
+sentence:2.7:0fe01aca	line 645	A client uses `https`, bounds the size of a response and the number of redirects, and refuses an address inside its own network, on every redirect as well.
+sentence:2.7:63ef97de	line 650	A `digest` shows that the bytes are the ones a `DocumentRef` names.
+sentence:2.7:770e660a	line 651	A client compares it before reading the bytes, and `unresolved_reference` (§ 2.4) reports a mismatch.
+sentence:2.7:a05f4e19	line 654	`exclusions`, `buyer_supplied.segments[]`, and `buyer_supplied.suppression_list` show a buyer's strategy and can hold data about people.
+sentence:2.7:ded42f9e	line 657	§ 5.5 states the disclosure rule for `exclusions`.
+sentence:3:8bce3258	line 704	Whose `status`.
+sentence:3:d1ec9803	line 704	The proposal's (§ 4.1) for a field defined in § 4; the line item's (§ 5.1) for a field defined in § 5, including `seller-set` sub-fields of a `mixed` field.
+sentence:3:786275c2	line 708	§ 4.3, not the `seller-set` revision rule, governs the seller's answer to a `requestable` ask.
+sentence:3:cb1810ae	line 712	Only `requestable` fields require the counterparty to respond.
+sentence:3:acf8d54a	line 715	A resolved `commitment` is an offer to buy (§ 5.6.1).
+sentence:3:9cae6039	line 721	`selected[]`, `value`, and `excluded[]` (§ 5.3) are keys of the field and carry no marker of their own.
+sentence:3.1:0a88d171	line 726	Every field marked `selectable` is a `Selectable[T]`, or a named type that holds its keys, where `T` is the option type.
+sentence:3.1:85278b83	line 729	`Selectable` keys:
+sentence:3.1:90082c7b	line 742	`selected[]` is the complete set in effect and replaces `included[]`.
+sentence:3.1:4235f893	line 743	With no `selected[]`, `included[]` is in effect.
+sentence:3.1:2da94e5e	line 743	`max_select` counts the whole set.
+sentence:3.1:ec0ebc8d	line 744	Dropping an option in `included[]` doesn't lower the rate.
+sentence:3.1:167f85d2	line 751	`Delta` keys.
+sentence:3.1:1355e230	line 751	§ 5.6 states how they enter `agreed_rate`.
+sentence:3.2:f5da1fc4	line 763	A field marked `settable` declares its bounds in one of two forms, and the buyer writes one key, `value`.
+sentence:3.2:9509efd3	line 764	`frequency_cap` holds its form in `count`.
+sentence:3.2:7d7b28fc	line 764	The keys of `commitment` are the one exception: `commitment_bounds.spend` and the committed entry's `unit_bounds` hold its bounds (§ 5.6, § 5.6.1).
+sentence:3.2:5abfeb9e	line 768	`Settable` is the envelope form.
+sentence:3.2:688cf2cf	line 768	`value` only narrows `allowed[]`.
+sentence:3.2:f07ea411	line 776	`Narrowing` keys.
+sentence:3.2:a0327ab0	line 785	`SettableRange` holds the keys of `Range[T]` (§ 2.2) and these.
+sentence:3.3:27f28f1d	line 801	On a `dooh` line item, they recompute on the screens of the properties in effect, over hours inside both `operating_hours[]` and `daypart`.
+sentence:3.3:c10596ed	line 804	A buyer reads these figures by sending the seller an `AvailabilityRead`.
+sentence:3.3:d6de45ae	line 804	The read changes no `status`, writes no history, reserves nothing, and doesn't limit a later decline (§ 5.6.1).
+sentence:3.3:f4451272	line 808	`AvailabilityRead` holds the keys of `BuyerWrites` (§ 3.4) and these:
+sentence:3.4:39df5553	line 818	`BuyerWrites` holds what a buyer writes on one line item.
+sentence:3.4:5167ab36	line 822	`BuyerWrites` lists these paths, where `<selectable>` is a field marked `selectable`, and `<settable>` is a field marked `settable` other than `frequency_cap`:
+sentence:3.4:e06f9ab3	line 836	`LineItemWrites` holds the keys of `BuyerWrites` and this one.
+sentence:3.4:808be197	line 836	It is the buyer's writes on one line item, which a `Commit` (§ 5.6.1) and a hold's `requested_terms` (§ 5.6.2) carry.
+sentence:4.1:a8a07485	line 872	`HistoryEntry` keys:
+sentence:4.1:3dab0ceb	line 882	`HistoryPath` keys:
+sentence:4.1:9ff4638d	line 890	`RequestedValue` holds exactly one key: the `requestable` field `pointer` names, in the form its row states.
+sentence:4.1:a0fee758	line 891	`pointer` says which `pricing[]` entry.
+sentence:4.1:49814af1	line 904	A proposal names exactly one `seller.domain`.
+sentence:4.1:fbfad0a5	line 905	For this specification one `seller.domain` is one seller: entities that transact under one domain are one seller here, and `seller.legal_name` carries the legal name.
+sentence:4.1:da1773b0	line 911	Where a third party hosts a seller's agent or published files, `seller.domain` is the selling entity's own registrable domain, never the host's.
+sentence:4.1.1:4bba336f	line 948	Restricting to S leaves `line_items[]` an array of the line items in S, in document order however S is named.
+sentence:4.1.1:085d807a	line 949	In a proposal with `packages[]`, it leaves each package that holds a line item in S, with only the line items and add-ons in S, and each `$.line_items[*]` path above also selects that path under `$.packages[*].line_items[*]` and `$.packages[*].add_ons[*]`.
+sentence:4.1.1:b86f0ddd	line 952	Nothing else narrows: a proposal-level value such as `description` stays as it is.
+sentence:4.1.1:642fcd68	line 955	The one exception is `buyer_supplied`: if it holds no key after these removals, it is removed too, whether the removals emptied it or it was written empty.
+sentence:4.1.1:87d9c76f	line 958	Each removed path is one of three things: lifecycle state or sequence position (`version`, `status`, `assent[]`, `negotiation_history[]`, `change_requests[]`, `hold`); a seller assertion, advisory text, an informative figure, or an identifier minted downstream of agreement (`best_for[]`, `not_suitable_for[]`, `seasonality_notes`, `availability`, `addressable_scale`, `expected_match_rate`, `min_rate`, `derived_units`, `external_references[]`); or a delivery (`assets[]`, `segments[]`, `suppression_list`).
+sentence:4.1.1:6c933da9	line 964	The requirement on creative (`formats`, `format_specs`, `creative_policy`, `materials_due`) is a term, and so is the permission to deliver a list (`segments_allowed`, `suppression_allowed`, `accepted_exclusions`).
+sentence:4.1.1:219bf348	line 969	Every other value is inside the record, named here or not: `proposal_id`, `spec_version`, `seller`, `buyer`, `type`, `proposal_template_id`, `brief_id`, `issued_from`, `offer_window`, `ext`, and each package's `package_id` and `min_commitments[]`; every `seller-set` field, including `hold_terms` and prose (`description`, `media_kit_detail`, `creative_policy`, `format_specs`); the seller's value of a `requestable` field, such as `pricing[].list_rate`, including one a `grant` or `counter` put in force; every option space (`available[]`, `included[]`, `deltas`, `max_select`, `allowed[]`, `min` / `max`, `default`); every `BuyerWrites` value (§ 3.4) and `commitment`, as they stand at `agreed`; `pricing[].agreed_rate`; and every `DocumentRef` (§ 2.2) whole, with any key its publisher added, whose `url` and `digest` pin the bytes.
+sentence:4.1.1:9f0d6559	line 978	A list the buyer delivers after `agreed` is a delivery and does not change the agreed record (§ 4.1.2).
+sentence:4.1.1:66e6fbb3	line 981	Where a value whose Type cell is `String` (§ 2.6) conflicts with a typed field of the same `version` in the binding record, the typed field governs.
+sentence:4.1.1:a91a7ba7	line 983	A value of an `Enum` or of a § 2.2 type, such as an `Instant`, `Duration`, or `VocabularyTerm`, is a typed field.
+sentence:4.1.1:3f083a18	line 985	A `description` that offers an 8.00 `CPM` doesn't change a `list_rate` of 12.00.
+sentence:4.1.1:8ca741a7	line 988	The binding record is cut from the composed record: the Full Representation of `version` as the seller published it to this buyer, with the buyer's writes (§ 3.4) applied.
+sentence:4.1.1:5c177d70	line 990	A stored line item holds the writes of a `commit` only while its `commitment` entry is live or matched by an `acceptance`.
+sentence:4.1.1:ee465300	line 992	Otherwise, as for a rejected `commit`, a full fetch doesn't show them and they enter no later composed record.
+sentence:4.1.1:b1290f2c	line 993	A document that already holds those writes at that `version` is its own composed record.
+sentence:4.1.1:67ab8f6f	line 994	A `Commit` (§ 5.6.1) carries the buyer's entry and writes, not a copy of the seller's terms.
+sentence:4.1.1:ea65ff78	line 1000	`derived` values.
+sentence:4.1.1:07a18634	line 1000	The only `derived` value inside the record is `pricing[].agreed_rate` on the committed entry.
+sentence:4.1.1:f8e55774	line 1001	On a line item with a `commitment`, a party sets it to the § 5.6 result before serializing, replacing a written value or adding an absent one.
+sentence:4.1.1:ea066674	line 1008	A document carried as YAML is a single YAML document, converted to JSON under the YAML 1.2 core schema: aliases expand, and `<<` is an ordinary key.
+sentence:4.1.1:0d226a75	line 1010	A non-string mapping key, `.inf`, `.nan`, a recursive alias, an explicit tag, or a second document in the stream has no JSON form and makes the document invalid for this section, and so do duplicate object keys in its JSON form.
+sentence:4.1.1:62bc0de7	line 1022	`24.00`, `24`, and the YAML `0x18` are the same value.
+sentence:4.1.1:565dfc29	line 1025	`record_digest` is the `Digest` (§ 2.2) of the digest input.
+sentence:4.1.1:9fd49903	line 1025	It sits only on `assent[]` entries.
+sentence:4.1.1:b10cb27e	line 1031	A `withdrawal` or `decline` acts on the entries it matches (§ 4.1.2), so its `record_digest` is compared, not recomputed.
+sentence:4.1.2:4185f60b	line 1036	`assent[]` holds the parties' acts in the order they were written, and only it decides whether a line item is agreed.
+sentence:4.1.2:7838c492	line 1039	`AssentEntry` keys:
+sentence:4.1.2:7c0975a4	line 1051	Two entries match when their `version`, `record_digest`, and `line_item_ids[]` are equal.
+sentence:4.1.2:c6e43dca	line 1052	`line_item_ids[]` compare as sets, so an acceptance cannot cover part of a commitment.
+sentence:4.1.2:e95695a5	line 1055	`role: commitment` is written by the buyer.
+sentence:4.1.2:18100fa4	line 1057	The entry accepts every `terms_refs[]` entry (§ 5.8) of the line items it names, at the bytes each `digest` pins, so a buyer compares each document with its `digest` first.
+sentence:4.1.2:74cbe1c9	line 1060	`role: acceptance` is written by the seller, only while a `commitment` entry it matches is live.
+sentence:4.1.2:b1e180e2	line 1061	An `acceptance` that matches no live entry is invalid.
+sentence:4.1.2:3d67e37e	line 1062	`role: withdrawal` is written by the buyer, and `role: decline` by the seller.
+sentence:4.1.2:3720a27b	line 1062	Each ends the `commitment` entries before it that it matches.
+sentence:4.1.2:c5c4e5ee	line 1064	A `commitment` entry is live until the first of these: a matching `withdrawal` or `decline`, its `commit` going stale (§ 4.1.3) or void (§ 4.3.2, § 4.3.4), or `offer_window.end`.
+sentence:4.1.2:57dfdeca	line 1066	Once a matching `acceptance` exists, nothing ends it.
+sentence:4.1.2:46048f7e	line 1073	The line items of a `commitment` entry are `agreed` when, and only when, `assent[]` holds a matching `acceptance` entry.
+sentence:4.1.2:110168c4	line 1074	A line item for which no such pair exists is not agreed, whatever its `status` says.
+sentence:4.1.2:42dbc7e5	line 1076	Adding an `assent[]` entry does not change `version`.
+sentence:4.1.2:430978d8	line 1077	`agreed` is terminal for a line item.
+sentence:4.1.2:248a753f	line 1084	To check a pair, a party recomputes `record_digest` from the agreed record, not from the current document, and tests that the two entries match.
+sentence:4.1.2:067e10f7	line 1086	Each party keeps the agreed record, and a copy of every document a `DocumentRef` in it pins.
+sentence:4.1.2:addc1297	line 1095	Requests and responses are both signed, so the seller's `acceptance` and `decline` arrive signed, as the buyer's entries do.
+sentence:4.1.2:ec934f27	line 1097	The signature attributes the entry to the record's party that `role` implies when it covers the body, through `Content-Digest` (RFC 9530), and the host of the signing origin is that party's `domain` or a subdomain of it, such as `signing.<domain>`.
+sentence:4.1.2:aafdf092	line 1103	`record_digest` covers `seller` and `buyer`, so the signed body also binds the party's name.
+sentence:4.1.2:8e5481e7	line 1111	No check in this specification requires or verifies a signature, and `agreed` does not depend on one.
+sentence:4.1.2:5ca39dff	line 1118	Once a matching pair exists, an absent or failed signature, or a key later removed from its directory, does not change `agreed`.
+sentence:4.1.3:52da3817	line 1124	The offered terms of a version are every value the seller writes: `immutable` and `seller-set` fields; the seller's value of a `requestable` field, such as `pricing[].list_rate`; the seller-declared structure of `selectable` and `settable` fields (`available[]`, `included[]`, `deltas`, `max_select`, `allowed[]`, `min`, `max`, `default`); and the set of `line_item_id`s the version carries.
+sentence:4.1.3:fdeb7c34	line 1140	A buyer composes against a named `version` and never increments it.
+sentence:4.1.3:3984bae3	line 1143	Two representations of the same `(proposal_id, version)` whose offered terms differ, compared on the fields and line items both carry, are non-conformant.
+sentence:4.1.3:39b87017	line 1154	Its `action` is one of the following:
+sentence:4.1.3:031671ad	line 1157	`published` for version 1, appended no later than the moment version 1 is frozen, and for a change the seller makes on its own initiative, including a change to `seller-set` prose.
+sentence:4.1.3:9a678333	line 1160	`granted` or `countered` for a change that answers a buyer's `requestable` ask: `granted` puts the requested value into force, `countered` puts a different value into force in its place.
+sentence:4.1.3:23e07e1c	line 1165	Every other entry (`requested`, `declined`, `withdrawn`) carries the version it refers to.
+sentence:4.1.3:7f809fd0	line 1168	An ask or a hold is on a `version`.
+sentence:4.1.3:ee4166ee	line 1168	It is stale when the binding record (§ 4.1.1) for the line items it names, with any buyer writes applied, differs between that `version` and the current one.
+sentence:4.1.3:2905c906	line 1170	`version` is outside the record, so a revision that touches only another line item does not make it stale, and a change to a proposal-level term does.
+sentence:4.1.3:0efead3c	line 1172	A change to the `line_item_id`s of a package that holds a line item it names also makes it stale.
+sentence:4.1.3:379f94d5	line 1174	§ 5.6.1 states the test for a `commit`.
+sentence:4.1.4:b3c0c7ee	line 1185	A proposal that holds `packages[]` holds each of its line items in a package, so a line item the seller sells alone is a package of one.
+sentence:4.1.4:9ad0a9c8	line 1186	A line item sold both alone and in a package appears twice, under two `line_item_id`s, as two offers.
+sentence:4.1.4:3b37e5bb	line 1190	`Package` keys:
+sentence:4.1.4:3b9469af	line 1199	`MinCommitment` holds the keys of `CommitmentAmount` and this one.
+sentence:4.1.4:0ddca2d6	line 1199	Whatever `basis` the commitment on `line_item_id` uses, a `spend` threshold reads against its seller total (§ 5.6.5), in the currency of the entry committed (§ 5.6), and a `units` threshold reads against the units that entry commits, as `pricing[].unit_bounds` counts them.
+sentence:4.1.4:b473baac	line 1209	`package_id` values are unique within the proposal, and so are `line_item_id` values.
+sentence:4.1.4:4cae9eae	line 1216	A package can't be bought while a line item in its `line_items[]` is `sold_out` or `withdrawn`, since that line item can't be committed.
+sentence:4.1.4:759ac005	line 1217	Each line item keeps its own `status` (§ 5.1).
+sentence:4.1.4:31c4d5d7	line 1218	The holds on the line items in a package's `line_items[]` move as a unit (§ 5.6.2).
+sentence:4.1.4:ff91db0d	line 1221	In an agreed package whose `line_items[]` holds more than one line item, a buyer exercises their `cancellation_policy` options only together.
+sentence:4.1.4:6bc2a815	line 1222	It sends one request (§ 4.4), whose entries share an `id`, with a `cancellation` (§ 5.6.6) for each.
+sentence:4.1.4:86099b57	line 1223	Every notice states the same `cancelled_share` and `requested_effective_at`.
+sentence:4.1.4:e1f30211	line 1224	Each cancellation takes effect on the latest effective date any of them yields (§ 5.6.6), and cancels no more than the smallest `max_share` that applies on that date.
+sentence:4.1.4:5396c293	line 1226	A notice on only some of them, or a request whose notices differ in `cancelled_share` or `requested_effective_at`, exercises no option.
+sentence:4.1.4:63dd7c59	line 1229	Cancelling the line items doesn't cancel an add-on: a buyer cancels it under its own `cancellation_policy`.
+sentence:4.2:e31853ae	line 1245	`best_for[]`, `not_suitable_for[]`, and `seasonality_notes` are advisory.
+sentence:4.2:0848d5bd	line 1245	They are outside the binding record (§ 4.1.1) and the offered terms (§ 4.1.3), so editing them creates no `version`.
+sentence:4.3:0172dee2	line 1251	A proposal with no `buyer` is shared.
+sentence:4.3:cc29872f	line 1251	A proposal with a `buyer` is issued to that buyer.
+sentence:4.3:cb70d96f	line 1252	The seller creates one with `publish`: a new `proposal_id`, version 1, `buyer`, and, when it is made from a shared proposal, `issued_from`.
+sentence:4.3:49057986	line 1254	A `custom` proposal is issued from the start.
+sentence:4.3:2d63383c	line 1254	`buyer` is immutable, so every later version stays with that buyer.
+sentence:4.3:9e990c7e	line 1255	Each issued proposal has an independent `status`, `version` and `negotiation_history[]`.
+sentence:4.3:79b4c9d5	line 1258	A buyer that wants an issued proposal sends, over the message binding, the ask, hold, or commit it would make, naming the shared proposal and `version` it read, or a brief.
+sentence:4.3:40c869be	line 1259	A seller that issues one answers with `publish`, and the buyer sends its ask, hold, or commit against the new `proposal_id`.
+sentence:4.3:0fdeac86	line 1263	Asks, `under_review`, holds, and assent live on a proposal issued to one buyer; a shared proposal, or any other record more than one buyer can read (§ 5.8), carries none of them.
+sentence:4.3:e8505912	line 1267	A buyer `request` (`requestable`, not a hold) or `commit` (§ 5.6.1) is an ask: it names a `version` and stays open until answered or withdrawn, or until it goes stale (§ 4.1.3) or void (§ 4.3.2, § 4.3.4).
+sentence:4.3:7862d36d	line 1269	A `commit` is one act, a `Commit` (§ 5.6.1): the buyer's `assent[]` entry and the writes of each line item that entry names.
+sentence:4.3:57bc7e08	line 1271	A `commit` that goes stale or void is no longer open, and its `commitment` entry is no longer live (§ 4.1.2).
+sentence:4.3:52465c83	line 1272	A `request` is identified by its `line_item_id`, `pointer`, and `requested_value` (§ 4.1).
+sentence:4.3:44501508	line 1272	Two equal ones are one ask while that ask is open, and an equal `request` after it ends is a new ask.
+sentence:4.3.2:3b027dd8	line 1294	A line item moves between `status` values as follows.
+sentence:4.3.2:3f09fd6a	line 1297	`draft` → `draft` at a new `version`: seller `publish`.
+sentence:4.3.2:7b4f62b9	line 1298	`draft` → `published`: seller `publish`.
+sentence:4.3.2:f3624cd7	line 1298	In a frozen version this changes only `status`, so it makes no new `version` and no entry (§ 4.1.3).
+sentence:4.3.2:432cde21	line 1300	`draft` → `withdrawn`: seller.
+sentence:4.3.2:fc89424d	line 1301	`published` → `published` at a new `version`: seller `publish`.
+sentence:4.3.2:1f349c08	line 1302	`published` → `under_review`: buyer ask.
+sentence:4.3.2:6a2e7e12	line 1303	`under_review` → `under_review`: another buyer ask, a seller or buyer act that ends one ask while another stays open, or a seller `publish` that makes no open ask stale.
+sentence:4.3.2:fdaf195e	line 1306	`under_review` → `published`: the last open ask ends by seller `grant`, `counter`, or `decline`, by buyer `withdraw`, or by going stale on a new `version` (rule 2).
+sentence:4.3.2:2a216346	line 1309	`under_review` → `agreed`: seller `accept` of a `commit` (§ 4.1.2); open asks are void.
+sentence:4.3.2:b7662b7b	line 1310	`published` | `under_review` → `sold_out`: seller, never while `hold.status` is `held`; open asks are void.
+sentence:4.3.2:263e2d6f	line 1312	`published` | `under_review` | `sold_out` → `withdrawn`: seller, never while `hold.status` is `held`, nor until the latest `price_valid_until` of its `pricing[]` entries; open asks are void.
+sentence:4.3.2:735461af	line 1315	`sold_out` → `published`: seller, when quantity returns, with no new `version`, because `availability` is not an offered term.
+sentence:4.3.2:2616bec3	line 1317	`published` | `under_review` | `sold_out` → `expired`: `offer_window.end` passes (§ 4.3.4).
+sentence:4.3.2:e0b60730	line 1320	A firm entry is a `pricing[]` entry with a `price_valid_until`.
+sentence:4.3.2:62e994af	line 1320	It holds until that date or `offer_window.end`, whichever comes first.
+sentence:4.3.2:66f8a6f2	line 1329	The allowed grounds are lack of availability, an exclusivity conflict (§ 5.6.7), and a ground stated in the `terms_refs[]` in force when the entry was first offered.
+sentence:4.3.2:efa1872a	line 1333	`sold_out` is lack of availability: a `commit` that arrives while the line item is `sold_out` returns `not_committable` (§ 2.4).
+sentence:4.3.2:01ce39af	line 1338	The seller rejects it with `stale_version` (§ 2.4).
+sentence:4.3.2:5b46a741	line 1340	The revision is a new `version` (§ 4.1.3).
+sentence:4.3.3:12aff16a	line 1348	A proposal's `status` is the first of the following that applies:
+sentence:4.3.3:5fa412e4	line 1350	`draft` when every line item is `draft`.
+sentence:4.3.3:3d1deac4	line 1351	`under_review` when any line item is.
+sentence:4.3.3:7bc17500	line 1352	`published` when any line item is `draft`, `published` or `sold_out`.
+sentence:4.3.3:993853a6	line 1353	`agreed` when any line item is `agreed`.
+sentence:4.3.3:d7067bca	line 1354	Otherwise `expired` when any line item is `expired`, else `withdrawn`.
+sentence:4.3.3:9483a37d	line 1356	A seller `withdraw` of the proposal moves to `withdrawn` every line item that § 4.3.2 lets the seller withdraw.
+sentence:4.4:fb5323cd	line 1372	The history of changes requested after a line item is `agreed`, under any `transaction_mechanism`.
+sentence:4.4:574794ba	line 1381	`ChangeRequest` keys:
+sentence:4.4:c5f567dd	line 1400	A change of `status` is a new entry with the same `id` and `baseline`.
+sentence:4.4:5c5f200c	line 1403	The OpenDirect 2.1 ChangeRequest has no structured statement of the change, only free-text `comments`.
+sentence:5.1.1:5c446bbd	line 1425	Conditions are stated in AdCOM 1.0 terms: the distribution channel, the ad's media (`Placement` subtypes) and the device type.
+sentence:5.1.1:9cc50767	line 1445	`MediaChannel` is a `VocabularyTerm` (§ 2.2) whose core terms are the rows of this table.
+sentence:5.1.1:f84d6159	line 1455	Placement type, such as interstitial or rewarded (OpenRTB 2.6 `video.plcmt`, `imp.instl` and `imp.rwdd`), does not change the channel.
+sentence:5.1.1:d78ddddf	line 1458	Impressions in linear TV, including addressable linear, are outside this table: they have no core `channel` term in 3.0.
+sentence:5.2.1:115c1106	line 1474	`Environment` is a value of this table.
+sentence:5.2.2:4076adca	line 1492	Keys follow AdCOM 1.0 `Placement` and its `DisplayPlacement`, `VideoPlacement` and `AudioPlacement` subtypes, and the matching OpenRTB 2.6 `Imp` attributes.
+sentence:5.2.2:29ac120f	line 1498	`plcmt`, `playmethod[]`, `api[]` and `feed` take any code in List: Plcmt Subtypes - Video, List: Playback Methods, List: API Frameworks and List: Feed Types respectively.
+sentence:5.2.2:ff1c2731	line 1506	`Placement` keys:
+sentence:5.2.2:0f1f9ffb	line 1521	`Refresh` keys:
+sentence:5.2.2:37fcff5a	line 1527	`plcmt` takes its OpenRTB 2.6 name.
+sentence:5.2.2:d640a947	line 1527	AdCOM 1.0 carries the same list as `VideoPlacement.ptype`.
+sentence:5.2.2:3e19d307	line 1528	OpenRTB 2.6 `Audio` has no `skip`, `skipafter` or `playbackmethod`, so for audio those keys map to AdCOM 1.0 `AudioPlacement` only.
+sentence:5.2.2:b9b60857	line 1532	An absent key does not constrain it: a line item that omits `instl` can deliver to interstitial and non-interstitial impressions alike.
+sentence:5.2.2:724e97b8	line 1534	AdCOM 1.0 reads an absent `reward` or `instl` as `0`; here it means either value.
+sentence:5.2.2:8f7b65da	line 1537	An impression matches `api[]` when it supports every listed framework, `playmethod[]` when its playback method is one of the listed values, and `refresh` when the slot renders each creative for at least `min_interval_s` seconds before it refreshes, or does not refresh.
+sentence:5.2.3:c99219fe	line 1549	Each option in `available[]`:
+sentence:5.2.3:a07eb480	line 1551	`BreakPositionOption` keys:
+sentence:5.2.3:a1ad8639	line 1562	AdCOM keys are on `VideoPlacement`, or on `AudioPlacement` for an `audio` line item.
+sentence:5.2.3:775a04b0	line 1566	In `podseq` and `slotinpod`, 0 (any) matches every value.
+sentence:5.2.3:02009bcd	line 1567	In `delay`, -1 matches -1 and any value above 0.
+sentence:5.2.3:61fe9089	line 1568	In `slotinpod`, 2 (first or last) matches 1, -1, and 2.
+sentence:5.2.3:cee0f2de	line 1568	`maxseq` and `poddur` match a pod at or below them.
+sentence:5.2.4:c99219fe	line 1580	Each option in `available[]`:
+sentence:5.2.4:05b0def3	line 1582	`PropertyOption` keys:
+sentence:5.2.5:87c26995	line 1604	`AppId` names an app within its store.
+sentence:5.2.5:a7f197cc	line 1604	A block list (§ 5.5) holds `AppId` entries.
+sentence:5.2.5:f9de9f3d	line 1611	`App` holds the keys of `AppId` and these:
+sentence:5.2.6:d0ecb401	line 1620	Each property states by what right `seller.domain` sells it.
+sentence:5.2.6:fce81ac9	line 1622	`SellerAccount` keys:
+sentence:5.2.6:429fda90	line 1629	The governing file is the ads.txt of each `domains[]` entry, or the app-ads.txt of the developer domain in the app's store listing (found by `store_url`, or by `store` and `bundle`), not `apps[].developer_domain`.
+sentence:5.2.6:6582ec27	line 1631	For `seller_accounts[]`, it is the ads.txt of `inventory_partner_domain` when present, or of `seller.domain` when `seller_relationship` is `inventory_partner`.
+sentence:5.2.8:9760fc55	line 1663	When `channel` is `dooh`, a property is a set of screens of one venue type.
+sentence:5.2.8:39b7ecbf	line 1665	`Screen` keys:
+sentence:5.2.8:7e5eac5e	line 1677	`Loop` keys:
+sentence:5.2.8:78cd1d0d	line 1684	`SyncGroup` keys:
+sentence:5.2.8:0479a87f	line 1695	With a `loop`, a screen delivers `slots_per_loop` × 3,600 ÷ `length_s` plays per operating hour.
+sentence:5.2.9:7de40ccb	line 1700	`ProgramOption` keys:
+sentence:5.2.9:48a78bfe	line 1708	`EventSchedule` keys come from the LEAP Forecast API `UpcomingEvent`, in LEAP's spelling and with its meanings, except that the two times are `Instant` values:
+sentence:5.2.9:3fdaee92	line 1719	An impression matches an option when its content has the option's value for every key `content` declares, with `network` and `channel` compared by `id`.
+sentence:5.2.9:437cd42d	line 1720	With `schedule`, the impression also falls between `scheduledstart` and `scheduledend`, or the event's actual end when `flexibleend` is `1`.
+sentence:5.2.9:9cf2e3f3	line 1732	An event in effect that is cancelled or does not air in its window delivers nothing, and its `delta_flat` is not owed.
+sentence:5.2.9:a4b58e7a	line 1733	`commitment` still applies across the other options in effect inside the flight, and a shortfall against it settles under `shortfall_remedy` (§ 5.7) as for any other delivery.
+sentence:5.3:a4571acc	line 1746	`AudienceOption` keys:
+sentence:5.3:bfc01b13	line 1757	`AudienceSelectable` holds the keys of `Selectable[AudienceOption]` and these:
+sentence:5.3:d7819ead	line 1764	`CombineOperator` is `any` | `all`.
+sentence:5.3:1b70217c	line 1768	The seller audiences in effect (§ 3.1), under the `combine` option in effect.
+sentence:5.3:dc249217	line 1768	`any` matches a user in at least one of them.
+sentence:5.3:2cc1bd2a	line 1769	`all` matches a user in every one.
+sentence:5.3:b8e5ad97	line 1771	At least one of `buyer_supplied.segments[]`, when that list is not empty.
+sentence:5.3:241f87a3	line 1772	None of the options in `excluded[]`.
+sentence:5.3:4d4b8367	line 1773	Not in `buyer_supplied.suppression_list`.
+sentence:5.3:147681be	line 1775	An option in `excluded[]` adds its delta to `agreed_rate` (§ 5.6), under either operator.
+sentence:5.3:d87de53a	line 1782	`BuyerSupplied` keys:
+sentence:5.3:7e711942	line 1792	`BuyerList` describes a list the buyer supplies.
+sentence:5.3:87a16af4	line 1802	`AddressableScale` keys:
+sentence:5.4:75612a3e	line 1823	`FormatId` is a String: `<channel>/<name>`, where `<channel>` is the line item's `channel`, with no `/` or `@` inside a part.
+sentence:5.4:c91aa765	line 1826	`FormatSpec` keys:
+sentence:5.4:e971be47	line 1836	A later registry version does not change an agreed record's `format_specs`.
+sentence:5.4:2fd61eda	line 1840	Core terms: `audio_file` | `video_file` | `image_file` | `markup` | `script`.
+sentence:5.4:d523872c	line 1845	Core terms: `human_only` | `synthetic_permitted`.
+sentence:5.4:729dfe04	line 1846	An asset whose `provenance.synthetic` is true doesn't conform to a spec whose `voice` is `human_only`.
+sentence:5.4:ddb46085	line 1850	`MaterialsDue` holds exactly one key:
+sentence:5.4:a4fd0b15	line 1857	`Asset` keys:
+sentence:5.4:616bf86c	line 1870	On an entry with `built_by: seller`, the seller writes the keys marked `supplied`.
+sentence:5.4:b97e051a	line 1873	`AssetProvenance` records what the party that delivers an asset states about how it was made.
+sentence:5.4:c44e00ea	line 1885	`CreativeDelivery` keys:
+sentence:5.4:e0fd874c	line 1895	`creative_delivery.method` routes the creative under any `transaction_mechanism`:
+sentence:5.4:cde5c3c6	line 1905	`materials_due` doesn't apply when nothing reaches the seller.
+sentence:5.4:af91a182	line 1905	Under OpenDirect 2.1, an `assets[]` entry is a `Creative` assigned to the `Line`, and `approval_status` reads as the seller's status in its `creativeapprovals`.
+sentence:5.4:ae170996	line 1909	`ProductionOption` keys:
+sentence:5.4.1:239a73ec	line 1936	The presence of a URL in VAST `<ClickThrough>` does not establish that requesting it is safe for inspection.
+sentence:5.5:e6f04d03	line 1959	`geo`, `device`, `daypart`, and `frequency_cap` declare bounds, not a value (§ 3.2), and one that is absent declares none.
+sentence:5.5:9c72da40	line 1961	`markets` declares options (§ 3.1).
+sentence:5.5:7f2d336f	line 1961	For `accepted_exclusions` and `exclusions`, the seller declares what it can enforce, and the buyer supplies its lists.
+sentence:5.5:e5c3c930	line 1995	`ExclusionType` is a `VocabularyTerm` (§ 2.2).
+sentence:5.5:fffaa911	line 1995	Core terms: `domains` | `apps` | `categories` | `keywords`.
+sentence:5.5:7438acf7	line 2005	`ExclusionList` is an array of entries, or a `DocumentRef` (§ 2.2) to a JSON array of them.
+sentence:5.5:8b1300b5	line 2010	`AcceptedExclusions` keys:
+sentence:5.5:987af28e	line 2017	`ExclusionTerms` keys:
+sentence:5.5:c9174288	line 2028	An exclusion the buyer adds after `agreed` is a delivery under `accepted_exclusions` (§ 4.1.1).
+sentence:5.5:8548ce2d	line 2029	It travels outside this object, as the members of a `BuyerList` (§ 5.3) do, and `exclusions` stays as it stood at `agreed`.
+sentence:5.5:0b79aa1d	line 2036	`GeoCode` is a String: an ISO 3166-1 alpha-2 country code, an ISO 3166-2 subdivision code, or an extension `VocabularyTerm` for any other area, such as a metro list.
+sentence:5.5:1ce75e3b	line 2049	A seller whose rate differs by market declares `markets`:
+sentence:5.5:9a3726de	line 2060	`ClockWindow` is a repeating window of civil time, deliberately not an `Interval`.
+sentence:5.5:8a0cbdb7	line 2069	`ClockTime` is a String: `HH:MM` on a 24-hour clock, two digits each, from `00:00` to `23:59`, or `24:00`, the end of the day.
+sentence:5.5:0b8ec236	line 2072	`DayOfWeek` is `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`.
+sentence:5.5:422cf727	line 2089	Like the calendar Day of OpenDirect 2.1 `Line.frequencyinterval`, a `frequency_cap.period` other than `flight` is a calendar period in `time_zone`; weeks start on Monday.
+sentence:5.5:0533ff68	line 2094	`FrequencyCap` keys:
+sentence:5.5:6f529195	line 2102	`screen` caps plays per DOOH screen, counted by `screen_id`, or by `sync_group_id` for a sync group's screens; in the bid stream, the screen is the OpenRTB 2.6 `device` with `devicetype` 8.
+sentence:5.6:8ea91c67	line 2136	`pricing[]` entries are alternatives.
+sentence:5.6:edab44fe	line 2137	Only that entry enters `agreed_rate` and `derived_units`.
+sentence:5.6:87f50fab	line 2141	`CurrencyCode` is a String: an ISO 4217 alphabetic code, such as `USD`.
+sentence:5.6:6707dfc8	line 2143	A rate reads in its own entry's `currency`.
+sentence:5.6:8e609656	line 2143	A commitment reads in the committed entry's `currency`, and so does every other `Amount` on the line item: `commitment_bounds.spend`, § 3.1 `delta_cpm` and `delta_flat`, and a cancellation fee.
+sentence:5.6:109c75f7	line 2150	Every `Amount` on a line item is on one basis, so that rates, charges, and totals add and compare.
+sentence:5.6:bc1e0afe	line 2153	`agreed_rate` is computed on the committed entry from the options in effect (§ 3.1), in exact decimal, and rounded once, half up, to 6 decimal places:
+sentence:5.6:388fd9ea	line 2160	A delta counts when its option is in effect and not in `included[]`, on any field of the line item marked `selectable`; § 5.3 adds excluded audience options.
+sentence:5.6:1a265711	line 2161	A `delta_cpm` enters only a `CPM` or `CPMV` entry (§ 3.1), and the option's other deltas still count.
+sentence:5.6:cf14058d	line 2162	So `list_rate` 24.00 with one `delta_cpm` of 3.00 and one `delta_fraction` of 0.02 is 27.54.
+sentence:5.6:e918dad7	line 2164	`delta_flat` stays outside it.
+sentence:5.6:6916ae07	line 2166	For a deal on a `CPM` entry (§ 1.1), the committed entry's `agreed_rate` is the deal's price per thousand impressions, in that entry's `currency`.
+sentence:5.6:432bb085	line 2168	Under an auction `price_type`, it is the deal's minimum bid.
+sentence:5.6:77e03480	line 2169	The Deals API treats it as guidance: per-impression floors can be higher, so a bid at `agreed_rate` is not guaranteed to clear.
+sentence:5.6:cd747ebc	line 2172	`Availability` keys:
+sentence:5.6:a94b6774	line 2183	An `Availability` compares with a commitment only when it has no `granularity`, its `unit` equals the term in the § 5.6.5 `unit` column for the committed entry's `cost_method`, and its `window` equals `commitment.flight`.
+sentence:5.6:9f7d93e0	line 2185	§ 5.6.4 states the committed quantity on a `dooh` line item.
+sentence:5.6.1:4d685ea4	line 2190	The buyer writes it on its composed record (§ 4.1.1), and a `commit` carries it to the seller.
+sentence:5.6.1:38f27f62	line 2191	The buyer writes its `settable` keys itself, and they have no `default` (§ 3.2).
+sentence:5.6.1:78efd2ce	line 2192	A `commitment` resolves under § 3 when the buyer is eligible (§ 5.8), every `selected[]`, `excluded[]`, and `value` on the line item is within what the seller declared (§ 3.1, § 3.2, § 5.3), and the commitment fits `commitment_bounds.spend` and the committed entry's `unit_bounds`, is not stale (§ 4.1.3), and meets the package rules (§ 4.1.4).
+sentence:5.6.1:7f1131ab	line 2196	A resolved `commitment` is an offer to buy.
+sentence:5.6.1:ae4035b9	line 2196	It binds only when the seller accepts it; `assent[]` (§ 4.1.2) records that acceptance for the binding `version`.
+sentence:5.6.1:c02504a9	line 2202	The figures travel in a `CommitResult` with the `decline` entry, in whatever delivers it: the response to the `commit`, a replay, or a later delivery by the message binding (§ 1.2).
+sentence:5.6.1:74271741	line 2207	This does not cover inventory that a hold granted ahead of it (`hold.position`, § 5.6.2) reserves or took on converting.
+sentence:5.6.1:b4dfcf02	line 2210	Frozen when the line item's `status` becomes `agreed`.
+sentence:5.6.1:3f8ec2fb	line 2212	`CommitmentAmount` is the committed figure.
+sentence:5.6.1:1caf701e	line 2212	`basis` means only this.
+sentence:5.6.1:97cda95a	line 2219	`Commitment` holds the keys of `CommitmentAmount`, each `settable`, and these:
+sentence:5.6.1:86809de5	line 2228	The buyer's `assent[]` entry (§ 4.1.2) pins the `version` of a `commit` and carries its `idempotency_key`, so `commitment` repeats neither.
+sentence:5.6.1:00527955	line 2231	`CommitmentBounds` keys:
+sentence:5.6.1:a4760783	line 2239	`Commit` keys:
+sentence:5.6.1:5b645460	line 2246	`CommitResult` is the result of a `commit` that wrote an entry, as it stands.
+sentence:5.6.1:3080dd19	line 2253	The seller recomputes `record_digest` over the line items the entry names as they stand, plus the `writes` of the `Commit` (§ 4.1.1).
+sentence:5.6.1:92c4cfb6	line 2263	A rejected `commit` writes no entry.
+sentence:5.6.1:1c7ec724	line 2265	A seller that rejects a `commit` before `offer_window.start`, or because a live `commitment` entry already names one of its line items (§ 4.1.2), returns `not_committable` with `retry: same`.
+sentence:5.6.1:973fcdc6	line 2269	A `commit` on an issued proposal that this specification gives the seller no ground to reject writes the buyer's `commitment` entry.
+sentence:5.6.1:61a9e908	line 2271	Either way it is an `assent[]` entry, which a full fetch returns (§ 2.1).
+sentence:5.6.1:705cdb53	line 2277	The checks above apply to a new `commit`, not to returning a stored result.
+sentence:5.6.1:e53fa249	line 2278	An error whose `retry` is `same` is not a stored result, so the retry runs the checks again.
+sentence:5.6.1:691b5ead	line 2280	A retry against a new `version` is a new `commit`, with a new `idempotency_key`.
+sentence:5.6.1:ac425753	line 2283	A buyer's `commitment` entry carries its `idempotency_key`, and `assent[]` keeps every entry (§ 4.1.2).
+sentence:5.6.1:31c8e04d	line 2284	So a seller finds a `commit` that wrote an entry by its key for as long as it keeps the proposal.
+sentence:5.6.1:7cd22801	line 2287	Once the seller no longer keeps a rejection, it runs the checks above on a replay as on a first `commit`, and a replay that passes writes the entry with its `idempotency_key`.
+sentence:5.6.2:4d9f74d3	line 2293	`hold_terms` offers a hold.
+sentence:5.6.2:ac21bac2	line 2293	It is `seller-set`, and it is inside the binding record.
+sentence:5.6.2:3e406815	line 2294	`hold` is live state, outside the record (§ 4.1.1), and is absent on a shared proposal (§ 4.3).
+sentence:5.6.2:e7b2ef2c	line 2296	`held` means the seller has reserved inventory.
+sentence:5.6.2:9de8c52d	line 2296	A seller that only honors terms sets `hold_terms.available` to `false` and uses `price_valid_until`.
+sentence:5.6.2:a33a8155	line 2299	`HoldTerms` keys:
+sentence:5.6.2:a2eb4920	line 2306	`Hold` keys:
+sentence:5.6.2:893bf1b3	line 2318	`HoldStatus` is `requested` | `held` | `declined` | `expired` | `released` | `converted`.
+sentence:5.6.2:8dfa1e5f	line 2323	No `hold`, or `declined` | `expired` | `released` → `requested`: the buyer asks, writing `version` and any `requested_terms`.
+sentence:5.6.2:bdfd497a	line 2325	The ask replaces any earlier `hold`.
+sentence:5.6.2:038dc7fc	line 2326	`requested` → `held`: the seller grants, writing `valid_until` and any `held_availability`.
+sentence:5.6.2:84a20faf	line 2328	`requested` → `declined`: the seller declines, `hold_terms.available` becomes `false`, or the line item leaves `published` or `under_review` other than to `agreed`.
+sentence:5.6.2:2735c772	line 2331	`held` → `held`: the seller re-offers a hold its revision makes stale, moving `version` to the new one, writing any `held_availability`, and lowering `valid_until` to the new version's cap (§ 4.3.4) where that comes first (§ 4.3.2, rule 2).
+sentence:5.6.2:4de66a40	line 2334	`held` → `expired`: `valid_until` passes and no `commit` the buyer made while the hold ran is open (§ 4.3).
+sentence:5.6.2:b2e319b6	line 2335	The hold stays `held` while that `commit` is open.
+sentence:5.6.2:81abd801	line 2337	`held` → `released`: the buyer releases, or the seller releases a hold its revision makes stale (§ 4.3.2, rule 2).
+sentence:5.6.2:2d1b1b82	line 2339	`requested` | `held` → `converted`: the line item reaches `agreed`.
+sentence:5.6.2:0440b061	line 2340	`converted` is terminal.
+sentence:5.6.2:c554b85b	line 2342	While `status` is `held`, the held terms are the offered terms of `hold.version`, which § 4.1.3 freezes; a seller change is a new `version` under § 4.3.2, rule 2.
+sentence:5.6.2:46d74f75	line 2346	The holds on the line items in one package's `line_items[]` (§ 4.1.4) move as a unit: each transition applies to all of them, and `valid_until` is the earliest any of them allows.
+sentence:5.6.2:8947408e	line 2351	Hold transitions do not change the line item's `status` (§ 5.1) and do not append to `negotiation_history[]` (§ 4.1).
+sentence:5.6.3:a11017e6	line 2356	An add-on is a line item a package holds in `add_ons[]` (§ 4.1.4).
+sentence:5.6.3:7d6a12c5	line 2356	It has its own pricing, such as a discounted `list_rate` or `cost_method: FLAT` at 0.
+sentence:5.6.3:c71a71ef	line 2359	A bonus that more than one package unlocks is an add-on in each, under its own `line_item_id`.
+sentence:5.6.4:4c18e97f	line 2364	On a `dooh` line item, a play is one display of an ad on one screen, inside the screen's operating hours, that ends no more than `play_tolerance_ms` short of the ad's full duration and that the proof-of-play log records.
+sentence:5.6.4:aa912fbe	line 2367	On a sync group (§ 5.2.8), a display that meets those conditions on at least `min_screens_per_play` of its screens is one play, not one per screen.
+sentence:5.6.4:a001cab1	line 2370	Every impression count on the line item (`pricing[]`, `commitment`, `availability`, `committed_metrics[]`) counts these.
+sentence:5.6.4:fc6d4d41	line 2375	The committed quantity is in the committed entry's unit (§ 5.6.5), so `PLAY` commits plays and `CPM` commits impressions.
+sentence:5.6.4:029b2892	line 2377	With `properties.available[].allocation: seller_allocated`, or on a screen that schedules without a loop, plays are also reported.
+sentence:5.6.4:0420133f	line 2379	A `committed_metrics[]` tuple commits its own level either way (§ 5.7.1).
+sentence:5.6.4:810c0c57	line 2382	`DeliveryCounting` keys:
+sentence:5.6.4:ec46b19c	line 2391	`ProofOfPerformance` keys:
+sentence:5.6.4:bb0738ea	line 2398	`ImpressionMultiplier` keys:
+sentence:5.6.4:6475cdc3	line 2408	The multiplier's source controls the count of impressions: `seller` when `source_type` is Publisher Provided (`2`) or `vendor` is the proposal's `seller.domain`, and `vendor` otherwise.
+sentence:5.6.5:f59c7318	line 2419	`cost_method` is a `VocabularyTerm` (§ 2.2).
+sentence:5.6.5:0fce7e80	line 2419	Its core terms are `CPM` | `CPMV` | `CPC` | `CPCV` | `CPV` | `CPP` | `CPA` | `PLAY` | `TIME` | `FLAT`.
+sentence:5.6.5:c41055d4	line 2420	Terms are upper case, like OpenDirect 2.1 `Line.ratetype`.
+sentence:5.6.5:8b8feaa4	line 2437	An entry's unit is the term in the `unit` column for its `cost_method`.
+sentence:5.6.5:60f46987	line 2437	`unit` is a column here, not a key on the entry.
+sentence:5.6.5:295aae28	line 2438	The `unit` terms are `impressions` | `viewable_impressions` | `clicks` | `completed_views` | `views` | `rating_points` | `actions` | `plays` | `hours` | `days` | `weeks`.
+sentence:5.6.5:752f24a9	line 2441	An extension term has no row: its `unit_label`, a free label, names its unit.
+sentence:5.6.5:d44507be	line 2443	`CostParameters` lists the `cost_parameters` keys a core term uses.
+sentence:5.6.5:4804c1fd	line 2466	`derived_units` = (`amount` − those charges) ÷ `agreed_rate` × rate per, rounded down to a whole unit, where rate per comes from the table for a core term and from `rate_per` for an extension term.
+sentence:5.6.5:03d899cb	line 2470	When `commitment.basis` is `units`, `derived_units` is `amount`, and the seller total is `amount` ÷ rate per × `agreed_rate` plus those charges.
+sentence:5.6.5:aa43e614	line 2473	`FLAT` and `TIME` set these figures from the rate and the flight instead, and a rule that reads `commitment.amount` on such an entry reads them: the seller total when `commitment.basis` is `spend`, `derived_units` when it is `units`.
+sentence:5.6.5:d857cda3	line 2477	`FLAT`.
+sentence:5.6.5:c993e906	line 2477	`agreed_rate` is the price of the line item, so the seller total is `agreed_rate` plus those charges.
+sentence:5.6.5:82c7e79e	line 2481	`TIME`.
+sentence:5.6.5:bebb70ec	line 2481	`derived_units` is the whole `rate_unit`s elapsed from `commitment.flight.start` through `commitment.flight.end`, inclusive, and the seller total is `derived_units` × `agreed_rate` plus those charges.
+sentence:5.6.5:b1d5965b	line 2485	Delivery is counted in the entry's unit, and each unit is worth `agreed_rate` ÷ rate per, with rate per as above.
+sentence:5.6.5:087aa70d	line 2486	A `FLAT` entry has no unit, so its delivery is the days of `commitment.flight` delivered, counted in elapsed days from `commitment.flight.start`.
+sentence:5.6.5:dd8b2621	line 2488	Each day is worth `agreed_rate` ÷ the flight's length in days, and a last part day is worth its fraction of that.
+sentence:5.6.5:95de5970	line 2491	A seller fee is never a `pricing[]` entry.
+sentence:5.6.6:ce641a8d	line 2496	`CancellationOption` keys:
+sentence:5.6.6:30cb5ba9	line 2507	`Fee` keys:
+sentence:5.6.6:fa40089a	line 2516	`DatedShare` keys.
+sentence:5.6.6:b6316b39	line 2516	An entry applies when the effective date falls in its `window`.
+sentence:5.6.6:9ad600cc	line 2517	Notice then counts to `window.start`.
+sentence:5.6.6:f2b3045a	line 2524	The effective date is the later of the date the buyer asks for and notice received plus `notice_duration`.
+sentence:5.6.6:a16b33c6	line 2525	The remaining commitment is `commitment.amount`, without `delta_flat` charges, less delivery (§ 5.6.5) through the effective date; the cancelled amount is the part of it the buyer cancels, up to the `max_share` that applies.
+sentence:5.6.6:c02f4eb3	line 2528	These, and the base of a `commitment` fee, are money (§ 5.6): units and days are valued as § 5.6.5 values delivery.
+sentence:5.6.6:904063ba	line 2529	The buyer owes that delivery, `production` (§ 5.4) work completed by then, and the fee.
+sentence:5.6.6:39c82311	line 2532	An entry's `cancellation` (§ 4.4) records the notice.
+sentence:5.6.6:eaf7a730	line 2533	It changes no term, and the line item's `status` stays `agreed`.
+sentence:5.6.6:1e6b79ab	line 2536	`CancellationNotice` keys:
+sentence:5.6.7:3840b989	line 2547	`ExclusivityOption` keys:
+sentence:5.6.7:d6b2dc54	line 2559	A line item whose `preemption` names `exclusivity` doesn't count against a later exclusivity term on dates at least its `notice_duration` after the seller's notice, or on every date when it has no `notice_duration`: the seller preempts it on those dates instead.
+sentence:5.6.7:992e8f24	line 2564	A line item states `preemption` when a later sale can preempt its delivery, such as the faces in a station that another buyer can dominate.
+sentence:5.6.7:c25caa79	line 2568	`Preemption` keys:
+sentence:5.6.7:1d7dd076	line 2577	Preemption doesn't excuse a shortfall, which `shortfall_remedy` (§ 5.7) settles.
+sentence:5.6.7:a55e8456	line 2578	A `remedy` on `preemption` settles the delivery a preemption takes instead, on any `delivery_type`.
+sentence:5.7.1:3be5910a	line 2593	`measurement_source` measures committed metrics; its `attribution_window` isn't a settlement window.
+sentence:5.7.1:b41f4b95	line 2594	`controlling_measurement` counts the units the invoice uses.
+sentence:5.7.1:ce9728e0	line 2595	Counted delivery, including delivery that still counts after `commitment.flight.end`, falls in an invoice period.
+sentence:5.7.1:6d7c6000	line 2596	The seller sets the period in `billing.invoice_period` (§ 5.10).
+sentence:5.7.1:d1c1989b	line 2597	A `month` is a calendar month in `billing.time_zone`.
+sentence:5.7.1:758abe1e	line 2598	`cycle` periods run back to back from `commitment.flight.start`, each `billing.cycle_length` long.
+sentence:5.7.1:c6d017c6	line 2601	`CommittedMetric` keys:
+sentence:5.7.1:8a42ee73	line 2609	A term defines whether its `level` is a rate or a count, and its definition names its standard.
+sentence:5.7.1:c16f1346	line 2610	Core terms: `viewable_rate` | `completion_rate` | `ivt_rate` | `impressions`.
+sentence:5.7.1:b982fd5f	line 2620	`MeasurementOption` keys:
+sentence:5.7.1:4c0d8bf4	line 2629	`ControllingMeasurementOption` keys:
+sentence:5.7.1:69fed52a	line 2639	`ReportingOption` keys:
+sentence:5.7.1:a5747f87	line 2650	`ShortfallRemedy` holds the keys of `Selectable[VocabularyTerm]` and this one:
+sentence:5.7.1:7a4aebc4	line 2656	`RemedyTerms` keys:
+sentence:5.7.1:5e8f12d3	line 2666	A shortfall is a final value that misses a committed `level` in its `direction`, under any `delivery_type`: a committed `level` is guaranteed in its own right.
+sentence:5.7.1:c903a153	line 2668	Final delivery below `commitment.amount` is a shortfall only where the line item's `delivery_type` (§ 5.9) is `guaranteed`: counted in units when `commitment.basis` is `units`, and, when it is `spend`, valued as § 5.6.5 values delivery, against `commitment.amount` without `delta_flat` charges.
+sentence:5.7.1:9f775fec	line 2671	Every shortfall follows the `shortfall_remedy` rules below.
+sentence:5.7.1:9be5781a	line 2672	When `preemption` states a `remedy` (§ 5.6.7), the delivery a preemption takes, less any delivery the seller adds within `commitment.flight` to replace it, is a shortfall on any `delivery_type`.
+sentence:5.7.1:4dcb6eae	line 2674	That part follows those rules as though its `remedy` were the only option in effect at commit, under the `remedy_terms` of `shortfall_remedy`, and there `none` leaves committed levels guaranteed.
+sentence:5.7.1:b7791864	line 2677	`shortfall_remedy` settles the rest of a shortfall.
+sentence:5.7.1:aadd7eb9	line 2679	`shortfall_remedy`: the options in effect are ordered, first choice first.
+sentence:5.7.1:43489648	line 2683	If none remains, the shortfall settles under `remedy_terms`.
+sentence:5.7.1:e4c66ce6	line 2686	A buyer that commits with `makegood` in effect consents to a makegood within `makegood_window`.
+sentence:5.7.1:0f29149a	line 2689	Under `sov_basis: impressions` (§ 5.9), the promised share is the offered `sov_share`.
+sentence:5.7.1:d8c91fc7	line 2694	OpenDirect 2.1 `Stats` reports delivery to date on a Line, with a spot's `shareoftime`.
+sentence:5.7.1:87eb5e07	line 2697	A line item with no `controlling_measurement` option in effect, or no `final_after` on the option in effect, states no final count either.
+sentence:5.7.1:4b34946c	line 2698	An `embedded` line item with no `final_after` also states no end to the counting in § 5.9, and `terms_refs[]` (§ 5.8) may state one.
+sentence:5.8:021bf6d9	line 2704	`visibility` says who may read a line item.
+sentence:5.8:f47873bb	line 2704	`required_credentials[]`, `eligible_buyers[]`, `eligible_seats[]`, and `buyer_requirements` (§ 5.9) say who may commit to it.
+sentence:5.8:2411dfc1	line 2706	`terms_refs[]` names the binding documents a `commitment` entry accepts (§ 4.1.2).
+sentence:5.8:5f72435b	line 2717	Each `visibility` value names who may read the line item:
+sentence:5.8:86625df0	line 2719	`public`: any requester, with no authentication.
+sentence:5.8:7536291d	line 2720	`registry_gated`: an authenticated requester (§ 1.2) acting for a party the IAB Tech Lab Agent Registry attests.
+sentence:5.8:46af5318	line 2722	`named`: an authenticated requester acting for a party that `eligible_buyers[]` names, or that holds a seat `eligible_seats[]` names.
+sentence:5.8:c219f50b	line 2728	An authenticated requester acting for the party a proposal's `buyer` names may read all of it, whatever `visibility` says.
+sentence:5.8:a4300adf	line 2730	A response carries only the line items the requester may read, and a package only when the requester may read every line item in its `line_items[]`.
+sentence:5.8:3b62d557	line 2732	A request for any other line item, or for a proposal the requester may not read, returns `not_found` (§ 2.4).
+sentence:5.8:dcc71db0	line 2733	A full fetch leaves out only line items (§ 2.1), so a value it returns can name a line item the requester may not read, such as a `negotiation_history[]` path.
+sentence:5.8:e7bfc683	line 2744	`required_credentials[]`: the buyer meets it.
+sentence:5.8:76d0a76a	line 2746	A buyer that fails these rules, or an authority check the seller applies (whether the sender may make this request for `buyer`, or `buyer` for an advertiser it names, § 1.2), gets `not_eligible` (§ 2.4), or `not_found` when the requester may not read what the request names.
+sentence:5.8:2398e570	line 2752	`RequiredCredential` keys:
+sentence:5.8:72703795	line 2763	Neither is expressed through `required_credentials[]`.
+sentence:5.9:d22c8e42	line 2779	`MechanismOption` keys:
+sentence:5.9:b2ad07c2	line 2786	`TransactionMechanism` is `direct_io` | `programmatic_guaranteed` | `preferred_deal` | `private_auction`.
+sentence:5.9:ec193d1b	line 2787	A deal mechanism is one that lands in a Deals API `Deal` (§ 1.1).
+sentence:5.9:78feda70	line 2798	`BuyerRequirements` keys:
+sentence:5.9:c0a264aa	line 2807	`DeliveryType` is `guaranteed` | `share_of_voice` | `non_guaranteed`: what the seller promises to deliver, independent of how the line item transacts and how it is priced.
+sentence:5.9:780639bf	line 2811	`guaranteed`: the seller reserves the committed units for the flight, or, on a `FLAT` entry, which has none, the days of `commitment.flight` (§ 5.6.5).
+sentence:5.9:3e43b1df	line 2813	`share_of_voice`: the seller reserves a fixed share of the inventory, up to all of it, for the flight.
+sentence:5.9:b939f4ba	line 2814	With a `daypart` (§ 5.5), the share is of the daypart's hours only, read in the line item's `time_zone`.
+sentence:5.9:f32957d9	line 2817	`non_guaranteed`: the seller reserves nothing.
+sentence:5.9:ad89958c	line 2819	A domination, every screen and static face in a location or in its paid zone, is `guaranteed` with an included `exclusivity` term of `scope: sole` and the matching `separation`, `location` or `paid_zone` (§ 5.6.7), not `share_of_voice` at 100%.
+sentence:5.9:2027aafb	line 2823	`sov_basis: loop_time` requires `properties.available[].allocation: all` on every DOOH property.
+sentence:5.9:724b38e9	line 2826	Under `loop_time`, the share derives from `properties.available[].slots_per_loop` and each screen's `loop`: `slots_per_loop` × `slot_s` ÷ `length_s`.
+sentence:5.9:9082816a	line 2827	Under `impressions`, `sov_share` states it.
+sentence:5.9:3d045cc4	line 2829	On DOOH, its eligible screens are the line item's screen set, the pool the seller allocates from under `properties.available[].allocation: seller_allocated`.
+sentence:5.9:2993d991	line 2832	Its scope is the line item's flight and `daypart`.
+sentence:5.9:b68f43d2	line 2834	The `serving_mode` core terms mean the same on every channel:
+sentence:5.9:2ec443b2	line 2836	`dai`: an ad server picks the ad for each impression when the content or the ad break is requested, including ad replacement in a station's stream.
+sentence:5.9:a5bc48be	line 2838	`scheduled`: the media owner's scheduler pushes plays to the player.
+sentence:5.9:f227911e	line 2839	`embedded`: the ad is recorded into the content or aired in a live program, so everyone who receives that content receives that ad.
+sentence:5.9:431fd8e8	line 2840	A baked-in podcast read, a live read, and a broadcast spot carried in a simulcast are `embedded`.
+sentence:5.9:6e4adf4e	line 2843	On an `embedded` line item:
+sentence:5.9:0b6dfc17	line 2845	`commitment.flight` bounds release or air dates.
+sentence:5.9:b4c4172d	line 2845	Delivery to that content after `commitment.flight.end` counts toward `commitment` until the `final_after` of the `controlling_measurement` option in effect elapses after that end (§ 5.7.1).
+sentence:5.10:c5332d43	line 2861	`ExternalReference` keys:
+sentence:5.10:5f241d90	line 2870	`Agreement` keys:
+sentence:5.10:b6c393ae	line 2880	`Billing` keys:
+sentence:5.10:4ab70d24	line 2891	A buyer's own code for a supplier goes in `external_references[]`, under an extension `reference_type`.
+sentence:5.10:4644ceda	line 2895	OpenProposal supplies the agreed record and `terms_refs[]` a connector needs.
+sentence:6:b55a7db8	line 2902	Runnable copies of every example below live in `examples/`.
+sentence:6.1:140f66aa	line 2906	See `examples/proposal.yaml`.
+sentence:6.1:f9a8a85e	line 2909	Its `line_items[]` holds the line items of §§ 6.2 to 6.4, 6.7, and 6.11, which are extracts of it.
+sentence:6.1:67afcf02	line 2910	§§ 6.9 and 6.10 show a buyer's composed record (§ 4.1.1) of a line item issued to it (§ 4.3), before its `commit`.
+sentence:6.2:2299377c	line 2915	Shows `selectable` audiences with per-option pricing, `pricing[]` alternatives in two currencies, cancellation options, `settable` bounds, and a `delivery_type` per mechanism.
+sentence:6.2:c19128b7	line 2917	See `examples/line-item-display.yaml`.
+sentence:6.3:4832dfcd	line 2922	Shows priced cancellation options at three `notice_duration` values, `break_position` with priced pre-roll and first-in-pod options (§ 5.2.3), server-side insertion in `placement.ssai` (§ 5.2.2), `format_specs` entries, two pinned to a format registry version and one defined by the seller (§ 5.4), and `keywords` accepted only as `best_effort` (§ 5.5).
+sentence:6.3:24bee9be	line 2926	See `examples/line-item-ctv.yaml`.
+sentence:6.4:e80ba391	line 2933	Shows `placement.feed` on a music stream, a line item priced by market, a cancellation fee that steps with notice before the start, and priced exclusivity terms.
+sentence:6.4:dd9e06dd	line 2935	See `examples/line-item-audio.yaml`.
+sentence:6.5:5a32cf98	line 2942	See `examples/proposal-package.yaml`, and the bonus alone in `examples/line-item-ctv-bonus.yaml`.
+sentence:6.6:832ad0f8	line 2948	The display line item is `registry_gated`, so it is not listed.
+sentence:6.6:70160ee0	line 2949	See `examples/manifest.json`.
+sentence:6.7:844bf24a	line 2954	Shows `placement` on in-app rewarded video, with OMID support that lets a buyer select a third-party `measurement_source`.
+sentence:6.7:d6388541	line 2955	See `examples/line-item-rewarded-video.yaml`.
+sentence:6.8:5878e190	line 2960	Shows a custom proposal after the seller counters a request and accepts a commitment: matching `assent[]` entries over one `record_digest` (§ 4.1.1, § 4.1.2), which covers the `digest` of each document in `terms_refs[]` (§ 5.8), the history that led there (§ 4.3), and `change_requests[]` entries outside the digest, one for each line item, the second a deal with no Order (§ 4.4).
+sentence:6.8:b3804fa3	line 2964	See `examples/proposal-agreed.yaml`.
+sentence:6.9:8ab8eac3	line 2969	Shows a buyer's composed record (§ 4.1.1) of a line item issued to it (§ 4.3), before its `commit`, with its `commitment`: a CPM priced on impressions, with the multiplier's source, data release, and settlement rule in `delivery_counting.impression_multiplier` (§ 5.6.4).
+sentence:6.9:a2e4ce66	line 2972	See `examples/line-item-dooh.yaml`.
+sentence:6.10:1a29db9d	line 2977	A host read recorded into new episodes of a podcast: a buyer's composed record (§ 4.1.1) of a line item issued to it (§ 4.3), before its `commit`, with `retention` and no per-listener targeting.
+sentence:6.10:2d916e96	line 2979	See `examples/line-item-podcast-embedded.yaml`.
+sentence:6.11:88461576	line 2984	A seven-game series sold as `programs`, with the games that may not be played outside the base rate.
+sentence:6.11:71be7fff	line 2985	See `examples/line-item-ctv-live-series.yaml`.
+sentence:6.12:b19afb72	line 2990	One line item is agreed at version 1, with a commitment under one of two `pricing[]` entries.
+sentence:6.12:b3642271	line 2992	Its buyer writes `selected[]` and `value`, and `agreed_rate` follows from the options in effect (§ 5.6).
+sentence:6.12:999105e1	line 2993	The other stays `published` at version 2, with a hold, so the proposal stays `published` (§ 4.3.3).
+sentence:6.12:56c05cb8	line 2994	The `assent[]` entries name version 1, and the digest is over that line item alone (§ 4.1.2).
+sentence:6.12:9a29cc32	line 2995	A `change_requests[]` entry records a notice to cancel part of the agreed line item (§ 5.6.6).
+sentence:6.12:b569c32e	line 2996	See `examples/proposal-issued.yaml`.
+sentence:7:7837e94d	line 3005	`description`, `media_kit_detail`, `best_for[]` and `seasonality_notes` are what a model needs to decide whether to look further.
+sentence:7:9f242c90	line 3011	`channel` is the discriminator.
+sentence:7:cacca623	line 3012	Fields such as `placement`, `programs`, `break_position`, and the DOOH property keys apply only where a channel needs them, and `format_specs` carries what is channel-specific about creative shape.
+sentence:7:47fe67dd	line 3025	Each has its own `proposal_id` per counterparty or destination, and may carry `proposal_template_id` (§ 4.1) to trace it back to its template and `issued_from` to trace it back to a shared proposal.
+sentence:7:63073cc9	line 3029	Buyer-specific terms, such as annual rates and named visibility, live on the issued proposal's line items: `visibility: named`, `eligible_buyers[]` and their own `pricing[]`.
+sentence:7:00dc0082	line 3033	Buyer–seller relationships are expressed as issued proposals (`visibility: named`, `eligible_buyers[]` set to that buyer, with the negotiated `pricing[]`) plus the buyer agent's business rules.
+sentence:7:34eb4f8a	line 3037	`agreement` and `terms_refs[]` (§ 5.10, § 5.8) point at the agreement and terms a line item is executed under; IO generation happens through connectors.
+sentence:8:7629cc2d	line 3053	A `Line.productid` would be one use: an agreed record doesn't say which OpenDirect `Product` it books.
+sentence:8:cb3bf489	line 3055	Once one line item guarantees `viewable_rate` and another `completion_rate`, there is no normalised way for a buying agent to compare or optimise across them. 3.0 doesn't cover it.
+sentence:8:410d8824	line 3059	The format registry has no entries for `audio/*`, `ctv/*` or `dooh/*`.
+sentence:8:23797e56	line 3059	A `format_specs` entry can copy a registry version or be defined by the seller (§ 5.4), so half the declared channels have only seller-defined specs today.
+sentence:8:d62ebb45	line 3061	A `spec_ref` names a registry by domain alone: this draft doesn't say which registry that is or how to fetch an entry.
+sentence:8:53af5c06	line 3064	A package (§ 4.1.4) covers bundle purchases without a `min_line_items` count.
+sentence:8:fc4da301	line 3067	Should `billing.payment_terms` and `billing.invoicing_party` be repeated on every line item, given they are usually identical across a seller's shelf?
+sentence:8:4ab95d5c	line 3069	`environments.available[]` needs validation against real inventory.
+sentence:8:5faba1d9	line 3071	`spec_version` names the release a document follows, and § 2.5 makes a key the receiver's release does not list invalid.
+sentence:8:9b744913	line 3075	Every `Amount` on a line item is on one basis (§ 5.6).
+sentence:8:d9620ead	line 3077	A `commitment.amount` of 80,000.00 at an `agreed_rate` of 24.00 `CPM` buys 3,333,333 impressions if 24.00 is what the seller invoices.
+sentence:8:22549d3d	line 3083	This draft also doesn't state what a `credit` is worth.
+sentence:8:039f4336	line 3087	Must a manifest response carry both `ETag` and `Last-Modified`, or is either enough?
+sentence:8:6e6e8987	line 3090	How does a `change_requests[]` entry state a change other than a cancellation?
+sentence:8:a7594c05	line 3091	`cancellation` states a notice to cancel.
+sentence:8:4d0ad0aa	line 3091	The OpenDirect 2.1 ChangeRequest has no structured statement of any other change, only free-text `comments` (§ 4.4).

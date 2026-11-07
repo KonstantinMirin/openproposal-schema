@@ -11,10 +11,10 @@ import { loadKernel } from "../src/kernel.ts";
 import { loadDecisions, loadMappings } from "../src/mapping.ts";
 import { resolveModel, type ModelDoc } from "../src/model.ts";
 import { emitRules, loadVectors, type RulesDoc, VECTORS_DIR } from "../src/rules.ts";
-import { OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
+import { oldConstructors, oldKernel, OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT, SPEC);
-const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const KERNEL = oldKernel(loadKernel(ROOT, SPEC));
+const CONSTRUCTORS = oldConstructors(loadConstructors(ROOT, SPEC));
 const MAPPINGS = loadMappings(join(SPEC, "mapping"));
 const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 const VECTORS = loadVectors(join(SPEC, VECTORS_DIR));

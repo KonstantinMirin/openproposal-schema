@@ -448,6 +448,26 @@ export function checkRuleVectors(doc: RulesDoc, model: ModelDoc, files: EmittedF
     const named = types.get(prop.type.name);
     return named ? schemaIdOf(named, schemaDir, baseOf(files, schemaDir)) : null;
   };
+  const propOf = (key: string) => {
+    const [t, p] = key.split(".");
+    const owner = types.get(t!);
+    return owner && "properties" in owner ? owner.properties[p!] : undefined;
+  };
+  /** The schema of each item of a context key's list, where its property is a list of a named type. */
+  const contextList = (key: string): string | null => {
+    const prop = propOf(key);
+    const item = prop?.type.kind === "apply" && prop.type.constructor === "List" ? prop.type.arguments.T : undefined;
+    const named = item?.kind === "named" ? types.get(item.name) : undefined;
+    return named ? schemaIdOf(named, schemaDir, baseOf(files, schemaDir)) : null;
+  };
+  /** The schema of a context key's copy, where its property is a constructor's copy. */
+  const contextCopy = (key: string): string | null => {
+    const prop = propOf(key);
+    if (prop?.type.kind !== "apply") return null;
+    const copy = [...types.values()].find((t) => t.kind === "copy" && canonicalJson(t.of) === canonicalJson({ ...prop.type, name: undefined }) );
+    const exact = copy ?? [...types.values()].find((t) => t.kind === "copy" && canonicalJson((t as { of: unknown }).of) === canonicalJson(prop.type));
+    return exact ? schemaIdOf(exact, schemaDir, baseOf(files, schemaDir)) : null;
+  };
   for (const r of doc.rules) {
     const schema = r.vectors.schema;
     if (schema === undefined) {
@@ -461,7 +481,14 @@ export function checkRuleVectors(doc: RulesDoc, model: ModelDoc, files: EmittedF
           if (why) problems.push(`rule "${r.id}": ${label} vector ${i + 1}: the ${r.vectors.type} schema rejects its ${part} (${why}); a rule vector passes the schema, so the rule alone decides it (type rules § 9)`);
         }
         for (const [k, value] of Object.entries(v.context ?? {})) {
-          const s = contextSchema(k);
+          // A list of a named type, as the stack's `LineItem.pricing`, holds each item against the item's schema; a copy, as `TransactionMechanismSelection`, against its own.
+          const listed = contextList(k);
+          if (listed !== null) {
+            const why = !Array.isArray(value) ? "isn't a list" : value.map((x) => verdict(listed, x)).find((w) => w) ?? null;
+            if (why) problems.push(`rule "${r.id}": ${label} vector ${i + 1}: context "${k}": ${why}`);
+            continue;
+          }
+          const s = contextSchema(k) ?? contextCopy(k);
           const why = s === null ? `"${k}" has no named type` : verdict(s, value);
           if (why) problems.push(`rule "${r.id}": ${label} vector ${i + 1}: context "${k}": ${why}`);
         }

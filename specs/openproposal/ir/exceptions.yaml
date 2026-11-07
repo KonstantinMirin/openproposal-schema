@@ -38,9 +38,9 @@ exceptions:
   - { finding: "unresolved_identifier:Line.frequencyinterval", verdict: accepted, reason: "OpenDirect 2.1 attribute, cited in § 5.5 for the calendar period of `frequency_cap.period`.", locks: [with-open-prs] }
 
   # Names that stand for something outside the object model on purpose.
-  - { finding: "unresolved_identifier:audience_pricing", verdict: accepted, reason: "§ 3.1 names an earlier draft's field to say that `pricing` replaces it." }
-  - { finding: "unresolved_identifier:io_id", verdict: accepted, reason: "§ 5.10 cites a Prisma key as an example of a buyer-owned external reference." }
+  - { finding: "unresolved_identifier:audience_pricing", verdict: accepted, reason: "§ 3.1 names an earlier draft's field to say that `pricing` replaces it.", locks: [main, with-open-prs] }
+  - { finding: "unresolved_identifier:io_id", verdict: accepted, reason: "§ 5.10 cites a Prisma key as an example of a buyer-owned external reference.", locks: [main, with-open-prs] }
   - { finding: "unresolved_identifier:min_line_items", verdict: accepted, reason: "§ 8 open question 5 asks whether to add this field; it doesn't exist yet." }
 
   # Lint misreads.
-  - { finding: "value_set_subset:converted | expired | released", verdict: false_positive, reason: "The § 5.6.2 transitions sentence lists the end states of `state`; it doesn't declare a second value set." }
+  - { finding: "value_set_subset:converted | expired | released", verdict: false_positive, reason: "The § 5.6.2 transitions sentence lists the end states of `state`; it doesn't declare a second value set.", locks: [main, with-open-prs] }

@@ -50,7 +50,11 @@ export function readValueList(tokens: readonly Token[], i: number, taken: Readon
     items.push({ value: next.value, annotation: null });
     j += 2;
   }
-  if (items.length < 2) return null;
+  // A list of one value is its code span alone (the stack's § 2.6), read where a row names its core terms: "Core term: `x`, …", or
+  // "Core terms: the `frequency_cap.per` terms (§ 5.5), and `person`", the row's own after the terms it takes from another row.
+  const lead = tokens[i - 1];
+  const single = items.length === 1 && lead?.kind === "text" && /(?:\bCore terms?:\s*|\bterms(?: of § [\d.]+| \(§ [\d.]+\))?,? and\s+)$/.test(lead.value);
+  if (items.length < 2 && !single) return null;
   let contextAfter: string | null = null;
   const after = tokens[j + 1];
   if (after?.kind === "text") {

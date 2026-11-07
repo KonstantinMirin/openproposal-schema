@@ -80,7 +80,8 @@ export const feedback = defineGate<FeedbackInput>({
   code: ["src/feedback.ts#buildFeedback", "src/feedback.ts#checkFeedback", "src/feedback.ts#foldedCodeSpans", "src/feedback.ts#checkLineLinks", "src/feedback.ts#renderDetails", "src/fetch.ts#snapshotOf"],
   check: (i) => {
     const { doc, problems } = buildFeedback(i);
-    const fb = feedbackOf(repoRoot(i.builds[0]!.lock));
+    // A lock's own report has its own layout (reportBuilds).
+    const fb = i.profile ?? feedbackOf(repoRoot(i.builds[0]!.lock));
     problems.push(...checkFeedback(doc, i.builds, fb));
     // The sources of the text the report shows: the decision records, the recorded findings, and the round-trip differences.
     for (const file of [...new Set([...i.decisions.map((d) => d.file), i.recordedFindings.file, i.recordedDifferences.file])]) problems.push(...foldedCodeSpans(relative(ROOT, file), readFileSync(file, "utf8")));

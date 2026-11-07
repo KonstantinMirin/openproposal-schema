@@ -20,11 +20,13 @@ const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 const LOCKS: [string, SpecIR][] = [
   ["main", JSON.parse(readFileSync(join(SPEC, "ir", "spec-ir.json"), "utf8")) as SpecIR],
   ["with-open-prs", JSON.parse(readFileSync(join(SPEC, "ir", "with-open-prs", "spec-ir.json"), "utf8")) as SpecIR],
+  ["with-our-stack", JSON.parse(readFileSync(join(SPEC, "ir", "with-our-stack", "spec-ir.json"), "utf8")) as SpecIR],
 ];
 const PRS = LOCKS[1]![1];
 
 const all = (r: CoverageResult) => [...r.coverage, ...r.location, ...r.rules, ...r.types];
-const check = (mappings: MappingFile[], lock = "with-open-prs") => checkCoverage(lock === "main" ? LOCKS[0]![1] : PRS, lock, mappings, KERNEL, CONSTRUCTORS);
+const irOf = (lock: string) => LOCKS.find(([l]) => l === lock)![1];
+const check = (mappings: MappingFile[], lock = "with-open-prs") => checkCoverage(irOf(lock), lock, mappings, KERNEL, CONSTRUCTORS);
 
 /** The committed mapping with one file changed by `edit`. */
 function edited(module: string, edit: (m: MappingFile) => void): MappingFile[] {
@@ -174,7 +176,7 @@ test("a decision record can't override a mapping rule", () => {
   assert.match(overridden.rules.join("\n"), /entry "field:4\.1:version": rule "domain-row" applies on lock "with-open-prs", so the entry cites it, not a decision record/);
 });
 
-const sources = (mappings: MappingFile[], lock = "with-open-prs") => checkSources(lock === "main" ? LOCKS[0]![1] : PRS, lock, mappings, DECISIONS, KERNEL.lists);
+const sources = (mappings: MappingFile[], lock = "with-open-prs") => checkSources(irOf(lock), lock, mappings, DECISIONS, KERNEL.lists);
 const declOf = (m: MappingFile, name: string) => {
   const d = (m.types ?? []).find((x) => x.name === name);
   assert.ok(d, `no type ${name}`);

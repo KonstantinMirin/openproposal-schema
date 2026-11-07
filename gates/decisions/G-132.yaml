@@ -1,0 +1,75 @@
+format: 1
+id: G-132
+date: 2026-10-28
+question: What changes in the gates when AdCOM's lists are written as proto3 enums from the published schemas alone, and the enum drift report compares them?
+decision: >-
+  A first target, the proto target (src/targets/proto.ts, `npm run proto`,
+  docs/design/target-rules.md), writes each integer-coded vocabulary of a
+  spec's published schema tree as a proto3 enum. It reads only the
+  documents the tree's release.json lists and the package the profile's
+  new `names.proto.package` gives; AdCOM's is `adcom.v1`, and its one file
+  is specs/adcom/proto/adcom/v1/lists.proto: 42 enums, 316 values, each
+  enum named as its $defs key, each value the enum's UPPER_SNAKE prefix and
+  the code's name by type rules § 6, numbered as the code, with
+  `<ENUM>_UNSPECIFIED = 0` where the list has no code 0. Vendor ranges and
+  Start Delay's media offset are no values; proto3's open enums keep them.
+  Five new gates: proto-builds (no emitter problem, and the pinned protoc
+  compiles every file), proto-schema-only (every module the emitter
+  reaches, static or dynamic, sits under src/targets/; no target's code
+  names a spec's folder or profile name, in any case; and a run on a copy
+  of the tracked schemas/ alone writes the same bytes), proto-deterministic,
+  proto-committed, and proto-tracked. A sixth, enum-drift-target, holds
+  the proto file to the registry: an enum for every list with codes, named
+  as its vocabulary, every code at its number, and no value but the unset
+  one. The enum drift report gains the proto file as a column and a names
+  section, for a reader and not as drift, that lists each enum and value
+  adcom-proto and Prebid name otherwise. Its sentinel rule also takes a 0
+  named "unspecified", as the proto file's are. `proto` is an output stage's
+  entry of a spec's folder, and the suite holds 540 tests.
+rationale: >-
+  No check is relaxed. Every gate that reaches the profile's types
+  (src/profile.ts's SpecNames gains the optional `proto`, and STAGE_ENTRIES
+  the `proto` entry) changes fingerprint without changing what it checks;
+  that accounts for the pipeline gates in this list. The enum drift
+  sources gate reaches the refactored comparison, which gives adcom-proto
+  and Prebid the same totals as before. No other spec's output changes:
+  OpenProposal's and the Deals API's committed files, sdk/, and feedback/
+  are byte-identical.
+accepts:
+  - { gate: comparison, fingerprint: 07341898dc788dbd2c0c2c0bccd4e6583ebd338708f8d5e9dc723dc119db3fb5 }
+  - { gate: corpus-generates, fingerprint: 5856d8302235b7a581bbb43396a9f729afa3c46bbe8a84c66186177569888596 }
+  - { gate: corpus-isolation, fingerprint: db99d0a186aec0a0805d911cab6aa7e55dc46e837c18e35c2ad973248254ea34 }
+  - { gate: corpus-labels, fingerprint: 5bd400f1307f8e853f8ca92656026966cffb3f197c9c7a5e28be2cfd40ce974b }
+  - { gate: enum-drift-sources, fingerprint: c490d31dceb680ab79c2faee65084c454693bcdcaf672843cd731d8181c42abb }
+  - { gate: enum-drift-target, fingerprint: 3e99f90d6a3c0c16f19992dd5a1f6ca2c0ba3f999236adf5fda92e89b676c61b }
+  - { gate: examples-oracle, fingerprint: d89d9091c3a11b2ffc5e85ab81676bffbd898cd7f9e16f273afd2568dc6cc139 }
+  - { gate: examples-validate, fingerprint: 648663551f0aa268fcd1ee874d090030739f54bfb06ac072c07876a0a2528347 }
+  - { gate: extraction, fingerprint: 0a23b47eedae70b9ee1ee41eae0a3dc1d87df1bd13a829c18f202e5002f930ed }
+  - { gate: feedback, fingerprint: 8a5b9b87d52e8ebbfe6e48b7be721a2e8fef0763ae7fce5a1accc14139bde39c }
+  - { gate: fidelity, fingerprint: bc6e4a4549902c8424fb07a1f3be4697a8d4c311a94c4fdf4be278451e7589c3 }
+  - { gate: field-examples, fingerprint: 247b4fca36e76b32ab6ca0478649417656ec32883c31969e8641c99b7e79df1d }
+  - { gate: guard, fingerprint: 363b89c1c5fe543c83e823024b753e07852a39738987013bf4c83a70483b87f1 }
+  - { gate: kernel-load, fingerprint: 817564195382843c004b4a4f650495e3fa5398dbca548acfde7776051b274461 }
+  - { gate: npm-test, fingerprint: 73dcdad3bedb94bb37068abc2658049c8bf3f1c74a58a36ae7c7f3cf2fe46328 }
+  - { gate: plain-generates, fingerprint: 07685cc407b83953254e946ecb1a082fcc7697d456c898f02f4aed8bb27a1252 }
+  - { gate: proto-builds, fingerprint: e4ae1b61c7fe3b2b23990a71288968fb5126d90852fc4ed57fcae9dd4e5df19b }
+  - { gate: proto-committed, fingerprint: c08ac8e6b2739ef75cde3573632cd44ce9c3020645009a063d2039a4ec8be40a }
+  - { gate: proto-deterministic, fingerprint: 40b0c992b198bfa57bad8064179a60e18f26a7a041425be54efdde20fb47fad2 }
+  - { gate: proto-schema-only, fingerprint: da6ff52a0c06703bc0cbbc161a3e4e152edeb867a0cfe589aa9e16b42eb65624 }
+  - { gate: proto-tracked, fingerprint: 02da2e063d6d709a52bdda94f76a389aa9d4fe5a1a5cc49e4dea5a5a9c461681 }
+  - { gate: record-wording, fingerprint: bcf61e6e4f58c44c2863aaf3cce5d984f2c55736c8a3e4ddac750214577ec3ea }
+  - { gate: release-breaking, fingerprint: 01dc35b500f6769abee60e3b85ab0c0a99af4694a347415c117eba8176f5b130 }
+  - { gate: release-breaking-corpus, fingerprint: f27227a65eb0132cabe128d4b0c6267ae2b8bc4a0d5945517a87955405911016 }
+  - { gate: release-builds, fingerprint: 5ee2c2274d45317d656bfe9e568cd22883da9248589e86f828d6717ca9ab2830 }
+  - { gate: round-trip, fingerprint: f9040ead4e9eb96ef058599fb6d25324f2c0ddbda028e68df7b1149488e5df19 }
+  - { gate: rule-checks, fingerprint: 92055d38d93cc17b1ea7188f4011c750d633ef19bc2e83966c8cc80645bf765d }
+  - { gate: rule-vectors, fingerprint: eb367c9d168c6911924b3bf97c0457310f8d93af9a216808f91e8b498b863f02 }
+  - { gate: schemas-ajv, fingerprint: 0ddd0923a2832eb25dfd519973b6759159b5fd8ddf50a1783dc79013e9a0a859 }
+  - { gate: schemas-conventions, fingerprint: 52635344cfe28c3dd1ad750da62968ebab4b0ec66c1eb2ba709efa74d25408f7 }
+  - { gate: schemas-oracle, fingerprint: 825288601351ba92db6530d3ba5fb6a9399a49c91cb2ead56dbb542a142826fe }
+  - { gate: sdk-generate, fingerprint: 20e8f74d03dc15cd6c824a6a5f14140fe6e4fcbfdbb3686b9aaeabde932c67b9 }
+  - { gate: site-builds, fingerprint: badb33a123b737041c8d88ab1a240f91ed0ad4ce1345502c0bdf19040b495866 }
+  - { gate: spec-profile, fingerprint: 44145f7f979299a44ea0648044c1f36593d0eb7afcf5bf0244c750e1bab59316 }
+  - { gate: type-examples-generate, fingerprint: e2c1701dcfa6b1558692a9948f1fc8deade0a24842533728f1df02a12a68574f }
+  - { gate: type-examples-valid, fingerprint: 44a3e527205c368d2e03a4892b12cf0aca641abdd8f27f5c5e8a1b5c9776dda2 }
+  - { gate: variant-examples, fingerprint: 1c7f8d2ffcafa771407436f404e12535ab8ae07ac752e0a102d5c1e835d134b3 }

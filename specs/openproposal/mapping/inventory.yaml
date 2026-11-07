@@ -3,10 +3,13 @@
 format: 1
 module: inventory
 sections: [ "5.2", 5.2.1, 5.2.2 ]
+lock_sections: { with-our-stack: [ 5.2.3, 5.2.9 ] }
+lock_depends: { with-our-stack: [ properties ] }
 types:
   - name: ContentDetail
     kind: object
     ir: field:5.2:content_detail
+    locks: [ main, with-open-prs ]
     source: { decision: D-016 }
     open: true
     description: "The shows, series, sections, and network verticals the line item's inventory holds. The specification states no members, so the object accepts any."
@@ -15,6 +18,19 @@ types:
     ir: "key:5.2:apps[].platform"
     locks: [ with-open-prs ]
     source: { rule: key-table-object }
+    open: false
+  - name: LineItemEpisodes
+    kind: vocabulary
+    ir: field:5.2:episodes#description/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: false
+    terms: [ new, catalog, all ]
+  - name: Environment
+    kind: vocabulary
+    ir: sentence:5.2.1:115c1106
+    locks: [ with-our-stack ]
+    source: { decision: D-053 }
     open: false
   - name: Placement
     kind: object
@@ -46,35 +62,44 @@ types:
     open: true
     terms: [ "1", "2", "3", "4", "5", "6", "7", "8", "9" ]
     list: { name: "List: API Frameworks" }
+  - name: Placement
+    kind: object
+    ir: key:5.2.2:Placement.reward
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: Refresh
+    kind: object
+    ir: key:5.2.2:Refresh.min_interval_s
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: BreakPositionOption
+    kind: object
+    ir: key:5.2.3:BreakPositionOption.id
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: ProgramOption
+    kind: object
+    ir: key:5.2.9:ProgramOption.id
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: EventSchedule
+    kind: object
+    ir: key:5.2.9:EventSchedule.scheduledstart
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: EventScheduleEventstatus
+    kind: vocabulary
+    ir: key:5.2.9:EventSchedule.eventstatus#meaning/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: false
+    terms: [ "1", "2", "3" ]
 entries:
-  - ir: field:5.2:properties
-    digest: 8167901b1024772db9ede8143ce1d5009d6effcfd66b290f82e427a00940b50c
-    locks: [ main ]
-    source: { decisions: [ D-018, D-020 ] }
-    as:
-      role: property
-      object: LineItem
-      type:
-        kind: apply
-        constructor: Selectable
-        arguments:
-          T: { kind: apply, constructor: CatalogRefOr, arguments: { T: { kind: named, name: PropertiesOption } } }
-          K: { kind: named, name: Uuid }
-      presence: optional
-  - ir: field:5.2:properties
-    digest: 4115b24e46ceb6cf1b12d1730a313c02123ae5b3ed6739bb9fefdaadc10ea478
-    locks: [ with-open-prs ]
-    source: { decisions: [ D-018, D-020 ] }
-    as:
-      role: property
-      object: LineItem
-      type:
-        kind: apply
-        constructor: Selectable
-        arguments:
-          T: { kind: apply, constructor: CatalogRefOr, arguments: { T: { kind: named, name: PropertiesOption } } }
-          K: { kind: named, name: Uuid }
-      presence: optional
   - ir: field:5.2:properties#description/object:1
     digest: d17ed59027f652ad048ca0fb7bae6984613c7b5dfc4273560958ce7006b42990
     locks: [ main ]
@@ -121,32 +146,9 @@ entries:
     as: { role: schema, in: PropertiesOption }
   - ir: field:5.2:content_detail
     digest: e5dc0ce4102338d1e9363ae1d2de7fe4b6acacb482b2b3806da30b30a8d80e6e
+    locks: [ main, with-open-prs ]
     source: { decision: D-016 }
     as: { role: property, object: LineItem, type: { kind: named, name: ContentDetail }, presence: optional }
-  - ir: field:5.2:environments
-    digest: 9620f7dbd886ab646236c463a61295b37031e109a44ba55fb348fb59630c8ab4
-    locks: [ main ]
-    source: { decision: D-018 }
-    as:
-      role: property
-      object: LineItem
-      type:
-        kind: apply
-        constructor: Selectable
-        arguments: { T: { kind: named, name: Environment }, K: { kind: named, name: Environment } }
-      presence: optional
-  - ir: field:5.2:environments
-    digest: 84b5b18b0b2d226a00eba1247dbe8f69f6214baa012d419d2d50878eb0669a95
-    locks: [ with-open-prs ]
-    source: { decision: D-018 }
-    as:
-      role: property
-      object: LineItem
-      type:
-        kind: apply
-        constructor: Selectable
-        arguments: { T: { kind: named, name: Environment }, K: { kind: named, name: Environment } }
-      presence: optional
   - ir: field:5.2:environments#description/values:1
     digest: ce5d37486929f1d04c45a68640b59c8995669804f880b262ca33ed4c07f5afc7
     locks: [ main ]
@@ -157,11 +159,6 @@ entries:
     locks: [ with-open-prs ]
     source: { decisions: [ D-013, D-014 ] }
     as: { role: type, name: Environment, layer: vocabulary, open: true }
-  - ir: field:5.2:placement
-    digest: efe7fb8d687de04c417b4ae3dc66f0a8ffd450ed1341fb1457aa0290f818c7f3
-    locks: [ with-open-prs ]
-    source: { rule: keyed-object-field }
-    as: { role: property, object: LineItem, type: { kind: named, name: Placement }, presence: optional }
   - ir: rule:5.2:f3d3f9e8
     digest: 8b18fd138cba2473076f1cedd5ce8284a836808d0c5ac65354248f8dbcc0cae3
     locks: [ with-open-prs ]
@@ -207,41 +204,209 @@ entries:
     locks: [ with-open-prs ]
     source: { rule: prose-sentence }
     as: { role: informative }
+  - ir: field:5.2:properties
+    digest: 8167901b1024772db9ede8143ce1d5009d6effcfd66b290f82e427a00940b50c
+    locks: [ main ]
+    source: { decisions: [ D-018, D-020 ] }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments:
+          T: { kind: apply, constructor: CatalogRefOr, arguments: { T: { kind: named, name: PropertiesOption } } }
+          K: { kind: named, name: Uuid }
+      presence: optional
+  - ir: field:5.2:properties
+    digest: 4115b24e46ceb6cf1b12d1730a313c02123ae5b3ed6739bb9fefdaadc10ea478
+    locks: [ with-open-prs ]
+    source: { decisions: [ D-018, D-020 ] }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments:
+          T: { kind: apply, constructor: CatalogRefOr, arguments: { T: { kind: named, name: PropertiesOption } } }
+          K: { kind: named, name: Uuid }
+      presence: optional
+  - ir: field:5.2:properties
+    digest: 51851b4eb428c45904ca874aaf132f101255a70f54933a8c86fb19deb3af33d1
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: Selectable, arguments: { T: { kind: named, name: PropertyOption } } }
+      presence: optional
+  - ir: rule:5.2:ae26d4ac
+    digest: d7ede8a2faaaeb43b1cdb7d898cb292f5340cd23b711f83930d73b3656fcea13
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: field:5.2:programs
+    digest: 0bd24b7fed13b4603b984b13e1cd96e94f05ae0297bc8d344bcd2c4402a8f744
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: Selectable, arguments: { T: { kind: named, name: ProgramOption } } }
+      presence: optional
+  - ir: rule:5.2:ae26d4ac-2
+    digest: c317638d674bd0237e0eacccfc7ecb5ecb253cb9098f87532f32dc604d3ccfc3
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: field:5.2:episodes
+    digest: 3ebc19c1e7eaf3d213fcc20953e57784975cdfe4f9a5186b0f22f760e42e1567
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: LineItemEpisodes }, presence: conditional }
+  - ir: field:5.2:episodes#description/values:1
+    digest: 71702ec497756e53f7d6ce4c9a6c2cf1a682b9c2217b86463630c9b1c2c36917
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: LineItemEpisodes }
+  - ir: rule:5.2:2f4f1aa3
+    digest: bcf87a10370a434164885f6c5cb133b5e797eebcd4a796afdd286d27a689a93c
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: LineItem }
+  - ir: field:5.2:environments
+    digest: 9620f7dbd886ab646236c463a61295b37031e109a44ba55fb348fb59630c8ab4
+    locks: [ main ]
+    source: { decision: D-018 }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: Environment }, K: { kind: named, name: Environment } }
+      presence: optional
+  - ir: field:5.2:environments
+    digest: 84b5b18b0b2d226a00eba1247dbe8f69f6214baa012d419d2d50878eb0669a95
+    locks: [ with-open-prs ]
+    source: { decision: D-018 }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: Environment }, K: { kind: named, name: Environment } }
+      presence: optional
+  - ir: field:5.2:environments
+    digest: c8049e4329c95ef6c2268d38de2b6135d01762045962a725ca02b32a0cff0260
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: Selectable, arguments: { T: { kind: named, name: Environment } } }
+      presence: optional
+  - ir: rule:5.2:ae26d4ac-3
+    digest: fe2139358d3bb07a8e9bef92a8b872b9f5679a30a65bc3ef7d54e4c3b033feab
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: field:5.2:placement
+    digest: efe7fb8d687de04c417b4ae3dc66f0a8ffd450ed1341fb1457aa0290f818c7f3
+    locks: [ with-open-prs ]
+    source: { rule: keyed-object-field }
+    as: { role: property, object: LineItem, type: { kind: named, name: Placement }, presence: optional }
+  - ir: field:5.2:placement
+    digest: 251908a4d726bb9c6afc02b64974df5636b73f20341b0b3012872fde8af40917
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Placement }, presence: conditional }
+  - ir: rule:5.2:f8f39d84
+    digest: 98b6354205981a0382943645f19400acd2b5e9efe9dac76c65614b27fe279348
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: LineItem }
+  - ir: field:5.2:break_position
+    digest: 36a179d8ded35e7248fad87107030e9a680624365d04b7b56796df392ddc7e4c
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: Selectable, arguments: { T: { kind: named, name: BreakPositionOption } } }
+      presence: optional
+  - ir: rule:5.2:ae26d4ac-4
+    digest: ee9b8b8e92f01a7f740a889d9ab7d4a534bfbcd58364f7e1ae72c2a64702349d
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: sentence:5.2.1:115c1106
+    digest: f0ad867407a399994ee6ea6eeba064b80232b4fab04a2f9b622c08eec59d78b6
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
   - ir: def:5.2.1:environments.web_desktop
     digest: fc9e8f19430aa98b5221e55f14e552f2d45140fda9a72ddf9f223c8e8a880c1c
     locks: [ with-open-prs ]
     source: { rule: definition-term }
+    as: { role: term, vocabulary: Environment }
+  - ir: def:5.2.1:environments.web_desktop
+    digest: fc9e8f19430aa98b5221e55f14e552f2d45140fda9a72ddf9f223c8e8a880c1c
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
     as: { role: term, vocabulary: Environment }
   - ir: def:5.2.1:environments.web_mobile
     digest: 597226422bc5b1d02c0154dc633c7713bc0d38a31db78c679eed3afec27f2ebf
     locks: [ with-open-prs ]
     source: { rule: definition-term }
     as: { role: term, vocabulary: Environment }
+  - ir: def:5.2.1:environments.web_mobile
+    digest: bdf45419142683a139c75c0f75da61babd6abc50ab82f123c1d584938d960d74
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: term, vocabulary: Environment }
   - ir: def:5.2.1:environments.app_mobile
     digest: f92942a442d7a518f5aa113e7be4b11b2d53f399124316be59ab39d4091c720b
     locks: [ with-open-prs ]
     source: { rule: definition-term }
+    as: { role: term, vocabulary: Environment }
+  - ir: def:5.2.1:environments.app_mobile
+    digest: 20ce90c682930792b81224ce6f15c6a8acda0a2d855375cbf3922efc0830c95f
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
     as: { role: term, vocabulary: Environment }
   - ir: def:5.2.1:environments.ctv
     digest: 09f296c7839bd87454e1725b3e95e5928443061a81b45e9d42060c264538522f
     locks: [ with-open-prs ]
     source: { rule: definition-term }
     as: { role: term, vocabulary: Environment }
+  - ir: def:5.2.1:environments.ctv
+    digest: d1d9e357e2c80f742179a2e8ebb683b2e6275fbe3417a52e2b1fcfb7ce654aae
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: term, vocabulary: Environment }
   - ir: def:5.2.1:environments.dooh
     digest: e79ca7086e2c65e04ae00013edc8dfc85ef0947722649e27aaa25e5d84e715f5
     locks: [ with-open-prs ]
     source: { rule: definition-term }
+    as: { role: term, vocabulary: Environment }
+  - ir: def:5.2.1:environments.dooh
+    digest: e79ca7086e2c65e04ae00013edc8dfc85ef0947722649e27aaa25e5d84e715f5
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
     as: { role: term, vocabulary: Environment }
   - ir: rule:5.2.1:cc42a1f8
     digest: e997800cb64e5db5c061617420685bd24d85ac97cc51c170f34d36526154e37d
     locks: [ with-open-prs ]
     source: { decision: D-030 }
     as: { role: rule, object: LineItem }
-  - ir: sentence:5.2.2:4076adca
-    digest: d76efae93f99344c4c74e2fb1cffdc78993c5155838aa3038bcc720c01ac0b1b
-    locks: [ with-open-prs ]
-    source: { rule: prose-sentence }
-    as: { role: informative }
+  - ir: rule:5.2.1:cc42a1f8
+    digest: e997800cb64e5db5c061617420685bd24d85ac97cc51c170f34d36526154e37d
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
   - ir: rule:5.2.2:463dfafd
     digest: eee71b1ff54c633f884713ce121e5b82ef4ecc041de54921c9ab66336402c469
     locks: [ with-open-prs ]
@@ -325,9 +490,157 @@ entries:
       layer: object
       open: false
       members: { min_interval_s: { type: { kind: named, name: Duration }, presence: required } }
+  - ir: rule:5.2.2:f9a1a6d5
+    digest: 55a75b3759267d3ce395ff7c66237f3fff0e0aea8350f090f790277b4c3d2cbc
+    locks: [ with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: rule, object: LineItem }
+  - ir: sentence:5.2.2:4076adca
+    digest: d76efae93f99344c4c74e2fb1cffdc78993c5155838aa3038bcc720c01ac0b1b
+    locks: [ with-open-prs, with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.2:29ac120f
+    digest: 20f523a8718dd8102b599e60465a4748923a16230efb27b8eb15769bcc9c5365
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.2:ff1c2731
+    digest: afc88d03c590ffc66f23bb78c79ba69d1d543477d35835dd0626478fee20f78f
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.2.2:Placement.reward
+    digest: 6243552951780056e5e425e05fe6b9a4415b59a38daf4397feb58047498888ff
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Placement, type: { kind: named, name: IntegerFlag }, presence: optional }
+  - ir: rule:5.2.2:ae26d4ac
+    digest: 857be3fbad0ed67111c033d90067a10a04068e709208955aa0be65de047f80d6
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Placement }
+  - ir: key:5.2.2:Placement.instl
+    digest: ea0607b0c8eaddea6f7971105d106b56f0f97a8c93eb80aed7845c7579d35899
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Placement, type: { kind: named, name: IntegerFlag }, presence: optional }
+  - ir: rule:5.2.2:ae26d4ac-2
+    digest: 7852a7aaaf078ef5fe0d4b7dee5a8d0e49e76196f836c13182fd28c536249cc7
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Placement }
+  - ir: key:5.2.2:Placement.plcmt
+    digest: e3090907130d670141bad2596b056c351584f8e5c03f535354eb3b341b606143
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Placement, type: { kind: named, name: PlainInteger }, presence: conditional }
+  - ir: rule:5.2.2:40e6089f
+    digest: f82ed4d064117d6d3dd53462c727d016e794470aed81c4e47d5a060a2fb3ec94
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: Placement }
+  - ir: key:5.2.2:Placement.skip
+    digest: c4688332e468110399eb6c929ae527892405380a68f6f75ac8daf60e954c303d
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Placement, type: { kind: named, name: IntegerFlag }, presence: optional }
+  - ir: rule:5.2.2:ae26d4ac-3
+    digest: 51d3a04c19dbc5fb22a73bce30e746dfdc14cde32c572edd9fdf6b5eabfd7670
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Placement }
+  - ir: key:5.2.2:Placement.skipafter
+    digest: d52c7f497d5028b2767e0376aeaf1b4dd9f3f61a2be2f89ff6722573f0e546aa
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Placement, type: { kind: named, name: PlainInteger }, presence: optional }
+  - ir: rule:5.2.2:ae26d4ac-4
+    digest: e899af801ba8de8c1b3f4b7125ec77b9a8b4309fdbdee11d10373cae8890e40e
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Placement }
+  - ir: "key:5.2.2:Placement.playmethod[]"
+    digest: be8bf552ba1d21d0b2c82b1c8b2a43e7d2fca0aa27c1f29261057ff0fab1c629
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: Placement
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PlainInteger } } }
+      presence: optional
+  - ir: rule:5.2.2:ae26d4ac-5
+    digest: 7a40bafb9cc813ba4001fd9cec5a7187f9bfca9695b6c5c90c5a708568aa7697
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Placement }
+  - ir: "key:5.2.2:Placement.api[]"
+    digest: c577b85ef9a5c7412b3bbe51de9e35879db3999ec4d7d744f7edb150bb78044b
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: Placement
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PlainInteger } } }
+      presence: optional
+  - ir: rule:5.2.2:ae26d4ac-6
+    digest: da16410c6953e36ba77a26dfd47706f08226f1fd5153ebb676418de0bf1b5dee
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Placement }
+  - ir: key:5.2.2:Placement.refresh
+    digest: 3635936dae82755c7248ed5873b1a0d4321c452ae80852638dc56c0cf8f55973
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Placement, type: { kind: named, name: Refresh }, presence: optional }
+  - ir: rule:5.2.2:ae26d4ac-7
+    digest: e0fd55550f43169aaea2c0c10da154132de88daf7b2d78764f9aa2a5efbd2291
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Placement }
+  - ir: key:5.2.2:Placement.feed
+    digest: 333168c63745e6f2a46254e2397e6759e1bca501db2eb4e6dde83ae08a9d7fc7
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Placement, type: { kind: named, name: PlainInteger }, presence: conditional }
+  - ir: rule:5.2.2:87d20470
+    digest: 8227488d01efae710c86ea34b96fe8ed7f7217837a82769a793710c833762f5a
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: Placement }
+  - ir: key:5.2.2:Placement.ssai
+    digest: e4dc1163a0e9b2eb6e169545fbe874a884db7e8974cc5f36a4dc0e07b0023577
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Placement, type: { kind: named, name: PlainInteger }, presence: optional }
+  - ir: rule:5.2.2:ae26d4ac-8
+    digest: 9b74d4081367160dfa4f4d46809392501f25fdbcae0e1f2dba3a362ab21d8cd9
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Placement }
+  - ir: sentence:5.2.2:0f1f9ffb
+    digest: 4d0149aace2120874c2da4abc651e0222a2ed697cf3a84cfbb31b4eecd808d58
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.2.2:Refresh.min_interval_s
+    digest: 858d83b183216c3319adeb6bb3882f4c9b9efc6d5f54ee31fc71a54ba64b3743
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Refresh, type: { kind: named, name: PlainInteger }, presence: required }
+  - ir: rule:5.2.2:373dbf11
+    digest: 9baa22e303b327348b204d2c52777d532dac9deb1d7f45f7e692d0df59d7ab6f
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Refresh }
   - ir: sentence:5.2.2:37fcff5a
     digest: eeda39e6ab87e9dc80e2398a1b403239a6b4b08476dc455878e6cd6aa0636255
     locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.2:37fcff5a
+    digest: 692c486a760d2862ea18d86883b0b018b8325283bf8c9e88bcd8d555760b1077
+    locks: [ with-our-stack ]
     source: { rule: prose-sentence }
     as: { role: informative }
   - ir: sentence:5.2.2:d640a947
@@ -335,9 +648,19 @@ entries:
     locks: [ with-open-prs ]
     source: { rule: prose-sentence }
     as: { role: informative }
+  - ir: sentence:5.2.2:d640a947
+    digest: 33d019a618dc8181421d58e823c1a406f747909b511fca5b487e3cd7ee08c4c8
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
   - ir: sentence:5.2.2:3e19d307
     digest: 94dd2495fd0067d5cff94c41d3b92932914a95a0e36ef39ba883b8f7db7b7477
     locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.2:3e19d307
+    digest: 8f906b1b60c15c16e80d705a0a2f1692f033ecb37b45304b798f34c80e86e8f9
+    locks: [ with-our-stack ]
     source: { rule: prose-sentence }
     as: { role: informative }
   - ir: sentence:5.2.2:b9b60857
@@ -345,9 +668,19 @@ entries:
     locks: [ with-open-prs ]
     source: { rule: prose-sentence }
     as: { role: informative }
+  - ir: sentence:5.2.2:b9b60857
+    digest: e045a018bcc8eafb40a63bf9c5cad72e780149a24ea4f4adfd1111c3ec56c4ca
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
   - ir: sentence:5.2.2:724e97b8
     digest: 5c8ad5c642dd07bda9ab78cf4b4f1b67f8afda68d97761b6f3cbf5937b8f737e
     locks: [ with-open-prs ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.2:724e97b8
+    digest: 5876d89b3121733374dc371a057fcd8fce53e94114bfe2b7880f74cdea359e59
+    locks: [ with-our-stack ]
     source: { rule: prose-sentence }
     as: { role: informative }
   - ir: rule:5.2.2:6f05ff6d
@@ -355,13 +688,252 @@ entries:
     locks: [ with-open-prs ]
     source: { decision: D-030 }
     as: { role: obligation, party: seller }
+  - ir: rule:5.2.2:6f05ff6d
+    digest: 31d2e287d2e57e3c6c2b5aef3c3d4ff9d28cf0abb7ad31708c7a1a990fda7b39
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: seller }
   - ir: sentence:5.2.2:8f7b65da
     digest: 93c86ce3be0a8632875068aeb51152e4209e2028542d67b0300128d81985afaa
     locks: [ with-open-prs ]
     source: { rule: prose-sentence }
     as: { role: informative }
-  - ir: rule:5.2.2:f9a1a6d5
-    digest: 55a75b3759267d3ce395ff7c66237f3fff0e0aea8350f090f790277b4c3d2cbc
-    locks: [ with-open-prs ]
-    source: { decision: D-030 }
-    as: { role: rule, object: LineItem }
+  - ir: sentence:5.2.2:8f7b65da
+    digest: ffae85e883de7eeaee84c22aa667b50469b511b454c443736ca11fb2dbb0c4db
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.2.2:871e9967
+    digest: dc17c8c4801d7dd95aa299f8d41b1de10459f40d46501daaa75759cee3f1c0b1
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:5.2.3:c99219fe
+    digest: 5a10720329aa4596604680c7dccf079156344f40cc1c6dbdfa692e9cbe425df1
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.3:a07eb480
+    digest: ba48ddbc31fc494e03177588be95f402752e43d2f3628834339834c53bda13ef
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.2.3:BreakPositionOption.id
+    digest: f6c45e6c0994be0cf7bc9d207bd2514f0627136674ad6c29a1b8196cc8c38b59
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: BreakPositionOption, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:5.2.3:373dbf11
+    digest: 9af7a7e60ae26b4dfdd335d2782fa7dc08b5f6fdd01e6e0bbf05e2f4af495b03
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: BreakPositionOption }
+  - ir: key:5.2.3:BreakPositionOption.delay
+    digest: d63561085e0c0ccde432d5879c3aeb5cda949edaec2f04fb1cf59450d0635c28
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: BreakPositionOption, type: { kind: named, name: PlainInteger }, presence: optional }
+  - ir: rule:5.2.3:ae26d4ac
+    digest: b0d464b1e3a06828d009ae70c61ac1e03b431632596f20c2742282f9f11046ce
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: BreakPositionOption }
+  - ir: key:5.2.3:BreakPositionOption.podseq
+    digest: ae0ce09fe21092d7a7d0b27488286827932824167b0ded710ade27fffe26700d
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: BreakPositionOption, type: { kind: named, name: PlainInteger }, presence: optional }
+  - ir: rule:5.2.3:ae26d4ac-2
+    digest: c8e088e785a44b7728ee421f166a195a0d78deef81b1c8aa4ca18bd6df9585cb
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: BreakPositionOption }
+  - ir: key:5.2.3:BreakPositionOption.slotinpod
+    digest: 70660d55ea0099ed60b1cb0f8b24ef3436293d3c92f4bd2fc1979d1b7e9ca877
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: BreakPositionOption, type: { kind: named, name: PlainInteger }, presence: optional }
+  - ir: rule:5.2.3:ae26d4ac-3
+    digest: 24724c266b26ba43c867373b4ffe101deeecf2916036d196b54e06af021956da
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: BreakPositionOption }
+  - ir: key:5.2.3:BreakPositionOption.maxseq
+    digest: 0621ab83e2302b50b004c6b0eb70a73924d8a6cd6c52f6fce386a43446f424c5
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: BreakPositionOption, type: { kind: named, name: PlainInteger }, presence: optional }
+  - ir: rule:5.2.3:ae26d4ac-4
+    digest: 82685f78c0e75bb69b12c9fa2c610e48935e0cb00e20683145edaf065aa31228
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: BreakPositionOption }
+  - ir: key:5.2.3:BreakPositionOption.poddur
+    digest: 37180c898a9cfe74fa941482b963b5a8517e7560080ad41c3fd03570807dc9cd
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: BreakPositionOption, type: { kind: named, name: PlainInteger }, presence: optional }
+  - ir: rule:5.2.3:ae26d4ac-5
+    digest: b9d66eac06662e5bf0beca9a722b9d76dce0998d8cd16ec8d1d2e84f8d4878fe
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: BreakPositionOption }
+  - ir: sentence:5.2.3:a1ad8639
+    digest: 80b02f50cae82104f136b1c8149e70b5a9d819c9e2b9c57a6db5b9965cf02460
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.3:775a04b0
+    digest: a43d73d5f0c6aa76522185fc8f04108c49b4d7d64c1ab2803e1f6f76c66cf44a
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.3:02009bcd
+    digest: aefb327d3004f0c167a8069d074d636fabc9f16eaa1e8818b805b84f95971dbf
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.3:61fe9089
+    digest: 299bb7fefa4be1df45ddb5373acf3aa31fefd9e023d59db086b157155524b5ee
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.3:cee0f2de
+    digest: 3cbc03e82676cce20a48b0fb62292d2f097ca17cfa590ddc64e67485b3b91302
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.2.3:b5b384f4
+    digest: f0a0485ed927c79a3e7369ada0bca1c72749991e633eca1ace28a3029a57dcae
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.2.3:eb0e5f3b
+    digest: 3efec115b69253f5bcfadf499e784de9fdf7140f1347524fcb5d7726cfd24113
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:5.2.9:7de40ccb
+    digest: 1f56d0c052135ec99ce204cc275a5de08b601fd825b95d60e1497df877340bbc
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.2.9:ProgramOption.id
+    digest: 1f08a6de6b8b0435920a5dc5f377a8bdac439e4521883f8efded38e2e7fcc839
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ProgramOption, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:5.2.9:373dbf11
+    digest: 3348bba4cf3b8703bdc570a2fcf37742a1f97b86f1fd660267ddae645e8e4919
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ProgramOption }
+  - ir: key:5.2.9:ProgramOption.content
+    digest: 69af89fccab487593d6c5be36bf56321757213cd2e0eb5e5ad36b2a404962c10
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ProgramOption, type: { kind: named, name: OpenObject }, presence: optional }
+  - ir: rule:5.2.9:ae26d4ac
+    digest: 61b6e75348612af3693857023fb70e4c425722f0a111955f79a96220920a467a
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ProgramOption }
+  - ir: key:5.2.9:ProgramOption.schedule
+    digest: 8144c0b122fe8c0ddeac202da1b4818407e9f3f65c40d0bc6b0336ed650b391d
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ProgramOption, type: { kind: named, name: EventSchedule }, presence: optional }
+  - ir: rule:5.2.9:ae26d4ac-2
+    digest: c549a7a8be5033a60521afedce1ba3e9f603797130df171b8776f6269730d89b
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ProgramOption }
+  - ir: sentence:5.2.9:48a78bfe
+    digest: aeb77e81308a8b2ef95d02c9e21d8ed319368b20a2bbffec9d3304523fe1e708
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.2.9:EventSchedule.scheduledstart
+    digest: 1f74ac939d62373be95bcc3585b2267f4d72acc58c31a73d8cf76a2e588f9366
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: EventSchedule, type: { kind: named, name: Instant }, presence: required }
+  - ir: rule:5.2.9:373dbf11-2
+    digest: e6a789859ec92b2c4e4e5a28dc6ed3d649f3017c3a194a014fd27ee782a84027
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: EventSchedule }
+  - ir: key:5.2.9:EventSchedule.scheduledend
+    digest: 513a1ebee01ef39422a6206de63375d699f75252b2538b13cd18f0c0e2872cd3
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: EventSchedule, type: { kind: named, name: Instant }, presence: required }
+  - ir: rule:5.2.9:373dbf11-3
+    digest: ef881fd5372e679c4623eb4422055a6f1b68c3ea7a9336f99419223365b49938
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: EventSchedule }
+  - ir: key:5.2.9:EventSchedule.flexibleend
+    digest: 8e6bda1215e30e2de8865e792545c34ec2ef230cf7914a49048171f67f3d6081
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: EventSchedule, type: { kind: named, name: IntegerFlag }, presence: optional }
+  - ir: rule:5.2.9:ae26d4ac-3
+    digest: d1c63a834da32ed99bab91852f2fc1f7b0881e60f83c0990c539566d6aaf11f1
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: EventSchedule }
+  - ir: key:5.2.9:EventSchedule.eventstatus
+    digest: 3aab32f44a23c332b94f1510a1773b1109bf33b24fd84f1217a86b4b06387264
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: EventSchedule
+      type: { kind: named, name: EventScheduleEventstatus }
+      presence: optional
+  - ir: key:5.2.9:EventSchedule.eventstatus#meaning/values:1
+    digest: 8309d878f156730cdf96d13cae2153a7e6fe656dee261e90aca747f332f1d996
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: EventScheduleEventstatus }
+  - ir: rule:5.2.9:baa505ce
+    digest: 39bb85d09dc7a5e7aa9fa204f416406191ad8fda2307795dfd6e35115f387391
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: EventSchedule }
+  - ir: sentence:5.2.9:3fdaee92
+    digest: c2e0ce5f165fe80fc1677899985ff7a06224bd6c0abe64535a31976fb54d4734
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.9:437cd42d
+    digest: 891352c8ab133b633f80bb5ae474e6009a113258b24e7406d1eff492a70ccef0
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.2.9:28e8ca66
+    digest: 323e729f573c67f12cc4a1ebc66e7fbb1e6c2b4b0f40ab0d003c22e182122ecf
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.2.9:962abfb9
+    digest: 9fe9888d371a4da2fac6c392a2bb9fdfec1bc84510879ee7a26a2136646b4ce6
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.2.9:775db74d
+    digest: 655694cd1b135a8ae279820285816e2d1f09a7969b5e1e85ca4e8cd5cdb2eb16
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:5.2.9:9cf2e3f3
+    digest: 1116a1015627ac181ffac3562db2577221f8c2e4f20a3048e00ead76b7fcd591
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.2.9:a4b58e7a
+    digest: c270bcc2e29358919ff999275e56064d9645d322a60f00679dd47617639777c0
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }

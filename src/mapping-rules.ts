@@ -13,14 +13,19 @@ import { canonicalJson } from "./canonical.ts";
 import { pascalField } from "./constructors.ts";
 import type { Constructors } from "./constructors.ts";
 import type { Element } from "./elements.ts";
+import type { TypeExpr } from "./grammar/type-expr.ts";
 import type { Field, IrObjectForm, Key, SpecIR, Table } from "./ir-types.ts";
 import { BOOLEAN, conceptOfRow } from "./domains.ts";
-import { listedValues, type Kernel } from "./kernel.ts";
+import { kernelOn, listedValues, type Kernel } from "./kernel.ts";
 import { heldOwnerOf } from "./owners.ts";
-import type { Declaration, MappingEntry, Presence, Target, TypeRef } from "./mapping.ts";
+import { inScope, type Declaration, type MappingEntry, type Presence, type Target, type TypeRef } from "./mapping.ts";
 
 /** What a rule may read: one lock's IR, the kernel, and the in-scope mapping on that lock. */
 export interface RuleContext {
+  /** The lock the rules run on. */
+  lock: string;
+  /** The in-scope declarations of the mapping files on the lock: each one's name, kind, and terms. */
+  declared?: { name: string; kind: string; terms?: string[] }[];
   ir: SpecIR;
   elements: Map<string, Element>;
   kernel: Kernel;
@@ -154,7 +159,8 @@ const words = (name: string) => name.replace(/([a-z0-9])([A-Z])/g, "$1 $2").toLo
 /** The documents on the lock: the field rows' owners, and every document a mapping entry defines, such as the § 2.3 manifest. */
 function documentsOf(ctx: RuleContext): string[] {
   const defined = [...ctx.entries.values()].flatMap((x) => (x.as.role === "type" && x.as.layer === "document" ? [x.as.name] : []));
-  return [...new Set([...ownersOf(ctx.ir).map(documentOf), ...defined])].sort();
+  const declared = (ctx.declared ?? []).flatMap((d) => (d.kind === "document" ? [d.name] : []));
+  return [...new Set([...ownersOf(ctx.ir).map(documentOf), ...defined, ...declared])].sort();
 }
 
 /** A code a list row writes: a decimal integer, as AdCOM's `3` or `-1`. */
@@ -197,6 +203,318 @@ export function vocabularyOfList(title: string): string {
     if (at > 0) hw[at - 1] = singular(hw[at - 1]!);
   }
   return [...hw, ...qualifiers.flatMap(words)].map((w) => w[0]!.toUpperCase() + w.slice(1).toLowerCase()).join("");
+}
+
+/** The layout of a table of shared types, one named type a row, as the stack's § 2.2 writes them. */
+const SHARED_TYPES_LAYOUT = "type-form-rules";
+
+/** The row of a table of shared types with this element ID, or null. */
+function sharedTypeRowOf(ctx: RuleContext, id: string): SpecIR["definitions"][number] | null {
+  const d = ctx.ir.definitions.find((x) => x.id === id);
+  return d !== undefined && d.layout === SHARED_TYPES_LAYOUT ? d : null;
+}
+
+/** The names of the objects the lock's key tables define, as `objectOfKey` names them. */
+const keyObjectsOf = (ir: SpecIR): Set<string> => new Set(ir.keys.flatMap((k) => objectOfKey(ir, k) ?? []));
+
+/**
+ * The kernel primitives a text that defines its own types may name: a
+ * primitive on the lock whose kernel binding cites, on the lock, the element
+ * where the text defines that name, its § 2.2 row (`def:2.2:IntegerFlag`) or
+ * its sentence ("`CurrencyCode` is a String: …"). Sharing a name alone isn't
+ * enough: the stack's `Url` and `Duration` take forms the kernel's don't.
+ */
+const kernelNames = (ctx: RuleContext): Map<string, string> => {
+  const out = new Map<string, string>();
+  for (const p of kernelOn(ctx.kernel, ctx.lock).primitives) {
+    for (const c of p.sources.spec ?? []) {
+      if (!inScope(c.locks, ctx.lock) || !ctx.elements.has(c.ir)) continue;
+      const e = ctx.elements.get(c.ir)!;
+      // The name the cited element defines: a § 2.2 row's, or a sentence's "`ClockTime` is …", which may alias the kernel's name, as `ClockTime` is `TimeOfDay`.
+      const defined = e.kind === "definition" && e.element.layout === SHARED_TYPES_LAYOUT ? e.element.value : (/^`([A-Z][A-Za-z0-9]*)` is /.exec(c.quote)?.[1] ?? null);
+      // A primitive of the name itself wins over one that only cites the same definition, as `NamespacedTerm` cites `VocabularyTerm`'s row.
+      // An edition defines its own name only: the stack's `NamespacedTerm` cites the `VocabularyTerm` row for its grammar, and is no `VocabularyTerm`.
+      if (defined !== null && p.edition !== undefined && defined !== p.name) continue;
+      if (defined !== null && (!out.has(defined) || p.name === defined)) out.set(defined, p.name);
+    }
+  }
+  return out;
+};
+
+/** The scalar names the stack's § 2.6 Type cells use, and the plain kernel type each takes where the row gives no other form. */
+const PLAIN: Readonly<Record<string, string>> = { String: "PlainString", Integer: "PlainInteger", Number: "PlainNumber", Object: "OpenObject" };
+
+/** The names the in-scope declarations of the lock define, as the vocabularies and unions a decision gives. */
+const declaredNames = (ctx: RuleContext): Set<string> => new Set((ctx.declared ?? []).map((d) => d.name));
+
+/** The names of the profiles the entries define, as `LineItemSummary`. */
+const profileNames = (ctx: RuleContext): Set<string> => new Set([...ctx.entries.values()].flatMap((x) => (x.as.role === "profile" ? [x.as.name ?? x.as.document + x.as.profile] : [])));
+
+/** A word in PascalCase from snake case: `cost_method` is `CostMethod`. */
+const pascal = (w: string) => w.split("_").filter((x) => x !== "").map((x) => x[0]!.toUpperCase() + x.slice(1)).join("");
+
+/** The vocabulary a typed row's own values, or a value table its key heads, define (§ 2.6 "Value lists"). */
+export interface RowVocabulary {
+  name: string;
+  open: boolean;
+  /** The element that writes the terms: the row's value list, or the value table's first row. */
+  ir: string;
+  /** The terms, for a row's own list; a value table's rows give theirs as term entries. */
+  terms: string[] | null;
+}
+
+/**
+ * The core terms a row's text takes from elsewhere (the stack's § 2.6): "the
+ * `a.b` terms (§ N)", the own list of the row `b` of the object `a` names, and
+ * "the `c` terms of § N", the codes the column `c` of § N's value tables holds.
+ */
+export function takenFrom(ir: SpecIR, text: string): { terms: string[]; elements: string[] } {
+  const clause = /\bCore terms?:(.*?)(?:\.\s+[A-Z]|\.?$)/.exec(text)?.[1] ?? "";
+  const out: string[] = [];
+  const elements: string[] = [];
+  for (const m of clause.matchAll(/\bthe `([a-z][a-z0-9_]*)\.([a-z][a-z0-9_]*)` terms \(§ [\d.]+\)/g)) {
+    const key = ir.keys.find((k) => k.id.endsWith(`:${pascal(m[1]!)}.${m[2]}`));
+    const list = key?.value_lists.map((id) => ir.value_lists.find((v) => v.id === id)!).find((v) => v.host === `${key.id}#meaning`);
+    if (list) elements.push(list.id);
+    out.push(...(list?.items.map((i) => i.value) ?? []));
+  }
+  for (const m of clause.matchAll(/\bthe `([a-z][a-z0-9_]*)` terms of § ([\d.]+)/g)) {
+    for (const d of ir.definitions.filter((x) => x.loc.section === m[2])) {
+      const cell = d.columns.find((c) => c.name === `\`${m[1]}\``)?.text ?? "";
+      // A cell that names a key, as TIME's `rate_unit`, takes that key's terms, which its own row lists.
+      const keyed = (v: string) => ir.keys.some((k) => k.loc.section === m[2] && k.key.path === v);
+      const terms = [...cell.matchAll(/`([^`]+)`/g)].map((x) => x[1]!).filter((v) => !keyed(v));
+      if (terms.length > 0) elements.push(d.id);
+      out.push(...terms);
+    }
+  }
+  return { terms: [...new Set(out)], elements };
+}
+const takenTerms = (ctx: RuleContext, text: string): string[] => takenFrom(ctx.ir, text).terms;
+
+/** The type a row's Type cell names at its root, under any `Array` or `Selectable`. */
+const leafOf = (t: TypeExpr): TypeExpr => (t.kind === "array" ? leafOf(t.items) : t.kind === "apply" && t.name === "Selectable" && t.arguments.length === 1 ? leafOf(t.arguments[0]!) : t);
+
+/**
+ * A typed row's vocabulary (§ 2.6): an `Enum` row's list, closed; an `Integer`
+ * row's list, closed; and a `VocabularyTerm` row's core terms, open, from its
+ * own list or from the value table its key heads. Named from the row's path:
+ * the object the row belongs to and its last segment, in PascalCase, so
+ * `type` on the proposal is `ProposalType`, `pricing[].cost_method`
+ * `PricingEntryCostMethod`, and `AssentEntry.role` `AssentEntryRole`, a
+ * list's in the singular. Null for a row with no list, or of another type.
+ */
+export function rowVocabulary(ctx: RuleContext, e: Element): RowVocabulary | null {
+  if (e.kind !== "field" && e.kind !== "key") return null;
+  const expr = e.kind === "field" ? (e.element.required !== undefined ? e.element.type.parsed : null) : (e.element.type_expr ?? null);
+  if (expr === null) return null;
+  const leaf = leafOf(expr);
+  const kind = leaf.kind === "scalar" && ["Enum", "Integer"].includes(leaf.name) ? leaf.name : leaf.kind === "named" && leaf.name === "VocabularyTerm" ? "VocabularyTerm" : null;
+  if (kind === null) return null;
+  const host = `${e.element.id}#${e.kind === "field" ? "description" : "meaning"}`;
+  const own = e.element.value_lists.map((id) => ctx.ir.value_lists.find((v) => v.id === id)!).find((v) => v.host === host);
+  const path = e.kind === "field" ? e.element.names[0]!.path : e.element.key.path;
+  const last = path.split(".").pop()!.replaceAll("[]", "");
+  const listed = path.endsWith("[]") || expr.kind === "array";
+  const base = `${(e.kind === "field" ? objectOfField(e.element) : objectOfKey(ctx.ir, e.element)) ?? ""}${pascal(last)}`;
+  const words = base.match(/[A-Z][a-z0-9]*/g) ?? [base];
+  const name = listed ? [...words.slice(0, -1), singular(words.at(-1)!)].join("") : base;
+  // Core terms a row takes from another row or a table, as "the `frequency_cap.per` terms (§ 5.5)" or "the `unit` terms of § 5.6.5".
+  const taken = kind === "VocabularyTerm" ? takenTerms(ctx, e.kind === "field" ? e.element.description.text : e.element.meaning.text) : [];
+  if (own) return { name, open: kind === "VocabularyTerm", ir: own.id, terms: [...new Set([...taken, ...own.items.map((i) => i.value)])] };
+  if (kind !== "VocabularyTerm") return null;
+  if (taken.length > 0) return { name, open: true, ir: e.element.id, terms: taken };
+  // A value table headed by the key's name lists its core terms, as `cost_method`'s does.
+  const tables = ctx.ir.tables.filter((t) => t.parent?.via === "header" && t.parent.identifier === last && ctx.ir.definitions.some((d) => d.loc.table === t.id));
+  const rows = ctx.ir.fields.filter((f) => f.names[0]!.path.split(".").pop()!.replaceAll("[]", "") === last).length + ctx.ir.keys.filter((k) => k.key.path.split(".").pop()!.replaceAll("[]", "") === last).length;
+  // A row that lists no core terms, here or in a table, is an open vocabulary of its own whose terms the text leaves to their definers (§ 2.2).
+  // A row that lists no core terms, here or in a table, is an open list whose terms their definers give, which a decision names and sets aside (§ 2.2).
+  if (tables.length !== 1 || rows !== 1) return null;
+  const first = ctx.ir.definitions.find((d) => d.loc.table === tables[0]!.id)!;
+  return { name, open: true, ir: first.id, terms: null };
+}
+
+/**
+ * The model type a typed row's type expression names, or null where no rule
+ * decides it. `String`, `Integer`, `Number`, and `Object` take the plain
+ * kernel types; Boolean the inline boolean; a name, the object its key table
+ * defines, a declared or entry-defined type, a document, an array field's
+ * entry object, or a kernel primitive whose binding cites the text's
+ * definition of the name, under that name or the kernel's; `Array[T]` a list;
+ * and a generic type, the kernel's constructor of that name on the lock, its
+ * arguments in its parameters' order.
+ */
+export function typeOfExpr(t: TypeExpr, ctx: RuleContext): TypeRef | null {
+  switch (t.kind) {
+    case "scalar": {
+      if (t.name === "Boolean") return { kind: "boolean" };
+      const plain = PLAIN[t.name];
+      if (plain === undefined) return null;
+      const on = kernelOn(ctx.kernel, ctx.lock).primitives.some((p) => p.name === plain) || declaredNames(ctx).has(plain);
+      return on ? named(plain) : null;
+    }
+    case "named": {
+      const objects = keyObjectsOf(ctx.ir);
+      const templates = [...ctx.constructors.constructors, ...ctx.constructors.parts];
+      if (objects.has(t.name) && !templates.some((c) => c.name === t.name) && !profileNames(ctx).has(t.name)) return named(t.name);
+      // A type another entry defines, as the § 2.2 vocabulary `Side`, or a declaration, as the union `Measurer`.
+      if ([...ctx.entries.values()].some((x) => x.as.role === "type" && x.as.name === t.name) || declaredNames(ctx).has(t.name) || profileNames(ctx).has(t.name)) return named(t.name);
+      // A document the field rows describe, as `Array[LineItem]` holds line items.
+      if (ownersOf(ctx.ir).map(documentOf).includes(t.name)) return named(t.name);
+      // An array field's sub-field rows define its entry object, as `pricing[]`'s define `PricingEntry`.
+      if (ctx.ir.fields.some((f) => f.names[0]!.segments.length === 2 && f.names[0]!.segments[0]!.array && `${pascalField(f.names[0]!.segments[0]!.name)}Entry` === t.name)) return named(t.name);
+      // A part the text writes for the kernel's, as the stack's `Ext`.
+      if (ctx.constructors.parts.some((p) => p.name === t.name)) return named(t.name);
+      const k = kernelNames(ctx).get(t.name);
+      if (k !== undefined) return named(k);
+      // A § 2.2 type whose Form is another type expression, as `Ext` is `Map[Domain, Object]`, is that expression.
+      const row = ctx.ir.definitions.find((d) => d.layout === SHARED_TYPES_LAYOUT && d.value === t.name);
+      const form = row?.columns.find((c) => c.name === "Form")?.text ?? "";
+      const alias = /^`([^`]+)`$/.exec(form)?.[1];
+      const parsed = alias !== undefined && alias !== t.name ? parseTypeText(alias) : null;
+      return parsed === null ? null : typeOfExpr(parsed, ctx);
+    }
+    case "array": {
+      const item = typeOfExpr(t.items, ctx);
+      return item === null ? null : list(item);
+    }
+    case "apply": {
+      const args = t.arguments.map((a) => typeOfExpr(a, ctx));
+      if (args.some((a) => a === null)) return null;
+      if (t.name === "Map" && args.length === 2) return { kind: "apply", constructor: "Map", arguments: { K: args[0]!, V: args[1]! } };
+      const c = ctx.constructors.constructors.find((x) => x.name === t.name);
+      const params = (c?.parameters ?? []).filter((p) => !p.optional);
+      if (!c || params.length !== args.length) return null;
+      return { kind: "apply", constructor: c.name, arguments: Object.fromEntries(params.map((p, i) => [p.name, args[i]!])) };
+    }
+    default:
+      return null;
+  }
+}
+
+/** The type a lead-in's "holds the keys of `Y`" names: an object, or a constructor applied to one argument, as `Selectable[AudienceOption]`. */
+function heldType(text: string, ctx: RuleContext, holder?: string): TypeRef | null {
+  const m = /^([A-Z][A-Za-z0-9]*)(?:\[([A-Z][A-Za-z0-9]*)\])?$/.exec(text);
+  if (!m) return null;
+  if (m[2] === undefined) return typeOfExpr({ kind: "named", name: m[1]! }, ctx);
+  const arg: TypeExpr = /^[A-Z]$/.test(m[2]) ? { kind: "param", name: m[2] } : { kind: "named", name: m[2] };
+  if (arg.kind === "param") return null;
+  // Options typed `VocabularyTerm`, as `ShortfallRemedy` holds `Selectable[VocabularyTerm]`, are the vocabulary a decision names for the object's options.
+  if (arg.kind === "named" && arg.name === "VocabularyTerm" && holder !== undefined) {
+    // Options typed `VocabularyTerm`, as `ShortfallRemedy` holds `Selectable[VocabularyTerm]`, whose holding row lists their core terms, are
+    // the vocabulary those terms make where the text writes the list once more, as `Preemption.remedy`'s (§ 2.6: a list is written once).
+    const row = [...ctx.elements.values()].find((x) => (x.kind === "field" || x.kind === "key") && (x.kind === "field" ? x.element.required !== undefined && x.element.type.parsed.kind === "named" && x.element.type.parsed.name === holder : x.element.type_expr?.kind === "named" && x.element.type_expr.name === holder));
+    const own = row && (row.kind === "field" || row.kind === "key") ? ctx.ir.value_lists.find((l) => row.element.value_lists.includes(l.id) && l.host === `${row.element.id}#${row.kind === "field" ? "description" : "meaning"}`) : undefined;
+    const terms = own ? canonicalJson(own.items.map((i) => i.value)) : null;
+    const same = terms === null ? undefined : [...ctx.elements.values()].map((x) => rowVocabulary(ctx, x)).find((v) => v !== null && v.terms !== null && canonicalJson(v.terms) === terms);
+    if (same) return { kind: "apply", constructor: "Selectable", arguments: { T: named(same.name) } };
+  }
+  return typeOfExpr({ kind: "apply", name: m[1]!, arguments: [arg] }, ctx);
+}
+
+/** A type expression written in text, as `Map[Domain, Object]`: a name, or a name applied to arguments; null for anything else. */
+export function parseTypeText(text: string): TypeExpr | null {
+  let pos = 0;
+  const src = text.replace(/\s+/g, "");
+  const term = (): TypeExpr | null => {
+    const m = /^[A-Z][A-Za-z0-9]*/.exec(src.slice(pos));
+    if (!m) return null;
+    pos += m[0].length;
+    const name = m[0];
+    if (src[pos] !== "[") return ["String", "Integer", "Number", "Boolean", "Enum", "Object"].includes(name) ? { kind: "scalar", name } : /^[A-Z]$/.test(name) ? { kind: "param", name } : { kind: "named", name };
+    pos++;
+    const args: TypeExpr[] = [];
+    for (;;) {
+      const a = term();
+      if (a === null) return null;
+      args.push(a);
+      if (src[pos] === ",") pos++;
+      else break;
+    }
+    if (src[pos] !== "]") return null;
+    pos++;
+    return name === "Array" && args.length === 1 ? { kind: "array", items: args[0]! } : { kind: "apply", name, arguments: args };
+  };
+  const t = term();
+  return t !== null && pos === src.length ? t : null;
+}
+
+/** A condition the schema states: a sibling's value, "REQUIRED when `x` is `v`". */
+const SIBLING_VALUE = /^REQUIRED when `([a-z][a-z0-9_]*)` is `([^`]+)`$/;
+
+/** The rows of the object a typed row belongs to, by their key or field name, in the order the text writes them. */
+function siblingRows(ctx: RuleContext, row: Element): Element[] {
+  const object = objectOfRow(ctx.ir, row);
+  return [...ctx.elements.values()].filter((x) => (x.kind === "field" || x.kind === "key") && objectOfRow(ctx.ir, x) === object);
+}
+
+const lastOf = (x: Element): string => (x.kind === "field" ? x.element.names[0]!.path : x.kind === "key" ? x.element.key.path : "").split(".").pop()!.replaceAll("[]", "");
+
+/** The values a sibling row takes, where they are a vocabulary's or the boolean's, or null. */
+function siblingValues(ctx: RuleContext, sibling: Element): string[] | null {
+  const t = typedRowType(sibling, ctx);
+  if (t?.kind === "boolean") return ["true", "false"];
+  if (t?.kind !== "named") return null;
+  const v = rowVocabulary(ctx, sibling);
+  if (v?.terms) return v.terms;
+  const d = (ctx.declared ?? []).find((x) => x.name === t.name && x.kind === "vocabulary");
+  if (d?.terms) return d.terms;
+  const entry = [...ctx.entries.entries()].find(([, x]) => x.as.role === "type" && x.as.name === t.name && x.as.layer === "vocabulary");
+  const list = entry ? ctx.ir.value_lists.find((l) => l.id === entry[0]) : undefined;
+  if (list) return list.items.map((i) => i.value);
+  // A vocabulary whose value table lists its terms, as `MediaChannel`'s `channel` table.
+  const tables = ctx.ir.tables.filter((tb) => tb.parent?.via === "header" && tb.parent.identifier === lastOf(sibling));
+  const rows = ctx.ir.definitions.filter((x) => tables.some((tb) => tb.id === x.loc.table));
+  return rows.length > 0 ? rows.map((x) => x.value) : null;
+}
+
+/** Whether a typed row's condition is the object's schema's to state (type rules § 8): a sibling's value, read by no other sibling's condition but the one that reads the most. */
+function conditionStated(ctx: RuleContext, row: Element): { sibling: string } | null {
+  if (row.kind !== "field" && row.kind !== "key") return null;
+  const p = row.kind === "field" ? row.element.presence : (row.element.required?.parsed ?? null);
+  if (p?.kind !== "clauses" || p.clauses.length !== 1 || p.clauses[0]!.qualifier !== "when") return null;
+  const m = SIBLING_VALUE.exec(`REQUIRED when ${p.clauses[0]!.condition}`);
+  if (!m) return null;
+  const sibling = siblingRows(ctx, row).find((x) => lastOf(x) === m[1]);
+  const values = sibling ? siblingValues(ctx, sibling) : null;
+  return values !== null && values.includes(m[2]!) ? { sibling: m[1]! } : null;
+}
+
+/** Whether a conditional typed row's condition is a rule's: one the schema can't state, or on a sibling other than the one the object's schema reads. */
+export function conditionLeft(ctx: RuleContext, row: Element): boolean {
+  if (row.kind !== "field" && row.kind !== "key") return false;
+  if (presenceOf(row.element) !== "conditional") return false;
+  const own = conditionStated(ctx, row);
+  if (own === null) return true;
+  const counts = new Map<string, number>();
+  for (const x of siblingRows(ctx, row)) {
+    const s = presenceOf((x as { element: Field | Key }).element) === "conditional" ? conditionStated(ctx, x) : null;
+    if (s) counts.set(s.sibling, (counts.get(s.sibling) ?? 0) + 1);
+  }
+  const keep = [...counts.keys()].sort((a, b) => counts.get(b)! - counts.get(a)! || (a < b ? -1 : 1))[0];
+  return own.sibling !== keep;
+}
+
+/** A typed row's type: its vocabulary, where its values define one, else its Type cell's (`typeOfExpr`). */
+function typedRowType(e: Element, ctx: RuleContext): TypeRef | null {
+  if (e.kind !== "field" && e.kind !== "key") return null;
+  const expr = e.kind === "field" ? (e.element.required !== undefined ? e.element.type.parsed : null) : (e.element.type_expr ?? null);
+  if (expr === null) return null;
+  const v = rowVocabulary(ctx, e);
+  if (v === null) return typeOfExpr(expr, ctx);
+  const wrap = (x: TypeExpr): TypeRef | null => {
+    if (x.kind === "array") {
+      const i = wrap(x.items);
+      return i === null ? null : list(i);
+    }
+    if (x.kind === "apply" && x.name === "Selectable") {
+      const c = ctx.constructors.constructors.find((y) => y.name === "Selectable");
+      const p = c?.parameters.find((y) => !y.optional);
+      return p ? { kind: "apply", constructor: "Selectable", arguments: { [p.name]: named(v.name) } } : null;
+    }
+    return named(v.name);
+  };
+  return wrap(expr);
 }
 
 /** The entry rules, tried in order; the first that applies derives the entry. */
@@ -263,6 +581,22 @@ export const ENTRY_RULES: EntryRule[] = [
     },
   },
   {
+    id: "required-cell",
+    says: "A statement that is a typed row's Required cell, as the stack's \"REQUIRED when `role` is `commitment`\", is the presence of the property the row maps to: what the object's schema states where it can state it, a value of one sibling the object's other conditions don't read, and otherwise a rule of the object.",
+    derive: (e, ctx) => {
+      if (e.kind !== "statement" || !e.element.host.endsWith("#required")) return null;
+      const row = ctx.elements.get(e.element.host.slice(0, -"#required".length));
+      if (row?.kind !== "field" && row?.kind !== "key") return null;
+      const as = ctx.entries.get(row.element.id)?.as;
+      // A key of a kernel type's table, as the stack's § 3.1 `Selectable` keys, is that type's schema, its presence too.
+      if (as?.role === "schema") return { role: "schema", in: as.in };
+      if (as?.role !== "property") return null;
+      // A key a table adds to a profile is optional there, whatever its condition on the full form says.
+      if ([...ctx.entries.values()].some((x) => x.as.role === "profile" && (x.as.name ?? x.as.document + x.as.profile) === as.object)) return { role: "schema", in: as.object };
+      return conditionLeft(ctx, row) ? { role: "rule", object: as.object } : { role: "schema", in: as.object };
+    },
+  },
+  {
     id: "presence-statement",
     says: "A statement that is a row's own REQUIRED or OPTIONAL sentence is the presence of the property that row maps to, which the object's schema states.",
     derive: (e, ctx) => {
@@ -271,6 +605,60 @@ export const ENTRY_RULES: EntryRule[] = [
       if (host?.kind !== "field" || host.element.presence === null) return null;
       const as = ctx.entries.get(host.element.id)?.as;
       return as?.role === "property" ? { role: "schema", in: as.object } : null;
+    },
+  },
+  {
+    id: "row-vocabulary-values",
+    says: "A typed row's own value list is the vocabulary the row's values define (§ 2.6), which the vocabulary's schema expresses.",
+    derive: (e, ctx) => {
+      if (e.kind !== "value_list") return null;
+      const host = ctx.elements.get(e.element.host.split("#")[0]!);
+      const v = host ? rowVocabulary(ctx, host) : null;
+      return v !== null && v.ir === e.element.id ? { role: "schema", in: v.name } : null;
+    },
+  },
+  {
+    id: "table-term",
+    says: "A row of a value table that the one typed row of its key's name types, as the `cost_method` table's, is a term of that row's vocabulary, or restates one where the row lists its own values (§ 2.6).",
+    derive: (e, ctx) => {
+      if (e.kind !== "definition") return null;
+      const t = tableOf(ctx.ir, e.element);
+      if (t?.parent?.via !== "header") return null;
+      const name = t.parent.identifier;
+      const rows = [...ctx.elements.values()].filter((x) => (x.kind === "field" && x.element.names[0]!.path.split(".").pop()!.replaceAll("[]", "") === name) || (x.kind === "key" && x.element.key.path.split(".").pop()!.replaceAll("[]", "") === name));
+      if (rows.length !== 1) return null;
+      const row = rows[0]!;
+      let v = rowVocabulary(ctx, row);
+      // A row typed by a vocabulary a declaration gives, as `channel` is a `MediaChannel`, whose core terms its value table lists.
+      if (v === null && (row.kind === "field" || row.kind === "key")) {
+        const expr = row.kind === "field" ? (row.element.required !== undefined ? row.element.type.parsed : null) : (row.element.type_expr ?? null);
+        const leaf = expr === null ? null : expr.kind === "apply" && expr.name === "Map" ? expr.arguments[0]! : leafOf(expr);
+        const d = leaf?.kind === "named" ? (ctx.declared ?? []).find((x) => x.name === leaf.name && x.kind === "vocabulary") : undefined;
+        if (d) v = { name: d.name, open: false, ir: "", terms: d.terms ?? null };
+      }
+      if (v === null) return null;
+      if (v.terms === null) return { role: "term", vocabulary: v.name };
+      return v.terms.includes(e.element.value) ? { role: "schema", in: v.name } : null;
+    },
+  },
+  {
+    id: "shared-type-row",
+    says: "A row of a table of shared types whose name the mapping defines, as a vocabulary its Form cell's value list gives, is what that type's schema expresses.",
+    derive: (e, ctx) => {
+      if (e.kind !== "definition") return null;
+      const row = sharedTypeRowOf(ctx, e.element.id);
+      if (row === null) return null;
+      if (row.value_lists.some((v) => typeNameOf(ctx, v) === row.value)) return { role: "schema", in: row.value };
+      // A type the kernel holds in the text's form, under its name or the kernel's, or a declaration gives (§ 2.2).
+      const t = typeOfExpr({ kind: "named", name: row.value }, ctx);
+      if (t?.kind === "named") return { role: "schema", in: t.name };
+      // A type that is another expression, as `Ext` is `Map[Domain, Object]`, is what that expression's constructor expresses.
+      if (t?.kind === "apply") return { role: "schema", in: t.constructor };
+      const p = kernelOn(ctx.kernel, ctx.lock).primitives.find((x) => x.name === row.value) ?? ctx.constructors.parts.find((x) => x.name === row.value);
+      if (p) return { role: "schema", in: p.name };
+      // A row a primitive's binding cites as the definition of its form, as the stack's `NamespacedTerm` cites `VocabularyTerm`'s grammar.
+      const citing = kernelOn(ctx.kernel, ctx.lock).primitives.find((x) => (x.sources.spec ?? []).some((c) => c.ir === row.id && inScope(c.locks, ctx.lock)));
+      return citing ? { role: "schema", in: citing.name } : null;
     },
   },
   {
@@ -315,8 +703,12 @@ export const ENTRY_RULES: EntryRule[] = [
     says: "In the kernel's sections, a statement, code block, or § 3.1 key that one constructor or part cites as its source, or else exactly one primitive cites, is what that type's schema expresses.",
     derive: (e, ctx) => {
       if (e.kind === "field" || e.kind === "definition" || e.kind === "marker") return null;
-      if (ctx.moduleOf(e.element.loc.section) !== KERNEL_MODULE) return null;
-      if (e.kind === "key" && objectOfKey(ctx.ir, e.element) !== null) return null;
+      // A key table the text writes for a kernel part outside the kernel's sections, as the stack's § 5.5 `ClockWindow`, is that part's too.
+      const partKey = e.kind === "key" && ctx.constructors.parts.some((p) => p.name === objectOfKey(ctx.ir, e.element));
+      if (ctx.moduleOf(e.element.loc.section) !== KERNEL_MODULE && !partKey) return null;
+      // A key of a table the text writes for a kernel type, as the stack's § 3.1 `Selectable` keys, is that type's.
+      const keyObject = e.kind === "key" ? objectOfKey(ctx.ir, e.element) : null;
+      if (keyObject !== null && ![...ctx.constructors.constructors, ...ctx.constructors.parts].some((c) => c.name === keyObject)) return null;
       const { primitives, templates } = kernelCiters(ctx, e.element.id);
       if (templates.length === 1) return { role: "schema", in: templates[0]! };
       if (templates.length === 0 && primitives.length === 1) return { role: "schema", in: primitives[0]! };
@@ -325,18 +717,47 @@ export const ENTRY_RULES: EntryRule[] = [
   },
   {
     id: "example-file",
-    says: "A sentence that names one file under `examples/`, in a section whose title names exactly one document, such as \"See `examples/proposal.yaml`.\" under § 6.1 Proposal, points to an example of that document, which the examples gate validates.",
+    says: "A sentence that names one file under `examples/`, in a section whose title names exactly one document, such as \"See `examples/proposal.yaml`.\" under § 6.1 Proposal, points to an example of that document, which the examples gate validates. A title that names no document by its whole name names the one document whose name ends in the title's last word, as \"Publication manifest\" the stack's `ProposalManifest`. A sentence that names several files points to an example of each, the document each file's name starts with, as `line-item-ctv-bonus.yaml` a line item.",
     derive: (e, ctx) => {
-      if (e.kind !== "sentence" || exampleFilesOf(e.element.text).length !== 1) return null;
+      if (e.kind !== "sentence") return null;
+      const files = exampleFilesOf(e.element.text);
+      const docs = documentsOf(ctx);
+      if (files.length > 1) {
+        // Each file's document is the longest one whose name, in kebab case, its file name starts with.
+        const of = (f: string) => docs.filter((d) => f.split("/").pop()!.startsWith(`${words(d).replaceAll(" ", "-")}`)).sort((a, b) => b.length - a.length)[0];
+        const objects = files.map(of);
+        if (objects.some((o) => o === undefined)) return null;
+        return { role: "example", object: objects[0]!, files: Object.fromEntries(files.map((f, i) => [f, objects[i]!])) };
+      }
+      if (files.length !== 1) return null;
       const title = ctx.ir.sections.find((s) => s.id === e.element.loc.section)?.title.toLowerCase() ?? "";
-      const named = documentsOf(ctx).filter((d) => new RegExp(`(^|[^a-z])${words(d)}($|[^a-z])`).test(title));
-      return named.length === 1 ? { role: "example", object: named[0]! } : null;
+      const named = docs.filter((d) => new RegExp(`(^|[^a-z])${words(d)}($|[^a-z])`).test(title));
+      if (named.length === 1) return { role: "example", object: named[0]! };
+      const last = title.split(/[^a-z]+/).filter(Boolean).pop();
+      const ending = named.length === 0 && last !== undefined ? docs.filter((d) => words(d).split(" ").pop() === last) : [];
+      return ending.length === 1 ? { role: "example", object: ending[0]! } : null;
     },
   },
   {
     id: "prose-sentence",
     says: "A prose sentence with no RFC 2119 keyword states no requirement of its own, so it is informative. A decision that rests on it covers it, so a change to it makes the decision stale.",
     derive: (e) => (e.kind === "sentence" ? { role: "informative" } : null),
+  },
+  {
+    id: "typed-row",
+    says: "A row of a table that types its rows in the text's own type names and has a Required column, as the stack's, is a property of its object with the type its Type cell names: Boolean the inline boolean, a name the object a key table defines under that name, a document, an array field's entry object, or a kernel primitive whose binding cites the text's definition of that name on the lock, `Array[T]` a list, and `Map[K, V]` and `Range[T]` the kernel's constructors.",
+    derive: (e, ctx) => {
+      if (e.kind !== "field" && e.kind !== "key") return null;
+      // A key of a table the text writes for a kernel type, as `ClockWindow`'s, is that type's schema, not a property.
+      if (e.kind === "key" && [...ctx.constructors.constructors, ...ctx.constructors.parts].some((c) => c.name === objectOfKey(ctx.ir, e.element))) return null;
+      const type = typedRowType(e, ctx);
+      if (type === null) return null;
+      // A key that restates another row "in the form its row states", as `RequestedValue`'s, names its copy after its own object, which a decision gives.
+      const object = e.kind === "key" ? objectOfKey(ctx.ir, e.element) : null;
+      const restates = object !== null && [...ctx.ir.sentences, ...ctx.ir.statements].some((x) => x.text.startsWith(`\`${object}\` holds exactly one key`) && x.text.includes("in the form its row states"));
+      if (restates && type.kind === "apply" && type.constructor !== "List") return null;
+      return property(ctx.ir, e, type);
+    },
   },
   {
     id: "scalar-field",
@@ -454,6 +875,31 @@ export const DECLARATION_RULES: DeclarationRule[] = [
       }),
   },
   {
+    id: "marker-vocabulary",
+    says: "A marker table whose rows define every marker the field and key rows carry, `mixed` among them where a row carries it, as the stack's § 3, declares the closed kernel vocabulary `Marker`, at its first row, whose terms the rows define.",
+    derive: (ctx) => {
+      const defined = new Set(ctx.ir.markers.map((m) => m.marker));
+      const used = [...ctx.ir.fields.map((f) => f.marker), ...ctx.ir.keys.map((k) => k.marker)].filter((m): m is string => m !== undefined);
+      if (ctx.ir.markers.length === 0 || used.length === 0 || !used.every((m) => defined.has(m))) return [];
+      return [{ name: "Marker", kind: "vocabulary" as const, ir: ctx.ir.markers[0]!.id, source: { rule: "marker-vocabulary" }, open: false }];
+    },
+  },
+  {
+    id: "row-vocabulary",
+    says: "A typed row's values define a vocabulary (§ 2.6): an `Enum` or `Integer` row's own list, closed, and a `VocabularyTerm` row's core terms, open, from its own list or the value table its key heads, named after the row's object and key, as `ProposalType` and `AssentEntryRole`, and declared at the element that writes the terms.",
+    derive: (ctx) => {
+      const out: Declaration[] = [];
+      const seen = new Set<string>();
+      for (const e of ctx.elements.values()) {
+        const v = rowVocabulary(ctx, e);
+        if (v === null || seen.has(v.name)) continue;
+        seen.add(v.name);
+        out.push({ name: v.name, kind: "vocabulary", ir: v.ir, source: { rule: "row-vocabulary" }, open: v.open, ...(v.terms && v.terms.length > 0 ? { terms: v.terms } : {}) });
+      }
+      return out;
+    },
+  },
+  {
     id: "document-owner",
     says: "The owners of the field rows are the documents, such as `Proposal` and `LineItem`, each declared at its first field row, but an owner another owner's field holds, which is an object.",
     derive: (ctx) => {
@@ -478,24 +924,51 @@ export const DECLARATION_RULES: DeclarationRule[] = [
   },
   {
     id: "key-table-object",
-    says: "A key table that names a field or member describes a closed object, named after it and declared at the table's first row.",
-    derive: (ctx) =>
-      ctx.ir.tables.flatMap((t) => {
+    says: "A key table that names a field or member describes a closed object, named after it and declared at the table's first row. One the text calls open, as the stack's § 2.5 \"the open objects `DocumentRef` (§ 2.2), `ErrorObject` (§ 2.4), and `CostParameters`\", is open, and the keys it doesn't list are another definition's. One a statement publishes as a file at a URL, as the stack's § 2.3 `ProposalManifest`, is a document.",
+    derive: (ctx) => {
+      // The objects a sentence calls open by name, as "and so are the open objects `DocumentRef` (§ 2.2), `ErrorObject` (§ 2.4), …".
+      const openNamed = new Set(
+        [...ctx.ir.sentences, ...ctx.ir.statements].flatMap((s) => {
+          const m = /\bthe open objects? ((?:`[A-Z][A-Za-z0-9]*`[^`.]*)+)/.exec(s.text);
+          return m ? [...m[1]!.matchAll(/`([A-Z][A-Za-z0-9]*)`/g)].map((x) => x[1]!) : [];
+        }),
+      );
+      // The objects a statement publishes as a file of their own, as "A seller MAY publish `https://…/openproposal.json`, a `ProposalManifest`",
+      // are documents.
+      const published = new Set([...ctx.ir.sentences, ...ctx.ir.statements].flatMap((s) => [...s.text.matchAll(/\bpublish(?:es)? `https?:\/\/[^`]+`, an? `([A-Z][A-Za-z0-9]*)`/g)].map((m) => m[1]!)));
+      return ctx.ir.tables.flatMap((t): Declaration[] => {
         // A module the mapping leaves for a later phase declares nothing yet.
         if (ctx.deferred(t.section)) return [];
         const first = ctx.ir.keys.find((k) => k.loc.table === t.id);
         const name = first ? objectOfKey(ctx.ir, first) : null;
-        return first && name ? [{ name, kind: "object" as const, ir: first.id, source: { rule: "key-table-object" }, open: false }] : [];
-      }),
+        // A key table the text writes for a kernel type, as the stack's § 2.2 `Range` keys, describes that type, not an object of its own.
+        if (name !== null && [...ctx.constructors.constructors, ...ctx.constructors.parts].some((c) => c.name === name)) return [];
+        // So does a key table that adds keys to a profile, as "**`ProposalSummary`** adds this key:" (§ 2.6).
+        if (name !== null && [...ctx.entries.values()].some((x) => x.as.role === "profile" && (x.as.name ?? x.as.document + x.as.profile) === name)) return [];
+        if (!first || !name) return [];
+        // A lead-in that reads "`X` holds the keys of `Y`" (the stack's § 2.6) gives `X` the keys of `Y`: a profile's, which it
+        // includes, as `ManifestEntry` holds `ProposalSummary`'s, or an object's or an applied constructor's, which it holds.
+        const lead = [...ctx.ir.sentences, ...ctx.ir.statements].find((s) => s.loc.section === t.section && s.text.startsWith(`\`${name}\` holds the keys of \``));
+        const held = lead ? /^`[^`]+` holds the keys of `([^`]+)`/.exec(lead.text)![1]! : null;
+        const ref = held === null ? null : heldType(held, ctx, name);
+        const profile = held !== null && profileNames(ctx).has(held);
+        if (published.has(name)) return [{ name, kind: "document" as const, ir: first.id, source: { rule: "key-table-object" } }];
+        const open = openNamed.has(name);
+        return [{ name, kind: "object" as const, ir: first.id, source: { rule: "key-table-object" }, open, ...(open ? { foreign_keys: true as const } : {}), ...(profile ? { includes: held! } : ref ? { holds: [ref] } : {}) }];
+      });
+    },
   },
   {
     id: "sub-field-object",
-    says: "An array field whose items have rows of their own describes a closed `<Field>Entry` object, declared at the array field's row.",
+    says: "An array field whose items have rows of their own describes a closed `<Field>Entry` object, declared at the array field's row, where the field is typed Array[Object] or names that object as its item type.",
     derive: (ctx) =>
       ctx.ir.fields.flatMap((f) => {
         const path = f.names[0]!.path;
-        if (!isListOf(f, "Object") || !ctx.ir.fields.some((g) => g.names[0]!.path.startsWith(`${path}.`))) return [];
-        return [{ name: `${pascalField(path)}Entry`, kind: "object" as const, ir: f.id, source: { rule: "sub-field-object" }, open: false }];
+        // The stack types the array by its entry's name, `Array[PricingEntry]`, the name this rule gives it.
+        const entry = `${pascalField(path)}Entry`;
+        const typed = f.type.parsed.kind === "array" && f.type.parsed.items.kind === "named" && f.type.parsed.items.name === entry;
+        if (!(isListOf(f, "Object") || typed) || !ctx.ir.fields.some((g) => g.names[0]!.path.startsWith(`${path}.`))) return [];
+        return [{ name: entry, kind: "object" as const, ir: f.id, source: { rule: "sub-field-object" }, open: false }];
       }),
   },
 ];

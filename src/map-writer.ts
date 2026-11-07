@@ -41,7 +41,10 @@ export function writeMappings(locks: LockIr[], mappings: MappingFile[], kernel: 
     const working: MappingFile[] = decided.map((m) => ({ ...m, entries: [...m.entries] }));
     const scratch: MappingFile = { format: 1, module: "\u0000rules", sections: [], entries: [], file: "(rules)" };
     working.push(scratch);
+    const decidedNames = new Set(decided.flatMap((m) => (m.types ?? []).filter((d) => inScope(d.locks, lock)).map((d) => d.name)));
     for (let pass = 0; pass < 8; pass++) {
+      // The rules' declarations are in the context the entry rules read, as the committed mapping's are for the checks.
+      scratch.types = DECLARATION_RULES.flatMap((rule) => rule.derive(ruleContext(ir, lock, working, kernel, constructors))).filter((d) => !decidedNames.has(d.name)).map((d) => ({ ...d, locks: [lock] }));
       const ctx = ruleContext(ir, lock, working, kernel, constructors);
       let added = 0;
       for (const [id, e] of elements) {
@@ -62,7 +65,6 @@ export function writeMappings(locks: LockIr[], mappings: MappingFile[], kernel: 
       list.push({ lock, digest: entry.digest, entry: { ir: entry.ir, digest: entry.digest, source: { rule: r.rule }, as: r.as } });
       derived.set(entry.ir, list);
     }
-    const decidedNames = new Set(decided.flatMap((m) => (m.types ?? []).filter((d) => inScope(d.locks, lock)).map((d) => d.name)));
     for (const rule of DECLARATION_RULES) {
       for (const d of rule.derive(ctx)) {
         if (decidedNames.has(d.name)) continue;
@@ -150,12 +152,15 @@ const HEADER = [
 
 /** The canonical text of one mapping file. */
 function render(m: MappingFile): string {
-  const lines = [...HEADER, "format: 1", `module: ${m.module}`, `sections: ${flow(m.sections)}`];
+  const scoped = new Set(Object.values(m.lock_sections ?? {}).flat());
+  const lines = [...HEADER, "format: 1", `module: ${m.module}`, `sections: ${flow(m.sections.filter((s) => !scoped.has(s)))}`];
+  if (m.lock_sections && Object.keys(m.lock_sections).length > 0) lines.push(`lock_sections: ${flow(m.lock_sections)}`);
   if (m.depends && m.depends.length > 0) lines.push(`depends: ${flow(m.depends)}`);
+  if (m.lock_depends && Object.keys(m.lock_depends).length > 0) lines.push(`lock_depends: ${flow(m.lock_depends)}`);
   if (m.deferred) lines.push(`deferred: { decision: ${m.deferred.decision} }`);
   if (m.types && m.types.length > 0) {
     lines.push("types:");
-    for (const d of m.types) lines.push(...item(d as unknown as Record<string, unknown>, ["name", "kind", "ir", "locks", "source", "open", "terms", "any_of", "includes", "members"]));
+    for (const d of m.types) lines.push(...item(d as unknown as Record<string, unknown>, ["name", "kind", "ir", "locks", "source", "open", "foreign_keys", "terms", "any_of", "includes", "members"]));
   } else lines.push("types: []");
   if (m.entries.length > 0) {
     lines.push("entries:");

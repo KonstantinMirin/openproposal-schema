@@ -33,6 +33,8 @@ export interface SpecNames {
     go: { module: string; package: string };
     ts: { package: string };
   };
+  /** The protocol buffer target's package (src/targets/proto.ts); absent for a spec with no proto files. */
+  proto?: { package: string };
 }
 
 /** How the site's pages name a lock (`site.locks` in the profile). */
@@ -66,6 +68,10 @@ export interface FeedbackProfile {
   rules: { id: string; title: string; intro?: string }[];
   kinds: Record<string, string>;
   suggestion: { title: string; lead: string; items: string[] };
+  /** The locks the report reads, the default first; each other lock has a report of its own, under `feedback/<lock>/` and `comparison/<lock>/`. All, when absent. */
+  locks?: string[];
+  /** For each lock with a report of its own: its headline. */
+  reports?: Record<string, { headline: string; label?: string; phrase?: string }>;
 }
 
 export interface SpecProfile {
@@ -105,7 +111,7 @@ export const STAGE_ENTRIES: Readonly<Record<Stage, readonly string[]>> = {
   extract: ["ir"],
   model: ["mapping", "decisions", "kernel-binding.yaml"],
   schemas: ["vectors", "schemas", "rules"],
-  outputs: ["corpus", "type-examples", "comparison", "feedback", "variants", "examples", "releases", "roundtrip", "field-examples", "plain-generator", "enum-drift"],
+  outputs: ["corpus", "type-examples", "comparison", "feedback", "variants", "examples", "releases", "roundtrip", "field-examples", "plain-generator", "enum-drift", "proto"],
 };
 
 /** A spec's SDK packages. Throws for a spec with no SDK types, whose profile names none. */
@@ -166,6 +172,12 @@ export function checkProfile(i: ProfileCheckInput): string[] {
   for (const stage of STAGES) {
     if (reaches(through, stage)) continue;
     for (const e of STAGE_ENTRIES[stage].filter((x) => i.entries.includes(x))) problems.push(`${where}: says the spec has reached "${through}", and it holds ${e}, which the "${stage}" stage writes; its gates would not run`);
+  }
+  // A proto package names its spec, as `<namespace>.<spec>.v1` does, so two specs' enums never share a package.
+  if (p.names.proto) {
+    const segments = p.names.proto.package.split(".");
+    const spec = p.id.replace(/-/g, "");
+    if (segments.at(-2) !== spec) problems.push(`${where}: the proto package "${p.names.proto.package}" doesn't name the spec before its version; write it as <namespace>.${spec}.v<N>`);
   }
   // Every entry is one a stage writes, so no file sits where no gate reads it.
   const known = new Set(STAGES.flatMap((s) => STAGE_ENTRIES[s]));

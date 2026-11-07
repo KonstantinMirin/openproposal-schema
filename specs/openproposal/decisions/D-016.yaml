@@ -8,33 +8,43 @@ covers:
   - ir: field:4.1:assent
     digest: 9306decda4e7acc0d22679fb45574d8d8f500e44c09023a25112e40458cd2be8
     quote: "`assent` | Object | derived | Buyer and seller assent records and timestamps for the binding version. Signature scheme is WS1"
+    locks: [main, with-open-prs]
   - ir: field:4.2:specifications
     digest: 2557955239ae4bfb7f4a786063ac4250508c2541bc86198ff12bf1a00c56b0f0
     quote: "`specifications` | String/Object | seller-set | Structured detail at media-kit depth"
+    locks: [main, with-open-prs]
   - ir: field:5.2:content_detail
     digest: e5dc0ce4102338d1e9363ae1d2de7fe4b6acacb482b2b3806da30b30a8d80e6e
     quote: "`content_detail` | Object | seller-set | Shows, series, sections, network verticals"
+    locks: [main, with-open-prs]
   - ir: field:5.4:specs
     digest: f3fa67ecc797ea15ee4ad04313861161f3e8fcec742af3d24e4ab1f99f20273a
     quote: "`specs` | Object | seller-set | As defined by the referenced format registry entry. OpenProposal does not hardcode a shape per channel"
+    locks: [main, with-open-prs]
   - ir: field:5.4:third_party_tags
     digest: 7c3e68646af2fcaf101cdd07a8abe4fd7ec5a36eabd7ed4e06a71e0d8b626d80
     quote: "`third_party_tags` | Object | seller-set | Accepted wrapper types and VAST versions"
+    locks: [main, with-open-prs]
   - ir: field:5.4:approval
     digest: 099f711760829277a50ff8ea557e2d9131e53c929b364a23770815cbe7a074c8
     quote: "`approval` | Object | seller-set | Review SLA and revision policy"
+    locks: [main, with-open-prs]
   - ir: field:5.6:cancellation_policy
     digest: 6c8bbcd373f89f5fdf8c0e6a3e9f43bc0e26cc1b5ba35a4f13c2dd246f37dba4
     quote: "`cancellation_policy` | Object | selectable | `available[]` of cancellation rights with `pricing` per option"
+    locks: [main, with-open-prs]
   - ir: field:5.6:exclusivity
     digest: 5012d5c8189fd4016ce87f254fff0fa14c929365d9efc3f2256ccfcf80b73c46
     quote: "`exclusivity` | Object | selectable | `available[]` of exclusivity terms with `pricing`"
+    locks: [main, with-open-prs]
   - ir: field:5.6:creative_policy
     digest: aa3353469e3bafe74a8022b1fadfe0694ac15c0f840b266a7089d8ac8d18c996
     quote: "`creative_policy` | Object | seller-set | Content and category restrictions on creative"
+    locks: [main, with-open-prs]
   - ir: field:5.3:buyer_supplied#description/object:1
     digest: d5cdd605af129db6ef8a658446a915a300cb4b1abe0f7ff6a2ae97f9fbb99f8f
     quote: "{ segments_allowed, suppression_allowed, match_rate_expected, segments[], suppression_list }"
+    locks: [main, with-open-prs]
 options:
   - id: open-object
     summary: A named object that accepts any members, so the field validates as an object and the members stay the field's owner's to define.

@@ -28,9 +28,9 @@ import { checkDuplication } from "../src/duplication.ts";
 import type { SpecIR } from "../src/ir-types.ts";
 import { assertingAjv, kernelStructures, loadKernel } from "../src/kernel.ts";
 import { inScope, loadDecisions, loadMappings, type MappingFile, type TypeRef } from "../src/mapping.ts";
-import { ROOT, SPEC } from "./helpers.ts";
+import { oldConstructors, oldKernel, oldShared, ROOT, SPEC } from "./helpers.ts";
 
-const MODEL: Model = { kernel: loadKernel(ROOT, SPEC), constructors: loadConstructors(ROOT, SPEC) };
+const MODEL: Model = { kernel: oldKernel(loadKernel(ROOT, SPEC)), constructors: oldConstructors(loadConstructors(ROOT, SPEC)) };
 const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 const LOCKS: [string, SpecIR][] = [
   ["main", JSON.parse(readFileSync(join(SPEC, "ir", "spec-ir.json"), "utf8")) as SpecIR],
@@ -83,7 +83,7 @@ test("the model defines the six constructors, their two parts, and the kernel's 
   assert.deepEqual(MODEL.constructors.constructors.map((c) => c.name).sort(), ["CatalogRefOr", "List", "Map", "Range", "Selectable", "Settable"]);
   assert.deepEqual(MODEL.constructors.parts.map((p) => p.name).sort(), ["CatalogReference", "DaypartWindow", "PriceDelta"]);
   assert.deepEqual(sound(MODEL), []);
-  assert.deepEqual(checkDuplication([...kernelStructures(MODEL.kernel), ...partStructures(MODEL.constructors)], sharedStructures(MODEL.kernel.domains), true), []);
+  assert.deepEqual(checkDuplication([...kernelStructures(MODEL.kernel), ...partStructures(MODEL.constructors)], oldShared(sharedStructures(MODEL.kernel.domains)), true), []);
 });
 
 test("each constructor cites its spec rows, current on both locks", () => {
@@ -221,7 +221,7 @@ test("arguments must fit the parameters", () => {
     ]),
   ]);
   assert.deepEqual(problems, [
-    'mapping/test.yaml: entry "field:a": Range\'s T accepts a primitive whose values are ordered (a number or a date-time), not ExternalId',
+    'mapping/test.yaml: entry "field:a": Range\'s T accepts a primitive whose values are ordered (a number, a date-time, or a duration), not ExternalId',
     'mapping/test.yaml: entry "field:b": Map\'s K accepts a type whose values are strings, not Count',
     'mapping/test.yaml: entry "field:c": List\'s T accepts a named type or a named copy, not boolean (type rules § 4)',
     'mapping/test.yaml: entry "field:d": Selectable needs an argument for T',
@@ -316,7 +316,7 @@ test("a copy is named after the field or the object member its entry's IR elemen
 test("copies of one application are one definition, not twins, but a copy still can't twin another type", () => {
   const copies = copyStructures(MODEL, [mapping([["field:5.4:formats", apply("Selectable", { T: named("ExternalId"), K: named("ExternalId") })], ["field:5.4:production", apply("Selectable", { T: named("ExternalId"), K: named("ExternalId") })]])]);
   assert.deepEqual(copies.map((c) => c.name), ["FormatsSelection", "ProductionSelection"]);
-  assert.deepEqual(checkDuplication([...kernelStructures(MODEL.kernel), ...partStructures(MODEL.constructors), ...copies], sharedStructures(MODEL.kernel.domains), true), []);
+  assert.deepEqual(checkDuplication([...kernelStructures(MODEL.kernel), ...partStructures(MODEL.constructors), ...copies], oldShared(sharedStructures(MODEL.kernel.domains)), true), []);
   const twin = { name: "OptionChoice", structure: copies[0]!.structure, where: "mapping/test.yaml" };
   const problems = checkDuplication([...copies, twin]);
   assert.equal(problems.length, 2);

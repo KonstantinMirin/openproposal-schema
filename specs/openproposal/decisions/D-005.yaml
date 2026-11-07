@@ -8,9 +8,11 @@ covers:
   - ir: field:5.7:committed_metrics[]
     digest: 2c123e829ef892456b09671dfd52243f1bef0db8b067aa9c5d184dc07411caf5
     quote: "`committed_metrics[]` | Array[Object] | requestable | `{ metric, value, basis }` tuples — `viewable_rate` for display, `completion_rate` for video/audio/CTV, an audience-modelled metric for DOOH. Seller declares a ceiling; a buyer MAY request above it"
+    locks: [main, with-open-prs]
   - ir: field:5.3:buyer_supplied
     digest: 18d87a0de58116db76d7152a7f96bc722dc700b91f053406b32e4299e7910504
     quote: "`buyer_supplied` | Object | supplied | `{ segments_allowed, suppression_allowed, match_rate_expected, segments[], suppression_list }`. `match_rate_expected` is the seller's stated expectation; `segments[]` and `suppression_list` are buyer-populated"
+    locks: [main, with-open-prs]
 options:
   - id: by-metric
     summary: A rate is a number from 0 to 1, so 70 % is 0.7; any other committed metric, such as audience impacts for DOOH, is a number that is never negative.

@@ -91,7 +91,10 @@ export function importedLists(imp: SpecImport): ExternalList[] {
     const rows = ir.definitions.filter((d) => d.loc.section === section.id);
     const vendor = rows.find((r) => /^\d+\+$/.test(r.value));
     // A code is any integer, negative ones too, as Pod Sequence's -1; a row such as Start Delay Modes' `>0` stands for an extension.
-    const codes = rows.filter((r) => /^-?(0|[1-9][0-9]*)$/.test(r.value)).map((r) => ({ code: Number(r.value), label: rowLabel(r.columns[0]?.text ?? "") }));
+    // Each code's name is the one the registry's schema gives it, so every spec names a code as its registry does.
+    const branches = ((s as { oneOf?: { const?: unknown; title?: unknown }[] }).oneOf ?? []).filter((b) => typeof b.title === "string" && b.const !== undefined);
+    const titleOf = (code: number) => branches.find((b) => b.const === code)?.title as string | undefined;
+    const codes = rows.filter((r) => /^-?(0|[1-9][0-9]*)$/.test(r.value)).map((r) => ({ code: Number(r.value), label: rowLabel(r.columns[0]?.text ?? ""), ...(titleOf(Number(r.value)) !== undefined ? { title: titleOf(Number(r.value))! } : {}) }));
     const extension = rows.find((r) => !/^-?(0|[1-9][0-9]*)$/.test(r.value) && !/^\d+\+$/.test(r.value));
     out.push({
       name: title,

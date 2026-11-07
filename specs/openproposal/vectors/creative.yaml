@@ -5,8 +5,79 @@ rules:
   # `materials_due`: a buyer MAY request a later date.
   - rule: rule:5.4:2eaa294f
     digest: 61f09f4e064e43f2fa580ac4cbf4d7d5c34bd64f2539c58b40351900d38338fd
+    locks: [main, with-open-prs]
     decision: D-034
     valid:
       - { party: buyer, before: { materials_due: "2026-11-01T17:00:00Z" }, after: { materials_due: "2026-11-08T17:00:00Z" } }
     invalid:
       - { party: buyer, before: { materials_due: "2026-11-08T17:00:00Z" }, after: { materials_due: "2026-11-01T17:00:00Z" } }
+
+  # `format_specs` REQUIRED when the proposal has left `draft` and `formats` is present (D-060).
+  - rule: rule:5.4:3a677601
+    digest: 179391013b3fe6067fdac2f2d7dabe2586a3a9b7b4045826d22f0eb5f446d904
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["field:5.4:format_specs"]
+    valid:
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}}, "context": {"Proposal.status": "published"}}
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}, "formats": {"available": ["audio/host-read-30s"], "included": ["audio/host-read-30s"]}}, "context": {"Proposal.status": "draft"}}
+    invalid:
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}, "formats": {"available": ["audio/host-read-30s"], "included": ["audio/host-read-30s"]}}, "context": {"Proposal.status": "published"}}
+
+  # `Asset.markup` REQUIRED when `url` is absent (D-060).
+  - rule: rule:5.4:45b02f49
+    digest: e7a0648c579d939c0bbb45a85074ab24d0c4d7ce307f475c91d9ad66f9dc518f
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.4:Asset.markup"]
+    valid:
+      - {"value": {"approval_status": "PENDING", "asset_id": "examplepub-q4-sports", "built_by": "seller", "format_id": "display/300x250", "markup": "examplepub-q4-sports", "url": "https://ads.examplepub.example/a.mp3"}}
+      - {"value": {"approval_status": "PENDING", "asset_id": "examplepub-q4-sports", "built_by": "seller", "format_id": "display/300x250", "markup": "<VAST/>"}}
+    invalid:
+      - {"value": {"approval_status": "PENDING", "asset_id": "examplepub-q4-sports", "built_by": "seller", "format_id": "display/300x250"}}
+
+  # `Asset.url` REQUIRED when `markup` is absent (D-060).
+  - rule: rule:5.4:e2c0968b
+    digest: 3b906c757f35dbd7821ee80e05e1a1a0982d19a7e0b190d141c563deeaef8bd7
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.4:Asset.url"]
+    valid:
+      - {"value": {"approval_status": "PENDING", "asset_id": "examplepub-q4-sports", "built_by": "seller", "format_id": "display/300x250", "markup": "examplepub-q4-sports", "url": "https://ads.examplepub.example/a.mp3"}}
+      - {"value": {"approval_status": "PENDING", "asset_id": "examplepub-q4-sports", "built_by": "seller", "format_id": "display/300x250", "markup": "<VAST/>"}}
+    invalid:
+      - {"value": {"approval_status": "PENDING", "asset_id": "examplepub-q4-sports", "built_by": "seller", "format_id": "display/300x250"}}
+
+  # `MaterialsDue.at` REQUIRED when `before_start` is absent (D-060).
+  - rule: rule:5.4:58ab1d09
+    digest: cf367adda092c8b84706c8a4e8880a5ade2150be85b355e013666fad47d243aa
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.4:MaterialsDue.at"]
+    valid:
+      - {"value": {"at": "2026-10-01T23:59:59Z"}}
+      - {"value": {"before_start": "P1D"}}
+    invalid:
+      - {"value": {}}
+
+  # `MaterialsDue.before_start` REQUIRED when `at` is absent (D-060).
+  - rule: rule:5.4:7a6f2ac4
+    digest: 5ba98f4787975291dbfde94c70dfbef4dad6d686fd41ff981709686ccaab795d
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.4:MaterialsDue.before_start"]
+    valid:
+      - {"value": {"at": "2026-10-01T23:59:59Z"}}
+      - {"value": {"before_start": "P1D"}}
+    invalid:
+      - {"value": {}}
+
+  - rule: rule:5.4:2eaa294f
+    digest: 61f09f4e064e43f2fa580ac4cbf4d7d5c34bd64f2539c58b40351900d38338fd
+    locks: [with-our-stack]
+    decision: D-034
+    type: LineItem
+    valid:
+      - {"party": "buyer", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "materials_due": {"at": "2026-10-01T23:59:59Z"}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "materials_due": {"at": "2026-10-08T23:59:59Z"}}}
+    invalid:
+      - {"party": "buyer", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "materials_due": {"at": "2026-10-08T23:59:59Z"}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "materials_due": {"at": "2026-10-01T23:59:59Z"}}}

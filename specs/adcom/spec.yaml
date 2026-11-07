@@ -16,6 +16,8 @@ names:
   edition: "1.0"
   release: main of 2026-07-23
   schema_base: "https://adtechspec.noetis.dev/adcom/"
+  # The proto target's package (docs/design/target-rules.md): its lists as proto3 enums under proto/.
+  proto: { package: com.postindustria.ads.adcom.v1 }
 # Its pages on the public site (src/site/; specs/site.yaml gives the site).
 site:
   # The type map opens at the device types, a list other specs cite.

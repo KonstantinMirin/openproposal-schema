@@ -23,8 +23,29 @@ test("type expressions parse into the small grammar", () => {
   });
 });
 
+test("a text's own types parse as names, applications, and parameters", () => {
+  assert.deepEqual(parseTypeExpr("Instant"), { kind: "named", name: "Instant" });
+  assert.deepEqual(parseTypeExpr("T"), { kind: "param", name: "T" });
+  assert.deepEqual(parseTypeExpr("Selectable[FormatId]"), { kind: "apply", name: "Selectable", arguments: [{ kind: "named", name: "FormatId" }] });
+  assert.deepEqual(parseTypeExpr("Map[ExclusionType, ExclusionList]"), {
+    kind: "apply",
+    name: "Map",
+    arguments: [
+      { kind: "named", name: "ExclusionType" },
+      { kind: "named", name: "ExclusionList" },
+    ],
+  });
+  assert.deepEqual(parseTypeExpr("Array[Range[Integer]]"), {
+    kind: "array",
+    items: { kind: "apply", name: "Range", arguments: [{ kind: "scalar", name: "Integer" }] },
+  });
+});
+
 test("an unknown or malformed type expression is an error, not a string", () => {
-  assert.throws(() => parseTypeExpr("Map[String]"), /unknown type name "Map"/);
+  assert.throws(() => parseTypeExpr("Map[String]"), /"Map" takes two arguments/);
+  assert.throws(() => parseTypeExpr("String[Integer]"), /"String" takes no arguments/);
+  assert.throws(() => parseTypeExpr("Array"), /"Array" needs its item type/);
+  assert.throws(() => parseTypeExpr("instant"), /unknown type name "instant"/);
   assert.throws(() => parseTypeExpr("Array[Object"), /expected "\]"/);
   assert.throws(() => parseTypeExpr("String or Object"), /unexpected/);
   assert.throws(() => parseTypeExpr(""), /expected a type name/);

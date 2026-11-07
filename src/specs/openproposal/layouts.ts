@@ -24,6 +24,89 @@ export function layoutsOf(documents: readonly DocumentOwner[]): readonly Layout[
       allowed: (s) => s.part === "body" && fieldSections.includes(topNumber(s)!),
       allowedText: sectionsText(fieldSections),
     },
+    // The stack's field tables state each row's type in the text's own type names and its presence in a Required column.
+    {
+      id: "field-required",
+      kind: "field",
+      header: ["Field", "Type", "Required", "Mutability", "Description"],
+      allowed: (s) => s.part === "body" && fieldSections.includes(topNumber(s)!),
+      allowedText: sectionsText(fieldSections),
+    },
+    {
+      id: "key-type-required-meaning",
+      kind: "key",
+      header: ["Key", "Type", "Required", "Meaning"],
+      type: "Type",
+      typed: true,
+      allowed: inPart("body"),
+      allowedText: "the body",
+    },
+    {
+      id: "key-type-required-meaning-mutability",
+      kind: "key",
+      header: ["Key", "Type", "Required", "Meaning", "Mutability"],
+      type: "Type",
+      typed: true,
+      marker: "Mutability",
+      allowed: inPart("body"),
+      allowedText: "the body",
+    },
+    {
+      id: "key-type-required-meaning-mapping",
+      kind: "key",
+      header: ["Key", "Type", "Required", "Meaning", "AdCOM 1.0, OpenRTB 2.6"],
+      type: "Type",
+      typed: true,
+      mapping: "AdCOM 1.0, OpenRTB 2.6",
+      allowed: inPart("body"),
+      allowedText: "the body",
+    },
+    // The stack's § 2.2 defines its shared types, one a row, by name.
+    {
+      id: "type-form-rules",
+      kind: "definition",
+      header: ["Type", "Form", "Rules"],
+      allowed: inPart("body"),
+      allowedText: "the body",
+    },
+    // The stack's value tables, each headed by the field or key whose values it defines.
+    ...[
+      ["Returned when"],
+      ["Distribution channel", "Device types"],
+      ["The governing file declares"],
+      ["Who hosts the creative", "What reaches the seller"],
+      ["Entry", "Meaning"],
+      ["Kind", "Usual `direction`", "Definition"],
+      ["Deal mechanism", { code: true } as const],
+      ["Downstream standard", "`reference_type` (§ 5.10)", "Change path"],
+      [{ code: true } as const, "One unit", "Rate per", { code: true } as const],
+    ].map(
+      (rest): Layout => ({
+        id: `value-${rest.map((h) => (typeof h === "string" ? h.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") : "code")).join("-")}`,
+        kind: "definition",
+        header: [{ code: true }, ...rest],
+        allowed: inPart("body"),
+        allowedText: "the body",
+      }),
+    ),
+    // The stack's tables that name no field, key, or value: how a standard takes the agreed line item's values, the layers of
+    // § 1.2, the Web Bot Auth profile's choices, the § 4.3.1 interactions, and the § 4.3.4 instants.
+    ...[
+      ["Deals API 1.0", "OpenRTB 2.6", "From the agreed line item"],
+      ["OpenDirect 2.1", "From the agreed line item"],
+      ["Layer", "Question", "Answered by", "Owner", "In the proposal object"],
+      ["Rule", "Profile choice"],
+      ["Interaction", "Actor", "Effect; history `action`"],
+      ["Instant", "Ends", "Effect when passed"],
+    ].map(
+      (header): Layout => ({
+        id: `table-${header.map((h) => h.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")).join("-")}`,
+        kind: "concept",
+        header,
+        allowed: inPart("body"),
+        allowedText: "the body",
+      }),
+    ),
     {
       id: "key-required-meaning",
       kind: "key",
@@ -77,6 +160,13 @@ export function layoutsOf(documents: readonly DocumentOwner[]): readonly Layout[
       id: "appendix-a",
       kind: "appendix_a",
       header: ["Field", "Section", "Type", "Marker"],
+      allowed: (s) => s.id === "A",
+      allowedText: "Appendix A",
+    },
+    {
+      id: "appendix-a-required",
+      kind: "appendix_a",
+      header: ["Field", "Section", "Type", "Required", "Marker"],
       allowed: (s) => s.id === "A",
       allowedText: "Appendix A",
     },

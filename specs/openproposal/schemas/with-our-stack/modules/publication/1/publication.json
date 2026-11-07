@@ -1,0 +1,22 @@
+{
+  "$defs": {
+    "HoldLimits": {
+      "additionalProperties": false,
+      "properties": {
+        "per_advertiser": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "Holds whose `status` is `held` for one advertiser, counted by the `commitment.advertisers[]` in each hold's `requested_terms`. A hold that names several advertisers counts once for each"
+        },
+        "per_buyer": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "Holds whose `status` is `held` on proposals issued to one `buyer.domain`"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/publication/1/publication.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `publication` module: the vocabularies, objects, unions, and constructor copies of § 2.3.",
+  "title": "publication"
+}

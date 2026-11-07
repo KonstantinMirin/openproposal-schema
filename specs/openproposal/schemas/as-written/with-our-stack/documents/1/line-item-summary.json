@@ -1,0 +1,105 @@
+{
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item-summary.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The OpenProposal `LineItemSummary` profile: the fields of the `LineItem` document that the specification lists for it.",
+  "properties": {
+    "addressable_scale": {
+      "$ref": "../../modules/audience/1/audience.json#/$defs/AddressableScale",
+      "description": "What the line item can reach, recomputed against the buyer's selection. Not segment size. See below"
+    },
+    "audiences": {
+      "$ref": "../../modules/representation/1/representation.json#/$defs/LineItemSummaryAudienceSelectable",
+      "description": "The line item's `audiences`, projected to `available[].id` and `available[].name`."
+    },
+    "break_position": {
+      "$ref": "../../modules/representation/1/representation.json#/$defs/LineItemSummaryBreakPositionSelection",
+      "description": "The line item's `break_position`, projected to `available[].id`, `available[].delay`, and `available[].slotinpod`."
+    },
+    "buyer_requirements": {
+      "$ref": "../../modules/representation/1/representation.json#/$defs/LineItemSummaryBuyerRequirements",
+      "description": "The line item's `buyer_requirements`, projected to `allowed_dsps[]`."
+    },
+    "channel": {
+      "$ref": "../../modules/line-item/1/line-item.json#/$defs/MediaChannel",
+      "description": "Core terms in § 5.1.1. The discriminator for how the rest of the line item is read"
+    },
+    "commitment_bounds": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/CommitmentBounds",
+      "description": "The envelope inside which a buyer may commit, and a buyer MAY request another. See 5.6.1"
+    },
+    "committed_metrics": {
+      "description": "`CommittedMetric` tuples (§ 5.7.1). Seller declares its offered `level`. A buyer MAY request a stricter `level`, one further in `direction`. A request MUST NOT change a tuple's `direction`",
+      "items": {
+        "$ref": "../../modules/guarantees/1/guarantees.json#/$defs/CommittedMetric"
+      },
+      "type": "array"
+    },
+    "delivery_counting": {
+      "$ref": "../../modules/representation/1/representation.json#/$defs/LineItemSummaryDeliveryCounting",
+      "description": "The line item's `delivery_counting`, projected to `impression_multiplier.impression_type` and `impression_multiplier.source_type`."
+    },
+    "environments": {
+      "$ref": "../../modules/representation/1/representation.json#/$defs/LineItemSummaryEnvironmentsSelection",
+      "description": "The line item's `environments`, projected to `available[]`."
+    },
+    "episodes": {
+      "$ref": "../../modules/inventory/1/inventory.json#/$defs/LineItemEpisodes",
+      "description": "`new` | `catalog` | `all`. `new`: released within the flight. `catalog`: released before it. `all`: either"
+    },
+    "formats": {
+      "$ref": "../../modules/representation/1/representation.json#/$defs/LineItemSummaryFormatsSelection",
+      "description": "The line item's `formats`, projected to `included[]`."
+    },
+    "geo": {
+      "$ref": "../../modules/targeting/1/targeting.json#/$defs/GeoBounds",
+      "description": "Where the line item runs. `allowed[]` of `GeoCode` (below). A line item MUST NOT declare both `geo` and `markets`"
+    },
+    "line_item_id": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/PlainString",
+      "description": "Identity within the proposal"
+    },
+    "markets": {
+      "$ref": "../../modules/targeting/1/targeting.json#/$defs/MarketsSelection",
+      "description": "For a line item priced by market. See `GeoCode` below"
+    },
+    "placement": {
+      "$ref": "../../modules/representation/1/representation.json#/$defs/LineItemSummaryPlacement",
+      "description": "The line item's `placement`, projected to `reward`, `instl`, `plcmt`, `skip`, and `feed`."
+    },
+    "pricing": {
+      "description": "The line item's `pricing[]`, each entry projected to `pricing_id`, `cost_method`, `list_rate`, `currency`, `price_type`, and `unit_bounds`.",
+      "items": {
+        "$ref": "../../modules/representation/1/representation.json#/$defs/LineItemSummaryPricingEntry"
+      },
+      "type": "array"
+    },
+    "programs": {
+      "$ref": "../../modules/representation/1/representation.json#/$defs/LineItemSummaryProgramsSelection",
+      "description": "The line item's `programs`, projected to `available[].id` and `available[].content`."
+    },
+    "properties": {
+      "$ref": "../../modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesSelection",
+      "description": "The line item's `properties`, projected to `available[].id`, `available[].name`, `available[].domains[]`, `available[].apps[].store`, `available[].apps[].bundle`, `available[].child_audience`, `available[].seller_relationship`, and `available[].venue_type`."
+    },
+    "required_credentials": {
+      "description": "What a buyer holds to be eligible",
+      "items": {
+        "$ref": "../../modules/eligibility/1/eligibility.json#/$defs/RequiredCredential"
+      },
+      "type": "array"
+    },
+    "transaction_mechanism": {
+      "$ref": "../../modules/representation/1/representation.json#/$defs/LineItemSummaryTransactionMechanismSelection",
+      "description": "The line item's `transaction_mechanism`, projected to `available[]`."
+    }
+  },
+  "required": [
+    "channel",
+    "line_item_id",
+    "pricing",
+    "transaction_mechanism"
+  ],
+  "title": "LineItemSummary",
+  "type": "object"
+}

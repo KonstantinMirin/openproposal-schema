@@ -11,6 +11,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { loadConstructors, type Constructors } from "./constructors.ts";
 import type { SpecIR } from "./ir-types.ts";
+import { constructorEditionsOn, kernelEditionsOn } from "./editions.ts";
 import { loadKernel, type Kernel } from "./kernel.ts";
 import { loadLock, repoRoot, type SpecLock } from "./lock.ts";
 import { loadDecisions, loadMappings, type DecisionRecord, type MappingFile } from "./mapping.ts";
@@ -73,6 +74,8 @@ export interface Build {
 /** Resolves one lock's build, in the schemas we propose or in a variant. `root` is the lock's spec folder. */
 export function resolveBuild(input: { lock: SpecLock; root: string; mappings: MappingFile[]; decisions: DecisionRecord[]; kernel: Kernel; constructors: Constructors; variant?: Variant; ir?: SpecIR }): Build {
   const { lock, root, decisions } = input;
+  // Each lock sees its own editions of the kernel's types (src/editions.ts).
+  input = { ...input, kernel: kernelEditionsOn(input.kernel, lock.name), constructors: constructorEditionsOn(input.constructors, lock.name) };
   const ir = input.ir ?? (JSON.parse(readFileSync(join(root, lock.ir_dir, "spec-ir.json"), "utf8")) as SpecIR);
   const irDir = relative(root, join(root, lock.ir_dir));
   const label = input.variant ? `${lock.name} (${input.variant.name})` : lock.name;

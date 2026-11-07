@@ -1,0 +1,434 @@
+format: 1
+id: D-060
+status: proposed
+kind: gap
+author: agent
+question: "How do the stack's presence conditions that a schema can't state, such as \"REQUIRED when the line item offers a deal mechanism\", read, and what payloads does each accept?"
+covers:
+  - ir: rule:4.1:1ef7cbec
+    digest: b3312a566921f0ae7901dde16941c24ec1de8da774eb311807666a6cbd75915f
+    quote: REQUIRED when `type` is `custom` or `assent[]` is present
+    locks: [with-our-stack]
+  - ir: rule:4.1:22f5a51a
+    digest: 7e3027977a9fe53710f9bf4af73bff3f01aa56f609b4a961b6be02c1571068a8
+    quote: REQUIRED when `packages[]` is absent
+    locks: [with-our-stack]
+  - ir: rule:4.1:94b23ce1
+    digest: 7aa153d5cff1390f252cc1be94c0cbfa3fc97f251ed682305096ef0ff6126d15
+    quote: REQUIRED when `line_items[]` is absent
+    locks: [with-our-stack]
+  - ir: rule:4.1:9c98396c
+    digest: a18081c73c446929c4031b83f55703713fb01fbdb5bb6b73221128def0c992ca
+    quote: REQUIRED when the current `version` is frozen (§ 4.1.3)
+    locks: [with-our-stack]
+  - ir: rule:4.1:71a584ca
+    digest: fee4b8592bfd056fd009a30e94fcb080654936a23f0a01ba9a4124ce3385efa5
+    quote: REQUIRED when `requested_value` is present
+    locks: [with-our-stack]
+  - ir: rule:4.1:d31e02ee
+    digest: 78f1d63acfa6c7112b132c164f4872e3645ccddc0a4033d0b7304d59eb6e963f
+    quote: REQUIRED when the entry's `action` is `requested`
+    locks: [with-our-stack]
+  - ir: rule:4.4:9754e43c
+    digest: 0d7152995f7b35be29f0c40654ff3d42d787cf1aa62453b9d62527cf0dfc3d6d
+    quote: REQUIRED when the line item has an `order` reference (§ 5.10)
+    locks: [with-our-stack]
+  - ir: rule:5.2:2f4f1aa3
+    digest: bcf87a10370a434164885f6c5cb133b5e797eebcd4a796afdd286d27a689a93c
+    quote: REQUIRED when `placement.feed` is Podcast (3) or Catch-up radio (4)
+    locks: [with-our-stack]
+  - ir: rule:5.2:f8f39d84
+    digest: 98b6354205981a0382943645f19400acd2b5e9efe9dac76c65614b27fe279348
+    quote: REQUIRED when `channel` is `video` or `audio`
+    locks: [with-our-stack]
+  - ir: rule:5.2.2:40e6089f
+    digest: f82ed4d064117d6d3dd53462c727d016e794470aed81c4e47d5a060a2fb3ec94
+    quote: REQUIRED when `channel` is `video`
+    locks: [with-our-stack]
+  - ir: rule:5.2.2:87d20470
+    digest: 8227488d01efae710c86ea34b96fe8ed7f7217837a82769a793710c833762f5a
+    quote: REQUIRED when `channel` is `audio`
+    locks: [with-our-stack]
+  - ir: rule:5.2.4:02c220b8
+    digest: 36a0f278ff22b7b0884cdcf91a0329776f1afa402cc3bc809cd5fbe427b70e49
+    quote: REQUIRED when `channel` is `dooh`
+    locks: [with-our-stack]
+  - ir: rule:5.2.4:ea387bb0
+    digest: b4f0034f99cb878ea27381a7ebee200d694c9d61f8dd5ac17ce0e965fa32ac73
+    quote: REQUIRED when `channel` is `dooh` and `allocation` is `all`
+    locks: [with-our-stack]
+  - ir: rule:5.2.4:45d0b1fa
+    digest: f6a772d5267d5c7610684eb86d845891ff8dc8e319afac9f68ced6f9887db120
+    quote: REQUIRED when `seller_relationship` is `reseller`, or the line item offers a deal mechanism (§ 5.9)
+    locks: [with-our-stack]
+  - ir: rule:5.2.4:65ca47c9
+    digest: 3e939a90f559a0366bc88b8bba0df06746919795c1bf990a3650f88becf90df3
+    quote: REQUIRED when `domains[]` is absent
+    locks: [with-our-stack]
+  - ir: rule:5.2.4:c8e6720e
+    digest: deb08ee697e96fb13400d1957885fc09c540a6cdd4f200601491677cb92a6753
+    quote: REQUIRED when `apps[]` is absent
+    locks: [with-our-stack]
+  - ir: rule:5.3:153027ca
+    digest: a76948674f927c0bedf5eed46ac78e5c66f5f384d74e1d1206fa63f15bf3d21d
+    quote: REQUIRED when more than one seller audience can be in effect
+    locks: [with-our-stack]
+  - ir: rule:5.4:3a677601
+    digest: 179391013b3fe6067fdac2f2d7dabe2586a3a9b7b4045826d22f0eb5f446d904
+    quote: REQUIRED when the proposal has left `draft` and `formats` is present
+    locks: [with-our-stack]
+  - ir: rule:5.4:45b02f49
+    digest: e7a0648c579d939c0bbb45a85074ab24d0c4d7ce307f475c91d9ad66f9dc518f
+    quote: REQUIRED when `url` is absent
+    locks: [with-our-stack]
+  - ir: rule:5.4:e2c0968b
+    digest: 3b906c757f35dbd7821ee80e05e1a1a0982d19a7e0b190d141c563deeaef8bd7
+    quote: REQUIRED when `markup` is absent
+    locks: [with-our-stack]
+  - ir: rule:5.4:58ab1d09
+    digest: cf367adda092c8b84706c8a4e8880a5ade2150be85b355e013666fad47d243aa
+    quote: REQUIRED when `before_start` is absent
+    locks: [with-our-stack]
+  - ir: rule:5.4:7a6f2ac4
+    digest: 5ba98f4787975291dbfde94c70dfbef4dad6d686fd41ff981709686ccaab795d
+    quote: REQUIRED when `at` is absent
+    locks: [with-our-stack]
+  - ir: rule:5.5:4a35bd89
+    digest: cef4b7bac5cf2c1f77f18ddfffd62ad8c8669e856a8b264427e218ff261c98ee
+    quote: REQUIRED when `daypart` or `frequency_cap` is present
+    locks: [with-our-stack]
+  - ir: rule:5.6:0f8d396f
+    digest: 32bc109b3441be001719afaeecfaf260d3b08279427292d7884d1e09c4d91b1d
+    quote: REQUIRED when the term requires keys
+    locks: [with-our-stack]
+  - ir: rule:5.6:62e21e38
+    digest: a5fc7801d7e0e75f77186ffcfb53329a8c87fb0c4580a2f7d3cfb3eac828a00a
+    quote: REQUIRED when this is the committed entry
+    locks: [with-our-stack]
+  - ir: rule:5.6:7235466d
+    digest: edbebf8628d97f9afbeea2352a2a296273d83835abad92ddac174165a51593f5
+    quote: REQUIRED when `cost_method` is an extension term
+    locks: [with-our-stack]
+  - ir: rule:5.6:7235466d-2
+    digest: f97eafcfa7d6a33bca948caddbb79968c143502ff3a16a8f1228017f1afeeedc
+    quote: REQUIRED when `cost_method` is an extension term
+    locks: [with-our-stack]
+  - ir: rule:5.6:7235466d-3
+    digest: 2012ba8bd8a1634147a31367da8e8b9242b46230781381b8f6dbba629e699bfd
+    quote: REQUIRED when `cost_method` is an extension term
+    locks: [with-our-stack]
+  - ir: rule:5.6:8288302a
+    digest: 14845c24a6584a33e2511f328e76d63744a32697970793ff90942fffd2a9da7c
+    quote: REQUIRED when the entry prices a deal mechanism
+    locks: [with-our-stack]
+  - ir: rule:5.6.1:7b200076
+    digest: 9e18907555be656084a26c328b8c8eb77fb599431a8da02c7e479e93c92e450f
+    quote: REQUIRED when `pricing[]` has more than one entry
+    locks: [with-our-stack]
+  - ir: rule:5.6.1:94be9998
+    digest: 38ff50f3f0dfa34548278f8ba4e33081dcfe7d8c801d8bac6bae715f7986be66
+    quote: REQUIRED when `entries[]` holds a `decline` for lack of availability
+    locks: [with-our-stack]
+  - ir: rule:5.6.4:615bf228
+    digest: 919b9bf1f25088f695ee7d6a8be5b52f8c590af183570a1e9d4724b9e0a3bd5b
+    quote: REQUIRED when a property has `sync_groups[]`
+    locks: [with-our-stack]
+  - ir: rule:5.6.4:e58650b7
+    digest: ae43a5c3f5ade9914aaa18fc5e59aec9ee10bea1c71c4435fae9b1997bc6113a
+    quote: REQUIRED when the line item counts impressions
+    locks: [with-our-stack]
+  - ir: rule:5.6.4:b6f5be4c
+    digest: a8da9f49baf1a471cef2b65811934b6ab98701aa669fa7de550d7a07c97acf39
+    quote: REQUIRED when `source_type` is not Publisher Provided (`2`)
+    locks: [with-our-stack]
+  - ir: rule:5.6.6:11a40445
+    digest: cad04ebb97eb461ca5f32fe81412134bd363422d1403a0186870c468b5cf5fec
+    quote: REQUIRED when `calculation` is `cancelled` or `commitment`
+    locks: [with-our-stack]
+  - ir: rule:5.7:76df804b
+    digest: c1ad8c132d41a5f46d02fe035f5895f7c0314505c6ead3321c0ae5ddd9c025df
+    quote: REQUIRED when `serving_mode` is `embedded` or the line item has `committed_metrics[]`, `commitment_bounds.spend`, or a `pricing[].unit_bounds`
+    locks: [with-our-stack]
+  - ir: rule:5.9:c0f7b8ce
+    digest: 90913c40f1240deeed5765732a715a8f4bceb8b53323a5d4cce7e1e0bf429160
+    quote: REQUIRED when an option's `delivery_type` is `share_of_voice`
+    locks: [with-our-stack]
+  - ir: rule:5.9:cc571473
+    digest: 3eb4ace214846296e1b8a5482a12c3d9865730f4e59ea97eeb745f3fd9b9713b
+    quote: REQUIRED when the line item offers a deal mechanism
+    locks: [with-our-stack]
+  - ir: rule:5.9:ceef2a21
+    digest: c1f37e026a4f11d034d14c5326b515fc73c785812b665f359aac32f4002982de
+    quote: REQUIRED when `sov_basis` is `impressions`
+    locks: [with-our-stack]
+  - ir: rule:5.9:d8611936
+    digest: 18117b0431fd09d72305fd6e85680a1b3fc1c8064215f71599c41b9c2ee5d40a
+    quote: REQUIRED when `serving_mode` is `embedded`
+    locks: [with-our-stack]
+  - ir: rule:5.6.5:119b216f
+    digest: 01cde1f2da64d635b8b9eeb7bf07124cbe2b32437fdb9a8da0f9d7348e9b7382
+    quote: REQUIRED when `cost_method` is `TIME`
+    locks: [with-our-stack]
+  - ir: rule:5.6.5:1f435d20
+    digest: ff0a56d1ef6678b94894fe41368168fb5353c9a14550b17b1f9c80345e12f727
+    quote: REQUIRED when `cost_method` is `CPMV`
+    locks: [with-our-stack]
+  - ir: rule:5.6.5:449027fe
+    digest: 09463a33881539b359828013565f62011814a82ff0fc4412ed89438866b4b004
+    quote: REQUIRED when `cost_method` is `CPA`
+    locks: [with-our-stack]
+  - ir: rule:5.6.5:449027fe-2
+    digest: 7e9aa34a55da2441ba5236f0eedf69d82bb6ba759bd480e69b26a312ee5d9fb1
+    quote: REQUIRED when `cost_method` is `CPA`
+    locks: [with-our-stack]
+  - ir: rule:5.6.5:449027fe-3
+    digest: 0d8c9c152642d8d0ad925ec5f0ebc35166edd864c3644cb2b9d1adc74440ddaf
+    quote: REQUIRED when `cost_method` is `CPA`
+    locks: [with-our-stack]
+  - ir: rule:5.6.5:acca3c1c
+    digest: f13e25bdd0b8b7b2491fe48364a02b8aa32fed911f9a4c463e88527ae606b23e
+    quote: REQUIRED when `cost_method` is `CPP`
+    locks: [with-our-stack]
+  - ir: rule:5.6.5:acca3c1c-2
+    digest: 003f6ff6820230313bf76da952419795e7a197f7a3571ac083e21176a7e5937c
+    quote: REQUIRED when `cost_method` is `CPP`
+    locks: [with-our-stack]
+  - ir: rule:5.6.5:26b080e2
+    digest: 53b66673be9dfda59cddab0d08036d45c14649449fcd51605f979677c3e2e60b
+    quote: REQUIRED when `cost_method` is `CPV` and `view_s` is absent
+    locks: [with-our-stack]
+  - ir: rule:5.6.5:f959ab87
+    digest: f9d2c3fbfce7a94efbbda207d68a95babb2b39c16b73991db6579abedb475247
+    quote: REQUIRED when `cost_method` is `CPV` and `view_fraction` is absent
+    locks: [with-our-stack]
+  - ir: rule:2.2:e46f15c4
+    digest: 842f144cbb538352e229fb3aafe5bbb71a204f09e1aeb96e1c3d14aa72935dae
+    quote: REQUIRED when the `VersionRef` is outside its proposal
+    locks: [with-our-stack]
+  - ir: rule:2.4:3b0456cb
+    digest: a62c2e41efb1e1379726c47c217e9704b8d29d61c9a1bfac33f33a5c7b284a36
+    quote: REQUIRED when the request names a proposal the requester may read
+    locks: [with-our-stack]
+  - ir: field:4.1:buyer
+    digest: 70a9f70cbc2a62629f9f8dc25d1b5817da3f53d4c99f6fe5f78b0eb4788f0d16
+    quote: "`buyer` | Party | immutable | The entity that assents, usually the agency. Its presence makes the proposal issued to that buyer (§ 4.3). Whom the spend is for is `commitment.advertisers[]` (§ 5.6.1), and whether the buyer may bind that advertiser is authorization (§ 1.2). `legal_name` is REQUIRED here"
+    locks: [with-our-stack]
+  - ir: field:4.1:line_items[]
+    digest: 3297babbffd7993c2f38502969b9a78de653b17228c6e8740fd33945c5fcbc13
+    quote: "`line_items[]` | Array[LineItem] | seller-set | The line items (§ 5), in the order the seller wrote them. A proposal holds `line_items[]` or `packages[]`, not both"
+    locks: [with-our-stack]
+  - ir: field:4.1:packages[]
+    digest: cc990001914964447824d3dda86eae212f99f19d96b4d9b5735081f38f007bb9
+    quote: "`packages[]` | Array[Package] | seller-set | The line items in packages (§ 4.1.4), in the order the seller wrote them"
+    locks: [with-our-stack]
+  - ir: field:4.1:negotiation_history[]
+    digest: be8ec170ece0e752caa572bdcb2293159768eaf6894f4fdfb6f743924f73abec
+    quote: "`negotiation_history[]` | Array[HistoryEntry] | recorded | Ordered, append-only. Entries MUST NOT be edited or removed. A commit and its answers are in `assent[]`, not here, and an entry here voids nothing"
+    locks: [with-our-stack]
+  - ir: key:4.1:HistoryPath.line_item_id
+    digest: 1f3fb157323c96fd5762aa060d9d4c19fdd02f4734214748e159c33877993814
+    quote: "`line_item_id` | REQUIRED when `requested_value` is present | The line item. When absent, `pointer` is into the proposal"
+    locks: [with-our-stack]
+  - ir: key:4.1:HistoryPath.requested_value
+    digest: d1c6c315651e741d3bd5068c2c738d241cb6a6cf0642b006bd9022c20dbffcf4
+    quote: "`requested_value` | REQUIRED when the entry's `action` is `requested` | On a `requested` entry, the value the buyer asked for. On a `declined` entry, or a buyer's `withdrawn` entry, the value of the `request` it ended. Absent on every other entry"
+    locks: [with-our-stack]
+  - ir: key:4.4:ChangeRequest.orderid
+    digest: e2d547e91227664e9b2ca3b86ce36a433cde2f469db6d798621d1ee2d7ae84dd
+    quote: "`orderid` | REQUIRED when the line item has an `order` reference (§ 5.10) | The order the change is requested for: the id in the `order` entry"
+    locks: [with-our-stack]
+  - ir: field:5.2:episodes
+    digest: 3ebc19c1e7eaf3d213fcc20953e57784975cdfe4f9a5186b0f22f760e42e1567
+    quote: "`episodes` | Enum | seller-set | `new` | `catalog` | `all`. `new`: released within the flight. `catalog`: released before it. `all`: either"
+    locks: [with-our-stack]
+  - ir: field:5.2:placement
+    digest: 251908a4d726bb9c6afc02b64974df5636b73f20341b0b3012872fde8af40917
+    quote: "`placement` | Placement | seller-set | What every impression of this line item is: rewarded, interstitial, video placement subtype, skippability, playback, API frameworks, refresh, server-side insertion and audio feed. See 5.2.2"
+    locks: [with-our-stack]
+  - ir: key:5.2.2:Placement.plcmt
+    digest: e3090907130d670141bad2596b056c351584f8e5c03f535354eb3b341b606143
+    quote: "`plcmt` | REQUIRED when `channel` is `video` | A value from List: Plcmt Subtypes - Video, such as Instream (1). Its presence states that the line item is video, so a `ctv` line item that sells video carries it | `VideoPlacement.ptype`, `video.plcmt`"
+    locks: [with-our-stack]
+  - ir: key:5.2.2:Placement.feed
+    digest: 333168c63745e6f2a46254e2397e6759e1bca501db2eb4e6dde83ae08a9d7fc7
+    quote: "`feed` | REQUIRED when `channel` is `audio` | A value from List: Feed Types, such as Podcast (3) | `AudioPlacement.feed`, `audio.feed`"
+    locks: [with-our-stack]
+  - ir: key:5.2.4:PropertyOption.venue_type
+    digest: 78f8494879de6e326402cd24af001372bbb228338900d5faec7042b25c257aad
+    quote: "`venue_type` | REQUIRED when `channel` is `dooh` | `taxonomy` is a value of AdCOM 1.0 List: DOOH Venue Taxonomies. `ids[]` holds exactly one id. It covers only itself, not its descendants. The values OpenRTB 2.6 `dooh.venuetypetax` and `dooh.venuetype` carry"
+    locks: [with-our-stack]
+  - ir: key:5.2.4:PropertyOption.screens[]
+    digest: c0de2413bae7a966c468ea5bd0f26c207ed20ff66dba549b71f9cee7053877e4
+    quote: "`screens[]` | REQUIRED when `channel` is `dooh` and `allocation` is `all` | The property's screens (§ 5.2.8)"
+    locks: [with-our-stack]
+  - ir: key:5.2.4:PropertyOption.seller_accounts[]
+    digest: 256753be657967d26034978299fe97b1043d3a29e9a8f580ff6ace3bb7034c4e
+    quote: "`seller_accounts[]` | REQUIRED when `seller_relationship` is `reseller`, or the line item offers a deal mechanism (§ 5.9) | The accounts that sell the property"
+    locks: [with-our-stack]
+  - ir: key:5.2.4:PropertyOption.apps[]
+    digest: 892321b9606c31abfc8bd376dfdcb9ad15769f4eecdcc51d5a80cbc54b5d4330
+    quote: "`apps[]` | REQUIRED when `domains[]` is absent | The apps behind a property sold in `app_mobile` or `ctv` (§ 5.2.5)"
+    locks: [with-our-stack]
+  - ir: key:5.2.4:PropertyOption.domains[]
+    digest: 4fdff00a813e8665185f332349816ea8b2696dd9b9dcf113195f430ca575de86
+    quote: "`domains[]` | REQUIRED when `apps[]` is absent | The property's domains. On a `dooh` line item, the inventory owner's domain, as OpenRTB 2.6 `dooh.domain`"
+    locks: [with-our-stack]
+  - ir: key:5.3:AudienceSelectable.combine
+    digest: e60aad2648e01532ad874d5c1862db3fac8c9ae1e9016d3ba358c43c80a66e31
+    quote: "`combine` | REQUIRED when more than one seller audience can be in effect | The operators the seller supports. `max_select: 1`. `included[]` MUST name exactly one option. It carries no `deltas`"
+    locks: [with-our-stack]
+  - ir: field:5.4:format_specs
+    digest: e1002f5a6ce64e7aab22acd2215df84e47e0bf49e0fc914d9765c2396556242d
+    quote: "`format_specs` | Map[FormatId, FormatSpec] | seller-set | Map from format id to `FormatSpec`"
+    locks: [with-our-stack]
+  - ir: key:5.4:Asset.markup
+    digest: 1237f40e094ce62f23d5600b3d8d84150a17e30cab5fb5847da0fcc4bc8ddb45
+    quote: "`markup` | REQUIRED when `url` is absent | The tag or creative markup"
+    locks: [with-our-stack]
+  - ir: key:5.4:Asset.url
+    digest: 2c75977918fb7225eb4cd6708a04826cb23321db44d40f6014803232afffe67a
+    quote: "`url` | REQUIRED when `markup` is absent | Where the asset is, such as a tag URL with its macros unexpanded"
+    locks: [with-our-stack]
+  - ir: key:5.4:MaterialsDue.at
+    digest: b578221f277f710c3a05044e89d5006998c3d4a396d577ce1e2e186c58f7b8ee
+    quote: "`at` | REQUIRED when `before_start` is absent | The deadline"
+    locks: [with-our-stack]
+  - ir: key:5.4:MaterialsDue.before_start
+    digest: 4fc1455a01dffca27f9df2a47fbab1e2d920ef0033fa2286d47b9b0b79728864
+    quote: "`before_start` | REQUIRED when `at` is absent | The deadline, as a length of time before `commitment.flight.start`"
+    locks: [with-our-stack]
+  - ir: field:5.5:time_zone
+    digest: 958a94cb93aec0fc1e994aa1650a4973a0ecd1d859de960efcc516c8b0179a00
+    quote: "`time_zone` | ZoneName | seller-set | The clock for `daypart` and a calendar `frequency_cap.period`"
+    locks: [with-our-stack]
+  - ir: field:5.6:pricing[].cost_parameters
+    digest: 8ed967ab7ef435edae7e6079c8adb38edcb8d79ca99e7d98d12491e2a69035eb
+    quote: "`pricing[].cost_parameters` | CostParameters | seller-set | The keys the term requires (§ 5.6.5). Absent when it requires none"
+    locks: [with-our-stack]
+  - ir: field:5.6:pricing[].agreed_rate
+    digest: 5ed66aa5f747b2c39b111708371543c09c29f59f000e958808f939b45aa40c45
+    quote: "`pricing[].agreed_rate` | Amount | derived | The transacted rate (below). Absent on every other entry"
+    locks: [with-our-stack]
+  - ir: field:5.6:pricing[].rate_per
+    digest: 7e4207e926c3bc3ad125e4fb90e60d39c2da7f4932b255e95a32ce1b030f906f
+    quote: "`pricing[].rate_per` | Integer | seller-set | `1` | `1000`. Units per rate. For a core term, the vocabulary sets it, and a present value MUST match"
+    locks: [with-our-stack]
+  - ir: field:5.6:pricing[].unit_label
+    digest: e5f4eb08fce55537e174e857278fd675a79a1ba5b42e2467c5df819a1641a425
+    quote: "`pricing[].unit_label` | String | seller-set | A short label for one unit, such as `engagement`"
+    locks: [with-our-stack]
+  - ir: field:5.6:pricing[].cost_definition
+    digest: 058ee19825269a09de5e8611d2842e4189701ec079b0892b10ee5372f1849e1b
+    quote: "`pricing[].cost_definition` | DocumentRef | seller-set | Public definition of one unit and the `cost_parameters` keys (§ 5.6.5)"
+    locks: [with-our-stack]
+  - ir: field:5.6:pricing[].price_type
+    digest: 4ef76dd54651ea69ff33e03b64b711f7432f602686abc603ae4fba14befd6e7f
+    quote: "`pricing[].price_type` | Integer | seller-set | How `agreed_rate` clears, as Deals API 1.0 `terms.pricetype`: Dynamic (0), the auction type of each bid request; First Price (1); Second Price Plus (2); Fixed Price (3); or an exchange-specific value, 500 and up"
+    locks: [with-our-stack]
+  - ir: key:5.6.1:Commitment.pricing_id
+    digest: 90f18952cbecfa5425a0aeb5d2fceb2e7178cb881c2530b604c42f971f43404f
+    quote: "`pricing_id` | REQUIRED when `pricing[]` has more than one entry | The entry the buyer commits under"
+    locks: [with-our-stack]
+  - ir: key:5.6.1:CommitResult.availability
+    digest: 4a080484e0290001c168dbd5c5391fcac0ec96f6f467f4584e8113f84a6af257
+    quote: "`availability` | REQUIRED when `entries[]` holds a `decline` for lack of availability | The figures that `decline` states, keyed by `line_item_id`. They are not part of the entry"
+    locks: [with-our-stack]
+  - ir: key:5.6.4:DeliveryCounting.partial_play_credit
+    digest: 175b6a72505afc647dbb7a39c1f9942d4226232bf5273beeb1b3a99b57363c97
+    quote: "`partial_play_credit` | REQUIRED when a property has `sync_groups[]` | What a display on fewer than `min_screens_per_play` screens counts. Core terms: `none` (no play) | `pro_rata` (screens played ÷ `min_screens_per_play`)"
+    locks: [with-our-stack]
+  - ir: key:5.6.4:DeliveryCounting.impression_multiplier
+    digest: 7f75a90d77fd5f50f2654617b4656bc42d1dd27d75af2042b2238318547e1699
+    quote: "`impression_multiplier` | REQUIRED when the line item counts impressions | What turns a play into impressions. A line item that counts only plays needs none"
+    locks: [with-our-stack]
+  - ir: key:5.6.4:ImpressionMultiplier.vendor
+    digest: 053bd0fa2450bf0b795fb29af8f3e771c2037ded36a7b3f25a96795cdb733710
+    quote: "`vendor` | REQUIRED when `source_type` is not Publisher Provided (`2`) | The domain of the vendor or exchange that supplies the multipliers, as OpenRTB 2.6 `imp.qty.vendor` names a vendor"
+    locks: [with-our-stack]
+  - ir: key:5.6.6:Fee.share
+    digest: 9808405435ae42a3f1da6f2b4ec7392198dbbaeea2d514920c5ea11bbc7cc17d
+    quote: "`share` | REQUIRED when `calculation` is `cancelled` or `commitment` | The fee as a share"
+    locks: [with-our-stack]
+  - ir: field:5.7:controlling_measurement
+    digest: 49502fe7e2df06af62949e7e1d39c6f61ab2d20743bb6e5a6af1f422c93cf593
+    quote: "`controlling_measurement` | Selectable[ControllingMeasurementOption] | selectable | Whose count of billable units is invoiced. See § 5.7.1. `max_select: 1`. `included[]` MUST name exactly one option"
+    locks: [with-our-stack]
+  - ir: field:5.9:sov_basis
+    digest: 9f16571bb67e5a47d6e4deed1768aade229b08ba0d210d12528180f88f77aba2
+    quote: "`sov_basis` | Enum | seller-set | `impressions` | `loop_time`. `impressions`: a share of the line item's eligible impressions (digital placements, pooled DOOH products). `loop_time`: a share of each named screen's loop time (fixed-loop DOOH spots)"
+    locks: [with-our-stack]
+  - ir: field:5.9:deal_origin
+    digest: f21648ecf3916eb059d1d534dc5ec1a91eabc10131a83c6de8f6f55192c60f00
+    quote: "`deal_origin` | RegistrableDomain | seller-set | Absent otherwise. The advertising system domain whose namespace holds the deal ID and that pushes the deal, as the Deals API 1.0 `origin`: typically an SSP, or the ad server for a deal it books itself"
+    locks: [with-our-stack]
+  - ir: field:5.9:sov_share
+    digest: 6eb41dd522c0bed3a0b8677dff4f9db36f063d925ee655a668ed902513bef66c
+    quote: "`sov_share` | Fraction | seller-set | Absent under `loop_time`. The promised share, greater than 0"
+    locks: [with-our-stack]
+  - ir: field:5.9:retention
+    digest: d6da48e3ba2ad2ebe71cde6d131a3f183b1c4731c74ec54ab7ceb15b18d5e88e
+    quote: "`retention` | Range[Duration] | seller-set | From release or air. The ad stays in every copy of the content the seller distributes for at least `min` and is removed by `max`. No `max`: indefinitely. When `placement.feed` is present, only copies in that feed count toward delivery"
+    locks: [with-our-stack]
+  - ir: key:5.6.5:CostParameters.rate_unit
+    digest: 74df1a978c5ed85de51d86acf9461a72ece8335b55bedd6ded4f0d9358329098
+    quote: "`rate_unit` | REQUIRED when `cost_method` is `TIME` | `hour` | `day` | `week`. The unit the rate buys, counted in elapsed units"
+    locks: [with-our-stack]
+  - ir: key:5.6.5:CostParameters.viewability_standard
+    digest: d213f91f3a635104e410c38f8b7a3a30e570fc1ba329d6b54df2766a43926bcc
+    quote: "`viewability_standard` | REQUIRED when `cost_method` is `CPMV` | The viewability standard that counts a unit. Core term: `mrc`, the MRC guidelines that `viewable_rate` cites (§ 5.7.1)"
+    locks: [with-our-stack]
+  - ir: key:5.6.5:CostParameters.action_type
+    digest: 83db4387a45bdbb90bb5b272125d57893b95f7b98aaa79113f504c819c8e577e
+    quote: "`action_type` | REQUIRED when `cost_method` is `CPA` | The kind of action counted, such as `shop.example:purchase`. This version lists no core terms"
+    locks: [with-our-stack]
+  - ir: key:5.6.5:CostParameters.attribution_window
+    digest: cb7249308e30fff79b598498150bd1391340a20c003fed80551ac4c7bffdf3f7
+    quote: "`attribution_window` | REQUIRED when `cost_method` is `CPA` | How long after exposure an action counts"
+    locks: [with-our-stack]
+  - ir: key:5.6.5:CostParameters.action_source
+    digest: 8f01f9eb8f0c09a191dd0763d5ea61b2e7f0073b97c34f55b884abe1ebc1e751
+    quote: "`action_source` | REQUIRED when `cost_method` is `CPA` | Who reports the action"
+    locks: [with-our-stack]
+  - ir: key:5.6.5:CostParameters.demographic
+    digest: 28f394d87003c6ac615d1126a28769db077572b544dfde8a08a57ec31a6a4f7b
+    quote: "`demographic` | REQUIRED when `cost_method` is `CPP` | The rated demographic, such as `ratings.example:adults_25_54`. Its definition states whether co-viewers and impressions of unknown age count, or says `unknown`. This version lists no core terms"
+    locks: [with-our-stack]
+  - ir: key:5.6.5:CostParameters.rating_source
+    digest: b65d516902c5a98bb0242c8ee45d639487f6970e0e38bfa7d8fe2a2e9fccb6d4
+    quote: "`rating_source` | REQUIRED when `cost_method` is `CPP` | Who supplies the ratings"
+    locks: [with-our-stack]
+  - ir: key:5.6.5:CostParameters.view_fraction
+    digest: 852a7939f310a33b1aca70429e265e554af80de54e24477b3813fc78cfebcd1d
+    quote: "`view_fraction` | REQUIRED when `cost_method` is `CPV` and `view_s` is absent | The fraction of the creative played that makes a view. Absent when `view_s` is present"
+    locks: [with-our-stack]
+  - ir: key:5.6.5:CostParameters.view_s
+    digest: 07c3ce92aff2f4d5079df371767846cbd707637eec0a113f9b1737580634ae30
+    quote: "`view_s` | REQUIRED when `cost_method` is `CPV` and `view_fraction` is absent | Seconds played that make a view. Absent when `view_fraction` is present"
+    locks: [with-our-stack]
+  - ir: key:2.2:VersionRef.seller_domain
+    digest: ec8fb461339f3b87060c0c03b4969284400815d632384455d3a9aa69e78fe3c8
+    quote: "`seller_domain` | REQUIRED when the `VersionRef` is outside its proposal | The proposal's `seller.domain`"
+    locks: [with-our-stack]
+  - ir: key:2.4:ErrorObject.version
+    digest: 407dee4d73ecc52331ba20ae22175edcb429a3a6b9d79a0856b5d828e48980b4
+    quote: "`version` | REQUIRED when the request names a proposal the requester may read | The proposal's `version` when the error was decided"
+    locks: [with-our-stack]
+options:
+  - id: row-rules
+    summary: "Each is a rule of the row's object, with vectors, and the check reads the condition as the text states it: on the value, on what the object's container holds, or, for a request, on what the receiver does. Where the text names a reading, the rule takes it: a deal mechanism is one the § 5.9 table marks Yes, a line item counts impressions where an entry's cost method's unit is an impression (`CPM` or `CPMV`), a term requires keys where its § 5.6.5 row names `cost_parameters`, a version is frozen once the proposal leaves `draft` or `assent[]` holds an entry, the committed entry is the one the line item's `commitment.pricing_id` names, or its only entry, and a line item with no `commitment` has none, and more than one seller audience can be in effect where there are two options and `max_select` allows two."
+  - id: schema-only
+    summary: "Leave them to prose."
+chosen: row-rules
+rationale: >-
+  § 2.6 makes a Required cell `REQUIRED when <condition>`, and the stack
+  writes many conditions a JSON Schema can't state: a sibling's absence, a
+  value in another object, or a value only a party knows. Each row's cell is
+  its own statement, so each is a rule of the row's object, and its vectors
+  show the condition met and not met. The readings follow the text's own
+  definitions: § 5.9 defines a deal mechanism as one that lands in a Deals API
+  `Deal`, which its table marks; § 5.6.5's table gives each cost method's unit
+  and its `cost_parameters`; and § 4.1 says a version is frozen at the
+  earliest of the proposal's `status` leaving `draft`, an entry naming it, or
+  a counterparty receiving it, of which a payload shows the first two.
+feedback: >-
+  None needed.

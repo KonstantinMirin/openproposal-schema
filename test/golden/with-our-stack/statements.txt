@@ -1,0 +1,602 @@
+rule:front:ceff832d	MUST NOT	line 7	It is not a ratified IAB Tech Lab standard and MUST NOT be treated as one.
+rule:1.1:d539a004	OPTIONAL	line 80	OPTIONAL.
+rule:2:4ae8f775	MUST NOT	line 211	A field on a line item MUST NOT inherit its value from the proposal or from a sibling line item.
+rule:2:ddbf85da	MAY	line 218	A buyer MAY select and commit any subset of a proposal's `line_items[]`.
+rule:2.1:568d4699	MUST	line 227	A full fetch MUST return it, except for line items and packages the requester may not read (§ 5.8).
+rule:2.1:5072813c	MAY	line 231	A manifest entry holds it (§ 2.3), and a response over the message binding (§ 1.2) MAY carry it.
+rule:2.1:57273714	REQUIRED	line 300	REQUIRED when the full form holds `line_items[]`
+rule:2.1:c0741f43	REQUIRED	line 301	REQUIRED when the full form holds `packages[]`
+rule:2.1:373dbf11	REQUIRED	line 307	REQUIRED
+rule:2.1:373dbf11-2	REQUIRED	line 308	REQUIRED
+rule:2.1:ae26d4ac	OPTIONAL	line 309	OPTIONAL
+rule:2.1:ae26d4ac-2	OPTIONAL	line 310	OPTIONAL
+rule:2.2:ef4efcb1	MAY	line 315	Its row MAY narrow the type for that field, by requiring a key the type leaves OPTIONAL or by limiting the values or count the type allows, and says so.
+rule:2.2:df0340d2	MUST	line 323	Producers MUST write this form.
+rule:2.2:1e8acd47	MUST NOT	line 323	Consumers MUST compare byte for byte and MUST NOT normalize a value before comparing it.
+rule:2.2:32c53f84	MAY	line 348	Anyone MAY define an extension term.
+rule:2.2:c3db85f7	MUST	line 355	For a `channel` (§ 5.1.1) or `cost_method` (§ 5.6.5) term, these effects are a MUST.
+rule:2.2:9c143862	MAY	line 356	A field MAY state another effect.
+rule:2.2:373dbf11	REQUIRED	line 365	REQUIRED
+rule:2.2:b0cdbdd1	MAY	line 365	It MAY need authentication
+rule:2.2:373dbf11-2	REQUIRED	line 366	REQUIRED
+rule:2.2:373dbf11-3	REQUIRED	line 375	REQUIRED
+rule:2.2:373dbf11-4	REQUIRED	line 376	REQUIRED
+rule:2.2:ae26d4ac	OPTIONAL	line 377	OPTIONAL
+rule:2.2:e46f15c4	REQUIRED	line 378	REQUIRED when the `VersionRef` is outside its proposal
+rule:2.2:3d1eff57	MUST NOT	line 381	An absent or unresolvable `registry_id` MUST NOT make a document malformed, and a consumer MUST ignore a resolved entry whose verified domain is not `domain`.
+rule:2.2:373dbf11-5	REQUIRED	line 388	REQUIRED
+rule:2.2:ae26d4ac-2	OPTIONAL	line 389	OPTIONAL
+rule:2.2:ae26d4ac-3	OPTIONAL	line 390	OPTIONAL
+rule:2.2:373dbf11-6	REQUIRED	line 396	REQUIRED
+rule:2.2:ae26d4ac-4	OPTIONAL	line 397	OPTIONAL
+rule:2.2:373dbf11-7	REQUIRED	line 404	REQUIRED
+rule:2.2:373dbf11-8	REQUIRED	line 405	REQUIRED
+rule:2.2:373dbf11-9	REQUIRED	line 411	REQUIRED
+rule:2.2:373dbf11-10	REQUIRED	line 412	REQUIRED
+rule:2.2:ae26d4ac-5	OPTIONAL	line 419	OPTIONAL
+rule:2.2:ae26d4ac-6	OPTIONAL	line 420	OPTIONAL
+rule:2.3:8d420e7d	MAY	line 424	A seller MAY publish `https://<seller.domain>/.well-known/openproposal.json`, a `ProposalManifest`.
+rule:2.3:373dbf11	REQUIRED	line 431	REQUIRED
+rule:2.3:373dbf11-2	REQUIRED	line 432	REQUIRED
+rule:2.3:373dbf11-3	REQUIRED	line 433	REQUIRED
+rule:2.3:ae26d4ac	OPTIONAL	line 434	OPTIONAL
+rule:2.3:373dbf11-4	REQUIRED	line 440	REQUIRED
+rule:2.3:9c46c162	REQUIRED	line 442	At least one of `ETag` and `Last-Modified` is REQUIRED, so buyers can poll cheaply.
+rule:2.3:59a4ca91	MUST	line 452	Manifest entries MUST match the current version of each proposal.
+rule:2.3:86c05e36	SHOULD	line 455	A seller that limits concurrent holds SHOULD declare the limit in `hold_limits`.
+rule:2.3:ae26d4ac-2	OPTIONAL	line 461	OPTIONAL
+rule:2.3:ae26d4ac-3	OPTIONAL	line 462	OPTIONAL
+rule:2.3:cad085e3	MAY	line 465	A seller that declares `per_advertiser` MAY decline a hold request whose `requested_terms` names no advertiser.
+rule:2.4:c17390d3	MUST	line 483	A party that rejects a request MUST return `errors[]`, one or more `ErrorObject`s.
+rule:2.4:373dbf11	REQUIRED	line 495	REQUIRED
+rule:2.4:373dbf11-2	REQUIRED	line 496	REQUIRED
+rule:2.4:bd6cd209	SHOULD NOT	line 496	A receiver SHOULD NOT parse it
+rule:2.4:ae26d4ac	OPTIONAL	line 497	OPTIONAL
+rule:2.4:3b0456cb	REQUIRED	line 498	REQUIRED when the request names a proposal the requester may read
+rule:2.4:373dbf11-3	REQUIRED	line 499	REQUIRED
+rule:2.5:b7667a2c	MAY	line 529	The proposal, each line item, and each `change_requests[]` entry (§ 4.4) MAY carry `ext`, an `Ext`.
+rule:2.5:95586079	MUST	line 530	Each key MUST be a `Domain` that its owner controls, and each value is an object that the owner defines.
+rule:2.5:54a97cce	MUST	line 531	A seller's own entries MUST use its `seller.domain` as the key.
+rule:2.5:f02c39d6	MUST NOT	line 539	An `ext` entry MUST NOT change the meaning of a field this specification defines.
+rule:2.5:84b68ec7	MUST NOT	line 540	A term the counterparty must understand to transact MUST NOT be an `ext` entry; it is a field or a vocabulary term.
+rule:2.5:d8749eb6	MUST NOT	line 542	A receiver MUST ignore an `ext` entry it does not understand, and MUST NOT reject a document because of it.
+rule:2.5:7eb6b4bc	MUST	line 543	It MUST keep `ext` unchanged when it stores or forwards the document.
+rule:2.5:c97afe58	MAY	line 554	Apart from an unknown term (§ 2.2), a receiver MAY skip a whole line item it cannot read, without assenting to it.
+rule:2.5:7bd50d5a	MUST NOT	line 555	It MUST NOT keep a line item after removing fields from it.
+rule:2.6:6f3c4fcc	MAY	line 561	A key table has the columns Key, Type, Required, and Meaning, and MAY add a last column that names a source standard.
+rule:2.8:2bb38cac	OPTIONAL	line 665	Signing is OPTIONAL: § 4.1.2 states what a signature shows, and `agreed` never depends on one.
+rule:2.8:1a572833	MAY	line 678	A party that cannot verify a response MAY refuse to write its own entry (§ 4.1.2)
+rule:3:e5ff81ed	MAY	line 693	The seller sets it and MAY revise it while the `status` of the object that carries it is `draft`, `published` or `under_review`.
+rule:3:d5ed9b66	MAY	line 694	Each option MAY carry a price delta.
+rule:3:82c2f1b0	MAY	line 697	The buyer MAY ask for a value outside the declared space.
+rule:3:07a16404	MUST	line 710	`selectable`, `settable` and `supplied` fields MUST resolve without a round trip — everything needed to validate and price them is declared in the proposal.
+rule:3:e1b586de	MUST NOT	line 722	The buyer MUST NOT alter the keys the seller declares beside them.
+rule:3.1:373dbf11	REQUIRED	line 733	REQUIRED
+rule:3.1:373dbf11-2	REQUIRED	line 734	REQUIRED
+rule:3.1:ae26d4ac	OPTIONAL	line 735	OPTIONAL
+rule:3.1:ae26d4ac-2	OPTIONAL	line 736	OPTIONAL
+rule:3.1:ae26d4ac-3	OPTIONAL	line 737	OPTIONAL
+rule:3.1:bfffacdf	REQUIRED	line 739	An object option's id is its REQUIRED `id`, unique in the field.
+rule:3.1:ae26d4ac-4	OPTIONAL	line 755	OPTIONAL
+rule:3.1:ae26d4ac-5	OPTIONAL	line 756	OPTIONAL
+rule:3.1:ae26d4ac-6	OPTIONAL	line 757	OPTIONAL
+rule:3.1:99ddc11e	MUST NOT	line 759	An option priced only by `delta_cpm` MUST NOT resolve against any other entry.
+rule:3.2:373dbf11	REQUIRED	line 772	REQUIRED
+rule:3.2:373dbf11-2	REQUIRED	line 773	REQUIRED
+rule:3.2:ae26d4ac	OPTIONAL	line 774	OPTIONAL
+rule:3.2:373dbf11-3	REQUIRED	line 780	REQUIRED
+rule:3.2:9277e83b	MUST	line 780	Each entry MUST be covered by an `allowed[]` entry
+rule:3.2:ae26d4ac-2	OPTIONAL	line 781	OPTIONAL
+rule:3.2:4659b1d4	MUST	line 781	Each entry MUST be covered by an `include[]` entry
+rule:3.2:373dbf11-4	REQUIRED	line 790	REQUIRED
+rule:3.2:ae26d4ac-3	OPTIONAL	line 791	OPTIONAL
+rule:3.3:1c0f3417	MUST	line 795	Because audiences, properties, formats, and `markets` are `selectable`, and a `settable` targeting `value` and buyer `exclusions` (§ 5.5) narrow delivery, `addressable_scale` and `availability` MUST be recomputed against the buyer's actual selection, values, and exclusions.
+rule:3.3:810028b3	MUST	line 799	`availability` MUST also be recomputed against the `break_position` and `programs` options in effect.
+rule:3.3:373dbf11	REQUIRED	line 812	REQUIRED
+rule:3.3:de17ca68	REQUIRED	line 812	`line_item_id` is REQUIRED here
+rule:3.3:373dbf11-2	REQUIRED	line 813	REQUIRED
+rule:3.3:ae26d4ac	OPTIONAL	line 814	OPTIONAL
+rule:3.4:8a37931e	OPTIONAL	line 820	Every path is OPTIONAL.
+rule:3.4:373dbf11	REQUIRED	line 841	REQUIRED
+rule:4.1:373dbf11	REQUIRED	line 855	REQUIRED
+rule:4.1:373dbf11-2	REQUIRED	line 856	REQUIRED
+rule:4.1:ce1d9648	MUST NOT	line 856	The offered terms of a frozen version MUST NOT change; a change to them creates version `n+1`.
+rule:4.1:373dbf11-3	REQUIRED	line 857	REQUIRED
+rule:4.1:373dbf11-4	REQUIRED	line 858	REQUIRED
+rule:4.1:b1f3c197	REQUIRED	line 858	`legal_name` is REQUIRED here
+rule:4.1:1ef7cbec	REQUIRED	line 859	REQUIRED when `type` is `custom` or `assent[]` is present
+rule:4.1:b1f3c197-2	REQUIRED	line 859	`legal_name` is REQUIRED here
+rule:4.1:373dbf11-5	REQUIRED	line 860	REQUIRED
+rule:4.1:ae26d4ac	OPTIONAL	line 861	OPTIONAL
+rule:4.1:ae26d4ac-2	OPTIONAL	line 862	OPTIONAL
+rule:4.1:373dbf11-6	REQUIRED	line 863	REQUIRED
+rule:4.1:ae26d4ac-3	OPTIONAL	line 864	OPTIONAL
+rule:4.1:8e9aacb8	MUST NOT	line 864	Entries MUST NOT be edited or removed
+rule:4.1:ae26d4ac-4	OPTIONAL	line 865	OPTIONAL
+rule:4.1:1a0e1d65	REQUIRED	line 866	REQUIRED when `type` is `custom`
+rule:4.1:9c98396c	REQUIRED	line 867	REQUIRED when the current `version` is frozen (§ 4.1.3)
+rule:4.1:d401d65e	MUST NOT	line 867	Entries MUST NOT be edited or removed.
+rule:4.1:22f5a51a	REQUIRED	line 868	REQUIRED when `packages[]` is absent
+rule:4.1:94b23ce1	REQUIRED	line 869	REQUIRED when `line_items[]` is absent
+rule:4.1:ae26d4ac-5	OPTIONAL	line 870	OPTIONAL
+rule:4.1:373dbf11-7	REQUIRED	line 876	REQUIRED
+rule:4.1:373dbf11-8	REQUIRED	line 877	REQUIRED
+rule:4.1:373dbf11-9	REQUIRED	line 878	REQUIRED
+rule:4.1:373dbf11-10	REQUIRED	line 879	REQUIRED
+rule:4.1:ff8838af	MAY	line 879	MAY be empty
+rule:4.1:373dbf11-11	REQUIRED	line 880	REQUIRED
+rule:4.1:71a584ca	REQUIRED	line 886	REQUIRED when `requested_value` is present
+rule:4.1:373dbf11-12	REQUIRED	line 887	REQUIRED
+rule:4.1:d31e02ee	REQUIRED	line 888	REQUIRED when the entry's `action` is `requested`
+rule:4.1:ae26d4ac-6	OPTIONAL	line 895	OPTIONAL
+rule:4.1:ae26d4ac-7	OPTIONAL	line 896	OPTIONAL
+rule:4.1:ae26d4ac-8	OPTIONAL	line 897	OPTIONAL
+rule:4.1:ae26d4ac-9	OPTIONAL	line 898	OPTIONAL
+rule:4.1:ae26d4ac-10	OPTIONAL	line 899	OPTIONAL
+rule:4.1:fae6ebab	MUST NOT	line 901	`proposal_template_id` MUST NOT be required for a buyer to transact.
+rule:4.1:4311c613	MUST NOT	line 904	A seller MUST NOT name a domain it does not control.
+rule:4.1:9d47bb1c	SHOULD	line 907	A selling entity that controls several registrable domains SHOULD use the same `seller.domain` for every proposal it publishes as one seller; a seller that publishes proposals under several domains holds an Agent Registry entry for each, or the entry does not apply.
+rule:4.1.1:e95eca3f	MUST NOT	line 1016	Strings, `Instant` values included, are hashed as that value; a party MUST NOT trim, normalize, or reformat a value it did not write.
+rule:4.1.1:6e3d2c89	MUST NOT	line 1018	A producer MUST NOT write a Number that this serialization does not reproduce as the numeric value written; a Number with at most 15 significant digits inside the range of a double always does, and a document containing one that does not is invalid for this section.
+rule:4.1.1:e93caddf	MUST	line 1028	A receiving party MUST recompute `record_digest` and compare it byte-for-byte before relying on a live `commitment` entry, over the line items as they stand plus the writes its `commit` carries (§ 5.6.1), or on a matching pair, from its agreed record (§ 4.1.2).
+rule:4.1.2:373dbf11	REQUIRED	line 1043	REQUIRED
+rule:4.1.2:373dbf11-2	REQUIRED	line 1044	REQUIRED
+rule:4.1.2:373dbf11-3	REQUIRED	line 1045	REQUIRED
+rule:4.1.2:373dbf11-4	REQUIRED	line 1046	REQUIRED
+rule:4.1.2:527c9881	MUST	line 1046	MUST be non-empty
+rule:4.1.2:373dbf11-5	REQUIRED	line 1047	REQUIRED
+rule:4.1.2:1cbff705	REQUIRED	line 1048	REQUIRED when `role` is `commitment`
+rule:4.1.2:d5a6e326	MUST NOT	line 1048	The seller MUST NOT interpret it (§ 5.6.1)
+rule:4.1.2:a9695c33	REQUIRED	line 1049	REQUIRED when `role` is `decline`
+rule:4.1.2:0006fe1d	MUST	line 1055	Its `line_item_ids[]` MUST name line items whose `commitment` object (§ 5.6.1) is populated in the record, and on their own MUST meet the package rules (§ 4.1.4).
+rule:4.1.2:c9ce18dd	MAY	line 1066	An entry that is not live stays in `assent[]`, and the line items it names MAY appear in a new `commitment` entry.
+rule:4.1.2:dc1eb3b2	MUST NOT	line 1069	A line item MUST NOT be named by more than one live `commitment` entry, nor by more than one `acceptance` entry.
+rule:4.1.2:a855dcd7	MUST	line 1077	Every `seller-set`, `selectable`, `settable`, and `requestable` value of it and its `pricing[].agreed_rate` MUST remain as in the version `assent[]` names.
+rule:4.1.2:b3c1ac3b	OPTIONAL	line 1111	The evidence is OPTIONAL.
+rule:4.1.2:9a7a80e3	MAY	line 1117	Within the limits on a decline (§ 4.3.2, § 5.6.1), a party MAY refuse to write its own entry for any reason, including a counterparty message it cannot verify.
+rule:4.1.3:fb70b3cb	MAY	line 1129	The following are not offered terms and MAY change without a new version: `status` (proposal and line item), `assent[]`, `negotiation_history[]`, `change_requests[]`, `availability`, `addressable_scale`, `hold`, `external_references[]`, `assets[].approval_status`, a `built_by: seller` entry of `assets[]`; `best_for[]`, `not_suitable_for[]`, and `seasonality_notes`, which are advisory (§ 4.2); `pricing[].min_rate`, which is a hint; `buyer_supplied.expected_match_rate`, which is the seller's stated expectation; every value the buyer writes (a `BuyerWrites` value, `commitment`, any other `supplied` field, and a `requestable` ask); and every `derived` value computed from a buyer's writes (`pricing[].agreed_rate`, `commitment.derived_units`).
+rule:4.1.3:dd69dac7	MAY	line 1142	A seller MAY edit a proposal in place only while its current version is not yet frozen (§ 4.1).
+rule:4.1.3:e06c57e1	MUST NOT	line 1145	A line item that appears in a frozen version MUST NOT be removed from the proposal or moved to another package; it leaves the shelf by its `status` (§ 5.1), which is a lifecycle change.
+rule:4.1.3:03718402	MUST	line 1151	Each change to the offered terms of a frozen version MUST create version `n+1` and MUST append exactly one `negotiation_history[]` entry carrying that `version`, with `actor: seller` and `paths[]` naming every offered-terms field whose value differs from version `n`.
+rule:4.1.3:862b74db	MUST	line 1177	A seller MUST keep every version that a `negotiation_history[]` or `assent[]` entry names retrievable by `(proposal_id, version)` for as long as the proposal is retrievable.
+rule:4.1.4:373dbf11	REQUIRED	line 1194	REQUIRED
+rule:4.1.4:373dbf11-2	REQUIRED	line 1195	REQUIRED
+rule:4.1.4:ae26d4ac	OPTIONAL	line 1196	OPTIONAL
+rule:4.1.4:ae26d4ac-2	OPTIONAL	line 1197	OPTIONAL
+rule:4.1.4:373dbf11-3	REQUIRED	line 1207	REQUIRED
+rule:4.1.4:d0dd8213	MUST	line 1210	A `commit` that names a line item in a package's `line_items[]` MUST name all of them.
+rule:4.1.4:24987106	MUST	line 1211	A `commit` that names an add-on MUST name every line item in its package's `line_items[]` and meet each of the package's `min_commitments[]`.
+rule:4.1.4:759b4d1f	MUST	line 1213	A seller MUST reject a `commit` that breaks either rule with `not_committable` (§ 2.4).
+rule:4.1.4:7d683b70	MUST	line 1214	This check MUST be deterministic.
+rule:4.1.4:e6117ad4	MAY	line 1228	It asks for a change those options don't give, and the seller MAY decline it unless `terms_refs[]` (§ 5.8) gives it.
+rule:4.2:373dbf11	REQUIRED	line 1239	REQUIRED
+rule:4.2:ae26d4ac	OPTIONAL	line 1240	OPTIONAL
+rule:4.2:ae26d4ac-2	OPTIONAL	line 1241	OPTIONAL
+rule:4.2:ae26d4ac-3	OPTIONAL	line 1242	OPTIONAL
+rule:4.2:ae26d4ac-4	OPTIONAL	line 1243	OPTIONAL
+rule:4.3.1:344cb94d	MAY	line 1283	A `counter` of `pricing[].list_rate` MAY also change `included[]`, with `paths[]` naming both
+rule:4.3.2:4825c8da	MUST NOT	line 1321	While it holds, a seller revision MUST NOT change that entry, `pricing_id` included, and MUST NOT end it sooner by moving `offer_window.end`.
+rule:4.3.2:131efb6c	MAY	line 1323	A `grant` or `counter` of a `request` on that entry MAY lower its `list_rate` or widen its `unit_bounds`.
+rule:4.3.2:72de0cc2	MUST	line 1326	The seller of an issued proposal MUST answer a resolved `commit` under it that arrives while the entry holds, on or after `offer_window.start`, and passes the checks of § 5.6.1 and any authority check the seller applies (§ 5.8): accept it, or decline it on an allowed ground.
+rule:4.3.2:d044b92c	MUST	line 1331	The answer MUST come before the entry stops holding: otherwise silence works as a decline on no ground.
+rule:4.3.2:29fded3f	MAY	line 1340	A seller MAY revise a line item while an ask is open or a hold runs.
+rule:4.3.2:31f66e42	MUST	line 1341	An ask it makes stale ends (rule 1), and the seller MUST release a `held` hold it makes stale or re-offer it at the new `version`, where `hold.status` stays `held`.
+rule:4.3.2:84b5ebab	MUST NOT	line 1343	A `commit` MUST NOT carry a `requestable` ask: `accept` makes no new `version`, so another value takes a separate `request`.
+rule:4.3.4:6f1237a1	SHOULD	line 1364	`status` unchanged; a later `commit` under that entry is rejected (§ 5.6.1), and the seller SHOULD `publish` or `withdraw`
+rule:4.3.4:e97d564c	MUST NOT	line 1367	`hold.valid_until` MUST NOT exceed `offer_window.end` or the earliest `pricing[].price_valid_until`.
+rule:4.4:ae26d4ac	OPTIONAL	line 1379	OPTIONAL
+rule:4.4:373dbf11	REQUIRED	line 1385	REQUIRED
+rule:4.4:373dbf11-2	REQUIRED	line 1386	REQUIRED
+rule:4.4:de17ca68	REQUIRED	line 1386	`line_item_id` is REQUIRED here
+rule:4.4:373dbf11-3	REQUIRED	line 1387	REQUIRED
+rule:4.4:373dbf11-4	REQUIRED	line 1388	REQUIRED
+rule:4.4:ae26d4ac-2	OPTIONAL	line 1389	OPTIONAL
+rule:4.4:ae26d4ac-3	OPTIONAL	line 1390	OPTIONAL
+rule:4.4:ae26d4ac-4	OPTIONAL	line 1391	OPTIONAL
+rule:4.4:9754e43c	REQUIRED	line 1392	REQUIRED when the line item has an `order` reference (§ 5.10)
+rule:4.4:ae26d4ac-5	OPTIONAL	line 1393	OPTIONAL
+rule:4.4:ae26d4ac-6	OPTIONAL	line 1394	OPTIONAL
+rule:4.4:ae26d4ac-7	OPTIONAL	line 1395	OPTIONAL
+rule:4.4:ae26d4ac-8	OPTIONAL	line 1396	OPTIONAL
+rule:4.4:ae26d4ac-9	OPTIONAL	line 1397	OPTIONAL
+rule:4.4:ae26d4ac-10	OPTIONAL	line 1398	OPTIONAL
+rule:5.1:373dbf11	REQUIRED	line 1417	REQUIRED
+rule:5.1:373dbf11-2	REQUIRED	line 1418	REQUIRED
+rule:5.1:373dbf11-3	REQUIRED	line 1419	REQUIRED
+rule:5.1:ae26d4ac	OPTIONAL	line 1420	OPTIONAL
+rule:5.1.1:4c696214	MUST	line 1454	The seller MUST serve a line item only on impressions of its `channel`.
+rule:5.2:ae26d4ac	OPTIONAL	line 1465	OPTIONAL
+rule:5.2:ae26d4ac-2	OPTIONAL	line 1466	OPTIONAL
+rule:5.2:2f4f1aa3	REQUIRED	line 1467	REQUIRED when `placement.feed` is Podcast (3) or Catch-up radio (4)
+rule:5.2:ae26d4ac-3	OPTIONAL	line 1468	OPTIONAL
+rule:5.2:f8f39d84	REQUIRED	line 1469	REQUIRED when `channel` is `video` or `audio`
+rule:5.2:ae26d4ac-4	OPTIONAL	line 1470	OPTIONAL
+rule:5.2.1:cc42a1f8	MUST	line 1487	Each `environments.available[]` value MUST match at least one impression to which 5.1.1 gives the line item's `channel`.
+rule:5.2.2:ae26d4ac	OPTIONAL	line 1510	OPTIONAL
+rule:5.2.2:ae26d4ac-2	OPTIONAL	line 1511	OPTIONAL
+rule:5.2.2:40e6089f	REQUIRED	line 1512	REQUIRED when `channel` is `video`
+rule:5.2.2:ae26d4ac-3	OPTIONAL	line 1513	OPTIONAL
+rule:5.2.2:ae26d4ac-4	OPTIONAL	line 1514	OPTIONAL
+rule:5.2.2:ae26d4ac-5	OPTIONAL	line 1515	OPTIONAL
+rule:5.2.2:ae26d4ac-6	OPTIONAL	line 1516	OPTIONAL
+rule:5.2.2:ae26d4ac-7	OPTIONAL	line 1517	OPTIONAL
+rule:5.2.2:87d20470	REQUIRED	line 1518	REQUIRED when `channel` is `audio`
+rule:5.2.2:ae26d4ac-8	OPTIONAL	line 1519	OPTIONAL
+rule:5.2.2:373dbf11	REQUIRED	line 1525	REQUIRED
+rule:5.2.2:6f05ff6d	MUST NOT	line 1536	The seller MUST NOT deliver the line item to an impression that does not match a key that is present.
+rule:5.2.2:871e9967	SHOULD NOT	line 1542	Unless `api[]` includes OMID 1.0 (7), a line item whose `committed_metrics[]` includes `viewable_rate` and whose `environments.available[]` includes `app_mobile` or `ctv` SHOULD NOT offer a `measurement_source` option whose `measured_by` is not `seller`.
+rule:5.2.3:373dbf11	REQUIRED	line 1555	REQUIRED
+rule:5.2.3:ae26d4ac	OPTIONAL	line 1556	OPTIONAL
+rule:5.2.3:ae26d4ac-2	OPTIONAL	line 1557	OPTIONAL
+rule:5.2.3:ae26d4ac-3	OPTIONAL	line 1558	OPTIONAL
+rule:5.2.3:ae26d4ac-4	OPTIONAL	line 1559	OPTIONAL
+rule:5.2.3:ae26d4ac-5	OPTIONAL	line 1560	OPTIONAL
+rule:5.2.3:b5b384f4	MUST	line 1572	A declared option is a delivery term: with an option in effect, the seller MUST serve the line item only into impressions that match one, and when the line item executes over OpenRTB 2.6, a bid request that offers its deal MUST carry `imp.video` or `imp.audio` values that match one.
+rule:5.2.3:eb0e5f3b	MUST NOT	line 1575	A seller MUST NOT declare `slotinpod` 1, 2, or -1 unless it can guarantee that slot.
+rule:5.2.4:373dbf11	REQUIRED	line 1586	REQUIRED
+rule:5.2.4:ae26d4ac	OPTIONAL	line 1587	OPTIONAL
+rule:5.2.4:c8e6720e	REQUIRED	line 1588	REQUIRED when `apps[]` is absent
+rule:5.2.4:65ca47c9	REQUIRED	line 1589	REQUIRED when `domains[]` is absent
+rule:5.2.4:373dbf11-2	REQUIRED	line 1590	REQUIRED
+rule:5.2.4:ae26d4ac-2	OPTIONAL	line 1591	OPTIONAL
+rule:5.2.4:45d0b1fa	REQUIRED	line 1592	REQUIRED when `seller_relationship` is `reseller`, or the line item offers a deal mechanism (§ 5.9)
+rule:5.2.4:373dbf11-3	REQUIRED	line 1593	REQUIRED
+rule:5.2.4:74a51506	REQUIRED	line 1594	REQUIRED when `child_audience` is `mixed`
+rule:5.2.4:02c220b8	REQUIRED	line 1595	REQUIRED when `channel` is `dooh`
+rule:5.2.4:ae26d4ac-3	OPTIONAL	line 1596	OPTIONAL
+rule:5.2.4:ae26d4ac-4	OPTIONAL	line 1597	OPTIONAL
+rule:5.2.4:ea387bb0	REQUIRED	line 1598	REQUIRED when `channel` is `dooh` and `allocation` is `all`
+rule:5.2.4:ae26d4ac-5	OPTIONAL	line 1599	OPTIONAL
+rule:5.2.4:ae26d4ac-6	OPTIONAL	line 1600	OPTIONAL
+rule:5.2.5:373dbf11	REQUIRED	line 1608	REQUIRED
+rule:5.2.5:373dbf11-2	REQUIRED	line 1609	REQUIRED
+rule:5.2.5:ae26d4ac	OPTIONAL	line 1615	OPTIONAL
+rule:5.2.5:baa505ce	RECOMMENDED	line 1616	RECOMMENDED
+rule:5.2.6:373dbf11	REQUIRED	line 1626	REQUIRED
+rule:5.2.6:373dbf11-2	REQUIRED	line 1627	REQUIRED
+rule:5.2.6:b4fc58b5	MUST	line 1642	Each `seller_accounts[]` entry MUST be a record in the governing file.
+rule:5.2.6:a1d575ff	MUST NOT	line 1643	A seller MUST NOT state a relationship its governing file, where one exists, does not support.
+rule:5.2.6:0cb2d370	MUST	line 1644	A consumer that checks MUST use this table, and confirms that sellers.json at `asi` lists `sid` as a `seller_id`, with `domain` equal to `seller.domain` where the entry carries `domain`.
+rule:5.2.7:d85c61b6	SHOULD NOT	line 1652	A line item with a `directed` entry in `properties.available[]` SHOULD NOT carry `audiences`, and its `buyer_supplied.segments_allowed` and `suppression_allowed` SHOULD be false.
+rule:5.2.7:166e9f13	MUST NOT	line 1654	Where that property's app store bars behavioral advertising (Apple's Kids Category, Google Play's Families policies), the line item MUST NOT carry `audiences`, and both flags MUST be false.
+rule:5.2.8:373dbf11	REQUIRED	line 1669	REQUIRED
+rule:5.2.8:ae26d4ac	OPTIONAL	line 1670	OPTIONAL
+rule:5.2.8:ae26d4ac-2	OPTIONAL	line 1671	OPTIONAL
+rule:5.2.8:ae26d4ac-3	OPTIONAL	line 1672	OPTIONAL
+rule:5.2.8:ae26d4ac-4	OPTIONAL	line 1673	OPTIONAL
+rule:5.2.8:ae26d4ac-5	OPTIONAL	line 1674	OPTIONAL
+rule:5.2.8:ae26d4ac-6	OPTIONAL	line 1675	OPTIONAL
+rule:5.2.8:373dbf11-2	REQUIRED	line 1681	REQUIRED
+rule:5.2.8:373dbf11-3	REQUIRED	line 1682	REQUIRED
+rule:5.2.8:373dbf11-4	REQUIRED	line 1688	REQUIRED
+rule:5.2.8:373dbf11-5	REQUIRED	line 1689	REQUIRED
+rule:5.2.8:373dbf11-6	REQUIRED	line 1690	REQUIRED
+rule:5.2.8:66d19e2d	MUST NOT	line 1692	With `seller_allocated`, a buyer value MUST NOT name or exclude individual screens.
+rule:5.2.9:373dbf11	REQUIRED	line 1704	REQUIRED
+rule:5.2.9:ae26d4ac	OPTIONAL	line 1705	OPTIONAL
+rule:5.2.9:ae26d4ac-2	OPTIONAL	line 1706	OPTIONAL
+rule:5.2.9:373dbf11-2	REQUIRED	line 1714	REQUIRED
+rule:5.2.9:373dbf11-3	REQUIRED	line 1715	REQUIRED
+rule:5.2.9:ae26d4ac-3	OPTIONAL	line 1716	OPTIONAL
+rule:5.2.9:baa505ce	RECOMMENDED	line 1717	RECOMMENDED
+rule:5.2.9:28e8ca66	MUST	line 1724	With an option in effect, the seller MUST serve the line item only into impressions that match one.
+rule:5.2.9:962abfb9	MUST	line 1725	When the line item executes over OpenRTB 2.6, the seller MUST send the matched option's `content` values in `site.content` or `app.content`, under OpenRTB 2.6's key names, such as `livestream` for `live` and `contentrating` for `rating`.
+rule:5.2.9:775db74d	MUST NOT	line 1729	An option whose `schedule.eventstatus` is tentative (`2`) MUST NOT be in `included[]`, and its entry in `deltas`, if any, MUST be `delta_flat`.
+rule:5.3:ae26d4ac	OPTIONAL	line 1741	OPTIONAL
+rule:5.3:ae26d4ac-2	OPTIONAL	line 1742	OPTIONAL
+rule:5.3:ae26d4ac-3	OPTIONAL	line 1743	OPTIONAL
+rule:5.3:ae26d4ac-4	OPTIONAL	line 1744	OPTIONAL
+rule:5.3:373dbf11	REQUIRED	line 1750	REQUIRED
+rule:5.3:ae26d4ac-5	OPTIONAL	line 1751	OPTIONAL
+rule:5.3:373dbf11-2	REQUIRED	line 1752	REQUIRED
+rule:5.3:373dbf11-3	REQUIRED	line 1753	REQUIRED
+rule:5.3:373dbf11-4	REQUIRED	line 1754	REQUIRED
+rule:5.3:ae26d4ac-6	OPTIONAL	line 1755	OPTIONAL
+rule:5.3:153027ca	REQUIRED	line 1761	REQUIRED when more than one seller audience can be in effect
+rule:5.3:7cdd61de	MUST	line 1761	`included[]` MUST name exactly one option.
+rule:5.3:ae26d4ac-7	OPTIONAL	line 1762	OPTIONAL
+rule:5.3:7dce4112	MUST	line 1778	`addressable_scale` and `availability` (§ 3.3) MUST be recomputed against conditions 1 and 3.
+rule:5.3:ae26d4ac-8	OPTIONAL	line 1786	OPTIONAL
+rule:5.3:ae26d4ac-9	OPTIONAL	line 1787	OPTIONAL
+rule:5.3:ae26d4ac-10	OPTIONAL	line 1788	OPTIONAL
+rule:5.3:ae26d4ac-11	OPTIONAL	line 1789	OPTIONAL
+rule:5.3:ae26d4ac-12	OPTIONAL	line 1790	OPTIONAL
+rule:5.3:373dbf11-5	REQUIRED	line 1797	REQUIRED
+rule:5.3:ae26d4ac-13	OPTIONAL	line 1798	OPTIONAL
+rule:5.3:ae26d4ac-14	OPTIONAL	line 1799	OPTIONAL
+rule:5.3:ae26d4ac-15	OPTIONAL	line 1800	OPTIONAL
+rule:5.3:373dbf11-6	REQUIRED	line 1806	REQUIRED
+rule:5.3:373dbf11-7	REQUIRED	line 1807	REQUIRED
+rule:5.3:373dbf11-8	REQUIRED	line 1808	REQUIRED
+rule:5.4:ae26d4ac	OPTIONAL	line 1814	OPTIONAL
+rule:5.4:3a677601	REQUIRED	line 1815	REQUIRED when the proposal has left `draft` and `formats` is present
+rule:5.4:ae26d4ac-2	OPTIONAL	line 1816	OPTIONAL
+rule:5.4:ae26d4ac-3	OPTIONAL	line 1817	OPTIONAL
+rule:5.4:ae26d4ac-4	OPTIONAL	line 1818	OPTIONAL
+rule:5.4:2eaa294f	MAY	line 1818	A buyer MAY request a later date
+rule:5.4:ae26d4ac-5	OPTIONAL	line 1819	OPTIONAL
+rule:5.4:ae26d4ac-6	OPTIONAL	line 1820	OPTIONAL
+rule:5.4:ae26d4ac-7	OPTIONAL	line 1821	OPTIONAL
+rule:5.4:ae26d4ac-8	OPTIONAL	line 1830	OPTIONAL
+rule:5.4:373dbf11	REQUIRED	line 1831	REQUIRED
+rule:5.4:c07c0dd1	MUST	line 1833	Once the proposal leaves `draft`, every id in `formats.available[]` MUST have a `format_specs` entry.
+rule:5.4:7f775a7d	MUST	line 1834	When `spec_ref` is present, `spec` MUST equal the content of the version it names, and the format id SHOULD equal the `<collection>/<entry_id>` part of `spec_ref`.
+rule:5.4:d81bbf40	MAY	line 1839	A `spec` MAY hold `asset`, a `VocabularyTerm` (§ 2.2) that says what the buyer supplies for the format.
+rule:5.4:28521712	MAY	line 1844	A `spec` MAY also hold `voice`, a `VocabularyTerm` that says whether a synthesized voice may read the ad.
+rule:5.4:58ab1d09	REQUIRED	line 1854	REQUIRED when `before_start` is absent
+rule:5.4:7a6f2ac4	REQUIRED	line 1855	REQUIRED when `at` is absent
+rule:5.4:373dbf11-2	REQUIRED	line 1861	REQUIRED
+rule:5.4:373dbf11-3	REQUIRED	line 1862	REQUIRED
+rule:5.4:e2c0968b	REQUIRED	line 1863	REQUIRED when `markup` is absent
+rule:5.4:45b02f49	REQUIRED	line 1864	REQUIRED when `url` is absent
+rule:5.4:ae26d4ac-9	OPTIONAL	line 1865	OPTIONAL
+rule:5.4:ae26d4ac-10	OPTIONAL	line 1866	OPTIONAL
+rule:5.4:ae26d4ac-11	OPTIONAL	line 1867	OPTIONAL
+rule:5.4:ae26d4ac-12	OPTIONAL	line 1868	OPTIONAL
+rule:5.4:373dbf11-4	REQUIRED	line 1878	REQUIRED
+rule:5.4:ae26d4ac-13	OPTIONAL	line 1879	OPTIONAL
+rule:5.4:ae26d4ac-14	OPTIONAL	line 1880	OPTIONAL
+rule:5.4:ae26d4ac-15	OPTIONAL	line 1881	OPTIONAL
+rule:5.4:ae26d4ac-16	OPTIONAL	line 1882	OPTIONAL
+rule:5.4:ae26d4ac-17	OPTIONAL	line 1883	OPTIONAL
+rule:5.4:373dbf11-5	REQUIRED	line 1889	REQUIRED
+rule:5.4:ae26d4ac-18	OPTIONAL	line 1890	OPTIONAL
+rule:5.4:ae26d4ac-19	OPTIONAL	line 1891	OPTIONAL
+rule:5.4:ae26d4ac-20	OPTIONAL	line 1892	OPTIONAL
+rule:5.4:ae26d4ac-21	OPTIONAL	line 1893	OPTIONAL
+rule:5.4:373dbf11-6	REQUIRED	line 1913	REQUIRED
+rule:5.4:ae26d4ac-22	OPTIONAL	line 1914	OPTIONAL
+rule:5.4:ae26d4ac-23	OPTIONAL	line 1915	OPTIONAL
+rule:5.4:ae26d4ac-24	OPTIONAL	line 1916	OPTIONAL
+rule:5.4.1:7adf48a7	MUST NOT	line 1925	An implementation performing inspection MUST NOT send any production notification.
+rule:5.4.1:ef1a453e	MAY	line 1929	An implementation MAY retrieve creative documents, follow VAST wrappers and inspect referenced media as needed for its checks.
+rule:5.4.1:52bc805d	MUST NOT	line 1937	The inspector MUST NOT request a destination or redirect that sends a production notification; it MAY use a separate inspection URL or the receiving service's documented test mode under the conditions below.
+rule:5.4.1:f25ad098	MUST	line 1942	A preview that executes creative or verification code MUST prevent that code from sending production notifications.
+rule:5.4.1:11d3ac1e	MAY	line 1943	Synthetic events MAY be sent to test endpoints, or through a test mode that the receiving service documents as excluding those events from production measurement and delivery diagnostics.
+rule:5.4.1:fbc60b60	MUST	line 1949	Inspection failures MUST be reported through diagnostics, without firing a production VAST `<Error>` or `verificationNotExecuted` URL.
+rule:5.4.1:3a29e732	MUST NOT	line 1950	An implementation MUST NOT report a check that was skipped or could not finish as passed.
+rule:5.5:ae26d4ac	OPTIONAL	line 1966	OPTIONAL
+rule:5.5:9d06dca4	MUST NOT	line 1966	A line item MUST NOT declare both `geo` and `markets`
+rule:5.5:ae26d4ac-2	OPTIONAL	line 1967	OPTIONAL
+rule:5.5:ae26d4ac-3	OPTIONAL	line 1968	OPTIONAL
+rule:5.5:ae26d4ac-4	OPTIONAL	line 1969	OPTIONAL
+rule:5.5:4a35bd89	REQUIRED	line 1970	REQUIRED when `daypart` or `frequency_cap` is present
+rule:5.5:ae26d4ac-5	OPTIONAL	line 1971	OPTIONAL
+rule:5.5:ae26d4ac-6	OPTIONAL	line 1972	OPTIONAL
+rule:5.5:ae26d4ac-7	OPTIONAL	line 1973	OPTIONAL
+rule:5.5:45e820f6	MUST	line 2001	A seller MUST reject an entry whose `store` it doesn't know, rather than apply it across stores, with `validation`
+rule:5.5:373dbf11	REQUIRED	line 2014	REQUIRED
+rule:5.5:ae26d4ac-8	OPTIONAL	line 2015	OPTIONAL
+rule:5.5:373dbf11-2	REQUIRED	line 2021	REQUIRED
+rule:5.5:ae26d4ac-9	OPTIONAL	line 2022	OPTIONAL
+rule:5.5:2e4a1b0c	MUST NOT	line 2024	A buyer MUST NOT supply an exclusion type absent from `accepted_exclusions.types`.
+rule:5.5:b03a5d5e	MUST	line 2025	A seller MUST reject it deterministically rather than ignore it, with `not_offered`.
+rule:5.5:7fdb152c	MUST NOT	line 2027	A seller MUST NOT present `best_effort` enforcement as a guarantee.
+rule:5.5:b8445d68	MUST NOT	line 2032	A seller MUST NOT disclose them to anyone but that buyer and the systems and vendors that enforce or verify them for this line item.
+rule:5.5:373dbf11-3	REQUIRED	line 2065	REQUIRED
+rule:5.5:373dbf11-4	REQUIRED	line 2066	REQUIRED
+rule:5.5:373dbf11-5	REQUIRED	line 2067	REQUIRED
+rule:5.5:373dbf11-6	REQUIRED	line 2098	REQUIRED
+rule:5.5:373dbf11-7	REQUIRED	line 2099	REQUIRED
+rule:5.5:373dbf11-8	REQUIRED	line 2100	REQUIRED
+rule:5.6:373dbf11	REQUIRED	line 2110	REQUIRED
+rule:5.6:373dbf11-2	REQUIRED	line 2111	REQUIRED
+rule:5.6:6b704eb1	MUST NOT	line 2111	A revision MUST NOT reuse it for a different `cost_method`, `cost_parameters`, `currency`, or `transaction_mechanisms[]`
+rule:5.6:373dbf11-3	REQUIRED	line 2112	REQUIRED
+rule:5.6:7235466d	REQUIRED	line 2113	REQUIRED when `cost_method` is an extension term
+rule:5.6:6981b8a3	MUST	line 2113	For a core term, the vocabulary sets it, and a present value MUST match
+rule:5.6:7235466d-2	REQUIRED	line 2114	REQUIRED when `cost_method` is an extension term
+rule:5.6:7235466d-3	REQUIRED	line 2115	REQUIRED when `cost_method` is an extension term
+rule:5.6:0f8d396f	REQUIRED	line 2116	REQUIRED when the term requires keys
+rule:5.6:ae26d4ac	OPTIONAL	line 2117	OPTIONAL
+rule:5.6:373dbf11-4	REQUIRED	line 2118	REQUIRED
+rule:5.6:d1a0bbb2	MAY	line 2118	A buyer MAY request another value, and a granted value is the `list_rate` of the next `version`
+rule:5.6:62e21e38	REQUIRED	line 2119	REQUIRED when this is the committed entry
+rule:5.6:ae26d4ac-2	OPTIONAL	line 2120	OPTIONAL
+rule:5.6:373dbf11-5	REQUIRED	line 2121	REQUIRED
+rule:5.6:8288302a	REQUIRED	line 2122	REQUIRED when the entry prices a deal mechanism
+rule:5.6:ae26d4ac-3	OPTIONAL	line 2123	OPTIONAL
+rule:5.6:ae26d4ac-4	OPTIONAL	line 2124	OPTIONAL
+rule:5.6:dd42c497	MAY	line 2124	A buyer MAY request another.
+rule:5.6:ae26d4ac-5	OPTIONAL	line 2125	OPTIONAL
+rule:5.6:02c220b8	REQUIRED	line 2126	REQUIRED when `channel` is `dooh`
+rule:5.6:ae26d4ac-6	OPTIONAL	line 2127	OPTIONAL
+rule:5.6:ae808131	MAY	line 2127	The envelope inside which a buyer may commit, and a buyer MAY request another.
+rule:5.6:ae26d4ac-7	OPTIONAL	line 2128	OPTIONAL
+rule:5.6:ae26d4ac-8	OPTIONAL	line 2129	OPTIONAL
+rule:5.6:ae26d4ac-9	OPTIONAL	line 2130	OPTIONAL
+rule:5.6:ae26d4ac-10	OPTIONAL	line 2131	OPTIONAL
+rule:5.6:ae26d4ac-11	OPTIONAL	line 2132	OPTIONAL
+rule:5.6:ae26d4ac-12	OPTIONAL	line 2133	OPTIONAL
+rule:5.6:ae26d4ac-13	OPTIONAL	line 2134	OPTIONAL
+rule:5.6:317562fb	MUST	line 2136	The buyer commits under exactly one, the committed entry, named by `commitment.pricing_id`, or the only entry when that key is absent; it MUST cover the mechanism in effect.
+rule:5.6:dd547abd	MUST NOT	line 2138	Two entries MUST NOT share `cost_method`, `cost_parameters`, `currency`, and a mechanism.
+rule:5.6:373dbf11-6	REQUIRED	line 2176	REQUIRED
+rule:5.6:373dbf11-7	REQUIRED	line 2177	REQUIRED
+rule:5.6:373dbf11-8	REQUIRED	line 2178	REQUIRED
+rule:5.6:373dbf11-9	REQUIRED	line 2179	REQUIRED
+rule:5.6:ae26d4ac-14	OPTIONAL	line 2180	OPTIONAL
+rule:5.6:373dbf11-10	REQUIRED	line 2181	REQUIRED
+rule:5.6:6a84a96c	MUST	line 2181	MUST be `forecast` when the line item's `delivery_type` (§ 5.9) is `non_guaranteed`
+rule:5.6.1:a9e897de	MAY	line 2198	A seller MAY decline a resolved `commitment` with a `decline` entry; the buyer MAY recompose.
+rule:5.6.1:d10d0271	MUST	line 2200	A decline for lack of availability MUST state the `availability` of each line item it covers, recomputed against the buyer's composition; the seller's determination is authoritative.
+rule:5.6.1:bee0b154	MUST NOT	line 2206	While a buyer's hold (§ 5.6.2) runs, the seller MUST NOT decline that buyer's `commitment` for lack of availability.
+rule:5.6.1:373dbf11	REQUIRED	line 2216	REQUIRED
+rule:5.6.1:373dbf11-2	REQUIRED	line 2217	REQUIRED
+rule:5.6.1:7b200076	REQUIRED	line 2223	REQUIRED when `pricing[]` has more than one entry
+rule:5.6.1:373dbf11-3	REQUIRED	line 2224	REQUIRED
+rule:5.6.1:373dbf11-4	REQUIRED	line 2225	REQUIRED
+rule:5.6.1:ae26d4ac	OPTIONAL	line 2226	OPTIONAL
+rule:5.6.1:ae26d4ac-2	OPTIONAL	line 2235	OPTIONAL
+rule:5.6.1:ae26d4ac-3	OPTIONAL	line 2236	OPTIONAL
+rule:5.6.1:ae26d4ac-4	OPTIONAL	line 2237	OPTIONAL
+rule:5.6.1:373dbf11-5	REQUIRED	line 2243	REQUIRED
+rule:5.6.1:373dbf11-6	REQUIRED	line 2244	REQUIRED
+rule:5.6.1:373dbf11-7	REQUIRED	line 2250	REQUIRED
+rule:5.6.1:94be9998	REQUIRED	line 2251	REQUIRED when `entries[]` holds a `decline` for lack of availability
+rule:5.6.1:d0b0661f	MAY	line 2254	A value equal to the entry's means the line items have not changed and the buyer read the same terms, so the seller MAY accept, at the `version` the entry names.
+rule:5.6.1:e2d7680a	MUST	line 2258	The seller MUST reject a new `commit` whose `record_digest` differs from the recomputed value, that is stale (§ 4.1.3), whose proposal is past `offer_window.end`, or where the committed entry is past its `price_valid_until`.
+rule:5.6.1:255884a5	MUST	line 2260	The rejection MUST carry `expired` when `offer_window.end` or `price_valid_until` has passed, `stale_version` when the `commit` is stale, `not_committable` when a ground of that code applies (§ 2.4), and otherwise `record_mismatch`, so the buyer can fetch it again.
+rule:5.6.1:a3c72e8a	MUST	line 2264	These checks MUST be deterministic: they depend only on the stored proposal, the `commit`, and the time the seller receives it.
+rule:5.6.1:a9a58c00	MUST	line 2274	For a replay from the same buyer of a `commit` the seller has already processed, with the same `idempotency_key` and an otherwise equal `Commit`, the seller MUST return the result as it now stands: the rejection, or the `CommitResult`.
+rule:5.6.1:ad94cfb4	MUST NOT	line 2276	It MUST NOT write a second `commitment` entry.
+rule:5.6.1:82cb5af0	MUST NOT	line 2279	Reusing an `idempotency_key` with a different `Commit` MUST return `idempotency_conflict` and MUST NOT write an entry or change a `commitment`.
+rule:5.6.1:1d80425b	MUST	line 2285	The seller MUST keep a rejection whose `retry` is not `same` at least until `offer_window.end`, or, on a proposal with no `offer_window.end`, for as long as it keeps the proposal.
+rule:5.6.2:373dbf11	REQUIRED	line 2303	REQUIRED
+rule:5.6.2:ae26d4ac	OPTIONAL	line 2304	OPTIONAL
+rule:5.6.2:373dbf11-2	REQUIRED	line 2310	REQUIRED
+rule:5.6.2:373dbf11-3	REQUIRED	line 2311	REQUIRED
+rule:5.6.2:ae26d4ac-2	OPTIONAL	line 2312	OPTIONAL
+rule:5.6.2:ae26d4ac-3	OPTIONAL	line 2313	OPTIONAL
+rule:5.6.2:ae26d4ac-4	OPTIONAL	line 2314	OPTIONAL
+rule:5.6.2:ae26d4ac-5	OPTIONAL	line 2315	OPTIONAL
+rule:5.6.2:9f15a58f	REQUIRED	line 2316	REQUIRED when `status` is `held`
+rule:5.6.2:2e3103fc	MAY	line 2316	It MAY remain on `expired` and `released`
+rule:5.6.2:3c2ac6dd	MUST	line 2324	`hold_terms.available` MUST be `true`.
+rule:5.6.2:59aeaf37	MUST	line 2345	A seller's answer MUST set `status` to `held` or `declined`.
+rule:5.6.2:6842bab9	MUST NOT	line 2345	A repeated request while `requested` or `held` MUST NOT start a second hold.
+rule:5.6.4:373dbf11	REQUIRED	line 2386	REQUIRED
+rule:5.6.4:373dbf11-2	REQUIRED	line 2387	REQUIRED
+rule:5.6.4:615bf228	REQUIRED	line 2388	REQUIRED when a property has `sync_groups[]`
+rule:5.6.4:e58650b7	REQUIRED	line 2389	REQUIRED when the line item counts impressions
+rule:5.6.4:373dbf11-3	REQUIRED	line 2395	REQUIRED
+rule:5.6.4:373dbf11-4	REQUIRED	line 2396	REQUIRED
+rule:5.6.4:373dbf11-5	REQUIRED	line 2402	REQUIRED
+rule:5.6.4:373dbf11-6	REQUIRED	line 2403	REQUIRED
+rule:5.6.4:b6f5be4c	REQUIRED	line 2404	REQUIRED when `source_type` is not Publisher Provided (`2`)
+rule:5.6.4:373dbf11-7	REQUIRED	line 2405	REQUIRED
+rule:5.6.4:373dbf11-8	REQUIRED	line 2406	REQUIRED
+rule:5.6.4:5a783437	MUST	line 2410	Every impression count that settles or invoices the line item MUST use its multipliers, and a committed `impressions` level (§ 5.7.1) settles on that source's count.
+rule:5.6.4:c940cf70	MUST	line 2414	Impressions MUST be summed unrounded over each invoice period and rounded once.
+rule:5.6.5:1f435d20	REQUIRED	line 2448	REQUIRED when `cost_method` is `CPMV`
+rule:5.6.5:f959ab87	REQUIRED	line 2449	REQUIRED when `cost_method` is `CPV` and `view_fraction` is absent
+rule:5.6.5:26b080e2	REQUIRED	line 2450	REQUIRED when `cost_method` is `CPV` and `view_s` is absent
+rule:5.6.5:acca3c1c	REQUIRED	line 2451	REQUIRED when `cost_method` is `CPP`
+rule:5.6.5:acca3c1c-2	REQUIRED	line 2452	REQUIRED when `cost_method` is `CPP`
+rule:5.6.5:449027fe	REQUIRED	line 2453	REQUIRED when `cost_method` is `CPA`
+rule:5.6.5:449027fe-2	REQUIRED	line 2454	REQUIRED when `cost_method` is `CPA`
+rule:5.6.5:449027fe-3	REQUIRED	line 2455	REQUIRED when `cost_method` is `CPA`
+rule:5.6.5:119b216f	REQUIRED	line 2456	REQUIRED when `cost_method` is `TIME`
+rule:5.6.5:12747a05	MUST	line 2458	A seller's own extension terms MUST use its `seller.domain` as the `<domain>`.
+rule:5.6.5:9a5cd215	MUST	line 2458	The host of `cost_definition.url` MUST be the term's `<domain>` or a subdomain of it.
+rule:5.6.5:f0fab0a8	MUST NOT	line 2461	`agreed_rate` MUST NOT be negative.
+rule:5.6.5:bdabfe4f	MUST	line 2461	When `commitment.basis` is `spend`, on an entry other than `FLAT` or `TIME`, `agreed_rate` MUST be greater than 0.
+rule:5.6.5:1f53e407	MUST NOT	line 2464	When `commitment.basis` is `spend`, `amount` is the seller total, on the same terms as `agreed_rate`, including `delta_flat` charges in effect (§ 3.1), which MUST NOT exceed it.
+rule:5.6.5:5d5c5fc3	MUST	line 2478	`commitment.basis` MUST be `spend`, and `derived_units` is absent.
+rule:5.6.5:d09c565b	MUST	line 2491	A receiver MUST treat an extension entry that breaks these rules as unavailable, not the line item as invalid.
+rule:5.6.6:373dbf11	REQUIRED	line 2500	REQUIRED
+rule:5.6.6:373dbf11-2	REQUIRED	line 2501	REQUIRED
+rule:5.6.6:373dbf11-3	REQUIRED	line 2502	REQUIRED
+rule:5.6.6:373dbf11-4	REQUIRED	line 2503	REQUIRED
+rule:5.6.6:527c9881	MUST	line 2503	MUST be non-empty
+rule:5.6.6:ae26d4ac	OPTIONAL	line 2504	OPTIONAL
+rule:5.6.6:ae26d4ac-2	OPTIONAL	line 2505	OPTIONAL
+rule:5.6.6:ae26d4ac-3	OPTIONAL	line 2511	OPTIONAL
+rule:5.6.6:373dbf11-5	REQUIRED	line 2512	REQUIRED
+rule:5.6.6:11a40445	REQUIRED	line 2513	REQUIRED when `calculation` is `cancelled` or `commitment`
+rule:5.6.6:1aca1eb5	REQUIRED	line 2514	REQUIRED when `calculation` is `fixed`
+rule:5.6.6:373dbf11-6	REQUIRED	line 2521	REQUIRED
+rule:5.6.6:373dbf11-7	REQUIRED	line 2522	REQUIRED
+rule:5.6.6:373dbf11-8	REQUIRED	line 2540	REQUIRED
+rule:5.6.6:373dbf11-9	REQUIRED	line 2541	REQUIRED
+rule:5.6.6:373dbf11-10	REQUIRED	line 2542	REQUIRED
+rule:5.6.6:373dbf11-11	REQUIRED	line 2543	REQUIRED
+rule:5.6.7:373dbf11	REQUIRED	line 2551	REQUIRED
+rule:5.6.7:373dbf11-2	REQUIRED	line 2552	REQUIRED
+rule:5.6.7:ed6695a7	REQUIRED	line 2553	REQUIRED when `scope` is `category`
+rule:5.6.7:ae26d4ac	OPTIONAL	line 2554	OPTIONAL
+rule:5.6.7:373dbf11-3	REQUIRED	line 2555	REQUIRED
+rule:5.6.7:ae26d4ac-2	OPTIONAL	line 2556	OPTIONAL
+rule:5.6.7:650682d8	MUST	line 2558	A seller MUST decline a `commitment` whose term in effect conflicts with an accepted term on the same inventory and dates.
+rule:5.6.7:373dbf11-4	REQUIRED	line 2572	REQUIRED
+rule:5.6.7:ae26d4ac-3	OPTIONAL	line 2573	OPTIONAL
+rule:5.6.7:ae26d4ac-4	OPTIONAL	line 2574	OPTIONAL
+rule:5.6.7:69534567	MUST NOT	line 2576	A seller MUST NOT preempt a line item that has no `preemption`, or for a reason that its `preemption` doesn't name.
+rule:5.7:ae26d4ac	OPTIONAL	line 2585	OPTIONAL
+rule:5.7:44693ff4	MAY	line 2585	A buyer MAY request a stricter `level`, one further in `direction`.
+rule:5.7:13d06c59	MUST NOT	line 2585	A request MUST NOT change a tuple's `direction`
+rule:5.7:ae26d4ac-2	OPTIONAL	line 2586	OPTIONAL
+rule:5.7:76df804b	REQUIRED	line 2587	REQUIRED when `serving_mode` is `embedded` or the line item has `committed_metrics[]`, `commitment_bounds.spend`, or a `pricing[].unit_bounds`
+rule:5.7:dfffe633	MUST	line 2587	`included[]` MUST name exactly one option
+rule:5.7:ae26d4ac-3	OPTIONAL	line 2588	OPTIONAL
+rule:5.7:ae26d4ac-4	OPTIONAL	line 2589	OPTIONAL
+rule:5.7.1:373dbf11	REQUIRED	line 2605	REQUIRED
+rule:5.7.1:373dbf11-2	REQUIRED	line 2606	REQUIRED
+rule:5.7.1:373dbf11-3	REQUIRED	line 2607	REQUIRED
+rule:5.7.1:373dbf11-4	REQUIRED	line 2624	REQUIRED
+rule:5.7.1:373dbf11-5	REQUIRED	line 2625	REQUIRED
+rule:5.7.1:ae26d4ac	OPTIONAL	line 2626	OPTIONAL
+rule:5.7.1:ae26d4ac-2	OPTIONAL	line 2627	OPTIONAL
+rule:5.7.1:373dbf11-6	REQUIRED	line 2633	REQUIRED
+rule:5.7.1:373dbf11-7	REQUIRED	line 2634	REQUIRED
+rule:5.7.1:f7832319	MUST	line 2634	When `channel` is `dooh` and the line item counts impressions, `counted_by` MUST be the source of the line item's `delivery_counting.impression_multiplier`.
+rule:5.7.1:f96c27c0	MUST	line 2634	When the `pricing[]` entry the buyer commits under has `cost_method` `CPP`, `counted_by` MUST be its `cost_parameters.rating_source`
+rule:5.7.1:ae26d4ac-3	OPTIONAL	line 2635	OPTIONAL
+rule:5.7.1:ae26d4ac-4	OPTIONAL	line 2636	OPTIONAL
+rule:5.7.1:ae26d4ac-5	OPTIONAL	line 2637	OPTIONAL
+rule:5.7.1:373dbf11-8	REQUIRED	line 2643	REQUIRED
+rule:5.7.1:373dbf11-9	REQUIRED	line 2644	REQUIRED
+rule:5.7.1:ae26d4ac-6	OPTIONAL	line 2645	OPTIONAL
+rule:5.7.1:ae26d4ac-7	OPTIONAL	line 2646	OPTIONAL
+rule:5.7.1:ae26d4ac-8	OPTIONAL	line 2647	OPTIONAL
+rule:5.7.1:ae26d4ac-9	OPTIONAL	line 2648	OPTIONAL
+rule:5.7.1:ae26d4ac-10	OPTIONAL	line 2654	OPTIONAL
+rule:5.7.1:ae26d4ac-11	OPTIONAL	line 2660	OPTIONAL
+rule:5.7.1:ae26d4ac-12	OPTIONAL	line 2661	OPTIONAL
+rule:5.7.1:0a8e3bf2	MUST	line 2679	When `none` is in effect, it MUST be the only option.
+rule:5.7.1:5ea9f08c	MUST NOT	line 2680	It means no remedy for any shortfall, and committed levels become targets, which an agent MUST NOT present as guaranteed.
+rule:5.7.1:2911055a	MAY	line 2682	The buyer MAY refuse a `makegood`, and the seller then offers the next.
+rule:5.7.1:2d69f4d8	MUST NOT	line 2684	A makegood MUST NOT run past `commitment.flight.end` without the buyer's consent.
+rule:5.7.1:364afa20	MAY	line 2685	A seller MAY offer that consent upfront in `remedy_terms`.
+rule:5.8:373dbf11	REQUIRED	line 2711	REQUIRED
+rule:5.8:ae26d4ac	OPTIONAL	line 2712	OPTIONAL
+rule:5.8:ae26d4ac-2	OPTIONAL	line 2713	OPTIONAL
+rule:5.8:ae26d4ac-3	OPTIONAL	line 2714	OPTIONAL
+rule:5.8:ae26d4ac-4	OPTIONAL	line 2715	OPTIONAL
+rule:5.8:3976e4c0	MUST	line 2739	`eligible_buyers[]`, `eligible_seats[]`: `buyer.domain` MUST be in `eligible_buyers[]`, or `buyer_requirements.seats` MUST name at least one seat, each in an `eligible_seats[]` entry for its `dsp`.
+rule:5.8:876ec9ff	MUST	line 2742	`buyer_requirements.allowed_dsps[]` (§ 5.9): when `buyer_requirements.seats` is present, its `dsp` MUST be in the list.
+rule:5.8:373dbf11-2	REQUIRED	line 2756	REQUIRED
+rule:5.8:373dbf11-3	REQUIRED	line 2757	REQUIRED
+rule:5.8:dc23a761	MUST NOT	line 2759	A consumer that does not know a `credential_type` MUST NOT treat the proposal or line item as invalid for that reason.
+rule:5.8:0bdd8354	MUST	line 2760	It MUST treat that entry as unsatisfiable.
+rule:5.9:373dbf11	REQUIRED	line 2770	REQUIRED
+rule:5.9:5bfed285	MAY	line 2770	A seller MAY offer the same inventory through more than one.
+rule:5.9:c0f7b8ce	REQUIRED	line 2771	REQUIRED when an option's `delivery_type` is `share_of_voice`
+rule:5.9:ceef2a21	REQUIRED	line 2772	REQUIRED when `sov_basis` is `impressions`
+rule:5.9:ae26d4ac	OPTIONAL	line 2773	OPTIONAL
+rule:5.9:d8611936	REQUIRED	line 2774	REQUIRED when `serving_mode` is `embedded`
+rule:5.9:cc571473	REQUIRED	line 2775	REQUIRED when the line item offers a deal mechanism
+rule:5.9:ae26d4ac-2	OPTIONAL	line 2776	OPTIONAL
+rule:5.9:ae26d4ac-3	OPTIONAL	line 2777	OPTIONAL
+rule:5.9:373dbf11-2	REQUIRED	line 2783	REQUIRED
+rule:5.9:373dbf11-3	REQUIRED	line 2784	REQUIRED
+rule:5.9:395d178a	MUST	line 2788	An option's `delivery_type` MUST be one its row allows.
+rule:5.9:ae26d4ac-4	OPTIONAL	line 2802	OPTIONAL
+rule:5.9:ae26d4ac-5	OPTIONAL	line 2803	OPTIONAL
+rule:5.9:ae26d4ac-6	OPTIONAL	line 2804	OPTIONAL
+rule:5.9:ae26d4ac-7	OPTIONAL	line 2805	OPTIONAL
+rule:5.9:ed367af9	MUST	line 2848	`episodes`, when present, MUST be `new`.
+rule:5.9:f8f81606	MUST	line 2849	`geo`, `markets`, `device`, and `frequency_cap` MUST be absent.
+rule:5.9:5b2d3b90	MUST NOT	line 2849	`daypart` bounds air time, not listening or viewing time, so `time_zone` MUST NOT be `viewer_local`.
+rule:5.9:01b1b76d	MUST	line 2851	`transaction_mechanism.available[]` MUST hold only the `direct_io` option.
+rule:5.10:ae26d4ac	OPTIONAL	line 2857	OPTIONAL
+rule:5.10:24d8a5b3	MUST	line 2857	Once the deal exists in `deal_origin`, the seller MUST record its ID as one `deal` entry on the line item.
+rule:5.10:57a4349f	MAY	line 2857	An entry is not a term and MAY be added after `agreed`
+rule:5.10:ae26d4ac-2	OPTIONAL	line 2858	OPTIONAL
+rule:5.10:ae26d4ac-3	OPTIONAL	line 2859	OPTIONAL
+rule:5.10:373dbf11	REQUIRED	line 2865	REQUIRED
+rule:5.10:ae26d4ac-4	OPTIONAL	line 2866	OPTIONAL
+rule:5.10:373dbf11-2	REQUIRED	line 2867	REQUIRED
+rule:5.10:373dbf11-3	REQUIRED	line 2868	REQUIRED
+rule:5.10:373dbf11-4	REQUIRED	line 2874	REQUIRED
+rule:5.10:ae26d4ac-5	OPTIONAL	line 2875	OPTIONAL
+rule:5.10:ae26d4ac-6	OPTIONAL	line 2876	OPTIONAL
+rule:5.10:ae26d4ac-7	OPTIONAL	line 2877	OPTIONAL
+rule:5.10:ae26d4ac-8	OPTIONAL	line 2878	OPTIONAL
+rule:5.10:ae26d4ac-9	OPTIONAL	line 2884	OPTIONAL
+rule:5.10:ae26d4ac-10	OPTIONAL	line 2885	OPTIONAL
+rule:5.10:ae26d4ac-11	OPTIONAL	line 2886	OPTIONAL
+rule:5.10:ae26d4ac-12	OPTIONAL	line 2887	OPTIONAL
+rule:5.10:71c0176a	REQUIRED	line 2888	REQUIRED when `invoice_period` is `cycle`
+rule:5.10:ae26d4ac-13	OPTIONAL	line 2889	OPTIONAL
+rule:8:14eecfaa	MAY	line 3081	A buyer MAY refuse a sole or last `makegood`, and § 5.7.1 then points at `remedy_terms`, whose keys describe only a makegood.

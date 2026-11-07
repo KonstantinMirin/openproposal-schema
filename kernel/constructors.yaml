@@ -253,6 +253,252 @@ constructors:
         - doc: docs/design/type-rules.md
           section: 7. Constructors
 
+  # Editions of the stack's § 2.2 and § 2.6 constructors (src/editions.ts): its `Range` bounds any ordered type, durations among them, and its
+  # `Array` and `Map` are the kernel's, with vectors of the types the stack's text defines.
+  - name: Range
+    edition: stack
+    description: A range of values from `min` to `max`, with at least one bound, such as the time an ad stays in the content the seller distributes.
+    parameters:
+      - name: T
+        accepts: ordered
+        description: The type of each bound, a number, a timestamp, or a duration.
+    naming: { from: field, suffix: Range }
+    shell:
+      type: object
+      properties:
+        min: { $model: { kind: parameter, name: T } }
+        max: { $model: { kind: parameter, name: T } }
+      additionalProperties: false
+      minProperties: 1
+    rules:
+      - id: constructor:Range:ordered
+        statement: "`min` is no greater than `max`: numbers compare as numbers, and timestamps as instants."
+        arguments: { T: { kind: named, name: PlainInteger } }
+        valid:
+          - { min: 1, max: 6 }
+          - { min: 4, max: 4 }
+        invalid:
+          - { min: 6, max: 1 }
+      - id: constructor:Range:duration-ordered
+        statement: "`min` is no greater than `max` where durations compare: one is no greater than another when it has no more years and months and no more days, hours, minutes and seconds, as `P14D` and `P30D`, or `PT48H` and `P3D`; a pair neither bounds, as `P1M` and `P30D`, the text doesn't order."
+        arguments: { T: { kind: named, name: Duration } }
+        valid:
+          - { min: "P14D", max: "P30D" }
+          - { min: "PT48H", max: "P3D" }
+          - { min: "P1M", max: "P1Y" }
+        invalid:
+          - { min: "P30D", max: "P14D" }
+          - { min: "P1Y", max: "P6M" }
+    vectors:
+      - arguments: { T: { kind: named, name: PlainInteger } }
+        valid:
+          - { min: 1, max: 6 }
+          - { min: 1 }
+          - { max: 6 }
+        invalid:
+          - {}
+          - { min: "1" }
+          - { min: 1, step: 1 }
+          - 3
+      - arguments: { T: { kind: named, name: Duration } }
+        valid:
+          - { min: "P14D" }
+          - { min: "P14D", max: "P1Y" }
+        invalid:
+          - { min: "P2W" }
+          - { max: 14 }
+    sources:
+      design:
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+
+  - name: List
+    edition: stack
+    description: An ordered list of values of one type.
+    parameters:
+      - name: T
+        accepts: named
+        description: The type of each item. It is named, so a list never holds an inline form (type rules § 4).
+    naming: { from: inline }
+    shell:
+      type: array
+      items: { $model: { kind: parameter, name: T } }
+    vectors:
+      - arguments: { T: { kind: named, name: PlainString } }
+        valid:
+          - []
+          - ["seat-99812", "IAS"]
+        invalid:
+          - ["seat-99812", 300]
+          - "seat-99812"
+          - {}
+    sources:
+      design:
+        - doc: docs/design/type-rules.md
+          section: 4. Named or inline
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+
+  - name: Map
+    edition: stack
+    description: An object whose keys are values of one type and whose values are of another, such as one format spec per format id.
+    parameters:
+      - name: K
+        accepts: string
+        description: The type of each key. A JSON object key is a string.
+      - name: V
+        accepts: named
+        description: The type of each value. It is named, so a map never holds an inline form (type rules § 4).
+    naming: { from: inline }
+    shell:
+      type: object
+      propertyNames: { $model: { kind: parameter, name: K } }
+      additionalProperties: { $model: { kind: parameter, name: V } }
+    vectors:
+      - arguments: { K: { kind: named, name: FormatId }, V: { kind: named, name: PlainInteger } }
+        valid:
+          - {}
+          - { "display/300x250": 5000, "display/728x90": 500 }
+        invalid:
+          - { "display/300x250": "5000" }
+          - { "300x250": 10 }
+          - { "display/300x250@3": 10 }
+          - []
+    sources:
+      design:
+        - doc: docs/design/type-rules.md
+          section: 4. Named or inline
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+
+  # Editions and constructors of the 17-PR stack's § 3.1 and § 3.2 (src/editions.ts).
+  - name: Selectable
+    edition: stack
+    description: A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, `selected[]` the buyer's choice, which replaces it, and `deltas` the price of each option outside `included[]`, each by option id.
+    parameters:
+      - name: T
+        accepts: named
+        description: The type of one option. A string option's id is its value; an object option's id is its `id`.
+    naming: { from: field, suffix: Selection }
+    shell:
+      type: object
+      properties:
+        available: { $model: { kind: apply, constructor: List, arguments: { T: { kind: parameter, name: T } } } }
+        included: { $model: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PlainString } } }, description: "The options in the base rate, by option id." }
+        selected: { $model: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PlainString } } }, description: "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`." }
+        deltas: { $model: { kind: apply, constructor: Map, arguments: { K: { kind: named, name: PlainString }, V: { kind: named, name: Delta } } }, description: "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta." }
+        max_select: { $model: { kind: named, name: PlainInteger }, description: "The most options that may be in effect." }
+      required: [available, included]
+      additionalProperties: false
+    vectors:
+      - arguments: { T: { kind: named, name: PlainString } }
+        valid:
+          - { available: ["display/300x250", "display/728x90"], included: ["display/300x250"], deltas: { "display/728x90": { delta_cpm: 3 } }, max_select: 2 }
+          - { available: ["a"], included: [], selected: ["a"] }
+        invalid:
+          - { available: ["a"] }
+          - { included: [] }
+          - { available: ["a"], included: [], pricing: {} }
+          - { available: ["a"], included: [], deltas: { a: {} } }
+          - { available: [3], included: [] }
+          - "a"
+    sources:
+      design:
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+
+  - name: Settable
+    edition: stack
+    description: A field the buyer sets within the entries the seller allows, `allowed[]`, by writing a `value` that narrows them; `default` is in effect when `value` is absent.
+    parameters:
+      - name: T
+        accepts: named
+        description: The type of one entry the buyer narrows within, such as a geo code.
+    naming: { from: field, suffix: Bounds }
+    shell:
+      type: object
+      properties:
+        allowed: { $model: { kind: apply, constructor: List, arguments: { T: { kind: parameter, name: T } } }, description: "The entries the buyer narrows within." }
+        default: { $model: { kind: apply, constructor: Narrowing, arguments: { T: { kind: parameter, name: T } } }, description: "In effect when `value` is absent." }
+        value: { $model: { kind: apply, constructor: Narrowing, arguments: { T: { kind: parameter, name: T } } }, description: "The buyer's value." }
+      required: [allowed, default]
+      additionalProperties: false
+    vectors:
+      - arguments: { T: { kind: named, name: PlainString } }
+        valid:
+          - { allowed: ["US", "CA"], default: { include: ["US"] } }
+          - { allowed: ["US"], default: { include: ["US"] }, value: { include: ["US"], exclude: ["US-CA"] } }
+        invalid:
+          - { allowed: ["US"] }
+          - { default: { include: ["US"] } }
+          - { allowed: ["US"], default: { exclude: ["US"] } }
+          - { allowed: ["US"], default: { include: ["US"] }, min: "US" }
+          - "US"
+    sources:
+      design:
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+
+  - name: Narrowing
+    description: Entries the buyer narrows to, `include[]`, less those it excludes, `exclude[]`. Exclusion wins.
+    parameters:
+      - name: T
+        accepts: named
+        description: The type of one entry.
+    naming: { from: argument, parameter: T, suffix: Narrowing }
+    shell:
+      type: object
+      properties:
+        include: { $model: { kind: apply, constructor: List, arguments: { T: { kind: parameter, name: T } } }, description: "The entries included." }
+        exclude: { $model: { kind: apply, constructor: List, arguments: { T: { kind: parameter, name: T } } }, description: "The entries excluded from those included." }
+      required: [include]
+      additionalProperties: false
+    vectors:
+      - arguments: { T: { kind: named, name: PlainString } }
+        valid:
+          - { include: ["US"] }
+          - { include: ["US"], exclude: ["US-CA"] }
+        invalid:
+          - {}
+          - { exclude: ["US"] }
+          - { include: "US" }
+          - { include: [], extra: 1 }
+    sources:
+      design:
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+
+  - name: SettableRange
+    description: The range form of a settable field. The buyer writes `value` between `min` and `max` inclusive, and `default` is in effect when `value` is absent.
+    parameters:
+      - name: T
+        accepts: ordered
+        description: The type of each bound and of the value, a number or a point in time.
+    naming: { from: field, suffix: SettableRange }
+    shell:
+      type: object
+      properties:
+        min: { $model: { kind: parameter, name: T }, description: "The lower bound." }
+        max: { $model: { kind: parameter, name: T }, description: "The upper bound." }
+        default: { $model: { kind: parameter, name: T }, description: "In effect when `value` is absent, between the bounds." }
+        value: { $model: { kind: parameter, name: T }, description: "The buyer's value, between the bounds inclusive." }
+      required: [default]
+      additionalProperties: false
+    vectors:
+      - arguments: { T: { kind: named, name: PlainInteger } }
+        valid:
+          - { min: 1, max: 6, default: 3 }
+          - { min: 1, default: 1, value: 4 }
+        invalid:
+          - { min: 1, max: 6 }
+          - { default: "3" }
+          - { min: 1, default: 2, step: 1 }
+          - 3
+    sources:
+      design:
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+
 parts:
   - name: Ext
     description: An object for members the specification leaves to the parties to define, such as the Deals API's `ext` on each of its objects. It takes any members, and a receiver keeps the ones it doesn't know.
@@ -364,3 +610,54 @@ parts:
       standards:
         - name: Google Ad Manager API, DayPart
           url: https://developers.google.com/ad-manager/api/reference/latest/LineItemService.DayPart
+
+  - name: Delta
+    description: The price of one option outside `included[]`, as any of a change to the rate of a CPM or CPMV entry, a fraction that multiplies the rate of any entry, and a charge outside the rate. At least one is present.
+    concept: option-delta
+    shell:
+      type: object
+      properties:
+        delta_cpm: { $model: { kind: named, name: Amount }, description: "Added to the rate of a `CPM` or `CPMV` entry, and to no other." }
+        delta_fraction: { $model: { kind: named, name: FractionDelta }, description: "Multiplies the rate of any entry by 1 plus this value." }
+        delta_flat: { $model: { kind: named, name: Amount }, description: "A charge on any entry, outside the rate." }
+      additionalProperties: false
+      minProperties: 1
+    vectors:
+      valid:
+        - { delta_cpm: 2 }
+        - { delta_fraction: 0.2, delta_flat: 500 }
+      invalid:
+        - {}
+        - { delta_fraction: -1 }
+        - { delta_pct: 5 }
+        - { delta_cpm: "2" }
+    sources:
+      design:
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+
+  - name: ClockWindow
+    description: A repeating window of civil time, on the days `days[]` names, from the first minute `start` up to `before`, the first minute after it, read on the line item's clock. It is deliberately not an interval between two points in time.
+    concept: clock-window
+    shell:
+      type: object
+      properties:
+        days: { $model: { kind: apply, constructor: List, arguments: { T: { kind: named, name: DayName } } }, description: "The days the window repeats on." }
+        start: { $model: { kind: named, name: TimeOfDay }, description: "The first minute. Not `24:00`." }
+        before: { $model: { kind: named, name: TimeOfDay }, description: "The first minute after the window." }
+      required: [days, start, before]
+      additionalProperties: false
+    vectors:
+      valid:
+        - { days: [monday, tuesday], start: "06:00", before: "22:00" }
+        - { days: [friday], start: "23:00", before: "24:00" }
+      invalid:
+        - { days: [monday], start: "06:00" }
+        - { days: [funday], start: "06:00", before: "22:00" }
+        - { days: [monday], start: "6:00", before: "22:00" }
+        - { days: [monday], start: "06:00", before: "22:00", end: "22:00" }
+    sources:
+      design:
+        - doc: docs/design/type-rules.md
+          section: 7. Constructors
+

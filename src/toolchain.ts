@@ -208,7 +208,7 @@ export function checkToolchain(root: string, pkg: Pkg = JSON.parse(readFileSync(
     const versions = [...new Set(list.map((p) => p.version))];
     if (versions.length > 1) problems.push(`${name} is pinned as ${versions.join(" and ")} across ${list.map((p) => p.file).join(", ")}`);
   }
-  if (!existsSync(python)) problems.push("no venv at .venv; run: npm run setup:oracle && npm run setup:sdk && npm run setup:plaingen");
+  if (!existsSync(python)) problems.push("no venv at .venv; run: npm run setup:oracle && npm run setup:sdk && npm run setup:plaingen && npm run setup:proto");
   else {
     const r = run(python, ["-I", join(root, "tools", "toolchain", "installed.py")], { input: JSON.stringify({ pins: pins.map((p) => ({ name: p.name, marker: p.marker })) }) });
     if (!r.ok) problems.push(`tools/toolchain/installed.py failed: ${r.err}`);

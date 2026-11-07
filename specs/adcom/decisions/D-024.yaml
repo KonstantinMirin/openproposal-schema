@@ -1,0 +1,33 @@
+format: 1
+id: D-024
+status: proposed
+kind: gap
+author: agent
+question: "List: Playback Cessation Modes describes code 3 in a sentence too long to name it. What is its short name?"
+covers:
+  - ir: def:list_playbackcessationmodes:3
+    digest: 0e9953ee45b8b8eb18cbd777c8503dd9d64067512626e639ec8b1d8cb35b7b78
+    quote: "`3` | On Leaving Viewport Continues as a Floating/Slider Unit until Video Completion or when Terminated by User"
+options:
+  - id: short-name
+    summary: >-
+      Name code 3 "On Leaving Viewport Continues as Floating Unit"; the code
+      keeps its row as its description.
+  - id: row-text
+    summary: >-
+      Name the code by its row, cut to a usable length, which ends the name
+      at "a Floating".
+chosen: short-name
+rationale: >-
+  What sets code 3 apart is that playback continues as a floating unit once
+  the player leaves the viewport, which the short name keeps. The row's end,
+  "until Video Completion or when Terminated by User", says when that unit
+  stops, as code 1 says when playback stops, and "Floating" stands for
+  "Floating/Slider"; both stay in the description.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L4269"
+names:
+  "def:list_playbackcessationmodes:3": On Leaving Viewport Continues as Floating Unit
+feedback: >-
+  Give each code of List: Playback Cessation Modes a short name beside its
+  definition, so that every implementation names the codes alike.

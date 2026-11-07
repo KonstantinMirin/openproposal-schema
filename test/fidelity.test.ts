@@ -14,7 +14,7 @@ import { loadDecisions, loadMappings, type DecisionRecord } from "../src/mapping
 import { resolveModel } from "../src/model.ts";
 import { emitRules, loadVectors, VECTORS_DIR } from "../src/rules.ts";
 import { fidelity, loadExpected, type ExpectedFile } from "../gates/fidelity.ts";
-import { extractText, FIELD_HEADER, lineItems, OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
+import { extractText, FIELD_HEADER, lineItems, oldConstructors, oldKernel, OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
 
 const PRS = JSON.parse(readFileSync(join(SPEC, "ir", "with-open-prs", "spec-ir.json"), "utf8")) as SpecIR;
 const read = (ir: SpecIR) => readConstraints(ir);
@@ -235,9 +235,9 @@ function gateInput(): FidelityInput & { expected: ExpectedFile; names: SchemaNam
   if (built) return built;
   const lock = loadLock(join(SPEC, "spec-input", "with-open-prs.lock.yaml"));
   const decisions = loadDecisions(join(SPEC, "decisions"));
-  const kernel = loadKernel(ROOT, SPEC);
+  const kernel = oldKernel(loadKernel(ROOT, SPEC));
   const mappings = loadMappings(join(SPEC, "mapping"));
-  const { model } = resolveModel({ ir: PRS, lock: lock.name, mappings, decisions, kernel, constructors: loadConstructors(ROOT, SPEC) });
+  const { model } = resolveModel({ ir: PRS, lock: lock.name, mappings, decisions, kernel, constructors: oldConstructors(loadConstructors(ROOT, SPEC)) });
   const schemaDir = schemaDirOf(lock.ir_dir);
   const emitted = emitSchemas(model, schemaDir, OP_SCHEMA);
   const rules = emitRules({ model, ir: PRS, lock: lock.name, vectors: loadVectors(join(SPEC, VECTORS_DIR)), decisions, schemaDir, conditionsLeft: emitted.conditions.left, schemaBase: OP_SCHEMA.base }).doc;
@@ -329,7 +329,7 @@ test("a closed vocabulary no closed value list reaches is counted unread, and on
 });
 
 test("a sentence that gives members the codes of named lists is read with the lists' codes, and unread without them", () => {
-  const lists = loadKernel(ROOT, SPEC).lists;
+  const lists = oldKernel(loadKernel(ROOT, SPEC)).lists;
   const sentence = PRS.sentences.find((s) => /take any code in List:/.test(s.text))!;
   const of = (cs: SpecConstraint[]) => cs.filter((c) => c.element === sentence.id && c.form === "values").map((c) => [c.at.member.name, "values" in c ? c.values : null, "open" in c ? c.open : null]);
   assert.deepEqual(of(readConstraints(PRS, lists).constraints).sort(), [
@@ -353,7 +353,7 @@ test("a row's namespaced options read as their examples, each valid, and each wi
 });
 
 test("a named list that reserves vendor codes lists each of them: 500 is an API framework, and 499 and 10 aren't", () => {
-  const lists = loadKernel(ROOT, SPEC).lists;
+  const lists = oldKernel(loadKernel(ROOT, SPEC)).lists;
   const sentence = PRS.sentences.find((s) => /take any code in List:/.test(s.text))!;
   const api = readConstraints(PRS, lists).constraints.find((c) => c.element === sentence.id && c.at.member.name === "api");
   assert.ok(api && api.form === "values");

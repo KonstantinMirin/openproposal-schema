@@ -24,10 +24,11 @@ import type { SpecIR } from "../src/ir-types.ts";
 import { loadKernel } from "../src/kernel.ts";
 import { loadDecisions, loadMappings, type MappingFile, type TypeRef } from "../src/mapping.ts";
 import { resolveModel, type ModelDoc, type ModelType } from "../src/model.ts";
-import { ROOT, SPEC } from "./helpers.ts";
+import { constructorEditionsOn, kernelEditionsOn } from "../src/editions.ts";
+import { oldConstructors, oldKernel, ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT, SPEC);
-const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const KERNEL = oldKernel(loadKernel(ROOT, SPEC));
+const CONSTRUCTORS = oldConstructors(loadConstructors(ROOT, SPEC));
 const MAPPINGS = loadMappings(join(SPEC, "mapping"));
 const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 const LOCKS: [string, SpecIR][] = [
@@ -36,6 +37,10 @@ const LOCKS: [string, SpecIR][] = [
 ];
 const MODELS = LOCKS.map(([lock, ir]) => resolveModel({ ir, lock, mappings: MAPPINGS, decisions: DECISIONS, kernel: KERNEL, constructors: CONSTRUCTORS }).model);
 const MODEL = MODELS[1]!;
+// The stack's model, from its own editions of the kernel's types (src/editions.ts), for the checks that read every lock's.
+const FULL_KERNEL = loadKernel(ROOT, SPEC);
+const FULL_CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const STACK_MODEL = resolveModel({ ir: JSON.parse(readFileSync(join(SPEC, "ir", "with-our-stack", "spec-ir.json"), "utf8")) as SpecIR, lock: "with-our-stack", mappings: MAPPINGS, decisions: DECISIONS, kernel: kernelEditionsOn(FULL_KERNEL, "with-our-stack"), constructors: constructorEditionsOn(FULL_CONSTRUCTORS, "with-our-stack") }).model;
 
 const named = (name: string): TypeRef => ({ kind: "named", name });
 const list = (t: TypeRef): TypeRef => ({ kind: "apply", constructor: "List", arguments: { T: t } });
@@ -56,7 +61,7 @@ test("every convention holds on the committed model of each lock", () => {
     assert.deepEqual(vocabularies.problems, [], model.input.lock);
     assert.deepEqual(checkDuplication(modelStructures(model, KERNEL, CONSTRUCTORS, vocabularies.names), sharedStructures(KERNEL.domains)), [], model.input.lock);
   }
-  assert.deepEqual(dependsProblems(MODELS, MAPPINGS), []);
+  assert.deepEqual(dependsProblems([...MODELS, STACK_MODEL], MAPPINGS), []);
 });
 
 test("cycles finds every strongly connected component with more than one node, or a self-loop", () => {
@@ -81,7 +86,10 @@ test("a reference to a higher layer, or a cycle, fails the layer gate", () => {
 
 test("a reference to a module that depends doesn't list, or from the kernel to a module, fails", () => {
   const undeclared = structuredClone(MAPPINGS);
-  undeclared.find((m) => m.module === "targeting")!.depends = [];
+  const targeting = undeclared.find((m) => m.module === "targeting")!;
+  targeting.depends = [];
+  // With the open PRs, targeting lists inventory for that lock alone (`lock_depends`).
+  targeting.lock_depends = {};
   assert.match(moduleProblems(MODEL, undeclared).join("\n"), /mapping\/targeting\.yaml: object "AppBundleEntry" references "StorePlatform" of module "inventory", which "depends" doesn't list/);
   const kernel = edited("Marker", (t) => t.references.push("Channel"));
   assert.match(moduleProblems(kernel, MAPPINGS).join("\n"), /kernel: vocabulary "Marker" references "Channel" of module "line-item"; the kernel references no module/);

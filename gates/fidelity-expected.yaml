@@ -18,3 +18,18 @@ ruled:
       item's `channel`, which sits outside the `placement` object, so the
       `Placement` schema can't state it. The rule states it, with an invalid
       vector of a video line item whose placement has no `plcmt`.
+  - constraint: "field:5.9:retention#conditional@line_item.retention"
+    locks: [ with-our-stack ]
+    rule: "rule:5.9:d8611936"
+    reason: >-
+      § 5.9 makes `retention` REQUIRED when `serving_mode` is `embedded`,
+      which D-060 states as a rule of the line item, as it does every stack
+      `REQUIRED when` cell, with an invalid vector of an embedded line item
+      that has no `retention`.
+  - constraint: "field:5.9:sov_share#conditional@line_item.sov_share"
+    locks: [ with-our-stack ]
+    rule: "rule:5.9:ceef2a21"
+    reason: >-
+      § 5.9 makes `sov_share` REQUIRED when `sov_basis` is `impressions`,
+      which D-060 states as a rule of the line item, with an invalid vector
+      of a line item sold on impressions that has no `sov_share`.

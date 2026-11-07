@@ -34,6 +34,24 @@ primitives:
   - { name: NamespacedTerm, absent: true }
   - { name: CatalogRef, absent: true }
   - { name: Digest, absent: true }
+  - { name: Digest, edition: stack, absent: true }
+  - { name: Url, edition: stack, absent: true }
+  - { name: Duration, edition: stack, absent: true }
+  - { name: Domain, edition: stack, absent: true }
+  - { name: Amount, edition: stack, absent: true }
+  - { name: NamespacedTerm, edition: stack, absent: true }
+  - { name: RegistrableDomain, absent: true }
+  - { name: HttpsUrl, absent: true }
+  - { name: Instant, absent: true }
+  - { name: EntryRef, absent: true }
+  - { name: FractionDelta, absent: true }
+  - { name: FieldPointer, absent: true }
+  - { name: IanaZone, absent: true }
+  - { name: GeoCode, absent: true }
+  - { name: PlainString, absent: true }
+  - { name: PlainInteger, absent: true }
+  - { name: PlainNumber, absent: true }
+  - { name: FormatId, edition: stack, absent: true }
 constructors:
   - { name: Selectable, absent: true }
   - { name: Settable, absent: true }
@@ -41,11 +59,20 @@ constructors:
   - { name: CatalogRefOr, absent: true }
   - { name: List, absent: true }
   - { name: Map, absent: true }
+  - { name: Range, edition: stack, absent: true }
+  - { name: List, edition: stack, absent: true }
+  - { name: Map, edition: stack, absent: true }
+  - { name: Selectable, edition: stack, absent: true }
+  - { name: Settable, edition: stack, absent: true }
+  - { name: Narrowing, absent: true }
+  - { name: SettableRange, absent: true }
 parts:
   - { name: PriceDelta, absent: true }
   - { name: CatalogReference, absent: true }
   - { name: DaypartWindow, absent: true }
   - { name: Ext, absent: true }
+  - { name: Delta, absent: true }
+  - { name: ClockWindow, absent: true }
 domains:
   - { name: identity, absent: true }
   - { name: reference, absent: true }
@@ -61,9 +88,12 @@ domains:
       - { name: namespaced-term, absent: true }
   - { name: extension, absent: true }
   - { name: flag, absent: true }
+  - { name: option-pricing, absent: true }
 homonyms: []
 bases: []
 shared_structures:
   - { concepts: [external-id, text], absent: true }
   - { concepts: [currency, country], absent: true }
   - { concepts: [amount, measure], absent: true }
+  - { concepts: [domain-name, registrable-domain], absent: true }
+  - { concepts: [amount, plain-number], absent: true }

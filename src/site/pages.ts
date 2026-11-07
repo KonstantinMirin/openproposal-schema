@@ -16,6 +16,7 @@ import { baseOf, esc, inline, page, prose } from "./html.ts";
 import { mapLink } from "./route.ts";
 import type { SourceInfo } from "./sources.ts";
 import { REPO_ROOT } from "../repo.ts";
+import { PROTO_DIR, protoFiles } from "../targets/layout.ts";
 import { stands } from "../mapping.ts";
 
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
@@ -214,6 +215,8 @@ export function decisionPage(inputs: SiteInputs, d: DecisionRecord): string {
       return items.length > 0 ? `<h3>${esc(lockNames(b, lock.name).label)}</h3><ul class="sources">${items.join("")}</ul>` : "";
     })
     .join("");
+  // The names a record gives codes whose rows give none, each by the row it quotes.
+  const namesGiven = d.names ? `<section><h2>The names it gives</h2><div class="scroll"><table><thead><tr><th>Row</th><th>Name</th></tr></thead><tbody>${Object.entries(d.names).map(([ir, name]) => `<tr><td>${esc(d.covers.find((c) => c.ir === ir)?.quote ?? ir)}</td><td>${esc(name)}</td></tr>`).join("")}</tbody></table></div></section>` : "";
   const examples = (inputs.feedback?.examples ?? []).filter((x) => x.decisions.includes(d.id));
   const exRows = examples
     .map((x) => `<tr><td data-label="Example"><code>${esc(x.example)}</code></td><td data-label="Where">${x.paths.map((p) => `<code>${esc(p)}</code>`).join("<br>")}</td><td data-label="Why">${inline(x.reason, base)}</td><td data-label="Input">${x.locks.map((l) => esc(lockNames(b, l).short)).join(", ")}</td></tr>`)
@@ -240,6 +243,7 @@ ${sw ? `<section><h2>As written</h2><p>${inline(sw.reads, base)}</p><p class="no
 ${d.feedback ? `<section><h2>${d.kind === "gap" ? "What we ask the specification to state" : "What we ask the specification to change"}</h2>${prose(d.feedback, base)}</section>` : ""}
 <section><h2>The specification lines it rests on</h2><p class="note">Each line is quoted as the record pins it. Expand an item to read the quote.</p>${sources}</section>
 ${examples.length > 0 ? `<section><h2>${d.kind === "gap" ? "Examples that disagree with the text" : "Examples that follow the text, not this change"}</h2><div class="scroll"><table><thead><tr><th>Example</th><th>Where</th><th>Why</th><th>Input</th></tr></thead><tbody>${exRows}</tbody></table></div></section>` : ""}
+${namesGiven}
 ${shaped ? `<section><h2>What it shapes</h2>${shaped}</section>` : ""}
 ${repo}
 </div>`;
@@ -284,11 +288,14 @@ ${sdk}
 <details><summary>Browse the ${s.schemas.length} schema files on this site</summary><ul class="tree-files">${s.schemas.map((p) => `<li><a href="${p}"><code>${esc(p)}</code></a></li>`).join("")}</ul></details></section>`;
     })
     .join("\n");
+  // A target's files, such as proto enums, are unofficial: generated here from the published schemas, not published by the specification's owners.
+  const proto = [...protoFiles(inputs.root).keys()].map((p) => posix.join(PROTO_DIR, p));
+  const protoCard = proto.length > 0 ? `\n<section class="card dl"><h2>Proto3 enums <span class="tag">Unofficial target</span></h2><p class="note">Each integer-coded vocabulary as a proto3 enum, generated from the published schemas alone, each value numbered as its code. The specification's owners don't publish these files.</p><ul class="files">${proto.map((p) => `<li>${repoLink(b, "blob", at(p), `<code>${esc(p)}</code>`)}</li>`).join("")}</ul></section>` : "";
   const builds = inputs.variants.length > 1 ? "Each build's" : "Each input's";
   const body = `<div class="wrap">
 <h1>Files</h1>
 <p class="sub">${builds} JSON Schema 2020-12 files, its rules with their test vectors, and its example payloads are in the public repository${b.repo ? `, under ${repoLink(b, "tree", posix.join("specs", b.spec), `<code>specs/${esc(b.spec)}/</code>`)}` : ""}. This site serves each schema file under the spec's path, and every <code>$ref</code> is relative. ${b.schemaBase === `${b.siteUrl}${b.spec}/` ? "Each file's <code>$id</code> is its URL on this site, so a validator resolves every <code>$ref</code> from here." : `Each file's <code>$id</code> still names it under <code>${esc(b.schemaBase)}</code>; the <code>$id</code>s move to this site's paths before the first frozen release.`}</p>
-<div class="dl-grid">${cards}</div>
+<div class="dl-grid">${cards}${protoCard}</div>
 </div>`;
   return page({ path: "downloads.html", title: `Files · ${named(b)} JSON Schema`, description: `Where the generated ${named(b)} JSON Schema files, rules, and example payloads are.`, section: "downloads", body, brand: b });
 }

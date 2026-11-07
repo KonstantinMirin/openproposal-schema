@@ -446,3 +446,260 @@ primitives:
         - "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
         - "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b85"
     showcase: ["8bc1e566c463606f2971c6f29669a988ff5fa2e1cba04721e63b871133a4958b", "644197a08014b4a8b77075a2e3fd3bc0c69568254a8c805892559f1369dfaa47"]
+
+  # Editions and types of the 17-PR stack's § 2.2 and its prose. An edition stands in for the type
+  # without one on the locks the spec's binding publishes it on (src/editions.ts).
+  - name: Digest
+    edition: stack
+    description: A SHA-256 hash, written with its algorithm as `sha256:` and the 64 lowercase hexadecimal characters of the hash, 71 characters in all. The field that holds it says what its input is.
+    type: string
+    concept: digest
+    constraints:
+      pattern: '^sha256:[0-9a-f]{64}$'
+    sources:
+      standards:
+        - name: FIPS 180-4, Secure Hash Standard (SHA-256)
+          url: https://csrc.nist.gov/pubs/fips/180-4/upd1/final
+    vectors:
+      valid: ["sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "sha256:0000000000000000000000000000000000000000000000000000000000000000"]
+      invalid: ["9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "sha256:9F86D081884C7D659A2FEAA0C55AD015A3BF4F1B2B0B822CD15D6C15B0F00A08", "sha512:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "sha256:9f86d0", 42]
+    showcase: ["sha256:3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7", "sha256:4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"]
+
+  - name: Url
+    edition: stack
+    description: An absolute `http` or `https` URL, as RFC 3986 writes one, that a client can fetch.
+    type: string
+    concept: url
+    constraints:
+      format: uri
+      pattern: '^https?://.+$'
+    sources:
+      standards:
+        - name: RFC 3986, Uniform Resource Identifier (URI) Generic Syntax
+          url: https://www.rfc-editor.org/rfc/rfc3986
+    vectors:
+      valid: ["https://examplepub.example/terms/io-2026.pdf", "http://ads.examplepub.example/vast.xml"]
+      invalid: ["ftp://examplepub.example/terms", "examplepub.example/terms", "https://", "https://exa mple.example/", 7]
+    showcase: ["https://examplepub.example/creative/specs", "http://ads.examplepub.example/vast.xml"]
+
+  - name: Duration
+    edition: stack
+    description: A length of time, written in the ISO 8601 grammar of RFC 3339 Appendix A without its week form, such as `P14D` or `PT48H`, never `P2W`.
+    type: string
+    concept: duration
+    constraints:
+      format: duration
+      pattern: '^[0-9PYMDTHS]+$'
+    sources:
+      standards:
+        - name: RFC 3339, Appendix A, ISO 8601 collected ABNF (duration)
+          url: https://www.rfc-editor.org/rfc/rfc3339#appendix-A
+    vectors:
+      valid: ["P14D", "PT48H", "P0D", "P1Y2M3DT4H5M6S", "PT30M"]
+      invalid: ["P2W", "P", "PT", "14D", "P1DT", "P1.5D", 14]
+    showcase: ["P14D", "PT48H"]
+
+  - name: Domain
+    edition: stack
+    description: A domain name in lowercase ASCII, its internationalized labels in A-label form, with no scheme, port, path, or trailing dot, such as `examplepub.example`. Two values are compared byte for byte.
+    type: string
+    concept: domain-name
+    constraints:
+      pattern: '^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$'
+      maxLength: 253
+    sources:
+      standards:
+        - name: RFC 5890, Internationalized Domain Names for Applications (A-labels)
+          url: https://www.rfc-editor.org/rfc/rfc5890
+    vectors:
+      valid: ["examplepub.example", "xn--bcher-kva.example", "a.b.c.example", "localhost"]
+      invalid: ["Examplepub.example", "-examplepub.example", "examplepub..example", "examplepub.example.", "https://examplepub.example", "examplepub.example:8080", "examplepub.example/path", ""]
+    showcase: ["examplepub.example", "markets-weekly.example"]
+
+  - name: Amount
+    edition: stack
+    description: A sum of money or a rate, as a Number that the canonical JSON serialization reproduces as written, with at most 15 significant digits inside the range of a double. It carries no currency; the entry it belongs to says which one it reads in.
+    type: number
+    concept: amount
+    constraints: {}
+    vectors:
+      valid: [0, 12.5, 25000, 0.000001]
+      invalid: ["12.50", null, true]
+    showcase: [12.5, 25000]
+
+  - name: NamespacedTerm
+    edition: stack
+    description: A term outside a vocabulary's core list, written `<domain>:<term>`, where the domain is one its definer controls and a term is ASCII letters, digits, `_`, and `-`, such as `examplepub.example:podcast-host-read`.
+    type: string
+    concept: namespaced-term
+    constraints:
+      pattern: '^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*:[A-Za-z0-9_-]+$'
+    vectors:
+      valid: ["examplepub.example:podcast-host-read", "measure.example:mrc_v2"]
+      invalid: ["podcast", ":term", "examplepub.example:", "Examplepub.example:x", "examplepub.example:two words", 1]
+    showcase: ["examplepub.example:podcast-host-read", "examplepub.example:sponsor_read"]
+
+  - name: RegistrableDomain
+    description: A domain that is the registrable domain of the Public Suffix List, taken over the whole list, its PRIVATE section included, written as a domain is, such as `examplepub.example`. It names a business.
+    type: string
+    concept: registrable-domain
+    constraints:
+      pattern: '^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$'
+      maxLength: 253
+    sources:
+      standards:
+        - name: Public Suffix List
+          url: https://publicsuffix.org/
+    vectors:
+      valid: ["examplepub.example", "dsp.example"]
+      invalid: ["Examplepub.example", "examplepub.example.", "https://examplepub.example", ""]
+    showcase: ["examplepub.example", "buyer-agency.example"]
+
+  - name: HttpsUrl
+    description: An absolute `https` URL, a location fetched over TLS.
+    type: string
+    concept: https-url
+    constraints:
+      format: uri
+      pattern: '^https://.+$'
+    sources:
+      standards:
+        - name: RFC 3986, Uniform Resource Identifier (URI) Generic Syntax
+          url: https://www.rfc-editor.org/rfc/rfc3986
+    vectors:
+      valid: ["https://examplepub.example/.well-known/openproposal.json", "https://examplepub.example/terms/io-2026.pdf"]
+      invalid: ["http://examplepub.example/terms", "examplepub.example/terms", "https://", "https://exa mple.example/", 3]
+    showcase: ["https://examplepub.example/terms/io-2026.pdf", "https://examplepub.example/terms/msa-2026.pdf"]
+
+  - name: Instant
+    description: A point in time, written as an RFC 3339 date-time in whole seconds that ends in `Z`, such as `2026-11-02T00:00:00Z`, so one instant has one written form.
+    type: string
+    concept: canonical-instant
+    constraints:
+      format: date-time
+      pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$'
+    sources:
+      standards:
+        - name: RFC 3339, Date and Time on the Internet (date-time)
+          url: https://www.rfc-editor.org/rfc/rfc3339#section-5.6
+    vectors:
+      valid: ["2026-11-02T00:00:00Z", "2026-12-31T23:59:59Z"]
+      invalid: ["2026-11-02T00:00:00.5Z", "2026-11-02T00:00:00+00:00", "2026-11-02t00:00:00z", "2026-11-02", "2026-13-02T00:00:00Z", 20261102]
+    showcase: ["2026-11-02T00:00:00Z", "2026-12-14T09:00:00Z"]
+
+  - name: EntryRef
+    description: A named entry at one exact version, written `<domain>/<collection>/<entry_id>@<version>`, with no `/` or `@` inside a part, such as `examplepub.example/formats/homepage-takeover@3`. Its content doesn't change.
+    type: string
+    concept: entry-ref
+    constraints:
+      pattern: '^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*/[^\x00-\x20\x7f/@]+/[^\x00-\x20\x7f/@]+@[^\x00-\x20\x7f/@]+$'
+    vectors:
+      valid: ["examplepub.example/formats/homepage-takeover@3", "examplepub.example/audiences/business-readers@2026-10"]
+      invalid: ["formats/homepage-takeover@3", "examplepub.example/formats/homepage-takeover", "examplepub.example/formats/a/b@3", "examplepub.example/formats/x@3@4", 3]
+    showcase: ["examplepub.example/formats/homepage-takeover@3", "examplepub.example/formats/roadblock@1"]
+
+  - name: FractionDelta
+    description: A change to a rate as a fraction of it, a Number greater than -1, such as `0.20` for 20 percent more.
+    type: number
+    concept: fraction-delta
+    constraints:
+      exclusiveMinimum: -1
+    vectors:
+      valid: [0.2, -0.5, 0, 3]
+      invalid: [-1, -1.5, "0.2"]
+    showcase: [0.2, -0.1]
+
+  - name: FieldPointer
+    description: A location in an object of the specification, written as a JSON Pointer, such as `/line_items/0/pricing/1/list_rate`.
+    type: string
+    concept: field-pointer
+    constraints:
+      pattern: '^(/([^\x00-\x1f~/]|~[01])*)*$'
+    sources:
+      standards:
+        - name: RFC 6901, JavaScript Object Notation (JSON) Pointer
+          url: https://www.rfc-editor.org/rfc/rfc6901
+    vectors:
+      valid: ["/line_items/0/pricing/1/list_rate", "", "/a~1b/c~0d"]
+      invalid: ["line_items/0", "/a~2b", "/a~", 5]
+    showcase: ["/line_items/0/pricing/0/list_rate", "/line_items/1/commitment_bounds"]
+
+  - name: IanaZone
+    description: A time zone, named as the IANA time zone database names it, such as `America/New_York` or `UTC`.
+    type: string
+    concept: iana-zone
+    constraints:
+      pattern: '^[A-Z][A-Za-z0-9_+-]*(/[A-Za-z0-9_+-]+)*$'
+    sources:
+      standards:
+        - name: IANA Time Zone Database
+          url: https://www.iana.org/time-zones
+    vectors:
+      valid: ["America/New_York", "UTC", "Etc/GMT+5"]
+      invalid: ["viewer_local", "america/new_york", "", "America//New_York", 5]
+    showcase: ["America/New_York", "Europe/London"]
+
+  - name: GeoCode
+    description: An area, written as an ISO 3166-1 alpha-2 country code, such as `US`, an ISO 3166-2 subdivision code, such as `US-CA`, or an extension term for any other area, such as a metro list. A country covers every subdivision code it prefixes.
+    type: string
+    concept: geo-code
+    constraints:
+      pattern: '^([A-Z]{2}(-[A-Z0-9]{1,3})?|[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*:[A-Za-z0-9_-]+)$'
+    sources:
+      standards:
+        - name: ISO 3166-1, Codes for the representation of names of countries (alpha-2)
+          url: https://www.iso.org/iso-3166-country-codes.html
+        - name: ISO 3166-2, Country subdivision code
+          url: https://www.iso.org/standard/72483.html
+    vectors:
+      valid: ["US", "US-CA", "GB-LND", "nielsen.example:dma-501"]
+      invalid: ["USA", "us", "US-", "US-CALIF", "dma-501", 840]
+    showcase: ["US", "US-NY"]
+
+  - name: PlainString
+    description: A string the text types as String and gives no other form; the field that holds it says what it means.
+    type: string
+    concept: plain-string
+    constraints: {}
+    vectors:
+      valid: ["examplepub-q4-sports", ""]
+      invalid: [7, true, null]
+    showcase: ["examplepub-q4-sports", "examplepub-q4-news"]
+
+  - name: PlainInteger
+    description: A whole number the text types as Integer and gives no other range, within the integers every JSON implementation reads exactly, from −(2^53 − 1) to 2^53 − 1; the field that holds it says what it counts.
+    type: integer
+    concept: plain-integer
+    constraints:
+      minimum: -9007199254740991
+      maximum: 9007199254740991
+    sources:
+      standards:
+        - name: RFC 7493, The I-JSON Message Format (section 2.2, numbers)
+          url: https://www.rfc-editor.org/rfc/rfc7493#section-2.2
+    vectors:
+      valid: [0, 3, -1, 9007199254740991]
+      invalid: [1.5, "3", 9007199254740992]
+    showcase: [3, 12]
+
+  - name: PlainNumber
+    description: A number the text types as Number and gives no other range; the field that holds it says what it measures.
+    type: number
+    concept: plain-number
+    constraints: {}
+    vectors:
+      valid: [0, 1.25, -3]
+      invalid: ["1.25", null]
+    showcase: [1.25, 40]
+
+  - name: FormatId
+    edition: stack
+    description: The ID of a creative format, written `<channel>/<name>`, where `<channel>` is the line item's channel, with no `/` or `@` inside a part, such as `display/300x250`.
+    type: string
+    concept: format-id
+    constraints:
+      pattern: '^[^\x00-\x20\x7f/@]+/[^\x00-\x20\x7f/@]+$'
+    vectors:
+      valid: ["display/300x250", "audio/host-read-30s"]
+      invalid: ["300x250", "display/", "/300x250", "display/300x250/2", "display/300x250@3", 300]
+    showcase: ["display/300x250", "display/728x90"]

@@ -1,0 +1,242 @@
+{
+  "$defs": {
+    "Loop": {
+      "additionalProperties": false,
+      "properties": {
+        "length_s": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "Loop length, in seconds"
+        },
+        "slot_s": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "Slot length, in seconds"
+        }
+      },
+      "required": [
+        "length_s",
+        "slot_s"
+      ],
+      "type": "object"
+    },
+    "PropertyOption": {
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "child_audience": {
+            "const": "mixed"
+          }
+        },
+        "required": [
+          "child_audience"
+        ]
+      },
+      "properties": {
+        "allocation": {
+          "$ref": "#/$defs/PropertyOptionAllocation",
+          "description": "`all` | `seller_allocated`. Absent means `all`. With `all`, the line item runs on every listed screen. With `seller_allocated`, the seller picks the screens: `screens[]`, when present, is the pool it picks from and is seller-set, and the proof-of-play log names the screens used"
+        },
+        "apps": {
+          "description": "The apps behind a property sold in `app_mobile` or `ctv` (§ 5.2.5)",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/App"
+          },
+          "type": "array"
+        },
+        "child_audience": {
+          "$ref": "#/$defs/PropertyOptionChildAudience",
+          "description": "`directed` | `mixed` | `general`. `directed`: children are its primary audience under the law the seller applies, or its app store lists it for children only. `mixed`: directed to children but not as its primary audience, or listed for children and older users. `general`: neither. § 5.2.7 states what follows"
+        },
+        "child_treatment": {
+          "$ref": "#/$defs/PropertyOptionChildTreatment",
+          "description": "`excluded` | `contextual`. `excluded`: users identified as children don't receive the line item. `contextual`: they receive it without personal data"
+        },
+        "domains": {
+          "description": "The property's domains. On a `dooh` line item, the inventory owner's domain, as OpenRTB 2.6 `dooh.domain`",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Domain"
+          },
+          "type": "array"
+        },
+        "id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "Option id (§ 3.1)"
+        },
+        "inventory_partner_domain": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Domain",
+          "description": "As OpenRTB 2.6 `site.inventorypartnerdomain` and `app.inventorypartnerdomain`"
+        },
+        "min_screens": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "With `seller_allocated`, the fewest screens the seller allocates to the line item"
+        },
+        "name": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "The property's name, for people"
+        },
+        "screens": {
+          "description": "The property's screens (§ 5.2.8)",
+          "items": {
+            "$ref": "#/$defs/Screen"
+          },
+          "type": "array"
+        },
+        "seller_accounts": {
+          "description": "The accounts that sell the property",
+          "items": {
+            "$ref": "#/$defs/SellerAccount"
+          },
+          "type": "array"
+        },
+        "seller_relationship": {
+          "$ref": "#/$defs/PropertyOptionSellerRelationship",
+          "description": "`owner` | `manager` | `inventory_partner` | `reseller`, checked as § 5.2.6 states"
+        },
+        "slots_per_loop": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "The slots per loop the line item buys on each screen of the property that has a `loop`"
+        },
+        "sync_groups": {
+          "description": "Screens that show the same ad at the same moment, sold as one (§ 5.2.8)",
+          "items": {
+            "$ref": "#/$defs/SyncGroup"
+          },
+          "type": "array"
+        },
+        "venue_type": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/TaxonomyCodes",
+          "description": "`taxonomy` is a value of AdCOM 1.0 List: DOOH Venue Taxonomies. `ids[]` holds exactly one id. It covers only itself, not its descendants. The values OpenRTB 2.6 `dooh.venuetypetax` and `dooh.venuetype` carry"
+        }
+      },
+      "required": [
+        "child_audience",
+        "id",
+        "seller_relationship"
+      ],
+      "then": {
+        "required": [
+          "child_treatment"
+        ]
+      },
+      "type": "object"
+    },
+    "PropertyOptionAllocation": {
+      "enum": [
+        "all",
+        "seller_allocated"
+      ],
+      "type": "string"
+    },
+    "PropertyOptionChildAudience": {
+      "enum": [
+        "directed",
+        "mixed",
+        "general"
+      ],
+      "type": "string"
+    },
+    "PropertyOptionChildTreatment": {
+      "enum": [
+        "excluded",
+        "contextual"
+      ],
+      "type": "string"
+    },
+    "PropertyOptionSellerRelationship": {
+      "enum": [
+        "owner",
+        "manager",
+        "inventory_partner",
+        "reseller"
+      ],
+      "type": "string"
+    },
+    "Screen": {
+      "additionalProperties": false,
+      "properties": {
+        "lat": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainNumber",
+          "description": "Latitude, as OpenRTB 2.6 `geo.lat`. Absent when `movable` is true"
+        },
+        "lon": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainNumber",
+          "description": "Longitude, as OpenRTB 2.6 `geo.lon`. Absent when `movable` is true"
+        },
+        "loop": {
+          "$ref": "#/$defs/Loop",
+          "description": "Absent when the screen schedules ads without a loop"
+        },
+        "movable": {
+          "description": "True when the screen has no fixed location, as AdCOM 1.0 `Dooh.fixed` value 2 (movable)",
+          "type": "boolean"
+        },
+        "operating_hours": {
+          "description": "`ClockWindow` entries (§ 5.5), in the screen's `time_zone`",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ClockWindow"
+          },
+          "type": "array"
+        },
+        "screen_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "The seller's id for the screen, as its proof-of-play log carries it. When the bid request's `device.ifa_type` is `ppid`, as the OpenRTB 2.6 implementation guide (§ 7.9.2.5) uses it, `device.ifa` carries the same id"
+        },
+        "time_zone": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/IanaZone",
+          "description": "The screen's time zone"
+        }
+      },
+      "required": [
+        "screen_id"
+      ],
+      "type": "object"
+    },
+    "SellerAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "asi": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Domain",
+          "description": "As ads.txt field 1, Domain name of the advertising system"
+        },
+        "sid": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "As ads.txt field 2, Publisher's Account ID"
+        }
+      },
+      "required": [
+        "asi",
+        "sid"
+      ],
+      "type": "object"
+    },
+    "SyncGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "min_screens_per_play": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "The fewest of the group's screens that must show a display for it to count as one play (§ 5.6.4)"
+        },
+        "screen_ids": {
+          "description": "The `screen_id` of each screen in the group",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "array"
+        },
+        "sync_group_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "The group's id"
+        }
+      },
+      "required": [
+        "min_screens_per_play",
+        "screen_ids",
+        "sync_group_id"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/modules/properties/1/properties.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `properties` module: the vocabularies, objects, unions, and constructor copies of § 5.2.4, § 5.2.6, § 5.2.7, and § 5.2.8.",
+  "title": "properties"
+}

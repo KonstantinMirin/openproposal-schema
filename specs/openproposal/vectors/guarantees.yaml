@@ -5,6 +5,7 @@ rules:
   # `committed_metrics[]`: the seller declares a ceiling; a buyer MAY request above it.
   - rule: rule:5.7:4994173c
     digest: 49df828c767ca4a88396c5d0d566a026506a90ae23eec522d12849b159e6aff6
+    locks: [main, with-open-prs]
     decision: D-034
     valid:
       - party: buyer
@@ -14,3 +15,14 @@ rules:
       - party: buyer
         before: { committed_metrics: [{ metric: viewable_rate, value: 0.7, basis: "measure.example:impressions" }] }
         after: { committed_metrics: [{ metric: viewable_rate, value: 0.6, basis: "measure.example:impressions" }] }
+
+  # `controlling_measurement` REQUIRED when `serving_mode` is `embedded` or the line item has `committed_metrics[]`, `commitment_bounds.spend`, or a `pricing[].unit_bounds` (D-060).
+  - rule: rule:5.7:76df804b
+    digest: c1ad8c132d41a5f46d02fe035f5895f7c0314505c6ead3321c0ae5ddd9c025df
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["field:5.7:controlling_measurement"]
+    valid:
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}}}
+    invalid:
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}, "serving_mode": "embedded", "retention": {"min": "P90D", "max": "P1Y"}}}

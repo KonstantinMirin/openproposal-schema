@@ -1,0 +1,57 @@
+format: 1
+id: D-020
+status: proposed
+kind: gap
+author: agent
+question: "List: Playback Methods describes codes 1, 2, 4, 5, and 6 in phrases too long to name them, and codes 1 and 2, and 5 and 6, differ only at their ends, in their sound. What is each code's short name?"
+covers:
+  - ir: def:list_playbackmethods:1
+    digest: e9bffcb505edad849ce580d8c2968b6fce9351455def9d23d5320c43d385ce11
+    quote: "`1` | Initiates without any specific user interaction with Sound On"
+  - ir: def:list_playbackmethods:2
+    digest: 13e2c919b365cb7dbd8e13e8ac909cffd91802bf4cd6f2ae8e28645923b6d248
+    quote: "`2` | Initiates without any specific user interaction Sound Off by Default"
+  - ir: def:list_playbackmethods:4
+    digest: e01b8c8069612c4893e433fcbd936b255914d6eee1919f948febb7ae845c3b1e
+    quote: "`4` | Initiates on Mouse-Over or cursor over with Sound On"
+  - ir: def:list_playbackmethods:5
+    digest: 41d43f2edf5812daff99809221bc5d7cbca95e84ad4cc02fe09b5f444a6e9d64
+    quote: "`5` | Initiates on Entering Viewport or scrolling into view with Sound On"
+  - ir: def:list_playbackmethods:6
+    digest: 2852b601f07001bdbc8db852fc59610e2695e5f2e1b0fafe9e9712566d059f6a
+    quote: "`6` | Initiates on Entering Viewport or scrolling into view with Sound Off by Default"
+options:
+  - id: short-names
+    summary: >-
+      Name the codes as code 3, "Initiates on Click with Sound On", names
+      its own: 1 "Initiates Automatically with Sound On", 2 "Initiates
+      Automatically with Sound Off", 4 "Initiates on Mouse-Over with Sound
+      On", 5 "Initiates on Entering Viewport with Sound On", and 6
+      "Initiates on Entering Viewport with Sound Off"; each code keeps its
+      row as its description.
+  - id: row-text
+    summary: >-
+      Name each code by its row, cut to a usable length, so that the words
+      that tell codes 1 and 2, and 5 and 6, apart are cut off, and code 4's
+      name ends at "with".
+chosen: short-names
+rationale: >-
+  Each of these rows runs past the length a name can have, and the words a
+  cut drops are its last ones, the sound, which is what tells codes 1 and
+  2, and 5 and 6, apart. The short names keep the trigger and the sound in
+  the form code 3 already has; "Automatically" restates "without any
+  specific user interaction", and "on Entering Viewport" and "on
+  Mouse-Over" drop "or scrolling into view" and "or cursor over", which say
+  the same.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L4285"
+names:
+  "def:list_playbackmethods:1": Initiates Automatically with Sound On
+  "def:list_playbackmethods:2": Initiates Automatically with Sound Off
+  "def:list_playbackmethods:4": Initiates on Mouse-Over with Sound On
+  "def:list_playbackmethods:5": Initiates on Entering Viewport with Sound On
+  "def:list_playbackmethods:6": Initiates on Entering Viewport with Sound Off
+feedback: >-
+  Give each code of List: Playback Methods a short name beside its
+  definition, so that every implementation names the codes alike and the
+  codes that differ only in their sound are told apart by name.

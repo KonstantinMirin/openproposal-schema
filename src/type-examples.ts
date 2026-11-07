@@ -508,7 +508,25 @@ export function generateTypeExamples(input: TypeExamplesInput): { doc: TypeExamp
     const baseline = typeValue(id, []);
     const t = typeAt.get(id);
     const candidate = t?.kind === "primitive" || (t?.kind === "vocabulary" && termsOf(t, id).length > 0) ? fullType(id, [], 0).value : shown(id, baseline, false);
-    const value = holds(id, candidate) === null ? candidate : baseline;
+    let value = holds(id, candidate) === null ? candidate : baseline;
+    // A baseline that breaks a rule that requires a member under a condition, as the stack's "REQUIRED when `url` is absent",
+    // takes the members it lacks, each at its own minimal value, in the schema's order, until it holds.
+    if (holds(id, value) !== null && isMap(value)) {
+      const { node, file } = v.node(id);
+      const props = isMap(node.properties) ? node.properties : {};
+      let cur: Schema = { ...(value as Schema) };
+      for (const k of Object.keys(props)) {
+        if (holds(id, cur) === null) break;
+        if (k in cur || !isMap(props[k])) continue;
+        const next = { ...cur, [k]: shown(`${id}/properties/${escape(k)}`, build(props[k] as Schema, file, [], [id]), true) };
+        if (failure(check(id, next)) === null || !(holds(id, next) ?? "").startsWith("/")) cur = next;
+      }
+      if (holds(id, cur) === null) {
+        const ordered: Schema = {};
+        for (const k of Object.keys(props)) if (k in cur) ordered[k] = cur[k];
+        value = ordered;
+      }
+    }
     minimals.set(id, value);
     return value;
   };

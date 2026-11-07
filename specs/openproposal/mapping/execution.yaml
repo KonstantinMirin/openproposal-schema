@@ -4,57 +4,67 @@ format: 1
 module: execution
 sections: [ "5.9" ]
 types:
+  - name: LineItemSovBasis
+    kind: vocabulary
+    ir: field:5.9:sov_basis#description/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: false
+    terms: [ impressions, loop_time ]
+  - name: LineItemServingMode
+    kind: vocabulary
+    ir: field:5.9:serving_mode#description/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: true
+    terms: [ dai, scheduled, embedded ]
   - name: BuyerRequirements
     kind: object
     ir: field:5.9:buyer_requirements
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-012, D-027 ] }
+    open: false
+  - name: MechanismOption
+    kind: object
+    ir: key:5.9:MechanismOption.id
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: BuyerRequirements
+    kind: object
+    ir: key:5.9:BuyerRequirements.seats_expected
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
     open: false
 entries:
   - ir: field:5.9:buying_route
     digest: cf97c7788378567c4f8b14664ad331afae16ced4f7cb4405619df8e68d8112ce
+    locks: [ main, with-open-prs ]
     source: { rule: enum-row }
     as: { role: property, object: LineItem, type: { kind: named, name: BuyingRoute }, presence: optional }
   - ir: field:5.9:buying_route#description/values:1
     digest: 7fdf80551311a23d05467036e1a8ff3ddb1b4217b0fe9ed6fac6f158d0e99ad2
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-013, D-014 ] }
     as: { role: type, name: BuyingRoute, layer: vocabulary, open: true }
-  - ir: field:5.9:transaction_mechanism
-    digest: f64e965f4b27bc9cceae66a1b9829d52eb27d254b18bbe221b66de41db611eb5
-    source: { decision: D-018 }
-    as:
-      role: property
-      object: LineItem
-      type:
-        kind: apply
-        constructor: Selectable
-        arguments: { T: { kind: named, name: TransactionMechanism }, K: { kind: named, name: TransactionMechanism } }
-      presence: optional
   - ir: field:5.9:transaction_mechanism#description/values:1
     digest: f6d90d6db8947c8a3141ec73f686c436fdc01b4db98b84bb7c193fcf65442435
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-013, D-014 ] }
     as: { role: type, name: TransactionMechanism, layer: vocabulary, open: true }
   - ir: rule:5.9:d510ffe5
     digest: 61ff19d5ae93ecb1e7f406a252372f580d729d5c6575604bfff596ffaf8a77b0
+    locks: [ main, with-open-prs ]
     source: { decision: D-030 }
     as: { role: schema, in: Selectable }
-  - ir: field:5.9:serving_mode
-    digest: 713d37172a58d57f4f2dbe11fba48670f8b9a5f52754f867a13c449a660f38b2
-    source: { rule: enum-row }
-    as: { role: property, object: LineItem, type: { kind: named, name: ServingMode }, presence: optional }
-  - ir: field:5.9:serving_mode#description/values:1
-    digest: 03403ca635ba7592a5dacb31582b45eedf57b3e7ff3267736523b5f52e6a183d
-    source: { decisions: [ D-013, D-014 ] }
-    as: { role: type, name: ServingMode, layer: vocabulary, open: true }
   - ir: field:5.9:deal_id_issuance
     digest: 064acb1a6dfcb9c0cd2788373080091ccd3a991f47a4b1d055046eb5f51272cb
+    locks: [ main, with-open-prs ]
     source: { rule: domain-row }
     as: { role: property, object: LineItem, type: { kind: named, name: Text }, presence: optional }
-  - ir: field:5.9:buyer_requirements
-    digest: 19ff019961864951f5579cc6142cb0153f9749584c53a78823d8ff2abcb71c4c
-    source: { decisions: [ D-012, D-027 ] }
-    as: { role: property, object: LineItem, type: { kind: named, name: BuyerRequirements }, presence: optional }
   - ir: field:5.9:buyer_requirements#description/object:1
     digest: 0b6228bc154412978d5350265f2b047a7788de634feb88e9eb3a5e7fa1b0d417
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-012, D-027 ] }
     as:
       role: members
@@ -66,6 +76,7 @@ entries:
           presence: optional
   - ir: field:5.9:buyer_requirements#description/object:2
     digest: c3237ee1a6dc26edc444e2a846bb5d73fcaca808322b78b0e4634b08547adb7b
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-012, D-027 ] }
     as:
       role: members
@@ -74,7 +85,376 @@ entries:
         dsp_seat_id: { type: { kind: named, name: ExternalId }, presence: optional }
         dsp_id: { type: { kind: named, name: ExternalId }, presence: optional }
         seat_owner_entity: { type: { kind: named, name: Text }, presence: optional }
+  - ir: field:5.9:transaction_mechanism
+    digest: f64e965f4b27bc9cceae66a1b9829d52eb27d254b18bbe221b66de41db611eb5
+    locks: [ main, with-open-prs ]
+    source: { decision: D-018 }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: TransactionMechanism }, K: { kind: named, name: TransactionMechanism } }
+      presence: optional
+  - ir: field:5.9:transaction_mechanism
+    digest: 9f66052cb6d6f04e41cbeb1922e34fcd905151f0d8877af87cd5ea3aae10af04
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: Selectable, arguments: { T: { kind: named, name: MechanismOption } } }
+      presence: required
+  - ir: rule:5.9:373dbf11
+    digest: 0bae3cfe00842857d60914e21557cdf6ad256d486f94ac86418631a11c2072d4
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: rule:5.9:5bfed285
+    digest: edf1f2056849891ffc277f4e8c785814d60417f2eae3e8623a2c6eee18f11de8
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: seller }
+  - ir: field:5.9:sov_basis
+    digest: 9f16571bb67e5a47d6e4deed1768aade229b08ba0d210d12528180f88f77aba2
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: LineItemSovBasis }, presence: conditional }
+  - ir: field:5.9:sov_basis#description/values:1
+    digest: 56ab575c1d2565f9e47de4d163e38fe7dcf2b4c6d677c3af64327e552ca1cc38
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: LineItemSovBasis }
+  - ir: rule:5.9:c0f7b8ce
+    digest: 90913c40f1240deeed5765732a715a8f4bceb8b53323a5d4cce7e1e0bf429160
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: LineItem }
+  - ir: field:5.9:sov_share
+    digest: 6eb41dd522c0bed3a0b8677dff4f9db36f063d925ee655a668ed902513bef66c
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Fraction }, presence: conditional }
+  - ir: rule:5.9:ceef2a21
+    digest: c1f37e026a4f11d034d14c5326b515fc73c785812b665f359aac32f4002982de
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: LineItem }
+  - ir: field:5.9:serving_mode
+    digest: 713d37172a58d57f4f2dbe11fba48670f8b9a5f52754f867a13c449a660f38b2
+    locks: [ main, with-open-prs ]
+    source: { rule: enum-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: ServingMode }, presence: optional }
+  - ir: field:5.9:serving_mode
+    digest: c9994f9a14689c371bdf435ba3928d0fcb38fc125d310c8e47d602ba1b6c68fa
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: LineItemServingMode }, presence: optional }
+  - ir: field:5.9:serving_mode#description/values:1
+    digest: 03403ca635ba7592a5dacb31582b45eedf57b3e7ff3267736523b5f52e6a183d
+    locks: [ main, with-open-prs ]
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: ServingMode, layer: vocabulary, open: true }
+  - ir: field:5.9:serving_mode#description/values:1
+    digest: 41003de0bf64060dc0018dd80c709a94ad60347898ebc87652ecd39f315be1b3
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: LineItemServingMode }
+  - ir: rule:5.9:ae26d4ac
+    digest: eafc9f5fd23f749bca868cf72c47c12ab1952738d2ba6eaf933e8d2eafd40482
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: field:5.9:retention
+    digest: d6da48e3ba2ad2ebe71cde6d131a3f183b1c4731c74ec54ab7ceb15b18d5e88e
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: Range, arguments: { T: { kind: named, name: Duration } } }
+      presence: conditional
+  - ir: rule:5.9:d8611936
+    digest: 18117b0431fd09d72305fd6e85680a1b3fc1c8064215f71599c41b9c2ee5d40a
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: LineItem }
+  - ir: field:5.9:deal_origin
+    digest: f21648ecf3916eb059d1d534dc5ec1a91eabc10131a83c6de8f6f55192c60f00
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: RegistrableDomain }, presence: conditional }
+  - ir: rule:5.9:cc571473
+    digest: 3eb4ace214846296e1b8a5482a12c3d9865730f4e59ea97eeb745f3fd9b9713b
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: LineItem }
+  - ir: field:5.9:buyer_requirements
+    digest: 19ff019961864951f5579cc6142cb0153f9749584c53a78823d8ff2abcb71c4c
+    locks: [ main, with-open-prs ]
+    source: { decisions: [ D-012, D-027 ] }
+    as: { role: property, object: LineItem, type: { kind: named, name: BuyerRequirements }, presence: optional }
+  - ir: field:5.9:buyer_requirements
+    digest: acf75ad369359af27b9fa175e4ecfa51d02e9a46c145685e7262b5cf283eb403
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: BuyerRequirements }, presence: optional }
+  - ir: rule:5.9:ae26d4ac-2
+    digest: 5ca6322c87b3e20f1fae44382441324f282002a6a7246d28524d356040c13859
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
   - ir: field:5.9:serving_platform
     digest: 6755aeee541637916ff2959d75837395628b01f5deea9a200accf26eea573107
+    locks: [ main, with-open-prs ]
     source: { rule: domain-row }
     as: { role: property, object: LineItem, type: { kind: named, name: Text }, presence: optional }
+  - ir: field:5.9:serving_platform
+    digest: 95cb7fcc8b1bba7680a2be4208cb591f8e27a0b0bb5ac949a46c355919a032a8
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: Domain }, presence: optional }
+  - ir: rule:5.9:ae26d4ac-3
+    digest: a377ed0523f23d69db2fde1f53fa6a768fa5651b5612be2d7c8ce7b531bd90a2
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: sentence:5.9:d22c8e42
+    digest: 7d01cb8283c263bac9ac3cc47d43d8877fdd564415e4c079b99e2ec997f81bb2
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.9:MechanismOption.id
+    digest: 89762020a392a35aa2faa84845c6ef8193b313ee03e2bc3cfd9fdec680f254c7
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: MechanismOption
+      type: { kind: named, name: TransactionMechanism }
+      presence: required
+  - ir: rule:5.9:373dbf11-2
+    digest: 6bcd0400cf019d7b4bcc7b92155cb3ce36b480a317b041fb7285b165b0928186
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: MechanismOption }
+  - ir: key:5.9:MechanismOption.delivery_type
+    digest: 5f966bb0fcea48b53d6db18676648e4f953a2ea109f56f6b541fe7a424d877ab
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: MechanismOption, type: { kind: named, name: DeliveryType }, presence: required }
+  - ir: rule:5.9:373dbf11-3
+    digest: 2f2818faa844c035d864e39d09a264bb4297e7b58c9c4500a4ffb14ba1cd185d
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: MechanismOption }
+  - ir: block:5.9:2/values:1
+    digest: 858303b428f6779e718da3b7ca48602b19b0ee2438c5d0d385667ee5ee835c85
+    locks: [ with-our-stack ]
+    source: { decision: D-048 }
+    as: { role: type, name: TransactionMechanism, layer: vocabulary, open: false }
+  - ir: sentence:5.9:b2ad07c2
+    digest: c33681a71e3a7ea085aaf21ff9eda31b3a78d2eea7afd482f145cf104d8a7e86
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:ec193d1b
+    digest: 80e960e8d5943eaac4d88700290c29035b43c4351b76f3ab088f595591341150
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.9:395d178a
+    digest: 51db8748811b5568ecf7a953d431fdc85427b96b1fce3c620ad2d15b9608eea6
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: def:5.9:transaction_mechanism.direct_io
+    digest: 5f5784afd2b6daed909e3421d18e4fb107ad294741de632fde25a9a8e10bf7c2
+    locks: [ with-our-stack ]
+    source: { decision: D-058 }
+    as: { role: schema, in: TransactionMechanism }
+  - ir: def:5.9:transaction_mechanism.programmatic_guaranteed
+    digest: 5a49080c9ce661d70f9588ddd7c96393f0bd02c44dd81a69baffe4fe5bf33d65
+    locks: [ with-our-stack ]
+    source: { decision: D-058 }
+    as: { role: schema, in: TransactionMechanism }
+  - ir: def:5.9:transaction_mechanism.preferred_deal
+    digest: a2d093e2a34fd6b154293512e665088c51673008e55da801194a0191d5b1a01e
+    locks: [ with-our-stack ]
+    source: { decision: D-058 }
+    as: { role: schema, in: TransactionMechanism }
+  - ir: def:5.9:transaction_mechanism.private_auction
+    digest: 784a31ee3d864d65ab3180553573a302c02b980104d28a0f0d5de42dec75c292
+    locks: [ with-our-stack ]
+    source: { decision: D-058 }
+    as: { role: schema, in: TransactionMechanism }
+  - ir: sentence:5.9:78feda70
+    digest: 75f1850157b70de4b7b0137baef204bba1456af8722004e9213efa89bbcb18be
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.9:BuyerRequirements.seats_expected
+    digest: dc0a0ec8dd0a8f3b8f99cda3f5c6be3cdce372064c6903e866e7235ebd1b53b5
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: BuyerRequirements, type: { kind: boolean }, presence: optional }
+  - ir: rule:5.9:ae26d4ac-4
+    digest: 0bd6e6245f02f26694977016593b5255699f2a6f464554f16026cb7b5f3f1f8e
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: BuyerRequirements }
+  - ir: "key:5.9:BuyerRequirements.allowed_dsps[]"
+    digest: 7ba8cf788ce10d1b41183d30dcfe35471e97d1d1f788c9005f943a4bac48f91f
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: BuyerRequirements
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: RegistrableDomain } } }
+      presence: optional
+  - ir: rule:5.9:ae26d4ac-5
+    digest: 04b4a351bbefe440e9d3e6590b31e8f1dea68c532d560edae356dac5a1568baf
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: BuyerRequirements }
+  - ir: key:5.9:BuyerRequirements.seats
+    digest: 41ec107f02292d82f99a2fa5e116fc4b90f3e25b97f41a5be2371f5456f0a69e
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: BuyerRequirements, type: { kind: named, name: SeatRef }, presence: optional }
+  - ir: rule:5.9:ae26d4ac-6
+    digest: 85f3970cc3e2d88994dc57dd06049fe2df51d6390fc88cc2b8811c6d659b9754
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: BuyerRequirements }
+  - ir: key:5.9:BuyerRequirements.seat_owner
+    digest: df11abedb41e2c23ce30ca449643400dd89818d6b945ae3606663ef9aaf8b15b
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: BuyerRequirements, type: { kind: named, name: Party }, presence: optional }
+  - ir: rule:5.9:ae26d4ac-7
+    digest: d42ad718c910474bc7fd2dff7f6495ac4314f2b1ce60d155438cefded4c65794
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: BuyerRequirements }
+  - ir: block:5.9:4/values:1
+    digest: d1953e479a8f4c45c473a316204c9ddd222f6dbe031e40f2accc3d1556234500
+    locks: [ with-our-stack ]
+    source: { decision: D-048 }
+    as: { role: type, name: DeliveryType, layer: vocabulary, open: false }
+  - ir: sentence:5.9:c0a264aa
+    digest: 51de1e8673b1f717c5303af6a78b0f141cc610bbb9bca5ca8d70a803825d5504
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:780639bf
+    digest: 55542c6dd7f7fdc24abe2f97fe515ace1678a8b281cdaf78fc4dd94f874fd2d9
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:3e43b1df
+    digest: 575064a27f216240caf391094d98eedf3a585061c22044dcf1af7c2f4e28eda8
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:b939f4ba
+    digest: d4d9029d606b245609659013a589505f903b905a160e730db23fe9fa0834d51e
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:f32957d9
+    digest: ed11197f4b973bff7851e63f06fbb17b759504df9f1dc6d45507e9562a8ffa5e
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:ad89958c
+    digest: f9d28a8ba6aa2a72af788627552803327e1fe8f91a0416261a5279c85910cb08
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:2027aafb
+    digest: 4852f70ff122a9f76d4e8f88b720e4e02b4b8374c973b1b32352873927bb9f50
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:724b38e9
+    digest: 625acbdaadca5b24161803a10522347881d80d8389b7226e4b07d798101d838a
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:9082816a
+    digest: 44a8583bab4054964469f15e10fef6ea65b793fff46aeb540d996a24ca8b4bd9
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:3d045cc4
+    digest: 99c8b391ce08f3de9273ad801f220407e2cfc082d6832a617494ffec4a7deaa6
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:2993d991
+    digest: c6ba8782063caa04e97ec1ca406dd22e5e7537a16b3e657669e71cce805778b6
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:b68f43d2
+    digest: d5c41ac5c55d92265fa76c92c5b0075445c6658ce365ada88282d7cc78733f20
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:2ec443b2
+    digest: cf18f5ed5fcfc5eb29a555302ea210978bd105b478931e687f468ed7a110b6ce
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:a5bc48be
+    digest: c7d9d2516893a7adf66a8161a9cf24f80d35c006f397f382563c51ea0c31e442
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:f227911e
+    digest: bc771082617c1ce2c3d4a4322a039d8da90db47c1948799a2a380925516575c6
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:431fd8e8
+    digest: 178ea64e1de3940cce643ebadbb218dbcb3901ce6608a86ea576dfd2d84f96f8
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:6e4adf4e
+    digest: 00c23db3b1ec20f31c3e125db905a3bc5f21725dbb979a1c744a4af8f855dc6b
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:0b6dfc17
+    digest: 88d4e26e68b68014c68289dc5e6e97ae532a203fc78f447ac33ea41dafbd6d51
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.9:b4c4172d
+    digest: e9ce926fbf23950f0c4b845714b8a0d2fec872bef0413331d47b6a2ff18797b5
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.9:ed367af9
+    digest: 58ed8baf9c411cd155db2f060a3792996f3037942635e3499d96bc9126e6bd9f
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.9:5b2d3b90
+    digest: 6aa6280c205a75d04a97dc0defde1321a716323580a28f35c8a0bdaead7b12cc
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.9:f8f81606
+    digest: 15c83c8342c93c68532808ba61c9faef711ed13b643e96aca5a432ee80bf62c0
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.9:01b1b76d
+    digest: d48ca108f96d5e2be948893a78afb9695911088a512987932f6802b25b5b74e3
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }

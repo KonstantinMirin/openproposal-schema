@@ -71,7 +71,9 @@ test("toolchain: a workflow that can skip a step, ignore a failure, or not run o
   assert.deepEqual(checkWorkflow(skipped, pkg, mods), ["step 8 (npm run setup:plaingen) carries an if, which can skip it"]);
   const ignored = workflow.replace("      - run: npm run ci\n", "      - run: npm run ci\n        continue-on-error: true\n");
   assert.notEqual(ignored, workflow);
-  assert.deepEqual(checkWorkflow(ignored, pkg, mods), ["step 10 (npm run ci) carries continue-on-error, which ignores its failure"]);
+  assert.deepEqual(checkWorkflow(ignored, pkg, mods), ["step 11 (npm run ci) carries continue-on-error, which ignores its failure"]);
+  // The proto gates' protoc comes from setup:proto, so a workflow that leaves it out fails.
+  assert.deepEqual(checkWorkflow(workflow.replace("      - run: npm run setup:proto\n", ""), pkg, mods), ["the workflow doesn't run: npm run setup:proto"]);
   assert.deepEqual(checkWorkflow(workflow.replace("      - run: npm run ci\n", "      - run: npm run ci\n        continue-on-error: false\n"), pkg, mods), []);
   const job = workflow.replace("    runs-on: ubuntu-latest\n", "    runs-on: ubuntu-latest\n    if: github.event_name == 'push'\n    continue-on-error: true\n");
   assert.notEqual(job, workflow);

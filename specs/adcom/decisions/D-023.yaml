@@ -1,0 +1,32 @@
+format: 1
+id: D-023
+status: proposed
+kind: gap
+author: agent
+question: "List: Creative Attributes gives code 10 a list of five terms, too long to name the code. What is its short name?"
+covers:
+  - ir: def:list_creativeattributes:10
+    digest: 4a8d97753380014578856e65fa63e88266cc83b79b02a3cf2c579512089a0165
+    quote: "`10` | Shaky, Flashing, Flickering, Extreme Animation, Smileys"
+options:
+  - id: short-name
+    summary: >-
+      Name code 10 "Shaky, Flashing, or Extreme Animation"; the code keeps its
+      row, with Flickering and Smileys, as its description.
+  - id: row-text
+    summary: >-
+      Name the code by its row, cut to a usable length, which drops its last
+      word and keeps the rest.
+chosen: short-name
+rationale: >-
+  The row lists the kinds of motion the attribute covers, and a name can't
+  hold all five. The short name keeps three of them, reading Flickering as
+  close to Flashing, and leaves Smileys, the one term that names no kind of
+  motion, to the description, which keeps the whole row.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L3195"
+names:
+  "def:list_creativeattributes:10": Shaky, Flashing, or Extreme Animation
+feedback: >-
+  Give code 10 of List: Creative Attributes a short name, such as Extreme
+  Animation, and list its kinds of motion in its definition.

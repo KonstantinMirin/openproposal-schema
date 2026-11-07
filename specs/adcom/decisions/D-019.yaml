@@ -1,0 +1,37 @@
+format: 1
+id: D-019
+status: proposed
+kind: gap
+author: agent
+question: "List: Agent Types gives codes 1 and 3 a sentence each, not a name. What is each code's short name, which an implementation uses as a constant?"
+covers:
+  - ir: def:list_agenttypes:1
+    digest: 2323f62752a991504ca02729f56975bb8afc85cbc0bb776bcf29cb8be5b047ce
+    quote: "`1` | An ID which is tied to a specific web browser or device (cookie-based, probabilistic, or other)."
+  - ir: def:list_agenttypes:3
+    digest: 4759f82f507937eeabd3bed4393a2159cb7ca22d2a7d63d256c847481a1b2a94
+    quote: "`3` | A person-based ID, i.e., that is the same across devices."
+options:
+  - id: short-names
+    summary: >-
+      Name code 1 "Browser or device ID" and code 3 "Person-based ID", from
+      the rows' own words; each code keeps its row as its description.
+  - id: row-text
+    summary: >-
+      Name each code by the row's text, as "An ID which is tied to a
+      specific web browser or device", which reads as a sentence.
+chosen: short-names
+rationale: >-
+  A name cut from a sentence ends mid-phrase and reads as a fragment. Code
+  2's row starts with a usable name, "In-app impressions", so only codes 1
+  and 3 need one. The names use the rows' words, so they say nothing the
+  rows don't.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L2822"
+names:
+  "def:list_agenttypes:1": Browser or device ID
+  "def:list_agenttypes:3": Person-based ID
+feedback: >-
+  Give each code of List: Agent Types a short name beside its definition,
+  as List: Feed Types and List: ID Match Methods do, so that every
+  implementation names the codes alike.

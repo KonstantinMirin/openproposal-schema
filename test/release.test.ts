@@ -33,10 +33,10 @@ import {
   validateRelease,
   type Change,
 } from "../src/release.ts";
-import { OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
+import { oldConstructors, oldKernel, OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT, SPEC);
-const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const KERNEL = oldKernel(loadKernel(ROOT, SPEC));
+const CONSTRUCTORS = oldConstructors(loadConstructors(ROOT, SPEC));
 const MAPPINGS = loadMappings(join(SPEC, "mapping"));
 const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 const IR = JSON.parse(readFileSync(join(SPEC, "ir", "spec-ir.json"), "utf8")) as SpecIR;

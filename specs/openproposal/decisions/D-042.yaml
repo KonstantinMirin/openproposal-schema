@@ -8,9 +8,11 @@ covers:
   - ir: key:5.6.1:commitment.flight_start
     digest: f55507bcfbcdffa24a4949e12e1e59a92cef3e9b56f23e47b59e6b8c20f0d4fb
     quote: "`flight_start` | REQUIRED | The buyer's campaign start. Distinct from `valid_from`"
+    locks: [main, with-open-prs]
   - ir: key:5.6.1:commitment.flight_end
     digest: d3bd830cbe989315172dc25dcb1f42bdb93752cfa4f6f0112d4fca784f286345
     quote: "`flight_end` | REQUIRED | The buyer's campaign end. Distinct from `valid_until`"
+    locks: [main, with-open-prs]
 options:
   - id: timestamp
     summary: A point in time, a `Timestamp`, as the offer window's `valid_from` and `valid_until` are.

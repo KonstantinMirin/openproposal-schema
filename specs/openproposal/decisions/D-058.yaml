@@ -1,0 +1,216 @@
+format: 1
+id: D-058
+status: proposed
+kind: gap
+author: agent
+question: "What do the stack's prose lists, examples, and tables that restate or illustrate another definition map to?"
+covers:
+  - ir: sentence:2.4:252a6c4d
+    digest: 56679ec861c880bdf30440f9f2707feae8ebcef630007af2d784d17e498bd61e
+    quote: "Core codes: `validation` | `not_found` | `not_offered` | `unresolved_reference` | `not_committable` | `stale_version` | `expired` | `idempotency_conflict` | `not_eligible` | `record_mismatch`."
+    locks: [with-our-stack]
+  - ir: block:2.4:4/values:1
+    digest: d1e645ca8cce96208a8305a62ff25097316cc62d704ed072ab25056faabed259
+    quote: "`validation` | `not_found` | `not_offered` | `unresolved_reference` | `not_committable` | `stale_version` | `expired` | `idempotency_conflict` | `not_eligible` | `record_mismatch`"
+    locks: [with-our-stack]
+  - ir: block:5.6.5:1/values:1
+    digest: be1308cf74bc16b479553fc60339b6569527e55133519ee4031f435353e82a5f
+    quote: "`CPM` | `CPMV` | `CPC` | `CPCV` | `CPV` | `CPP` | `CPA` | `PLAY` | `TIME` | `FLAT`"
+    locks: [with-our-stack]
+  - ir: block:5.7.1:3/values:1
+    digest: 61f2bec7b245ca2c4dd09f004fb8c233da2b6cc9a906a85d9c553961f13cd590
+    quote: "`viewable_rate` | `completion_rate` | `ivt_rate` | `impressions`"
+    locks: [with-our-stack]
+  - ir: def:1.1:transaction_mechanism.direct_io
+    digest: 6719064a3ec537bc5b530838317ce1016700c0d471c3dc330bdf653721b2280c
+    quote: "`direct_io` | OpenDirect 2.1 · Order + Line | `order`, `line` | An OpenDirect 2.1 ChangeRequest on the booked Line (`lineid`). `change_requests[]` (§ 4.4) records it against the baseline `VersionRef` (§ 2.2). A partial cancel uses ChangeRequestLine, and a full cancel uses Line `?cancel` at the effective date"
+    locks: [with-our-stack]
+  - ir: def:5.9:transaction_mechanism.direct_io
+    digest: 5f5784afd2b6daed909e3421d18e4fb107ad294741de632fde25a9a8e10bf7c2
+    quote: "`direct_io` | No | Any"
+    locks: [with-our-stack]
+  - ir: sentence:5.6.5:60f46987
+    digest: bd6ea67574f983c23ecd46c042e3991b1283007ddc8d2b1fcc48bc095dfdf20e
+    quote: "`unit` is a column here, not a key on the entry."
+    locks: [with-our-stack]
+  - ir: block:5.6.5:2/values:1
+    digest: e00660fef89061aedaae96b661bd32026d740b008fb6f90f56639e1e774132d2
+    quote: "`impressions` | `viewable_impressions` | `clicks` | `completed_views` | `views` | `rating_points` | `actions` | `plays` | `hours` | `days` | `weeks`"
+    locks: [with-our-stack]
+  - ir: rule:5.4:d81bbf40
+    digest: 1958b55e03198e024b5daac389b5fa6659c2b61f619a98bd612e9db18fabe06b
+    quote: A `spec` MAY hold `asset`, a `VocabularyTerm` (§ 2.2) that says what the buyer supplies for the format.
+    locks: [with-our-stack]
+  - ir: block:5.4:4/values:1
+    digest: 6a9b8155781f0d5cae62ec361912d77688319c3949a31cbb655dcd39636b215a
+    quote: "`audio_file` | `video_file` | `image_file` | `markup` | `script`"
+    locks: [with-our-stack]
+  - ir: block:5.4:5/values:1
+    digest: 55440eaa89536a4f4671a1fc72a4cea3a29b68a8e05f3a1a7ba191334747ffe0
+    quote: "`human_only` | `synthetic_permitted`"
+    locks: [with-our-stack]
+  - ir: field:5.7:shortfall_remedy#description/values:1
+    digest: a46ceeb424ccdb43840913451c071279ee6d106418132fa5df63c3872ffbff85
+    quote: "`makegood` | `credit` | `none`"
+    locks: [with-our-stack]
+  - ir: block:4.3.2:10/values:1
+    digest: eac907f1064376194f7d851e51f8f0805d0141dac84ae204d33a87640f7f0644
+    quote: "`published` | `under_review`"
+    locks: [with-our-stack]
+  - ir: block:5.6.2:6/values:1
+    digest: 1851fbb2333a7b52ae3235b3f5a2a45c32e05c3d7f92701a418b6eae6e6bb607
+    quote: "`declined` | `expired` | `released`"
+    locks: [with-our-stack]
+  - ir: code:2.5:1
+    digest: 3d896e1951745285ef66a642e6d4755642584cc20a3ded40efcda3f42d82aca8
+    quote: |-
+      ext:
+        examplepub.example: { placement_code: "BD-ROS-300x250-Q4" }
+    locks: [with-our-stack]
+  - ir: code:5.5:1
+    digest: 4ae1940d6b0d5e5e5f8542aeef47eda510e75d995f1a6d97d226e1645971409c
+    quote: |-
+      accepted_exclusions:
+        types:
+          domains:    { enforcement: pre_serve, max_entries: 5000 }
+          apps:       { enforcement: pre_serve }
+          categories: { enforcement: pre_serve }
+          keywords:   { enforcement: best_effort, max_entries: 500 }
+        verification: ["integralads.com", "doubleverify.com"]
+
+      exclusions:
+        domains:    ["example-gambling.example"]
+        apps:       [{ store: roku_channel_store, bundle: "123456" }]
+        categories: [{ taxonomy: 7, ids: ["181"] }]         # IAB Content Taxonomy 3.0: Casinos & Gambling
+        keywords:   { url: "https://agency-a.example/lists/keywords-2026-10.json",   # a long list, by reference
+                      digest: "sha256:ca833e169e39bcaae9fc5b74f8dd3cfddf5b1c4158b6bc19bb3ae9112a347b06" }
+    locks: [with-our-stack]
+  - ir: code:2:1
+    digest: 165b0a3062398807b674d42cbe1aefa247e87670d42382cdebe7a615cdb95ca2
+    quote: |-
+      Proposal          → the merchandising pitch, identity, lifecycle state and assent
+      packages[]        → optional: sets of line items sold only together
+      line_items[]      → buyable units, each in exactly one channel
+    locks: [with-our-stack]
+  - ir: code:4.1.1:1
+    digest: 5f380bbe329be6760e05e67d76269b20e297fb3c34b9bf6502f106d8f5b794d7
+    quote: |-
+      $.version
+      $.status
+      $.assent
+      $.negotiation_history
+      $.change_requests
+      $.best_for
+      $.not_suitable_for
+      $.seasonality_notes
+      $.line_items[*].status
+      $.line_items[*].availability
+      $.line_items[*].addressable_scale
+      $.line_items[*].assets
+      $.line_items[*].buyer_supplied.expected_match_rate
+      $.line_items[*].buyer_supplied.segments
+      $.line_items[*].buyer_supplied.suppression_list
+      $.line_items[*].pricing[*].min_rate
+      $.line_items[*].hold
+      $.line_items[*].commitment.derived_units
+      $.line_items[*].external_references
+    locks: [with-our-stack]
+  - ir: code:5.6:1
+    digest: b6719071729d88ce1385f42bb24611bb3fa30ba1d809aa9722dc696fe478de90
+    quote: agreed_rate = (list_rate + sum of delta_cpm) × product of (1 + delta_fraction)
+    locks: [with-our-stack]
+  - ir: key:4.1:RequestedValue.unit_bounds
+    digest: e650773e444b150799cb1892373b724aeba75f9354454c2f995a8605bd5b770a
+    quote: "`unit_bounds` | OPTIONAL | A `pricing[].unit_bounds`"
+    locks: [with-our-stack]
+  - ir: def:1.1:transaction_mechanism.programmatic_guaranteed
+    digest: d0907a40fbf30f89cbc45fa1867a470cdb4be901a86c4053d80178954176760f
+    quote: "`programmatic_guaranteed` | OpenDirect 2.1 · Order + Line, as the reservation; Deals API 1.0 · `Deal` | `order`, `line`, `deal` | The reservation: as for `direct_io`. The deal: as for `preferred_deal`"
+    locks: [with-our-stack]
+  - ir: def:1.1:transaction_mechanism.preferred_deal
+    digest: 13885e3c1566ef22b1eadfbb8bd29c41815ab7026a4c06054309a0d74b7e888b
+    quote: "`preferred_deal` | Deals API 1.0 · `Deal` + OpenRTB 2.6 · `Deal` | `deal` | By agreement between implementers, against the same baseline. A full stop is `sellerstatus` 4 (archived)"
+    locks: [with-our-stack]
+  - ir: def:1.1:transaction_mechanism.private_auction
+    digest: 6c96325ef1ab338a3f33bb6865737d7a135a4ea060c599dec9545c8a7c8aa07d
+    quote: "`private_auction` | Deals API 1.0 · `Deal` + OpenRTB 2.6 · `Deal` | `deal` | As for `preferred_deal`"
+    locks: [with-our-stack]
+  - ir: def:5.9:transaction_mechanism.programmatic_guaranteed
+    digest: 5a49080c9ce661d70f9588ddd7c96393f0bd02c44dd81a69baffe4fe5bf33d65
+    quote: "`programmatic_guaranteed` | Yes | `guaranteed`, `share_of_voice`"
+    locks: [with-our-stack]
+  - ir: def:5.9:transaction_mechanism.preferred_deal
+    digest: a2d093e2a34fd6b154293512e665088c51673008e55da801194a0191d5b1a01e
+    quote: "`preferred_deal` | Yes | `non_guaranteed`"
+    locks: [with-our-stack]
+  - ir: def:5.9:transaction_mechanism.private_auction
+    digest: 784a31ee3d864d65ab3180553573a302c02b980104d28a0f0d5de42dec75c292
+    quote: "`private_auction` | Yes | `non_guaranteed`"
+    locks: [with-our-stack]
+  - ir: def:5.6.5:cost_method.TIME#unit/values:1
+    digest: f15f32c47bd59a324c9a71d0c013c5059f64bb924c8499381831d6e9de1a19fa
+    quote: "`hours` | `days` | `weeks`"
+    locks: [with-our-stack]
+  - ir: block:4.3.2:11/values:1
+    digest: 22eee0f1940429c81bb694a33e8fd031c7af80a2133dbcc56bfd530ab569c8b4
+    quote: "`published` | `under_review` | `sold_out`"
+    locks: [with-our-stack]
+  - ir: block:4.3.2:13/values:1
+    digest: 8f08bfadde868fb12618423e87a98d0bed7272cae472d5cc9b52f4761c2fc31d
+    quote: "`published` | `under_review` | `sold_out`"
+    locks: [with-our-stack]
+  - ir: block:5.6.2:12/values:1
+    digest: 61fd0d3f35eca1e0a3f3fcf2df815f66d6b1d9efde63a2b83b10b4623ab49c9a
+    quote: "`requested` | `held`"
+    locks: [with-our-stack]
+  - ir: code:5.5:2
+    digest: fc4f88183448190871232404a95f4fcdeee050aa36bbe78fc23fcfe915f70b1d
+    quote: |-
+      geo:
+        allowed: ["US"]
+        default: { include: ["US"] }
+        value:   { include: ["US"], exclude: ["US-TX"] }   # the buyer's write
+    locks: [with-our-stack]
+  - ir: code:5.5:3
+    digest: 18292d652dadcb8ef88fa92c5cfc7734db7390a86870ee7a622bf08ebfb2852d
+    quote: |-
+      markets:
+        available:  ["SG", "TH", "ID", "MY"]
+        included:   ["SG", "TH"]
+        deltas:     { "ID": { delta_cpm: 18.00 }, "MY": { delta_cpm: 21.00 } }
+        max_select: 4
+        selected:   ["SG", "ID"]   # the buyer's write: runs in these two, and pays the ID delta
+    locks: [with-our-stack]
+  - ir: code:5.5:4
+    digest: acaa5cdfd95ac89fc5020e24d1769c70cd2ba1e5cd869ca713c1089f147a5fc2
+    quote: |-
+      # Late fringe, 23:00 to 01:00, Monday night into Tuesday
+      daypart:
+        allowed:
+          - { days: [monday],  start: "23:00", before: "24:00" }
+          - { days: [tuesday], start: "00:00", before: "01:00" }
+        default:
+          include:
+            - { days: [monday],  start: "23:00", before: "24:00" }
+            - { days: [tuesday], start: "00:00", before: "01:00" }
+      time_zone: "America/New_York"
+    locks: [with-our-stack]
+options:
+  - id: restate-or-illustrate
+    summary: "A list or a table that writes the terms of a list the text defines elsewhere restates it, which that list's schema expresses: the core error codes, `cost_method`'s terms, the metrics, and the `transaction_mechanism` tables. A list of the values a transition moves between, a code block that shows one field or a formula, a `unit` column's terms, a list of the keys of an `Object` another definition sets, and a field's core terms for options typed `VocabularyTerm` are informative. `RequestedValue.unit_bounds` repeats the requestable field's form, a `Range[Integer]`, named after `RequestedValue`."
+  - id: vocabularies
+    summary: "Each list is a vocabulary of its own."
+chosen: restate-or-illustrate
+rationale: >-
+  § 2.6 says a list is written once and other mentions point to it. The core
+  error codes repeat the `code` table, the `cost_method` terms its table, the
+  metrics the `metric` table, and both `transaction_mechanism` tables
+  `TransactionMechanism`'s list. The transition lists name values of `status`
+  and `hold.status`; the YAML blocks show one field each; the § 4.1.1 block
+  names paths a record leaves out; and the § 5.6 block is a formula. `unit` is
+  a column, not a key on the entry; `asset` and `voice` are keys of a
+  `FormatSpec`'s `spec`, an `Object` another definition sets; and
+  `shortfall_remedy` holds `Selectable[VocabularyTerm]`, whose options the
+  text types as terms.
+feedback: >-
+  None needed.

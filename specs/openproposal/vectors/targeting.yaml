@@ -28,3 +28,15 @@ rules:
     invalid:
       - value: { exclusions_accepted: { types: [domain] }, exclusions: { keyword: [gambling] } }
       - value: { exclusions: { domain: [casino.example] } }
+
+  # `time_zone` REQUIRED when `daypart` or `frequency_cap` is present (D-060).
+  - rule: rule:5.5:4a35bd89
+    digest: cef4b7bac5cf2c1f77f18ddfffd62ad8c8669e856a8b264427e218ff261c98ee
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["field:5.5:time_zone"]
+    valid:
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}}}
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}, "frequency_cap": {"count": {"min": 1, "max": 6, "default": 3, "value": 4}, "per": "listener", "period": "day"}, "time_zone": "America/New_York"}}
+    invalid:
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}, "frequency_cap": {"count": {"min": 1, "max": 6, "default": 3, "value": 4}, "per": "listener", "period": "day"}}}

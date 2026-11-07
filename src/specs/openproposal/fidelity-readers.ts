@@ -246,6 +246,13 @@ export function readConstraints(ir: SpecIR, lists?: Lists, readings: Reading[] =
   }
 
   /** Where a value list's values sit: its row's value, a selectable field's `available[]` items, or an inline object's member. */
+  function selectable(t: TypeExpr | null | undefined): boolean {
+    if (!t) return false;
+    if (t.kind === "apply") return t.name === "Selectable";
+    if (t.kind !== "named") return false;
+    const name = t.name;
+    return [...ir.sentences, ...ir.statements].some((x) => x.text.startsWith(`\`${name}\` holds the keys of \`Selectable[`));
+  }
   function valueAt(v: ValueList): { at: SpecLocation; items: boolean }[] | string {
     if (v.origin === "prose") return "a value list in prose, whose subject the IR doesn't name";
     if (v.origin === "inline_object") {
@@ -263,7 +270,8 @@ export function readConstraints(ir: SpecIR, lists?: Lists, readings: Reading[] =
     if (rows.length === 0) return "a value list in a row the oracle can't place";
     if (v.subject !== null && !(v.subject.relation === "from" && v.subject.identifier === "available[]")) return `a value list whose subject is "${v.subject.identifier}"`;
     return rows.map((r) => {
-      if (v.subject !== null) return { at: { root: r.root, path: r.segments, member: seg("available", true) }, items: true };
+      // A selectable field's list is of its options, in `available[]`: a `Selectable[T]` row, or one of a type that holds its keys (the stack's § 3.1).
+      if (v.subject !== null || selectable(r.type)) return { at: { root: r.root, path: r.segments, member: seg("available", true) }, items: true };
       const last = r.segments.at(-1)!;
       return { at: { root: r.root, path: r.segments.slice(0, -1), member: last }, items: last.array || r.type?.kind === "array" };
     });
@@ -421,7 +429,9 @@ export function readConstraints(ir: SpecIR, lists?: Lists, readings: Reading[] =
         continue;
       }
       const root = { owner: f.owner } as const;
-      const members: [PathSegment[], string, unknown][] = isMap(value) ? Object.entries(value).map(([k, x]) => [[seg(name)], k, x]) : [[[], name, value]];
+      // A map's keys, as `exclusions`' `domains` under `Map[ExclusionType, ExclusionList]`, are values, not members, so the field's value is the example.
+      const map = f.type.parsed?.kind === "apply" && f.type.parsed.name === "Map";
+      const members: [PathSegment[], string, unknown][] = isMap(value) && !map ? Object.entries(value).map(([k, x]) => [[seg(name)], k, x]) : [[[], name, value]];
       for (const [path, member, x] of members) {
         const text = `${[...path.map((s) => s.name), member].join(".")}: ${JSON.stringify(x)}`;
         if (PLACEHOLDER.test(JSON.stringify(x))) {
@@ -612,6 +622,8 @@ const FORMATTED = new Set(["Timestamp", "Offset"]);
 export function hasStatedType(v: unknown, t: TypeExpr): boolean {
   if (t.kind === "union") return t.members.some((m) => hasStatedType(v, m));
   if (t.kind === "array") return Array.isArray(v) && v.every((x) => hasStatedType(x, t.items));
+  // A type the text names, as the stack's `Party`, states its form in its own definition, which the row doesn't restate.
+  if (t.kind === "named" || t.kind === "apply" || t.kind === "param") return true;
   const j = jsonType(v);
   switch (t.name as ScalarType) {
     case "String":
@@ -632,7 +644,7 @@ export function hasStatedType(v: unknown, t: TypeExpr): boolean {
 }
 
 /** The scalar names a type's values take, a list's by its items. */
-const scalarsOf = (t: TypeExpr): string[] => (t.kind === "scalar" ? [t.name] : t.kind === "array" ? scalarsOf(t.items) : t.members.flatMap(scalarsOf));
+const scalarsOf = (t: TypeExpr): string[] => (t.kind === "scalar" ? [t.name] : t.kind === "array" ? scalarsOf(t.items) : t.kind === "union" ? t.members.flatMap(scalarsOf) : []);
 
 /**
  * Values that a stated type rules out: another JSON type for each member, a
@@ -641,6 +653,8 @@ const scalarsOf = (t: TypeExpr): string[] => (t.kind === "scalar" ? [t.name] : t
  */
 export function wrongValues(t: TypeExpr): unknown[] {
   if (t.kind === "array") return ["x", ...wrongValues(t.items).filter((x) => !Array.isArray(x)).slice(0, 1).map((x) => [x])];
+  // A type the text names, as the stack's `Instant`, states its form in its own definition, which the row doesn't restate.
+  if (t.kind === "named" || t.kind === "apply" || t.kind === "param") return [];
   const members = t.kind === "union" ? t.members : [t];
   const candidates = members.flatMap((m) => (m.kind === "scalar" ? (WRONG[m.name] ?? []) : wrongValues(m)));
   const names = members.flatMap(scalarsOf);

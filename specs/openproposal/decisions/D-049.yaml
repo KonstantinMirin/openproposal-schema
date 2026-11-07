@@ -1,0 +1,56 @@
+format: 1
+id: D-049
+status: proposed
+kind: gap
+author: agent
+question: "Where the stack's text defines a type the kernel already holds under that name in another form, as § 2.2's `Digest`, which form does the stack's schema take?"
+covers:
+  - ir: def:2.2:Digest
+    digest: 3d8eea53cc986aa9993abb94385caee4c6baba8fdf1ff4c7f9a027f7c2202e58
+    quote: "`Digest` | String of 71 characters: `sha256:` followed by the 64 lowercase hexadecimal characters of the SHA-256 of its input | The value carries the algorithm, and a field name never names it. `sha256` is the only algorithm in this version. Each field that holds a `Digest` states its input"
+    locks: [with-our-stack]
+  - ir: def:2.2:Url
+    digest: ac1d3962a8fd84f62e1061d42d1e6d0741182bbc4679acf12ea6fa5e99c38ad3
+    quote: "`Url` | String: an absolute `http` or `https` URL (RFC 3986) | A location a client can fetch"
+    locks: [with-our-stack]
+  - ir: def:2.2:Duration
+    digest: b8964f62205468b2e358f311497bf7bac3b639dddf0eeead1ce15f5526490b06
+    quote: "`Duration` | String: the ISO 8601 grammar of RFC 3339 Appendix A without its week form (`P14D`, not `P2W`) | A length of time. A comparison names its anchor. A length within the playback of an ad or a placement, such as a play, view, read, loop, slot, or refresh, is instead an Integer whose key ends `_s` or `_ms`, except a key imported from another standard, which keeps its spelling (§ 2.6)"
+    locks: [with-our-stack]
+  - ir: def:2.2:Domain
+    digest: d671964da3ca199ac23b95c300f4348400e9cb5e63f6fb483f6fac0c98679265
+    quote: "`Domain` | String: lowercase ASCII, internationalized labels in A-label form (RFC 5890), with no scheme, port, path, or trailing dot | Producers MUST write this form. Consumers MUST compare byte for byte and MUST NOT normalize a value before comparing it. A value read from ads.txt or sellers.json is converted to this form before comparison"
+    locks: [with-our-stack]
+  - ir: def:2.2:Amount
+    digest: 7e43f7cc99e45c463678c46bb4532a1133af9e9fdff68dc37f7ec017ab97f0bb
+    quote: "`Amount` | Number within the limits of § 4.1.1 | Money. It carries no currency: § 5.6 states which one it reads in"
+    locks: [with-our-stack]
+  - ir: def:2.2:Ext
+    digest: dd56e75c1da896153df232a9ce59a6208c8d41fb3c7022fe5383b6c4122ab886
+    quote: "`Ext` | `Map[Domain, Object]` | The extension container. § 2.5 states its rules"
+    locks: [with-our-stack]
+  - ir: sentence:5.4:75612a3e
+    digest: 05d8ff4481454a9e3746c619724bf506cef80e22376841d04065b3f9baf9caa9
+    quote: "`FormatId` is a String: `<channel>/<name>`, where `<channel>` is the line item's `channel`, with no `/` or `@` inside a part."
+    locks: [with-our-stack]
+options:
+  - id: text-edition
+    summary: "The stack's form, as an edition of the type that exists only on the stack's lock, under the name the text gives it, so the other locks keep the kernel's form."
+  - id: kernel-form
+    summary: "The kernel's form on every lock, with the stack's differences recorded as departures."
+  - id: rename
+    summary: "The stack's form under a new name, such as `StackDigest`, beside the kernel's."
+chosen: text-edition
+rationale: >-
+  § 2.2 says one concept has one type, and defines the stack's: `Digest` is
+  `sha256:` and 64 lowercase hexadecimal characters, `Url` is an absolute
+  `http` or `https` URL, `Duration` is RFC 3339 Appendix A without the week
+  form, `Domain` is lowercase A-labels with no scheme, port, path, or trailing
+  dot, `Amount` is a Number within § 4.1.1's limits, `Ext` is `Map[Domain,
+  Object]`, and § 5.4 writes `FormatId` with no `/` or `@` inside a part. The
+  kernel's types of those names take other forms, which the other locks' texts
+  rest on. An edition carries the stack's form on the stack's lock alone, so
+  each text governs its own lock, and the stack's types keep the names the
+  text gives them.
+feedback: >-
+  None needed. The stack's § 2.2 defines each form.

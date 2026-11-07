@@ -1,0 +1,43 @@
+format: 1
+id: D-059
+status: proposed
+kind: gap
+author: agent
+question: "What is an `ExclusionList`, the value of each `exclusions` key?"
+covers:
+  - ir: sentence:5.5:7438acf7
+    digest: 4ec7da4f7e86b56e43fd57ad49fa21bbb25793fdeff7c3114c55bce5771e1571
+    quote: "`ExclusionList` is an array of entries, or a `DocumentRef` (§ 2.2) to a JSON array of them."
+    locks: [with-our-stack]
+  - ir: def:5.5:exclusions.domains
+    digest: 76b04cb891b3e9d15e630f42b72ab1c5b38742e5dde5a6b337a0aa9f388c94a2
+    quote: "`domains` | `Domain` | A domain. It covers only itself, not its subdomains"
+    locks: [with-our-stack]
+  - ir: def:5.5:exclusions.apps
+    digest: e2e756c26cfeabf02797f48fd83e9d10c93db5f2d8f282b901013aacfe788448
+    quote: "`apps` | `AppId` | An app (§ 5.2.5). A seller MUST reject an entry whose `store` it doesn't know, rather than apply it across stores, with `validation`"
+    locks: [with-our-stack]
+  - ir: def:5.5:exclusions.categories
+    digest: c1247ebdca722641ead3b70561ef223b13375432d36b92740aa686da257dd381
+    quote: "`categories` | `TaxonomyCodes` | `taxonomy` per AdCOM 1.0 List: Category Taxonomies. An id covers only itself, not its descendants"
+    locks: [with-our-stack]
+  - ir: def:5.5:exclusions.keywords
+    digest: 268c9685f8f10b231ed4d440ca610959197e80a26e1d48bd2c95a4fb923f803f
+    quote: "`keywords` | `String` | A keyword"
+    locks: [with-our-stack]
+options:
+  - id: entries-or-reference
+    summary: "A union of a list of entries and a `DocumentRef` to a JSON array of them, where an entry is a string, as a `Domain` or a keyword is, an `AppId`, or a `TaxonomyCodes`, the forms the Entry column gives."
+  - id: per-type
+    summary: "A type per exclusion type, keyed by it."
+chosen: entries-or-reference
+rationale: >-
+  § 5.5 says an `ExclusionList` is an array of entries, or a `DocumentRef` to
+  a JSON array of them, and the Entry cell of an exclusion type's row gives an
+  entry's form: `Domain` for `domains`, `AppId` for `apps`, `TaxonomyCodes`
+  for `categories`, and `String` for `keywords`. `exclusions` is a `Map` from
+  `ExclusionType` to `ExclusionList`, whose values have one type, so an entry
+  is any of those forms, and the extension types an extension term's
+  definition gives fall under them too.
+feedback: >-
+  None needed.

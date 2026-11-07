@@ -1,0 +1,95 @@
+# OpenProposal 3.0 — Example: Audio line item (spec § 6.4)
+line_item_id:   "streaming-audio"
+status:         published
+channel:        audio
+properties:     { available: [{ id: "tune-stream", name: "Tune Stream",
+                                domains: ["tune-stream.example"],
+                                apps: [{ store: apple_app_store, bundle: "000003",
+                                         developer_domain: "tune-stream.example" }],
+                                child_audience: general, seller_relationship: owner,
+                                seller_accounts: [{ asi: "ssp-a.example", sid: "pub-5001" }] }],
+                  included: ["tune-stream"] }
+placement:      { feed: 1 }                 # Music streaming service (1) (§ 5.2.2)
+environments:   { available: ["web_mobile", "app_mobile"],
+                  included:  ["web_mobile", "app_mobile"] }
+formats:        { available: ["audio/host-read-30s", "audio/produced-30s"],
+                  included: ["audio/produced-30s"],
+                  deltas: { "audio/host-read-30s": { delta_cpm: 9.00 } } }
+format_specs:                           # seller-defined: no spec_ref; values illustrative
+  "audio/host-read-30s":
+    spec:
+      asset:           script           # the buyer supplies a script, not an audio file
+      read_length_s:   30
+      language:        en
+      delivery:        pre_recorded
+      script_approval: { rounds: 2, lead_time: "P5D" }
+      voice:           human_only
+      pronunciation_guide: accepted
+  "audio/produced-30s":
+    spec:
+      asset:           audio_file
+      duration:        { nominal_s: 30, tolerance_ms: 500 }
+
+production:
+  available:    [{ id: "seller_built", built_by: seller, lead_time: "P14D" },
+                 { id: "buyer_supplied", built_by: buyer, lead_time: "P0D" }]
+  included:     ["buyer_supplied"]
+  deltas:       { seller_built: { delta_flat: 12000.00 } }
+
+markets:                               # priced by market (§ 5.5)
+  available:    ["US", "CA", "GB"]
+  included:     ["US"]
+  deltas:       { "CA": { delta_cpm: 1.50 }, "GB": { delta_cpm: 3.00 } }
+  max_select:   3
+
+frequency_cap:  { count: { min: 1, max: 6, default: 3 }, period: day, per: listener }
+time_zone:      viewer_local
+
+pricing:
+  - { pricing_id: "audio-cpm-usd", cost_method: CPM, list_rate: 18.00, min_rate: 15.84,
+      price_valid_until: "2026-12-15T23:59:59Z", currency: USD,
+      price_type: 3 }                  # Fixed Price
+
+commitment_bounds: { spend: { min: 5000.00 } }
+
+cancellation_policy:
+  available:
+    - id: "stepped-fee"
+      notice_duration: "P0D"
+      max_share: 1
+      fees:
+        - { before_reference: "P60D", calculation: none }
+        - { before_reference: "P30D", calculation: cancelled, share: 0.25 }
+        - { before_reference: "P7D",  calculation: cancelled, share: 0.50 }
+        - { before_reference: "P0D",  calculation: cancelled, share: 1.00 }
+  included:     ["stepped-fee"]
+  max_select:   1
+
+exclusivity:
+  available:
+    - id: "auto-pod"
+      scope: category
+      categories: { taxonomy: 8, ids: ["1551"] }   # Ad Product Taxonomy 2.0: Vehicles
+      competitors: ["competitor-auto.example"]
+      separation: pod
+    - { id: "sole-stream", scope: sole, separation: inventory }
+  included:     []                                 # no exclusivity in the base rate
+  deltas:       { "auto-pod": { delta_cpm: 4.00 }, "sole-stream": { delta_flat: 25000.00 } }
+  max_select:   1
+
+committed_metrics: [{ metric: completion_rate, level: 0.92, direction: at_least }]
+measurement_source:
+  available:    [{ id: seller-measured, measured_by: seller }]
+  included:     ["seller-measured"]
+controlling_measurement:
+  available:    [{ id: seller-count, counted_by: seller,
+                   discrepancy_threshold: 0.10, final_after: "P30D" }]
+  included:     ["seller-count"]
+  max_select:   1
+visibility:        public
+transaction_mechanism:
+  available:  [{ id: preferred_deal, delivery_type: non_guaranteed }]
+  included:   ["preferred_deal"]
+  max_select: 1
+serving_mode:      dai
+deal_origin:       "ssp-a.example"

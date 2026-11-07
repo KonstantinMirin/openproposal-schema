@@ -14,10 +14,10 @@ import { loadKernel } from "../src/kernel.ts";
 import { loadDecisions, loadMappings } from "../src/mapping.ts";
 import { resolveModel, type ModelDoc } from "../src/model.ts";
 import { ajvProblems, oracleProblems, spawnOracle } from "../src/schema-check.ts";
-import { OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
+import { oldConstructors, oldKernel, OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT, SPEC);
-const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const KERNEL = oldKernel(loadKernel(ROOT, SPEC));
+const CONSTRUCTORS = oldConstructors(loadConstructors(ROOT, SPEC));
 const MAPPINGS = loadMappings(join(SPEC, "mapping"));
 const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 const ir = (dir: string) => JSON.parse(readFileSync(join(SPEC, dir, "spec-ir.json"), "utf8")) as SpecIR;
@@ -235,14 +235,14 @@ test("the model fails a vocabulary that mixes marker rows with payload terms", (
   const mappings = structuredClone(MAPPINGS);
   const kernel = mappings.find((m) => m.module === "kernel")!;
   const term = kernel.entries.find((e) => e.as.role === "term" && e.ir === "marker:3:derived")!;
-  const moved = mappings.flatMap((m) => m.entries).find((e) => e.as.role === "term" && !e.ir.startsWith("marker:"));
+  const moved = mappings.flatMap((m) => m.entries).find((e) => e.as.role === "term" && !e.ir.startsWith("marker:") && (e.locks === undefined || e.locks.some((l) => l !== "with-our-stack")));
   assert.ok(moved && moved.as.role === "term");
   term.as = { ...term.as, vocabulary: moved.as.vocabulary } as typeof term.as;
   const r = resolveModel({ ir: ir("ir"), lock: "main", mappings, decisions: DECISIONS, kernel: KERNEL, constructors: CONSTRUCTORS });
   assert.match(r.problems.join("\n"), /mixes § 3 marker rows with payload terms/);
 });
 
-test("conditions on one sibling chain through else, and conditions on two siblings fail, since they would need allOf", () => {
+test("conditions on one sibling chain through else, and presence conditions on two siblings keep the sibling with more and leave the others, since they would need allOf", () => {
   const model = structuredClone(MAIN);
   const c = model.types.find((t) => t.name === "Commitment");
   assert.ok(c && c.kind === "object");
@@ -258,8 +258,8 @@ test("conditions on one sibling chain through else, and conditions on two siblin
   assert.ok(li && li.kind === "document");
   li.properties.placement = { ...li.properties.placement!, presence: "conditional", condition: "REQUIRED when `channel = video`" };
   const e = emitSchemas(prs, PRS_DIR, OP_SCHEMA);
-  assert.equal(e.problems.length, 1, e.problems.join("\n"));
-  assert.match(e.problems[0]!, /conditions on channel and terms_acceptance_required need one if \/ then each.*"allOf"/);
+  assert.deepEqual(e.problems, []);
+  assert.match(e.conditions.left.join("\n"), /the schema states the conditions on "\w+", and an if \/ then on "\w+" beside them needs "allOf"/);
 });
 
 test("the emitter fails on a condition whose value its sibling's vocabulary lacks", () => {

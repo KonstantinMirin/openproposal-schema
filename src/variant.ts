@@ -71,6 +71,8 @@ export interface Rewrite {
   in: string;
   from: string;
   to: string;
+  /** The locks whose descriptions hold the text; every lock when absent. */
+  locks?: string[];
 }
 
 /** A value with every string's `from` replaced by `to`, and how many strings held it. */
@@ -225,6 +227,7 @@ export function applyVariant(variant: Variant, inputs: { kernel: Kernel; constru
   let rewrittenMappings = mappings;
   for (const s of variant.switches) {
     for (const r of s.rewrite ?? []) {
+      if (!inScope(r.locks, lock)) continue;
       let count = 0;
       kernel = { ...kernel, primitives: kernel.primitives.map((p) => (p.name === r.in ? ((x) => ((count += x.count), x.value))(rewritten(p, r)) : p)) };
       constructors = { ...constructors, constructors: constructors.constructors.map((c) => (c.name === r.in ? ((x) => ((count += x.count), x.value))(rewritten(c, r)) : c)) };

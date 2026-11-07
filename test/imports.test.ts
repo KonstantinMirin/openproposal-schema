@@ -19,7 +19,8 @@ test("a list a spec imports comes from the registry's committed outputs: its cod
   assert.deepEqual(api.vendor, { from: 500, label: "Vendor-specific codes" });
   assert.deepEqual(api.registry, { schema: LISTS_ID, def: "ApiFramework" });
   const plcmt = lists.find((l) => l.name === "List: Plcmt Subtypes - Video")!;
-  assert.deepEqual(plcmt.codes.slice(0, 3), [{ code: 1, label: "Instream" }, { code: 2, label: "Accompanying Content" }, { code: 3, label: "Interstitial" }]);
+  // Each code also carries the name the registry's schema gives it.
+  assert.deepEqual(plcmt.codes.slice(0, 3), [{ code: 1, label: "Instream", title: "Instream" }, { code: 2, label: "Accompanying Content", title: "Accompanying Content" }, { code: 3, label: "Interstitial", title: "Interstitial" }]);
   assert.equal(plcmt.registry!.def, "PlcmtSubtypeVideo");
 });
 

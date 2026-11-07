@@ -14,7 +14,7 @@ test("the repository's root holds specs/, and each spec's folder holds its locks
   assert.equal(REPO_ROOT, ROOT);
   assert.deepEqual(specNames(), ["adcom", "dealsapi", "openproposal"]);
   assert.equal(specRoot(), SPEC);
-  assert.deepEqual(lockFiles(SPEC), [join(SPEC, "spec-input", "spec-lock.yaml"), join(SPEC, "spec-input", "with-open-prs.lock.yaml")], "the default lock first");
+  assert.deepEqual(lockFiles(SPEC), [join(SPEC, "spec-input", "spec-lock.yaml"), join(SPEC, "spec-input", "with-open-prs.lock.yaml"), join(SPEC, "spec-input", "with-our-stack.lock.yaml")], "the default lock first");
   // The default lock comes first even where another lock's name sorts before it.
   const tmp = mkdtempSync(join(tmpdir(), "locks-"));
   mkdirSync(join(tmp, "spec-input"));

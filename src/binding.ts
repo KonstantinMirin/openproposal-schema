@@ -49,6 +49,7 @@ export const BOUND_PATHS: Record<KernelFile, readonly string[]> = {
   constructors: [
     "constructors[].decision",
     "constructors[].decision_locks",
+    "constructors[].locks",
     "constructors[].sources.spec",
     "constructors[].fallback.statement",
     "constructors[].fallback.decision",
@@ -60,6 +61,7 @@ export const BOUND_PATHS: Record<KernelFile, readonly string[]> = {
     "constructors[].rules[].source.decision_locks",
     "parts[].decision",
     "parts[].decisions",
+    "parts[].locks",
     "parts[].sources.spec",
     "parts[].rules[].source.spec",
     "parts[].rules[].source.decision",
@@ -83,7 +85,8 @@ const isMap = (v: unknown): v is Json => v !== null && typeof v === "object" && 
 /** How a list item is named: by its `name`, its `id`, or, for a shared structure, its concepts. */
 export const itemKey = (v: unknown): string | null => {
   if (!isMap(v)) return null;
-  if (typeof v.name === "string") return v.name;
+  // An edition of a type, as the stack's `Digest`, is named by its type's name and its edition.
+  if (typeof v.name === "string") return typeof v.edition === "string" ? `${v.name}@${v.edition}` : v.name;
   if (typeof v.id === "string") return v.id;
   if (Array.isArray(v.concepts)) return v.concepts.join("+");
   return null;
@@ -134,7 +137,7 @@ export function mergeBinding(def: unknown, bind: unknown, at: string): unknown {
       }
       // The key that names the item is the kernel's; the rest is the binding's.
       const naming = ["name", "id", "concepts"].find((k) => k in (b as Json))!;
-      const { [naming]: _named, ...rest } = b as Json;
+      const { [naming]: _named, edition: _edition, ...rest } = b as Json;
       out[n] = mergeBinding(out[n], rest, `${at}[${key}]`);
     }
     return out;
@@ -209,7 +212,7 @@ export function unboundIn(doc: unknown, paths: readonly string[]): string[] {
     }
     const naming = "name" in v ? "name" : "id" in v ? "id" : "concepts" in v ? "concepts" : null;
     if (naming === null) out.push(`${at} (no name, id, or concepts to find it by)`);
-    const { [naming ?? ""]: _named, ...rest } = v;
+    const { [naming ?? ""]: _named, edition: _edition, ...rest } = v;
     // An item the spec's text never uses is absent from its kernel, and says so alone.
     if (rest.absent === true && Object.keys(rest).length === 1) return;
     if ("absent" in rest) out.push(`${at}.absent (an absent item gives nothing else, and absent is true)`);

@@ -179,10 +179,10 @@ test("the pipeline figure is inline SVG in a wide and a tall layout, each titled
 
 test("the files page marks each build's SDK tree secondary, as written the default, and the How it's built page explains the SDK types", () => {
   const files = at("downloads.html").toString("utf8");
-  for (const [tree, kind] of [["sdk/", "the default"], ["sdk/with-open-prs/", "the default"], ["sdk/proposed/", "an opt-in"], ["sdk/proposed/with-open-prs/", "an opt-in"]] as const) {
+  for (const [tree, kind] of [["sdk/", "the default"], ["sdk/with-open-prs/", "the default"], ["sdk/with-our-stack/", "the default"], ["sdk/proposed/", "an opt-in"], ["sdk/proposed/with-open-prs/", "an opt-in"], ["sdk/proposed/with-our-stack/", "an opt-in"]] as const) {
     assert.ok(files.includes(`as ${kind} SDK tree, <code>${tree}</code>`), tree);
   }
-  assert.equal((files.match(/<h3>SDK types <span class="tag">Secondary<\/span><\/h3>/g) ?? []).length, 4);
+  assert.equal((files.match(/<h3>SDK types <span class="tag">Secondary<\/span><\/h3>/g) ?? []).length, 6);
   const method = at("how-it-is-built.html").toString("utf8");
   assert.ok(method.includes('<a href="#sdk">The SDK types</a>'));
   for (const s of ["<code>sdk/proposed/</code>", "<code>SCHEMA_RELEASE</code>", "<code>Channels.CTV</code>", 'mode="receive"', "<code>dump_json</code>"]) assert.ok(method.includes(s), s);
@@ -216,8 +216,8 @@ test("the whole site gives AdCOM, a registry of lists with no departures and no 
   assert.doesNotMatch(at("map.html"), /aria-label="Variant"/);
   assert.match(at("decisions/index.html"), /Points the text leaves open/);
   assert.match(at("examples.html"), /<td data-label="Example"><code>1<\/code><\/td>/);
-  // OpenProposal cites four lists, and the Deals API Device Types, which OpenProposal cites too, and Category Taxonomies.
-  assert.match(at("registry.html"), /5 of them are cited by another specification on this site/);
+  // OpenProposal cites four lists on the old locks and more with the stack, and the Deals API Device Types, which OpenProposal cites too, and Category Taxonomies.
+  assert.match(at("registry.html"), /12 of them are cited by another specification on this site/);
   assert.match(at("registry.html"), /href="\.\.\/dealsapi\/map\.html#!\/type\/CategoryTaxonomy\?lock=main&variant=as-written/);
   assert.match(at("registry.html"), /href="\.\.\/openproposal\/map\.html#!\/type\/ApiFramework\?lock=with-open-prs&variant=as-written/);
   // A line of a merged text is linked where its PR or main wrote it, and named by the line the link opens at.

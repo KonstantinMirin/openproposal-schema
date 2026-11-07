@@ -1,0 +1,113 @@
+# OpenProposal 3.0 — Example: Live event series line item (spec § 6.11)
+# Illustrative only. If the series ends in five games, Games 6 and 7 deliver
+# nothing and a selected Game 7 delta_flat is not owed. The commitment still
+# applies across the games that air (§ 5.2.9).
+line_item_id:   "playoffs-2026-ctv"
+status:         published
+channel:        ctv
+properties:
+  available:
+    - id: "sports-app"
+      apps:
+        - { store: roku_channel_store, bundle: "000001",
+            store_url: "https://channelstore.roku.com/details/000001/sports-app",
+            developer_domain: "sports-app.example" }
+      child_audience: general
+      seller_relationship: owner
+      seller_accounts: [{ asi: "ssp-a.example", sid: "pub-2001" }]
+  included: ["sports-app"]
+programs:                     # the content the line item serves within (§ 5.2.9)
+  available:
+    - id: "series-g1"
+      content:
+        series: "Playoffs 2026"
+        title: "Team A vs Team B, Game 1"
+        network: { id: "example-network", name: "Example Network" }
+        live: 1               # scheduled broadcast
+        realtime: 1           # happening in real time, so a replay does not match
+      schedule: { scheduledstart: "2026-12-01T00:00:00Z", scheduledend: "2026-12-01T03:00:00Z",
+                  flexibleend: 1, eventstatus: 1 }   # flexible end; scheduled
+    - id: "series-g2"
+      content:
+        series: "Playoffs 2026"
+        title: "Team A vs Team B, Game 2"
+        network: { id: "example-network", name: "Example Network" }
+        live: 1               # scheduled broadcast
+        realtime: 1           # happening in real time, so a replay does not match
+      schedule: { scheduledstart: "2026-12-03T00:00:00Z", scheduledend: "2026-12-03T03:00:00Z",
+                  flexibleend: 1, eventstatus: 1 }   # flexible end; scheduled
+    - id: "series-g3"
+      content:
+        series: "Playoffs 2026"
+        title: "Team A vs Team B, Game 3"
+        network: { id: "example-network", name: "Example Network" }
+        live: 1               # scheduled broadcast
+        realtime: 1           # happening in real time, so a replay does not match
+      schedule: { scheduledstart: "2026-12-05T00:00:00Z", scheduledend: "2026-12-05T03:00:00Z",
+                  flexibleend: 1, eventstatus: 1 }   # flexible end; scheduled
+    - id: "series-g4"
+      content:
+        series: "Playoffs 2026"
+        title: "Team A vs Team B, Game 4"
+        network: { id: "example-network", name: "Example Network" }
+        live: 1               # scheduled broadcast
+        realtime: 1           # happening in real time, so a replay does not match
+      schedule: { scheduledstart: "2026-12-07T00:00:00Z", scheduledend: "2026-12-07T03:00:00Z",
+                  flexibleend: 1, eventstatus: 1 }   # flexible end; scheduled
+    - id: "series-g5"
+      content:
+        series: "Playoffs 2026"
+        title: "Team A vs Team B, Game 5"
+        network: { id: "example-network", name: "Example Network" }
+        live: 1               # scheduled broadcast
+        realtime: 1           # happening in real time, so a replay does not match
+      schedule: { scheduledstart: "2026-12-09T00:00:00Z", scheduledend: "2026-12-09T03:00:00Z",
+                  flexibleend: 1, eventstatus: 2 }   # flexible end; tentative
+    - id: "series-g6"
+      content:
+        series: "Playoffs 2026"
+        title: "Team A vs Team B, Game 6"
+        network: { id: "example-network", name: "Example Network" }
+        live: 1               # scheduled broadcast
+        realtime: 1           # happening in real time, so a replay does not match
+      schedule: { scheduledstart: "2026-12-11T00:00:00Z", scheduledend: "2026-12-11T03:00:00Z",
+                  flexibleend: 1, eventstatus: 2 }   # flexible end; tentative
+    - id: "series-g7"
+      content:
+        series: "Playoffs 2026"
+        title: "Team A vs Team B, Game 7"
+        network: { id: "example-network", name: "Example Network" }
+        live: 1               # scheduled broadcast
+        realtime: 1           # happening in real time, so a replay does not match
+      schedule: { scheduledstart: "2026-12-13T00:00:00Z", scheduledend: "2026-12-13T03:00:00Z",
+                  flexibleend: 1, eventstatus: 2 }   # flexible end; tentative
+  included:     ["series-g1", "series-g2", "series-g3", "series-g4"]
+  deltas:       { "series-g7": { delta_flat: 5000.00 } }   # in the committed pricing entry's currency
+  max_select:   7
+environments:   { available: ["ctv"], included: ["ctv"] }
+placement:      { plcmt: 1, ssai: 3 }      # Instream (1); all server-side (3) (§ 5.2.2)
+formats:        { available: ["ctv/instream-30s"], included: ["ctv/instream-30s"] }
+format_specs:
+  "ctv/instream-30s":
+    spec_ref: "registry.example/ctv/instream-30s@1"
+    spec:         { duration: { nominal_s: 30, tolerance_ms: 500 } }
+
+pricing:
+  - { pricing_id: "playoffs-cpm-usd", cost_method: CPM, list_rate: 60.00, price_type: 3,
+      price_valid_until: "2026-11-25T23:59:59Z", currency: USD }
+
+commitment_bounds: { spend: { min: 50000.00 } }
+controlling_measurement:
+  available:    [{ id: seller-count, counted_by: seller,
+                   discrepancy_threshold: 0.10, final_after: "P30D" }]
+  included:     ["seller-count"]
+  max_select:   1
+
+shortfall_remedy:  { available: ["makegood", "credit"], included: ["makegood"] }
+visibility:        public
+transaction_mechanism:
+  available:  [{ id: programmatic_guaranteed, delivery_type: guaranteed }]
+  included:   ["programmatic_guaranteed"]
+  max_select: 1
+serving_mode:      dai
+deal_origin:       "ssp-a.example"

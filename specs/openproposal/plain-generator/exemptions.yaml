@@ -70,6 +70,7 @@ exemptions:
       `.250` as `.250000`, and a lowercase `t` and `z` and the offset
       `-00:00` come back as `T` and `Z`: the same instant or length, but not
       the same JSON value.
+    locks: [main, with-open-prs]
     cases:
       - { label: "corpus Duration#/format baseline", kind: encoding }
       - { label: "corpus Duration#/type baseline", kind: encoding }
@@ -177,8 +178,111 @@ exemptions:
       `true` and `false` as the integers they equal, and coerces the string
       `"1"`, where the schema's `type: integer` rejects each. It rejects
       `2`, `-1`, and `0.5`, as the schema does.
-    locks: [with-open-prs]
+    locks: [with-open-prs, with-our-stack]
     cases:
       - { label: "primitive IntegerFlag invalid vector 3", kind: verdict }
       - { label: "primitive IntegerFlag invalid vector 4", kind: verdict }
       - { label: "primitive IntegerFlag invalid vector 5", kind: verdict }
+  - id: PG-16
+    reason: >-
+      The generator writes no `if` / `then`, as in PG-1, so a member the
+      stack's text requires under a condition on a sibling, such as an assent
+      entry's `ground` or a proposal's `brief_id`, is optional in the class
+      and its absence passes.
+    locks: [with-our-stack]
+    cases:
+      - { label: "corpus AssentEntry#/else/then/required/ground mutant", kind: verdict }
+      - { label: "corpus AssentEntry#/then/required/idempotency_key mutant", kind: verdict }
+      - { label: "corpus Billing#/then/required/cycle_length mutant", kind: verdict }
+      - { label: "corpus ExclusivityOption#/then/required/categories mutant", kind: verdict }
+      - { label: "corpus Fee#/then/required/amount mutant", kind: verdict }
+      - { label: "corpus Hold#/then/required/valid_until mutant", kind: verdict }
+      - { label: "corpus LineItem#/then/required/delivery_counting mutant", kind: verdict }
+      - { label: "corpus PropertyOption#/then/required/child_treatment mutant", kind: verdict }
+      - { label: "corpus Proposal#/then/required/brief_id mutant", kind: verdict }
+  - id: PG-17
+    reason: >-
+      The generator drops `minProperties`, as in PG-2, so the stack's `Delta`,
+      which states at least one key, and a range with no bound pass.
+    locks: [with-our-stack]
+    cases:
+      - { label: "corpus Delta#/minProperties mutant", kind: verdict }
+      - { label: "corpus RequestedUnitBoundsRange#/minProperties mutant", kind: verdict }
+      - { label: "corpus RetentionRange#/minProperties mutant", kind: verdict }
+      - { label: "corpus SpendRange#/minProperties mutant", kind: verdict }
+      - { label: "corpus UnitBoundsRange#/minProperties mutant", kind: verdict }
+  - id: PG-18
+    reason: >-
+      For a string with `format: uri`, the generator writes Pydantic's
+      `AnyUrl` and drops the `pattern` beside it, as in PG-3, so the stack's
+      `HttpsUrl` takes an `http:` URL, and `AnyUrl` strips a trailing newline,
+      as in PG-4, so a URL with one passes.
+    locks: [with-our-stack]
+    cases:
+      - { label: "corpus HttpsUrl#/pattern mutant", kind: verdict }
+      - { label: "primitive HttpsUrl valid vector 1 with a trailing newline", kind: verdict }
+      - { label: "primitive HttpsUrl valid vector 2 with a trailing newline", kind: verdict }
+      - { label: "primitive HttpsUrl invalid vector 1", kind: verdict }
+  - id: PG-19
+    reason: >-
+      For the stack's `Duration`, `format: duration` with a pattern that
+      leaves out the week form, the generator writes Python's `timedelta` and
+      drops the pattern, so `P2W` passes, and Pydantic parses a duration
+      leniently, as in PG-5, so a value the grammar rejects passes. It encodes
+      a `timedelta` in days, as in PG-6, so `PT48H` comes back as `P2D`, `P0D`
+      as `PT0S`, and `P1Y2M3DT4H5M6S` as `P1Y63DT4H5M6S`, months counted as
+      30 days: not the same JSON value, and for months not the same length.
+    locks: [with-our-stack]
+    cases:
+      - { label: "corpus Duration#/pattern mutant", kind: verdict }
+      - { label: "primitive Duration valid vector 2", kind: encoding }
+      - { label: "primitive Duration valid vector 3", kind: encoding }
+      - { label: "primitive Duration valid vector 4", kind: encoding }
+      - { label: "primitive Duration invalid vector 1", kind: verdict }
+      - { label: "primitive Duration invalid vector 5", kind: verdict }
+      - { label: "primitive Duration invalid vector 6", kind: verdict }
+      - { label: "primitive Duration invalid vector 7", kind: verdict }
+  - id: PG-20
+    reason: >-
+      For the stack's `Instant`, `format: date-time` with a pattern that takes
+      whole seconds and `Z` alone, the generator writes Python's `datetime`
+      and drops the pattern, as in PG-13, so a fraction of a second or another
+      offset passes, and Pydantic parses a JSON number as a Unix time, as in
+      PG-5.
+    locks: [with-our-stack]
+    cases:
+      - { label: "corpus Instant#/pattern mutant", kind: verdict }
+      - { label: "corpus Instant#/type mutant", kind: verdict }
+      - { label: "primitive Instant invalid vector 1", kind: verdict }
+      - { label: "primitive Instant invalid vector 2", kind: verdict }
+      - { label: "primitive Instant invalid vector 3", kind: verdict }
+      - { label: "primitive Instant invalid vector 6", kind: verdict }
+  - id: PG-21
+    reason: >-
+      With strict types, Pydantic's strict `int` rejects an integral float
+      such as `3.0`, which JSON Schema counts as an integer, as in PG-7, for
+      the stack's `PlainInteger`.
+    locks: [with-our-stack]
+    cases:
+      - { label: "primitive PlainInteger valid vector 1 written 0.0", kind: verdict }
+      - { label: "primitive PlainInteger valid vector 1 written 0e0", kind: verdict }
+      - { label: "primitive PlainInteger valid vector 2 written 3.0", kind: verdict }
+      - { label: "primitive PlainInteger valid vector 2 written 3e0", kind: verdict }
+      - { label: "primitive PlainInteger valid vector 3 written -1.0", kind: verdict }
+      - { label: "primitive PlainInteger valid vector 3 written -1e0", kind: verdict }
+      - { label: "primitive PlainInteger valid vector 4 written 9007199254740991.0", kind: verdict }
+      - { label: "primitive PlainInteger valid vector 4 written 9007199254740991e0", kind: verdict }
+  - id: PG-22
+    reason: >-
+      For an object keyed by `propertyNames` with a `$ref`, the generator
+      writes a dict keyed by a `RootModel` class, which isn't hashable, as in
+      PG-8, so validating a non-empty map raises a `TypeError`: the stack's
+      `format_specs`, keyed by `FormatId`, its `exclusions`, keyed by
+      `ExclusionType`, and a commit result's `availability`, keyed by line
+      item id.
+    locks: [with-our-stack]
+    cases:
+      - { label: "corpus rule \"marker:3:supplied\" valid vector 1 after", kind: error }
+      - { label: "corpus rule \"marker:3:supplied\" invalid vector 1 after", kind: error }
+      - { label: "corpus rule \"rule:5.6.1:94be9998\" valid vector 2 value", kind: error }
+      - { label: "constructor Map vectors[0] as Map<FormatId, PlainInteger> valid 2", kind: error }

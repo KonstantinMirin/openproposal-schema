@@ -92,9 +92,10 @@ test("the site check fails a quote that shows a Markdown link as text, on a page
   assert.match(checkSite(new Map([["s/data/main.as-written.json", plain]])).join("\n"), /the source a's quote isn't rendered/);
 });
 
-/** A text's words, in order: what a reader reads, with each link's or image's destination left out, since it shows as the link itself, but an image with no alt text, which shows its URL; with each `<br>` a line break; and with each character reference read as the space or character it is. */
+/** A text's words, in order: what a reader reads, with each link's or image's destination left out, since it shows as the link itself, but an image with no alt text, which shows its URL; with each `<br>` a line break; with each character reference read as the space or character it is; and with a code span's backticks unseen, so "`ErrorObject`s" reads as one word. */
 const wordsOf = (s: string) =>
   s
+    .replace(/`/g, "")
     .replace(/!\[\]\(\s*<?([^)\s>]*)>?\s*\)/g, " $1 ")
     .replace(/<br\s*\/?>/gi, " ")
     .replace(/\]\(\s*<?[^)\s>]*>?(?:\s+"[^"]*")?\s*\)/g, "] ")

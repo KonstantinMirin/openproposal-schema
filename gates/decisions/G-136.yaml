@@ -1,0 +1,100 @@
+format: 1
+id: G-136
+date: 2026-10-28
+question: What changes in the gates when AdCOM's proto package becomes com.postindustria.adcom.v1, a code's title drops its gloss and reads a name before a colon with no space, and a decision record may name a code its row doesn't?
+decision: >-
+  The owner's decisions on the proto target and the code titles. AdCOM's
+  profile names the package com.postindustria.adcom.v1, and its file moves
+  to proto/com/postindustria/adcom/v1/lists.proto; the proto gates'
+  fixtures name the new path. The generic title rule (src/emit.ts
+  rowName, withoutGloss, codeTitle) reads a row's name before a colon with
+  or without a space after it, as "Interstitial:Video ads …" names
+  Interstitial, but never a URL's colon or one a digit follows, and drops a
+  gloss: a parenthesized aside that starts "i.e.", "ie.", or "e.g.",
+  closed or not, and a tail that starts so; any other aside, such as
+  "(deprecated)", stays. A decision record may give the codes of a list whose
+  rows give no usable name short names, under a new `names` field, by each
+  row's IR element, which the record must cover; only a standing record
+  names a code, and model-resolves fails a record that names a row it
+  doesn't quote, or a row that is no code (fixtures). The term entries stay
+  the list-code rule's, since a decision covers only what no rule decides.
+  AdCOM's D-019, D-020, and D-021, gaps, quote the rows of List: Agent
+  Types 1 and 3, List: Playback Methods 1, 2, 4, 5, and 6, and List:
+  User-Agent Source 1 and 2, name each code, and ask AdCOM to name
+  every code. The release differ reports a decided name's change as an
+  annotation. 29 titles change: 20 from the rule, 17 in AdCOM and 3 in
+  the Deals API, and 9 from the decisions; 26 proto value names change. The
+  target rules record the package's folders, the code 0 that keeps the
+  spec's name as the spec's choice, and that names follow the spec alone,
+  with compatibility by number. The target rules also record, for every spec once the target writes
+  messages, how a service on the proto and a client on the schemas exchange
+  the same JSON, and how its message fields are numbered: seeded from
+  adcom-proto's numbers alone, kept in an append-only numbering file, and
+  held by buf breaking, which arrive with the first messages. The README
+  says to read and write AdCOM's enums by number.
+  The suite holds 543 tests.
+rationale: >-
+  No check is relaxed. Only titles and names change: no code, no term, no
+  verdict, and no number. The corpus, the type examples, the rules, and
+  every vector are unchanged; the release differ finds 9 annotation
+  changes in AdCOM's model on each lock and no reported change in any
+  spec's schema files, whose digests alone move; all 316 proto values keep
+  their numbers. The pipeline gates in this list change fingerprint
+  because they reach the mapping's, the model's, or the emitter's code.
+accepts:
+  - { gate: comparison, fingerprint: f6677d10614f89de0e31dea21213cc76b9279a91efd8f546fe9abed154710514 }
+  - { gate: constructors-applied, fingerprint: 6571e80fb6eac0ac22bfd83f602053a4f30571a102acbf3ca1d7821592ae6772 }
+  - { gate: constructors-check, fingerprint: 0de28b0ac193301738caf6d33e6e0e165736e86483a15604628417eb7cc6be1a }
+  - { gate: convention-beside-reference, fingerprint: d1606fadf4b45e8d3f55e53cf0c527efd0bdb8e90b738244b1d0f67aaa8651fd }
+  - { gate: convention-inline, fingerprint: a5a6b5a1bd640f9264fea794869674941007fc442b8398741c988d598691e2c8 }
+  - { gate: convention-keywords, fingerprint: 086ec3d13efa39df83a1aaf7ea71285003a7196fd6510a17c82b30e2a3e228e1 }
+  - { gate: convention-layers, fingerprint: 5605f611624b747a10831d10fac1697f9510d5518d567770cf7b0fe59357be00 }
+  - { gate: convention-lists, fingerprint: 50ff1bde7b5ffb1d150457cc9237159205f9cb2ec932df830ab421575753987a }
+  - { gate: convention-modules, fingerprint: b4d4d0f5d53fd269e9afc090523ee58d6e7c35ef8d000391f6898c9a8aca81a1 }
+  - { gate: convention-unions, fingerprint: e83af67288dd55da38ad63d30d5685aab688be8b9d1b59007945af6733af4a5c }
+  - { gate: corpus-generates, fingerprint: 84a9c7eb613ecdf52693f03b7bd222c2d2e445eb04518b5d31b5a835438f472d }
+  - { gate: corpus-isolation, fingerprint: 7a45275972fd7b4334cff0919f19f1b3f646fae672fef5e5453e39e105d3c3f6 }
+  - { gate: domains-check, fingerprint: 4673ad647d18645f01786dc25d6d666e4cba527e73451b607c9be047b8fc724b }
+  - { gate: domains-homonyms, fingerprint: 803a17d99e6cf476b0e67dcdb7468e525ac4b4cb8ac210542706deb2f9592a41 }
+  - { gate: domains-properties, fingerprint: ab53325c137feb596a07269cef5fbeb31e0fb26f405216da3ff28c69f78e0d51 }
+  - { gate: domains-used, fingerprint: 54ee4c689805142e348ba8dfe5dadd87f44c033b4195d3b490be9d1ea8424d9b }
+  - { gate: duplication-model, fingerprint: 672940419958422dcb24e4aaea85a3e4c8a8a1681918396c0fafdb7c0658603c }
+  - { gate: enum-drift-sources, fingerprint: a893cf60782ebdc11ddafaaae4ee255b50395d63de3a7af5e8e1b04bb3097e34 }
+  - { gate: examples-listing, fingerprint: 7f40c4b74724299af2fc19495936a92cc667b2c72da2c6a43f11f127279e7f7f }
+  - { gate: examples-validate, fingerprint: e34d08e52f4c9f8af97aafcca8ce91d56fddcf7559cc97d7a99a4aae1f285bed }
+  - { gate: extraction, fingerprint: b3b46d55aaf47e703f5616463e271f9542b9c625db87f4e52e0529d3075846ce }
+  - { gate: feedback, fingerprint: 183b0eed5c8aa7c395088d2b27a2f7388abeaca7490167878cd8020707395710 }
+  - { gate: fidelity, fingerprint: 6978034c0c16e91937e01a037f7ec1f2e5e9273376a06de69d25d3e3b321c28f }
+  - { gate: field-examples, fingerprint: 5b3e258940082c03d772bcf3be3507666cc07f3207618cce431329adce4ce229 }
+  - { gate: frozen-releases, fingerprint: 1df70a1d6123db0f69c5da4cbb50630e24cf4bde02ef8cdacc0603d1a1c7389f }
+  - { gate: frozen-reviewed, fingerprint: f8f2a79a363ee23f99c8d97fa968fd3603e728ea1408b335bef0454641000c64 }
+  - { gate: kernel-check, fingerprint: 56b9836bcf2ed1553e1d7a96a326118acedc5bd32e3cadd8525998ea07a5eb16 }
+  - { gate: mapping-current, fingerprint: bbf9bf81c6235988986ef1faf7f7cd29249dee5cd61dccd9bd4998731751c729 }
+  - { gate: mapping-load, fingerprint: 8af0b3bcdb2bb95e4869a7b5ccab58a0db54b114ba94d905fd217df04b786e1f }
+  - { gate: mapping-names, fingerprint: 21e3e8442bc78778de8ddfe3712458d977c11fff87b0e52ac02a83187b9af425 }
+  - { gate: mapping-sources, fingerprint: 6b1db0617680f2b1a1f39b7f370a941b7f54ce5df05f48c627a7b137509e1404 }
+  - { gate: model-resolves, fingerprint: dac11f8fc58e9d72ef9788a0854b19c5e6231accbd7219be701dcae1c0b7df42 }
+  - { gate: modules-depends, fingerprint: 013f099902d657eb685097949fe519c4d1fb5b2c27dc96932dcf9f5ea1543116 }
+  - { gate: npm-test, fingerprint: 1738c894d20018e7bdd34b224a62268180149071ae11de1105b4586fbdefb568 }
+  - { gate: proto-builds, fingerprint: 2688ac0da65762860e7d41fab00914d4191eda1fe85db2691e41571ddc18ca00 }
+  - { gate: proto-committed, fingerprint: 0748352ff7463706adb676585cf75aed3a19b13dfda27571ba2dd676f61cc5b5 }
+  - { gate: proto-tracked, fingerprint: 6b7fb30df85bd90e30587d56ac915f5c5f872347333f79b4b6fe377365bd05b6 }
+  - { gate: record-wording, fingerprint: 790518d9abae21d714b108323f03fe8a2a1fcdc5124a131b671dfe83ad936e22 }
+  - { gate: registry-agreement, fingerprint: 33b0f8697cc1c8c7ab2d1324fd067f74eae08c8e8f762a1c6b63e4521acc099c }
+  - { gate: release-breaking, fingerprint: 5f62da0010ef72c60afecf571552efd5dafbf494b658dc15f04f25d51fc725c1 }
+  - { gate: release-builds, fingerprint: e2260bd04d5216deb004582460595d093eae35fe096abeaec52f0975d5145e98 }
+  - { gate: release-digests, fingerprint: 5148a0b6db8a760aab57ffde2a0bde9e3edc87d96e92c3a8c3e5082c28934259 }
+  - { gate: round-trip, fingerprint: 70678293de9dffd7bd5933c75f1c2cfb2a1f229cf20f50decfa73c62f22a3117 }
+  - { gate: rule-checks, fingerprint: d3dbc59dbc2c1475b2a134fd20013199ca8aae98f2eb21ccc678ad184e754e9d }
+  - { gate: rule-vectors, fingerprint: 45faf489e42d6950d9b916b4bb165b21c026ba4ff8db73840f7da7f68c3049a1 }
+  - { gate: rules-emit, fingerprint: 7ad7a5644a183afca75a825042ff953c29dba197750f640eb5f59d6e2cebaa32 }
+  - { gate: schemas-conventions, fingerprint: b2b44ebb5fdaae29aacdafa3c844ffe8e5600992bb2a0d7c799bc08f70e426c7 }
+  - { gate: schemas-emit, fingerprint: f95d869e75f842faa5a078b0111165f4b333806e2ed05db01d1f92564ba0f62c }
+  - { gate: sdk-generate, fingerprint: 95a19f298cfdcc53d7be0d171b242b981b496e24dc0469178269a6c561cde0ee }
+  - { gate: site-builds, fingerprint: fdef0116949aced21b94efe2e6c950cd70c22977b8ed902e39000e48e3c6e481 }
+  - { gate: spec-profile, fingerprint: 52b7010ced876a824eb56d1ca85afb5446afe181c3abd84d4cafe9483d8961ea }
+  - { gate: type-examples-generate, fingerprint: 40bf512651268a45ae749fc5be9bf5b5459bee2d7b1c53fea4fc1a15eaeeb6ea }
+  - { gate: type-examples-valid, fingerprint: cecdaf6865d0a4857b79db9aebe21c6c828eee2d11ed2733bf98a16da0265977 }
+  - { gate: variant-check, fingerprint: 65f1545ebf01cc987f07fc37eb788c9f854a0772961bf18fd19cff87c704b7a8 }
+  - { gate: variant-diff, fingerprint: c857384d3d2fc1a9cafaf7a040862720ceae6de6d7ecb97171ef42b72572a07b }
+  - { gate: variant-examples, fingerprint: 671b3f60e5297097a982956b362014bb650b84401b03226f77f1fbe237f3489f }

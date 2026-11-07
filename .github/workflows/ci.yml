@@ -31,5 +31,6 @@ jobs:
       - run: npm run setup:oracle
       - run: npm run setup:sdk
       - run: npm run setup:plaingen
+      - run: npm run setup:proto
       - run: git fetch --no-tags --depth=1 origin "$GATE_BASE"
       - run: npm run ci

@@ -1,0 +1,6765 @@
+{
+  "counts": {
+    "by_kind": {
+      "array_suffix_mismatch": 1,
+      "duplicate_field_disagrees": 1,
+      "expression_value_unknown": 4,
+      "must_without_field": 35,
+      "name_reused_with_different_values": 1,
+      "unresolved_identifier": 222,
+      "value_set_duplicate": 2,
+      "value_set_subset": 6
+    },
+    "by_verdict": {
+      "accepted": 1,
+      "open": 271
+    },
+    "open": 271,
+    "total": 272
+  },
+  "findings": [
+    {
+      "details": {
+        "definitions": {
+          "field:4.1:status": {
+            "marker": "derived",
+            "type": "ProposalStatus",
+            "values": []
+          },
+          "field:5.1:status": {
+            "marker": "lifecycle",
+            "type": "LineItemStatus",
+            "values": []
+          }
+        },
+        "differs": [
+          "type",
+          "marker"
+        ]
+      },
+      "disposition": null,
+      "id": "duplicate_field_disagrees:status",
+      "kind": "duplicate_field_disagrees",
+      "locs": [
+        {
+          "line": 863,
+          "row": 9,
+          "section": "4.1",
+          "table": "table:4.1:1"
+        },
+        {
+          "line": 1418,
+          "row": 2,
+          "section": "5.1",
+          "table": "table:5.1:1"
+        }
+      ],
+      "message": "`status` is defined 2 times, and the definitions differ in type, marker.",
+      "subjects": [
+        "field:4.1:status",
+        "field:5.1:status"
+      ]
+    },
+    {
+      "details": {
+        "uses": {
+          "key:5.3:AddressableScale.unit": "person",
+          "key:5.6:Availability.unit": "slots_per_loop | unit_periods"
+        }
+      },
+      "disposition": null,
+      "id": "name_reused_with_different_values:unit",
+      "kind": "name_reused_with_different_values",
+      "locs": [
+        {
+          "line": 1807,
+          "row": 2,
+          "section": "5.3",
+          "table": "table:5.3:6"
+        },
+        {
+          "line": 2176,
+          "row": 1,
+          "section": "5.6",
+          "table": "table:5.6:2"
+        }
+      ],
+      "message": "`unit` names 2 different value sets.",
+      "subjects": [
+        "key:5.3:AddressableScale.unit",
+        "key:5.6:Availability.unit"
+      ]
+    },
+    {
+      "details": {
+        "values": [
+          "credit",
+          "makegood",
+          "none"
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_duplicate:credit | makegood | none",
+      "kind": "value_set_duplicate",
+      "locs": [
+        {
+          "line": 2574,
+          "row": 3,
+          "section": "5.6.7",
+          "table": "table:5.6.7:2"
+        },
+        {
+          "line": 2588,
+          "row": 4,
+          "section": "5.7",
+          "table": "table:5.7:1"
+        }
+      ],
+      "message": "The value set credit | makegood | none is declared 2 times.",
+      "subjects": [
+        "key:5.6.7:Preemption.remedy#meaning/values:1",
+        "field:5.7:shortfall_remedy#description/values:1"
+      ]
+    },
+    {
+      "details": {
+        "values": [
+          "published",
+          "sold_out",
+          "under_review"
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_duplicate:published | sold_out | under_review",
+      "kind": "value_set_duplicate",
+      "locs": [
+        {
+          "line": 1312,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1317,
+          "section": "4.3.2"
+        }
+      ],
+      "message": "The value set published | sold_out | under_review is declared 2 times.",
+      "subjects": [
+        "block:4.3.2:11/values:1",
+        "block:4.3.2:13/values:1"
+      ]
+    },
+    {
+      "details": {
+        "subset": [
+          "day",
+          "hour",
+          "week"
+        ],
+        "supersets": [
+          {
+            "lists": [
+              "def:2.2:CalendarUnit#form/values:1"
+            ],
+            "values": [
+              "day",
+              "hour",
+              "month",
+              "week"
+            ]
+          }
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_subset:day | hour | week",
+      "kind": "value_set_subset",
+      "locs": [
+        {
+          "line": 2456,
+          "row": 9,
+          "section": "5.6.5",
+          "table": "table:5.6.5:2"
+        }
+      ],
+      "message": "The value set day | hour | week is a strict subset of day | hour | month | week.",
+      "subjects": [
+        "key:5.6.5:CostParameters.rate_unit#meaning/values:1",
+        "def:2.2:CalendarUnit#form/values:1"
+      ]
+    },
+    {
+      "details": {
+        "subset": [
+          "days",
+          "hours",
+          "weeks"
+        ],
+        "supersets": [
+          {
+            "lists": [
+              "block:5.6.5:2/values:1"
+            ],
+            "values": [
+              "actions",
+              "clicks",
+              "completed_views",
+              "days",
+              "hours",
+              "impressions",
+              "plays",
+              "rating_points",
+              "viewable_impressions",
+              "views",
+              "weeks"
+            ]
+          }
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_subset:days | hours | weeks",
+      "kind": "value_set_subset",
+      "locs": [
+        {
+          "line": 2434,
+          "row": 9,
+          "section": "5.6.5",
+          "table": "table:5.6.5:1"
+        }
+      ],
+      "message": "The value set days | hours | weeks is a strict subset of actions | clicks | completed_views | days | hours | impressions | plays | rating_points | viewable_impressions | views | weeks.",
+      "subjects": [
+        "def:5.6.5:cost_method.TIME#unit/values:1",
+        "block:5.6.5:2/values:1"
+      ]
+    },
+    {
+      "details": {
+        "subset": [
+          "declined",
+          "expired",
+          "released"
+        ],
+        "supersets": [
+          {
+            "lists": [
+              "block:5.6.2:4/values:1"
+            ],
+            "values": [
+              "converted",
+              "declined",
+              "expired",
+              "held",
+              "released",
+              "requested"
+            ]
+          }
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_subset:declined | expired | released",
+      "kind": "value_set_subset",
+      "locs": [
+        {
+          "line": 2323,
+          "section": "5.6.2"
+        }
+      ],
+      "message": "The value set declined | expired | released is a strict subset of converted | declined | expired | held | released | requested.",
+      "subjects": [
+        "block:5.6.2:6/values:1",
+        "block:5.6.2:4/values:1"
+      ]
+    },
+    {
+      "details": {
+        "subset": [
+          "exclusivity"
+        ],
+        "supersets": [
+          {
+            "lists": [
+              "key:4.1.2:AssentEntry.ground#meaning/values:1"
+            ],
+            "values": [
+              "availability",
+              "exclusivity",
+              "terms"
+            ]
+          }
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_subset:exclusivity",
+      "kind": "value_set_subset",
+      "locs": [
+        {
+          "line": 2572,
+          "row": 1,
+          "section": "5.6.7",
+          "table": "table:5.6.7:2"
+        }
+      ],
+      "message": "The value set exclusivity is a strict subset of availability | exclusivity | terms.",
+      "subjects": [
+        "key:5.6.7:Preemption.reason#meaning/values:1",
+        "key:4.1.2:AssentEntry.ground#meaning/values:1"
+      ]
+    },
+    {
+      "details": {
+        "subset": [
+          "held",
+          "requested"
+        ],
+        "supersets": [
+          {
+            "lists": [
+              "block:5.6.2:4/values:1"
+            ],
+            "values": [
+              "converted",
+              "declined",
+              "expired",
+              "held",
+              "released",
+              "requested"
+            ]
+          }
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_subset:held | requested",
+      "kind": "value_set_subset",
+      "locs": [
+        {
+          "line": 2339,
+          "section": "5.6.2"
+        }
+      ],
+      "message": "The value set held | requested is a strict subset of converted | declined | expired | held | released | requested.",
+      "subjects": [
+        "block:5.6.2:12/values:1",
+        "block:5.6.2:4/values:1"
+      ]
+    },
+    {
+      "details": {
+        "subset": [
+          "published",
+          "under_review"
+        ],
+        "supersets": [
+          {
+            "lists": [
+              "def:2.2:ProposalStatus#form/values:1"
+            ],
+            "values": [
+              "agreed",
+              "draft",
+              "expired",
+              "published",
+              "under_review",
+              "withdrawn"
+            ]
+          },
+          {
+            "lists": [
+              "block:4.3.2:11/values:1",
+              "block:4.3.2:13/values:1"
+            ],
+            "values": [
+              "published",
+              "sold_out",
+              "under_review"
+            ]
+          }
+        ]
+      },
+      "disposition": null,
+      "id": "value_set_subset:published | under_review",
+      "kind": "value_set_subset",
+      "locs": [
+        {
+          "line": 1310,
+          "section": "4.3.2"
+        }
+      ],
+      "message": "The value set published | under_review is a strict subset of agreed | draft | expired | published | under_review | withdrawn; and of published | sold_out | under_review.",
+      "subjects": [
+        "block:4.3.2:10/values:1",
+        "def:2.2:ProposalStatus#form/values:1",
+        "block:4.3.2:11/values:1",
+        "block:4.3.2:13/values:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Account",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 108,
+          "section": "1.1"
+        },
+        {
+          "line": 128,
+          "section": "1.1"
+        }
+      ],
+      "message": "`Account` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.1:10",
+        "block:1.1:12"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:AdvertiserBrand",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 128,
+          "section": "1.1"
+        }
+      ],
+      "message": "`AdvertiserBrand` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.1:12"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Audio",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1528,
+          "section": "5.2.2"
+        }
+      ],
+      "message": "`Audio` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.2.2:5"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 4
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:AudioPlacement",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1439,
+          "row": 2,
+          "section": "5.1.1",
+          "table": "table:5.1.1:1"
+        },
+        {
+          "line": 1495,
+          "section": "5.2.2"
+        },
+        {
+          "line": 1529,
+          "section": "5.2.2"
+        },
+        {
+          "line": 1563,
+          "section": "5.2.3"
+        }
+      ],
+      "message": "`AudioPlacement` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.1.1:channel.audio#condition",
+        "block:5.2.2:1",
+        "block:5.2.2:5",
+        "block:5.2.3:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:BOTH",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1637,
+          "row": 1,
+          "section": "5.2.6",
+          "table": "table:5.2.6:2"
+        }
+      ],
+      "message": "`BOTH` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.2.6:seller_relationship.owner#the-governing-file-declares"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Bid.dealid",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 67,
+          "row": 1,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        }
+      ],
+      "message": "`Bid.dealid` resolves to no table row, key, or table-declared value; no table defines `Bid`.",
+      "subjects": [
+        "concept:1.1:1#openrtb-26"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Boolean",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 581,
+          "section": "2.6"
+        }
+      ],
+      "message": "`Boolean` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:BuyerStatus.status",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 101,
+          "section": "1.1"
+        }
+      ],
+      "message": "`BuyerStatus.status` resolves to no table row, key, or table-declared value; no table defines `BuyerStatus`.",
+      "subjects": [
+        "block:1.1:9"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 6
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:BuyerWrites",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 808,
+          "section": "3.3"
+        },
+        {
+          "line": 818,
+          "section": "3.4"
+        },
+        {
+          "line": 822,
+          "section": "3.4"
+        },
+        {
+          "line": 836,
+          "section": "3.4"
+        },
+        {
+          "line": 977,
+          "section": "4.1.1"
+        },
+        {
+          "line": 1137,
+          "section": "4.1.3"
+        }
+      ],
+      "message": "`BuyerWrites` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:3.3:3",
+        "block:3.4:1",
+        "block:3.4:2",
+        "block:3.4:3",
+        "block:4.1.1:4",
+        "block:4.1.3:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:CPD",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 115,
+          "row": 3,
+          "section": "1.1",
+          "table": "table:1.1:3"
+        }
+      ],
+      "message": "`CPD` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:1.1:3.3#from-the-agreed-line-item"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:ChangeRequestLifecycle",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 196,
+          "section": "1.2"
+        }
+      ],
+      "message": "`ChangeRequestLifecycle` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.2:8"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Channel",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1705,
+          "row": 2,
+          "section": "5.2.9",
+          "table": "table:5.2.9:1"
+        }
+      ],
+      "message": "`Channel` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.2.9:ProgramOption.content#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:ClockTime",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2069,
+          "section": "5.5"
+        }
+      ],
+      "message": "`ClockTime` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.5:14"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:CombineOperator",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1764,
+          "section": "5.3"
+        }
+      ],
+      "message": "`CombineOperator` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.3:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Content",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1705,
+          "row": 2,
+          "section": "5.2.9",
+          "table": "table:5.2.9:1"
+        }
+      ],
+      "message": "`Content` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.2.9:ProgramOption.content#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Content-Digest",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 677,
+          "row": 6,
+          "section": "2.8",
+          "table": "table:2.8:1"
+        },
+        {
+          "line": 1098,
+          "section": "4.1.2"
+        }
+      ],
+      "message": "`Content-Digest` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8:6#profile-choice",
+        "block:4.1.2:15"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Creative",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1906,
+          "section": "5.4"
+        }
+      ],
+      "message": "`Creative` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.4:12"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:CurrencyCode",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2141,
+          "section": "5.6"
+        }
+      ],
+      "message": "`CurrencyCode` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.6:2"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:DIRECT",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1637,
+          "row": 1,
+          "section": "5.2.6",
+          "table": "table:5.2.6:2"
+        }
+      ],
+      "message": "`DIRECT` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.2.6:seller_relationship.owner#the-governing-file-declares"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:DayOfWeek",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2072,
+          "section": "5.5"
+        }
+      ],
+      "message": "`DayOfWeek` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.5:15"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 10
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Deal",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 49,
+          "row": 2,
+          "section": "1.1",
+          "table": "table:1.1:1"
+        },
+        {
+          "line": 50,
+          "row": 3,
+          "section": "1.1",
+          "table": "table:1.1:1"
+        },
+        {
+          "line": 50,
+          "row": 3,
+          "section": "1.1",
+          "table": "table:1.1:1"
+        },
+        {
+          "line": 51,
+          "row": 4,
+          "section": "1.1",
+          "table": "table:1.1:1"
+        },
+        {
+          "line": 51,
+          "row": 4,
+          "section": "1.1",
+          "table": "table:1.1:1"
+        },
+        {
+          "line": 60,
+          "section": "1.1"
+        },
+        {
+          "line": 60,
+          "section": "1.1"
+        },
+        {
+          "line": 62,
+          "section": "1.1"
+        },
+        {
+          "line": 97,
+          "section": "1.1"
+        },
+        {
+          "line": 2788,
+          "section": "5.9"
+        }
+      ],
+      "message": "`Deal` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:1.1:transaction_mechanism.programmatic_guaranteed#downstream-standard",
+        "def:1.1:transaction_mechanism.preferred_deal#downstream-standard",
+        "def:1.1:transaction_mechanism.private_auction#downstream-standard",
+        "block:1.1:4",
+        "block:1.1:8",
+        "block:5.9:2"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Deal.at",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 76,
+          "row": 10,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        }
+      ],
+      "message": "`Deal.at` resolves to no table row, key, or table-declared value; no table defines `Deal`.",
+      "subjects": [
+        "concept:1.1:10#openrtb-26"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Deal.bidfloor",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 74,
+          "row": 8,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        },
+        {
+          "line": 86,
+          "section": "1.1"
+        }
+      ],
+      "message": "`Deal.bidfloor` resolves to no table row, key, or table-declared value; no table defines `Deal`.",
+      "subjects": [
+        "concept:1.1:8#openrtb-26",
+        "block:1.1:6"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Deal.bidfloorcur",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 75,
+          "row": 9,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        }
+      ],
+      "message": "`Deal.bidfloorcur` resolves to no table row, key, or table-declared value; no table defines `Deal`.",
+      "subjects": [
+        "concept:1.1:9#openrtb-26"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Deal.guar",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 77,
+          "row": 11,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        }
+      ],
+      "message": "`Deal.guar` resolves to no table row, key, or table-declared value; no table defines `Deal`.",
+      "subjects": [
+        "concept:1.1:11#openrtb-26"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Deal.id",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 67,
+          "row": 1,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        },
+        {
+          "line": 2868,
+          "row": 4,
+          "section": "5.10",
+          "table": "table:5.10:2"
+        }
+      ],
+      "message": "`Deal.id` resolves to no table row, key, or table-declared value; no table defines `Deal`.",
+      "subjects": [
+        "concept:1.1:1#openrtb-26",
+        "key:5.10:ExternalReference.reference_type#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 3
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Deal.wseat",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 70,
+          "row": 4,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        },
+        {
+          "line": 397,
+          "row": 2,
+          "section": "2.2",
+          "table": "table:2.2:5"
+        },
+        {
+          "line": 2714,
+          "row": 4,
+          "section": "5.8",
+          "table": "table:5.8:1"
+        }
+      ],
+      "message": "`Deal.wseat` resolves to no table row, key, or table-declared value; no table defines `Deal`.",
+      "subjects": [
+        "concept:1.1:4#openrtb-26",
+        "key:2.2:SeatRef.ids[]#meaning",
+        "field:5.8:eligible_seats[]#description"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:DeliveryType",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2807,
+          "section": "5.9"
+        }
+      ],
+      "message": "`DeliveryType` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.9:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:DisplayPlacement",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1443,
+          "row": 6,
+          "section": "5.1.1",
+          "table": "table:5.1.1:1"
+        },
+        {
+          "line": 1493,
+          "section": "5.2.2"
+        }
+      ],
+      "message": "`DisplayPlacement` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.1.1:channel.display#condition",
+        "block:5.2.2:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:DisplayPlacement.nativefmt",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1441,
+          "row": 4,
+          "section": "5.1.1",
+          "table": "table:5.1.1:1"
+        }
+      ],
+      "message": "`DisplayPlacement.nativefmt` resolves to no table row, key, or table-declared value; no table defines `DisplayPlacement`.",
+      "subjects": [
+        "def:5.1.1:channel.native#condition"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Dooh",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1438,
+          "row": 1,
+          "section": "5.1.1",
+          "table": "table:5.1.1:1"
+        },
+        {
+          "line": 1485,
+          "row": 5,
+          "section": "5.2.1",
+          "table": "table:5.2.1:1"
+        }
+      ],
+      "message": "`Dooh` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.1.1:channel.dooh#condition",
+        "def:5.2.1:environments.dooh#distribution-channel"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Dooh.fixed",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1672,
+          "row": 4,
+          "section": "5.2.8",
+          "table": "table:5.2.8:1"
+        }
+      ],
+      "message": "`Dooh.fixed` resolves to no table row, key, or table-declared value; no table defines `Dooh`.",
+      "subjects": [
+        "key:5.2.8:Screen.movable#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:ETag",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 442,
+          "section": "2.3"
+        },
+        {
+          "line": 3087,
+          "section": "8"
+        }
+      ],
+      "message": "`ETag` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.3:4",
+        "block:8:12"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Ed25519",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 673,
+          "row": 2,
+          "section": "2.8",
+          "table": "table:2.8:1"
+        }
+      ],
+      "message": "`Ed25519` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8:2#profile-choice"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 3
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Enum",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 581,
+          "section": "2.6"
+        },
+        {
+          "line": 586,
+          "section": "2.6"
+        },
+        {
+          "line": 984,
+          "section": "4.1.1"
+        }
+      ],
+      "message": "`Enum` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:4",
+        "block:4.1.1:5"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Environment",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1474,
+          "section": "5.2.1"
+        }
+      ],
+      "message": "`Environment` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.2.1:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:ExclusionList",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2005,
+          "section": "5.5"
+        }
+      ],
+      "message": "`ExclusionList` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.5:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:ExclusionType",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1995,
+          "section": "5.5"
+        }
+      ],
+      "message": "`ExclusionType` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.5:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:FlatRate",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 115,
+          "row": 3,
+          "section": "1.1",
+          "table": "table:1.1:3"
+        }
+      ],
+      "message": "`FlatRate` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:1.1:3.3#from-the-agreed-line-item"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:FormatId",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1823,
+          "section": "5.4"
+        }
+      ],
+      "message": "`FormatId` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.4:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Geo",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 90,
+          "section": "1.1"
+        }
+      ],
+      "message": "`Geo` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.1:7"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 4
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:GeoCode",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 89,
+          "section": "1.1"
+        },
+        {
+          "line": 1966,
+          "row": 1,
+          "section": "5.5",
+          "table": "table:5.5:1"
+        },
+        {
+          "line": 1967,
+          "row": 2,
+          "section": "5.5",
+          "table": "table:5.5:1"
+        },
+        {
+          "line": 2036,
+          "section": "5.5"
+        }
+      ],
+      "message": "`GeoCode` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.1:7",
+        "field:5.5:geo#description",
+        "field:5.5:markets#description",
+        "block:5.5:11"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:HoldStatus",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2318,
+          "section": "5.6.2"
+        }
+      ],
+      "message": "`HoldStatus` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.6.2:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:INVENTORYPARTNERDOMAIN",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1639,
+          "row": 3,
+          "section": "5.2.6",
+          "table": "table:5.2.6:2"
+        }
+      ],
+      "message": "`INVENTORYPARTNERDOMAIN` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.2.6:seller_relationship.inventory_partner#the-governing-file-declares"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Imp",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1496,
+          "section": "5.2.2"
+        }
+      ],
+      "message": "`Imp` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.2.2:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Integer",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 581,
+          "section": "2.6"
+        },
+        {
+          "line": 587,
+          "section": "2.6"
+        }
+      ],
+      "message": "`Integer` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:K",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 584,
+          "section": "2.6"
+        }
+      ],
+      "message": "`K` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Last-Modified",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 442,
+          "section": "2.3"
+        },
+        {
+          "line": 3087,
+          "section": "8"
+        }
+      ],
+      "message": "`Last-Modified` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.3:4",
+        "block:8:12"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 6
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Line",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 106,
+          "section": "1.1"
+        },
+        {
+          "line": 108,
+          "section": "1.1"
+        },
+        {
+          "line": 109,
+          "section": "1.1"
+        },
+        {
+          "line": 130,
+          "section": "1.1"
+        },
+        {
+          "line": 131,
+          "section": "1.1"
+        },
+        {
+          "line": 1906,
+          "section": "5.4"
+        }
+      ],
+      "message": "`Line` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.1:10",
+        "block:1.1:12",
+        "block:5.4:12"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Line.cost",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 118,
+          "row": 6,
+          "section": "1.1",
+          "table": "table:1.1:3"
+        }
+      ],
+      "message": "`Line.cost` resolves to no table row, key, or table-declared value; no table defines `Line`.",
+      "subjects": [
+        "concept:1.1:3.6#opendirect-21"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Line.enddate",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 114,
+          "row": 2,
+          "section": "1.1",
+          "table": "table:1.1:3"
+        }
+      ],
+      "message": "`Line.enddate` resolves to no table row, key, or table-declared value; no table defines `Line`.",
+      "subjects": [
+        "concept:1.1:3.2#opendirect-21"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Line.frequencycount",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 119,
+          "row": 7,
+          "section": "1.1",
+          "table": "table:1.1:3"
+        }
+      ],
+      "message": "`Line.frequencycount` resolves to no table row, key, or table-declared value; no table defines `Line`.",
+      "subjects": [
+        "concept:1.1:3.7#opendirect-21"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Line.frequencyinterval",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 119,
+          "row": 7,
+          "section": "1.1",
+          "table": "table:1.1:3"
+        },
+        {
+          "line": 2090,
+          "section": "5.5"
+        }
+      ],
+      "message": "`Line.frequencyinterval` resolves to no table row, key, or table-declared value; no table defines `Line`.",
+      "subjects": [
+        "concept:1.1:3.7#opendirect-21",
+        "block:5.5:16"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Line.name",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 126,
+          "section": "1.1"
+        }
+      ],
+      "message": "`Line.name` resolves to no table row, key, or table-declared value; no table defines `Line`.",
+      "subjects": [
+        "block:1.1:12"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Line.productid",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 127,
+          "section": "1.1"
+        },
+        {
+          "line": 3053,
+          "section": "8"
+        }
+      ],
+      "message": "`Line.productid` resolves to no table row, key, or table-declared value; no table defines `Line`.",
+      "subjects": [
+        "block:1.1:12",
+        "block:8:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Line.qty",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 117,
+          "row": 5,
+          "section": "1.1",
+          "table": "table:1.1:3"
+        }
+      ],
+      "message": "`Line.qty` resolves to no table row, key, or table-declared value; no table defines `Line`.",
+      "subjects": [
+        "concept:1.1:3.5#opendirect-21"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Line.rate",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 116,
+          "row": 4,
+          "section": "1.1",
+          "table": "table:1.1:3"
+        }
+      ],
+      "message": "`Line.rate` resolves to no table row, key, or table-declared value; no table defines `Line`.",
+      "subjects": [
+        "concept:1.1:3.4#opendirect-21"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 3
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Line.ratetype",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 115,
+          "row": 3,
+          "section": "1.1",
+          "table": "table:1.1:3"
+        },
+        {
+          "line": 617,
+          "section": "2.6"
+        },
+        {
+          "line": 2421,
+          "section": "5.6.5"
+        }
+      ],
+      "message": "`Line.ratetype` resolves to no table row, key, or table-declared value; no table defines `Line`.",
+      "subjects": [
+        "concept:1.1:3.3#opendirect-21",
+        "block:2.6:7",
+        "block:5.6.5:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Line.startdate",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 114,
+          "row": 2,
+          "section": "1.1",
+          "table": "table:1.1:3"
+        }
+      ],
+      "message": "`Line.startdate` resolves to no table row, key, or table-declared value; no table defines `Line`.",
+      "subjects": [
+        "concept:1.1:3.2#opendirect-21"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:LineDuration",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 119,
+          "row": 7,
+          "section": "1.1",
+          "table": "table:1.1:3"
+        }
+      ],
+      "message": "`LineDuration` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:1.1:3.7#from-the-agreed-line-item"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:LineItemSummary",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 238,
+          "section": "2.1"
+        }
+      ],
+      "message": "`LineItemSummary` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.1:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:MANAGERDOMAIN",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1638,
+          "row": 2,
+          "section": "5.2.6",
+          "table": "table:5.2.6:2"
+        }
+      ],
+      "message": "`MANAGERDOMAIN` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.2.6:seller_relationship.manager#the-governing-file-declares"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:MediaChannel",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1445,
+          "section": "5.1.1"
+        }
+      ],
+      "message": "`MediaChannel` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.1.1:2"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Modeled",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1753,
+          "row": 4,
+          "section": "5.3",
+          "table": "table:5.3:2"
+        }
+      ],
+      "message": "`Modeled` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.3:AudienceOption.data_label#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Number",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 581,
+          "section": "2.6"
+        }
+      ],
+      "message": "`Number` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:OKP",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 673,
+          "row": 2,
+          "section": "2.8",
+          "table": "table:2.8:1"
+        }
+      ],
+      "message": "`OKP` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8:2#profile-choice"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:OPTIONAL",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 575,
+          "section": "2.6"
+        }
+      ],
+      "message": "`OPTIONAL` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:OWNERDOMAIN",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1637,
+          "row": 1,
+          "section": "5.2.6",
+          "table": "table:5.2.6:2"
+        },
+        {
+          "line": 1637,
+          "row": 1,
+          "section": "5.2.6",
+          "table": "table:5.2.6:2"
+        }
+      ],
+      "message": "`OWNERDOMAIN` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.2.6:seller_relationship.owner#the-governing-file-declares"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Object",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 582,
+          "section": "2.6"
+        },
+        {
+          "line": 588,
+          "section": "2.6"
+        }
+      ],
+      "message": "`Object` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Option",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 565,
+          "section": "2.6"
+        }
+      ],
+      "message": "`Option` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 4
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Order",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 107,
+          "section": "1.1"
+        },
+        {
+          "line": 108,
+          "section": "1.1"
+        },
+        {
+          "line": 108,
+          "section": "1.1"
+        },
+        {
+          "line": 130,
+          "section": "1.1"
+        }
+      ],
+      "message": "`Order` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.1:10",
+        "block:1.1:12"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Order.accountid",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 126,
+          "section": "1.1"
+        }
+      ],
+      "message": "`Order.accountid` resolves to no table row, key, or table-declared value; no table defines `Order`.",
+      "subjects": [
+        "block:1.1:12"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Order.advertiserbrandid",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 127,
+          "section": "1.1"
+        }
+      ],
+      "message": "`Order.advertiserbrandid` resolves to no table row, key, or table-declared value; no table defines `Order`.",
+      "subjects": [
+        "block:1.1:12"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Order.currency",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 113,
+          "row": 1,
+          "section": "1.1",
+          "table": "table:1.1:3"
+        }
+      ],
+      "message": "`Order.currency` resolves to no table row, key, or table-declared value; no table defines `Order`.",
+      "subjects": [
+        "concept:1.1:3.1#opendirect-21"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Order.name",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 126,
+          "section": "1.1"
+        }
+      ],
+      "message": "`Order.name` resolves to no table row, key, or table-declared value; no table defines `Order`.",
+      "subjects": [
+        "block:1.1:12"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Order.publisherid",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 127,
+          "section": "1.1"
+        }
+      ],
+      "message": "`Order.publisherid` resolves to no table row, key, or table-declared value; no table defines `Order`.",
+      "subjects": [
+        "block:1.1:12"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Organization",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 128,
+          "section": "1.1"
+        }
+      ],
+      "message": "`Organization` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.1:12"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:P0D",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2501,
+          "row": 2,
+          "section": "5.6.6",
+          "table": "table:5.6.6:1"
+        },
+        {
+          "line": 2511,
+          "row": 1,
+          "section": "5.6.6",
+          "table": "table:5.6.6:2"
+        }
+      ],
+      "message": "`P0D` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.6.6:CancellationOption.notice_duration#meaning",
+        "key:5.6.6:Fee.before_reference#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:P14D",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 339,
+          "row": 18,
+          "section": "2.2",
+          "table": "table:2.2:1"
+        },
+        {
+          "line": 2501,
+          "row": 2,
+          "section": "5.6.6",
+          "table": "table:5.6.6:1"
+        }
+      ],
+      "message": "`P14D` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:2.2:Duration#form",
+        "key:5.6.6:CancellationOption.notice_duration#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:P28D",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2888,
+          "row": 5,
+          "section": "5.10",
+          "table": "table:5.10:4"
+        }
+      ],
+      "message": "`P28D` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.10:Billing.cycle_length#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:P2W",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 339,
+          "row": 18,
+          "section": "2.2",
+          "table": "table:2.2:1"
+        }
+      ],
+      "message": "`P2W` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:2.2:Duration#form"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:P30D",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2637,
+          "row": 5,
+          "section": "5.7.1",
+          "table": "table:5.7.1:4"
+        }
+      ],
+      "message": "`P30D` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.7.1:ControllingMeasurementOption.final_after#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:PUBLISHER",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1637,
+          "row": 1,
+          "section": "5.2.6",
+          "table": "table:5.2.6:2"
+        }
+      ],
+      "message": "`PUBLISHER` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.2.6:seller_relationship.owner#the-governing-file-declares"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 3
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Product",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 128,
+          "section": "1.1"
+        },
+        {
+          "line": 130,
+          "section": "1.1"
+        },
+        {
+          "line": 3054,
+          "section": "8"
+        }
+      ],
+      "message": "`Product` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.1:12",
+        "block:8:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:RECOMMENDED",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 575,
+          "section": "2.6"
+        }
+      ],
+      "message": "`RECOMMENDED` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:REQUIRED",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 575,
+          "section": "2.6"
+        }
+      ],
+      "message": "`REQUIRED` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:RESELLER",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1640,
+          "row": 4,
+          "section": "5.2.6",
+          "table": "table:5.2.6:2"
+        }
+      ],
+      "message": "`RESELLER` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.2.6:seller_relationship.reseller#the-governing-file-declares"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Signature-Agent",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 672,
+          "row": 1,
+          "section": "2.8",
+          "table": "table:2.8:1"
+        }
+      ],
+      "message": "`Signature-Agent` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8:1#profile-choice"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 3
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Site",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1481,
+          "row": 1,
+          "section": "5.2.1",
+          "table": "table:5.2.1:1"
+        },
+        {
+          "line": 1482,
+          "row": 2,
+          "section": "5.2.1",
+          "table": "table:5.2.1:1"
+        },
+        {
+          "line": 1484,
+          "row": 4,
+          "section": "5.2.1",
+          "table": "table:5.2.1:1"
+        }
+      ],
+      "message": "`Site` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.2.1:environments.web_desktop#distribution-channel",
+        "def:5.2.1:environments.web_mobile#distribution-channel",
+        "def:5.2.1:environments.ctv#distribution-channel"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Stats",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2694,
+          "section": "5.7.1"
+        }
+      ],
+      "message": "`Stats` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.7.1:13"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 3
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:String",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 581,
+          "section": "2.6"
+        },
+        {
+          "line": 981,
+          "section": "4.1.1"
+        },
+        {
+          "line": 2003,
+          "row": 4,
+          "section": "5.5",
+          "table": "table:5.5:2"
+        }
+      ],
+      "message": "`String` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:4",
+        "block:4.1.1:5",
+        "def:5.5:exclusions.keywords#entry"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 3
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:T",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 414,
+          "section": "2.2"
+        },
+        {
+          "line": 584,
+          "section": "2.6"
+        },
+        {
+          "line": 727,
+          "section": "3.1"
+        }
+      ],
+      "message": "`T` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.2:9",
+        "block:2.6:4",
+        "block:3.1:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:TransactionMechanism",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2786,
+          "section": "5.9"
+        }
+      ],
+      "message": "`TransactionMechanism` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.9:2"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:US",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 95,
+          "section": "1.1"
+        }
+      ],
+      "message": "`US` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.1:8"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:US-TX",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 96,
+          "section": "1.1"
+        }
+      ],
+      "message": "`US-TX` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.1:8"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:USA",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 96,
+          "section": "1.1"
+        }
+      ],
+      "message": "`USA` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.1:8"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:USD",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2141,
+          "section": "5.6"
+        }
+      ],
+      "message": "`USD` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.6:2"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:UTC",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 340,
+          "row": 19,
+          "section": "2.2",
+          "table": "table:2.2:1"
+        },
+        {
+          "line": 2889,
+          "row": 6,
+          "section": "5.10",
+          "table": "table:5.10:4"
+        }
+      ],
+      "message": "`UTC` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:2.2:IanaZone#form",
+        "key:5.10:Billing.time_zone#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:UpcomingEvent",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1709,
+          "section": "5.2.9"
+        }
+      ],
+      "message": "`UpcomingEvent` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.2.9:2"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:V",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 584,
+          "section": "2.6"
+        }
+      ],
+      "message": "`V` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 3
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:VideoPlacement",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1442,
+          "row": 5,
+          "section": "5.1.1",
+          "table": "table:5.1.1:1"
+        },
+        {
+          "line": 1494,
+          "section": "5.2.2"
+        },
+        {
+          "line": 1562,
+          "section": "5.2.3"
+        }
+      ],
+      "message": "`VideoPlacement` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.1.1:channel.video#condition",
+        "block:5.2.2:1",
+        "block:5.2.3:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:VideoPlacement.ptype",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1528,
+          "section": "5.2.2"
+        }
+      ],
+      "message": "`VideoPlacement.ptype` resolves to no table row, key, or table-declared value; no table defines `VideoPlacement`.",
+      "subjects": [
+        "block:5.2.2:5"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 10
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:X",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 588,
+          "section": "2.6"
+        },
+        {
+          "line": 589,
+          "section": "2.6"
+        },
+        {
+          "line": 590,
+          "section": "2.6"
+        },
+        {
+          "line": 590,
+          "section": "2.6"
+        },
+        {
+          "line": 592,
+          "section": "2.6"
+        },
+        {
+          "line": 593,
+          "section": "2.6"
+        },
+        {
+          "line": 593,
+          "section": "2.6"
+        },
+        {
+          "line": 595,
+          "section": "2.6"
+        },
+        {
+          "line": 595,
+          "section": "2.6"
+        },
+        {
+          "line": 596,
+          "section": "2.6"
+        }
+      ],
+      "message": "`X` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 4
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Y",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 589,
+          "section": "2.6"
+        },
+        {
+          "line": 589,
+          "section": "2.6"
+        },
+        {
+          "line": 589,
+          "section": "2.6"
+        },
+        {
+          "line": 590,
+          "section": "2.6"
+        }
+      ],
+      "message": "`Y` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Z",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 338,
+          "row": 17,
+          "section": "2.2",
+          "table": "table:2.2:1"
+        }
+      ],
+      "message": "`Z` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:2.2:Instant#form"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:_",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 331,
+          "row": 10,
+          "section": "2.2",
+          "table": "table:2.2:1"
+        }
+      ],
+      "message": "`_` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:2.2:VocabularyTerm#form"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:_allowed",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 612,
+          "section": "2.6"
+        }
+      ],
+      "message": "`_allowed` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:6"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:_ms",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 339,
+          "row": 18,
+          "section": "2.2",
+          "table": "table:2.2:1"
+        }
+      ],
+      "message": "`_ms` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:2.2:Duration#rules"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:_ref",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 611,
+          "section": "2.6"
+        }
+      ],
+      "message": "`_ref` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:6"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:_required",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 612,
+          "section": "2.6"
+        }
+      ],
+      "message": "`_required` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:6"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:_s",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 339,
+          "row": 18,
+          "section": "2.2",
+          "table": "table:2.2:1"
+        }
+      ],
+      "message": "`_s` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:2.2:Duration#rules"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 3
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:accept",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1286,
+          "row": 8,
+          "section": "4.3.1",
+          "table": "table:4.3.1:1"
+        },
+        {
+          "line": 1309,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1344,
+          "section": "4.3.2"
+        }
+      ],
+      "message": "`accept` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:4.3.1:8#interaction",
+        "block:4.3.2:9",
+        "block:4.3.2:17"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:5.6.5:2/values:1"
+        ],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:actions",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2432,
+          "row": 7,
+          "section": "5.6.5",
+          "table": "table:5.6.5:1"
+        }
+      ],
+      "message": "`actions` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "def:5.6.5:cost_method.CPA#unit"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:adtypes",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 71,
+          "row": 5,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        }
+      ],
+      "message": "`adtypes` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:1.1:5#deals-api-10"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:advertiser_crm",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1798,
+          "row": 2,
+          "section": "5.3",
+          "table": "table:5.3:5"
+        }
+      ],
+      "message": "`advertiser_crm` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.3:BuyerList.source#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:all_of[]",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 610,
+          "section": "2.6"
+        }
+      ],
+      "message": "`all_of[]` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:6"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:5.3:3/values:1"
+        ],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:any",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1768,
+          "section": "5.3"
+        }
+      ],
+      "message": "`any` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "block:5.3:5"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:app.bundle",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1609,
+          "row": 2,
+          "section": "5.2.5",
+          "table": "table:5.2.5:1"
+        }
+      ],
+      "message": "`app.bundle` resolves to no table row, key, or table-declared value; no table defines `app`.",
+      "subjects": [
+        "key:5.2.5:AppId.bundle#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:app.content",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1726,
+          "section": "5.2.9"
+        }
+      ],
+      "message": "`app.content` resolves to no table row, key, or table-declared value; no table defines `app`.",
+      "subjects": [
+        "block:5.2.9:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:app.domain",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1616,
+          "row": 2,
+          "section": "5.2.5",
+          "table": "table:5.2.5:2"
+        }
+      ],
+      "message": "`app.domain` resolves to no table row, key, or table-declared value; no table defines `app`.",
+      "subjects": [
+        "key:5.2.5:App.developer_domain#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:app.inventorypartnerdomain",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1591,
+          "row": 6,
+          "section": "5.2.4",
+          "table": "table:5.2.4:1"
+        }
+      ],
+      "message": "`app.inventorypartnerdomain` resolves to no table row, key, or table-declared value; no table defines `app`.",
+      "subjects": [
+        "key:5.2.4:PropertyOption.inventory_partner_domain#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:app.storeurl",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1615,
+          "row": 1,
+          "section": "5.2.5",
+          "table": "table:5.2.5:2"
+        }
+      ],
+      "message": "`app.storeurl` resolves to no table row, key, or table-declared value; no table defines `app`.",
+      "subjects": [
+        "key:5.2.5:App.store_url#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:asset",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1839,
+          "section": "5.4"
+        }
+      ],
+      "message": "`asset` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.4:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:audience_expansion",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1753,
+          "row": 4,
+          "section": "5.3",
+          "table": "table:5.3:2"
+        }
+      ],
+      "message": "`audience_expansion` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.3:AudienceOption.data_label#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:audience_id",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1752,
+          "row": 3,
+          "section": "5.3",
+          "table": "table:5.3:2"
+        }
+      ],
+      "message": "`audience_id` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.3:AudienceOption.taxonomy#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:bookingstatus",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 131,
+          "section": "1.1"
+        }
+      ],
+      "message": "`bookingstatus` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.1:12"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:5.6.5:2/values:1"
+        ],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:clicks",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2428,
+          "row": 3,
+          "section": "5.6.5",
+          "table": "table:5.6.5:1"
+        }
+      ],
+      "message": "`clicks` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "def:5.6.5:cost_method.CPC#unit"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 46
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:commit",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 499,
+          "row": 5,
+          "section": "2.4",
+          "table": "table:2.4:1"
+        },
+        {
+          "line": 511,
+          "row": 5,
+          "section": "2.4",
+          "table": "table:2.4:2"
+        },
+        {
+          "line": 511,
+          "row": 5,
+          "section": "2.4",
+          "table": "table:2.4:2"
+        },
+        {
+          "line": 991,
+          "section": "4.1.1"
+        },
+        {
+          "line": 992,
+          "section": "4.1.1"
+        },
+        {
+          "line": 1030,
+          "section": "4.1.1"
+        },
+        {
+          "line": 1048,
+          "row": 6,
+          "section": "4.1.2",
+          "table": "table:4.1.2:1"
+        },
+        {
+          "line": 1065,
+          "section": "4.1.2"
+        },
+        {
+          "line": 1175,
+          "section": "4.1.3"
+        },
+        {
+          "line": 1197,
+          "row": 4,
+          "section": "4.1.4",
+          "table": "table:4.1.4:1"
+        },
+        {
+          "line": 1210,
+          "section": "4.1.4"
+        },
+        {
+          "line": 1211,
+          "section": "4.1.4"
+        },
+        {
+          "line": 1213,
+          "section": "4.1.4"
+        },
+        {
+          "line": 1267,
+          "section": "4.3"
+        },
+        {
+          "line": 1269,
+          "section": "4.3"
+        },
+        {
+          "line": 1271,
+          "section": "4.3"
+        },
+        {
+          "line": 1284,
+          "row": 6,
+          "section": "4.3.1",
+          "table": "table:4.3.1:1"
+        },
+        {
+          "line": 1285,
+          "row": 7,
+          "section": "4.3.1",
+          "table": "table:4.3.1:1"
+        },
+        {
+          "line": 1286,
+          "row": 8,
+          "section": "4.3.1",
+          "table": "table:4.3.1:1"
+        },
+        {
+          "line": 1287,
+          "row": 9,
+          "section": "4.3.1",
+          "table": "table:4.3.1:1"
+        },
+        {
+          "line": 1309,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1327,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1333,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1343,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1364,
+          "row": 2,
+          "section": "4.3.4",
+          "table": "table:4.3.4:1"
+        },
+        {
+          "line": 2191,
+          "section": "5.6.1"
+        },
+        {
+          "line": 2203,
+          "section": "5.6.1"
+        },
+        {
+          "line": 2228,
+          "section": "5.6.1"
+        },
+        {
+          "line": 2246,
+          "section": "5.6.1"
+        },
+        {
+          "line": 2258,
+          "section": "5.6.1"
+        },
+        {
+          "line": 2261,
+          "section": "5.6.1"
+        },
+        {
+          "line": 2263,
+          "section": "5.6.1"
+        },
+        {
+          "line": 2265,
+          "section": "5.6.1"
+        },
+        {
+          "line": 2265,
+          "section": "5.6.1"
+        },
+        {
+          "line": 2269,
+          "section": "5.6.1"
+        },
+        {
+          "line": 2274,
+          "section": "5.6.1"
+        },
+        {
+          "line": 2277,
+          "section": "5.6.1"
+        },
+        {
+          "line": 2281,
+          "section": "5.6.1"
+        },
+        {
+          "line": 2284,
+          "section": "5.6.1"
+        },
+        {
+          "line": 2288,
+          "section": "5.6.1"
+        },
+        {
+          "line": 2312,
+          "row": 3,
+          "section": "5.6.2",
+          "table": "table:5.6.2:2"
+        },
+        {
+          "line": 2334,
+          "section": "5.6.2"
+        },
+        {
+          "line": 2335,
+          "section": "5.6.2"
+        },
+        {
+          "line": 2911,
+          "section": "6.1"
+        },
+        {
+          "line": 2970,
+          "section": "6.9"
+        },
+        {
+          "line": 2978,
+          "section": "6.10"
+        }
+      ],
+      "message": "`commit` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:2.4:ErrorObject.retry#meaning",
+        "def:2.4:code.not_committable#returned-when",
+        "block:4.1.1:6",
+        "block:4.1.1:11",
+        "key:4.1.2:AssentEntry.idempotency_key#meaning",
+        "block:4.1.2:7",
+        "block:4.1.3:7",
+        "key:4.1.4:Package.min_commitments[]#meaning",
+        "block:4.1.4:5",
+        "block:4.1.4:6",
+        "block:4.1.4:7",
+        "block:4.3:4",
+        "concept:4.3.1:6#effect-history-action",
+        "concept:4.3.1:7#interaction",
+        "concept:4.3.1:8#effect-history-action",
+        "concept:4.3.1:9#effect-history-action",
+        "block:4.3.2:9",
+        "block:4.3.2:14",
+        "block:4.3.2:17",
+        "concept:4.3.4:2#effect-when-passed",
+        "block:5.6.1:1",
+        "block:5.6.1:4",
+        "block:5.6.1:7",
+        "block:5.6.1:9",
+        "block:5.6.1:10",
+        "block:5.6.1:11",
+        "block:5.6.1:12",
+        "key:5.6.2:Hold.requested_terms#meaning",
+        "block:5.6.2:10",
+        "block:6.1:2",
+        "block:6.9:1",
+        "block:6.10:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:complete",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2616,
+          "row": 2,
+          "section": "5.7.1",
+          "table": "table:5.7.1:2"
+        }
+      ],
+      "message": "`complete` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:5.7.1:metric.completion_rate#definition"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:5.6.5:2/values:1"
+        ],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:completed_views",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2429,
+          "row": 4,
+          "section": "5.6.5",
+          "table": "table:5.6.5:1"
+        }
+      ],
+      "message": "`completed_views` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "def:5.6.5:cost_method.CPCV#unit"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:content-digest",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 677,
+          "row": 6,
+          "section": "2.8",
+          "table": "table:2.8:1"
+        }
+      ],
+      "message": "`content-digest` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8:6#profile-choice"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:content-type",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 677,
+          "row": 6,
+          "section": "2.8",
+          "table": "table:2.8:1"
+        }
+      ],
+      "message": "`content-type` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8:6#profile-choice"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:contentrating",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1727,
+          "section": "5.2.9"
+        }
+      ],
+      "message": "`contentrating` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.2.9:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:5.6.2:4/values:1"
+        ],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:converted",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2339,
+          "section": "5.6.2"
+        },
+        {
+          "line": 2340,
+          "section": "5.6.2"
+        }
+      ],
+      "message": "`converted` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "block:5.6.2:12"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 6
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:counter",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 697,
+          "row": 6,
+          "section": "3",
+          "table": "table:3:1"
+        },
+        {
+          "line": 975,
+          "section": "4.1.1"
+        },
+        {
+          "line": 1283,
+          "row": 5,
+          "section": "4.3.1",
+          "table": "table:4.3.1:1"
+        },
+        {
+          "line": 1283,
+          "row": 5,
+          "section": "4.3.1",
+          "table": "table:4.3.1:1"
+        },
+        {
+          "line": 1307,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1323,
+          "section": "4.3.2"
+        }
+      ],
+      "message": "`counter` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "marker:3:requestable#meaning",
+        "block:4.1.1:4",
+        "concept:4.3.1:5#interaction",
+        "concept:4.3.1:5#effect-history-action",
+        "block:4.3.2:8",
+        "block:4.3.2:14"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:country",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 91,
+          "section": "1.1"
+        }
+      ],
+      "message": "`country` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.1:7"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:created",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 674,
+          "row": 3,
+          "section": "2.8",
+          "table": "table:2.8:1"
+        },
+        {
+          "line": 674,
+          "row": 3,
+          "section": "2.8",
+          "table": "table:2.8:1"
+        }
+      ],
+      "message": "`created` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8:3#profile-choice"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:creativeapprovals",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1907,
+          "section": "5.4"
+        }
+      ],
+      "message": "`creativeapprovals` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.4:12"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:crv",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 673,
+          "row": 2,
+          "section": "2.8",
+          "table": "table:2.8:1"
+        }
+      ],
+      "message": "`crv` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8:2#profile-choice"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:data.ext.segtax",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1752,
+          "row": 3,
+          "section": "5.3",
+          "table": "table:5.3:2"
+        }
+      ],
+      "message": "`data.ext.segtax` resolves to no table row, key, or table-declared value; no table defines `data`.",
+      "subjects": [
+        "key:5.3:AudienceOption.taxonomy#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:date-time",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 338,
+          "row": 17,
+          "section": "2.2",
+          "table": "table:2.2:1"
+        }
+      ],
+      "message": "`date-time` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:2.2:Instant#form"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:device.devicetype",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1968,
+          "row": 3,
+          "section": "5.5",
+          "table": "table:5.5:1"
+        }
+      ],
+      "message": "`device.devicetype` resolves to no table row, key, or table-declared value; no table defines `devicetype`.",
+      "subjects": [
+        "field:5.5:device#description"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:device.ifa",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1669,
+          "row": 1,
+          "section": "5.2.8",
+          "table": "table:5.2.8:1"
+        }
+      ],
+      "message": "`device.ifa` resolves to no table row, key, or table-declared value; no table defines `ifa`.",
+      "subjects": [
+        "key:5.2.8:Screen.screen_id#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:device.ifa_type",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1669,
+          "row": 1,
+          "section": "5.2.8",
+          "table": "table:5.2.8:1"
+        }
+      ],
+      "message": "`device.ifa_type` resolves to no table row, key, or table-declared value; no table defines `ifa_type`.",
+      "subjects": [
+        "key:5.2.8:Screen.screen_id#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:devicetype",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2104,
+          "section": "5.5"
+        }
+      ],
+      "message": "`devicetype` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.5:18"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:dooh.venuetype",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1595,
+          "row": 10,
+          "section": "5.2.4",
+          "table": "table:5.2.4:1"
+        }
+      ],
+      "message": "`dooh.venuetype` resolves to no table row, key, or table-declared value; no table defines `venuetype`.",
+      "subjects": [
+        "key:5.2.4:PropertyOption.venue_type#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:dooh.venuetypetax",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1595,
+          "row": 10,
+          "section": "5.2.4",
+          "table": "table:5.2.4:1"
+        }
+      ],
+      "message": "`dooh.venuetypetax` resolves to no table row, key, or table-declared value; no table defines `venuetypetax`.",
+      "subjects": [
+        "key:5.2.4:PropertyOption.venue_type#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:enddate",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 83,
+          "section": "1.1"
+        }
+      ],
+      "message": "`enddate` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.1:5"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:engagement",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2114,
+          "row": 5,
+          "section": "5.6",
+          "table": "table:5.6:1"
+        }
+      ],
+      "message": "`engagement` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "field:5.6:pricing[].unit_label#description"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 3
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:errors[]",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 138,
+          "section": "1.2"
+        },
+        {
+          "line": 153,
+          "section": "1.2"
+        },
+        {
+          "line": 483,
+          "section": "2.4"
+        }
+      ],
+      "message": "`errors[]` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.2:1",
+        "block:1.2:3",
+        "block:2.4:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:expires",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 674,
+          "row": 3,
+          "section": "2.8",
+          "table": "table:2.8:1"
+        }
+      ],
+      "message": "`expires` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8:3#profile-choice"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:genres",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1705,
+          "row": 2,
+          "section": "5.2.9",
+          "table": "table:5.2.9:1"
+        }
+      ],
+      "message": "`genres` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.2.9:ProgramOption.content#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 5
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:grant",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 697,
+          "row": 6,
+          "section": "3",
+          "table": "table:3:1"
+        },
+        {
+          "line": 975,
+          "section": "4.1.1"
+        },
+        {
+          "line": 1282,
+          "row": 4,
+          "section": "4.3.1",
+          "table": "table:4.3.1:1"
+        },
+        {
+          "line": 1306,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1323,
+          "section": "4.3.2"
+        }
+      ],
+      "message": "`grant` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "marker:3:requestable#meaning",
+        "block:4.1.1:4",
+        "concept:4.3.1:4#interaction",
+        "block:4.3.2:8",
+        "block:4.3.2:14"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:5.9:4/values:1"
+        ],
+        "occurrences": 4
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:guaranteed",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2669,
+          "section": "5.7.1"
+        },
+        {
+          "line": 2794,
+          "row": 2,
+          "section": "5.9",
+          "table": "table:5.9:3"
+        },
+        {
+          "line": 2811,
+          "section": "5.9"
+        },
+        {
+          "line": 2820,
+          "section": "5.9"
+        }
+      ],
+      "message": "`guaranteed` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "block:5.7.1:10",
+        "def:5.9:transaction_mechanism.programmatic_guaranteed#delivery_type",
+        "block:5.9:5",
+        "block:5.9:8"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:5.6.2:4/values:1",
+          "block:5.6.2:12/values:1"
+        ],
+        "occurrences": 17
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:held",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 461,
+          "row": 1,
+          "section": "2.3",
+          "table": "table:2.3:3"
+        },
+        {
+          "line": 462,
+          "row": 2,
+          "section": "2.3",
+          "table": "table:2.3:3"
+        },
+        {
+          "line": 1311,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1313,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1342,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1343,
+          "section": "4.3.2"
+        },
+        {
+          "line": 2296,
+          "section": "5.6.2"
+        },
+        {
+          "line": 2316,
+          "row": 7,
+          "section": "5.6.2",
+          "table": "table:5.6.2:2"
+        },
+        {
+          "line": 2326,
+          "section": "5.6.2"
+        },
+        {
+          "line": 2331,
+          "section": "5.6.2"
+        },
+        {
+          "line": 2331,
+          "section": "5.6.2"
+        },
+        {
+          "line": 2334,
+          "section": "5.6.2"
+        },
+        {
+          "line": 2335,
+          "section": "5.6.2"
+        },
+        {
+          "line": 2337,
+          "section": "5.6.2"
+        },
+        {
+          "line": 2342,
+          "section": "5.6.2"
+        },
+        {
+          "line": 2345,
+          "section": "5.6.2"
+        },
+        {
+          "line": 2346,
+          "section": "5.6.2"
+        }
+      ],
+      "message": "`held` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "key:2.3:HoldLimits.per_buyer#meaning",
+        "key:2.3:HoldLimits.per_advertiser#meaning",
+        "block:4.3.2:10",
+        "block:4.3.2:11",
+        "block:4.3.2:17",
+        "block:5.6.2:1",
+        "key:5.6.2:Hold.valid_until#required",
+        "block:5.6.2:7",
+        "block:5.6.2:9",
+        "block:5.6.2:10",
+        "block:5.6.2:11",
+        "block:5.6.2:13",
+        "block:5.6.2:14"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:http",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 342,
+          "row": 21,
+          "section": "2.2",
+          "table": "table:2.2:1"
+        }
+      ],
+      "message": "`http` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:2.2:Url#form"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 5
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:https",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 176,
+          "section": "1.2"
+        },
+        {
+          "line": 342,
+          "row": 21,
+          "section": "2.2",
+          "table": "table:2.2:1"
+        },
+        {
+          "line": 343,
+          "row": 22,
+          "section": "2.2",
+          "table": "table:2.2:1"
+        },
+        {
+          "line": 645,
+          "section": "2.7"
+        },
+        {
+          "line": 672,
+          "row": 1,
+          "section": "2.8",
+          "table": "table:2.8:1"
+        }
+      ],
+      "message": "`https` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.2:6",
+        "def:2.2:Url#form",
+        "def:2.2:HttpsUrl#form",
+        "block:2.7:3",
+        "concept:2.8:1#profile-choice"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:5.4:5/values:1"
+        ],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:human_only",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1848,
+          "section": "5.4"
+        }
+      ],
+      "message": "`human_only` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "block:5.4:5"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:iab-agentic-primitives",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 149,
+          "section": "1.2"
+        },
+        {
+          "line": 194,
+          "section": "1.2"
+        }
+      ],
+      "message": "`iab-agentic-primitives` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.2:3",
+        "block:1.2:8"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:imp.audio",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1575,
+          "section": "5.2.3"
+        }
+      ],
+      "message": "`imp.audio` resolves to no table row, key, or table-declared value; no table defines `imp`.",
+      "subjects": [
+        "block:5.2.3:5"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:imp.instl",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1457,
+          "section": "5.1.1"
+        }
+      ],
+      "message": "`imp.instl` resolves to no table row, key, or table-declared value; no table defines `imp`.",
+      "subjects": [
+        "block:5.1.1:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:imp.qty.multiplier",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2406,
+          "row": 5,
+          "section": "5.6.4",
+          "table": "table:5.6.4:3"
+        }
+      ],
+      "message": "`imp.qty.multiplier` resolves to no table row, key, or table-declared value; no table defines `imp`.",
+      "subjects": [
+        "key:5.6.4:ImpressionMultiplier.settles_on#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:imp.qty.sourcetype",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2403,
+          "row": 2,
+          "section": "5.6.4",
+          "table": "table:5.6.4:3"
+        }
+      ],
+      "message": "`imp.qty.sourcetype` resolves to no table row, key, or table-declared value; no table defines `imp`.",
+      "subjects": [
+        "key:5.6.4:ImpressionMultiplier.source_type#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:imp.qty.vendor",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2404,
+          "row": 3,
+          "section": "5.6.4",
+          "table": "table:5.6.4:3"
+        }
+      ],
+      "message": "`imp.qty.vendor` resolves to no table row, key, or table-declared value; no table defines `imp`.",
+      "subjects": [
+        "key:5.6.4:ImpressionMultiplier.vendor#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:imp.rwdd",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1457,
+          "section": "5.1.1"
+        }
+      ],
+      "message": "`imp.rwdd` resolves to no table row, key, or table-declared value; no table defines `imp`.",
+      "subjects": [
+        "block:5.1.1:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:imp.video",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1574,
+          "section": "5.2.3"
+        }
+      ],
+      "message": "`imp.video` resolves to no table row, key, or table-declared value; no table defines `imp`.",
+      "subjects": [
+        "block:5.2.3:5"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:keyid",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 674,
+          "row": 3,
+          "section": "2.8",
+          "table": "table:2.8:1"
+        }
+      ],
+      "message": "`keyid` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8:3#profile-choice"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:kid",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 673,
+          "row": 2,
+          "section": "2.8",
+          "table": "table:2.8:1"
+        }
+      ],
+      "message": "`kid` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8:2#profile-choice"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:kty",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 673,
+          "row": 2,
+          "section": "2.8",
+          "table": "table:2.8:1"
+        }
+      ],
+      "message": "`kty` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8:2#profile-choice"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:live",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1705,
+          "row": 2,
+          "section": "5.2.9",
+          "table": "table:5.2.9:1"
+        },
+        {
+          "line": 1727,
+          "section": "5.2.9"
+        }
+      ],
+      "message": "`live` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.2.9:ProgramOption.content#meaning",
+        "block:5.2.9:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:livestream",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1727,
+          "section": "5.2.9"
+        }
+      ],
+      "message": "`livestream` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.2.9:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": {
+        "reason": "§ 8 open question 5 asks whether to add this field; it doesn't exist yet.",
+        "verdict": "accepted"
+      },
+      "id": "unresolved_identifier:min_line_items",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 3065,
+          "section": "8"
+        }
+      ],
+      "message": "`min_line_items` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:8:6"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:n",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1154,
+          "section": "4.1.3"
+        }
+      ],
+      "message": "`n` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:4.1.3:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:network",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1705,
+          "row": 2,
+          "section": "5.2.9",
+          "table": "table:5.2.9:1"
+        },
+        {
+          "line": 1720,
+          "section": "5.2.9"
+        }
+      ],
+      "message": "`network` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.2.9:ProgramOption.content#meaning",
+        "block:5.2.9:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:5.9:4/values:1"
+        ],
+        "occurrences": 4
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:non_guaranteed",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2181,
+          "row": 6,
+          "section": "5.6",
+          "table": "table:5.6:2"
+        },
+        {
+          "line": 2795,
+          "row": 3,
+          "section": "5.9",
+          "table": "table:5.9:3"
+        },
+        {
+          "line": 2796,
+          "row": 4,
+          "section": "5.9",
+          "table": "table:5.9:3"
+        },
+        {
+          "line": 2817,
+          "section": "5.9"
+        }
+      ],
+      "message": "`non_guaranteed` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "key:5.6:Availability.certainty#meaning",
+        "def:5.9:transaction_mechanism.preferred_deal#delivery_type",
+        "def:5.9:transaction_mechanism.private_auction#delivery_type",
+        "block:5.9:7"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:nonce",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 674,
+          "row": 3,
+          "section": "2.8",
+          "table": "table:2.8:1"
+        }
+      ],
+      "message": "`nonce` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8:3#profile-choice"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:origin",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 68,
+          "row": 2,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        },
+        {
+          "line": 2775,
+          "row": 6,
+          "section": "5.9",
+          "table": "table:5.9:1"
+        }
+      ],
+      "message": "`origin` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:1.1:2#deals-api-10",
+        "field:5.9:deal_origin#description"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:originating_domain",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1753,
+          "row": 4,
+          "section": "5.3",
+          "table": "table:5.3:2"
+        }
+      ],
+      "message": "`originating_domain` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.3:AudienceOption.data_label#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:playbackmethod",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1529,
+          "section": "5.2.2"
+        }
+      ],
+      "message": "`playbackmethod` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.2.2:5"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:5.6.5:2/values:1"
+        ],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:plays",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2433,
+          "row": 8,
+          "section": "5.6.5",
+          "table": "table:5.6.5:1"
+        }
+      ],
+      "message": "`plays` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "def:5.6.5:cost_method.PLAY#unit"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:ppid",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1669,
+          "row": 1,
+          "section": "5.2.8",
+          "table": "table:5.2.8:1"
+        }
+      ],
+      "message": "`ppid` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.2.8:Screen.screen_id#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 8
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:publish",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1252,
+          "section": "4.3"
+        },
+        {
+          "line": 1260,
+          "section": "4.3"
+        },
+        {
+          "line": 1279,
+          "row": 1,
+          "section": "4.3.1",
+          "table": "table:4.3.1:1"
+        },
+        {
+          "line": 1297,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1298,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1301,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1304,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1364,
+          "row": 2,
+          "section": "4.3.4",
+          "table": "table:4.3.4:1"
+        }
+      ],
+      "message": "`publish` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:4.3:1",
+        "block:4.3:2",
+        "concept:4.3.1:1#interaction",
+        "block:4.3.2:2",
+        "block:4.3.2:3",
+        "block:4.3.2:5",
+        "block:4.3.2:7",
+        "concept:4.3.4:2#effect-when-passed"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:ratetype",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 121,
+          "section": "1.1"
+        }
+      ],
+      "message": "`ratetype` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.1:11"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:rating",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1705,
+          "row": 2,
+          "section": "5.2.9",
+          "table": "table:5.2.9:1"
+        },
+        {
+          "line": 1727,
+          "section": "5.2.9"
+        }
+      ],
+      "message": "`rating` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.2.9:ProgramOption.content#meaning",
+        "block:5.2.9:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:5.6.5:2/values:1"
+        ],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:rating_points",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2177,
+          "row": 2,
+          "section": "5.6",
+          "table": "table:5.6:2"
+        },
+        {
+          "line": 2431,
+          "row": 6,
+          "section": "5.6.5",
+          "table": "table:5.6.5:1"
+        }
+      ],
+      "message": "`rating_points` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "key:5.6:Availability.quantity#meaning",
+        "def:5.6.5:cost_method.CPP#unit"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:ratings.example",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2451,
+          "row": 4,
+          "section": "5.6.5",
+          "table": "table:5.6.5:2"
+        }
+      ],
+      "message": "`ratings.example` resolves to no table row, key, or table-declared value; no table defines `ratings`.",
+      "subjects": [
+        "key:5.6.5:CostParameters.demographic#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:realtime",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1705,
+          "row": 2,
+          "section": "5.2.9",
+          "table": "table:5.2.9:1"
+        }
+      ],
+      "message": "`realtime` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.2.9:ProgramOption.content#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:region",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 91,
+          "section": "1.1"
+        }
+      ],
+      "message": "`region` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:1.1:7"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:5.6.2:4/values:1",
+          "block:5.6.2:6/values:1"
+        ],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:released",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2316,
+          "row": 7,
+          "section": "5.6.2",
+          "table": "table:5.6.2:2"
+        },
+        {
+          "line": 2337,
+          "section": "5.6.2"
+        }
+      ],
+      "message": "`released` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "key:5.6.2:Hold.valid_until#meaning",
+        "block:5.6.2:11"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 10
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:request",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 888,
+          "row": 3,
+          "section": "4.1",
+          "table": "table:4.1:3"
+        },
+        {
+          "line": 1267,
+          "section": "4.3"
+        },
+        {
+          "line": 1272,
+          "section": "4.3"
+        },
+        {
+          "line": 1273,
+          "section": "4.3"
+        },
+        {
+          "line": 1281,
+          "row": 3,
+          "section": "4.3.1",
+          "table": "table:4.3.1:1"
+        },
+        {
+          "line": 1282,
+          "row": 4,
+          "section": "4.3.1",
+          "table": "table:4.3.1:1"
+        },
+        {
+          "line": 1283,
+          "row": 5,
+          "section": "4.3.1",
+          "table": "table:4.3.1:1"
+        },
+        {
+          "line": 1284,
+          "row": 6,
+          "section": "4.3.1",
+          "table": "table:4.3.1:1"
+        },
+        {
+          "line": 1323,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1344,
+          "section": "4.3.2"
+        }
+      ],
+      "message": "`request` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:4.1:HistoryPath.requested_value#meaning",
+        "block:4.3:4",
+        "concept:4.3.1:3#interaction",
+        "concept:4.3.1:4#effect-history-action",
+        "concept:4.3.1:5#effect-history-action",
+        "concept:4.3.1:6#effect-history-action",
+        "block:4.3.2:14",
+        "block:4.3.2:17"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:segment.id",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1752,
+          "row": 3,
+          "section": "5.3",
+          "table": "table:5.3:2"
+        }
+      ],
+      "message": "`segment.id` resolves to no table row, key, or table-declared value; no table defines `segment`.",
+      "subjects": [
+        "key:5.3:AudienceOption.taxonomy#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:seller_id",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1645,
+          "section": "5.2.6"
+        }
+      ],
+      "message": "`seller_id` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.2.6:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:sellerstatus",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 50,
+          "row": 3,
+          "section": "1.1",
+          "table": "table:1.1:1"
+        },
+        {
+          "line": 101,
+          "section": "1.1"
+        }
+      ],
+      "message": "`sellerstatus` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:1.1:transaction_mechanism.preferred_deal#change-path",
+        "block:1.1:9"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:series",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1705,
+          "row": 2,
+          "section": "5.2.9",
+          "table": "table:5.2.9:1"
+        }
+      ],
+      "message": "`series` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.2.9:ProgramOption.content#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:sha-256",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 677,
+          "row": 6,
+          "section": "2.8",
+          "table": "table:2.8:1"
+        }
+      ],
+      "message": "`sha-256` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8:6#profile-choice"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:sha256",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 322,
+          "row": 1,
+          "section": "2.2",
+          "table": "table:2.2:1"
+        }
+      ],
+      "message": "`sha256` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:2.2:Digest#rules"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:5.9:4/values:1"
+        ],
+        "occurrences": 4
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:share_of_voice",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2771,
+          "row": 2,
+          "section": "5.9",
+          "table": "table:5.9:1"
+        },
+        {
+          "line": 2794,
+          "row": 2,
+          "section": "5.9",
+          "table": "table:5.9:3"
+        },
+        {
+          "line": 2813,
+          "section": "5.9"
+        },
+        {
+          "line": 2821,
+          "section": "5.9"
+        }
+      ],
+      "message": "`share_of_voice` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "field:5.9:sov_basis#required",
+        "def:5.9:transaction_mechanism.programmatic_guaranteed#delivery_type",
+        "block:5.9:6",
+        "block:5.9:8"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:shareoftime",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2695,
+          "section": "5.7.1"
+        }
+      ],
+      "message": "`shareoftime` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.7.1:13"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:shop.example",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2453,
+          "row": 6,
+          "section": "5.6.5",
+          "table": "table:5.6.5:2"
+        }
+      ],
+      "message": "`shop.example` resolves to no table row, key, or table-declared value; no table defines `shop`.",
+      "subjects": [
+        "key:5.6.5:CostParameters.action_type#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:site.content",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1726,
+          "section": "5.2.9"
+        }
+      ],
+      "message": "`site.content` resolves to no table row, key, or table-declared value; no table defines `site`.",
+      "subjects": [
+        "block:5.2.9:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:site.inventorypartnerdomain",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1591,
+          "row": 6,
+          "section": "5.2.4",
+          "table": "table:5.2.4:1"
+        }
+      ],
+      "message": "`site.inventorypartnerdomain` resolves to no table row, key, or table-declared value; no table defines `site`.",
+      "subjects": [
+        "key:5.2.4:PropertyOption.inventory_partner_domain#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:4.3.2:11/values:1",
+          "block:4.3.2:13/values:1"
+        ],
+        "occurrences": 8
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:sold_out",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 327,
+          "row": 6,
+          "section": "2.2",
+          "table": "table:2.2:1"
+        },
+        {
+          "line": 1216,
+          "section": "4.1.4"
+        },
+        {
+          "line": 1310,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1315,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1333,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1334,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1352,
+          "section": "4.3.3"
+        },
+        {
+          "line": 1363,
+          "row": 1,
+          "section": "4.3.4",
+          "table": "table:4.3.4:1"
+        }
+      ],
+      "message": "`sold_out` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "def:2.2:LineItemStatus#form",
+        "block:4.1.4:8",
+        "block:4.3.2:10",
+        "block:4.3.2:12",
+        "block:4.3.2:14",
+        "block:4.3.3:4",
+        "concept:4.3.4:1#effect-when-passed"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:taxonomy_id_list",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1752,
+          "row": 3,
+          "section": "5.3",
+          "table": "table:5.3:2"
+        }
+      ],
+      "message": "`taxonomy_id_list` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.3:AudienceOption.taxonomy#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:terms.countries",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 73,
+          "row": 7,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        },
+        {
+          "line": 94,
+          "section": "1.1"
+        }
+      ],
+      "message": "`terms.countries` resolves to no table row, key, or table-declared value; no table defines `countries`.",
+      "subjects": [
+        "concept:1.1:7#deals-api-10",
+        "block:1.1:8"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:terms.cur",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 75,
+          "row": 9,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        }
+      ],
+      "message": "`terms.cur` resolves to no table row, key, or table-declared value; no table defines `cur`.",
+      "subjects": [
+        "concept:1.1:9#deals-api-10"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:terms.dealfloor",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 74,
+          "row": 8,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        },
+        {
+          "line": 86,
+          "section": "1.1"
+        }
+      ],
+      "message": "`terms.dealfloor` resolves to no table row, key, or table-declared value; no table defines `dealfloor`.",
+      "subjects": [
+        "concept:1.1:8#deals-api-10",
+        "block:1.1:6"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:terms.enddate",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 72,
+          "row": 6,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        },
+        {
+          "line": 82,
+          "section": "1.1"
+        }
+      ],
+      "message": "`terms.enddate` resolves to no table row, key, or table-declared value; no table defines `enddate`.",
+      "subjects": [
+        "concept:1.1:6#deals-api-10",
+        "block:1.1:5"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:terms.guar",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 77,
+          "row": 11,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        }
+      ],
+      "message": "`terms.guar` resolves to no table row, key, or table-declared value; no table defines `guar`.",
+      "subjects": [
+        "concept:1.1:11#deals-api-10"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:terms.pricetype",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 76,
+          "row": 10,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        },
+        {
+          "line": 2122,
+          "row": 13,
+          "section": "5.6",
+          "table": "table:5.6:1"
+        }
+      ],
+      "message": "`terms.pricetype` resolves to no table row, key, or table-declared value; no table defines `pricetype`.",
+      "subjects": [
+        "concept:1.1:10#deals-api-10",
+        "field:5.6:pricing[].price_type#description"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:terms.startdate",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 72,
+          "row": 6,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        }
+      ],
+      "message": "`terms.startdate` resolves to no table row, key, or table-declared value; no table defines `startdate`.",
+      "subjects": [
+        "concept:1.1:6#deals-api-10"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:terms.totalcost",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 79,
+          "row": 13,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        }
+      ],
+      "message": "`terms.totalcost` resolves to no table row, key, or table-declared value; no table defines `totalcost`.",
+      "subjects": [
+        "concept:1.1:13#deals-api-10"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:text",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 592,
+          "section": "2.6"
+        }
+      ],
+      "message": "`text` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.6:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:title",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1705,
+          "row": 2,
+          "section": "5.2.9",
+          "table": "table:5.2.9:1"
+        }
+      ],
+      "message": "`title` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.2.9:ProgramOption.content#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:unknown",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2451,
+          "row": 4,
+          "section": "5.6.5",
+          "table": "table:5.6.5:2"
+        }
+      ],
+      "message": "`unknown` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.6.5:CostParameters.demographic#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:verificationNotExecuted",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1950,
+          "section": "5.4.1"
+        }
+      ],
+      "message": "`verificationNotExecuted` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.4.1:6"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:5.6.5:2/values:1"
+        ],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:viewable_impressions",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2427,
+          "row": 2,
+          "section": "5.6.5",
+          "table": "table:5.6.5:1"
+        }
+      ],
+      "message": "`viewable_impressions` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "def:5.6.5:cost_method.CPMV#unit"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 3
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:viewer_local",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 341,
+          "row": 20,
+          "section": "2.2",
+          "table": "table:2.2:1"
+        },
+        {
+          "line": 341,
+          "row": 20,
+          "section": "2.2",
+          "table": "table:2.2:1"
+        },
+        {
+          "line": 2850,
+          "section": "5.9"
+        }
+      ],
+      "message": "`viewer_local` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "def:2.2:ZoneName#form",
+        "def:2.2:ZoneName#rules",
+        "block:5.9:18"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [
+          "block:5.6.5:2/values:1"
+        ],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:views",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 2430,
+          "row": 5,
+          "section": "5.6.5",
+          "table": "table:5.6.5:1"
+        }
+      ],
+      "message": "`views` resolves to no table row, key, or table-declared value; only prose declares it.",
+      "subjects": [
+        "def:5.6.5:cost_method.CPV#unit"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:voice",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1844,
+          "section": "5.4"
+        },
+        {
+          "line": 1847,
+          "section": "5.4"
+        }
+      ],
+      "message": "`voice` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:5.4:5"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:webhook",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1379,
+          "row": 1,
+          "section": "4.4",
+          "table": "table:4.4:1"
+        }
+      ],
+      "message": "`webhook` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "field:4.4:change_requests[]#description"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 4
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:withdraw",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1287,
+          "row": 9,
+          "section": "4.3.1",
+          "table": "table:4.3.1:1"
+        },
+        {
+          "line": 1307,
+          "section": "4.3.2"
+        },
+        {
+          "line": 1356,
+          "section": "4.3.3"
+        },
+        {
+          "line": 1364,
+          "row": 2,
+          "section": "4.3.4",
+          "table": "table:4.3.4:1"
+        }
+      ],
+      "message": "`withdraw` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:4.3.1:9#interaction",
+        "block:4.3.2:8",
+        "block:4.3.3:7",
+        "concept:4.3.4:2#effect-when-passed"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:wseat",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 70,
+          "row": 4,
+          "section": "1.1",
+          "table": "table:1.1:2"
+        },
+        {
+          "line": 2804,
+          "row": 3,
+          "section": "5.9",
+          "table": "table:5.9:4"
+        }
+      ],
+      "message": "`wseat` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:1.1:4#deals-api-10",
+        "key:5.9:BuyerRequirements.seats#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_as": [
+          "excluded[]"
+        ]
+      },
+      "disposition": null,
+      "id": "array_suffix_mismatch:excluded",
+      "kind": "array_suffix_mismatch",
+      "locs": [
+        {
+          "line": 1594,
+          "row": 9,
+          "section": "5.2.4",
+          "table": "table:5.2.4:1"
+        }
+      ],
+      "message": "`excluded` is written without the `[]` its definition carries, or with one it lacks: `excluded[]`.",
+      "subjects": [
+        "key:5.2.4:PropertyOption.child_treatment#meaning"
+      ]
+    },
+    {
+      "details": {
+        "declared": []
+      },
+      "disposition": null,
+      "id": "expression_value_unknown:actor: seller",
+      "kind": "expression_value_unknown",
+      "locs": [
+        {
+          "line": 1153,
+          "section": "4.1.3"
+        }
+      ],
+      "message": "`actor: seller` uses a value, but the field declares no value list to check it against.",
+      "subjects": [
+        "block:4.1.3:3"
+      ]
+    },
+    {
+      "details": {
+        "declared": []
+      },
+      "disposition": null,
+      "id": "expression_value_unknown:built_by: seller",
+      "kind": "expression_value_unknown",
+      "locs": [
+        {
+          "line": 1133,
+          "section": "4.1.3"
+        },
+        {
+          "line": 1870,
+          "section": "5.4"
+        }
+      ],
+      "message": "`built_by: seller` uses a value, but the field declares no value list to check it against.",
+      "subjects": [
+        "block:4.1.3:1",
+        "block:5.4:8"
+      ]
+    },
+    {
+      "details": {
+        "declared": []
+      },
+      "disposition": null,
+      "id": "expression_value_unknown:cost_method: FLAT",
+      "kind": "expression_value_unknown",
+      "locs": [
+        {
+          "line": 2357,
+          "section": "5.6.3"
+        }
+      ],
+      "message": "`cost_method: FLAT` uses a value, but the field declares no value list to check it against.",
+      "subjects": [
+        "block:5.6.3:1"
+      ]
+    },
+    {
+      "details": {
+        "declared": []
+      },
+      "disposition": null,
+      "id": "expression_value_unknown:max_select: 1",
+      "kind": "expression_value_unknown",
+      "locs": [
+        {
+          "line": 1761,
+          "row": 1,
+          "section": "5.3",
+          "table": "table:5.3:3"
+        },
+        {
+          "line": 2587,
+          "row": 3,
+          "section": "5.7",
+          "table": "table:5.7:1"
+        },
+        {
+          "line": 2770,
+          "row": 1,
+          "section": "5.9",
+          "table": "table:5.9:1"
+        }
+      ],
+      "message": "`max_select: 1` uses a value, but the field declares no value list to check it against.",
+      "subjects": [
+        "key:5.3:AudienceSelectable.combine#meaning",
+        "field:5.7:controlling_measurement#description",
+        "field:5.9:transaction_mechanism#description"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2.1:568d4699",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 227,
+          "section": "2.1"
+        }
+      ],
+      "message": "A MUST statement in § 2.1 names no field or key: \"A full fetch MUST return it, except for line items and packages the requester may not read (§ 5.8).\"",
+      "subjects": [
+        "rule:2.1:568d4699"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2.3:59a4ca91",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 452,
+          "section": "2.3"
+        }
+      ],
+      "message": "A MUST statement in § 2.3 names no field or key: \"Manifest entries MUST match the current version of each proposal.\"",
+      "subjects": [
+        "rule:2.3:59a4ca91"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "errors[]",
+          "ErrorObject"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2.4:c17390d3",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 483,
+          "section": "2.4"
+        }
+      ],
+      "message": "A MUST statement in § 2.4 names no field or key: \"A party that rejects a request MUST return `errors[]`, one or more `ErrorObject`s.\"",
+      "subjects": [
+        "rule:2.4:c17390d3"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2.5:7bd50d5a",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 555,
+          "section": "2.5"
+        }
+      ],
+      "message": "A MUST NOT statement in § 2.5 names no field or key: \"It MUST NOT keep a line item after removing fields from it.\"",
+      "subjects": [
+        "rule:2.5:7bd50d5a"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "Domain"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2.5:95586079",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 530,
+          "section": "2.5"
+        }
+      ],
+      "message": "A MUST statement in § 2.5 names no field or key: \"Each key MUST be a `Domain` that its owner controls, and each value is an object that the owner defines.\"",
+      "subjects": [
+        "rule:2.5:95586079"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2:4ae8f775",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 211,
+          "section": "2"
+        }
+      ],
+      "message": "A MUST NOT statement in § 2 names no field or key: \"A field on a line item MUST NOT inherit its value from the proposal or from a sibling line item.\"",
+      "subjects": [
+        "rule:2:4ae8f775"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "selectable",
+          "settable",
+          "supplied"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:3:07a16404",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 710,
+          "section": "3"
+        }
+      ],
+      "message": "A MUST statement in § 3 names no field or key: \"`selectable`, `settable` and `supplied` fields MUST resolve without a round trip — everything needed to validate and price them is declared in the proposal.\"",
+      "subjects": [
+        "rule:3:07a16404"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:3:e1b586de",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 722,
+          "section": "3"
+        }
+      ],
+      "message": "A MUST NOT statement in § 3 names no field or key: \"The buyer MUST NOT alter the keys the seller declares beside them.\"",
+      "subjects": [
+        "rule:3:e1b586de"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:4.1.1:6e3d2c89",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1018,
+          "section": "4.1.1"
+        }
+      ],
+      "message": "A MUST NOT statement in § 4.1.1 names no field or key: \"A producer MUST NOT write a Number that this serialization does not reproduce as the numeric value written; a Number with at most 15 significant digits inside the range of a double always does, and a document containing one that does not is invalid for this section.\"",
+      "subjects": [
+        "rule:4.1.1:6e3d2c89"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "Instant"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:4.1.1:e95eca3f",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1016,
+          "section": "4.1.1"
+        }
+      ],
+      "message": "A MUST NOT statement in § 4.1.1 names no field or key: \"Strings, `Instant` values included, are hashed as that value; a party MUST NOT trim, normalize, or reformat a value it did not write.\"",
+      "subjects": [
+        "rule:4.1.1:e95eca3f"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "commit",
+          "not_committable"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:4.1.4:759b4d1f",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1213,
+          "section": "4.1.4"
+        }
+      ],
+      "message": "A MUST statement in § 4.1.4 names no field or key: \"A seller MUST reject a `commit` that breaks either rule with `not_committable` (§ 2.4).\"",
+      "subjects": [
+        "rule:4.1.4:759b4d1f"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:4.1.4:7d683b70",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1214,
+          "section": "4.1.4"
+        }
+      ],
+      "message": "A MUST statement in § 4.1.4 names no field or key: \"This check MUST be deterministic.\"",
+      "subjects": [
+        "rule:4.1.4:7d683b70"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:4.1:4311c613",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 904,
+          "section": "4.1"
+        }
+      ],
+      "message": "A MUST NOT statement in § 4.1 names no field or key: \"A seller MUST NOT name a domain it does not control.\"",
+      "subjects": [
+        "rule:4.1:4311c613"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:4.3.2:d044b92c",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1331,
+          "section": "4.3.2"
+        }
+      ],
+      "message": "A MUST statement in § 4.3.2 names no field or key: \"The answer MUST come before the entry stops holding: otherwise silence works as a decline on no ground.\"",
+      "subjects": [
+        "rule:4.3.2:d044b92c"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.2.2:6f05ff6d",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1536,
+          "section": "5.2.2"
+        }
+      ],
+      "message": "A MUST NOT statement in § 5.2.2 names no field or key: \"The seller MUST NOT deliver the line item to an impression that does not match a key that is present.\"",
+      "subjects": [
+        "rule:5.2.2:6f05ff6d"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "imp.video",
+          "imp.audio"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.2.3:b5b384f4",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1572,
+          "section": "5.2.3"
+        }
+      ],
+      "message": "A MUST statement in § 5.2.3 names no field or key: \"A declared option is a delivery term: with an option in effect, the seller MUST serve the line item only into impressions that match one, and when the line item executes over OpenRTB 2.6, a bid request that offers its deal MUST carry `imp.video` or `imp.audio` values that match one.\"",
+      "subjects": [
+        "rule:5.2.3:b5b384f4"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.2.6:a1d575ff",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1643,
+          "section": "5.2.6"
+        }
+      ],
+      "message": "A MUST NOT statement in § 5.2.6 names no field or key: \"A seller MUST NOT state a relationship its governing file, where one exists, does not support.\"",
+      "subjects": [
+        "rule:5.2.6:a1d575ff"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "seller_allocated"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.2.8:66d19e2d",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1692,
+          "section": "5.2.8"
+        }
+      ],
+      "message": "A MUST NOT statement in § 5.2.8 names no field or key: \"With `seller_allocated`, a buyer value MUST NOT name or exclude individual screens.\"",
+      "subjects": [
+        "rule:5.2.8:66d19e2d"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.2.9:28e8ca66",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1724,
+          "section": "5.2.9"
+        }
+      ],
+      "message": "A MUST statement in § 5.2.9 names no field or key: \"With an option in effect, the seller MUST serve the line item only into impressions that match one.\"",
+      "subjects": [
+        "rule:5.2.9:28e8ca66"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.4.1:3a29e732",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1950,
+          "section": "5.4.1"
+        }
+      ],
+      "message": "A MUST NOT statement in § 5.4.1 names no field or key: \"An implementation MUST NOT report a check that was skipped or could not finish as passed.\"",
+      "subjects": [
+        "rule:5.4.1:3a29e732"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.4.1:52bc805d",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1937,
+          "section": "5.4.1"
+        }
+      ],
+      "message": "A MUST NOT statement in § 5.4.1 names no field or key: \"The inspector MUST NOT request a destination or redirect that sends a production notification; it MAY use a separate inspection URL or the receiving service's documented test mode under the conditions below.\"",
+      "subjects": [
+        "rule:5.4.1:52bc805d"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.4.1:7adf48a7",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1925,
+          "section": "5.4.1"
+        }
+      ],
+      "message": "A MUST NOT statement in § 5.4.1 names no field or key: \"An implementation performing inspection MUST NOT send any production notification.\"",
+      "subjects": [
+        "rule:5.4.1:7adf48a7"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.4.1:f25ad098",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1942,
+          "section": "5.4.1"
+        }
+      ],
+      "message": "A MUST statement in § 5.4.1 names no field or key: \"A preview that executes creative or verification code MUST prevent that code from sending production notifications.\"",
+      "subjects": [
+        "rule:5.4.1:f25ad098"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "verificationNotExecuted"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.4.1:fbc60b60",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 1949,
+          "section": "5.4.1"
+        }
+      ],
+      "message": "A MUST statement in § 5.4.1 names no field or key: \"Inspection failures MUST be reported through diagnostics, without firing a production VAST `<Error>` or `verificationNotExecuted` URL.\"",
+      "subjects": [
+        "rule:5.4.1:fbc60b60"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "best_effort"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.5:7fdb152c",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 2027,
+          "section": "5.5"
+        }
+      ],
+      "message": "A MUST NOT statement in § 5.5 names no field or key: \"A seller MUST NOT present `best_effort` enforcement as a guarantee.\"",
+      "subjects": [
+        "rule:5.5:7fdb152c"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "not_offered"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.5:b03a5d5e",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 2025,
+          "section": "5.5"
+        }
+      ],
+      "message": "A MUST statement in § 5.5 names no field or key: \"A seller MUST reject it deterministically rather than ignore it, with `not_offered`.\"",
+      "subjects": [
+        "rule:5.5:b03a5d5e"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.5:b8445d68",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 2032,
+          "section": "5.5"
+        }
+      ],
+      "message": "A MUST NOT statement in § 5.5 names no field or key: \"A seller MUST NOT disclose them to anyone but that buyer and the systems and vendors that enforce or verify them for this line item.\"",
+      "subjects": [
+        "rule:5.5:b8445d68"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "commit"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.6.1:a3c72e8a",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 2264,
+          "section": "5.6.1"
+        }
+      ],
+      "message": "A MUST statement in § 5.6.1 names no field or key: \"These checks MUST be deterministic: they depend only on the stored proposal, the `commit`, and the time the seller receives it.\"",
+      "subjects": [
+        "rule:5.6.1:a3c72e8a"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "requested",
+          "held"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.6.2:6842bab9",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 2345,
+          "section": "5.6.2"
+        }
+      ],
+      "message": "A MUST NOT statement in § 5.6.2 names no field or key: \"A repeated request while `requested` or `held` MUST NOT start a second hold.\"",
+      "subjects": [
+        "rule:5.6.2:6842bab9"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "impressions"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.6.4:5a783437",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 2410,
+          "section": "5.6.4"
+        }
+      ],
+      "message": "A MUST statement in § 5.6.4 names no field or key: \"Every impression count that settles or invoices the line item MUST use its multipliers, and a committed `impressions` level (§ 5.7.1) settles on that source's count.\"",
+      "subjects": [
+        "rule:5.6.4:5a783437"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.6.4:c940cf70",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 2414,
+          "section": "5.6.4"
+        }
+      ],
+      "message": "A MUST statement in § 5.6.4 names no field or key: \"Impressions MUST be summed unrounded over each invoice period and rounded once.\"",
+      "subjects": [
+        "rule:5.6.4:c940cf70"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.6.5:d09c565b",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 2491,
+          "section": "5.6.5"
+        }
+      ],
+      "message": "A MUST statement in § 5.6.5 names no field or key: \"A receiver MUST treat an extension entry that breaks these rules as unavailable, not the line item as invalid.\"",
+      "subjects": [
+        "rule:5.6.5:d09c565b"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "none"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.7.1:0a8e3bf2",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 2679,
+          "section": "5.7.1"
+        }
+      ],
+      "message": "A MUST statement in § 5.7.1 names no field or key: \"When `none` is in effect, it MUST be the only option.\"",
+      "subjects": [
+        "rule:5.7.1:0a8e3bf2"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.7.1:5ea9f08c",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 2680,
+          "section": "5.7.1"
+        }
+      ],
+      "message": "A MUST NOT statement in § 5.7.1 names no field or key: \"It means no remedy for any shortfall, and committed levels become targets, which an agent MUST NOT present as guaranteed.\"",
+      "subjects": [
+        "rule:5.7.1:5ea9f08c"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:5.8:0bdd8354",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 2760,
+          "section": "5.8"
+        }
+      ],
+      "message": "A MUST statement in § 5.8 names no field or key: \"It MUST treat that entry as unsatisfiable.\"",
+      "subjects": [
+        "rule:5.8:0bdd8354"
+      ]
+    }
+  ],
+  "input": {
+    "blob": "179980bae43c78855432408cd6c6609109963d22",
+    "commit": "a4adff3efb85564d84a4439b27f554123feefd41",
+    "name": "with-our-stack"
+  },
+  "ir_version": 1
+}

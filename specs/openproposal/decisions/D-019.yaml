@@ -8,9 +8,11 @@ covers:
   - ir: field:5.4:formats
     digest: 2a8a55ef5666b057f31306cadf667fc01dff13e5cc5e009f00d3f649de375016
     quote: "`formats` | Object | selectable | `available[]` of registry format ids namespaced by channel (`display/300x250`, `audio/host-read-30s`), `included[]`, `pricing`, `max_select`"
+    locks: [main, with-open-prs]
   - ir: field:5.4:production
     digest: 0168284e2ec3d43c2249add202b7c657a7a4b37fe78ccfbf2cee694a3e76d199
     quote: "`production` | Object | selectable | Custom units. `available[]` of build options with `pricing` and `lead_time`; `{ custom_unit, build_owner, lead_time, cost }`"
+    locks: [main, with-open-prs]
   - ir: field:5.5:geo
     digest: 43710e564ef799d8f814bad00224216293ba574c123c139c7195b5d5c23058e6
     quote: "`geo` | Object | settable | `allowed[]` of geo codes the buyer may select within"
@@ -22,6 +24,7 @@ covers:
   - ir: field:5.5:device
     digest: 265e83a84f1efb967c4a62daab8adb8b69139f794b7cc080b03c5c28cf4828d4
     quote: "`device` | Object | settable | `allowed[]` of device categories"
+    locks: [main, with-open-prs]
   - ir: field:5.5:daypart
     digest: 25c80cd35ce4831dfbd372627f2d794511fffe5f029243e586ee1e607be4fdc2
     quote: "`daypart` | Object | settable | `allowed[]` of time windows"
@@ -29,15 +32,19 @@ covers:
   - ir: field:5.6:cancellation_policy
     digest: 6c8bbcd373f89f5fdf8c0e6a3e9f43bc0e26cc1b5ba35a4f13c2dd246f37dba4
     quote: "`cancellation_policy` | Object | selectable | `available[]` of cancellation rights with `pricing` per option"
+    locks: [main, with-open-prs]
   - ir: field:5.6:exclusivity
     digest: 5012d5c8189fd4016ce87f254fff0fa14c929365d9efc3f2256ccfcf80b73c46
     quote: "`exclusivity` | Object | selectable | `available[]` of exclusivity terms with `pricing`"
+    locks: [main, with-open-prs]
   - ir: field:5.7:shortfall_remedy
     digest: 9fdb8ca07f421677f7d411f9e9d3bc189128d125a8229b9622fed9779af55824
     quote: "`shortfall_remedy` | Object | selectable | `available[]` from `makegood` | `credit` | `none`, plus `remedy_terms`"
+    locks: [main, with-open-prs]
   - ir: field:5.4:production#description/object:1
     digest: 00eb00879b4a550444376e9812df5389c4a7066a43b48982f04bc6f35974f62d
     quote: "{ custom_unit, build_owner, lead_time, cost }"
+    locks: [main, with-open-prs]
 options:
   - id: as-listed
     summary: >-

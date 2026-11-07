@@ -1,0 +1,5484 @@
+{
+  "format": 1,
+  "input": {
+    "blob": "179980bae43c78855432408cd6c6609109963d22",
+    "commit": "a4adff3efb85564d84a4439b27f554123feefd41",
+    "lock": "with-our-stack"
+  },
+  "rules": [
+    {
+      "applies_to": [
+        "RequestedUnitBoundsRange",
+        "RetentionRange",
+        "SpendRange",
+        "UnitBoundsRange"
+      ],
+      "decisions": [
+        "D-062"
+      ],
+      "id": "constructor:Range:duration-ordered",
+      "owner": "Range",
+      "severity": "error",
+      "sources": [
+        "field:5.9:retention",
+        "sentence:2.2:db4f2290"
+      ],
+      "statement": "`min` is no greater than `max` where durations compare: one is no greater than another when it has no more years and months and no more days, hours, minutes and seconds, as `P14D` and `P30D`, or `PT48H` and `P3D`; a pair neither bounds, as `P1M` and `P30D`, the text doesn't order.",
+      "vectors": {
+        "arguments": {
+          "T": {
+            "kind": "named",
+            "name": "Duration"
+          }
+        },
+        "invalid": [
+          {
+            "value": {
+              "max": "P14D",
+              "min": "P30D"
+            }
+          },
+          {
+            "value": {
+              "max": "P6M",
+              "min": "P1Y"
+            }
+          }
+        ],
+        "valid": [
+          {
+            "value": {
+              "max": "P30D",
+              "min": "P14D"
+            }
+          },
+          {
+            "value": {
+              "max": "P3D",
+              "min": "PT48H"
+            }
+          },
+          {
+            "value": {
+              "max": "P1Y",
+              "min": "P1M"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "RequestedUnitBoundsRange",
+        "RetentionRange",
+        "SpendRange",
+        "UnitBoundsRange"
+      ],
+      "decisions": [],
+      "id": "constructor:Range:ordered",
+      "owner": "Range",
+      "severity": "error",
+      "sources": [
+        "sentence:2.2:db4f2290"
+      ],
+      "statement": "`min` is no greater than `max`: numbers compare as numbers, and timestamps as instants.",
+      "vectors": {
+        "arguments": {
+          "T": {
+            "kind": "named",
+            "name": "PlainInteger"
+          }
+        },
+        "invalid": [
+          {
+            "value": {
+              "max": 1,
+              "min": 6
+            }
+          }
+        ],
+        "valid": [
+          {
+            "value": {
+              "max": 6,
+              "min": 1
+            }
+          },
+          {
+            "value": {
+              "max": 4,
+              "min": 4
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "CurrencyCode"
+      ],
+      "decisions": [],
+      "id": "kernel:CurrencyCode:assigned",
+      "owner": "CurrencyCode",
+      "severity": "error",
+      "sources": [],
+      "standard": {
+        "name": "ISO 4217, Codes for the representation of currencies",
+        "url": "https://www.iso.org/iso-4217-currency-codes.html"
+      },
+      "statement": "A CurrencyCode MUST be an alphabetic code that ISO 4217 currently assigns.",
+      "vectors": {
+        "invalid": [
+          {
+            "value": "ABC"
+          },
+          {
+            "value": "QQQ"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/kernel/1/kernel.json#/$defs/CurrencyCode",
+        "type": "CurrencyCode",
+        "valid": [
+          {
+            "value": "USD"
+          },
+          {
+            "value": "JPY"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "TimeZone"
+      ],
+      "decisions": [],
+      "id": "kernel:TimeZone:listed",
+      "owner": "TimeZone",
+      "severity": "error",
+      "sources": [],
+      "standard": {
+        "name": "IANA Time Zone Database, zone names",
+        "url": "https://www.iana.org/time-zones"
+      },
+      "statement": "A `TimeZone` other than `viewer_local` MUST be a zone name that the IANA time zone database lists.",
+      "vectors": {
+        "invalid": [
+          {
+            "value": "America/Springfield"
+          },
+          {
+            "value": "Mars/Olympus_Mons"
+          },
+          {
+            "value": "Viewer_local"
+          },
+          {
+            "value": "UTC+5"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/kernel/1/kernel.json#/$defs/TimeZone",
+        "type": "TimeZone",
+        "valid": [
+          {
+            "value": "America/New_York"
+          },
+          {
+            "value": "Europe/London"
+          },
+          {
+            "value": "viewer_local"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.addressable_scale",
+        "LineItem.availability",
+        "LineItemSummary.addressable_scale"
+      ],
+      "decisions": [
+        "D-034"
+      ],
+      "id": "marker:3:asserted",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:asserted"
+      ],
+      "statement": "The seller states it from data the buyer can't recompute. Not a term, and it changes without a new version.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "addressable_scale": {
+                "quantity": 3201000,
+                "unit": "examplepub.example:podcast-host-read",
+                "window": {
+                  "end": "2026-12-31T23:59:59Z",
+                  "start": "2026-10-01T00:00:00Z"
+                }
+              },
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "addressable_scale": {
+                "quantity": 3200000,
+                "unit": "examplepub.example:podcast-host-read",
+                "window": {
+                  "end": "2026-12-31T23:59:59Z",
+                  "start": "2026-10-01T00:00:00Z"
+                }
+              },
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "buyer"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "addressable_scale": {
+                "quantity": 3201000,
+                "unit": "examplepub.example:podcast-host-read",
+                "window": {
+                  "end": "2026-12-31T23:59:59Z",
+                  "start": "2026-10-01T00:00:00Z"
+                }
+              },
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "addressable_scale": {
+                "quantity": 3200000,
+                "unit": "examplepub.example:podcast-host-read",
+                "window": {
+                  "end": "2026-12-31T23:59:59Z",
+                  "start": "2026-10-01T00:00:00Z"
+                }
+              },
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "seller"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "PricingEntry.agreed_rate",
+        "Proposal.status",
+        "Proposal.version",
+        "ProposalSummary.version"
+      ],
+      "decisions": [
+        "D-034"
+      ],
+      "id": "marker:3:derived",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:derived"
+      ],
+      "statement": "Computed by a rule this specification states. Neither party sets it directly.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [
+                {
+                  "agreed_rate": 12,
+                  "cost_method": "CPM",
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "audio-cpm-usd"
+                }
+              ],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [
+                {
+                  "agreed_rate": 18,
+                  "cost_method": "CPM",
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "audio-cpm-usd"
+                }
+              ],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "buyer"
+          },
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [
+                {
+                  "agreed_rate": 12,
+                  "cost_method": "CPM",
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "audio-cpm-usd"
+                }
+              ],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [
+                {
+                  "agreed_rate": 18,
+                  "cost_method": "CPM",
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "audio-cpm-usd"
+                }
+              ],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "seller"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [
+                {
+                  "agreed_rate": 18,
+                  "cost_method": "CPM",
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "audio-cpm-usd"
+                }
+              ],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "registry_gated"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [
+                {
+                  "agreed_rate": 18,
+                  "cost_method": "CPM",
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "audio-cpm-usd"
+                }
+              ],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "seller"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.channel",
+        "LineItem.line_item_id",
+        "LineItemSummary.channel",
+        "LineItemSummary.line_item_id",
+        "LineItemSummaryPricingEntry.pricing_id",
+        "PricingEntry.pricing_id",
+        "Proposal.brief_id",
+        "Proposal.buyer",
+        "Proposal.issued_from",
+        "Proposal.proposal_id",
+        "Proposal.proposal_template_id",
+        "Proposal.seller",
+        "Proposal.type",
+        "ProposalSummary.proposal_id",
+        "ProposalSummary.seller"
+      ],
+      "decisions": [
+        "D-034"
+      ],
+      "id": "marker:3:immutable",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:immutable"
+      ],
+      "statement": "Set once at creation. Neither party may change it.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "streaming-audio-2",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "seller"
+          },
+          {
+            "after": {
+              "channel": "display",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "buyer"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "registry_gated"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "seller"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.hold",
+        "LineItem.status"
+      ],
+      "decisions": [
+        "D-034"
+      ],
+      "id": "marker:3:lifecycle",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:lifecycle"
+      ],
+      "statement": "Live state of the object. The party its section names moves it between the stated values. Not a term.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "sold_out",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "buyer"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "sold_out",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "seller"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "BuyerWrites.buyer_requirements",
+        "LineItem.assets",
+        "LineItem.buyer_requirements",
+        "LineItem.buyer_supplied",
+        "LineItem.commitment",
+        "LineItem.pricing",
+        "LineItemSummary.buyer_requirements",
+        "LineItemSummary.pricing"
+      ],
+      "decisions": [
+        "D-034"
+      ],
+      "id": "marker:3:mixed",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:mixed"
+      ],
+      "statement": "The keys of the object carry different markers: in the Mutability column of its key table, in its lead-in for composed keys, or on its rows for `pricing[]`.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "buyer_requirements": {
+                "allowed_dsps": [
+                  "dsp-z.example"
+                ],
+                "seat_owner": {
+                  "domain": "examplepub.example",
+                  "legal_name": "Example Publisher US",
+                  "registry_id": "reg:examplepub-digital"
+                },
+                "seats": {
+                  "dsp": "dsp-a.example",
+                  "ids": [
+                    "seat-99812",
+                    "seat-99813"
+                  ]
+                },
+                "seats_expected": true
+              },
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "buyer_requirements": {
+                "allowed_dsps": [
+                  "dsp-a.example",
+                  "dsp-b.example"
+                ],
+                "seat_owner": {
+                  "domain": "examplepub.example",
+                  "legal_name": "Example Publisher US",
+                  "registry_id": "reg:examplepub-digital"
+                },
+                "seats": {
+                  "dsp": "dsp-a.example",
+                  "ids": [
+                    "seat-99812",
+                    "seat-99813"
+                  ]
+                },
+                "seats_expected": true
+              },
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "buyer"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "buyer_requirements": {
+                "allowed_dsps": [
+                  "dsp-a.example",
+                  "dsp-b.example"
+                ],
+                "seat_owner": {
+                  "domain": "examplepub.example",
+                  "legal_name": "Example Publisher US",
+                  "registry_id": "reg:examplepub-digital"
+                },
+                "seats": {
+                  "dsp": "dsp-a.example",
+                  "ids": [
+                    "seat-1"
+                  ]
+                },
+                "seats_expected": true
+              },
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "buyer_requirements": {
+                "allowed_dsps": [
+                  "dsp-a.example",
+                  "dsp-b.example"
+                ],
+                "seat_owner": {
+                  "domain": "examplepub.example",
+                  "legal_name": "Example Publisher US",
+                  "registry_id": "reg:examplepub-digital"
+                },
+                "seats": {
+                  "dsp": "dsp-a.example",
+                  "ids": [
+                    "seat-99812",
+                    "seat-99813"
+                  ]
+                },
+                "seats_expected": true
+              },
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "buyer"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.external_references",
+        "Proposal.assent",
+        "Proposal.change_requests",
+        "Proposal.negotiation_history"
+      ],
+      "decisions": [
+        "D-034"
+      ],
+      "id": "marker:3:recorded",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:recorded"
+      ],
+      "statement": "Written by the party that acted. Append-only: an entry is never edited or removed. Not a term.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "external_references": [],
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "external_references": [
+                {
+                  "id": "345233",
+                  "namespace": "examplepub-q4-sports",
+                  "reference_type": "order",
+                  "system": "orders.examplepub.example"
+                }
+              ],
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "seller"
+          },
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "external_references": [
+                {
+                  "id": "999",
+                  "namespace": "examplepub-q4-sports",
+                  "reference_type": "order",
+                  "system": "orders.examplepub.example"
+                }
+              ],
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "external_references": [
+                {
+                  "id": "345233",
+                  "namespace": "examplepub-q4-sports",
+                  "reference_type": "order",
+                  "system": "orders.examplepub.example"
+                }
+              ],
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "seller"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "external_references": [
+                {
+                  "id": "345233",
+                  "namespace": "examplepub-q4-sports",
+                  "reference_type": "order",
+                  "system": "orders.examplepub.example"
+                }
+              ],
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "seller"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.commitment_bounds",
+        "LineItem.committed_metrics",
+        "LineItem.materials_due",
+        "LineItemSummary.commitment_bounds",
+        "LineItemSummary.committed_metrics",
+        "LineItemSummaryPricingEntry.list_rate",
+        "LineItemSummaryPricingEntry.unit_bounds",
+        "PricingEntry.list_rate",
+        "PricingEntry.unit_bounds"
+      ],
+      "decisions": [
+        "D-029",
+        "D-034"
+      ],
+      "id": "marker:3:requestable",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:requestable",
+        "rule:3:82c2f1b0"
+      ],
+      "statement": "The buyer MAY ask for a value outside the declared space. An ask changes the value only through a seller `grant` or `counter` (§ 4.3.1). A change on the seller's own initiative follows § 4.1.3.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "materials_due": {
+                "at": "2026-10-08T23:59:59Z"
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "materials_due": {
+                "at": "2026-10-01T23:59:59Z"
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "buyer"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "materials_due": {
+                "at": "2026-10-08T23:59:59Z"
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "materials_due": {
+                "at": "2026-10-01T23:59:59Z"
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "seller"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "BuyerWrites.activation_route",
+        "BuyerWrites.audiences",
+        "BuyerWrites.break_position",
+        "BuyerWrites.cancellation_policy",
+        "BuyerWrites.controlling_measurement",
+        "BuyerWrites.environments",
+        "BuyerWrites.exclusivity",
+        "BuyerWrites.formats",
+        "BuyerWrites.markets",
+        "BuyerWrites.measurement_source",
+        "BuyerWrites.production",
+        "BuyerWrites.programs",
+        "BuyerWrites.properties",
+        "BuyerWrites.reporting",
+        "BuyerWrites.shortfall_remedy",
+        "BuyerWrites.transaction_mechanism",
+        "LineItem.activation_route",
+        "LineItem.audiences",
+        "LineItem.break_position",
+        "LineItem.cancellation_policy",
+        "LineItem.controlling_measurement",
+        "LineItem.environments",
+        "LineItem.exclusivity",
+        "LineItem.formats",
+        "LineItem.markets",
+        "LineItem.measurement_source",
+        "LineItem.production",
+        "LineItem.programs",
+        "LineItem.properties",
+        "LineItem.reporting",
+        "LineItem.shortfall_remedy",
+        "LineItem.transaction_mechanism",
+        "LineItemSummary.audiences",
+        "LineItemSummary.break_position",
+        "LineItemSummary.environments",
+        "LineItemSummary.formats",
+        "LineItemSummary.markets",
+        "LineItemSummary.programs",
+        "LineItemSummary.properties",
+        "LineItemSummary.transaction_mechanism"
+      ],
+      "decisions": [
+        "D-034"
+      ],
+      "id": "marker:3:selectable",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:selectable"
+      ],
+      "statement": "The buyer chooses from a seller-declared set. Each option MAY carry a price delta. Resolves without a round trip.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "non_guaranteed",
+                    "id": "preferred_deal"
+                  }
+                ],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "buyer"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "non_guaranteed",
+                    "id": "preferred_deal"
+                  }
+                ],
+                "included": [],
+                "selected": [
+                  "preferred_deal"
+                ]
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "non_guaranteed",
+                    "id": "preferred_deal"
+                  }
+                ],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "buyer"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.accepted_exclusions",
+        "LineItem.agreement",
+        "LineItem.approval",
+        "LineItem.billing",
+        "LineItem.creative_delivery",
+        "LineItem.creative_policy",
+        "LineItem.deal_origin",
+        "LineItem.delivery_counting",
+        "LineItem.eligible_buyers",
+        "LineItem.eligible_seats",
+        "LineItem.episodes",
+        "LineItem.ext",
+        "LineItem.format_specs",
+        "LineItem.hold_terms",
+        "LineItem.placement",
+        "LineItem.preemption",
+        "LineItem.renewal_right",
+        "LineItem.required_credentials",
+        "LineItem.retention",
+        "LineItem.serving_mode",
+        "LineItem.serving_platform",
+        "LineItem.sov_basis",
+        "LineItem.sov_share",
+        "LineItem.terms_refs",
+        "LineItem.time_zone",
+        "LineItem.visibility",
+        "LineItemSummary.delivery_counting",
+        "LineItemSummary.episodes",
+        "LineItemSummary.placement",
+        "LineItemSummary.required_credentials",
+        "LineItemSummaryPricingEntry.cost_method",
+        "LineItemSummaryPricingEntry.currency",
+        "LineItemSummaryPricingEntry.price_type",
+        "PricingEntry.cost_definition",
+        "PricingEntry.cost_method",
+        "PricingEntry.cost_parameters",
+        "PricingEntry.currency",
+        "PricingEntry.min_rate",
+        "PricingEntry.price_type",
+        "PricingEntry.price_valid_until",
+        "PricingEntry.rate_per",
+        "PricingEntry.transaction_mechanisms",
+        "PricingEntry.unit_label",
+        "Proposal.best_for",
+        "Proposal.description",
+        "Proposal.ext",
+        "Proposal.line_items",
+        "Proposal.media_kit_detail",
+        "Proposal.not_suitable_for",
+        "Proposal.offer_window",
+        "Proposal.packages",
+        "Proposal.seasonality_notes",
+        "Proposal.spec_version",
+        "ProposalSummary.description",
+        "ProposalSummary.offer_window"
+      ],
+      "decisions": [
+        "D-034"
+      ],
+      "id": "marker:3:seller-set",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:seller-set"
+      ],
+      "statement": "The seller sets it and MAY revise it while the `status` of the object that carries it is `draft`, `published` or `under_review`. § 4.3.2 states what a revision does to a line item `under_review`. The buyer cannot change it directly.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "registry_gated"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "buyer"
+          },
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "agreed",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "registry_gated"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "agreed",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "seller"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "registry_gated"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "seller"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "BuyerWrites.daypart",
+        "BuyerWrites.device",
+        "BuyerWrites.frequency_cap",
+        "BuyerWrites.geo",
+        "LineItem.daypart",
+        "LineItem.device",
+        "LineItem.frequency_cap",
+        "LineItem.geo",
+        "LineItemSummary.geo"
+      ],
+      "decisions": [
+        "D-034"
+      ],
+      "id": "marker:3:settable",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:settable"
+      ],
+      "statement": "The buyer supplies a value within seller-declared bounds. Resolves without a round trip.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "geo": {
+                "allowed": [
+                  "US",
+                  "CA",
+                  "MX"
+                ],
+                "default": {
+                  "include": [
+                    "US"
+                  ]
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "geo": {
+                "allowed": [
+                  "US",
+                  "CA"
+                ],
+                "default": {
+                  "include": [
+                    "US"
+                  ]
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "buyer"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "geo": {
+                "allowed": [
+                  "US",
+                  "CA"
+                ],
+                "default": {
+                  "include": [
+                    "US"
+                  ]
+                },
+                "value": {
+                  "include": [
+                    "CA"
+                  ]
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "geo": {
+                "allowed": [
+                  "US",
+                  "CA"
+                ],
+                "default": {
+                  "include": [
+                    "US"
+                  ]
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "buyer"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "BuyerWrites.exclusions",
+        "LineItem.exclusions"
+      ],
+      "decisions": [
+        "D-034"
+      ],
+      "id": "marker:3:supplied",
+      "owner": "Marker",
+      "severity": "error",
+      "sources": [
+        "marker:3:supplied"
+      ],
+      "statement": "The buyer provides data or an artifact. The seller does not pre-populate it.",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "exclusions": {
+                "keywords": [
+                  "crypto"
+                ]
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "seller"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "exclusions": {
+                "keywords": [
+                  "crypto"
+                ]
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "buyer"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "VersionRef.seller_domain"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:2.2:e46f15c4",
+      "level": "REQUIRED",
+      "owner": "VersionRef",
+      "severity": "error",
+      "sources": [
+        "key:2.2:VersionRef.seller_domain",
+        "rule:2.2:e46f15c4"
+      ],
+      "statement": "REQUIRED when the `VersionRef` is outside its proposal",
+      "vectors": {
+        "invalid": [
+          {
+            "response": "process",
+            "value": {
+              "proposal_id": "examplepub-agencya-custom-q4-2026",
+              "version": 2
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/kernel/1/kernel.json#/$defs/VersionRef",
+        "type": "VersionRef",
+        "valid": [
+          {
+            "response": "process",
+            "value": {
+              "proposal_id": "examplepub-agencya-custom-q4-2026",
+              "seller_domain": "examplepub.example",
+              "version": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "ErrorObject.version"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:2.4:3b0456cb",
+      "level": "REQUIRED",
+      "owner": "ErrorObject",
+      "severity": "error",
+      "sources": [
+        "key:2.4:ErrorObject.version",
+        "rule:2.4:3b0456cb"
+      ],
+      "statement": "REQUIRED when the request names a proposal the requester may read",
+      "vectors": {
+        "invalid": [
+          {
+            "response": "process",
+            "value": {
+              "code": "validation",
+              "detail": "examplepub-q4-sports",
+              "retry": "same"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/kernel/1/kernel.json#/$defs/ErrorObject",
+        "type": "ErrorObject",
+        "valid": [
+          {
+            "response": "process",
+            "value": {
+              "code": "validation",
+              "detail": "examplepub-q4-sports",
+              "retry": "same",
+              "version": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Proposal.buyer"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:4.1:1ef7cbec",
+      "level": "REQUIRED",
+      "owner": "Proposal",
+      "severity": "error",
+      "sources": [
+        "field:4.1:buyer",
+        "rule:4.1:1ef7cbec"
+      ],
+      "statement": "REQUIRED when `type` is `custom` or `assent[]` is present",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "brief_id": "brief-1",
+              "description": "examplepub-q4-sports",
+              "line_items": [
+                {
+                  "channel": "dooh",
+                  "delivery_counting": {
+                    "play_tolerance_ms": 0,
+                    "proof_of_performance": {
+                      "evidence": [],
+                      "logged_by": "buyer"
+                    }
+                  },
+                  "line_item_id": "examplepub-q4-sports",
+                  "pricing": [],
+                  "status": "draft",
+                  "transaction_mechanism": {
+                    "available": [],
+                    "included": []
+                  },
+                  "visibility": "public"
+                }
+              ],
+              "proposal_id": "examplepub-q4-sports",
+              "seller": {
+                "domain": "examplepub.example"
+              },
+              "spec_version": "examplepub-q4-sports",
+              "status": "published",
+              "type": "custom",
+              "version": 0
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/proposal.json",
+        "type": "Proposal",
+        "valid": [
+          {
+            "value": {
+              "description": "examplepub-q4-sports",
+              "line_items": [
+                {
+                  "channel": "dooh",
+                  "delivery_counting": {
+                    "play_tolerance_ms": 0,
+                    "proof_of_performance": {
+                      "evidence": [],
+                      "logged_by": "buyer"
+                    }
+                  },
+                  "line_item_id": "examplepub-q4-sports",
+                  "pricing": [],
+                  "status": "draft",
+                  "transaction_mechanism": {
+                    "available": [],
+                    "included": []
+                  },
+                  "visibility": "public"
+                }
+              ],
+              "proposal_id": "examplepub-q4-sports",
+              "seller": {
+                "domain": "examplepub.example"
+              },
+              "spec_version": "examplepub-q4-sports",
+              "status": "published",
+              "type": "standard",
+              "version": 0
+            }
+          },
+          {
+            "value": {
+              "brief_id": "brief-1",
+              "buyer": {
+                "domain": "examplepub.example",
+                "legal_name": "Example Publisher US",
+                "registry_id": "reg:examplepub-digital"
+              },
+              "description": "examplepub-q4-sports",
+              "line_items": [
+                {
+                  "channel": "dooh",
+                  "delivery_counting": {
+                    "play_tolerance_ms": 0,
+                    "proof_of_performance": {
+                      "evidence": [],
+                      "logged_by": "buyer"
+                    }
+                  },
+                  "line_item_id": "examplepub-q4-sports",
+                  "pricing": [],
+                  "status": "draft",
+                  "transaction_mechanism": {
+                    "available": [],
+                    "included": []
+                  },
+                  "visibility": "public"
+                }
+              ],
+              "proposal_id": "examplepub-q4-sports",
+              "seller": {
+                "domain": "examplepub.example"
+              },
+              "spec_version": "examplepub-q4-sports",
+              "status": "published",
+              "type": "custom",
+              "version": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Proposal.line_items"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:4.1:22f5a51a",
+      "level": "REQUIRED",
+      "owner": "Proposal",
+      "severity": "error",
+      "sources": [
+        "field:4.1:line_items[]",
+        "rule:4.1:22f5a51a"
+      ],
+      "statement": "REQUIRED when `packages[]` is absent",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "description": "examplepub-q4-sports",
+              "proposal_id": "examplepub-q4-sports",
+              "seller": {
+                "domain": "examplepub.example"
+              },
+              "spec_version": "examplepub-q4-sports",
+              "status": "published",
+              "type": "standard",
+              "version": 0
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/proposal.json",
+        "type": "Proposal",
+        "valid": [
+          {
+            "value": {
+              "description": "examplepub-q4-sports",
+              "line_items": [
+                {
+                  "channel": "dooh",
+                  "delivery_counting": {
+                    "play_tolerance_ms": 0,
+                    "proof_of_performance": {
+                      "evidence": [],
+                      "logged_by": "buyer"
+                    }
+                  },
+                  "line_item_id": "examplepub-q4-sports",
+                  "pricing": [],
+                  "status": "draft",
+                  "transaction_mechanism": {
+                    "available": [],
+                    "included": []
+                  },
+                  "visibility": "public"
+                }
+              ],
+              "proposal_id": "examplepub-q4-sports",
+              "seller": {
+                "domain": "examplepub.example"
+              },
+              "spec_version": "examplepub-q4-sports",
+              "status": "published",
+              "type": "standard",
+              "version": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "HistoryPath.line_item_id"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:4.1:71a584ca",
+      "level": "REQUIRED",
+      "owner": "HistoryPath",
+      "severity": "error",
+      "sources": [
+        "key:4.1:HistoryPath.line_item_id",
+        "rule:4.1:71a584ca"
+      ],
+      "statement": "REQUIRED when `requested_value` is present",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "pointer": "/creative_delivery",
+              "requested_value": {
+                "commitment_bounds": {
+                  "earliest_start": "2026-10-05T00:00:00Z",
+                  "latest_end": "2026-12-31T23:59:59Z",
+                  "spend": {
+                    "max": 500000,
+                    "min": 5000
+                  }
+                },
+                "committed_metrics": [
+                  {
+                    "direction": "at_least",
+                    "level": 0.92,
+                    "metric": "completion_rate"
+                  }
+                ],
+                "list_rate": 12.5,
+                "materials_due": {
+                  "at": "2026-10-01T23:59:59Z",
+                  "before_start": "P1D"
+                },
+                "unit_bounds": {
+                  "max": 3,
+                  "min": 3
+                }
+              }
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/proposal/1/proposal.json#/$defs/HistoryPath",
+        "type": "HistoryPath",
+        "valid": [
+          {
+            "value": {
+              "pointer": "/creative_delivery"
+            }
+          },
+          {
+            "value": {
+              "line_item_id": "business-daily-display",
+              "pointer": "/creative_delivery",
+              "requested_value": {
+                "commitment_bounds": {
+                  "earliest_start": "2026-10-05T00:00:00Z",
+                  "latest_end": "2026-12-31T23:59:59Z",
+                  "spend": {
+                    "max": 500000,
+                    "min": 5000
+                  }
+                },
+                "committed_metrics": [
+                  {
+                    "direction": "at_least",
+                    "level": 0.92,
+                    "metric": "completion_rate"
+                  }
+                ],
+                "list_rate": 12.5,
+                "materials_due": {
+                  "at": "2026-10-01T23:59:59Z",
+                  "before_start": "P1D"
+                },
+                "unit_bounds": {
+                  "max": 3,
+                  "min": 3
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Proposal.packages"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:4.1:94b23ce1",
+      "level": "REQUIRED",
+      "owner": "Proposal",
+      "severity": "error",
+      "sources": [
+        "field:4.1:packages[]",
+        "rule:4.1:94b23ce1"
+      ],
+      "statement": "REQUIRED when `line_items[]` is absent",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "description": "examplepub-q4-sports",
+              "proposal_id": "examplepub-q4-sports",
+              "seller": {
+                "domain": "examplepub.example"
+              },
+              "spec_version": "examplepub-q4-sports",
+              "status": "published",
+              "type": "standard",
+              "version": 0
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/proposal.json",
+        "type": "Proposal",
+        "valid": [
+          {
+            "value": {
+              "description": "examplepub-q4-sports",
+              "line_items": [
+                {
+                  "channel": "dooh",
+                  "delivery_counting": {
+                    "play_tolerance_ms": 0,
+                    "proof_of_performance": {
+                      "evidence": [],
+                      "logged_by": "buyer"
+                    }
+                  },
+                  "line_item_id": "examplepub-q4-sports",
+                  "pricing": [],
+                  "status": "draft",
+                  "transaction_mechanism": {
+                    "available": [],
+                    "included": []
+                  },
+                  "visibility": "public"
+                }
+              ],
+              "proposal_id": "examplepub-q4-sports",
+              "seller": {
+                "domain": "examplepub.example"
+              },
+              "spec_version": "examplepub-q4-sports",
+              "status": "published",
+              "type": "standard",
+              "version": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Proposal.negotiation_history"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:4.1:9c98396c",
+      "level": "REQUIRED",
+      "owner": "Proposal",
+      "severity": "error",
+      "sources": [
+        "field:4.1:negotiation_history[]",
+        "rule:4.1:9c98396c"
+      ],
+      "statement": "REQUIRED when the current `version` is frozen (§ 4.1.3)",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "description": "examplepub-q4-sports",
+              "line_items": [
+                {
+                  "channel": "dooh",
+                  "delivery_counting": {
+                    "play_tolerance_ms": 0,
+                    "proof_of_performance": {
+                      "evidence": [],
+                      "logged_by": "buyer"
+                    }
+                  },
+                  "line_item_id": "examplepub-q4-sports",
+                  "pricing": [],
+                  "status": "draft",
+                  "transaction_mechanism": {
+                    "available": [],
+                    "included": []
+                  },
+                  "visibility": "public"
+                }
+              ],
+              "proposal_id": "examplepub-q4-sports",
+              "seller": {
+                "domain": "examplepub.example"
+              },
+              "spec_version": "examplepub-q4-sports",
+              "status": "published",
+              "type": "standard",
+              "version": 0
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/proposal.json",
+        "type": "Proposal",
+        "valid": [
+          {
+            "value": {
+              "description": "examplepub-q4-sports",
+              "line_items": [
+                {
+                  "channel": "dooh",
+                  "delivery_counting": {
+                    "play_tolerance_ms": 0,
+                    "proof_of_performance": {
+                      "evidence": [],
+                      "logged_by": "buyer"
+                    }
+                  },
+                  "line_item_id": "examplepub-q4-sports",
+                  "pricing": [],
+                  "status": "draft",
+                  "transaction_mechanism": {
+                    "available": [],
+                    "included": []
+                  },
+                  "visibility": "public"
+                }
+              ],
+              "proposal_id": "examplepub-q4-sports",
+              "seller": {
+                "domain": "examplepub.example"
+              },
+              "spec_version": "examplepub-q4-sports",
+              "status": "draft",
+              "type": "standard",
+              "version": 0
+            }
+          },
+          {
+            "value": {
+              "description": "examplepub-q4-sports",
+              "line_items": [
+                {
+                  "channel": "dooh",
+                  "delivery_counting": {
+                    "play_tolerance_ms": 0,
+                    "proof_of_performance": {
+                      "evidence": [],
+                      "logged_by": "buyer"
+                    }
+                  },
+                  "line_item_id": "examplepub-q4-sports",
+                  "pricing": [],
+                  "status": "draft",
+                  "transaction_mechanism": {
+                    "available": [],
+                    "included": []
+                  },
+                  "visibility": "public"
+                }
+              ],
+              "negotiation_history": [],
+              "proposal_id": "examplepub-q4-sports",
+              "seller": {
+                "domain": "examplepub.example"
+              },
+              "spec_version": "examplepub-q4-sports",
+              "status": "published",
+              "type": "standard",
+              "version": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "HistoryPath.requested_value"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:4.1:d31e02ee",
+      "level": "REQUIRED",
+      "owner": "HistoryPath",
+      "severity": "error",
+      "sources": [
+        "key:4.1:HistoryPath.requested_value",
+        "rule:4.1:d31e02ee"
+      ],
+      "statement": "REQUIRED when the entry's `action` is `requested`",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "HistoryEntry.action": "requested"
+            },
+            "value": {
+              "pointer": "/creative_delivery"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/proposal/1/proposal.json#/$defs/HistoryPath",
+        "type": "HistoryPath",
+        "valid": [
+          {
+            "context": {
+              "HistoryEntry.action": "published"
+            },
+            "value": {
+              "pointer": "/creative_delivery"
+            }
+          },
+          {
+            "context": {
+              "HistoryEntry.action": "requested"
+            },
+            "value": {
+              "line_item_id": "business-daily-display",
+              "pointer": "/creative_delivery",
+              "requested_value": {
+                "commitment_bounds": {
+                  "earliest_start": "2026-10-05T00:00:00Z",
+                  "latest_end": "2026-12-31T23:59:59Z",
+                  "spend": {
+                    "max": 500000,
+                    "min": 5000
+                  }
+                },
+                "committed_metrics": [
+                  {
+                    "direction": "at_least",
+                    "level": 0.92,
+                    "metric": "completion_rate"
+                  }
+                ],
+                "list_rate": 12.5,
+                "materials_due": {
+                  "at": "2026-10-01T23:59:59Z",
+                  "before_start": "P1D"
+                },
+                "unit_bounds": {
+                  "max": 3,
+                  "min": 3
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "ChangeRequest.orderid"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:4.4:9754e43c",
+      "level": "REQUIRED",
+      "owner": "ChangeRequest",
+      "severity": "error",
+      "sources": [
+        "key:4.4:ChangeRequest.orderid",
+        "rule:4.4:9754e43c"
+      ],
+      "statement": "REQUIRED when the line item has an `order` reference (§ 5.10)",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "LineItem.external_references": [
+                {
+                  "id": "345233",
+                  "namespace": "examplepub-q4-sports",
+                  "reference_type": "order",
+                  "system": "orders.examplepub.example"
+                }
+              ]
+            },
+            "value": {
+              "actor": "buyer",
+              "at": "2026-11-02T15:20:00Z",
+              "baseline": {
+                "proposal_id": "examplepub-agencya-custom-q4-2026",
+                "version": 2
+              },
+              "id": "67853"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/proposal/1/proposal.json#/$defs/ChangeRequest",
+        "type": "ChangeRequest",
+        "valid": [
+          {
+            "context": {
+              "LineItem.external_references": []
+            },
+            "value": {
+              "actor": "buyer",
+              "at": "2026-11-02T15:20:00Z",
+              "baseline": {
+                "proposal_id": "examplepub-agencya-custom-q4-2026",
+                "version": 2
+              },
+              "id": "67853"
+            }
+          },
+          {
+            "context": {
+              "LineItem.external_references": [
+                {
+                  "id": "345233",
+                  "namespace": "examplepub-q4-sports",
+                  "reference_type": "order",
+                  "system": "orders.examplepub.example"
+                }
+              ]
+            },
+            "value": {
+              "actor": "buyer",
+              "at": "2026-11-02T15:20:00Z",
+              "baseline": {
+                "proposal_id": "examplepub-agencya-custom-q4-2026",
+                "version": 2
+              },
+              "id": "67853",
+              "orderid": "345233"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Placement.plcmt"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.2.2:40e6089f",
+      "level": "REQUIRED",
+      "owner": "Placement",
+      "severity": "error",
+      "sources": [
+        "key:5.2.2:Placement.plcmt",
+        "rule:5.2.2:40e6089f"
+      ],
+      "statement": "REQUIRED when `channel` is `video`",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "LineItem.channel": "video"
+            },
+            "value": {}
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/inventory/1/inventory.json#/$defs/Placement",
+        "type": "Placement",
+        "valid": [
+          {
+            "context": {
+              "LineItem.channel": "video"
+            },
+            "value": {
+              "plcmt": 1
+            }
+          },
+          {
+            "context": {
+              "LineItem.channel": "display"
+            },
+            "value": {}
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Placement.feed"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.2.2:87d20470",
+      "level": "REQUIRED",
+      "owner": "Placement",
+      "severity": "error",
+      "sources": [
+        "key:5.2.2:Placement.feed",
+        "rule:5.2.2:87d20470"
+      ],
+      "statement": "REQUIRED when `channel` is `audio`",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "LineItem.channel": "audio"
+            },
+            "value": {}
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/inventory/1/inventory.json#/$defs/Placement",
+        "type": "Placement",
+        "valid": [
+          {
+            "context": {
+              "LineItem.channel": "audio"
+            },
+            "value": {
+              "feed": 1
+            }
+          },
+          {
+            "context": {
+              "LineItem.channel": "display"
+            },
+            "value": {}
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "PropertyOption.venue_type"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.2.4:02c220b8",
+      "level": "REQUIRED",
+      "owner": "PropertyOption",
+      "severity": "error",
+      "sources": [
+        "key:5.2.4:PropertyOption.venue_type",
+        "rule:5.2.4:02c220b8"
+      ],
+      "statement": "REQUIRED when `channel` is `dooh`",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "LineItem.channel": "dooh"
+            },
+            "value": {
+              "allocation": "all",
+              "apps": [],
+              "child_audience": "directed",
+              "domains": [
+                "tune-stream.example",
+                "business-daily.example"
+              ],
+              "id": "examplepub-q4-sports",
+              "seller_relationship": "owner"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/properties/1/properties.json#/$defs/PropertyOption",
+        "type": "PropertyOption",
+        "valid": [
+          {
+            "context": {
+              "LineItem.channel": "display"
+            },
+            "value": {
+              "allocation": "all",
+              "apps": [],
+              "child_audience": "directed",
+              "domains": [
+                "tune-stream.example",
+                "business-daily.example"
+              ],
+              "id": "examplepub-q4-sports",
+              "seller_relationship": "owner"
+            }
+          },
+          {
+            "context": {
+              "LineItem.channel": "dooh"
+            },
+            "value": {
+              "allocation": "all",
+              "apps": [],
+              "child_audience": "directed",
+              "domains": [
+                "tune-stream.example",
+                "business-daily.example"
+              ],
+              "id": "examplepub-q4-sports",
+              "seller_relationship": "owner",
+              "venue_type": {
+                "ids": [
+                  "1551"
+                ],
+                "taxonomy": 8
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "PropertyOption.seller_accounts"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.2.4:45d0b1fa",
+      "level": "REQUIRED",
+      "owner": "PropertyOption",
+      "severity": "error",
+      "sources": [
+        "key:5.2.4:PropertyOption.seller_accounts[]",
+        "rule:5.2.4:45d0b1fa"
+      ],
+      "statement": "REQUIRED when `seller_relationship` is `reseller`, or the line item offers a deal mechanism (§ 5.9)",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "allocation": "all",
+              "apps": [],
+              "child_audience": "directed",
+              "domains": [
+                "tune-stream.example",
+                "business-daily.example"
+              ],
+              "id": "examplepub-q4-sports",
+              "seller_relationship": "reseller"
+            }
+          },
+          {
+            "context": {
+              "LineItem.transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "guaranteed",
+                    "id": "programmatic_guaranteed"
+                  }
+                ],
+                "included": [
+                  "programmatic_guaranteed"
+                ]
+              }
+            },
+            "value": {
+              "allocation": "all",
+              "apps": [],
+              "child_audience": "directed",
+              "domains": [
+                "tune-stream.example",
+                "business-daily.example"
+              ],
+              "id": "examplepub-q4-sports",
+              "seller_relationship": "owner"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/properties/1/properties.json#/$defs/PropertyOption",
+        "type": "PropertyOption",
+        "valid": [
+          {
+            "context": {
+              "LineItem.transaction_mechanism": {
+                "available": [],
+                "included": []
+              }
+            },
+            "value": {
+              "allocation": "all",
+              "apps": [],
+              "child_audience": "directed",
+              "domains": [
+                "tune-stream.example",
+                "business-daily.example"
+              ],
+              "id": "examplepub-q4-sports",
+              "seller_relationship": "owner"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "PropertyOption.apps"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.2.4:65ca47c9",
+      "level": "REQUIRED",
+      "owner": "PropertyOption",
+      "severity": "error",
+      "sources": [
+        "key:5.2.4:PropertyOption.apps[]",
+        "rule:5.2.4:65ca47c9"
+      ],
+      "statement": "REQUIRED when `domains[]` is absent",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "allocation": "all",
+              "child_audience": "directed",
+              "id": "examplepub-q4-sports",
+              "seller_relationship": "owner"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/properties/1/properties.json#/$defs/PropertyOption",
+        "type": "PropertyOption",
+        "valid": [
+          {
+            "value": {
+              "allocation": "all",
+              "apps": [],
+              "child_audience": "directed",
+              "domains": [
+                "tune-stream.example",
+                "business-daily.example"
+              ],
+              "id": "examplepub-q4-sports",
+              "seller_relationship": "owner"
+            }
+          },
+          {
+            "value": {
+              "allocation": "all",
+              "apps": [
+                {
+                  "bundle": "000003",
+                  "developer_domain": "tune-stream.example",
+                  "store": "apple_app_store",
+                  "store_url": "https://channelstore.roku.com/details/000001/sports-app"
+                }
+              ],
+              "child_audience": "directed",
+              "id": "examplepub-q4-sports",
+              "seller_relationship": "owner"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "PropertyOption.domains"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.2.4:c8e6720e",
+      "level": "REQUIRED",
+      "owner": "PropertyOption",
+      "severity": "error",
+      "sources": [
+        "key:5.2.4:PropertyOption.domains[]",
+        "rule:5.2.4:c8e6720e"
+      ],
+      "statement": "REQUIRED when `apps[]` is absent",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "allocation": "all",
+              "child_audience": "directed",
+              "id": "examplepub-q4-sports",
+              "seller_relationship": "owner"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/properties/1/properties.json#/$defs/PropertyOption",
+        "type": "PropertyOption",
+        "valid": [
+          {
+            "value": {
+              "allocation": "all",
+              "apps": [],
+              "child_audience": "directed",
+              "domains": [
+                "tune-stream.example",
+                "business-daily.example"
+              ],
+              "id": "examplepub-q4-sports",
+              "seller_relationship": "owner"
+            }
+          },
+          {
+            "value": {
+              "allocation": "all",
+              "apps": [
+                {
+                  "bundle": "000003",
+                  "developer_domain": "tune-stream.example",
+                  "store": "apple_app_store",
+                  "store_url": "https://channelstore.roku.com/details/000001/sports-app"
+                }
+              ],
+              "child_audience": "directed",
+              "id": "examplepub-q4-sports",
+              "seller_relationship": "owner"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "PropertyOption.screens"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.2.4:ea387bb0",
+      "level": "REQUIRED",
+      "owner": "PropertyOption",
+      "severity": "error",
+      "sources": [
+        "key:5.2.4:PropertyOption.screens[]",
+        "rule:5.2.4:ea387bb0"
+      ],
+      "statement": "REQUIRED when `channel` is `dooh` and `allocation` is `all`",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "LineItem.channel": "dooh"
+            },
+            "value": {
+              "allocation": "all",
+              "apps": [],
+              "child_audience": "directed",
+              "domains": [
+                "tune-stream.example",
+                "business-daily.example"
+              ],
+              "id": "examplepub-q4-sports",
+              "seller_relationship": "owner"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/properties/1/properties.json#/$defs/PropertyOption",
+        "type": "PropertyOption",
+        "valid": [
+          {
+            "context": {
+              "LineItem.channel": "dooh"
+            },
+            "value": {
+              "allocation": "seller_allocated",
+              "apps": [],
+              "child_audience": "directed",
+              "domains": [
+                "tune-stream.example",
+                "business-daily.example"
+              ],
+              "id": "examplepub-q4-sports",
+              "seller_relationship": "owner"
+            }
+          },
+          {
+            "context": {
+              "LineItem.channel": "dooh"
+            },
+            "value": {
+              "allocation": "all",
+              "apps": [],
+              "child_audience": "directed",
+              "domains": [
+                "tune-stream.example",
+                "business-daily.example"
+              ],
+              "id": "examplepub-q4-sports",
+              "screens": [
+                {
+                  "lat": 40.7128,
+                  "lon": -74.006,
+                  "loop": {
+                    "length_s": 60,
+                    "slot_s": 10
+                  },
+                  "movable": true,
+                  "operating_hours": [
+                    {
+                      "before": "22:00",
+                      "days": [
+                        "monday",
+                        "tuesday"
+                      ],
+                      "start": "06:00"
+                    }
+                  ],
+                  "screen_id": "np-001",
+                  "time_zone": "America/New_York"
+                }
+              ],
+              "seller_relationship": "owner"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.episodes"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.2:2f4f1aa3",
+      "level": "REQUIRED",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "field:5.2:episodes",
+        "rule:5.2:2f4f1aa3"
+      ],
+      "statement": "REQUIRED when `placement.feed` is Podcast (3) or Catch-up radio (4)",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 3
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          },
+          {
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "episodes": "new",
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 3
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.placement"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.2:f8f39d84",
+      "level": "REQUIRED",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "field:5.2:placement",
+        "rule:5.2:f8f39d84"
+      ],
+      "statement": "REQUIRED when `channel` is `video` or `audio`",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "channel": "audio",
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          },
+          {
+            "value": {
+              "channel": "video",
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "value": {
+              "channel": "display",
+              "line_item_id": "examplepub-q4-sports",
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          },
+          {
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "AudienceSelectable.available",
+        "AudienceSelectable.combine",
+        "AudienceSelectable.deltas",
+        "AudienceSelectable.included",
+        "AudienceSelectable.max_select",
+        "AudienceSelectable.selected"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.3:153027ca",
+      "level": "REQUIRED",
+      "owner": "AudienceSelectable",
+      "severity": "error",
+      "sources": [
+        "key:5.3:AudienceSelectable.combine",
+        "rule:5.3:153027ca"
+      ],
+      "statement": "REQUIRED when more than one seller audience can be in effect",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "available": [
+                {
+                  "data_label": {},
+                  "id": "smb-decision-makers",
+                  "sensitive_categories": [],
+                  "taxonomy": 4
+                },
+                {
+                  "data_label": {},
+                  "id": "second",
+                  "sensitive_categories": [],
+                  "taxonomy": 4
+                }
+              ],
+              "included": []
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/audience/1/audience.json#/$defs/AudienceSelectable",
+        "type": "AudienceSelectable",
+        "valid": [
+          {
+            "value": {
+              "available": [],
+              "included": []
+            }
+          },
+          {
+            "value": {
+              "available": [
+                {
+                  "data_label": {},
+                  "id": "smb-decision-makers",
+                  "sensitive_categories": [],
+                  "taxonomy": 4
+                },
+                {
+                  "data_label": {},
+                  "id": "second",
+                  "sensitive_categories": [],
+                  "taxonomy": 4
+                }
+              ],
+              "included": [],
+              "max_select": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.materials_due"
+      ],
+      "decisions": [
+        "D-030",
+        "D-034"
+      ],
+      "id": "rule:5.4:2eaa294f",
+      "level": "MAY",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "field:5.4:materials_due",
+        "rule:5.4:2eaa294f"
+      ],
+      "statement": "A buyer MAY request a later date",
+      "vectors": {
+        "invalid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "materials_due": {
+                "at": "2026-10-01T23:59:59Z"
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "materials_due": {
+                "at": "2026-10-08T23:59:59Z"
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "buyer"
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "after": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "materials_due": {
+                "at": "2026-10-08T23:59:59Z"
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "before": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "materials_due": {
+                "at": "2026-10-01T23:59:59Z"
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            },
+            "party": "buyer"
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.format_specs"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.4:3a677601",
+      "level": "REQUIRED",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "field:5.4:format_specs",
+        "rule:5.4:3a677601"
+      ],
+      "statement": "REQUIRED when the proposal has left `draft` and `formats` is present",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "Proposal.status": "published"
+            },
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "formats": {
+                "available": [
+                  "audio/host-read-30s"
+                ],
+                "included": [
+                  "audio/host-read-30s"
+                ]
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "context": {
+              "Proposal.status": "published"
+            },
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          },
+          {
+            "context": {
+              "Proposal.status": "draft"
+            },
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "formats": {
+                "available": [
+                  "audio/host-read-30s"
+                ],
+                "included": [
+                  "audio/host-read-30s"
+                ]
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Asset.markup"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.4:45b02f49",
+      "level": "REQUIRED",
+      "owner": "Asset",
+      "severity": "error",
+      "sources": [
+        "key:5.4:Asset.markup",
+        "rule:5.4:45b02f49"
+      ],
+      "statement": "REQUIRED when `url` is absent",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "approval_status": "PENDING",
+              "asset_id": "examplepub-q4-sports",
+              "built_by": "seller",
+              "format_id": "display/300x250"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/creative/1/creative.json#/$defs/Asset",
+        "type": "Asset",
+        "valid": [
+          {
+            "value": {
+              "approval_status": "PENDING",
+              "asset_id": "examplepub-q4-sports",
+              "built_by": "seller",
+              "format_id": "display/300x250",
+              "markup": "examplepub-q4-sports",
+              "url": "https://ads.examplepub.example/a.mp3"
+            }
+          },
+          {
+            "value": {
+              "approval_status": "PENDING",
+              "asset_id": "examplepub-q4-sports",
+              "built_by": "seller",
+              "format_id": "display/300x250",
+              "markup": "<VAST/>"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "MaterialsDue.at"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.4:58ab1d09",
+      "level": "REQUIRED",
+      "owner": "MaterialsDue",
+      "severity": "error",
+      "sources": [
+        "key:5.4:MaterialsDue.at",
+        "rule:5.4:58ab1d09"
+      ],
+      "statement": "REQUIRED when `before_start` is absent",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {}
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/creative/1/creative.json#/$defs/MaterialsDue",
+        "type": "MaterialsDue",
+        "valid": [
+          {
+            "value": {
+              "at": "2026-10-01T23:59:59Z"
+            }
+          },
+          {
+            "value": {
+              "before_start": "P1D"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "MaterialsDue.before_start"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.4:7a6f2ac4",
+      "level": "REQUIRED",
+      "owner": "MaterialsDue",
+      "severity": "error",
+      "sources": [
+        "key:5.4:MaterialsDue.before_start",
+        "rule:5.4:7a6f2ac4"
+      ],
+      "statement": "REQUIRED when `at` is absent",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {}
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/creative/1/creative.json#/$defs/MaterialsDue",
+        "type": "MaterialsDue",
+        "valid": [
+          {
+            "value": {
+              "at": "2026-10-01T23:59:59Z"
+            }
+          },
+          {
+            "value": {
+              "before_start": "P1D"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Asset.url"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.4:e2c0968b",
+      "level": "REQUIRED",
+      "owner": "Asset",
+      "severity": "error",
+      "sources": [
+        "key:5.4:Asset.url",
+        "rule:5.4:e2c0968b"
+      ],
+      "statement": "REQUIRED when `markup` is absent",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "approval_status": "PENDING",
+              "asset_id": "examplepub-q4-sports",
+              "built_by": "seller",
+              "format_id": "display/300x250"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/creative/1/creative.json#/$defs/Asset",
+        "type": "Asset",
+        "valid": [
+          {
+            "value": {
+              "approval_status": "PENDING",
+              "asset_id": "examplepub-q4-sports",
+              "built_by": "seller",
+              "format_id": "display/300x250",
+              "markup": "examplepub-q4-sports",
+              "url": "https://ads.examplepub.example/a.mp3"
+            }
+          },
+          {
+            "value": {
+              "approval_status": "PENDING",
+              "asset_id": "examplepub-q4-sports",
+              "built_by": "seller",
+              "format_id": "display/300x250",
+              "markup": "<VAST/>"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.time_zone"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.5:4a35bd89",
+      "level": "REQUIRED",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "field:5.5:time_zone",
+        "rule:5.5:4a35bd89"
+      ],
+      "statement": "REQUIRED when `daypart` or `frequency_cap` is present",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "frequency_cap": {
+                "count": {
+                  "default": 3,
+                  "max": 6,
+                  "min": 1,
+                  "value": 4
+                },
+                "per": "listener",
+                "period": "day"
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          },
+          {
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "frequency_cap": {
+                "count": {
+                  "default": 3,
+                  "max": 6,
+                  "min": 1,
+                  "value": 4
+                },
+                "per": "listener",
+                "period": "day"
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "status": "draft",
+              "time_zone": "America/New_York",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Commitment.pricing_id"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6.1:7b200076",
+      "level": "REQUIRED",
+      "owner": "Commitment",
+      "severity": "error",
+      "sources": [
+        "key:5.6.1:Commitment.pricing_id",
+        "rule:5.6.1:7b200076"
+      ],
+      "statement": "REQUIRED when `pricing[]` has more than one entry",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "LineItem.pricing": [
+                {
+                  "cost_method": "CPM",
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "audio-cpm-usd"
+                },
+                {
+                  "cost_method": "CPM",
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "b"
+                }
+              ]
+            },
+            "value": {
+              "advertisers": [],
+              "amount": 80000,
+              "basis": "spend",
+              "flight": {
+                "end": "2026-12-31T23:59:59Z",
+                "start": "2026-10-01T00:00:00Z"
+              }
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/Commitment",
+        "type": "Commitment",
+        "valid": [
+          {
+            "context": {
+              "LineItem.pricing": [
+                {
+                  "cost_method": "CPM",
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "audio-cpm-usd"
+                }
+              ]
+            },
+            "value": {
+              "advertisers": [],
+              "amount": 80000,
+              "basis": "spend",
+              "flight": {
+                "end": "2026-12-31T23:59:59Z",
+                "start": "2026-10-01T00:00:00Z"
+              }
+            }
+          },
+          {
+            "context": {
+              "LineItem.pricing": [
+                {
+                  "cost_method": "CPM",
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "audio-cpm-usd"
+                },
+                {
+                  "cost_method": "CPM",
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "b"
+                }
+              ]
+            },
+            "value": {
+              "advertisers": [],
+              "amount": 80000,
+              "basis": "spend",
+              "flight": {
+                "end": "2026-12-31T23:59:59Z",
+                "start": "2026-10-01T00:00:00Z"
+              },
+              "pricing_id": "audio-cpm-usd"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "CommitResult.availability"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6.1:94be9998",
+      "level": "REQUIRED",
+      "owner": "CommitResult",
+      "severity": "error",
+      "sources": [
+        "key:5.6.1:CommitResult.availability",
+        "rule:5.6.1:94be9998"
+      ],
+      "statement": "REQUIRED when `entries[]` holds a `decline` for lack of availability",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "entries": [
+                {
+                  "at": "2026-09-22T10:14:03Z",
+                  "ground": "availability",
+                  "line_item_ids": [
+                    "business-daily-display",
+                    "weather-app-ctv"
+                  ],
+                  "record_digest": "sha256:a9290958d7f148d212b552b51b6cc3ccca86edbc817f2058252b3ee9d7d3a10a",
+                  "role": "decline",
+                  "version": 2
+                }
+              ]
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/CommitResult",
+        "type": "CommitResult",
+        "valid": [
+          {
+            "value": {
+              "entries": []
+            }
+          },
+          {
+            "value": {
+              "availability": {
+                "x": {
+                  "certainty": "reservable",
+                  "computed_at": "2026-10-06T16:20:00Z",
+                  "granularity": "hour",
+                  "quantity": 3555555,
+                  "unit": "slots_per_loop",
+                  "window": {
+                    "end": "2026-12-31T23:59:59Z",
+                    "start": "2026-10-01T00:00:00Z"
+                  }
+                }
+              },
+              "entries": [
+                {
+                  "at": "2026-09-22T10:14:03Z",
+                  "ground": "availability",
+                  "line_item_ids": [
+                    "business-daily-display",
+                    "weather-app-ctv"
+                  ],
+                  "record_digest": "sha256:a9290958d7f148d212b552b51b6cc3ccca86edbc817f2058252b3ee9d7d3a10a",
+                  "role": "decline",
+                  "version": 2
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "DeliveryCounting.partial_play_credit"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6.4:615bf228",
+      "level": "REQUIRED",
+      "owner": "DeliveryCounting",
+      "severity": "error",
+      "sources": [
+        "key:5.6.4:DeliveryCounting.partial_play_credit",
+        "rule:5.6.4:615bf228"
+      ],
+      "statement": "REQUIRED when a property has `sync_groups[]`",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "LineItem.properties": {
+                "available": [
+                  {
+                    "allocation": "all",
+                    "apps": [],
+                    "child_audience": "directed",
+                    "domains": [
+                      "tune-stream.example",
+                      "business-daily.example"
+                    ],
+                    "id": "examplepub-q4-sports",
+                    "seller_relationship": "owner",
+                    "sync_groups": [
+                      {
+                        "min_screens_per_play": 3,
+                        "screen_ids": [],
+                        "sync_group_id": "examplepub-q4-sports"
+                      }
+                    ]
+                  }
+                ],
+                "included": []
+              }
+            },
+            "value": {
+              "play_tolerance_ms": 500,
+              "proof_of_performance": {
+                "evidence": [],
+                "logged_by": "seller"
+              }
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/DeliveryCounting",
+        "type": "DeliveryCounting",
+        "valid": [
+          {
+            "context": {
+              "LineItem.properties": {
+                "available": [],
+                "included": []
+              }
+            },
+            "value": {
+              "play_tolerance_ms": 500,
+              "proof_of_performance": {
+                "evidence": [],
+                "logged_by": "seller"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "ImpressionMultiplier.vendor"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6.4:b6f5be4c",
+      "level": "REQUIRED",
+      "owner": "ImpressionMultiplier",
+      "severity": "error",
+      "sources": [
+        "key:5.6.4:ImpressionMultiplier.vendor",
+        "rule:5.6.4:b6f5be4c"
+      ],
+      "statement": "REQUIRED when `source_type` is not Publisher Provided (`2`)",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "dataset": "examplepub-q4-sports",
+              "impression_type": "gross",
+              "settles_on": "declared",
+              "source_type": 1
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/ImpressionMultiplier",
+        "type": "ImpressionMultiplier",
+        "valid": [
+          {
+            "value": {
+              "dataset": "examplepub-q4-sports",
+              "impression_type": "gross",
+              "settles_on": "declared",
+              "source_type": 2
+            }
+          },
+          {
+            "value": {
+              "dataset": "examplepub-q4-sports",
+              "impression_type": "gross",
+              "settles_on": "declared",
+              "source_type": 1,
+              "vendor": "audience-vendor.example"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "DeliveryCounting.impression_multiplier"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6.4:e58650b7",
+      "level": "REQUIRED",
+      "owner": "DeliveryCounting",
+      "severity": "error",
+      "sources": [
+        "key:5.6.4:DeliveryCounting.impression_multiplier",
+        "rule:5.6.4:e58650b7"
+      ],
+      "statement": "REQUIRED when the line item counts impressions",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "LineItem.pricing": [
+                {
+                  "cost_method": "CPM",
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "audio-cpm-usd"
+                }
+              ]
+            },
+            "value": {
+              "play_tolerance_ms": 500,
+              "proof_of_performance": {
+                "evidence": [],
+                "logged_by": "seller"
+              }
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/DeliveryCounting",
+        "type": "DeliveryCounting",
+        "valid": [
+          {
+            "context": {
+              "LineItem.pricing": [
+                {
+                  "cost_method": "TIME",
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "audio-cpm-usd"
+                }
+              ]
+            },
+            "value": {
+              "play_tolerance_ms": 500,
+              "proof_of_performance": {
+                "evidence": [],
+                "logged_by": "seller"
+              }
+            }
+          },
+          {
+            "context": {
+              "LineItem.pricing": [
+                {
+                  "cost_method": "CPM",
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "audio-cpm-usd"
+                }
+              ]
+            },
+            "value": {
+              "impression_multiplier": {
+                "dataset": "examplepub-q4-sports",
+                "impression_type": "gross",
+                "settles_on": "declared",
+                "source_type": 1
+              },
+              "play_tolerance_ms": 500,
+              "proof_of_performance": {
+                "evidence": [],
+                "logged_by": "seller"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "CostParameters.rate_unit"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6.5:119b216f",
+      "level": "REQUIRED",
+      "owner": "CostParameters",
+      "severity": "error",
+      "sources": [
+        "key:5.6.5:CostParameters.rate_unit",
+        "rule:5.6.5:119b216f"
+      ],
+      "statement": "REQUIRED when `cost_method` is `TIME`",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "TIME"
+            },
+            "value": {}
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/CostParameters",
+        "type": "CostParameters",
+        "valid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPM"
+            },
+            "value": {}
+          },
+          {
+            "context": {
+              "PricingEntry.cost_method": "TIME"
+            },
+            "value": {
+              "rate_unit": "hour"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "CostParameters.viewability_standard"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6.5:1f435d20",
+      "level": "REQUIRED",
+      "owner": "CostParameters",
+      "severity": "error",
+      "sources": [
+        "key:5.6.5:CostParameters.viewability_standard",
+        "rule:5.6.5:1f435d20"
+      ],
+      "statement": "REQUIRED when `cost_method` is `CPMV`",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPMV"
+            },
+            "value": {}
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/CostParameters",
+        "type": "CostParameters",
+        "valid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPM"
+            },
+            "value": {}
+          },
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPMV"
+            },
+            "value": {
+              "viewability_standard": "examplepub.example:podcast-host-read"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "CostParameters.view_fraction"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6.5:26b080e2",
+      "level": "REQUIRED",
+      "owner": "CostParameters",
+      "severity": "error",
+      "sources": [
+        "key:5.6.5:CostParameters.view_fraction",
+        "rule:5.6.5:26b080e2"
+      ],
+      "statement": "REQUIRED when `cost_method` is `CPV` and `view_s` is absent",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPV"
+            },
+            "value": {}
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/CostParameters",
+        "type": "CostParameters",
+        "valid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPM"
+            },
+            "value": {}
+          },
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPV"
+            },
+            "value": {
+              "view_s": 3
+            }
+          },
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPV"
+            },
+            "value": {
+              "view_fraction": 0.7
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "CostParameters.action_type"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6.5:449027fe",
+      "level": "REQUIRED",
+      "owner": "CostParameters",
+      "severity": "error",
+      "sources": [
+        "key:5.6.5:CostParameters.action_type",
+        "rule:5.6.5:449027fe"
+      ],
+      "statement": "REQUIRED when `cost_method` is `CPA`",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPA"
+            },
+            "value": {}
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/CostParameters",
+        "type": "CostParameters",
+        "valid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPM"
+            },
+            "value": {}
+          },
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPA"
+            },
+            "value": {
+              "action_type": "examplepub.example:podcast-host-read"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "CostParameters.attribution_window"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6.5:449027fe-2",
+      "level": "REQUIRED",
+      "owner": "CostParameters",
+      "severity": "error",
+      "sources": [
+        "key:5.6.5:CostParameters.attribution_window",
+        "rule:5.6.5:449027fe-2"
+      ],
+      "statement": "REQUIRED when `cost_method` is `CPA`",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPA"
+            },
+            "value": {}
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/CostParameters",
+        "type": "CostParameters",
+        "valid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPM"
+            },
+            "value": {}
+          },
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPA"
+            },
+            "value": {
+              "attribution_window": "P14D"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "CostParameters.action_source"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6.5:449027fe-3",
+      "level": "REQUIRED",
+      "owner": "CostParameters",
+      "severity": "error",
+      "sources": [
+        "key:5.6.5:CostParameters.action_source",
+        "rule:5.6.5:449027fe-3"
+      ],
+      "statement": "REQUIRED when `cost_method` is `CPA`",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPA"
+            },
+            "value": {}
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/CostParameters",
+        "type": "CostParameters",
+        "valid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPM"
+            },
+            "value": {}
+          },
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPA"
+            },
+            "value": {
+              "action_source": "seller"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "CostParameters.demographic"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6.5:acca3c1c",
+      "level": "REQUIRED",
+      "owner": "CostParameters",
+      "severity": "error",
+      "sources": [
+        "key:5.6.5:CostParameters.demographic",
+        "rule:5.6.5:acca3c1c"
+      ],
+      "statement": "REQUIRED when `cost_method` is `CPP`",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPP"
+            },
+            "value": {}
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/CostParameters",
+        "type": "CostParameters",
+        "valid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPM"
+            },
+            "value": {}
+          },
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPP"
+            },
+            "value": {
+              "demographic": "examplepub.example:podcast-host-read"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "CostParameters.rating_source"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6.5:acca3c1c-2",
+      "level": "REQUIRED",
+      "owner": "CostParameters",
+      "severity": "error",
+      "sources": [
+        "key:5.6.5:CostParameters.rating_source",
+        "rule:5.6.5:acca3c1c-2"
+      ],
+      "statement": "REQUIRED when `cost_method` is `CPP`",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPP"
+            },
+            "value": {}
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/CostParameters",
+        "type": "CostParameters",
+        "valid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPM"
+            },
+            "value": {}
+          },
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPP"
+            },
+            "value": {
+              "rating_source": "seller"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "CostParameters.view_s"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6.5:f959ab87",
+      "level": "REQUIRED",
+      "owner": "CostParameters",
+      "severity": "error",
+      "sources": [
+        "key:5.6.5:CostParameters.view_s",
+        "rule:5.6.5:f959ab87"
+      ],
+      "statement": "REQUIRED when `cost_method` is `CPV` and `view_fraction` is absent",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPV"
+            },
+            "value": {}
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/CostParameters",
+        "type": "CostParameters",
+        "valid": [
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPM"
+            },
+            "value": {}
+          },
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPV"
+            },
+            "value": {
+              "view_fraction": 0.7
+            }
+          },
+          {
+            "context": {
+              "PricingEntry.cost_method": "CPV"
+            },
+            "value": {
+              "view_s": 3
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "Fee.share"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6.6:11a40445",
+      "level": "REQUIRED",
+      "owner": "Fee",
+      "severity": "error",
+      "sources": [
+        "key:5.6.6:Fee.share",
+        "rule:5.6.6:11a40445"
+      ],
+      "statement": "REQUIRED when `calculation` is `cancelled` or `commitment`",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "calculation": "cancelled"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/Fee",
+        "type": "Fee",
+        "valid": [
+          {
+            "value": {
+              "calculation": "none"
+            }
+          },
+          {
+            "value": {
+              "calculation": "cancelled",
+              "share": 0.25
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "PricingEntry.cost_parameters"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6:0f8d396f",
+      "level": "REQUIRED",
+      "owner": "PricingEntry",
+      "severity": "error",
+      "sources": [
+        "field:5.6:pricing[].cost_parameters",
+        "rule:5.6:0f8d396f"
+      ],
+      "statement": "REQUIRED when the term requires keys",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "cost_method": "TIME",
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/PricingEntry",
+        "type": "PricingEntry",
+        "valid": [
+          {
+            "value": {
+              "cost_method": "CPM",
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd"
+            }
+          },
+          {
+            "value": {
+              "cost_method": "TIME",
+              "cost_parameters": {
+                "rate_unit": "hour"
+              },
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "PricingEntry.agreed_rate"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6:62e21e38",
+      "level": "REQUIRED",
+      "owner": "PricingEntry",
+      "severity": "error",
+      "sources": [
+        "field:5.6:pricing[].agreed_rate",
+        "rule:5.6:62e21e38"
+      ],
+      "statement": "REQUIRED when this is the committed entry",
+      "vectors": {
+        "invalid": [
+          {
+            "context": {
+              "Commitment.pricing_id": "audio-cpm-usd"
+            },
+            "value": {
+              "cost_method": "CPM",
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/PricingEntry",
+        "type": "PricingEntry",
+        "valid": [
+          {
+            "context": {
+              "Commitment.pricing_id": "other-entry"
+            },
+            "value": {
+              "cost_method": "CPM",
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd"
+            }
+          },
+          {
+            "context": {
+              "Commitment.pricing_id": "audio-cpm-usd"
+            },
+            "value": {
+              "agreed_rate": 18,
+              "cost_method": "CPM",
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "PricingEntry.rate_per"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6:7235466d",
+      "level": "REQUIRED",
+      "owner": "PricingEntry",
+      "severity": "error",
+      "sources": [
+        "field:5.6:pricing[].rate_per",
+        "rule:5.6:7235466d"
+      ],
+      "statement": "REQUIRED when `cost_method` is an extension term",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "cost_definition": {
+                "digest": "sha256:83e44f6fa723c35fef1b3528b16cc13a8a19ee34a32b658f6d3cc243ce12592e",
+                "url": "https://examplepub.example/legal/io-terms-2026.pdf"
+              },
+              "cost_method": "examplepub.example:per-spot",
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd",
+              "unit_label": "spot"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/PricingEntry",
+        "type": "PricingEntry",
+        "valid": [
+          {
+            "value": {
+              "cost_method": "CPM",
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd"
+            }
+          },
+          {
+            "value": {
+              "cost_definition": {
+                "digest": "sha256:83e44f6fa723c35fef1b3528b16cc13a8a19ee34a32b658f6d3cc243ce12592e",
+                "url": "https://examplepub.example/legal/io-terms-2026.pdf"
+              },
+              "cost_method": "examplepub.example:per-spot",
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd",
+              "rate_per": 1,
+              "unit_label": "spot"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "PricingEntry.unit_label"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6:7235466d-2",
+      "level": "REQUIRED",
+      "owner": "PricingEntry",
+      "severity": "error",
+      "sources": [
+        "field:5.6:pricing[].unit_label",
+        "rule:5.6:7235466d-2"
+      ],
+      "statement": "REQUIRED when `cost_method` is an extension term",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "cost_definition": {
+                "digest": "sha256:83e44f6fa723c35fef1b3528b16cc13a8a19ee34a32b658f6d3cc243ce12592e",
+                "url": "https://examplepub.example/legal/io-terms-2026.pdf"
+              },
+              "cost_method": "examplepub.example:per-spot",
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd",
+              "rate_per": 1
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/PricingEntry",
+        "type": "PricingEntry",
+        "valid": [
+          {
+            "value": {
+              "cost_method": "CPM",
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd"
+            }
+          },
+          {
+            "value": {
+              "cost_definition": {
+                "digest": "sha256:83e44f6fa723c35fef1b3528b16cc13a8a19ee34a32b658f6d3cc243ce12592e",
+                "url": "https://examplepub.example/legal/io-terms-2026.pdf"
+              },
+              "cost_method": "examplepub.example:per-spot",
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd",
+              "rate_per": 1,
+              "unit_label": "spot"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "PricingEntry.cost_definition"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6:7235466d-3",
+      "level": "REQUIRED",
+      "owner": "PricingEntry",
+      "severity": "error",
+      "sources": [
+        "field:5.6:pricing[].cost_definition",
+        "rule:5.6:7235466d-3"
+      ],
+      "statement": "REQUIRED when `cost_method` is an extension term",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "cost_method": "examplepub.example:per-spot",
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd",
+              "rate_per": 1,
+              "unit_label": "spot"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/PricingEntry",
+        "type": "PricingEntry",
+        "valid": [
+          {
+            "value": {
+              "cost_method": "CPM",
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd"
+            }
+          },
+          {
+            "value": {
+              "cost_definition": {
+                "digest": "sha256:83e44f6fa723c35fef1b3528b16cc13a8a19ee34a32b658f6d3cc243ce12592e",
+                "url": "https://examplepub.example/legal/io-terms-2026.pdf"
+              },
+              "cost_method": "examplepub.example:per-spot",
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd",
+              "rate_per": 1,
+              "unit_label": "spot"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "PricingEntry.price_type"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.6:8288302a",
+      "level": "REQUIRED",
+      "owner": "PricingEntry",
+      "severity": "error",
+      "sources": [
+        "field:5.6:pricing[].price_type",
+        "rule:5.6:8288302a"
+      ],
+      "statement": "REQUIRED when the entry prices a deal mechanism",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "cost_method": "CPM",
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd",
+              "transaction_mechanisms": [
+                "programmatic_guaranteed"
+              ]
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/commercial/1/commercial.json#/$defs/PricingEntry",
+        "type": "PricingEntry",
+        "valid": [
+          {
+            "value": {
+              "cost_method": "CPM",
+              "currency": "USD",
+              "list_rate": 18,
+              "pricing_id": "audio-cpm-usd"
+            }
+          },
+          {
+            "value": {
+              "cost_method": "CPM",
+              "currency": "USD",
+              "list_rate": 18,
+              "price_type": 1,
+              "pricing_id": "audio-cpm-usd",
+              "transaction_mechanisms": [
+                "programmatic_guaranteed"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.controlling_measurement"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.7:76df804b",
+      "level": "REQUIRED",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "field:5.7:controlling_measurement",
+        "rule:5.7:76df804b"
+      ],
+      "statement": "REQUIRED when `serving_mode` is `embedded` or the line item has `committed_metrics[]`, `commitment_bounds.spend`, or a `pricing[].unit_bounds`",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "retention": {
+                "max": "P1Y",
+                "min": "P90D"
+              },
+              "serving_mode": "embedded",
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.sov_basis"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.9:c0f7b8ce",
+      "level": "REQUIRED",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "field:5.9:sov_basis",
+        "rule:5.9:c0f7b8ce"
+      ],
+      "statement": "REQUIRED when an option's `delivery_type` is `share_of_voice`",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "channel": "dooh",
+              "deal_origin": "examplepub.example",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "programmatic_guaranteed"
+                  }
+                ],
+                "included": [
+                  "programmatic_guaranteed"
+                ]
+              },
+              "visibility": "public"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.deal_origin"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.9:cc571473",
+      "level": "REQUIRED",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "field:5.9:deal_origin",
+        "rule:5.9:cc571473"
+      ],
+      "statement": "REQUIRED when the line item offers a deal mechanism",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "guaranteed",
+                    "id": "programmatic_guaranteed"
+                  }
+                ],
+                "included": [
+                  "programmatic_guaranteed"
+                ]
+              },
+              "visibility": "public"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          },
+          {
+            "value": {
+              "channel": "dooh",
+              "deal_origin": "examplepub.example",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "guaranteed",
+                    "id": "programmatic_guaranteed"
+                  }
+                ],
+                "included": [
+                  "programmatic_guaranteed"
+                ]
+              },
+              "visibility": "public"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.sov_share"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.9:ceef2a21",
+      "level": "REQUIRED",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "field:5.9:sov_share",
+        "rule:5.9:ceef2a21"
+      ],
+      "statement": "REQUIRED when `sov_basis` is `impressions`",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "channel": "dooh",
+              "deal_origin": "examplepub.example",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "sov_basis": "impressions",
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "programmatic_guaranteed"
+                  }
+                ],
+                "included": [
+                  "programmatic_guaranteed"
+                ]
+              },
+              "visibility": "public"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem.retention"
+      ],
+      "decisions": [
+        "D-060"
+      ],
+      "id": "rule:5.9:d8611936",
+      "level": "REQUIRED",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "field:5.9:retention",
+        "rule:5.9:d8611936"
+      ],
+      "statement": "REQUIRED when `serving_mode` is `embedded`",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "serving_mode": "embedded",
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/line-item.json",
+        "type": "LineItem",
+        "valid": [
+          {
+            "value": {
+              "channel": "dooh",
+              "delivery_counting": {
+                "play_tolerance_ms": 0,
+                "proof_of_performance": {
+                  "evidence": [],
+                  "logged_by": "buyer"
+                }
+              },
+              "line_item_id": "examplepub-q4-sports",
+              "placement": {
+                "feed": 1
+              },
+              "pricing": [],
+              "status": "draft",
+              "transaction_mechanism": {
+                "available": [],
+                "included": []
+              },
+              "visibility": "public"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

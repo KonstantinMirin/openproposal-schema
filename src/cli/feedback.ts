@@ -4,7 +4,7 @@ import { parseArgs } from "node:util";
 import { buildLock, DEFAULT_LOCK_FILE, type LockBuild } from "../compare.ts";
 import { loadConstructors } from "../constructors.ts";
 import { FINDINGS_FILE, loadFindings } from "../examples.ts";
-import { allDecisions, buildFeedback, checkFeedback, DETAILS_LINK, feedbackOf, FEEDBACK_DIR, FEEDBACK_FILES, proposedOf, renderComment, renderDetails, renderFeedback } from "../feedback.ts";
+import { allDecisions, buildFeedback, checkFeedback, DETAILS_LINK, FEEDBACK_DIR, FEEDBACK_FILES, feedbackOf, proposedOf, renderComment, renderDetails, renderFeedback, reportBuilds } from "../feedback.ts";
 import { loadKernel } from "../kernel.ts";
 import { loadLock } from "../lock.ts";
 import { loadDecisions, loadMappings } from "../mapping.ts";
@@ -49,21 +49,28 @@ async function main(): Promise<number> {
     else failed = true;
   }
   if (failed) return 1;
-  const { doc, problems } = buildFeedback({ ...input, builds, recordedFindings: loadFindings(join(specDir, FINDINGS_FILE)), recordedDifferences: loadDifferences(join(specDir, DIFFERENCES_FILE)) });
-  problems.push(...checkFeedback(doc, builds, feedbackOf(specDir)));
+  // The report on the locks the profile names, and one of its own for each other lock, in `feedback/<lock>/`.
+  const reports = reportBuilds(feedbackOf(specDir), builds).map((r) => ({ ...r, ...buildFeedback({ ...input, builds: r.builds, profile: r.profile, ...(r.own ? { own: true as const } : {}), recordedFindings: loadFindings(join(specDir, FINDINGS_FILE)), recordedDifferences: loadDifferences(join(specDir, DIFFERENCES_FILE)) }) }));
+  const problems = reports.flatMap((r) => [...r.problems, ...checkFeedback(r.doc, r.builds, r.profile)].map((p) => (r.dir === "" ? p : `${r.dir}: ${p}`)));
   for (const p of problems) console.error(`error: ${p}`);
   if (problems.length > 0) return 1;
-  const out = values.out !== undefined ? resolve(values.out) : join(specDir, FEEDBACK_DIR);
-  mkdirSync(out, { recursive: true });
-  writeFileSync(join(out, FEEDBACK_FILES.data), renderFeedback(doc));
-  writeFileSync(join(out, FEEDBACK_FILES.comment), renderComment(doc));
-  writeFileSync(join(out, FEEDBACK_FILES.details), renderDetails(doc, feedbackOf(specDir)));
+  const top = values.out !== undefined ? resolve(values.out) : join(specDir, FEEDBACK_DIR);
+  for (const r of reports) {
+    const out = join(top, r.dir);
+    mkdirSync(out, { recursive: true });
+    writeFileSync(join(out, FEEDBACK_FILES.data), renderFeedback(r.doc));
+    writeFileSync(join(out, FEEDBACK_FILES.comment), renderComment(r.doc));
+    writeFileSync(join(out, FEEDBACK_FILES.details), renderDetails(r.doc, r.profile));
+  }
+  const { doc } = reports[0]!;
+  const out = top;
   const shown = out.startsWith(`${root}/`) ? out.slice(root.length + 1) : out;
   const decisions = allDecisions(doc);
   const proposed = decisions.filter((d) => d.status === "proposed").length;
   console.log(
     `${decisions.length - (doc.departures.length - proposedOf(doc).length)} decisions (${proposedOf(doc).length} of them changes we propose, ${decisions.filter((d) => d.feedback !== undefined).length} with feedback, ${proposed} still proposed), ${doc.findings.reduce((n, r) => n + r.findings.length, 0)} open lint findings, ${doc.examples.length} example findings; ${shown}/${FEEDBACK_FILES.comment} and ${shown}/${FEEDBACK_FILES.details}`,
   );
+  for (const r of reports.slice(1)) console.log(`${r.dir}: its own report, ${allDecisions(r.doc).length} decisions, ${r.doc.examples.length} example findings; ${shown}/${r.dir}/${FEEDBACK_FILES.comment} and ${shown}/${r.dir}/${FEEDBACK_FILES.details}`);
   console.log(`draft: review both files before posting, and replace ${DETAILS_LINK} in ${FEEDBACK_FILES.comment} with the gist of ${FEEDBACK_FILES.details}`);
   return 0;
 }

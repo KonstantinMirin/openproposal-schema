@@ -16,14 +16,17 @@ covers:
   - ir: field:5.3:audiences
     digest: 273649330d46a8fb5e90121fdad4864fa49d29ce6c34dce7c90fc37282e40b96
     quote: "`audiences` | Object | selectable | `available[]` of `{ id, name, taxonomy_ref, provenance, addressable_scale }`, `included[]`, `pricing` as `delta_cpm` per option, `max_select`"
+    locks: [main, with-open-prs]
   - ir: rule:2.2:c610e803
     digest: d92a309b641f5804a63417966289d0dd289ae5243884b49fab292652386ab7b0
     quote: "Any field whose value is drawn from a seller-maintained catalog MAY carry a reference in place of an inline value:"
+    locks: [main, with-open-prs]
   - ir: code:2.2:1
     digest: 5b0b87b43dbc9c1a24ed8f3e2bd71d22c5d790a6f786b980bd554f64a71436a0
     quote: |-
       catalog_ref: "<seller_namespace>/<collection>/<entry_id>@<version>"
       example:     "examplepub/audiences/smb-decision-makers@3"
+    locks: [main, with-open-prs]
 options:
   - id: audience-and-property-options
     summary: Each option in `audiences.available[]` and `properties.available[]` is an inline value or a catalog reference.

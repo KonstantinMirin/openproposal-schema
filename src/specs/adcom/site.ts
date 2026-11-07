@@ -16,7 +16,8 @@ import { lockNames, named } from "../../site/config.ts";
 import { buildOf, sourceInfos, type SiteInputs } from "../../site/data.ts";
 import { esc, inline, page } from "../../site/html.ts";
 import { DESIGN_NOTES_TOC, designNotes, pipelineFigure } from "../../site/method.ts";
-import { ENUM_DRIFT_DIR, ENUM_DRIFT_FILES, type EnumDriftDoc } from "../../enum-drift.ts";
+import { ENUM_DRIFT_DIR, ENUM_DRIFT_FILES, readProtoEnums, type EnumDriftDoc } from "../../enum-drift.ts";
+import { PROTO_DIR, protoFiles } from "../../targets/layout.ts";
 import { repoLink } from "../../site/pages.ts";
 import { mapLink } from "../../site/route.ts";
 import type { SiteCopy } from "../../site/copy.ts";
@@ -157,6 +158,9 @@ function methodPage(inputs: SiteInputs): string {
   const m = (type: string, view?: "schema" | "example") => mapLink("", type, lock.name, "as-written", view);
   const t = (type: string) => `<a href="${m(type)}"><code>${esc(type)}</code></a>`;
   const specLink = info.links[0];
+  // The proto target's enums, an unofficial output, name the worked example's code from its title.
+  const protoValue = [...protoFiles(inputs.root)].flatMap(([path, text]) => readProtoEnums(text.toString("utf8"), path).filter((e) => e.name === vocab.name).map((e) => ({ path, value: e.values.find((v) => v.value === Number(row.value)) })))[0];
+  const protoNote = protoValue?.value ? ` The proto3 enums generated from these schemas alone, an unofficial target, ${repoLink(b, "blob", posix.join("specs", b.spec, PROTO_DIR, protoValue.path), `<code>${esc(posix.join(PROTO_DIR, protoValue.path))}</code>`)}, name each value that way, prefixed with its enum's name, as <code>${esc(protoValue.value.name)} = ${protoValue.value.value}</code>.` : "";
   const toc: [string, string][] = [
     ["pipeline", "The pipeline"],
     ["extraction", "Extraction"],
@@ -227,7 +231,7 @@ ${pipelineFigure()}
 </ol>
 </section>
 
-${designNotes({ codes: `Every list here is integer codes, such as <code>3</code> for Connected TV in List: Device Types.`, flags: `The registry maps lists only, so no flag appears here yet; when the objects are mapped, a flag such as <code>instl</code> keeps the <code>0</code> | <code>1</code> the text writes.` })}
+${designNotes({ codes: `Every list here is integer codes, such as <code>3</code> for Connected TV in List: Device Types.${protoNote}`, flags: `The registry maps lists only, so no flag appears here yet; when the objects are mapped, a flag such as <code>instl</code> keeps the <code>0</code> | <code>1</code> the text writes.` })}
 
 <section id="reproduce">
 <h2>How to reproduce it</h2>

@@ -11,7 +11,7 @@
  *    vocabulary, no emitted schema holds the codes of a registry's list in
  *    an enum or in const branches, and the kernel's lists copy none;
  * 3. every vocabulary of such a list holds the registry's codes, with its
- *    labels, and every code the text restates beside a label of a list it
+ *    labels and the names the registry's schema gives them, and every code the text restates beside a label of a list it
  *    cites, as "MRAID 3.0 (6)" or a device table's "Connected TV (3)", is
  *    the code the registry gives that label;
  * 4. the spec pins each registry once, at a lock the registry has, and no
@@ -189,8 +189,8 @@ export function checkAgreement(i: AgreementInput): string[] {
     .flatMap(({ l }) => l.codes.flatMap((c) => [norm(c.label ?? ""), ...(short(c.label ?? "") ? [norm(short(c.label ?? "")!)] : [])].map((label) => ({ l, code: c.code, label }))))
     .filter((x) => x.label !== "")
     .sort((a, b) => b.label.length - a.label.length);
-  const restated = (at: string, s: string) => {
-    const items = [...s.matchAll(/\((\d+)\)/g)].map((m) => {
+  const restated = (at: string, s: string, from = 0) => {
+    const items = [...s.matchAll(/\((\d+)\)/g)].filter((m) => m.index >= from).map((m) => {
       const before = norm(s.slice(0, m.index));
       const n = Number(m[1]);
       const hits = labels.filter((x) => before === x.label || before.endsWith(` ${x.label}`) || before.endsWith(`(${x.label}`));
@@ -214,7 +214,12 @@ export function checkAgreement(i: AgreementInput): string[] {
     }
   };
   for (const [at, s] of texts(i.ir)) restated(at, s);
-  i.text.forEach((line, n) => line.split(/(?<!\\)\|/).forEach((cell) => restated(`line ${n + 1}`, cell)));
+  // A prose line reads on from the line before it, so a label the text wraps, as "Mobile/Tablet -" and "General (1)", is read whole.
+  i.text.forEach((line, n) => {
+    const prev = n > 0 ? i.text[n - 1]! : "";
+    if (!line.trimStart().startsWith("|") && prev.trim() !== "" && !prev.trimStart().startsWith("|")) return restated(`line ${n + 1}`, `${prev} ${line}`, prev.length + 1);
+    line.split(/(?<!\\)\|/).forEach((cell) => restated(`line ${n + 1}`, cell));
+  });
   // 3. A vocabulary of a registry's list holds the registry's codes, with its labels, from the registry.
   for (const t of i.model.types) {
     if (t.kind !== "vocabulary" || !t.list) continue;
@@ -225,6 +230,11 @@ export function checkAgreement(i: AgreementInput): string[] {
     const have = t.terms.map((x) => `${x.value} ${x.annotation ?? ""}`);
     for (const x of have.filter((h) => !want.includes(h))) problems.push(`${where}: ${t.name} holds "${x}", which ${t.list.name} at ${r.r.lock} doesn't`);
     for (const x of want.filter((w) => !have.includes(w))) problems.push(`${where}: ${t.name} lacks "${x}", which ${t.list.name} at ${r.r.lock} holds`);
+    // Each code takes the name the registry's schema gives it, so the spec's types name it as every other target does.
+    for (const x of t.terms) {
+      const want = r.l.codes.find((c) => String(c.code) === String(x.value))?.title;
+      if (want !== undefined && x.title !== want) problems.push(`${where}: ${t.name} names ${JSON.stringify(x.value)} "${x.title ?? "by its row"}", where ${t.list.name} at ${r.r.lock} names it "${want}"`);
+    }
     if (t.open !== (r.l.vendor !== undefined || r.l.extension !== undefined)) problems.push(`${where}: ${t.name} is ${t.open ? "open" : "closed"}, where ${t.list.name} at ${r.r.lock} is ${t.open ? "closed" : "open"}`);
   }
   // 2. No emitted schema holds a registry list's codes, in an enum or in const branches; a registry's vocabulary is a `$ref`; the kernel copies no list.

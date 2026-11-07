@@ -1,0 +1,50 @@
+# Rule vectors for the module `execution`. Regenerate a digest with
+# `npm run cite -- <rule ID>`.
+format: 1
+module: execution
+rules:
+
+  # `sov_basis` REQUIRED when an option's `delivery_type` is `share_of_voice` (D-060).
+  - rule: rule:5.9:c0f7b8ce
+    digest: 90913c40f1240deeed5765732a715a8f4bceb8b53323a5d4cce7e1e0bf429160
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["field:5.9:sov_basis"]
+    valid:
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}}}
+    invalid:
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [{"id": "programmatic_guaranteed", "delivery_type": "share_of_voice"}], "included": ["programmatic_guaranteed"]}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}, "deal_origin": "examplepub.example"}}
+
+  # `deal_origin` REQUIRED when the line item offers a deal mechanism (D-060).
+  - rule: rule:5.9:cc571473
+    digest: 3eb4ace214846296e1b8a5482a12c3d9865730f4e59ea97eeb745f3fd9b9713b
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["field:5.9:deal_origin"]
+    valid:
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}}}
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [{"id": "programmatic_guaranteed", "delivery_type": "guaranteed"}], "included": ["programmatic_guaranteed"]}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}, "deal_origin": "examplepub.example"}}
+    invalid:
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [{"id": "programmatic_guaranteed", "delivery_type": "guaranteed"}], "included": ["programmatic_guaranteed"]}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}}}
+
+  # `sov_share` REQUIRED when `sov_basis` is `impressions` (D-060).
+  - rule: rule:5.9:ceef2a21
+    digest: c1f37e026a4f11d034d14c5326b515fc73c785812b665f359aac32f4002982de
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["field:5.9:sov_share"]
+    valid:
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}}}
+    invalid:
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [{"id": "programmatic_guaranteed", "delivery_type": "share_of_voice"}], "included": ["programmatic_guaranteed"]}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}, "deal_origin": "examplepub.example", "sov_basis": "impressions"}}
+
+  # `retention` REQUIRED when `serving_mode` is `embedded` (D-060).
+  - rule: rule:5.9:d8611936
+    digest: 18117b0431fd09d72305fd6e85680a1b3fc1c8064215f71599c41b9c2ee5d40a
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["field:5.9:retention"]
+    valid:
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}}}
+    invalid:
+      - {"value": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "placement": {"feed": 1}, "serving_mode": "embedded"}}

@@ -193,6 +193,8 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
   const types = new Map(model.types.map((t) => [t.name, t]));
   const inst = new Instantiator(templatesOf(model));
   const conditions = { expressed: [] as string[], left: [] as string[] };
+  /** The rows whose Required cell is a rule (the stack's), whose condition the rule carries. */
+  const ruleRows = new Set(model.rules.flatMap((r) => (r.row ? [r.row] : [])));
 
   /** A property: its type's schema, with its description and the default its row states beside it. */
   const propertySchema = (p: ModelProperty, key: string, where: string): Record<string, unknown> => {
@@ -262,7 +264,10 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
       } else if (p.presence === "conditional") {
         const name = `${t.name}.${k}`;
         const match = CONDITION.map((re) => re.exec(p.condition ?? "")).find((m) => m !== null);
-        if (!match) {
+        if (p.sources.some((row) => ruleRows.has(row))) {
+          // The row's Required cell is a rule of its own, as the stack's are where the schema can't state them, so the rule carries it.
+          conditions.left.push(`${name}: "${p.condition}": the row's Required cell is a rule`);
+        } else if (!match) {
           conditions.left.push(`${name}: ${p.condition === undefined ? "the condition is unstated" : `"${p.condition}" names no sibling and value`}`);
         } else if (!props[match[1]!]) {
           conditions.left.push(`${name}: "${p.condition}" names "${match[1]}", which is no property of "${t.name}"`);
@@ -290,6 +295,16 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
           .sort()
           .map((m) => [m, { if: { properties: { [m]: { type: "object", required: [nested[m]!.member] } } }, then: { required: [...nested[m]!.require].sort() } }]),
       );
+    }
+    // Conditions on two siblings need an `if` each, which only `allOf` holds together, and type rules § 8 forbids it. Where
+    // only presence conditions read the other siblings, as the stack's line item's, the schema states the sibling with the
+    // most of them and leaves the others to the rules, whose rows name them; a type case can't be left, so it stays a problem.
+    const siblings = [...new Set(stated.map((s) => s.sibling))];
+    if (siblings.length > 1 && stated.every((x) => Object.keys(x.types).length === 0)) {
+      const count = (sib: string) => stated.filter((x) => x.sibling === sib).reduce((n, x) => n + x.require.length, 0);
+      const keep = [...siblings].sort((a, b) => count(b) - count(a) || (a < b ? -1 : 1))[0]!;
+      for (const x of stated.filter((y) => y.sibling !== keep)) for (const k of x.require) conditions.left.push(`${t.name}.${k}: "${props[k]!.condition}": the schema states the conditions on "${keep}", and an if / then on "${x.sibling}" beside them needs "allOf"`);
+      stated.splice(0, stated.length, ...stated.filter((y) => y.sibling === keep));
     }
     if (new Set(stated.map((s) => s.sibling)).size > 1) {
       problems.push(`${where}: conditions on ${[...new Set(stated.map((s) => s.sibling))].join(" and ")} need one if / then each, and holding them together needs "allOf", which type rules § 8 forbids`);
@@ -478,15 +493,71 @@ export function emitSchemas(model: ModelDoc, dir: string, names: SchemaNames): E
 export const isIntegerCoded = (t: ModelType): boolean => t.kind === "vocabulary" && t.terms.length > 0 && t.terms.every((x) => Number.isInteger(x.value));
 
 /**
+ * The name a row starts with before a colon: "Instream" of "Instream:
+ * Pre-roll, …", and of "Interstitial:Video ads …", which writes no space
+ * after it but a capital. A URL's colon is no such colon, nor one a
+ * lowercase letter, a digit, or a slash follows, as in "urn:iab:x" or
+ * "16:9", nor one inside parentheses, and the name holds no URL; null where
+ * the row starts with no name.
+ */
+export function rowName(text: string): string | null {
+  const m = /^(.{1,60}?):(?:\s|(?=[A-Z]))/.exec(text);
+  if (!m) return null;
+  const name = m[1]!;
+  const open = (name.match(/\(/g) ?? []).length;
+  const close = (name.match(/\)/g) ?? []).length;
+  return !/:\/\//.test(name) && !/https?$/i.test(name) && open === close ? name : null;
+}
+
+/** Where a gloss starts: "i.e.", "ie.", or "e.g.", in lowercase, as a gloss writes them. */
+const GLOSS = /^(?:i\.\s?e\.|ie\.|e\.\s?g\.)/;
+
+/**
+ * A title without a gloss: a parenthesized aside that starts "i.e.",
+ * "ie.", or "e.g.", anywhere, with any parentheses it holds, as "Text
+ * (i.e., a web page)" gives "Text", and one the text never closes, to the
+ * end; and a tail outside parentheses that starts so, as "A person-based
+ * ID, i.e., that is …" gives "A person-based ID". Another aside, such as
+ * "(deprecated)" or "(High Confidence)", says what the code is, and stays.
+ */
+export function withoutGloss(text: string): string {
+  let t = text;
+  for (let n = 0; n < t.length; n++) {
+    if (t[n] !== "(" || !GLOSS.test(t.slice(n + 1).trimStart())) continue;
+    let depth = 0;
+    let end = t.length;
+    for (let k = n; k < t.length; k++) {
+      if (t[k] === "(") depth++;
+      else if (t[k] === ")" && --depth === 0) {
+        end = k + 1;
+        break;
+      }
+    }
+    const start = t.slice(0, n).replace(/\s+$/, "").length;
+    t = t.slice(0, start) + t.slice(end);
+    n = start - 1;
+  }
+  let depth = 0;
+  for (let n = 0; n < t.length; n++) {
+    if (t[n] === "(") depth++;
+    else if (t[n] === ")") depth = Math.max(0, depth - 1);
+    else if (depth === 0 && /\s/.test(t[n]!) && GLOSS.test(t.slice(n + 1)) && /^[\s,]/.test(t.slice(n + 1).replace(GLOSS, ""))) {
+      t = t.slice(0, n).replace(/,\s*$/, "");
+      break;
+    }
+  }
+  return t.trim();
+}
+
+/**
  * A code's name, from its row's text: the name the row starts with before a
- * colon and a space, as "Instream: Pre-roll, …" names `Instream` (a URL's
- * colon is no such colon), or else the text, without a leading "- ", a URL,
- * or a final period, and cut at its first clause where it runs past 60
- * characters.
+ * colon (`rowName`), or else the text, without a leading "- ", a URL, a
+ * gloss (`withoutGloss`), or a final period, and cut at its first clause
+ * where it runs past 60 characters.
  */
 export function codeTitle(text: string): string {
-  const named = /^(.{1,60}?):\s/.exec(text)?.[1];
-  let t = (named ?? text).replace(/^\s*-\s+/, "").replace(/\s*https?:\/\/\S+/g, "").trim().replace(/\.$/, "");
+  const named = rowName(text);
+  let t = withoutGloss((named ?? text).replace(/^\s*-\s+/, "").replace(/\s*https?:\/\/\S+/g, "").trim()).replace(/\.$/, "");
   if (t.length > 60) {
     // The first clause break outside parentheses: a sentence's end, a dash, a semicolon, a parenthesis, or a comma.
     let depth = 0;
@@ -504,19 +575,22 @@ export function codeTitle(text: string): string {
 }
 
 /**
- * The names of a list's codes. A name two codes share before their colons is
- * a class the list groups codes by, as Feed Types' `AOD`, so those codes are
- * named by the text after it; a name still shared takes its code.
+ * The names of a list's codes. A name a decision gives a code, where the
+ * row gives none an implementation can use, is its name. A name two codes
+ * share before their colons is a class the list groups codes by, as Feed
+ * Types' `AOD`, so those codes are named by the text after it. A name
+ * still shared takes its code.
  */
-export function codeTitles(terms: readonly { value: unknown; annotation?: string; meanings?: string[] }[]): string[] {
+export function codeTitles(terms: readonly { value: unknown; annotation?: string; meanings?: string[]; title?: string }[]): string[] {
   const texts = terms.map((x) => x.annotation ?? String(x.value));
   // A code the list gives twice is named by each of its meanings, as "deal is complete or deal is archived".
   const first = terms.map((x, n) => (x.meanings ? x.meanings.map(codeTitle).join(" or ") : codeTitle(texts[n]!)));
   const shared = (xs: string[]) => new Set(xs.filter((x, n) => xs.indexOf(x) !== n));
   const classes = shared(first);
-  const second = texts.map((t, n) => (classes.has(first[n]!) && /^.{1,60}?:\s/.test(t) ? codeTitle(t.replace(/^.{1,60}?:\s/, "")) : first[n]!));
-  const still = shared(second);
-  return second.map((t, n) => (still.has(t) ? `${t} (${String(terms[n]!.value)})` : t));
+  const second = texts.map((t, n) => (classes.has(first[n]!) && rowName(t) !== null ? codeTitle(t.slice(rowName(t)!.length + 1).trim()) : first[n]!));
+  const decided = terms.map((x, n) => x.title ?? second[n]!);
+  const still = shared(decided);
+  return decided.map((t, n) => (still.has(t) ? `${t} (${String(terms[n]!.value)})` : t));
 }
 
 /**
@@ -533,6 +607,10 @@ function integerCoded(t: Extract<ModelType, { kind: "vocabulary" }>, types: Map<
   const vendor = t.vendor ?? t.list?.vendor;
   const codes = t.terms.map((x) => x.value as number);
   const titles = codeTitles(t.terms);
+  // A decided name is the code's name as given; one another code's name shares would take a code it wasn't given.
+  t.terms.forEach((x, n) => {
+    if (x.title !== undefined && titles[n] !== x.title) problems.push(`${t.module}: vocabulary "${t.name}": the name "${x.title}" given to ${JSON.stringify(x.value)} is another code's name too`);
+  });
   const branches: Record<string, unknown>[] = t.terms.map((x, n) => {
     const text = x.annotation ?? String(x.value);
     const title = titles[n]!;
@@ -550,7 +628,7 @@ function integerCoded(t: Extract<ModelType, { kind: "vocabulary" }>, types: Map<
     branches.push({ ...constraints, title: extensionOf(t).replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^(.)(.*)$/, (_, a: string, b: string) => a + b.toLowerCase()), ...(typeof description === "string" ? { description } : {}), ...leave });
   }
   // A list's title, or, for the specification's own labeled list, the vocabulary's name in words, as "Seller Deal Status".
-  const title = /\bList:\s[^,;]+/.exec(t.description ?? "")?.[0] ?? t.list?.name ?? (t.labeled ? t.name.replace(/([a-z])([A-Z])/g, "$1 $2") : undefined);
+  const title = /\bList:\s[^,;]+/.exec(t.description ?? "")?.[0] ?? t.list?.name ?? (t.labeled || t.description !== undefined ? t.name.replace(/([a-z])([A-Z])/g, "$1 $2") : undefined);
   const description = t.list ? `The codes of ${t.list.standard} ${t.list.name} (${t.list.url})` : (t.description ?? "").replace(/, each with its row's text/, "").replace(/\.$/, "");
   return { ...(title ? { title } : {}), ...(description ? { description } : {}), type: "integer", oneOf: branches };
 }
@@ -623,7 +701,8 @@ export function checkEmitted(files: EmittedFile[], model: ModelDoc, dir: string,
             ? [node, holder]
             : [node, isMap(keyed) && typeof keyed.$ref === "string" ? refTarget(String(keyed.$ref), f.path, byPath) : undefined]
           : /\/(if|then|else)$/.test(pointer)
-            ? [node, nodes.get(pointer.replace(/\/(if|then|else)$/, ""))]
+            ? // A chained condition's `else` holds the next `if` and `then`, which require properties of the object the chain starts at.
+              [node, nodes.get(pointer.replace(/(\/(if|then|else))+$/, ""))]
             : [node];
         for (const r of node.required) {
           if (!scope.some((x) => isMap(x?.properties) && String(r) in x.properties)) problems.push(`${at}: requires "${String(r)}", which is no property of its object`);

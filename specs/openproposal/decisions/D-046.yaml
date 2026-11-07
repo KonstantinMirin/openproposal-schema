@@ -8,9 +8,11 @@ covers:
   - ir: key:3.1:included[]
     digest: 8ec666d51bf96c60f03793156f832384d83126b7e98f3112259b423bc624b78b
     quote: "`included[]` | REQUIRED | Which options are in the base rate. MAY be empty"
+    locks: [main, with-open-prs]
   - ir: key:3.1:pricing
     digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
     quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+    locks: [main, with-open-prs]
   - ir: field:5.2:properties#description/object:1
     digest: d17ed59027f652ad048ca0fb7bae6984613c7b5dfc4273560958ce7006b42990
     quote: "{ id, name, domains, supported_formats }"
@@ -24,12 +26,15 @@ covers:
   - ir: field:5.3:audiences#description/object:1
     digest: 0a7d355ab5dcb787717d01988764dcca8895bdc0b1252de9e8269ad516e7ac6b
     quote: "{ id, name, taxonomy_ref, provenance, addressable_scale }"
+    locks: [main, with-open-prs]
   - ir: field:5.6:cancellation_policy
     digest: 6c8bbcd373f89f5fdf8c0e6a3e9f43bc0e26cc1b5ba35a4f13c2dd246f37dba4
     quote: "`cancellation_policy` | Object | selectable | `available[]` of cancellation rights with `pricing` per option"
+    locks: [main, with-open-prs]
   - ir: field:5.6:exclusivity
     digest: 5012d5c8189fd4016ce87f254fff0fa14c929365d9efc3f2256ccfcf80b73c46
     quote: "`exclusivity` | Object | selectable | `available[]` of exclusivity terms with `pricing`"
+    locks: [main, with-open-prs]
 options:
   - id: required-id
     summary: >-

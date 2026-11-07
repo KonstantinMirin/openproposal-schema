@@ -28,8 +28,8 @@ export type Target =
   | { role: "obligation"; party: "seller" | "buyer" | "consumer" | "implementation" }
   | { role: "schema"; in: string }
   | { role: "informative" }
-  | { role: "example"; object: string; columns?: Record<string, string> }
-  | { role: "profile"; profile: string; document: string; members?: Members; reads?: { item: string; paths: string[] }[] }
+  | { role: "example"; object: string; columns?: Record<string, string>; files?: Record<string, string> }
+  | { role: "profile"; profile: string; document: string; name?: string; optional?: true; members?: Members; reads?: { item: string; paths: string[] }[] }
   | { role: "rendered" };
 
 /** What decided an entry or a declaration. */
@@ -54,9 +54,13 @@ export interface Declaration {
   locks?: string[];
   source: Source;
   open?: boolean;
+  /** For an open object: its keys are another definition's, as an `Object` cell's are (the stack's § 2.6), so the examples gate reports none of them. */
+  foreign_keys?: true;
   members?: Members;
   /** A profile, `<Document><Profile>`, whose fields the object carries besides its own members. */
   includes?: string;
+  /** The types whose keys the object holds beside its own rows, as the stack's "`App` holds the keys of `AppId`". */
+  holds?: TypeRef[];
   terms?: string[];
   /** The code list of another standard whose codes the vocabulary's terms are, with each term's code where the two differ. */
   list?: { name: string; codes?: Record<string, string> };
@@ -74,10 +78,14 @@ export interface Declaration {
 export interface MappingFile {
   format: 1;
   module: string;
-  /** The specification sections the module owns. */
+  /** The specification sections the module owns: on every lock, and on the locks `lock_sections` names, those it lists. */
   sections: string[];
+  /** Sections that exist on only some locks, which the module owns there, by lock, as the stack's § 4.1.1 on `with-our-stack`; the loader also lists them in `sections`. */
+  lock_sections?: Record<string, string[]>;
   /** The other modules its types may reference; the kernel needs no listing (type rules § 3). */
   depends?: string[];
+  /** The other modules its types may reference on some locks only, by lock, so each lock's module graph is a DAG of its own. */
+  lock_depends?: Record<string, string[]>;
   /** A module the mapping leaves for a later phase, with the decision that says why: every element in its sections is informative. */
   deferred?: { decision: string };
   types?: Declaration[];
@@ -109,6 +117,8 @@ export interface DecisionRecord {
   rationale: string;
   evidence?: string[];
   feedback?: string;
+  /** The short names the record gives codes whose rows give none, by each code's row's IR element, which it covers. */
+  names?: Record<string, string>;
   issue?: string;
   superseded_by?: string;
   /** Why and when its owner withdrew it, for a `withdrawn` record. */
@@ -160,7 +170,8 @@ export function loadMappings(dir: string): MappingFile[] {
     if (errors.length > 0) throw new Error(`${file}: not a valid mapping file: ${errors.join("; ")}`);
     const m = doc as Omit<MappingFile, "file">;
     if (m.module !== stem) throw new Error(`${file}: "module" is "${m.module}"; it must equal the file name "${stem}"`);
-    return { ...m, file };
+    const extra = Object.values(m.lock_sections ?? {}).flat().filter((x, i, a) => a.indexOf(x) === i && !m.sections.includes(x));
+    return { ...m, sections: [...m.sections, ...extra], file };
   });
 }
 
@@ -178,6 +189,12 @@ export function loadDecisions(dir: string): DecisionRecord[] {
     if (d.id !== stem) throw new Error(`${file}: "id" is "${d.id}"; it must equal the file name "${stem}"`);
     return { ...d, file };
   });
+}
+
+/** The sections a module owns on one lock: those it owns on every lock, and those `lock_sections` gives that lock. */
+export function sectionsOn(m: Pick<MappingFile, "sections" | "lock_sections">, lock: string): string[] {
+  const scoped = new Set(Object.values(m.lock_sections ?? {}).flat());
+  return m.sections.filter((s) => !scoped.has(s) || (m.lock_sections?.[lock] ?? []).includes(s));
 }
 
 /** Whether an entry or a cover with these `locks` applies to `lock`. */

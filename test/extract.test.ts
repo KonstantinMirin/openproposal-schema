@@ -23,7 +23,7 @@ test("a row whose cell count differs from the header fails extraction", () => {
 
 test("an unknown marker or unparsed type fails extraction", () => {
   assert.throws(() => extractText(fieldTable("| `a` | String | negotiable | x |")), /unknown mutability marker "negotiable"/);
-  assert.throws(() => extractText(fieldTable("| `a` | Strng | immutable | x |")), /unknown type name "Strng"/);
+  assert.throws(() => extractText(fieldTable("| `a` | strng | immutable | x |")), /unknown type name "strng"/);
 });
 
 test("a field row yields its path, owner, type, marker, presence, and location", () => {

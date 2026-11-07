@@ -24,8 +24,9 @@ import { kernelOn, primitiveStructure, type Kernel } from "./kernel.ts";
 import type { RegistryRef } from "./imports.ts";
 import { codeOfTerm } from "./lists.ts";
 import { conceptOfType } from "./domains.ts";
-import { decisionsOf, type DecisionRecord, type MappingFile, type Members, type Presence, type Source, type TypeRef } from "./mapping.ts";
-import { KERNEL_MODULE, restatesPart } from "./mapping-rules.ts";
+import { constructorEditionsOn, kernelEditionsOn } from "./editions.ts";
+import { decisionsOf, sectionsOn, stands, type DecisionRecord, type MappingFile, type Members, type Presence, type Source, type TypeRef } from "./mapping.ts";
+import { documentOf, exampleFilesOf, KERNEL_MODULE, restatesPart } from "./mapping-rules.ts";
 import { requiredLists } from "./mapping-sources.ts";
 
 /** Each kind of named type, with the layer type rules § 3 puts it in. A copy's layer is computed (`copyLayer`). */
@@ -68,6 +69,8 @@ export interface ModelTerm {
   annotation?: string;
   /** The labels of a code the list gives twice, as the Deals API's tag gives `4` for "complete" and "archived", each of which the code means. */
   meanings?: string[];
+  /** The code's name a decision record gives, where its row gives none an implementation can use; it titles the code's branch. */
+  title?: string;
   sources: string[];
 }
 
@@ -118,6 +121,8 @@ export type ModelType = Base &
         open: boolean;
         /** What the object holds, from its declaration: for an open object, what the text says of it, since it names no members. */
         description?: string;
+        /** An open object whose keys another definition sets (the stack's § 2.6), so no key a value gives it is undefined. */
+        foreign_keys?: true;
         includes?: string;
         /** The type a profile's projection restricts to the members its paths name (type rules § 3), such as `PricingEntry` for the summary's pricing entries. */
         projects?: string;
@@ -170,11 +175,12 @@ export interface ModelDoc {
   input: { lock: string; commit: string; blob: string; ir_sha256: string; variant?: string };
   modules: ModelModule[];
   types: ModelType[];
-  rules: (ModelStatement & { owner: string })[];
+  /** `row`: the row whose Required cell states the rule, as the stack's "REQUIRED when `cost_method` is an extension term", whose condition the schema leaves to it. */
+  rules: (ModelStatement & { owner: string; row?: string })[];
   kernel_rules: ModelKernelRule[];
   obligations: (ModelStatement & { party: string })[];
   schema_statements: (ModelStatement & { in: string })[];
-  examples: (ModelStatement & { object: string })[];
+  examples: (ModelStatement & { object: string; files?: Record<string, string> })[];
   /** How many elements are informative text or rendered output, which no type carries. */
   counts: { informative: number; rendered: number };
   /**
@@ -268,8 +274,9 @@ export function conditionText(p: StatedPresence | null): string | undefined {
  * The convention checks run on the result (`src/conventions.ts`).
  */
 export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: string[] } {
-  const { ir, lock, mappings, constructors } = input;
-  const kernel = kernelOn(input.kernel, lock);
+  const { ir, lock, mappings } = input;
+  const kernel = kernelOn(kernelEditionsOn(input.kernel, lock), lock);
+  const constructors = constructorEditionsOn(input.constructors, lock);
   const problems: string[] = [];
   const elements = indexElements(ir);
   const entries = inScopeEntries(mappings, lock);
@@ -320,7 +327,7 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
   for (const c of constructors.constructors) {
     define(
       {
-        ...base(c.name, "constructor", KERNEL_MODULE, c.sources.spec.map((s) => s.ir), c.fallback ? [c.fallback.decision] : []),
+        ...base(c.name, "constructor", KERNEL_MODULE, c.sources.spec.filter((s) => onLock(s.locks)).map((s) => s.ir), c.fallback ? [c.fallback.decision] : []),
         kind: "constructor",
         description: c.description,
         // What an option carries is written in its type's field order, wherever the kernel and the spec's binding give each field.
@@ -368,7 +375,8 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
         define({ ...b, kind: "document", properties: properties(decl.members, sources) }, where);
         break;
       case "object":
-        define({ ...b, kind: "object", open: decl.open ?? false, ...(decl.description ? { description: decl.description } : {}), ...(decl.includes ? { includes: decl.includes } : {}), properties: properties(decl.members, sources) }, where);
+        if (decl.foreign_keys && !decl.open) problems.push(`${where}: its keys are another definition's, so it is open`);
+        define({ ...b, kind: "object", open: decl.open ?? false, ...(decl.description ? { description: decl.description } : {}), ...(decl.foreign_keys ? { foreign_keys: true as const } : {}), ...(decl.includes ? { includes: decl.includes } : {}), properties: properties(decl.members, sources) }, where);
         break;
       case "vocabulary": {
         // A vocabulary that cites a code list labels each term with its code's label, or with the code where the list spells it differently.
@@ -377,7 +385,8 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
         const terms = (decl.terms ?? []).map((value) => {
           const c = list ? codeOfTerm(list, value, decl.list!.codes) : undefined;
           const annotation = c?.label ?? (c !== undefined && String(c.code) !== value ? String(c.code) : undefined);
-          return { value, ...(annotation !== undefined ? { annotation } : {}), sources };
+          // A registry's code keeps the name its registry's schema gives it.
+          return { value, ...(annotation !== undefined ? { annotation } : {}), ...(list?.registry && c?.title !== undefined ? { title: c.title } : {}), sources };
         });
         if (list && (decl.open ?? false) !== (list.vendor !== undefined)) problems.push(`${where}: is ${decl.open ? "open" : "closed"}, but ${list.standard} ${list.name} ${list.vendor ? "reserves codes for vendors" : "reserves no codes for vendors"}; a vocabulary that cites a list is open exactly when the list reserves vendor codes (type rules § 6)`);
         const vendorCode = kernel.primitives.find((p) => p.name === VENDOR_CODE);
@@ -387,7 +396,11 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
         problems.push(...vendorProblems(where, decl.vendor, decl.extension, decl.open ?? false));
         if (decl.extension !== undefined && !kernel.primitives.some((p) => p.name === decl.extension)) problems.push(`${where}: its extension "${decl.extension}" is no kernel primitive`);
         if (decl.labeled) labeled.add(decl.name);
-        define({ ...b, kind: "vocabulary", open: decl.open ?? false, terms, ...(list ? { list: { name: list.name, standard: list.standard, url: list.url, ...(list.vendor ? { vendor: list.vendor } : {}), ...(list.registry ? { registry: list.registry } : {}) } } : {}), ...(decl.vendor ? { vendor: decl.vendor } : {}), ...(decl.extension ? { extension: decl.extension } : {}), ...(decl.labeled ? { labeled: true as const } : {}), ...(decl.description ? { description: decl.description } : {}) }, where);
+        // A row's own integer values, as `rate_per`'s `1` | `1000`, name no list: they are the values of the attribute whose row lists them.
+        const rowHost = !list && !decl.description && terms.length > 0 && terms.every((x) => INTEGER.test(x.value)) && decl.ir ? elements.get(String(decl.ir).split("#")[0]!) : undefined;
+        const rowOwner = rowHost?.kind === "field" ? `${pascalField(rowHost.element.owner)}.${rowHost.element.names[0]!.path}` : rowHost?.kind === "key" ? rowHost.element.id.split(":").slice(2).join(":") : undefined;
+        const rowDescription = rowOwner ? `The values of \`${rowOwner}\` its row lists` : undefined;
+        define({ ...b, kind: "vocabulary", open: decl.open ?? false, terms, ...(rowDescription ? { description: rowDescription } : {}), ...(list ? { list: { name: list.name, standard: list.standard, url: list.url, ...(list.vendor ? { vendor: list.vendor } : {}), ...(list.registry ? { registry: list.registry } : {}) } } : {}), ...(decl.vendor ? { vendor: decl.vendor } : {}), ...(decl.extension ? { extension: decl.extension } : {}), ...(decl.labeled ? { labeled: true as const } : {}), ...(decl.description ? { description: decl.description } : {}) }, where);
         break;
       }
       case "union":
@@ -440,7 +453,7 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
   const examplePaths: { where: string; object: string; column: string; path: string[] }[] = [];
   const counts = { informative: 0, rendered: 0 };
   const restated: { id: string; where: string; vocabulary: string }[] = [];
-  const profileEntries: { id: string; where: string; profile: string; document: string; members?: Members; paths?: string[]; decisions: string[] }[] = [];
+  const profileEntries: { id: string; where: string; profile: string; document: string; name?: string; optional?: true; members?: Members; paths?: string[]; decisions: string[] }[] = [];
 
   /** Adds properties to an object, a document, or a profile, failing on a name it already has. */
   const addProperties = (where: string, object: string, add: Record<string, ModelProperty>, kinds: Kind[]) => {
@@ -455,6 +468,9 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
     }
   };
 
+  // The rows a key table adds to a profile, as "`ProposalSummary` adds this key" (the stack's § 2.6), by the profile's name.
+  const profileNames = new Set([...entries.values()].flatMap(({ entry }) => (entry.as.role === "profile" ? [entry.as.name ?? entry.as.document + entry.as.profile] : [])));
+  const profileRows = new Map<string, Record<string, ModelProperty>>();
   for (const [id, { entry, file }] of ordered) {
     const as = entry.as;
     const where = `${file.file}: entry "${id}"`;
@@ -480,7 +496,8 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
         };
         const named = fieldOf(id);
         namedAfter.set(p, "field" in named ? named.field : undefined);
-        addProperties(where, as.object, Object.fromEntries(names.map((n) => [n, p])), ["object", "document"]);
+        if (profileNames.has(as.object)) profileRows.set(as.object, { ...(profileRows.get(as.object) ?? {}), ...Object.fromEntries(names.map((n) => [n, p])) });
+        else addProperties(where, as.object, Object.fromEntries(names.map((n) => [n, p])), ["object", "document"]);
         break;
       }
       case "members":
@@ -502,7 +519,7 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
         restated.push({ id, where, vocabulary: as.name });
         break;
       case "rule":
-        rules.push({ ...statementOf(e, id, entry.source), owner: as.object });
+        rules.push({ ...statementOf(e, id, entry.source), owner: as.object, ...(e?.kind === "statement" && e.element.host.endsWith("#required") ? { row: e.element.host.slice(0, -"#required".length) } : {}) });
         break;
       case "obligation":
         obligations.push({ ...statementOf(e, id, entry.source), party: as.party });
@@ -529,11 +546,18 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
           break;
         }
         if (as.columns) problems.push(`${where}: reads columns, which only a row of a table has, and the element is a ${e?.kind ?? "missing element"}`);
-        examples.push({ ...statementOf(e, id, entry.source), object: as.object });
+        // A sentence that names several files gives each file's document, as the decision it cites reads them.
+        if (as.files) {
+          const named = e?.kind === "sentence" ? exampleFilesOf(e.element.text) : [];
+          const keys = Object.keys(as.files);
+          if (named.length !== keys.length || named.some((f) => !keys.includes(f))) problems.push(`${where}: gives the files ${keys.join(", ")}, and the sentence names ${named.join(", ") || "none"}`);
+          if (as.files[keys[0]!] !== as.object) problems.push(`${where}: its object is the first file's, ${as.files[keys[0]!]}`);
+        }
+        examples.push({ ...statementOf(e, id, entry.source), object: as.object, ...(as.files ? { files: as.files } : {}) });
         break;
       }
       case "profile":
-        profileEntries.push({ id, where, profile: as.profile, document: as.document, ...(as.members ? { members: as.members } : {}), ...(as.reads ? { paths: as.reads.flatMap((r) => r.paths) } : {}), decisions: decisionsOf(entry.source) });
+        profileEntries.push({ id, where, profile: as.profile, document: as.document, ...(as.name ? { name: as.name } : {}), ...(as.optional ? { optional: true as const } : {}), ...(as.members ? { members: as.members } : {}), ...(as.reads ? { paths: as.reads.flatMap((r) => r.paths) } : {}), decisions: decisionsOf(entry.source) });
         break;
       case "informative":
         counts.informative++;
@@ -566,6 +590,38 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
     if (extra.length > 0) problems.push(`${r.where}: restates "${r.vocabulary}" with ${extra.map((v) => `"${v}"`).join(", ")}, which it lacks; each list is defined once (type rules § 5)`);
   }
 
+  // An object whose lead-in reads "`X` holds the keys of `Y`" (the stack's § 2.6) carries every key of `Y`, an object's or a
+  // constructor's applied to its arguments, beside its own rows, with the presence `Y` gives each.
+  for (const { decl, file } of declarations) {
+    if (decl.kind !== "object" || !decl.holds) continue;
+    const t = types.get(decl.name);
+    if (t?.kind !== "object") continue;
+    const where = `${file.file}: type "${decl.name}"`;
+    for (const h of decl.holds) {
+      let held: Record<string, ModelProperty> | null = null;
+      if (h.kind === "named") {
+        const x = types.get(h.name);
+        if (x?.kind === "object") held = x.properties;
+      } else if (h.kind === "apply") {
+        const c = constructors.constructors.find((x) => x.name === h.constructor);
+        const shell = c?.shell as { properties?: Record<string, { $model: TypeRef; description?: string }>; required?: string[] } | undefined;
+        if (shell?.properties) {
+          held = Object.fromEntries(
+            Object.entries(shell.properties).map(([k, slot]) => [k, { type: substitute(slot.$model, h.arguments), presence: shell.required?.includes(k) ? ("required" as const) : ("optional" as const), sources: t.sources, ...(slot.description ? { description: slot.description } : {}) }]),
+          );
+        }
+      }
+      if (held === null) {
+        problems.push(`${where}: holds the keys of ${renderType(h)}, which is no object and no constructor with keys on lock "${lock}"`);
+        continue;
+      }
+      for (const [k, p] of Object.entries(held)) {
+        if (k in t.properties) problems.push(`${where}: holds the key "${k}" of ${renderType(h)}, which its own rows also give`);
+        else t.properties[k] = { ...p };
+      }
+    }
+  }
+
   // Terms: one per spelling; a decimal integer is a JSON integer.
   for (const t of types.values()) {
     if (t.kind !== "vocabulary") continue;
@@ -588,6 +644,34 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
     else if (markers > 0) problems.push(`${t.module}: vocabulary "${t.name}" mixes § 3 marker rows with payload terms; markers are the model's \`marker\` attribute, not a payload value (type rules § 2)`);
   }
 
+  // Code names (type rules § 6): a standing decision record names a code whose row gives no usable name, by the row it covers.
+  const namedBy = new Map<string, string>();
+  for (const d of input.decisions) {
+    if (!d.names || !stands(d)) continue;
+    for (const [ir, name] of Object.entries(d.names)) {
+      const cover = d.covers.find((c) => c.ir === ir);
+      if (!cover) {
+        problems.push(`${d.id}: names ${ir} "${name}", which the record doesn't cover; a record names only a code whose row it quotes`);
+        continue;
+      }
+      // A row the lock doesn't hold, or that the record quotes only on other locks, has no code for it to name here.
+      if (!elements.has(ir) || (cover.locks !== undefined && !cover.locks.includes(lock))) continue;
+      const other = namedBy.get(ir);
+      if (other !== undefined) {
+        problems.push(`${d.id}: names ${ir} "${name}", which ${other} names too; one record names a code`);
+        continue;
+      }
+      namedBy.set(ir, d.id);
+      const owner = [...types.values()].find((t) => t.kind === "vocabulary" && t.terms.some((x) => x.sources.includes(ir)));
+      if (!owner || owner.kind !== "vocabulary") {
+        problems.push(`${d.id}: names ${ir} "${name}", which is no code's row on lock "${lock}"`);
+        continue;
+      }
+      for (const term of owner.terms) if (term.sources.includes(ir)) term.title = name;
+      owner.decisions = sorted([...new Set([...owner.decisions, d.id])]);
+    }
+  }
+
   // Profiles (type rules § 3): a profile projects each path its element lists from the document, and each path a decision
   // reads from a prose item, plus the members the profile adds. A path the specification lists under a requiring statement,
   // as § 2.1's "It MUST contain, per line item:", is required at each step (type rules § 4); a path a decision reads keeps
@@ -599,9 +683,10 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
   const conceptOf = kernel.domains ? conceptOfType(kernel.domains) : new Map<string, never>();
   const projectedUses: { t: TypeRef; field: string; module: string; where: string }[] = [];
   const profiles = new Map<string, typeof profileEntries>();
-  for (const p of profileEntries) profiles.set(p.document + p.profile, [...(profiles.get(p.document + p.profile) ?? []), p]);
+  for (const p of profileEntries) profiles.set(p.name ?? p.document + p.profile, [...(profiles.get(p.name ?? p.document + p.profile) ?? []), p]);
   for (const [name, list] of [...profiles].sort(([a], [b]) => (a < b ? -1 : 1))) {
     const document = list[0]!.document;
+    const allOptional = list.some((p) => p.optional);
     const module = entries.get(list[0]!.id)!.file.module;
     const where = list[0]!.where;
     const fields: string[] = [];
@@ -623,6 +708,19 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
     for (const p of list) {
       const e = elements.get(p.id);
       if (e?.kind === "identifier_list") for (const i of e.element.items) if (i.code) insert(i.text, required.has(e.element.id));
+      // A `text` block that a lead-in says lists a profile's paths, one a line (the stack's § 2.6), each path as written,
+      // or, for a segment written `<selectable>` or `<settable>`, each field of the document with that marker, `frequency_cap` aside for `<settable>` (§ 3.4).
+      if (e?.kind === "code_block" && e.element.lang === "text") {
+        for (const raw of e.element.text.split("\n").map((l) => l.trim()).filter((l) => l !== "")) {
+          const m = /^<(selectable|settable)>\.(.+)$/.exec(raw);
+          if (!m) {
+            insert(raw, false);
+            continue;
+          }
+          const docFields = ir.fields.filter((f) => documentOf(f.owner) === p.document && f.marker === m[1] && f.names[0]!.segments.length === 1 && !(m[1] === "settable" && f.names[0]!.path === "frequency_cap"));
+          for (const f of docFields) insert(`${f.names[0]!.path}.${m[2]}`, false);
+        }
+      }
       for (const path of p.paths ?? []) insert(path, false);
     }
 
@@ -654,6 +752,11 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
         }
       }
       const m = membersOf(t, field);
+      // An open part whose keys another definition sets, as `OpenObject`, holds the keys a path names, so the profile keeps it whole.
+      const open = t.kind === "named" ? constructors.parts.find((x) => x.name === t.name) : undefined;
+      if (m === null && open !== undefined && open.shell.additionalProperties === true && open.shell.properties === undefined) return t;
+      // So does an open object that names no members, as the stack's `OpenObject`.
+      if (m !== null && m.open && Object.keys(m.properties).length === 0) return t;
       if (m === null) {
         problems.push(`${where}: the profile "${name}" lists the path "${at}", which steps into ${renderType(t)}, which has no members to project on lock "${lock}"`);
         return t;
@@ -666,18 +769,27 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
           continue;
         }
         out[k] = project(sp, node, k, `${at}.${k}`);
+        // A projected member's copies are named after the field its source's are.
+        if (!namedAfter.has(out[k]!)) namedAfter.set(out[k]!, namedAfter.get(sp) ?? k);
       }
       // A member the domain model makes a projected member require, as money its currency, comes with it.
       for (const p of Object.values(out)) {
         const requires = p.type.kind === "named" ? conceptOf.get(p.type.name)?.concept.requires : undefined;
         if (requires && !(requires.member in out) && m.properties[requires.member]) out[requires.member] = m.properties[requires.member]!;
       }
-      const projected = `${name}${m.source}`;
+      // A profile the text names, as `BuyerWrites`, projects the copies of one constructor to the same members once, as
+      // `BuyerWritesSelectable` for every `<selectable>.selected[]`, where they agree; a copy that projects to other members keeps its own.
+      const shared = t.kind === "apply" && list[0]!.name !== undefined ? `${name}${t.constructor}` : null;
+      const sharedHave = shared === null ? undefined : types.get(shared);
+      const sameAs = (x: ModelType | undefined) => x?.kind === "object" && x.open === m.open && canonicalJson(Object.fromEntries(Object.entries(x.properties).map(([k, v]) => [k, [v.type, v.presence]]))) === canonicalJson(Object.fromEntries(Object.entries(out).map(([k, v]) => [k, [v.type, v.presence]])));
+      if (shared !== null && sharedHave !== undefined && sameAs(sharedHave)) return { kind: "named", name: shared };
+      const projected = shared !== null && sharedHave === undefined ? shared : `${name}${m.source}`;
       const t2: ModelType = { ...base(projected, "object", module, m.sources, []), kind: "object", open: m.open, properties: out, projects: m.source };
       const have = types.get(projected);
       if (!have) types.set(projected, t2);
       else if (canonicalJson(have) !== canonicalJson(t2)) problems.push(`${where}: the profile "${name}" projects ${m.source} twice, to different members, on lock "${lock}"`);
-      for (const [k, p] of Object.entries(out)) projectedUses.push({ t: p.type, field: k, module, where: `${where}: projection "${projected}": member "${k}"` });
+      // A member the projection keeps as its source has it, as a `Range` copy, is stated where the source states it.
+      for (const [k, p] of Object.entries(out)) if (canonicalJson(p.type) !== canonicalJson(m.properties[k]?.type)) projectedUses.push({ t: p.type, field: k, module, where: `${where}: projection "${projected}": member "${k}"` });
       return { kind: "named", name: projected };
     };
     // The paths a projected type holds, below the field it projects, as `included[]` or `available[].name`.
@@ -705,11 +817,18 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
       const { condition: _condition, cases: _cases, description: _description, ...rest } = p;
       const base = { ...rest, ...(description !== undefined ? { description } : {}) };
       if (node.required) return { ...base, ...(p.cases ? { cases: p.cases } : {}), type, presence: "required" };
+      // A profile whose every path is optional, as the stack's `BuyerWrites`, makes each projected member optional.
+      if (allOptional) return { ...base, ...(p.cases ? { cases: p.cases } : {}), type, presence: "optional" };
       return p.presence === "conditional" ? { ...base, ...(p.cases ? { cases: p.cases } : {}), type, presence: "optional" } : { ...base, ...(p.condition ? { condition: p.condition } : {}), ...(p.cases ? { cases: p.cases } : {}), type };
     };
 
     const props: Record<string, ModelProperty> = {};
     for (const p of list) Object.assign(props, properties(p.members, [p.id]));
+    // A key a table adds to a profile keeps its type; a condition binds the full form, which the profile can't check alone, so it is optional there.
+    for (const [k, p] of Object.entries(profileRows.get(name) ?? {})) {
+      const { condition: _c, ...rest } = p;
+      props[k] = p.presence === "conditional" ? { ...rest, presence: "optional" } : p;
+    }
     const doc = types.get(document);
     if (!doc || doc.kind !== "document") problems.push(`${where}: the profile "${name}" projects "${document}", which is no document on lock "${lock}"`);
     else {
@@ -729,7 +848,7 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
         ...base(name, "profile", module, list.map((p) => p.id), list.flatMap((p) => p.decisions)),
         kind: "profile",
         document,
-        fields: sorted([...fields, ...list.flatMap((p) => Object.keys(p.members ?? {}))]),
+        fields: sorted([...fields, ...list.flatMap((p) => Object.keys(p.members ?? {})), ...Object.keys(profileRows.get(name) ?? {})]),
         paths: [...new Set(paths)],
         properties: byKey(props),
       },
@@ -972,7 +1091,7 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
       if (!requires || !sibling || sibling.presence === "conditional" || sibling.default !== undefined || read.has(k)) continue;
       if (p.presence === "required") {
         if (sibling.presence !== "required") t.properties[requires.member] = { ...sibling, presence: "required" };
-      } else dependent[k] = [...(dependent[k] ?? []), requires.member];
+      } else if (sibling.presence !== "required") dependent[k] = [...(dependent[k] ?? []), requires.member];
     }
     for (const k of Object.keys(dependent)) dependent[k] = sorted(dependent[k]!);
     if (Object.keys(dependent).length > 0) t.dependent_required = byKey(dependent);
@@ -980,11 +1099,27 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
     if (narrowed.length > 0) t.references = sorted([...t.references, ...narrowed]);
   }
 
-  const modules: ModelModule[] = sorted([KERNEL_MODULE, ...mappings.map((m) => m.module)]).map((name) => {
+  // An object that holds documents or profiles, as the stack's `Package` holds line items and `ManifestEntry` their
+  // summaries, sits at their layer, so the layers still run one way (type rules § 3): it is raised to the highest layer it references.
+  for (let changed = true; changed; ) {
+    changed = false;
+    for (const t of types.values()) {
+      if (t.kind !== "object") continue;
+      const top = Math.max(t.layer, ...t.references.map((r) => types.get(r)).filter((u) => u !== undefined && (u.kind === "document" || u.kind === "profile" || u.kind === "object")).map((u) => u!.layer));
+      if (top > t.layer) {
+        t.layer = top;
+        changed = true;
+      }
+    }
+  }
+
+  // A module whose every section exists only on other locks, as one the stack's sections alone give, isn't in this lock's model.
+  const onThisLock = (m: MappingFile) => m.module === KERNEL_MODULE || m.sections.length === 0 || sectionsOn(m, lock).length > 0;
+  const modules: ModelModule[] = sorted([KERNEL_MODULE, ...mappings.filter(onThisLock).map((m) => m.module)]).map((name) => {
     const m = mappings.find((x) => x.module === name);
     const own = [...types.values()].filter((t) => t.module === name);
     const refs = own.flatMap((t) => t.references.map((r) => types.get(r)?.module).filter((x): x is string => x !== undefined && x !== name && x !== KERNEL_MODULE));
-    return { name, sections: m?.sections ?? [], references: sorted(refs) };
+    return { name, sections: m ? sectionsOn(m, lock) : [], references: sorted(refs) };
   });
 
   const byIr = <T extends { ir: string }>(xs: T[]) => xs.sort((a, b) => (a.ir < b.ir ? -1 : a.ir > b.ir ? 1 : 0));

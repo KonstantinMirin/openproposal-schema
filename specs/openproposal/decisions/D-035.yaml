@@ -8,6 +8,7 @@ covers:
   - ir: rule:2.2:06ccee9f
     digest: 88f6179c8487ecb60b3f98de8b1ecbbec92e618a36e441133f4f4447957c23b7
     quote: When a proposal reaches status `agreed`, every `catalog_ref` MUST be replaced by its resolved value in the stored record, so the committed artifact is self-contained and immutable.
+    locks: [main, with-open-prs]
   - ir: rule:5.5:16494a1a
     digest: 855cc7c52aa4330ff909d07b79740de5114d8f109cc015572cad24a87f313e2c
     quote: "`list_ref` MUST be hash-pinned, and resolved into the stored record at `agreed`, as for `catalog_ref` (§ 2.2)."

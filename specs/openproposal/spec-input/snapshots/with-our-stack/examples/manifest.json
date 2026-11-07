@@ -1,0 +1,364 @@
+{
+  "generated_at": "2026-10-03T15:00:00Z",
+  "spec_version": "3.0",
+  "proposals": [
+    {
+      "proposal_id": "examplepub-us-q4-2026-omni",
+      "version": 2,
+      "seller": {
+        "domain": "examplepub.example",
+        "legal_name": "Example Publisher US"
+      },
+      "description": "Cross-channel Example Publisher US package spanning display, video, audio, and CTV. Business and financial audience skew, weekday-heavy delivery.\n",
+      "offer_window": {
+        "start": "2026-10-01T00:00:00Z",
+        "end": "2026-12-31T23:59:59Z"
+      },
+      "full_url": "https://examplepub.example/openproposal/examplepub-us-q4-2026-omni",
+      "line_items": [
+        {
+          "line_item_id": "streaming-audio",
+          "channel": "audio",
+          "environments": {
+            "available": [
+              "web_mobile",
+              "app_mobile"
+            ]
+          },
+          "placement": {
+            "feed": 1
+          },
+          "properties": {
+            "available": [
+              {
+                "id": "tune-stream",
+                "name": "Tune Stream",
+                "domains": [
+                  "tune-stream.example"
+                ],
+                "apps": [
+                  {
+                    "store": "apple_app_store",
+                    "bundle": "000003"
+                  }
+                ],
+                "child_audience": "general",
+                "seller_relationship": "owner"
+              }
+            ]
+          },
+          "formats": {
+            "included": [
+              "audio/produced-30s"
+            ]
+          },
+          "markets": {
+            "available": [
+              "US",
+              "CA",
+              "GB"
+            ],
+            "included": [
+              "US"
+            ],
+            "deltas": {
+              "CA": {
+                "delta_cpm": 1.5
+              },
+              "GB": {
+                "delta_cpm": 3.0
+              }
+            },
+            "max_select": 3
+          },
+          "pricing": [
+            {
+              "pricing_id": "audio-cpm-usd",
+              "cost_method": "CPM",
+              "list_rate": 18.0,
+              "currency": "USD",
+              "price_type": 3
+            }
+          ],
+          "commitment_bounds": {
+            "spend": {
+              "min": 5000.0
+            }
+          },
+          "committed_metrics": [
+            {
+              "metric": "completion_rate",
+              "level": 0.92,
+              "direction": "at_least"
+            }
+          ],
+          "transaction_mechanism": {
+            "available": [
+              {
+                "id": "preferred_deal",
+                "delivery_type": "non_guaranteed"
+              }
+            ]
+          }
+        },
+        {
+          "line_item_id": "playoffs-2026-ctv",
+          "channel": "ctv",
+          "environments": {
+            "available": [
+              "ctv"
+            ]
+          },
+          "programs": {
+            "available": [
+              {
+                "id": "series-g1",
+                "content": {
+                  "series": "Playoffs 2026",
+                  "title": "Team A vs Team B, Game 1"
+                }
+              },
+              {
+                "id": "series-g2",
+                "content": {
+                  "series": "Playoffs 2026",
+                  "title": "Team A vs Team B, Game 2"
+                }
+              },
+              {
+                "id": "series-g3",
+                "content": {
+                  "series": "Playoffs 2026",
+                  "title": "Team A vs Team B, Game 3"
+                }
+              },
+              {
+                "id": "series-g4",
+                "content": {
+                  "series": "Playoffs 2026",
+                  "title": "Team A vs Team B, Game 4"
+                }
+              },
+              {
+                "id": "series-g5",
+                "content": {
+                  "series": "Playoffs 2026",
+                  "title": "Team A vs Team B, Game 5"
+                }
+              },
+              {
+                "id": "series-g6",
+                "content": {
+                  "series": "Playoffs 2026",
+                  "title": "Team A vs Team B, Game 6"
+                }
+              },
+              {
+                "id": "series-g7",
+                "content": {
+                  "series": "Playoffs 2026",
+                  "title": "Team A vs Team B, Game 7"
+                }
+              }
+            ]
+          },
+          "placement": {
+            "plcmt": 1
+          },
+          "properties": {
+            "available": [
+              {
+                "id": "sports-app",
+                "apps": [
+                  {
+                    "store": "roku_channel_store",
+                    "bundle": "000001"
+                  }
+                ],
+                "child_audience": "general",
+                "seller_relationship": "owner"
+              }
+            ]
+          },
+          "formats": {
+            "included": [
+              "ctv/instream-30s"
+            ]
+          },
+          "pricing": [
+            {
+              "pricing_id": "playoffs-cpm-usd",
+              "cost_method": "CPM",
+              "list_rate": 60.0,
+              "currency": "USD",
+              "price_type": 3
+            }
+          ],
+          "commitment_bounds": {
+            "spend": {
+              "min": 50000.0
+            }
+          },
+          "transaction_mechanism": {
+            "available": [
+              {
+                "id": "programmatic_guaranteed",
+                "delivery_type": "guaranteed"
+              }
+            ]
+          }
+        },
+        {
+          "line_item_id": "weather-app-ctv",
+          "channel": "ctv",
+          "environments": {
+            "available": [
+              "ctv"
+            ]
+          },
+          "placement": {
+            "plcmt": 1
+          },
+          "break_position": {
+            "available": [
+              {
+                "id": "midroll-any",
+                "delay": -1,
+                "slotinpod": 0
+              },
+              {
+                "id": "preroll",
+                "delay": 0,
+                "slotinpod": 0
+              },
+              {
+                "id": "first-in-pod",
+                "delay": -1,
+                "slotinpod": 1
+              }
+            ]
+          },
+          "properties": {
+            "available": [
+              {
+                "id": "weather-app",
+                "apps": [
+                  {
+                    "store": "roku_channel_store",
+                    "bundle": "000000"
+                  }
+                ],
+                "child_audience": "general",
+                "seller_relationship": "owner"
+              }
+            ]
+          },
+          "formats": {
+            "included": [
+              "ctv/instream-15s"
+            ]
+          },
+          "pricing": [
+            {
+              "pricing_id": "ctv-pa-cpm-usd",
+              "cost_method": "CPM",
+              "list_rate": 45.0,
+              "currency": "USD",
+              "price_type": 1
+            }
+          ],
+          "commitment_bounds": {
+            "spend": {
+              "min": 25000.0
+            }
+          },
+          "committed_metrics": [
+            {
+              "metric": "completion_rate",
+              "level": 0.95,
+              "direction": "at_least"
+            }
+          ],
+          "transaction_mechanism": {
+            "available": [
+              {
+                "id": "private_auction",
+                "delivery_type": "non_guaranteed"
+              }
+            ]
+          }
+        },
+        {
+          "line_item_id": "puzzle-games-rewarded",
+          "channel": "video",
+          "environments": {
+            "available": [
+              "app_mobile"
+            ]
+          },
+          "placement": {
+            "reward": 1,
+            "instl": 1,
+            "plcmt": 3,
+            "skip": 0
+          },
+          "properties": {
+            "available": [
+              {
+                "id": "puzzle-pack",
+                "name": "Puzzle game pack",
+                "apps": [
+                  {
+                    "store": "apple_app_store",
+                    "bundle": "000002"
+                  }
+                ],
+                "child_audience": "general",
+                "seller_relationship": "owner"
+              }
+            ]
+          },
+          "formats": {
+            "included": [
+              "video/30s"
+            ]
+          },
+          "pricing": [
+            {
+              "pricing_id": "rewarded-cpm-usd",
+              "cost_method": "CPM",
+              "list_rate": 22.0,
+              "currency": "USD",
+              "price_type": 3
+            }
+          ],
+          "commitment_bounds": {
+            "spend": {
+              "min": 10000.0
+            }
+          },
+          "committed_metrics": [
+            {
+              "metric": "completion_rate",
+              "level": 0.95,
+              "direction": "at_least"
+            },
+            {
+              "metric": "viewable_rate",
+              "level": 0.9,
+              "direction": "at_least"
+            }
+          ],
+          "transaction_mechanism": {
+            "available": [
+              {
+                "id": "preferred_deal",
+                "delivery_type": "non_guaranteed"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

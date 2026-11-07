@@ -74,14 +74,16 @@ function shapeLine(shape: Shape, indent: string): string {
 function classBody(shape: Shape, problems: string[], where: string): string {
   const fields = shape.properties
     .map((p) => {
-      if (!IDENT.test(p.name) || RESERVED.has(p.name) || p.name.startsWith("model_") || p.name.startsWith("_")) {
+      if (!IDENT.test(p.name) || RESERVED.has(p.name) || p.name.startsWith("_")) {
         problems.push(`python: ${where}: the member "${p.name}" can't be a Pydantic field name`);
       }
       const t = typeOf(p.expr);
       return `    ${p.name}: ${p.required ? t : `Optional[${t}] = None`}\n${p.description ? docstring(p.description, "    ") : ""}`;
     })
     .join("");
-  return `${shapeLine(shape, "    ")}${fields}`;
+  // Pydantic reserves the `model_` prefix; a class with a member that starts with it, as the stack's `model_version`, frees the prefix for itself.
+  const freed = shape.properties.some((p) => p.name.startsWith("model_")) ? "    model_config = rt.ConfigDict(protected_namespaces=())\n\n" : "";
+  return `${freed}${shapeLine(shape, "    ")}${fields}`;
 }
 
 function scalarType(t: Extract<SdkType, { kind: "scalar" }>): string {

@@ -1,0 +1,104 @@
+{
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/buyer-writes.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The OpenProposal `BuyerWrites` profile: the fields of the `LineItem` document that the specification lists for it.",
+  "properties": {
+    "activation_route": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesSelectable",
+      "description": "The line item's `activation_route`, projected to `selected[]`."
+    },
+    "audiences": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesAudienceSelectable",
+      "description": "The line item's `audiences`, projected to `selected[]`, `excluded[]`, and `combine.selected[]`."
+    },
+    "break_position": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesSelectable",
+      "description": "The line item's `break_position`, projected to `selected[]`."
+    },
+    "buyer_requirements": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesBuyerRequirements",
+      "description": "The line item's `buyer_requirements`, projected to `seats` and `seat_owner`."
+    },
+    "cancellation_policy": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesSelectable",
+      "description": "The line item's `cancellation_policy`, projected to `selected[]`."
+    },
+    "controlling_measurement": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesSelectable",
+      "description": "The line item's `controlling_measurement`, projected to `selected[]`."
+    },
+    "daypart": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesSettable",
+      "description": "The line item's `daypart`, projected to `value`."
+    },
+    "device": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesDeviceBounds",
+      "description": "The line item's `device`, projected to `value`."
+    },
+    "environments": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesSelectable",
+      "description": "The line item's `environments`, projected to `selected[]`."
+    },
+    "exclusions": {
+      "additionalProperties": {
+        "$ref": "../../modules/targeting/1/targeting.json#/$defs/ExclusionList"
+      },
+      "description": "The buyer's block lists, keyed by exclusion type. See below",
+      "propertyNames": {
+        "$ref": "../../modules/targeting/1/targeting.json#/$defs/ExclusionType"
+      },
+      "type": "object"
+    },
+    "exclusivity": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesSelectable",
+      "description": "The line item's `exclusivity`, projected to `selected[]`."
+    },
+    "formats": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesSelectable",
+      "description": "The line item's `formats`, projected to `selected[]`."
+    },
+    "frequency_cap": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesFrequencyCap",
+      "description": "The line item's `frequency_cap`, projected to `count.value`."
+    },
+    "geo": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesGeoBounds",
+      "description": "The line item's `geo`, projected to `value`."
+    },
+    "markets": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesSelectable",
+      "description": "The line item's `markets`, projected to `selected[]`."
+    },
+    "measurement_source": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesSelectable",
+      "description": "The line item's `measurement_source`, projected to `selected[]`."
+    },
+    "production": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesSelectable",
+      "description": "The line item's `production`, projected to `selected[]`."
+    },
+    "programs": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesSelectable",
+      "description": "The line item's `programs`, projected to `selected[]`."
+    },
+    "properties": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesSelectable",
+      "description": "The line item's `properties`, projected to `selected[]`."
+    },
+    "reporting": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesSelectable",
+      "description": "The line item's `reporting`, projected to `selected[]`."
+    },
+    "shortfall_remedy": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesShortfallRemedy",
+      "description": "The line item's `shortfall_remedy`, projected to `selected[]`."
+    },
+    "transaction_mechanism": {
+      "$ref": "../../modules/commercial/1/commercial.json#/$defs/BuyerWritesSelectable",
+      "description": "The line item's `transaction_mechanism`, projected to `selected[]`."
+    }
+  },
+  "title": "BuyerWrites",
+  "type": "object"
+}

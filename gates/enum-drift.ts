@@ -1,9 +1,10 @@
 /**
  * The gates on a registry's enum drift report (src/enum-drift.ts): its
- * sources' pins and pairs, and the report's determinism and committed bytes. Each runs on
+ * sources' pins and pairs, the spec's own proto target held to the
+ * registry, and the report's determinism and committed bytes. Each runs on
  * a spec that has `enum-drift/sources.yaml`, AdCOM's.
  */
-import { checkEnumDriftSnapshots, compareEnumDrift, type EnumDriftSources } from "../src/enum-drift.ts";
+import { checkEnumDriftSnapshots, compareEnumDrift, compareTarget, targetProblems, type EnumDriftSources, type RegistryList } from "../src/enum-drift.ts";
 import type { SpecIR } from "../src/ir-types.ts";
 import type { ModelDoc } from "../src/model.ts";
 import { committedTreeCurrent, flipFirst, onlyGenerated, sameTreeRuns, type CommittedTreeInput, type TrackedInput, type TreeRunsInput } from "./common.ts";
@@ -37,6 +38,30 @@ export const enumDriftSources = defineGate<{ sources: EnumDriftSources; files: M
     { name: "an enum paired with no list", spec: ADCOM, mutate: (i) => ({ ...i, sources: withEnum(i.sources, "list_feedtypes", "prebid-openrtb", null) }), expect: "prebid-openrtb's enum FeedType is named for no list" },
     { name: "an enum paired with two lists", spec: ADCOM, mutate: (i) => ({ ...i, sources: withEnum(i.sources, "list_podsequence", "prebid-openrtb", "SlotPositionInPod") }), expect: "is named for list_podsequence and list_slotpositioninpod" },
     { name: "an enum value the reader can't read", spec: ADCOM, mutate: (i) => ({ ...i, files: withFile(i.files, "prebid-openrtb", "adcom1/device_type.go", (t) => t.replace(/DeviceType = 1 /, "DeviceType = iota ")) }), expect: "a constant the reader can't read" },
+  ],
+});
+
+/** The target's files with one file's text changed. */
+const withTarget = (files: Map<string, Buffer>, f: (text: string) => string) => new Map([...files].map(([p, b]) => [p, Buffer.from(f(b.toString("utf8")))]));
+
+export const enumDriftTarget = defineGate<{ lists: RegistryList[]; files: Map<string, Buffer> }>({
+  id: "enum-drift-target",
+  title: "enum drift target: the spec's own proto files hold an enum for every list with codes, named as its vocabulary, with every code at its own number and no other value but the unset one, none in a vendor range or a positive-number row",
+  code: ["src/enum-drift.ts#compareTarget", "src/enum-drift.ts#targetProblems"],
+  check: (i) => {
+    if (i.files.size === 0) return { problems: ["the spec has no proto files to compare"] };
+    const { target } = compareTarget(i.lists, i.files);
+    return { problems: targetProblems(target, i.lists), note: `${target.totals.compared} lists, ${target.totals.values} values; ${target.totals.missing} missing, ${target.totals.extra} extra, ${target.totals.noEnum} with no enum` };
+  },
+  fixtures: [
+    { name: "a code renumbered", spec: ADCOM, mutate: (i) => ({ ...i, files: withTarget(i.files, (t) => t.replace("API_FRAMEWORK_MRAID_3_0 = 6;", "API_FRAMEWORK_MRAID_3_0 = 60;")) }), expect: "the target's ApiFramework lacks the code 6" },
+    { name: "an enum dropped", spec: ADCOM, mutate: (i) => ({ ...i, files: withTarget(i.files, (t) => t.replace("enum DeviceType {", "enum DeviceTypes {")) }), expect: "Device Types: the target has no enum for the list" },
+    { name: "a value that is no code", spec: ADCOM, mutate: (i) => ({ ...i, files: withTarget(i.files, (t) => t.replace("  API_FRAMEWORK_SIMID_1_1 = 9;\n", "  API_FRAMEWORK_SIMID_1_1 = 9;\n  API_FRAMEWORK_SIMID_1_2 = 10;\n")) }), expect: "holds API_FRAMEWORK_SIMID_1_2 = 10, which is no code of the list" },
+    { name: "a vendor's code as a value, which a range is not", spec: ADCOM, mutate: (i) => ({ ...i, files: withTarget(i.files, (t) => t.replace("  API_FRAMEWORK_SIMID_1_1 = 9;\n", "  API_FRAMEWORK_SIMID_1_1 = 9;\n  API_FRAMEWORK_MY_VENDOR = 500;\n")) }), expect: "holds API_FRAMEWORK_MY_VENDOR = 500, which is no code of the list" },
+    { name: "a media offset as a value, which a positive-number row is not", spec: ADCOM, mutate: (i) => ({ ...i, files: withTarget(i.files, (t) => t.replace("  START_DELAY_MODE_GENERIC_POST_ROLL = -2;\n", "  START_DELAY_MODE_GENERIC_POST_ROLL = -2;\n  START_DELAY_MODE_SECOND_15 = 15;\n")) }), expect: "holds START_DELAY_MODE_SECOND_15 = 15, which is no code of the list" },
+    { name: "an enum of no list", spec: ADCOM, mutate: (i) => ({ ...i, files: withTarget(i.files, (t) => `${t}\nenum Extra {\n  EXTRA_UNSPECIFIED = 0;\n}\n`) }), expect: "the target's enum Extra is no list's vocabulary" },
+    { name: "a line the proto reader can't read", spec: ADCOM, mutate: (i) => ({ ...i, files: withTarget(i.files, (t) => t.replace("API_FRAMEWORK_ORMMA = 4;", "API_FRAMEWORK_ORMMA = 4 [deprecated = true];")) }), expect: "a line in enum ApiFramework the reader can't read" },
+    { name: "no proto files", spec: ADCOM, mutate: (i) => ({ ...i, files: new Map() }), expect: "the spec has no proto files to compare" },
   ],
 });
 

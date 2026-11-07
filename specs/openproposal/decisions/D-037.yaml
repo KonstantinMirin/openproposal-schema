@@ -8,15 +8,19 @@ covers:
   - ir: field:4.1:proposal_id
     digest: fb8604e60eabfa2db105b17ca562af8ba2f20784907dcce349772ce83054088d
     quote: "`proposal_id` | String | immutable | Unique identity for the proposal object"
+    locks: [main, with-open-prs]
   - ir: field:5.1:line_item_id
     digest: 60cd2aeea40121597f5e2b0725417665bc560c9b677000d3dfbc432d1c88c969
     quote: "`line_item_id` | String | immutable | Identity within the proposal"
+    locks: [main, with-open-prs]
   - ir: field:5.10:correlation_id
     digest: e015a269b356797dbfe7737b7178f592b5fe280e8a95db0d446724b685cc80d9
     quote: "`correlation_id` | String | derived | One identity for this line item's commitment, carried across every system it touches"
+    locks: [main, with-open-prs]
   - ir: key:5.6.1:commitment.idempotency_key
     digest: 47264d377373977897dc60c399d4e61a15e862743a2ff4e2fab92830ca3f3550
     quote: "`idempotency_key` | REQUIRED | Buyer-generated, unique per commitment attempt"
+    locks: [main, with-open-prs]
   - ir: sentence:5.6.1:b7271e6a
     digest: 5dd839c74bf1f8491a622216e9764d980816d4a413cbf9e8e64f990290dcc332
     quote: An `idempotency_key` is opaque and scoped to one buyer and seller pair.
@@ -61,6 +65,7 @@ covers:
   - ir: field:5.4:assets[]#description/object:1
     digest: e2ecbfe1e06380fb7c9966174c58ecc73d617563de6860287b1cd414bebcfff6
     quote: "{ asset_id, format_ref, url_or_tag, submitted_at, approval_status }"
+    locks: [main, with-open-prs]
   - ir: field:5.2:properties#description/object:1
     digest: d17ed59027f652ad048ca0fb7bae6984613c7b5dfc4273560958ce7006b42990
     quote: "{ id, name, domains, supported_formats }"
@@ -74,6 +79,7 @@ covers:
   - ir: field:5.3:audiences#description/object:1
     digest: 0a7d355ab5dcb787717d01988764dcca8895bdc0b1252de9e8269ad516e7ac6b
     quote: "{ id, name, taxonomy_ref, provenance, addressable_scale }"
+    locks: [main, with-open-prs]
 options:
   - id: uuid
     summary: A UUID in the RFC 9562 string form, which JSON Schema's `uuid` format checks.

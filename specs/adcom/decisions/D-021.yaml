@@ -1,0 +1,37 @@
+format: 1
+id: D-021
+status: proposed
+kind: gap
+author: agent
+question: "List: User-Agent Source names codes 1 and 2 alike, \"User-Agent Client Hints\", and tells them apart only in parentheses. What is each code's short name?"
+covers:
+  - ir: def:user-agent_source:1
+    digest: 07233269b8134d2e8ac8efdba18fcc6e4974cbe18d5e51e01ea54f575a83f98e
+    quote: "`1` | User-Agent Client Hints (only low-entropy headers were available)"
+  - ir: def:user-agent_source:2
+    digest: c1e2efa1cd3731488c5390ca24d3a2a522f4d5207215c7ef133e9c324e871791
+    quote: "`2` | User-Agent Client Hints (with high-entropy headers available)"
+options:
+  - id: short-names
+    summary: >-
+      Name code 1 "Low-Entropy Client Hints" and code 2 "High-Entropy
+      Client Hints"; each code keeps its row as its description.
+  - id: numbered
+    summary: >-
+      Name both "User-Agent Client Hints", each followed by its code, as
+      "User-Agent Client Hints (1)".
+chosen: short-names
+rationale: >-
+  The parentheses hold what tells the two codes apart, the headers that
+  were available, so a name without it says nothing about which is which,
+  and one that adds the code says only the number. The short names keep
+  the difference in the rows' own words.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L4505"
+names:
+  "def:user-agent_source:1": Low-Entropy Client Hints
+  "def:user-agent_source:2": High-Entropy Client Hints
+feedback: >-
+  Give codes 1 and 2 of List: User-Agent Source names that tell them
+  apart, such as low-entropy and high-entropy Client Hints, rather than
+  one name for both.

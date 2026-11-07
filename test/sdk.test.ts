@@ -11,10 +11,10 @@ import { applicationExpr, buildSdkModel, sdkDirOf } from "../src/sdk.ts";
 import { emitSdk } from "../src/sdk-emit.ts";
 import { compareRun, jsonEqual, runGo, runPython, runTypeScript, sdkCases, type SdkCase } from "../src/sdk-parity.ts";
 import type { CorpusDoc } from "../src/corpus.ts";
-import { OP_NAMES, OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
+import { oldConstructors, oldKernel, OP_NAMES, OP_SCHEMA, ROOT, SPEC } from "./helpers.ts";
 
-const KERNEL = loadKernel(ROOT, SPEC);
-const CONSTRUCTORS = loadConstructors(ROOT, SPEC);
+const KERNEL = oldKernel(loadKernel(ROOT, SPEC));
+const CONSTRUCTORS = oldConstructors(loadConstructors(ROOT, SPEC));
 const MAPPINGS = loadMappings(join(SPEC, "mapping"));
 const DECISIONS = loadDecisions(join(SPEC, "decisions"));
 

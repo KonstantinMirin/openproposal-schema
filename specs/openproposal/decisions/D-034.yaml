@@ -11,44 +11,93 @@ covers:
   - ir: marker:3:seller-set
     digest: 143411b52aa9e85874cc5f79024d330988c510ddf7f2981d59408e54a8730a60
     quote: "`seller-set` | The seller sets it and MAY revise it while status is `draft` or `published`. The buyer cannot change it directly."
+    locks: [main, with-open-prs]
   - ir: marker:3:selectable
     digest: 9d4920aaf4e7581b9e328b70600205e70277c7ca1a1f6275a8736c157cd1999d
     quote: "`selectable` | The buyer chooses from a seller-declared set. Each option MAY carry a price delta. Resolves without seller assent."
+    locks: [main, with-open-prs]
   - ir: marker:3:settable
     digest: 66671c35883697ab396f64f940b5566cca0b389bef1aa9fcaed09f2b8c20d961
     quote: "`settable` | The buyer supplies a value within seller-declared bounds. Resolves without seller assent."
+    locks: [main, with-open-prs]
   - ir: marker:3:supplied
     digest: ef075b4b9dcb9458ccaa36725478dc9e802f29a2ecefe182844fc36f506f69c2
     quote: "`supplied` | The buyer provides data or an artifact. The seller does not pre-populate it."
   - ir: marker:3:requestable
     digest: 0b447aa32ebfda424aa6e3d5c1f9e47d6189e495400007b71e0caba46fd695f5
     quote: "`requestable` | The buyer MAY ask for a value outside the declared space. Requires explicit seller assent."
+    locks: [main, with-open-prs]
   - ir: marker:3:derived
     digest: 7780967a402373bc1adc17783a9a589c88cb96424ef5908103565641580781df
     quote: "`derived` | Computed from other fields. Neither party sets it directly."
+    locks: [main, with-open-prs]
   - ir: block:5.6.2:1/values:1
     digest: c4f05bca19873a07f8a165ff6a69d25967eec96b3611c0dba1accd7c5c24b3fb
     quote: "`expired` | `released` | `converted`"
+    locks: [main, with-open-prs]
   - ir: sentence:5.6.2:516faad1
     digest: 2a548d3ef33b3aafd2fa6449fa5f767298acc8696d23a9f243e3c115c77bfc8d
     quote: "Transitions: `none` → `requested` → `held` → (`expired` | `released` | `converted`)."
+    locks: [main, with-open-prs]
   - ir: sentence:5.6.2:774f52b4
     digest: 11142c151ba5ff5f5862e36d05ce4337272c6891f441ebdddeb2c30fdac74eef
     quote: "`converted` is terminal and occurs when the line item reaches `agreed`."
+    locks: [main, with-open-prs]
   - ir: rule:4.1:8e9aacb8
     digest: 089fde20d5aa0c8c4d3ea3675f3ba09cf81f4d4a9615d0a627bee1cb3f823dba
     quote: Entries MUST NOT be edited or removed
+    locks: [main, with-open-prs]
   - ir: rule:5.4:2eaa294f
     digest: 61f09f4e064e43f2fa580ac4cbf4d7d5c34bd64f2539c58b40351900d38338fd
     quote: A buyer MAY request a later date
   - ir: rule:5.7:4994173c
     digest: 49df828c767ca4a88396c5d0d566a026506a90ae23eec522d12849b159e6aff6
     quote: Seller declares a ceiling; a buyer MAY request above it
+    locks: [main, with-open-prs]
   - ir: rule:5.8:59a01393
     digest: aac0652bc71ae2e1eb1544ac8cbd25d20ebb31022cfcae8997d55c54c49ad99a
     quote: "`terms_ref` MUST be hash-pinned and frozen at `agreed`."
     locks:
       - with-open-prs
+  - ir: marker:3:seller-set
+    digest: 94e2c7f4738dab5dbf24aee02a582e7d10e43dd4f3aa76237063215e6867f186
+    quote: "`seller-set` | The seller sets it and MAY revise it while the `status` of the object that carries it is `draft`, `published` or `under_review`. § 4.3.2 states what a revision does to a line item `under_review`. The buyer cannot change it directly."
+    locks: [with-our-stack]
+  - ir: marker:3:selectable
+    digest: 8a003787c373122f307a428826b4ca094f064f90fc1877096d8f8232946e3a51
+    quote: "`selectable` | The buyer chooses from a seller-declared set. Each option MAY carry a price delta. Resolves without a round trip."
+    locks: [with-our-stack]
+  - ir: marker:3:settable
+    digest: aadea752f5c312037a97353c1e8c88c591c5b2db26ec4ae59963b9490f47507b
+    quote: "`settable` | The buyer supplies a value within seller-declared bounds. Resolves without a round trip."
+    locks: [with-our-stack]
+  - ir: marker:3:requestable
+    digest: 6848566b78555a6b35a505cd2a1f627422f6519b85d870dd3a1163f3a9756102
+    quote: "`requestable` | The buyer MAY ask for a value outside the declared space. An ask changes the value only through a seller `grant` or `counter` (§ 4.3.1). A change on the seller's own initiative follows § 4.1.3."
+    locks: [with-our-stack]
+  - ir: marker:3:derived
+    digest: b6358d1160fc01ac4b4be0f9f0ecd7ddc19b6045c1ea4392f00449af12513592
+    quote: "`derived` | Computed by a rule this specification states. Neither party sets it directly."
+    locks: [with-our-stack]
+  - ir: marker:3:lifecycle
+    digest: 524814444ede737ab3ed5b2ece11b389b9daa7f0be9b8f98dbd2f3ebd083f218
+    quote: "`lifecycle` | Live state of the object. The party its section names moves it between the stated values. Not a term."
+    locks: [with-our-stack]
+  - ir: marker:3:recorded
+    digest: 5cb60abe2aa69153b9cf499b61dd6e5c83b2fed00f14493272d0d80f71978ea0
+    quote: "`recorded` | Written by the party that acted. Append-only: an entry is never edited or removed. Not a term."
+    locks: [with-our-stack]
+  - ir: marker:3:asserted
+    digest: adac5c0cbcb93033b5776a28f4fb27bd8ccc72bdd570f075d9626cba443664cd
+    quote: "`asserted` | The seller states it from data the buyer can't recompute. Not a term, and it changes without a new version."
+    locks: [with-our-stack]
+  - ir: marker:3:mixed
+    digest: 7c5eab99d5a8d933cf681a1e8b30c1c5840aacfb4dd49681e2ac6f563b2d2bc4
+    quote: "`mixed` | The keys of the object carry different markers: in the Mutability column of its key table, in its lead-in for composed keys, or on its rows for `pricing[]`."
+    locks: [with-our-stack]
+
+
+
 options:
   - id: narrow-reading
     summary: >-

@@ -286,7 +286,20 @@
  *     `npm run enum-drift` in separate processes write the in-process bytes, the
  *     committed report equals them, and every file git tracks under enum-drift/
  *     is the sources file, a pinned snapshot file, or one the report writes.
- * 18b. The public site (src/site/build.ts), once after every spec: one site
+ *     Where the spec has a proto target, its proto files hold an enum for
+ *     every list with codes, named as its vocabulary, every code at its
+ *     number, and no other value but the unset one (enum-drift-target).
+ * 18b. The proto target (src/targets/proto.ts), for a spec whose profile
+ *     names a proto package or whose folder holds proto/, AdCOM's: the
+ *     emitter's files from the spec's published schemas compile with the
+ *     protoc tools/proto/requirements.txt pins; the emitter's modules import
+ *     only the targets' modules, by name, with node:fs in the schema tree's
+ *     reader alone, and no target's code names a spec; its code and a copy
+ *     of the tracked schemas/, alone in a folder outside the repository,
+ *     two runs in separate processes, and the committed proto/ all equal
+ *     the in-process files;
+ *     and every file git tracks under proto/ is one it writes.
+ * 18c. The public site (src/site/build.ts), once after every spec: one site
  *     for the specs specs/site.yaml lists, each under its path, and the
  *     root's page that lists them. It builds, every internal link and
  *     resource names a file of the site and every type-map link a type of
@@ -320,7 +333,8 @@
  *     is edited, deleted, or renamed.
  */
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join, posix, relative } from "node:path";
 import { loadExceptions } from "../src/exceptions.ts";
 import { materialize } from "../src/fetch.ts";
@@ -329,6 +343,7 @@ import { DEFAULT_SPEC, lockFiles, specNames, specRoot } from "../src/repo.ts";
 import { loadConstructors, type Model } from "../src/constructors.ts";
 import { kernelTypes, type KernelType } from "../src/domains.ts";
 import { loadKernel, type Kernel } from "../src/kernel.ts";
+import { constructorEditionsOn, kernelEditionsOn } from "../src/editions.ts";
 import { checksOf, codesOf } from "../src/rule-checks.ts";
 import { specOf } from "../src/specs/index.ts";
 import type { SpecPlugin } from "../src/specs/plugin.ts";
@@ -353,7 +368,7 @@ import { runGo, runPython, runTypeScript, sdkCases, type SdkCase, type SdkRun } 
 import { EXEMPTIONS_FILE, type ExemptionsFile, loadExemptions, pinnedPlainGenerator, plainTarget } from "../src/plain-parity.ts";
 import { trackedGoMods } from "../src/toolchain.ts";
 import { buildLock, COMPARISON_DIR, compareLocks, DEFAULT_LOCK_FILE, renderComparison, renderComparisonMarkdown, type LockBuild } from "../src/compare.ts";
-import { buildFeedback, feedbackOf, FEEDBACK_DIR, FEEDBACK_FILES, internalTypeNames, renderComment, renderDetails, renderFeedback, type FeedbackInput } from "../src/feedback.ts";
+import { buildFeedback, feedbackOf, FEEDBACK_DIR, FEEDBACK_FILES, internalTypeNames, renderComment, renderDetails, renderFeedback, reportBuilds, reportGroups, type FeedbackInput } from "../src/feedback.ts";
 import { gitTracked } from "../gates/common.ts";
 import { fingerprint, overlay, runCheck, runFixture, ROOT, type FixtureRun, type Gate } from "../gates/harness.ts";
 import { REGISTRY } from "../gates/index.ts";
@@ -374,9 +389,13 @@ import { exceptionsFileOf } from "../gates/input.ts";
 import * as V from "../gates/variant.ts";
 import * as Site from "../gates/site.ts";
 import * as EnumDrift from "../gates/enum-drift.ts";
+import * as Proto from "../gates/proto.ts";
 import * as Registry from "../gates/registry.ts";
 import { agreementContext, lockText } from "../src/agreement.ts";
-import { allSnapshotFiles, ENUM_DRIFT_DIR, ENUM_DRIFT_FILES, ENUM_DRIFT_SOURCES, enumDriftFiles, loadEnumDriftSources } from "../src/enum-drift.ts";
+import { allSnapshotFiles, ENUM_DRIFT_DIR, ENUM_DRIFT_FILES, ENUM_DRIFT_SOURCES, enumDriftFiles, loadEnumDriftSources, registryLists } from "../src/enum-drift.ts";
+import { PROTO_DIR, protoFiles } from "../src/targets/layout.ts";
+import { emitProto } from "../src/targets/proto.ts";
+import { readSchemaTree } from "../src/targets/schema-tree.ts";
 import { buildSite, exportTree } from "../src/site/build.ts";
 import { loadSiteConfig } from "../src/site/config.ts";
 import { resolveBuild, variantNames, type Build } from "../src/builds.ts";
@@ -544,7 +563,7 @@ async function checkConstructorGates(locks: SpecLock[], kernel: Kernel, loaded: 
   const model: Model = { kernel, constructors: loadConstructors(ROOT, SPEC) };
   if (loaded) await gate(K.constructorsCheck, { model, decisions: loaded.decisions });
   else skipped(K.constructorsCheck, "the decision records didn't load");
-  for (const lock of locks) await gate(K.constructorSources, { ir: committedIr(lock), lock: lock.name, constructors: model.constructors }, lock);
+  for (const lock of locks) await gate(K.constructorSources, { ir: committedIr(lock), lock: lock.name, constructors: constructorEditionsOn(model.constructors, lock.name) }, lock);
   const mappings = loaded?.mappings ?? [];
   await gate(K.nesting, { model, mappings });
   await gate(K.mappingConstructors, { model, mappings });
@@ -558,7 +577,12 @@ async function checkDomainGates(locks: SpecLock[], model: Model, loaded: Loaded 
   const types = kernelTypes(model.kernel.primitives, model.constructors.parts, { kernel: model.kernel.file, constructors: model.constructors.file });
   if (loaded) await gate(K.domainsCheck, { domains: d, types, decisions: loaded.decisions });
   else skipped(K.domainsCheck, "the decision records didn't load");
-  for (const lock of locks) await gate(K.domainSources, { ir: committedIr(lock), lock: lock.name, domains: d, types }, lock);
+  // Each lock publishes its own editions and scoped parts (src/editions.ts).
+  for (const lock of locks) {
+    const k = kernelEditionsOn(model.kernel, lock.name);
+    const c = constructorEditionsOn(model.constructors, lock.name);
+    await gate(K.domainSources, { ir: committedIr(lock), lock: lock.name, domains: d, types: kernelTypes(k.primitives, c.parts, { kernel: model.kernel.file, constructors: model.constructors.file }) }, lock);
+  }
   return types;
 }
 
@@ -568,7 +592,7 @@ async function checkCoverageGates(locks: SpecLock[], model: Model, loaded: Loade
     return;
   }
   for (const lock of locks) {
-    const input = { ir: committedIr(lock), lock: lock.name, mappings: loaded.mappings, kernel: model.kernel, constructors: model.constructors };
+    const input = { ir: committedIr(lock), lock: lock.name, mappings: loaded.mappings, kernel: kernelEditionsOn(model.kernel, lock.name), constructors: constructorEditionsOn(model.constructors, lock.name) };
     await gate(M.mappingBijection, input, lock);
     await gate(M.mappingLocation, input, lock);
     await gate(M.mappingRules, input, lock);
@@ -591,15 +615,15 @@ async function checkModelGates(locks: SpecLock[], model: Model, loaded: Loaded |
     return resolved;
   }
   for (const lock of locks) {
-    const input = { ir: committedIr(lock), lock: lock.name, mappings: loaded.mappings, decisions: loaded.decisions, kernel: model.kernel, constructors: model.constructors };
+    const input = { ir: committedIr(lock), lock: lock.name, mappings: loaded.mappings, decisions: loaded.decisions, kernel: kernelEditionsOn(model.kernel, lock.name), constructors: constructorEditionsOn(model.constructors, lock.name) };
     if (!(await gate(D.modelResolves, input, lock))) continue;
     const doc = resolveModel(input).model;
     resolved.set(lock, doc);
     await gate(D.modelDeterministic, { label: "model.json", want: Buffer.from(renderModel(doc)), runs: twoRuns(lock, "model", "src/cli/resolve.ts", "model.json"), from: "model" }, lock);
-    const conventions = { model: doc, mappings: loaded.mappings, kernel: model.kernel, constructors: model.constructors, decisions: loaded.decisions };
+    const conventions = { model: doc, mappings: loaded.mappings, kernel: kernelEditionsOn(model.kernel, lock.name), constructors: constructorEditionsOn(model.constructors, lock.name), decisions: loaded.decisions };
     for (const c of CONVENTIONS) await gate(c, conventions, lock);
-    await gate(D.duplicationModel, { model: doc, kernel: model.kernel, constructors: model.constructors, decisions: loaded.decisions }, lock);
-    const types = kernelTypes(model.kernel.primitives, model.constructors.parts, { kernel: model.kernel.file, constructors: model.constructors.file });
+    await gate(D.duplicationModel, { model: doc, kernel: kernelEditionsOn(model.kernel, lock.name), constructors: constructorEditionsOn(model.constructors, lock.name), decisions: loaded.decisions }, lock);
+    const types = kernelTypes(kernelEditionsOn(model.kernel, lock.name).primitives, constructorEditionsOn(model.constructors, lock.name).parts, { kernel: model.kernel.file, constructors: model.constructors.file });
     await gate(D.domainsUsed, { model: doc, lock: lock.name, types }, lock);
     await gate(D.domainsProperties, { model: doc, lock: lock.name, domains: model.kernel.domains!, decisions: loaded.decisions }, lock);
   }
@@ -706,7 +730,7 @@ async function checkFidelityGates(models: Map<SpecLock, ModelDoc>, rulesOf: Map<
       skipped(fidelity, "the rules didn't emit", lock);
       continue;
     }
-    await gate(fidelity, { ir: committedIr(lock), lock: lock.name, model, files: emitSchemas(model, schemaDir, specSchemaNames()).files, kernel, rules, decisions: loaded.decisions, readings: readingsOf(loaded.mappings, lock.name), schemaDir, expected, readers: PLUGIN.fidelity!, names: specSchemaNames() }, lock);
+    await gate(fidelity, { ir: committedIr(lock), lock: lock.name, model, files: emitSchemas(model, schemaDir, specSchemaNames()).files, kernel: kernelEditionsOn(kernel, lock.name), rules, decisions: loaded.decisions, readings: readingsOf(loaded.mappings, lock.name), schemaDir, expected, readers: PLUGIN.fidelity!, names: specSchemaNames() }, lock);
   }
 }
 
@@ -744,7 +768,7 @@ async function checkCorpusGates(models: Map<SpecLock, ModelDoc>, rulesOf: Map<st
       complete = false;
       continue;
     }
-    const input = { model, files: emitted.files, rules, kernel, schemaDir, oracle: pinned };
+    const input = { model, files: emitted.files, rules, kernel: kernelEditionsOn(kernel, lock.name), schemaDir, oracle: pinned };
     if (!(await gate(O.corpusGenerates, input, lock))) {
       complete = false;
       continue;
@@ -794,7 +818,7 @@ async function checkTypeExampleGates(models: Map<SpecLock, ModelDoc>, kernel: Ke
       complete = false;
       continue;
     }
-    const input = { model, files: emitted.files, kernel, schemaDir, codes, ruleChecks: ruleChecks(), spec, fields };
+    const input = { model, files: emitted.files, kernel: kernelEditionsOn(kernel, lock.name), schemaDir, codes, ruleChecks: ruleChecks(), spec, fields };
     await gate(O.fieldExamples, input, lock);
     if (!(await gate(O.typeExamplesGenerate, input, lock))) {
       complete = false;
@@ -847,7 +871,7 @@ async function checkSdkGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[],
       skipped(S.sdkParity, `no committed corpus at ${corpusFile}; generate it with: npm run corpus`, lock);
       continue;
     }
-    const cases: SdkCase[] = sdkCases(doc, JSON.parse(readFileSync(join(SPEC, corpusFile), "utf8")) as CorpusDoc, model.kernel, model.constructors);
+    const cases: SdkCase[] = sdkCases(doc, JSON.parse(readFileSync(join(SPEC, corpusFile), "utf8")) as CorpusDoc, kernelEditionsOn(model.kernel, lock.name), constructorEditionsOn(model.constructors, lock.name));
     const legs: [string, () => Promise<SdkRun> | SdkRun][] = [
       ["TypeScript", () => runTypeScript(join(ROOT, dir, "ts"), cases)],
       ["Python", () => runPython(ROOT, join(ROOT, dir, "python"), cases)],
@@ -1020,8 +1044,11 @@ async function checkComparisonGates(locks: SpecLock[], loaded: Loaded | null, mo
     want.set(`${build.lock.name}.json`, Buffer.from(renderComparison(doc)));
     want.set(`${build.lock.name}.md`, Buffer.from(renderComparisonMarkdown(doc)));
   }
-  const variants = await variantReportFiles([base, ...others.map((o) => o.build)], input, recordedFindings);
-  for (const [name, text] of variants.files) want.set(name, Buffer.from(text));
+  // A lock with a report of its own has its variant reports in comparison/<lock>/ (reportGroups).
+  for (const g of reportGroups(specOf(SPEC).profile.feedback, [base, ...others.map((o) => o.build)])) {
+    const variants = await variantReportFiles(g.builds, input, recordedFindings);
+    for (const [name, text] of variants.files) want.set(g.dir === "" ? name : posix.join(g.dir, name), Buffer.from(text));
+  }
   await gate(P.comparisonDeterministic, { label: "comparison", want, runs: reportRuns("compare", "src/cli/compare.ts", [...want.keys()]), from: "comparison" });
   await gate(P.comparisonCommitted, { dir: COMPARISON_DIR, want, committed: reportTree(COMPARISON_DIR, [...want.keys()]), regenerate: "npm run compare" });
   await gate(P.comparisonTracked, { dir: COMPARISON_DIR, tracked: gitTracked(COMPARISON_DIR, SPEC), expected: [...want.keys()].map((f) => posix.join(COMPARISON_DIR, f)), remedy: "remove it, or write it with: npm run compare" });
@@ -1049,6 +1076,8 @@ async function checkEnumDriftGates(models: Map<SpecLock, ModelDoc>): Promise<voi
   const [lock, model] = entry;
   const files = allSnapshotFiles(SPEC, sources);
   if (!(await gate(EnumDrift.enumDriftSources, { sources, files, ir: committedIr(lock), model }))) return;
+  // A registry with a proto target holds its own enums to its lists, code for code.
+  if (NAMES.proto || existsSync(join(SPEC, PROTO_DIR))) await gate(EnumDrift.enumDriftTarget, { lists: registryLists(committedIr(lock), model), files: protoFiles(SPEC) });
   const { files: report, problems } = await enumDriftFiles(SPEC, sources, files);
   if (problems.length > 0) {
     record(`${posix.basename(SPEC)}: enum drift report`, false, problems.join("; "));
@@ -1060,6 +1089,64 @@ async function checkEnumDriftGates(models: Map<SpecLock, ModelDoc>): Promise<voi
   // The snapshot's files are each source's folder, which hashes to its pinned tree, and its license.
   const pinned = [ENUM_DRIFT_SOURCES, ...sources.sources.flatMap((s) => [...(files.get(s.id) ?? new Map()).keys()].filter((p) => p === s.license.path || p.startsWith(`${s.folder}/`)).map((p) => posix.join(ENUM_DRIFT_DIR, "snapshots", s.id, p)))];
   await gate(EnumDrift.enumDriftTracked, { dir: ENUM_DRIFT_DIR, tracked: gitTracked(ENUM_DRIFT_DIR, SPEC), expected: [...pinned, ...Object.values(ENUM_DRIFT_FILES).map((f) => posix.join(ENUM_DRIFT_DIR, f))], remedy: "remove it, pin it in enum-drift/sources.yaml, or write it with: npm run enum-drift" });
+}
+
+/**
+ * The proto target's gates, for a spec whose profile names a proto package
+ * or whose folder holds proto/: the emitter's files from the spec's
+ * published schemas compile, its imports and code, a run on a copy of the
+ * schema tree alone, two runs, the committed files, and every tracked file
+ * under proto/.
+ */
+async function checkProtoGates(): Promise<void> {
+  const name = posix.basename(SPEC);
+  const settings = NAMES.proto;
+  const tracked = gitTracked(PROTO_DIR, SPEC);
+  if (!settings) {
+    // A proto file with no package in the profile is one no target writes.
+    await gate(Proto.protoTracked, { dir: PROTO_DIR, tracked, expected: [], remedy: "the profile names no proto package (names.proto), so remove it or name one" });
+    return;
+  }
+  let emitted;
+  try {
+    emitted = emitProto(readSchemaTree(join(SPEC, "schemas")), settings);
+  } catch (e) {
+    skipped(Proto.protoBuilds, (e as Error).message);
+    return;
+  }
+  const want = new Map(emitted.files.map((f) => [f.path, Buffer.from(f.text)] as const));
+  await gate(Proto.protoBuilds, { files: want, problems: emitted.problems, enums: emitted.enums.length, values: emitted.enums.reduce((n, e) => n + e.values.length, 0) });
+  // The target's code and the schema tree as the export publishes it, the files git tracks under schemas/, alone in a folder outside the repository.
+  const sources = new Map([...gitTracked("src/targets"), "src/cli/proto.ts"].map((p) => [p, readFileSync(join(ROOT, p), "utf8")] as const));
+  const alone = mkdtempSync(join(tmpdir(), "proto-alone-"));
+  let aloneFiles: Map<string, Buffer>;
+  let aloneLog = "";
+  try {
+    const put = (p: string, b: Buffer | string) => {
+      mkdirSync(join(alone, posix.dirname(p)), { recursive: true });
+      writeFileSync(join(alone, p), b);
+    };
+    for (const p of gitTracked("schemas", SPEC)) put(p, readFileSync(join(SPEC, p)));
+    for (const [p, text] of sources) put(p, text);
+    // The folder's one other file says its modules are ES modules, as the repository's package.json does.
+    put("package.json", '{ "type": "module" }\n');
+    const r = spawnSync(process.execPath, ["--import", join(ROOT, "node_modules", "tsx", "dist", "esm", "index.mjs"), "src/cli/proto.ts", "--schemas", "schemas", "--package", settings.package, "--out", "out"], { cwd: alone, encoding: "utf8" });
+    aloneFiles = tree(alone, "out", [""]);
+    aloneLog = r.status === 0 ? "" : `${r.error?.message ?? ""}${r.stderr ?? ""}`.trim().split("\n").slice(0, 3).join(" ");
+  } finally {
+    rmSync(alone, { recursive: true, force: true });
+  }
+  const names = specNames(ROOT).flatMap((n) => [n, specOf(specRoot(n, ROOT)).profile.names.short]);
+  await gate(Proto.protoSchemaOnly, { entries: ["src/targets/proto.ts", "src/targets/schema-tree.ts"], reader: "src/targets/schema-tree.ts", read: (p) => readFileSync(join(ROOT, p), "utf8"), sources, names, want, alone: aloneFiles, aloneLog, tree: "the target's code and a copy of schemas/ outside the repository" });
+  const runs = [1, 2].map((n) => {
+    const out = join(ROOT, "build", "ci", `proto-run${n}`);
+    rmSync(out, { recursive: true, force: true });
+    run(bin("tsx"), ["src/cli/proto.ts", "--spec", name, "--out", out]);
+    return tree(ROOT, relative(ROOT, out), [""]);
+  });
+  await gate(Proto.protoDeterministic, { label: "proto", want, runs, from: "emitter" });
+  await gate(Proto.protoCommitted, { dir: PROTO_DIR, want, committed: tree(SPEC, PROTO_DIR, [""]), regenerate: `npm run proto -- --spec ${name}` });
+  await gate(Proto.protoTracked, { dir: PROTO_DIR, tracked, expected: [...want.keys()].map((p) => posix.join(PROTO_DIR, p)), remedy: `remove it, or write it with: npm run proto -- --spec ${name}` });
 }
 
 /** Two runs of a report CLI on the spec, each the files it wrote by name. */
@@ -1074,13 +1161,17 @@ function reportRuns(name: string, cli: string, files: string[]): Map<string, Buf
 const reportTree = (dir: string, files: string[]) => new Map(files.flatMap((f) => (existsSync(join(SPEC, dir, f)) ? [[f, readFileSync(join(SPEC, dir, f))] as const] : [])));
 
 async function checkFeedbackGates(ctx: FeedbackContext): Promise<void> {
-  if (!(await gate(P.feedback, ctx))) return;
-  const { doc } = buildFeedback(ctx);
-  const want = new Map<string, Buffer>([
-    [FEEDBACK_FILES.data, Buffer.from(renderFeedback(doc))],
-    [FEEDBACK_FILES.comment, Buffer.from(renderComment(doc))],
-    [FEEDBACK_FILES.details, Buffer.from(renderDetails(doc, feedbackOf(SPEC)))],
-  ]);
+  // The report on the profile's locks, and one of its own for each other lock, in feedback/<lock>/ (reportBuilds).
+  const want = new Map<string, Buffer>();
+  for (const r of reportBuilds(feedbackOf(SPEC), ctx.builds)) {
+    const input = { ...ctx, builds: r.builds, profile: r.profile, ...(r.own ? { own: true as const } : {}) };
+    if (!(await gate(P.feedback, input, r.dir === "" ? undefined : r.builds[0]!.lock))) return;
+    const { doc } = buildFeedback(input);
+    const at = (f: string) => (r.dir === "" ? f : posix.join(r.dir, f));
+    want.set(at(FEEDBACK_FILES.data), Buffer.from(renderFeedback(doc)));
+    want.set(at(FEEDBACK_FILES.comment), Buffer.from(renderComment(doc)));
+    want.set(at(FEEDBACK_FILES.details), Buffer.from(renderDetails(doc, r.profile)));
+  }
   await gate(P.feedbackDeterministic, { label: "feedback", want, runs: reportRuns("feedback", "src/cli/feedback.ts", [...want.keys()]), from: "report" });
   await gate(P.feedbackCommitted, { dir: FEEDBACK_DIR, want, committed: reportTree(FEEDBACK_DIR, [...want.keys()]), regenerate: "npm run feedback" });
   await gate(P.feedbackTracked, { dir: FEEDBACK_DIR, tracked: gitTracked(FEEDBACK_DIR, SPEC), expected: [...want.keys()].map((f) => posix.join(FEEDBACK_DIR, f)), remedy: "remove it, or write it with: npm run feedback" });
@@ -1356,7 +1447,7 @@ async function checkSpec(): Promise<Kernel | null> {
   if (kernel) {
     const model = await checkConstructorGates(locks, kernel, loaded);
     if (model) await checkDomainGates(locks, model, loaded);
-    await gate(K.duplicationKernel, { kernel, model, mappings: loaded?.mappings ?? [] });
+    await gate(K.duplicationKernel, { kernel, model, mappings: loaded?.mappings ?? [], locks: locks.map((l) => l.name) });
     if (model) {
       await checkCoverageGates(locks, model, loaded);
       const models = await checkModelGates(locks, model, loaded);
@@ -1392,6 +1483,8 @@ async function checkSpec(): Promise<Kernel | null> {
       const feedback = await checkComparisonGates(locks, loaded, model, vectors);
       // A registry with an `enum-drift/` folder compares its lists with other artifacts' enums.
       if (existsSync(join(SPEC, ENUM_DRIFT_DIR))) await checkEnumDriftGates(models);
+      // A spec with a proto package writes its integer-coded vocabularies as proto3 enums, from its published schemas alone.
+      if (NAMES.proto || existsSync(join(SPEC, PROTO_DIR))) await checkProtoGates();
       // A spec with no feedback target has no report yet, which optional-outputs checks; its records are held to its owners' terms by the record-wording gate.
       if (profile.feedback) {
         if (feedback) await checkFeedbackGates(feedback);

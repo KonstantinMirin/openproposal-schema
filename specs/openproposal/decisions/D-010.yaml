@@ -8,6 +8,7 @@ covers:
   - ir: key:3.1:pricing
     digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
     quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+    locks: [main, with-open-prs]
 options:
   - id: percent-from-minus-100
     summary: A percentage, so 10 is a 10 % surcharge, and at least −100.

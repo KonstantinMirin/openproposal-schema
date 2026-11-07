@@ -1,0 +1,53 @@
+format: 1
+id: D-051
+status: proposed
+kind: gap
+author: agent
+question: "Which type does each type the stack defines in its own words take, where the other locks' texts write the same form under another name, or none?"
+covers:
+  - ir: sentence:5.5:8a0cbdb7
+    digest: 3b832bffee99526e562a0042f5d00067e807bdbdb1501a0981e0f78edbd79c80
+    quote: "`ClockTime` is a String: `HH:MM` on a 24-hour clock, two digits each, from `00:00` to `23:59`, or `24:00`, the end of the day."
+    locks: [with-our-stack]
+  - ir: sentence:5.5:0b8ec236
+    digest: 127651172cb46c119486866258fb99696084e95d057affb088a17e3bc6b72047
+    quote: "`DayOfWeek` is `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`."
+    locks: [with-our-stack]
+  - ir: def:2.2:ZoneName
+    digest: cec6f43072d265cffcfbc633af33a3754a3aca0edd981f46aba57fd9d17018b4
+    quote: "`ZoneName` | An `IanaZone`, or `viewer_local` | `viewer_local` is where the ad renders. On a `dooh` line item that is each screen's own zone, which its `time_zone` names when present"
+    locks: [with-our-stack]
+  - ir: def:2.2:IanaZone
+    digest: a155797aac910548f8d5856f94bb63c7d3737a3a343dfac0a13179481951f330
+    quote: "`IanaZone` | String: a name in the IANA time zone database, such as `America/New_York` or `UTC` | A time zone"
+    locks: [with-our-stack]
+  - ir: def:2.2:Instant
+    digest: df8f4931a29cab49ac4f7be005c0e543329982c6dd42ad24f6ca266927fde0bc
+    quote: "`Instant` | String: an RFC 3339 `date-time` in whole seconds, ending in `Z` | A point in time. One written form, so one instant has one digest input"
+    locks: [with-our-stack]
+  - ir: def:2.2:HttpsUrl
+    digest: c96e41b2cdd45c793be7b6e4b549806b234be39bba19fe5fd8ba60dabb141706
+    quote: "`HttpsUrl` | A `Url` whose scheme is `https` | A location fetched over TLS"
+    locks: [with-our-stack]
+  - ir: def:2.2:RegistrableDomain
+    digest: 996140da167fae546cefbbdb984df61f7cf0780a2eca6d4d5aa48a5bed5e2666
+    quote: "`RegistrableDomain` | A `Domain` that is the Public Suffix List registrable domain, taken over the whole list, PRIVATE section included | It names a business"
+    locks: [with-our-stack]
+options:
+  - id: alias-where-equal
+    summary: "A type whose form equals a type the other locks' texts write takes that type: `ClockTime` is the clock time of a daypart window, `HH:MM` up to `24:00`, `DayOfWeek` the day of a daypart window, `monday` to `sunday`, and `ZoneName` the line item's clock, an IANA zone or `viewer_local`. `ClockWindow`, `IanaZone`, `Instant`, the `https` form of a URL, and `RegistrableDomain`, whose forms no other lock writes, are types of their own."
+  - id: all-own
+    summary: "Each is a type of its own under the stack's name."
+chosen: alias-where-equal
+rationale: >-
+  `ClockTime` is `HH:MM` from `00:00` to `23:59`, or `24:00`, which is the
+  kernel's `TimeOfDay`; `DayOfWeek` is `monday` to `sunday`, the kernel's
+  `DayName`; and `ZoneName` is an IANA zone or `viewer_local`, the kernel's
+  `TimeZone`. One concept has one type, so each takes the kernel's. `IanaZone`
+  has no `viewer_local`; `Instant` is in whole seconds and ends in `Z`,
+  narrower than any kernel point in time; `HttpsUrl` is the stack's `Url` with
+  the `https` scheme; and `RegistrableDomain` is a domain the Public Suffix
+  List makes registrable, which names a business. Each is a concept of its
+  own, so each is a type of its own.
+feedback: >-
+  None needed.

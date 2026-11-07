@@ -1,0 +1,34 @@
+{
+  "$id": "https://openproposal.noetis.dev/schemas/with-our-stack/documents/1/proposal-manifest.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The OpenProposal `ProposalManifest` document.",
+  "properties": {
+    "generated_at": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/Instant",
+      "description": "When the seller generated the file"
+    },
+    "hold_limits": {
+      "$ref": "../../modules/publication/1/publication.json#/$defs/HoldLimits",
+      "description": "The most holds (§ 5.6.2) the seller grants at once across its line items"
+    },
+    "proposals": {
+      "description": "One per listed proposal",
+      "items": {
+        "$ref": "manifest-entry.json"
+      },
+      "type": "array"
+    },
+    "spec_version": {
+      "$ref": "../../kernel/1/kernel.json#/$defs/PlainString",
+      "description": "The version of this specification the file follows"
+    }
+  },
+  "required": [
+    "generated_at",
+    "proposals",
+    "spec_version"
+  ],
+  "title": "ProposalManifest",
+  "type": "object"
+}

@@ -52,7 +52,7 @@ export interface Finding {
 
 /** A place a name is defined, for identifier resolution. */
 interface Definer {
-  kind: "field" | "field_parent" | "key" | "member" | "value" | "marker";
+  kind: "field" | "field_parent" | "key" | "member" | "value" | "marker" | "type";
   id: string;
   /** The name as written there, with any `[]`. */
   written: string;
@@ -449,6 +449,11 @@ function buildUniverse(ir: SpecIR): Universe {
   }
   for (const d of ir.definitions) put(names, d.value, { kind: "value", id: d.id, written: d.value, table: true });
   for (const m of ir.markers) put(names, m.marker, { kind: "marker", id: m.id, written: m.marker, table: true });
+  // A type a key table defines under a bold label that names it, as the stack's "**`Commit`** keys:".
+  for (const t of ir.tables) {
+    const id = t.parent?.via === "label" ? t.parent.identifier : null;
+    if (id && /^[A-Z][A-Za-z0-9]*$/.test(id)) put(names, id, { kind: "type", id: t.id, written: id, table: true });
+  }
   // The § 3.1 structure keys apply to every selectable field, so `formats.included[]` resolves.
   for (const k of ir.keys) {
     const t = ir.tables.find((tt) => tt.id === k.loc.table)!;
@@ -474,7 +479,7 @@ function resolve(u: Universe, value: string): Resolution {
   // Every field, key, and member name is in `names` under its last segment, so a one-segment name looks there.
   const exact = key.includes(".") ? u.paths.get(key) : u.names.get(key);
   if (exact && exact.some((d) => d.table)) {
-    const table = exact.filter((d) => d.table && d.kind !== "value" && d.kind !== "marker");
+    const table = exact.filter((d) => d.table && d.kind !== "value" && d.kind !== "marker" && d.kind !== "type");
     const written = [...new Set(table.map((d) => (key.includes(".") ? d.written : d.written.split(".").at(-1)!)))];
     const mismatch = written.length > 0 && !written.includes(value) ? written : null;
     return { definers: exact, arrayMismatch: mismatch, missingSegment: null };

@@ -47,7 +47,34 @@ test("an extension that would match a code leaves the code to its own branch, so
 test("a code's title is its row's own name before a colon, or else its whole text", () => {
   assert.equal(codeTitle("Instream: Pre-roll ads"), "Instream");
   assert.equal(codeTitle("MRAID 3.0"), "MRAID 3.0");
-  assert.equal(codeTitle("Initiated by idling (e.g. screensaver), Sound on"), "Initiated by idling (e.g. screensaver), Sound on");
+  // A gloss, a parenthesized "i.e." or "e.g." aside or such a tail, is no part of the name; any other aside is.
+  assert.equal(codeTitle("Initiated by idling (e.g. screensaver), Sound on"), "Initiated by idling, Sound on");
+  assert.equal(codeTitle("Text (i.e., primarily textual document such as a web page, eBook, or news article)"), "Text");
+  assert.equal(codeTitle("A person-based ID, i.e., that is the same across devices."), "A person-based ID");
+  assert.equal(codeTitle("active (i.e. deal is actively serving impressions)"), "active");
+  assert.equal(codeTitle("complete (ie. buying system shows deal has completed)"), "complete");
+  assert.equal(codeTitle("deal is complete (ie. selling scomplete (ie. selling system shows deal has completed)"), "deal is complete");
+  assert.equal(codeTitle("AdCom DOOH Venue Types (deprecated)"), "AdCom DOOH Venue Types (deprecated)");
+  assert.equal(codeTitle("51Degrees (High Confidence)"), "51Degrees (High Confidence)");
+  // A name before a colon with no space after it is a name too; a URL's colon, and one a digit follows, name nothing.
+  assert.equal(codeTitle("Interstitial:Video ads that are played without video content"), "Interstitial");
+  assert.equal(codeTitle("Time:Time-based refresh"), "Time");
+  assert.equal(codeTitle("See https://example.com/a: the list"), "See the list");
+  assert.equal(codeTitle("Aspect 16:9 video"), "Aspect 16:9 video");
+  // A colon a lowercase letter follows, or one inside parentheses, names nothing; a gloss is lowercase, kept whole with its parentheses, and a tail only outside them.
+  assert.equal(codeTitle("urn:iab:x"), "urn:iab:x");
+  assert.equal(codeTitle("mailto:x@y"), "mailto:x@y");
+  assert.equal(codeTitle("Foo (see:Bar) baz"), "Foo (see:Bar) baz");
+  assert.equal(codeTitle("Category (deprecated, e.g. old)"), "Category (deprecated, e.g. old)");
+  assert.equal(codeTitle("Browser IE. 11 only"), "Browser IE. 11 only");
+  assert.equal(codeTitle("Foo (i.e., bar (baz) qux)"), "Foo");
+});
+
+test("a name a decision gives a code titles it in place of its row's, and only an entry citing a decision may give one", async () => {
+  assert.deepEqual(codeTitles([{ value: 1, annotation: "Initiates without any specific user interaction with Sound On", title: "Automatic with Sound On" }, { value: 3, annotation: "Initiates on Click with Sound On" }]), ["Automatic with Sound On", "Initiates on Click with Sound On"]);
+  const { diffModels } = await import("../src/release.ts");
+  const vocab = (title?: string) => ({ format: 1, types: [{ name: "V", kind: "vocabulary", module: "m", terms: [{ value: 1, annotation: "Row", ...(title ? { title } : {}), sources: ["x"] }] }] });
+  assert.deepEqual(diffModels(vocab() as never, vocab("Short") as never).map((c) => [c.class, c.detail]), [["annotation", 'V 1\'s name changes']]);
 });
 
 test("a list's code names are unique and readable: a class two codes share is no name, a URL's colon splits nothing, and a long row is cut at its first clause", () => {
@@ -112,4 +139,35 @@ test("titled codes are an integer type and two or more titled integer consts, ea
     { ...ok, oneOf: [{ const: 0, title: "No" }, { const: 1, title: "Yes", minimum: 0 }] },
     { ...ok, oneOf: [{ const: 0, title: "No" }, { type: "integer", minimum: 500, title: "Vendor-specific" }] },
   ]) assert.equal(isTitledCodes(bad), false, JSON.stringify(bad));
+});
+
+test("a standing record's names title the codes it quotes, and a withdrawn record names none", async () => {
+  const { resolveBuild } = await import("../src/builds.ts");
+  const { loadKernel } = await import("../src/kernel.ts");
+  const { loadConstructors } = await import("../src/constructors.ts");
+  const { loadDecisions, loadMappings } = await import("../src/mapping.ts");
+  const { loadLock } = await import("../src/lock.ts");
+  const adcom = join(ROOT, "specs", "adcom");
+  const build = (withdraw: boolean, elsewhere = false) => {
+    const decisions = loadDecisions(join(adcom, "decisions")).map((d) => (withdraw && d.id === "D-019" ? { ...d, status: "withdrawn" as const, withdrawn: { date: "2026-10-28", reason: "A test." } } : elsewhere && d.id === "D-019" ? { ...d, covers: d.covers.map((c) => ({ ...c, locks: ["tag-202607"] })) } : d));
+    const b = resolveBuild({ root: adcom, mappings: loadMappings(join(adcom, "mapping")), decisions, kernel: loadKernel(ROOT, adcom), constructors: loadConstructors(ROOT, adcom), lock: loadLock(join(adcom, "spec-input", "spec-lock.yaml")) });
+    const t = b.model.types.find((x) => x.name === "AgentType")!;
+    return t.kind === "vocabulary" ? { titles: codeTitles(t.terms), decisions: t.decisions } : null;
+  };
+  const standing = build(false)!;
+  assert.deepEqual(standing.titles, ["Browser or device ID", "In-app impressions", "Person-based ID"]);
+  assert.ok(standing.decisions.includes("D-019"));
+  const withdrawn = build(true)!;
+  assert.deepEqual(withdrawn.titles, ["An ID which is tied to a specific web browser or device", "In-app impressions", "A person-based ID"]);
+  // Every decided name fits a code name's 48 characters and is its list's only one.
+  const named = Object.entries(LISTS.$defs).flatMap(([, def]) => (def.oneOf as Record<string, unknown>[]).filter((b) => "const" in b).map((b) => String(b.title)));
+  for (const t of ["Initiates on Mouse-Over with Sound On", "Podcast", "Shaky, Flashing, or Extreme Animation", "On Leaving Viewport Continues as Floating Unit"]) {
+    const list = Object.values(LISTS.$defs).find((def) => (def.oneOf as Record<string, unknown>[]).some((b) => b.title === t))!;
+    const titles = (list.oneOf as Record<string, unknown>[]).filter((b) => "const" in b).map((b) => String(b.title));
+    assert.ok(named.includes(t), t);
+    assert.ok(t.length <= 48, t);
+    assert.equal(titles.filter((x) => x === t).length, 1, t);
+  }
+  // A record that quotes the rows only on another lock names nothing on main.
+  assert.deepEqual(build(false, true)!.titles, withdrawn.titles);
 });

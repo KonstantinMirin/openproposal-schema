@@ -3,103 +3,124 @@
 format: 1
 module: proposal
 sections: [ "4", "4.1", "4.2" ]
+lock_sections: { with-our-stack: [ 4.1.1, 4.1.3, 4.1.4, "4.3", 4.3.1, 4.3.2, 4.3.3, 4.3.4, "4.4" ] }
+depends: [ commercial, creative, guarantees ]
+lock_depends: { with-our-stack: [ line-item ] }
 types:
+  - name: Assent
+    kind: object
+    ir: field:4.1:assent
+    locks: [ main, with-open-prs ]
+    source: { decision: D-016 }
+    open: true
+    description: "The buyer's and the seller's assent records, with their timestamps, for the binding version; the signature scheme is WS1. The specification states no members, so the object accepts any."
   - name: Proposal
     kind: document
     ir: field:4.1:proposal_id
     source: { rule: document-owner }
-  - name: Assent
+  - name: ProposalType
+    kind: vocabulary
+    ir: field:4.1:type#description/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: false
+    terms: [ standard, custom ]
+  - name: HistoryEntry
     kind: object
-    ir: field:4.1:assent
-    source: { decision: D-016 }
-    open: true
-    description: "The buyer's and the seller's assent records, with their timestamps, for the binding version; the signature scheme is WS1. The specification states no members, so the object accepts any."
+    ir: key:4.1:HistoryEntry.version
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: HistoryEntryAction
+    kind: vocabulary
+    ir: key:4.1:HistoryEntry.action#meaning/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: false
+    terms: [ published, requested, granted, countered, declined, withdrawn ]
+  - name: HistoryPath
+    kind: object
+    ir: key:4.1:HistoryPath.line_item_id
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: RequestedValue
+    kind: object
+    ir: key:4.1:RequestedValue.list_rate
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: Package
+    kind: object
+    ir: key:4.1.4:Package.package_id
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: MinCommitment
+    kind: object
+    ir: key:4.1.4:MinCommitment.line_item_id
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+    holds: [ { kind: named, name: CommitmentAmount } ]
   - name: Specifications
     kind: union
     ir: field:4.2:specifications
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-016, D-017 ] }
     any_of: [ { kind: named, name: Text }, { kind: named, name: SpecificationsDetail } ]
   - name: SpecificationsDetail
     kind: object
     ir: field:4.2:specifications
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-016, D-017 ] }
     open: true
     description: "Structured detail at media-kit depth. The specification states no members, so the object accepts any."
+  - name: ChangeRequest
+    kind: object
+    ir: key:4.4:ChangeRequest.id
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
 entries:
-  - ir: field:4.1:proposal_id
-    digest: fb8604e60eabfa2db105b17ca562af8ba2f20784907dcce349772ce83054088d
-    source: { rule: domain-row }
-    as: { role: property, object: Proposal, type: { kind: named, name: Uuid }, presence: optional }
-  - ir: field:4.1:version
-    digest: 0d60d71f86bb7ba75bce82f30d59f3a971355af3191a622f5ee2e856069fb67f
-    locks: [ main ]
-    source: { rule: domain-row }
-    as: { role: property, object: Proposal, type: { kind: named, name: Count }, presence: optional }
-  - ir: field:4.1:version
-    digest: a09ae7827a52ff907bbe2cb190b88a430dd2a075fe1f098c2f024ff7ba097988
-    locks: [ with-open-prs ]
-    source: { rule: domain-row }
-    as: { role: property, object: Proposal, type: { kind: named, name: Count }, presence: optional }
   - ir: field:4.1:seller_id
     digest: 98c167e650ac7cbe7a3fe910d218292ae19d16156e9a575875776ba335e4e833
+    locks: [ main, with-open-prs ]
     source: { rule: domain-row }
     as: { role: property, object: Proposal, type: { kind: named, name: ExternalId }, presence: optional }
   - ir: field:4.1:seller_name
     digest: 270af1c40363b766b5013891995f439c36dbfe87392a61eec853cc14203bb712
+    locks: [ main, with-open-prs ]
     source: { rule: domain-row }
     as: { role: property, object: Proposal, type: { kind: named, name: Text }, presence: optional }
-  - ir: field:4.1:type
-    digest: 35095315db54643d41a55ea9b5e8b8840ed8af88949879b9e664f2d7f19d172f
-    source: { rule: enum-row }
-    as: { role: property, object: Proposal, type: { kind: named, name: ProposalType }, presence: optional }
-  - ir: field:4.1:type#description/values:1
-    digest: ca19474b34999ea939d03107e0a9dceaf7abe2d56b469ae64f29c8a2c13257b4
-    source: { decisions: [ D-013, D-014 ] }
-    as: { role: type, name: ProposalType, layer: vocabulary, open: false }
-  - ir: field:4.1:proposal_template_id
-    digest: 5f43a39db8284176822173553f81108c25fea3e72083caeffb881d5050e8a39c
-    locks: [ with-open-prs ]
-    source: { rule: domain-row }
-    as: { role: property, object: Proposal, type: { kind: named, name: ExternalId }, presence: optional }
   - ir: rule:4.1:d539a004
     digest: 7a0c87bfe4e277354e4234f1e296faf65e96ea564107d035b1016607aa6370cd
     locks: [ with-open-prs ]
     source: { rule: presence-statement }
     as: { role: schema, in: Proposal }
-  - ir: field:4.1:status
-    digest: bdc344b98d2bc62fc489ecf7061c9ec2357ade93de698665c0ff758953cc8cae
-    source: { rule: enum-row }
-    as: { role: property, object: Proposal, type: { kind: named, name: ProposalStatus }, presence: optional }
   - ir: field:4.1:status#description/values:1
     digest: cabf49b77090b1d9d2b5dc594584cf6bb1506a5bd4440dbdd40528aa40cfaf35
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-013, D-014 ] }
     as: { role: type, name: ProposalStatus, layer: vocabulary, open: false }
   - ir: field:4.1:assent
     digest: 9306decda4e7acc0d22679fb45574d8d8f500e44c09023a25112e40458cd2be8
+    locks: [ main, with-open-prs ]
     source: { decision: D-016 }
     as: { role: property, object: Proposal, type: { kind: named, name: Assent }, presence: optional }
   - ir: "field:4.1:valid_from,valid_until"
     digest: 9c5853eb24269fa128f158276e85a0e45be848cce58efe34fa1739a06514e9a0
+    locks: [ main, with-open-prs ]
     source: { rule: scalar-field }
     as: { role: property, object: Proposal, type: { kind: named, name: Timestamp }, presence: optional }
   - ir: field:4.1:brief_ref
     digest: 482c83600e1a104be57aaa70c91f4df5bec6b6bdc7621b8c8cdb9283d768eeaa
+    locks: [ main, with-open-prs ]
     source: { rule: domain-row }
     as: { role: property, object: Proposal, type: { kind: named, name: ExternalId }, presence: conditional }
-  - ir: rule:4.1:1a0e1d65
-    digest: 4cee8e297ebc3f2899cde08ec2cda7d688e7354e6288db4e465ef692677f3c88
-    source: { rule: presence-statement }
-    as: { role: schema, in: Proposal }
-  - ir: "field:4.1:negotiation_history[]"
-    digest: abbd4590610b8e0e54e96209a13ee1d28abf6147841ca1fc9f3b19b22e8c03a4
-    source: { rule: inline-object-row }
-    as:
-      role: property
-      object: Proposal
-      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: NegotiationHistoryEntry } } }
-      presence: optional
   - ir: "field:4.1:negotiation_history[]#description/object:1"
     digest: 4e6fe4bb14cccd020b8d8e903fb098ce6de02c4a07e3c93fe9e1730709c4503d
+    locks: [ main, with-open-prs ]
     source: { decision: D-027 }
     as:
       role: type
@@ -120,16 +141,14 @@ entries:
         at: { type: { kind: named, name: Timestamp }, presence: optional }
   - ir: "field:4.1:negotiation_history[]#description/object:1/action"
     digest: 2f88df68f495e29d676b7fcdf23295f77f78e905e88b7a048edd3ef2d6a16516
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-013, D-014 ] }
     as: { role: type, name: NegotiationAction, layer: vocabulary, open: false }
   - ir: "field:4.1:negotiation_history[]#description/object:1/actor"
     digest: 3e5ab816e90d30ce9976f57b4a4cded920951dbab1bbda74d386b92fb61c0537
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-013, D-014 ] }
     as: { role: type, name: Party, layer: vocabulary, open: false, module: kernel }
-  - ir: rule:4.1:8e9aacb8
-    digest: 089fde20d5aa0c8c4d3ea3675f3ba09cf81f4d4a9615d0a627bee1cb3f823dba
-    source: { decision: D-030 }
-    as: { role: rule, object: Proposal }
   - ir: field:4.1:linked_execution
     digest: af2a98767432fd7fcecb2b2fced2a26e295676e29e23d7e42e9da56983e5ad28
     locks: [ with-open-prs ]
@@ -145,25 +164,937 @@ entries:
     locks: [ with-open-prs ]
     source: { rule: prose-sentence }
     as: { role: informative }
+  - ir: field:4.1:proposal_id
+    digest: fb8604e60eabfa2db105b17ca562af8ba2f20784907dcce349772ce83054088d
+    locks: [ main, with-open-prs ]
+    source: { rule: domain-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: Uuid }, presence: optional }
+  - ir: field:4.1:proposal_id
+    digest: 505aadeb488fdbaba09c40fc494d450478648a7d6b81f20440e67d378fd6f4b6
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:4.1:373dbf11
+    digest: 06dd0a87aa03809aa33d120dd7d219068f6833fe2608618bfa9960b216d40df6
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
+  - ir: field:4.1:version
+    digest: 0d60d71f86bb7ba75bce82f30d59f3a971355af3191a622f5ee2e856069fb67f
+    locks: [ main ]
+    source: { rule: domain-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: Count }, presence: optional }
+  - ir: field:4.1:version
+    digest: a09ae7827a52ff907bbe2cb190b88a430dd2a075fe1f098c2f024ff7ba097988
+    locks: [ with-open-prs ]
+    source: { rule: domain-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: Count }, presence: optional }
+  - ir: field:4.1:version
+    digest: 95abf292cdcc32a9365e568b756c093f4d7e96c011d58783a43c90db738b0db5
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: PlainInteger }, presence: required }
+  - ir: rule:4.1:373dbf11-2
+    digest: 4adcc06185ba356e3ff96976b913609ea1c0a3c51cef5a72f707138f6fcb7b45
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
+  - ir: rule:4.1:ce1d9648
+    digest: 78b338bdf7b4bee50907bdfe614694ced549764abc13dc72cead247ddc252886
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: field:4.1:spec_version
+    digest: 0e8346d62b7c56a63c39d2f66dcfac9fbf8bff3984485db6ea5c716221d8f281
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:4.1:373dbf11-3
+    digest: f4dea641f6db8e9ce45fd0a6dfd015adc8577d978b592fe63b8f1e4f382a9b5c
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
+  - ir: field:4.1:seller
+    digest: 3b4120e5f7f86a0c2ca2d8ac2b410fdd82453247a7755b5324050a877588c419
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: Party }, presence: required }
+  - ir: rule:4.1:373dbf11-4
+    digest: 85705729303db0f504788f57b1d63ee59d63e9758d8d70c6052637680c22bfb4
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
+  - ir: rule:4.1:b1f3c197
+    digest: 34aaac9abe19603f636fa41bf1b51998c2e9ca4745bc79df4b6ad517318dfeb4
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: field:4.1:buyer
+    digest: 70a9f70cbc2a62629f9f8dc25d1b5817da3f53d4c99f6fe5f78b0eb4788f0d16
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: Party }, presence: conditional }
+  - ir: rule:4.1:1ef7cbec
+    digest: b3312a566921f0ae7901dde16941c24ec1de8da774eb311807666a6cbd75915f
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: Proposal }
+  - ir: rule:4.1:b1f3c197-2
+    digest: ad1ac9da6dd24b90f0fb1d6d840c647266a6f8803045cb50780c4a460668005a
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: field:4.1:type
+    digest: 35095315db54643d41a55ea9b5e8b8840ed8af88949879b9e664f2d7f19d172f
+    locks: [ main, with-open-prs ]
+    source: { rule: enum-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: ProposalType }, presence: optional }
+  - ir: field:4.1:type
+    digest: ee799a94d1f3c2810d03d26aab4658201064ece8ec185ab17c6924692fdc7572
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: ProposalType }, presence: required }
+  - ir: field:4.1:type#description/values:1
+    digest: ca19474b34999ea939d03107e0a9dceaf7abe2d56b469ae64f29c8a2c13257b4
+    locks: [ main, with-open-prs ]
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: ProposalType, layer: vocabulary, open: false }
+  - ir: field:4.1:type#description/values:1
+    digest: ca19474b34999ea939d03107e0a9dceaf7abe2d56b469ae64f29c8a2c13257b4
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: ProposalType }
+  - ir: rule:4.1:373dbf11-5
+    digest: f51d6fdbb2544251710a54245736c897296fd2d4f7c7cb8064f938484a9ecfe6
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
+  - ir: field:4.1:proposal_template_id
+    digest: 5f43a39db8284176822173553f81108c25fea3e72083caeffb881d5050e8a39c
+    locks: [ with-open-prs ]
+    source: { rule: domain-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: ExternalId }, presence: optional }
+  - ir: field:4.1:proposal_template_id
+    digest: 3be054395ec9b9361e085c13831652204ded2153b3631ff710d4324eef1cd38f
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: PlainString }, presence: optional }
+  - ir: rule:4.1:ae26d4ac
+    digest: b8d30410f26f9aa62fd575fae6b38400defeae4e817547b124909a6d7a5c6b67
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
+  - ir: field:4.1:issued_from
+    digest: fc316d45cec766d4745c5fa072c538a147d0ca92a5f846b9257239b368c349bc
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: VersionRef }, presence: optional }
+  - ir: rule:4.1:ae26d4ac-2
+    digest: e7b7dee7326fdc8e82672b55541053c0f3c2d2a31bf6e548776e2bb42885b8e4
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
+  - ir: field:4.1:status
+    digest: bdc344b98d2bc62fc489ecf7061c9ec2357ade93de698665c0ff758953cc8cae
+    locks: [ main, with-open-prs ]
+    source: { rule: enum-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: ProposalStatus }, presence: optional }
+  - ir: field:4.1:status
+    digest: 88decdf9f117776d8cc73caa9e8f792e8d8b069e4eb33ed74d91e574501d32f2
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: ProposalStatus }, presence: required }
+  - ir: rule:4.1:373dbf11-6
+    digest: 11a030fb0ba9632547b6ff22601e940686dff4ed07fb416fef9c59e4cb542fec
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
+  - ir: "field:4.1:assent[]"
+    digest: 37fe2d72f423c5846425b820621ad53ea34c1a5b82f00e4126f311de06bc13db
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: Proposal
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: AssentEntry } } }
+      presence: optional
+  - ir: rule:4.1:8e9aacb8
+    digest: 089fde20d5aa0c8c4d3ea3675f3ba09cf81f4d4a9615d0a627bee1cb3f823dba
+    locks: [ main, with-open-prs ]
+    source: { decision: D-030 }
+    as: { role: rule, object: Proposal }
+  - ir: rule:4.1:8e9aacb8
+    digest: ff37aeb1ba84d151e43e278564e7de10cbcf52ae2f9cccb0f38b0191ac573247
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:4.1:ae26d4ac-3
+    digest: ed27fb21fac92abd46bd49311e6c4ef0888309c885d3668bdcd51e20bf892a9f
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
+  - ir: field:4.1:offer_window
+    digest: 1b00881e7b8293241b9a46f9bb2a071af4d2a2f6aa142517828c871859794c58
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: Interval }, presence: optional }
+  - ir: rule:4.1:ae26d4ac-4
+    digest: 517ce1f25ec00126043565c7bbe914e06a53859209d3e8aa081612848fdd1f85
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
+  - ir: field:4.1:brief_id
+    digest: e7bbfd797d37cc1822ac53a36835fc02fbb29387cddf12fd39783927a3126d8c
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: PlainString }, presence: conditional }
+  - ir: rule:4.1:1a0e1d65
+    digest: 4cee8e297ebc3f2899cde08ec2cda7d688e7354e6288db4e465ef692677f3c88
+    locks: [ main, with-open-prs ]
+    source: { rule: presence-statement }
+    as: { role: schema, in: Proposal }
+  - ir: rule:4.1:1a0e1d65
+    digest: 28b654821f3741be5f372bf7bb7e6fa875b4256bb77125fc0a99ef888cd7a229
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
+  - ir: "field:4.1:negotiation_history[]"
+    digest: abbd4590610b8e0e54e96209a13ee1d28abf6147841ca1fc9f3b19b22e8c03a4
+    locks: [ main, with-open-prs ]
+    source: { rule: inline-object-row }
+    as:
+      role: property
+      object: Proposal
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: NegotiationHistoryEntry } } }
+      presence: optional
+  - ir: "field:4.1:negotiation_history[]"
+    digest: be8ec170ece0e752caa572bdcb2293159768eaf6894f4fdfb6f743924f73abec
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: Proposal
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: HistoryEntry } } }
+      presence: conditional
+  - ir: rule:4.1:9c98396c
+    digest: a18081c73c446929c4031b83f55703713fb01fbdb5bb6b73221128def0c992ca
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: Proposal }
+  - ir: rule:4.1:d401d65e
+    digest: 8a2eb18c5cd8e5b96a5903a2542e487bac8991b62a28a1a8fdc878e6901f6f26
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: "field:4.1:line_items[]"
+    digest: 3297babbffd7993c2f38502969b9a78de653b17228c6e8740fd33945c5fcbc13
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: Proposal
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: LineItem } } }
+      presence: conditional
+  - ir: rule:4.1:22f5a51a
+    digest: 7e3027977a9fe53710f9bf4af73bff3f01aa56f609b4a961b6be02c1571068a8
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: Proposal }
+  - ir: "field:4.1:packages[]"
+    digest: cc990001914964447824d3dda86eae212f99f19d96b4d9b5735081f38f007bb9
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: Proposal
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Package } } }
+      presence: conditional
+  - ir: rule:4.1:94b23ce1
+    digest: 7aa153d5cff1390f252cc1be94c0cbfa3fc97f251ed682305096ef0ff6126d15
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: Proposal }
+  - ir: field:4.1:ext
+    digest: 540b8e84417df279d1c2ab396287190a574fc1548ea7be0806b1e70b332c5694
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: Proposal
+      type:
+        kind: apply
+        constructor: Map
+        arguments: { K: { kind: named, name: Domain }, V: { kind: named, name: OpenObject } }
+      presence: optional
+  - ir: rule:4.1:ae26d4ac-5
+    digest: e0d622f3b2b3cc471096a462bd6f5970ed9299dbce5970eb50f6155234201518
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
+  - ir: sentence:4.1:a8a07485
+    digest: ee353643852699971db781b771ade6211b580db9865d020b05554924eb60fe9e
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:4.1:HistoryEntry.version
+    digest: 2d917d282442becae950ee7a953543fc4d226962b82e46ae68cf4b72c93d9ccd
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: HistoryEntry, type: { kind: named, name: PlainInteger }, presence: required }
+  - ir: rule:4.1:373dbf11-7
+    digest: efad1d5cd6e75dbed028f9a9816d08b0bb2efc4deff6248802cded215ebfc100
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: HistoryEntry }
+  - ir: key:4.1:HistoryEntry.actor
+    digest: b52be2b784fdea29c833c8e159010ef2a4d6e41afb5689a5f779d809083d832f
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: HistoryEntry, type: { kind: named, name: Side }, presence: required }
+  - ir: rule:4.1:373dbf11-8
+    digest: 0519093eabd8f76f774e290613527fed2f6c9fc72d2e69676a91fee72570ecb1
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: HistoryEntry }
+  - ir: key:4.1:HistoryEntry.action
+    digest: b34325b525feca2ab6123aa87f31dac094b581caf159496dd6876f359bdd42e9
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: HistoryEntry, type: { kind: named, name: HistoryEntryAction }, presence: required }
+  - ir: key:4.1:HistoryEntry.action#meaning/values:1
+    digest: cf99c0ffc5cd61660199fb4160cfad9eb05cfdbdf450b68864d346deae345797
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: HistoryEntryAction }
+  - ir: rule:4.1:373dbf11-9
+    digest: 0052d6fd97018a173fb82939a66ee80259f219ba0b817a29f59c51599cbe8ffe
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: HistoryEntry }
+  - ir: "key:4.1:HistoryEntry.paths[]"
+    digest: 98e49e0a70cf6cfdd75d2966c419c072b9c7095e9f218828223e10ed225a427e
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: HistoryEntry
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: HistoryPath } } }
+      presence: required
+  - ir: rule:4.1:373dbf11-10
+    digest: 27341a2e1b17b29f38d156d69495ee55f837ffcd70cdbb8bc358c62a342b884a
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: HistoryEntry }
+  - ir: rule:4.1:ff8838af
+    digest: 4f52ba69650c864c333bc14f7fe814db4d8ba8c5afd6d94df32d1e9056aa277a
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: key:4.1:HistoryEntry.at
+    digest: b68b117ee8bbf9f32b984acac735be1ba894a9cd73c74e6aaec95b80c7380e3e
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: HistoryEntry, type: { kind: named, name: Instant }, presence: required }
+  - ir: rule:4.1:373dbf11-11
+    digest: 9cecb610218bda38f0813af5516e007d03918cc5ac8607eee09b5f9908b3bd03
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: HistoryEntry }
+  - ir: sentence:4.1:3dab0ceb
+    digest: 6c609491e147efa28f99b73c8966ae4f96157eec14d9202d44cb6a52e5752616
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:4.1:HistoryPath.line_item_id
+    digest: 1f3fb157323c96fd5762aa060d9d4c19fdd02f4734214748e159c33877993814
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: HistoryPath, type: { kind: named, name: PlainString }, presence: conditional }
+  - ir: rule:4.1:71a584ca
+    digest: fee4b8592bfd056fd009a30e94fcb080654936a23f0a01ba9a4124ce3385efa5
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: HistoryPath }
+  - ir: key:4.1:HistoryPath.pointer
+    digest: abd363f19dbe5d883fcc02f8441d2c815971f2638bfe37d0b583057b5340809f
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: HistoryPath, type: { kind: named, name: FieldPointer }, presence: required }
+  - ir: rule:4.1:373dbf11-12
+    digest: 873ebd108e70307c7a27a2f3a0dd1e474b66d5d03c3379199ec40750039724e7
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: HistoryPath }
+  - ir: key:4.1:HistoryPath.requested_value
+    digest: d1c6c315651e741d3bd5068c2c738d241cb6a6cf0642b006bd9022c20dbffcf4
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: HistoryPath, type: { kind: named, name: RequestedValue }, presence: conditional }
+  - ir: rule:4.1:d31e02ee
+    digest: 78f1d63acfa6c7112b132c164f4872e3645ccddc0a4033d0b7304d59eb6e963f
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: HistoryPath }
+  - ir: sentence:4.1:9ff4638d
+    digest: 813b0bf3aacc8c7b8e300007d4985f4de5c2793772b37ce28f202c6cbeccfdc8
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1:a0fee758
+    digest: 0df4a71166a8e407f65f81571a1865abf89ef5659ca4f375482232ac8154ca91
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:4.1:RequestedValue.list_rate
+    digest: 5eca1c21decabc08ea2e9e9ec3e3cc55a90f2c71c4b3671d3f07de2580a813ca
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: RequestedValue, type: { kind: named, name: Amount }, presence: optional }
+  - ir: rule:4.1:ae26d4ac-6
+    digest: fab463a131acbaedc2f3eb4f4f3422064cb8dcde1c7105f584d9c908aa1972db
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: RequestedValue }
+  - ir: key:4.1:RequestedValue.unit_bounds
+    digest: e650773e444b150799cb1892373b724aeba75f9354454c2f995a8605bd5b770a
+    locks: [ with-our-stack ]
+    source: { decision: D-058 }
+    as:
+      role: property
+      object: RequestedValue
+      type:
+        kind: apply
+        constructor: Range
+        arguments: { T: { kind: named, name: PlainInteger } }
+        name: RequestedUnitBoundsRange
+      presence: optional
+  - ir: rule:4.1:ae26d4ac-7
+    digest: 38e55151095a8dc00d560227db3bda0d73f484f30c0e0c53ea6ff8d7dc845f3f
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: RequestedValue }
+  - ir: key:4.1:RequestedValue.commitment_bounds
+    digest: bd31fac2ddf89a563687ce228a0f53ded82aaaf4a8fce139bb0508936722e5ab
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: RequestedValue, type: { kind: named, name: CommitmentBounds }, presence: optional }
+  - ir: rule:4.1:ae26d4ac-8
+    digest: 47183596a8a7d17e4142b0786425130f6ffa6050376317065b425f49f587f372
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: RequestedValue }
+  - ir: key:4.1:RequestedValue.materials_due
+    digest: 00fb3ac81506844f2ab7b9e90bf3e7cc8394d3b0d9cf845a8182227c8de85028
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: RequestedValue, type: { kind: named, name: MaterialsDue }, presence: optional }
+  - ir: rule:4.1:ae26d4ac-9
+    digest: 15071855b98eb69f5ed56b694a0d6e535e53d9c12cf348f2cb7da435c7c042c1
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: RequestedValue }
+  - ir: "key:4.1:RequestedValue.committed_metrics[]"
+    digest: d1acc44c82881bb54e4196416ea6ba430a8490cd59a3631071eb129c2fc2f54c
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: RequestedValue
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: CommittedMetric } } }
+      presence: optional
+  - ir: rule:4.1:ae26d4ac-10
+    digest: 86e90f9b472637baeaa21669a91f158a5e52a557ab194bb57f33fdc7d3518a51
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: RequestedValue }
   - ir: rule:4.1:fae6ebab
     digest: 6029b960f5e992bfd132ecadad927d812706780f56e4c5922571174dec942040
     locks: [ with-open-prs ]
     source: { decision: D-030 }
     as: { role: obligation, party: seller }
-  - ir: field:4.2:description
-    digest: d8f9bd51c2ecf2a1311600c2fad1dda1b1b8f74269700a3f3ae6018a8beba30d
-    source: { rule: domain-row }
-    as: { role: property, object: Proposal, type: { kind: named, name: Text }, presence: required }
+  - ir: rule:4.1:fae6ebab
+    digest: 9ab8f55b64b8d35d9b76de90e0207486bc671e1bd846dd0ea1701c9da007be1a
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:4.1:4311c613
+    digest: b5979e26d5c685062eb0ea9dd7b054ba7b8d20c7eb45ff74b3d45056ef075542
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:4.1:49814af1
+    digest: e244079e56d40cbb4a3f5bcff96f7607ddf9210000bb8a8118748580e75ea551
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1:fbfad0a5
+    digest: 312901af11e2895697390a888b018df34bcf34084f0e2cd20a771ff38e331729
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:4.1:9d47bb1c
+    digest: 4962e152924581675b2bf6bb0289222e18e886f56ed636396dcfa7c86dc8a153
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:4.1:da1773b0
+    digest: 6aa457dc0f2b495f10f8dd3e5ee2a2db88159461acc6dbe373cbe55e5cdb264c
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: code:4.1.1:1
+    digest: 5f380bbe329be6760e05e67d76269b20e297fb3c34b9bf6502f106d8f5b794d7
+    locks: [ with-our-stack ]
+    source: { decision: D-058 }
+    as: { role: informative }
+  - ir: sentence:4.1.1:4bba336f
+    digest: 5f9e26e2f615fdfe8f654570c163ee3619e98aec12a84770b6d3200869f30ef1
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:085d807a
+    digest: 5bc4d739b70e6042f9990ecfb6efa32c3ee79e37ee9499a8e8e59d84008713a7
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:b86f0ddd
+    digest: f3a4bda3210053cc60c622cb3e121a107581e623251f9bf05eea958a670c3103
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:642fcd68
+    digest: 0cbceb0ba68bbf0e47393d94eff711a6dfb94915f0924939836942d842a05b9a
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:87d9c76f
+    digest: 4bd6665899a952cdf85be68d945c240a6f23af2c244525e9ea8bbe229c11058c
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:6c933da9
+    digest: dbe30eca7eec35a551b247228b705f590e83c9844d3cb7a6c4858503569945ac
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:219bf348
+    digest: 12fd20d65e85720cc8217c7aebb3c375206c501b37c9d2eff539982d84e853a6
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:9f0d6559
+    digest: 257733b2e6214ab4a93fceb114f69e2ed2d64bc6e2e358c60fab2cde5540d090
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:66e6fbb3
+    digest: 931771a65a8eb31a27184f9cdaed007b61048f33a83fe508b29116ee6028886c
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:a91a7ba7
+    digest: 89ca247def0f7efbc7bf4e5233bde98de8163ac7bc37fad3b9cc079d179f3575
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:3f083a18
+    digest: 0da5fee4252f96486b4d9ba34ea07856c648b55f911f07a1db40fed7ce4d719b
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:8ca741a7
+    digest: a321c1603021f64117b8f943a026a09c85e5dba0e9d45e1b845ee630bd9af294
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:5c177d70
+    digest: ecd6ff279d7189cb964acd05aeaf71b9b0b93e92e64e6c43f62256b36b0df188
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:ee465300
+    digest: ea391f53ee433d9ae78af2f81f3d8ce7a60552545c693b7f4290188c8d1efbc0
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:b1290f2c
+    digest: ff750a47666824da7ff46f02c2f66d77c344173107e76885ab0db616c52cff76
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:67ab8f6f
+    digest: e07b1c7e7c1fe8574232cacc14d88ff8a4705b18dcc933fef4095426928cd8d3
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:07a18634
+    digest: a25396c2dbefba41fd0e630715533d694be7ba1607fabb1fc814c2dcc254c646
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:ea65ff78
+    digest: d6f170390c3e631240a374147aa911496d794fe6751f628f1cf2363eedf76285
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:f8e55774
+    digest: 421fbceb14a6f69dbeb9061f5c030c953372d608412bc16587c132255bbc6b1a
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:ea066674
+    digest: fd1792021ec8f22300717ab26dbe59d40be0f517b298c58c005d141f2042307e
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:0d226a75
+    digest: 301a67a2f707406e3a81431920ff2b647472ed22eb97f2b3d1a988417d1b9ca6
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:4.1.1:e95eca3f
+    digest: 0094bc8f8b869bc24c45badb4cb62162353a0c38d061c288444eb5e872cec738
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:4.1.1:6e3d2c89
+    digest: a4eced90b997d6c4d28db7e51e09b74f4641d0af099cb94ac709f3b871ac9a76
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:4.1.1:62bc0de7
+    digest: d2159b80cbe54eb6299d736f127db114f5cc8ea89df5318f449885d61a915ef7
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:565dfc29
+    digest: 093fe8b60b7facbacd10eaa8f085f19b6c01c258f82ebf81f4917435c9c87db0
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.1:9fd49903
+    digest: bbb662e8271103cb71ec02e35f69d13674567223b085c05eb29351bc5f4ea514
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:4.1.1:e93caddf
+    digest: c3de0f370a6bd2da02352372e894c929f8dafe8d938d5ea949a6343206259e02
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: consumer }
+  - ir: sentence:4.1.1:b10cb27e
+    digest: 81bb1ef066b7fa9b6dcb37b8a6d4ef42ad03f88247c7beff95f8e9c07c3bbd19
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.3:52da3817
+    digest: 6fecdba314c07c6a850dc46256ec9634c12b6c2ca30311edc94b7061c1a409f5
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:4.1.3:fb70b3cb
+    digest: 60fcb1887f427c7b421f3448509c170666612fbf8921d73ca3ac3064fa06cafb
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:4.1.3:fdeb7c34
+    digest: 5bfffab0421b4f6f0d0eec672c5a64f330edd9eba791f05668ba4b795012dd90
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:4.1.3:dd69dac7
+    digest: 3ba4c1077f2856bb1942f8145bec99a246e3514bcad8982680e5b5dc6b7b028d
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:4.1.3:3984bae3
+    digest: 37a6899dbdf97b98c6ae2afb0021cd78e2004cb6c87a3fa36dc97e9403a09b81
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:4.1.3:e06c57e1
+    digest: 43392f1f110005df6198890fcbf269c68790233cb10cf726a8fa9b9a22e8500b
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:4.1.3:03718402
+    digest: 092cc55c0ada2fda38f021420c13e82af3269b0c45e7623e6f71579d27b5ea0c
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:4.1.3:39b87017
+    digest: d6a03d5c0a8c47ddeb4d7b2fbe68676e72274cab5db8eb29cd019438d75fa663
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.3:031671ad
+    digest: e2f92d02d511f404b08fe0be6002e34627f50a7e27768aaf569a9d4b30a5ad91
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.3:9a678333
+    digest: c27de552ae3875575cbd739ab2e42e8987c123b1a41e752086268f95ff578c3c
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.3:23e07e1c
+    digest: 9ce57f4f72de41ec743d9a850a4c756fd9c912eb75b860c33ae19200d13e89b1
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.3:7f809fd0
+    digest: 8fd02b9e6a8c43e06186fa1b8336eb8cb12c80631255622d18cc82cd0dcb603b
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.3:ee4166ee
+    digest: 56b8c94b44871764e29219c36cae65e78e617a79ad1d63653db6bf2991b55822
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.3:2905c906
+    digest: bb3f0259b3a28ea67693f075247a05041c975684b9dadef174375a45c77318ee
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.3:0efead3c
+    digest: 9fd23526465ec483b78d3f1d7b5a1569abe01de580a0f30061607fc2a58314d4
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.3:379f94d5
+    digest: c86c4658cd476b208a63371a6a5bb362f5d62937e5d92d0df8a1d553a7a4abc2
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:4.1.3:862b74db
+    digest: 3ff132fb956552d2cf2a570951b4636228dfdd0a112020dbd5cd21a513adaf30
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:4.1.4:b3c0c7ee
+    digest: c9c02253f437b8eaeb90308992d6cc91972b6e53d027392465db05f8e1ad0c14
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.4:9ad0a9c8
+    digest: 149fd16e9f8a62e64b757493a1345dc2e8b2f2b70ad41cac84258be409adae72
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.4:3b37e5bb
+    digest: 0055422ac804804afbeec878e4491bfd46e6a4726879838f9bc24ca84ae3ea4d
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:4.1.4:Package.package_id
+    digest: 3e8e6bae92063c2d440f585a826688f8035db163952cd56202bb796f328121a2
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Package, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:4.1.4:373dbf11
+    digest: c6e06fc1d9444d7bdcc3e5836fa9f020ab48bd16bb26e869bc63aa3f5524c62c
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Package }
+  - ir: "key:4.1.4:Package.line_items[]"
+    digest: 329e0bab7d796fff3d9b5f013f76899003018c9badcfdf0c4f3b4873d97715ab
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: Package
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: LineItem } } }
+      presence: required
+  - ir: rule:4.1.4:373dbf11-2
+    digest: 2e91557f05763548101d7c2faf327684a94c4949cc79df5fd55053237155bac6
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Package }
+  - ir: "key:4.1.4:Package.add_ons[]"
+    digest: 5829528a68f99da2bdf0b16b5e0ec5d4a5d25cdeafc7b8781b4114d164542904
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: Package
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: LineItem } } }
+      presence: optional
+  - ir: rule:4.1.4:ae26d4ac
+    digest: eb33612cbedd8536ba5190b3798697b9b34c6a9c4f18f6763cb4f434086c7040
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Package }
+  - ir: "key:4.1.4:Package.min_commitments[]"
+    digest: 3466eba366391adf817b29ce098172020b732bc9ec3c79bba8e868e6aaa87f4d
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: Package
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: MinCommitment } } }
+      presence: optional
+  - ir: rule:4.1.4:ae26d4ac-2
+    digest: 07142e294449cabf62b1ce4e7a7e24c5e07b173d41e67020ded26b8c8d993d52
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Package }
+  - ir: sentence:4.1.4:0ddca2d6
+    digest: 5ef22fe8151d702c79e9deb86d91b893cea0e70a4277b0046478346edd237ae4
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.4:3b9469af
+    digest: 7c2233d4f30ec7d98d23655bfc080d958b8c8210842b80237c27aeb2c70e6cdc
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:4.1.4:MinCommitment.line_item_id
+    digest: 1068aa4245b47cd7c7d84bb06616e542364cb717f40888be5c091defaeb990cb
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: MinCommitment, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:4.1.4:373dbf11-3
+    digest: 907f639262e71a29a4abdf068532ff94df892b34a93a818d315a234205eb5b5b
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: MinCommitment }
+  - ir: sentence:4.1.4:b473baac
+    digest: 32715e52eca05937b4375fd3b78e80787880f680de9b19b6c617acdbe249dffb
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:4.1.4:d0dd8213
+    digest: e9e7b958ad6cff756d28ad747ed60d26a1559c8547d1dc53403346aa3df18d50
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:4.1.4:24987106
+    digest: 1e4a93b54defdd90df838969830a6024324a44963a339750993823a3562f50c5
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:4.1.4:759b4d1f
+    digest: 9aa19d6dc8581fc0b966993bb5af9c54f3d165b8acd8565f8da3994abb0220cd
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: seller }
+  - ir: rule:4.1.4:7d683b70
+    digest: c53afc967c1d7d2675219077935e812c71974852bb2841aa0eca59c972925f34
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:4.1.4:4cae9eae
+    digest: 2fce069045e074e4c5ddd503bee6c3244303eeefe3f602621a07b721eab934fb
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.4:759ac005
+    digest: 531121988c0979ffcdd053952271f4680f4b9e37e5561c93023eebc5ab0bd780
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.4:31c4d5d7
+    digest: 08566c10159407570f4424e30fda77602569af71875ceaed38739779e173c3f4
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.4:ff91db0d
+    digest: 86e5a1d29565ccc7ca1eaa2a684a97246d10ebed7356beb6300a959bf3e726bb
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.4:6bc2a815
+    digest: d4abc1aee56230bdf082e9593d0f455ed1711603694bfe8d66cdc0c67fc3fe53
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.4:86099b57
+    digest: 0302e9b1158b6f87333ddb5cd414f7686dae82bb763caa111492858ddf464757
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.4:e1f30211
+    digest: 63abd90c8b8f0ceac0ebf4a85da9c6ac2ec1d0b0908ea2dae031758bea53d398
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.1.4:5396c293
+    digest: 1870a85863912552161e4d147b8c679a65d7a6600b0e6bd2b5c9fff949ebd2dd
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:4.1.4:e6117ad4
+    digest: bb90e7fff20f4294c077493a28596ca29a005df1d28923c112910b560551ff95
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:4.1.4:63dd7c59
+    digest: 2479d7058187576f29d2745787b09ddfe41f54b34d5d80a85d8baf07b413c35a
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
   - ir: rule:4.2:86398bec
     digest: 0729d80adcf83b399edc0913051d0ccc3c32917608f81f978fb80c7230214344
+    locks: [ main, with-open-prs ]
     source: { rule: presence-statement }
     as: { role: schema, in: Proposal }
   - ir: field:4.2:specifications
     digest: 2557955239ae4bfb7f4a786063ac4250508c2541bc86198ff12bf1a00c56b0f0
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-016, D-017 ] }
     as: { role: property, object: Proposal, type: { kind: named, name: Specifications }, presence: optional }
+  - ir: field:4.2:description
+    digest: d8f9bd51c2ecf2a1311600c2fad1dda1b1b8f74269700a3f3ae6018a8beba30d
+    locks: [ main, with-open-prs ]
+    source: { rule: domain-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: Text }, presence: required }
+  - ir: field:4.2:description
+    digest: f741f0311c23ba6cfb77a404187fdba7545d0a92b7ba38712760ecf4a86b832b
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:4.2:373dbf11
+    digest: 130dbe7e52940b11e04be1b4d8a207b9eefda74e9e4244752e7fc2635db0f5ba
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
+  - ir: field:4.2:media_kit_detail
+    digest: 98405c359500e6ccda919cc364a242423ca10808af742184faa6bff9adc3d5a0
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: PlainString }, presence: optional }
+  - ir: rule:4.2:ae26d4ac
+    digest: 5f10c8149e48a987192103c167db9bc75eaadae97f2daeb302c914f380950095
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
   - ir: "field:4.2:best_for[]"
     digest: 4a9b533b2efb864c58a34a23e06d7788501a0c07cba58bfa9ead7c89e9dcb4c2
+    locks: [ main, with-open-prs ]
+    source: { rule: domain-row }
+    as:
+      role: property
+      object: Proposal
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Text } } }
+      presence: optional
+  - ir: "field:4.2:best_for[]"
+    digest: fa785a686b12c8287bea93b31973a72a44fc601f660d038cb4dcd64cfa91d1e3
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: Proposal
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PlainString } } }
+      presence: optional
+  - ir: rule:4.2:ae26d4ac-2
+    digest: ab21200beff4bb6bcc5fde3682862af4cdb4459b585a7dffac3b4804924675d6
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
+  - ir: "field:4.2:not_suitable_for[]"
+    digest: 90017ea8f4ac27e03fb7a3655c68ef299f3e0d2705575c428bff5865b1da9f2b
+    locks: [ main, with-open-prs ]
     source: { rule: domain-row }
     as:
       role: property
@@ -171,14 +1102,566 @@ entries:
       type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Text } } }
       presence: optional
   - ir: "field:4.2:not_suitable_for[]"
-    digest: 90017ea8f4ac27e03fb7a3655c68ef299f3e0d2705575c428bff5865b1da9f2b
-    source: { rule: domain-row }
+    digest: f730ad1f48b3b951211d96453e818575c2bde0b389346eb239a0958a29830e8d
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
     as:
       role: property
       object: Proposal
-      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: Text } } }
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PlainString } } }
       presence: optional
+  - ir: rule:4.2:ae26d4ac-3
+    digest: 09362743f7a49e6f2fae3afc5b659ea78608844e5acf568c7d3bc11681a7b6a2
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
   - ir: field:4.2:seasonality_notes
     digest: 33869d96c87875efa58c05a56f748e10c70beaf72e89bec328f29de4c6c3ece6
+    locks: [ main, with-open-prs ]
     source: { rule: domain-row }
     as: { role: property, object: Proposal, type: { kind: named, name: Text }, presence: optional }
+  - ir: field:4.2:seasonality_notes
+    digest: ba887f0a6fc13cac29acad0ce87325b6d0f9f10574dc85a6609adb877f24b356
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: Proposal, type: { kind: named, name: PlainString }, presence: optional }
+  - ir: rule:4.2:ae26d4ac-4
+    digest: a73aa7d70049aa3e127e871ec6761e970a4ca8aebe851f9c62b1f007917e725c
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
+  - ir: sentence:4.2:0848d5bd
+    digest: be69e01e4683720d6bddfcac060685b5b2c7aa07aea67061083ee4b4747cc77e
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.2:e31853ae
+    digest: f775877ee07d4c0675f7f0f59af021e0e8026353848aed19113792ff6e7b89c8
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3:0172dee2
+    digest: 05a96e5994c5dd3535c2f77075a35694f32a0ebb49ec2e4450b73bf8e6c8dabf
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3:cc29872f
+    digest: fb600240420ba95d7cc18ef99df5a3de642be573fe6625e38630e3795a0ba0c2
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3:cb70d96f
+    digest: 64a07338f96b132880cda7186c413c89507805985b3b8a70c282b83cebf85d73
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3:2d63383c
+    digest: c67429d486d9694ec5335f82acd63b6e6fc72f053ef74710e66759ce312abb5c
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3:49057986
+    digest: 80c6ccfe9c3b30bcf439e82ce3d687677481387e1281bd982a18ae1f29d4ac51
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3:9e990c7e
+    digest: 949ae5a07e408371ba7cb2a91facd26c6722b293774e16fdb700f0f4f8686275
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3:79b4c9d5
+    digest: 1becaa848ad0f9b0805a2571ab03dea994eb137bec402549e5afebd467603b29
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3:40c869be
+    digest: 0ae0bccb2bdba38e52e22603ff57e834441e2943fe3b754b74f552556bf18f89
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3:0fdeac86
+    digest: 15dec733b5d064423a120e0f0beb65d4937e7ae41979d1294b59b619ad53cb98
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3:e8505912
+    digest: 0ecdce15953a647b929be9c87edde207471e8b06ea5ebf562c83a17bcd511a5a
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3:7862d36d
+    digest: 953c6232a8e0a87790e0a2e16fa12daf38ec483661b1a298daa8efc3f453ac4c
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3:57bc7e08
+    digest: bb8bec02e650f02af0d1bbe2657ac692057402ddb6ceb54e11c16d9d5d0ce17c
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3:44501508
+    digest: 9de007a0461ab972af91b9ab8de8c4fc14cedf1b2892c7e911f7c2169f1818b5
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3:52465c83
+    digest: a33305e6e4e5ed356c850737fdced6746de9bee16ed55ae882f0b3dec26c216c
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: concept:4.3.1:1
+    digest: 5034542855e10c3a6c62a5bc98995732c74c87ecb96220a298beaa58bf521f30
+    locks: [ with-our-stack ]
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: concept:4.3.1:2
+    digest: c4d0882f6e33a518fe2d1a0c58ee6e82ba6bfe9c05092093909f64e3457f6168
+    locks: [ with-our-stack ]
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: concept:4.3.1:3
+    digest: 65fea1c5fe6eb18f88d3ee21ccb9d9f711a418e2a02ac2dd7b90bdf771ad85cf
+    locks: [ with-our-stack ]
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: concept:4.3.1:4
+    digest: b296ce3298abc22ee26c6d577fbff06ca68ea55c35d99c058e5bf0d889fc0263
+    locks: [ with-our-stack ]
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: concept:4.3.1:5
+    digest: 6cd0a2e685745358c5c060e48248dc5818d443dc25cf692bccd60c8ba6cd6c22
+    locks: [ with-our-stack ]
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: rule:4.3.1:344cb94d
+    digest: 93450941ac85f97c706d212a8260a6e97380b2a614c1a14bce219b75afcbacd0
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: concept:4.3.1:6
+    digest: 0168a237df4cc6f4949b9804b31f4857d458103a9ea8378f96f13ed5e44a06cb
+    locks: [ with-our-stack ]
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: concept:4.3.1:7
+    digest: 3d0388eca1fe9a0266332c82fdedd805d902c44dbd61b47cca719b47aad23d8e
+    locks: [ with-our-stack ]
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: concept:4.3.1:8
+    digest: 9a6b42b24d516b28f45d0841e94893c6e52614a326e87355efb9f1c50ca08a4d
+    locks: [ with-our-stack ]
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: concept:4.3.1:9
+    digest: 69785129ad29a9f15ac598769fd6d0a4b08804b13affc070afdf38ddc8e5f5bb
+    locks: [ with-our-stack ]
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: concept:4.3.1:10
+    digest: 09ebf75caad82614223ea30cc5ed7d018c0b9a71a94b6485ad4cc5b2544b4cc4
+    locks: [ with-our-stack ]
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: sentence:4.3.2:3b027dd8
+    digest: b82c3c24fc29c85170038a29bd1744a7484cf68f6107c89b4a8de0d406987889
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.2:3f09fd6a
+    digest: 644f8a3198731e7dc5fb0d6baa70356ca5523294994b1707e5dfbb87fd791182
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.2:7b4f62b9
+    digest: bf4e7e55ea13fe2e03dc5a227feef151b0796cb3ab67c7076598ae5a35395424
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.2:f3624cd7
+    digest: 22ba49382e8019f9a18aed598231e476817d22db4eaafddb705d20b246cb6f1a
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.2:432cde21
+    digest: be49f59d2e2d5dbcca8e20d8f2de6fd6b3e5af293e03275e2d78ad31fce0a7db
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.2:fc89424d
+    digest: bb660716087b4dd028da889ac049c4f8c2b3a8192930ffd0b6662903f66bf213
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.2:1f349c08
+    digest: 6641e56f7ce1163050098bd8251367654c88ae29fcd4b8dc74b667a1fc28d2fd
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.2:6a2e7e12
+    digest: 552431751016a022f14e000fdd7dd664eff4da9e02146b9766c5579735c8d12e
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.2:fdaf195e
+    digest: a478b29245c1bd0912c8eab4a5d5e66ba45f6e45dec21d979895b93e38c2a122
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.2:2a216346
+    digest: 8be925ff6206c678ae863d66d52e8471d0d9bc67f6de5a0d7a55ce1d2baf2864
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: block:4.3.2:10/values:1
+    digest: eac907f1064376194f7d851e51f8f0805d0141dac84ae204d33a87640f7f0644
+    locks: [ with-our-stack ]
+    source: { decision: D-058 }
+    as: { role: informative }
+  - ir: sentence:4.3.2:b7662b7b
+    digest: cff635258af3e7563993ae805e1b5164dd605dca1a3b0ae0469c26699964a9d2
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: block:4.3.2:11/values:1
+    digest: 22eee0f1940429c81bb694a33e8fd031c7af80a2133dbcc56bfd530ab569c8b4
+    locks: [ with-our-stack ]
+    source: { decision: D-058 }
+    as: { role: informative }
+  - ir: sentence:4.3.2:263e2d6f
+    digest: 2a7051a4aec4e81d60322784b3123b1b6d160da97030f421850f89c3e6e04343
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.2:735461af
+    digest: 3a4ac138aae62e06f22d13998ddd09f094879b85e12874abcc3db3f42f463a31
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: block:4.3.2:13/values:1
+    digest: 8f08bfadde868fb12618423e87a98d0bed7272cae472d5cc9b52f4761c2fc31d
+    locks: [ with-our-stack ]
+    source: { decision: D-058 }
+    as: { role: informative }
+  - ir: sentence:4.3.2:2616bec3
+    digest: 9ba8a28f81e03e7e0721c8bb54be3e5623f879bfc10ce18a1e68ae552e013a59
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.2:62e994af
+    digest: cd597f5403179efe9975b736d100aeccf1e17a7f46d6c74ae67f7ee42820fb35
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.2:e0b60730
+    digest: ca8d8fa0adf50a2c9539ed4c021ca3ceece8cd8970da05e69dc71c2f4a1551cf
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:4.3.2:4825c8da
+    digest: 63cab315e04772a46d16a682943f4ad70b37c51095af8f81424f77c554bf81d7
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:4.3.2:131efb6c
+    digest: 4c1a07084adfec99dbdb6ac5a25649be2f083e563069418cf38acf3df6079359
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:4.3.2:72de0cc2
+    digest: b3e5253083c356e414d080e0995c14216afa5acf7c5a6ff6c73a0c5dfda2acb9
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:4.3.2:66f8a6f2
+    digest: f4fb12ad76ee7b3addc993ff22ac2774cb6daddd91dbba7675db431943ccb36f
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:4.3.2:d044b92c
+    digest: c27be7604c1620e42e0676ad54b1d047914dc8d1c7347763aa66eda23d9c1733
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:4.3.2:efa1872a
+    digest: f128806da93eda4bdeced35261ff295bb5e5c263bcfb4101f0fe32fe826c481a
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.2:01ce39af
+    digest: e8156f315af6d2e8ff84cb9015c138a4000498886a665aad1b0d360792a95600
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:4.3.2:29fded3f
+    digest: 16c549cb668a3f1a9d745136f42388d6bfae910c52b7e37fac05a1ee16043c90
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:4.3.2:5b46a741
+    digest: c1397f5df23fb4a5cdeb9ecaebf043b1105ccc658f596b5f92d1134382f7ca37
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:4.3.2:31f66e42
+    digest: 864666506dea509244909c707f725d31c02a0e1c21662702a1495e7ca3738fd5
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:4.3.2:84b5ebab
+    digest: 52279a09a58e49b6d84610422a63b069554beccb6c2dd5c40c9e473fb347e765
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:4.3.3:12aff16a
+    digest: d9f29ba39a4a40437bc043239d0f5ec9a1d6bb52b8e8db1da90d405e69242362
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.3:5fa412e4
+    digest: f50aef45cd2abb8a78775b9698659f8bb5dd4f907194893ec6e3411aec173092
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.3:3d1deac4
+    digest: 6ec4d254aec133fdfb6e93ab8aeb85fd36e798f6dc8e71f53bf2dfac5563da4e
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.3:7bc17500
+    digest: 8480d39d0eba9f8c033e7783d4b67cee84e68b62356c33a28376ace78cf76e66
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.3:993853a6
+    digest: 3062ce37377a8083551f9af12c27d0d1ba6e52fa9f7671bffb29d7613bfa25c8
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.3:d7067bca
+    digest: a7435f4ad09b7748abad34e46b7791deb380c77ca480a22bbe6f90f20c52ab07
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.3.3:9483a37d
+    digest: dbf7e2802298f6eb613b1ba92d2dfa094bd940affb8c6c9ee8c0ee622333ea85
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: concept:4.3.4:1
+    digest: ad3f265095a75254165336bdd534f63f033d147da3488a6fdafa0d13fb4c2c95
+    locks: [ with-our-stack ]
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: concept:4.3.4:2
+    digest: dd563165300e474256ebabdf762de04d81c8e48f3120c960b94e71e050edbe63
+    locks: [ with-our-stack ]
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: rule:4.3.4:6f1237a1
+    digest: 5013f24cebf8be0327b24dbb500ec6a3454dce6a5e8bf6288de7da5e57e001bc
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: concept:4.3.4:3
+    digest: e974cf76d95246c1d01410c2ea30cb316646f79f3bbd2ab96598e65baf7fdc9d
+    locks: [ with-our-stack ]
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: rule:4.3.4:e97d564c
+    digest: 932a8c574fccbf94d2563201e0cde29a38efd3311b1bd49946b177ec15e27afc
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:4.4:fb5323cd
+    digest: d329900e86913bb1173012a803c5b9cfa90328a903dc68b59453ccb10afd727a
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: "field:4.4:change_requests[]"
+    digest: 37848c071eae8107ce3bb5fda622133aae3661efcab5aa4b527dd5583bf9fb93
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: Proposal
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ChangeRequest } } }
+      presence: optional
+  - ir: rule:4.4:ae26d4ac
+    digest: 5ec6486efed740acef18e4f22d988202b337759c1a30612fc01b1a8cfda284b6
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: Proposal }
+  - ir: sentence:4.4:574794ba
+    digest: d785540821416ea3e63ed32e22037343f429ca75d0d0d1447fa2867cd29d6fb9
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:4.4:ChangeRequest.id
+    digest: 9301c189b36eaf245b459d63597e92a4b77f447e62259f79c05447ec408e1582
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ChangeRequest, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:4.4:373dbf11
+    digest: a1d3a9f30d1cf63cb74969ad2b08b2b6de0072278c0261ebcd379f09d4cd1592
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ChangeRequest }
+  - ir: key:4.4:ChangeRequest.baseline
+    digest: a21c367e18159a52d25f88609851c31e21320ad7c847e1412e7fa4ed1652b05c
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ChangeRequest, type: { kind: named, name: VersionRef }, presence: required }
+  - ir: rule:4.4:373dbf11-2
+    digest: a38937bd331aa0b3f6b1728fd14a3e1549626f6bf75b7a397e3eb791ef75d213
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ChangeRequest }
+  - ir: rule:4.4:de17ca68
+    digest: 4a5a11808fec6593d07ce8ce79497090890238e94013a83502285c800c899c4d
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: key:4.4:ChangeRequest.actor
+    digest: 8def2d1ba92a67f694e9da3142071bcb47f9cfa24d3416163622b73884327711
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ChangeRequest, type: { kind: named, name: Side }, presence: required }
+  - ir: rule:4.4:373dbf11-3
+    digest: b2cecb1ea9deb49e9375b6c2909ee4e17db7ff1c8d60fd812ae0d36a144ca10d
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ChangeRequest }
+  - ir: key:4.4:ChangeRequest.at
+    digest: 6a91017e387a4f43f40a658693691ef7862dbfed2a34ca6b412ae813595e95c0
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ChangeRequest, type: { kind: named, name: Instant }, presence: required }
+  - ir: rule:4.4:373dbf11-4
+    digest: e33401e536c81f4a2093a526c6ad4f4b14f3fcd7d85aa307877067acc0a189fe
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ChangeRequest }
+  - ir: key:4.4:ChangeRequest.accountid
+    digest: fbdc1a836ad8a313623cae6e6ad5647f7a243fe4c5d6e409c65d6301b9df3915
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ChangeRequest, type: { kind: named, name: PlainString }, presence: optional }
+  - ir: rule:4.4:ae26d4ac-2
+    digest: 46451f2e1c8de9e033aeda5c730b6ff2965dbf0085746a07f70c209b9e7ecf12
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ChangeRequest }
+  - ir: key:4.4:ChangeRequest.comments
+    digest: ffb9530ad5040636fb05ef2d8664953bd5938455d18973c9d346cbaeb97294fb
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ChangeRequest, type: { kind: named, name: PlainString }, presence: optional }
+  - ir: rule:4.4:ae26d4ac-3
+    digest: 0769bb4a81aeae17d8f5ed67d7f95a39266b937f3e781825bee968d2d8db2c17
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ChangeRequest }
+  - ir: "key:4.4:ChangeRequest.contacts[]"
+    digest: 2d63c167aaf84bfd4ea0c181515a69dcf428cf41c1cfdb20070980b0a31026c5
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: ChangeRequest
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: OpenObject } } }
+      presence: optional
+  - ir: rule:4.4:ae26d4ac-4
+    digest: 19eadc25cce9624e2bd1ba3117b78ae725664b1ea6e099b9fe32222a54d1652e
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ChangeRequest }
+  - ir: key:4.4:ChangeRequest.orderid
+    digest: e2d547e91227664e9b2ca3b86ce36a433cde2f469db6d798621d1ee2d7ae84dd
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ChangeRequest, type: { kind: named, name: PlainString }, presence: conditional }
+  - ir: rule:4.4:9754e43c
+    digest: 0d7152995f7b35be29f0c40654ff3d42d787cf1aa62453b9d62527cf0dfc3d6d
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: ChangeRequest }
+  - ir: key:4.4:ChangeRequest.lineid
+    digest: 6d4ef20151122c543da5c6e6ed60d2d595ff3940761e6862d5339260880ee465
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ChangeRequest, type: { kind: named, name: PlainString }, presence: optional }
+  - ir: rule:4.4:ae26d4ac-5
+    digest: bbd90c03005df82be46b0d2e394376fed04ef9d713abc9356f16c786c7a10699
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ChangeRequest }
+  - ir: key:4.4:ChangeRequest.requesterid
+    digest: a8a10060c8ab069adfb2a3335840d6cad47b9257ac92e827025e1b8d885b0d51
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ChangeRequest, type: { kind: named, name: PlainString }, presence: optional }
+  - ir: rule:4.4:ae26d4ac-6
+    digest: d5515cb31df8febee85ddee6ac8e996cfe1149e795038e9a3832f089c1fc8785
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ChangeRequest }
+  - ir: key:4.4:ChangeRequest.providerdata
+    digest: 577d6443c9f823525ea30ce80f1aff5417f5d973217b0dbf0718be879cb3e385
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ChangeRequest, type: { kind: named, name: OpenObject }, presence: optional }
+  - ir: rule:4.4:ae26d4ac-7
+    digest: eb240a9442566bd671edcb4a10221a9eca49d65393007c121cf15b5a89c169fe
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ChangeRequest }
+  - ir: key:4.4:ChangeRequest.status
+    digest: 40541a326b4a4462449c630637e1a6e9cd3ebcbc8909a8da1ff7129d7ee9caf2
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ChangeRequest, type: { kind: named, name: ApprovalStatus }, presence: optional }
+  - ir: rule:4.4:ae26d4ac-8
+    digest: c711a3c851110cd8f28d9c93393537a5fcedcd1bf56c458246adf1b29c9e31e4
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ChangeRequest }
+  - ir: key:4.4:ChangeRequest.cancellation
+    digest: 73047fac295054d2cae4967784feafd5fddb3b7dabb8218611d0d0457d8c50ac
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ChangeRequest, type: { kind: named, name: CancellationNotice }, presence: optional }
+  - ir: rule:4.4:ae26d4ac-9
+    digest: f474b8d837156120e4557a3196abb68a443b13ae9fcca327ef8e0de5f4deb54e
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ChangeRequest }
+  - ir: key:4.4:ChangeRequest.ext
+    digest: b8ef98a6ba46e630fb9c58f17f3be1335586d44f2af163dd549bfe6e17b6f9b6
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: ChangeRequest
+      type:
+        kind: apply
+        constructor: Map
+        arguments: { K: { kind: named, name: Domain }, V: { kind: named, name: OpenObject } }
+      presence: optional
+  - ir: rule:4.4:ae26d4ac-10
+    digest: 5ebc9944fa3d79168a83bd7e2260496f2eadcaf7b404069f1d749ba79029845e
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ChangeRequest }
+  - ir: sentence:4.4:c5f567dd
+    digest: 7b6ce4a44a7f0ed5b6834a97d10732e234b2fd3c84a84af6531c83bd356e10a1
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:4.4:5c5f200c
+    digest: 6b07e107613c7b840cc5f2fefe632df28a402b439a7a68555cde992e39aae4b4
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }

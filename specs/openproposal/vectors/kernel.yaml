@@ -9,6 +9,7 @@ module: kernel
 rules:
   - rule: marker:3:immutable
     digest: 36e4c2830d95e3c4ae4166cdaccae23edbe3bfa8a26898faea72ba1cb8e37586
+    locks: [main, with-open-prs]
     decision: D-034
     type: LineItem
     valid:
@@ -28,6 +29,7 @@ rules:
 
   - rule: marker:3:seller-set
     digest: 143411b52aa9e85874cc5f79024d330988c510ddf7f2981d59408e54a8730a60
+    locks: [main, with-open-prs]
     decision: D-034
     type: LineItem
     valid:
@@ -50,6 +52,7 @@ rules:
 
   - rule: marker:3:selectable
     digest: 9d4920aaf4e7581b9e328b70600205e70277c7ca1a1f6275a8736c157cd1999d
+    locks: [main, with-open-prs]
     decision: D-034
     type: LineItem
     valid:
@@ -66,6 +69,7 @@ rules:
 
   - rule: marker:3:settable
     digest: 66671c35883697ab396f64f940b5566cca0b389bef1aa9fcaed09f2b8c20d961
+    locks: [main, with-open-prs]
     decision: D-034
     type: LineItem
     valid:
@@ -79,6 +83,7 @@ rules:
 
   - rule: marker:3:supplied
     digest: ef075b4b9dcb9458ccaa36725478dc9e802f29a2ecefe182844fc36f506f69c2
+    locks: [main, with-open-prs]
     decision: D-034
     type: LineItem
     valid:
@@ -92,6 +97,7 @@ rules:
 
   - rule: marker:3:requestable
     digest: 0b447aa32ebfda424aa6e3d5c1f9e47d6189e495400007b71e0caba46fd695f5
+    locks: [main, with-open-prs]
     decision: D-034
     type: LineItem
     valid:
@@ -111,6 +117,7 @@ rules:
 
   - rule: marker:3:derived
     digest: 7780967a402373bc1adc17783a9a589c88cb96424ef5908103565641580781df
+    locks: [main, with-open-prs]
     decision: D-034
     type: LineItem
     valid:
@@ -127,6 +134,7 @@ rules:
 
   - rule: rule:2.2:06ccee9f
     digest: 88f6179c8487ecb60b3f98de8b1ecbbec92e618a36e441133f4f4447957c23b7
+    locks: [main, with-open-prs]
     decision: D-035
     valid:
       - value:
@@ -139,3 +147,139 @@ rules:
       - value:
           status: agreed
           audiences: { available: [{ catalog_ref: examplepub/audiences/smb-decision-makers@3 }], included: [] }
+
+  # `VersionRef.seller_domain` REQUIRED when the `VersionRef` is outside its proposal (D-060).
+  - rule: rule:2.2:e46f15c4
+    digest: 842f144cbb538352e229fb3aafe5bbb71a204f09e1aeb96e1c3d14aa72935dae
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:2.2:VersionRef.seller_domain"]
+    valid:
+      - {"value": {"proposal_id": "examplepub-agencya-custom-q4-2026", "version": 2, "seller_domain": "examplepub.example"}, "response": "process"}
+    invalid:
+      - {"value": {"proposal_id": "examplepub-agencya-custom-q4-2026", "version": 2}, "response": "process"}
+
+  # `ErrorObject.version` REQUIRED when the request names a proposal the requester may read (D-060).
+  - rule: rule:2.4:3b0456cb
+    digest: a62c2e41efb1e1379726c47c217e9704b8d29d61c9a1bfac33f33a5c7b284a36
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:2.4:ErrorObject.version"]
+    valid:
+      - {"value": {"code": "validation", "detail": "examplepub-q4-sports", "retry": "same", "version": 2}, "response": "process"}
+    invalid:
+      - {"value": {"code": "validation", "detail": "examplepub-q4-sports", "retry": "same"}, "response": "process"}
+
+  - rule: marker:3:immutable
+    digest: 36e4c2830d95e3c4ae4166cdaccae23edbe3bfa8a26898faea72ba1cb8e37586
+    locks: [with-our-stack]
+    decision: D-034
+    type: LineItem
+    valid:
+      - {"party": "seller", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "registry_gated", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}}
+    invalid:
+      - {"party": "seller", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}, "after": {"channel": "dooh", "line_item_id": "streaming-audio-2", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}}
+      - {"party": "buyer", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}, "after": {"channel": "display", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}}
+
+  - rule: marker:3:seller-set
+    digest: 94e2c7f4738dab5dbf24aee02a582e7d10e43dd4f3aa76237063215e6867f186
+    locks: [with-our-stack]
+    decision: D-034
+    type: LineItem
+    valid:
+      - {"party": "seller", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "registry_gated", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}}
+    invalid:
+      - {"party": "buyer", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "registry_gated", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}}
+      - {"party": "seller", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "agreed", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "agreed", "transaction_mechanism": {"available": [], "included": []}, "visibility": "registry_gated", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}}
+
+  - rule: marker:3:selectable
+    digest: 8a003787c373122f307a428826b4ca094f064f90fc1877096d8f8232946e3a51
+    locks: [with-our-stack]
+    decision: D-034
+    type: LineItem
+    valid:
+      - {"party": "buyer", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [{"id": "preferred_deal", "delivery_type": "non_guaranteed"}], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [{"id": "preferred_deal", "delivery_type": "non_guaranteed"}], "included": [], "selected": ["preferred_deal"]}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}}
+    invalid:
+      - {"party": "buyer", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [{"id": "preferred_deal", "delivery_type": "non_guaranteed"}], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}}
+
+  - rule: marker:3:settable
+    digest: aadea752f5c312037a97353c1e8c88c591c5b2db26ec4ae59963b9490f47507b
+    locks: [with-our-stack]
+    decision: D-034
+    type: LineItem
+    valid:
+      - {"party": "buyer", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "geo": {"allowed": ["US", "CA"], "default": {"include": ["US"]}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "geo": {"allowed": ["US", "CA"], "default": {"include": ["US"]}, "value": {"include": ["CA"]}}}}
+    invalid:
+      - {"party": "buyer", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "geo": {"allowed": ["US", "CA"], "default": {"include": ["US"]}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "geo": {"allowed": ["US", "CA", "MX"], "default": {"include": ["US"]}}}}
+
+  - rule: marker:3:supplied
+    digest: ef075b4b9dcb9458ccaa36725478dc9e802f29a2ecefe182844fc36f506f69c2
+    locks: [with-our-stack]
+    decision: D-034
+    type: LineItem
+    valid:
+      - {"party": "buyer", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "exclusions": {"keywords": ["crypto"]}}}
+    invalid:
+      - {"party": "seller", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "exclusions": {"keywords": ["crypto"]}}}
+
+  - rule: marker:3:requestable
+    digest: 6848566b78555a6b35a505cd2a1f627422f6519b85d870dd3a1163f3a9756102
+    locks: [with-our-stack]
+    decision: D-034
+    type: LineItem
+    valid:
+      - {"party": "seller", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "materials_due": {"at": "2026-10-01T23:59:59Z"}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "materials_due": {"at": "2026-10-08T23:59:59Z"}}}
+    invalid:
+      - {"party": "buyer", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "materials_due": {"at": "2026-10-01T23:59:59Z"}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "materials_due": {"at": "2026-10-08T23:59:59Z"}}}
+
+  - rule: marker:3:derived
+    digest: b6358d1160fc01ac4b4be0f9f0ecd7ddc19b6045c1ea4392f00449af12513592
+    locks: [with-our-stack]
+    decision: D-034
+    type: LineItem
+    valid:
+      - {"party": "seller", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [{"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "agreed_rate": 18}], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [{"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "agreed_rate": 18}], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "registry_gated", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}}
+    invalid:
+      - {"party": "buyer", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [{"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "agreed_rate": 18}], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [{"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "agreed_rate": 12}], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}}
+      - {"party": "seller", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [{"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "agreed_rate": 18}], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [{"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "agreed_rate": 12}], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}}
+
+  - rule: marker:3:lifecycle
+    digest: 524814444ede737ab3ed5b2ece11b389b9daa7f0be9b8f98dbd2f3ebd083f218
+    locks: [with-our-stack]
+    decision: D-034
+    type: LineItem
+    valid:
+      - {"party": "seller", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "published", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "sold_out", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}}
+    invalid:
+      - {"party": "buyer", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "published", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "sold_out", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}}
+
+  - rule: marker:3:recorded
+    digest: 5cb60abe2aa69153b9cf499b61dd6e5c83b2fed00f14493272d0d80f71978ea0
+    locks: [with-our-stack]
+    decision: D-034
+    type: LineItem
+    valid:
+      - {"party": "seller", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "external_references": [{"id": "345233", "namespace": "examplepub-q4-sports", "reference_type": "order", "system": "orders.examplepub.example"}]}}
+    invalid:
+      - {"party": "seller", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "external_references": [{"id": "345233", "namespace": "examplepub-q4-sports", "reference_type": "order", "system": "orders.examplepub.example"}]}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "external_references": []}}
+      - {"party": "seller", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "external_references": [{"id": "345233", "namespace": "examplepub-q4-sports", "reference_type": "order", "system": "orders.examplepub.example"}]}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "external_references": [{"id": "999", "namespace": "examplepub-q4-sports", "reference_type": "order", "system": "orders.examplepub.example"}]}}
+
+  - rule: marker:3:asserted
+    digest: adac5c0cbcb93033b5776a28f4fb27bd8ccc72bdd570f075d9626cba443664cd
+    locks: [with-our-stack]
+    decision: D-034
+    type: LineItem
+    valid:
+      - {"party": "seller", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "addressable_scale": {"quantity": 3200000, "unit": "examplepub.example:podcast-host-read", "window": {"end": "2026-12-31T23:59:59Z", "start": "2026-10-01T00:00:00Z"}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "addressable_scale": {"quantity": 3201000, "unit": "examplepub.example:podcast-host-read", "window": {"end": "2026-12-31T23:59:59Z", "start": "2026-10-01T00:00:00Z"}}}}
+    invalid:
+      - {"party": "buyer", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "addressable_scale": {"quantity": 3200000, "unit": "examplepub.example:podcast-host-read", "window": {"end": "2026-12-31T23:59:59Z", "start": "2026-10-01T00:00:00Z"}}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "addressable_scale": {"quantity": 3201000, "unit": "examplepub.example:podcast-host-read", "window": {"end": "2026-12-31T23:59:59Z", "start": "2026-10-01T00:00:00Z"}}}}
+
+  - rule: marker:3:mixed
+    digest: 7c5eab99d5a8d933cf681a1e8b30c1c5840aacfb4dd49681e2ac6f563b2d2bc4
+    locks: [with-our-stack]
+    decision: D-034
+    type: LineItem
+    valid:
+      - {"party": "buyer", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "buyer_requirements": {"allowed_dsps": ["dsp-a.example", "dsp-b.example"], "seat_owner": {"domain": "examplepub.example", "legal_name": "Example Publisher US", "registry_id": "reg:examplepub-digital"}, "seats": {"dsp": "dsp-a.example", "ids": ["seat-99812", "seat-99813"]}, "seats_expected": true}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "buyer_requirements": {"allowed_dsps": ["dsp-a.example", "dsp-b.example"], "seat_owner": {"domain": "examplepub.example", "legal_name": "Example Publisher US", "registry_id": "reg:examplepub-digital"}, "seats": {"dsp": "dsp-a.example", "ids": ["seat-1"]}, "seats_expected": true}}}
+    invalid:
+      - {"party": "buyer", "before": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "buyer_requirements": {"allowed_dsps": ["dsp-a.example", "dsp-b.example"], "seat_owner": {"domain": "examplepub.example", "legal_name": "Example Publisher US", "registry_id": "reg:examplepub-digital"}, "seats": {"dsp": "dsp-a.example", "ids": ["seat-99812", "seat-99813"]}, "seats_expected": true}}, "after": {"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "buyer_requirements": {"allowed_dsps": ["dsp-z.example"], "seat_owner": {"domain": "examplepub.example", "legal_name": "Example Publisher US", "registry_id": "reg:examplepub-digital"}, "seats": {"dsp": "dsp-a.example", "ids": ["seat-99812", "seat-99813"]}, "seats_expected": true}}}

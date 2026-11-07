@@ -461,6 +461,8 @@ export function diffModels(from: ModelDoc, to: ModelDoc): Change[] {
         const u = terms.get(canonicalJson(t.value));
         if (!u) add("breaking", name, "removed-term", `${name} drops ${JSON.stringify(t.value)}`, String(t.value));
         else if (t.annotation !== u.annotation) add("annotation", name, "description", `${name} ${JSON.stringify(t.value)}'s label changes`, String(t.value));
+        // A name a decision gives a code is prose too: the code and what it accepts are the same.
+        else if (t.title !== u.title) add("annotation", name, "description", `${name} ${JSON.stringify(t.value)}'s name changes`, String(t.value));
       }
       const had = new Set(a.terms.map((t) => canonicalJson(t.value)));
       for (const t of b.terms) if (!had.has(canonicalJson(t.value))) add("additive", name, "added-term", `${name} adds ${JSON.stringify(t.value)}`, String(t.value));

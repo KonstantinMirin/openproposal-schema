@@ -13,6 +13,7 @@ import * as mapping from "./mapping.ts";
 import * as meta from "./meta.ts";
 import * as model from "./model.ts";
 import * as outputs from "./outputs.ts";
+import * as proto from "./proto.ts";
 import * as release from "./release.ts";
 import * as reports from "./reports.ts";
 import * as sdk from "./sdk.ts";
@@ -33,6 +34,7 @@ const MODULES: Record<string, Record<string, unknown>> = {
   "gates/reports.ts": reports,
   "gates/fidelity.ts": fidelity,
   "gates/enum-drift.ts": enumDrift,
+  "gates/proto.ts": proto,
   "gates/registry.ts": registry,
   "gates/variant.ts": variant,
   "gates/site.ts": site,

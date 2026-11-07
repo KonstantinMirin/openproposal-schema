@@ -1,0 +1,1325 @@
+{
+  "$defs": {
+    "AssentEntry": {
+      "additionalProperties": false,
+      "else": {
+        "if": {
+          "properties": {
+            "role": {
+              "const": "decline"
+            }
+          },
+          "required": [
+            "role"
+          ]
+        },
+        "then": {
+          "required": [
+            "ground"
+          ]
+        }
+      },
+      "if": {
+        "properties": {
+          "role": {
+            "const": "commitment"
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "properties": {
+        "at": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Instant",
+          "description": "When the party wrote the entry, by its own statement. No rule reads order from it"
+        },
+        "ground": {
+          "$ref": "#/$defs/AssentEntryGround",
+          "description": "Why the seller declined. Core terms: `availability` | `exclusivity` | `terms`, the grounds of § 4.3.2. Absent on any other entry. A receiver that doesn't know a term still reads the entry as a `decline`"
+        },
+        "idempotency_key": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "Buyer-generated, unique per `commit`, opaque, and scoped to one buyer and seller pair. The seller MUST NOT interpret it (§ 5.6.1)"
+        },
+        "line_item_ids": {
+          "description": "The line items the entry names. MUST be non-empty",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "array"
+        },
+        "record_digest": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Digest",
+          "description": "Of the binding record for the line items in `line_item_ids[]` (§ 4.1.1)"
+        },
+        "role": {
+          "$ref": "#/$defs/AssentEntryRole",
+          "description": "`commitment` | `acceptance` | `withdrawal` | `decline`. It says what the entry does, and it implies the party"
+        },
+        "version": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "The `version` of the record the digest was computed over. `version` is outside the binding record, so the entry binds it"
+        }
+      },
+      "required": [
+        "at",
+        "line_item_ids",
+        "record_digest",
+        "role",
+        "version"
+      ],
+      "then": {
+        "required": [
+          "idempotency_key"
+        ]
+      },
+      "type": "object"
+    },
+    "AssentEntryGround": {
+      "anyOf": [
+        {
+          "enum": [
+            "availability",
+            "exclusivity",
+            "terms"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "AssentEntryRole": {
+      "enum": [
+        "commitment",
+        "acceptance",
+        "withdrawal",
+        "decline"
+      ],
+      "type": "string"
+    },
+    "Availability": {
+      "additionalProperties": false,
+      "properties": {
+        "certainty": {
+          "$ref": "#/$defs/AvailabilityCertainty",
+          "description": "`forecast` | `reservable`. `forecast`: the seller's estimate of the quantity. `reservable`: the quantity the seller says it can reserve for `window`. MUST be `forecast` when the line item's `delivery_type` (§ 5.9) is `non_guaranteed`"
+        },
+        "computed_at": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Instant",
+          "description": "When the seller computed it"
+        },
+        "granularity": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/CalendarUnit",
+          "description": "The bucket `quantity` counts per, within `window`. Absent: `quantity` is the total over `window`"
+        },
+        "quantity": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainNumber",
+          "description": "How many. It can be fractional where the unit is, such as `rating_points` per `day`"
+        },
+        "unit": {
+          "$ref": "#/$defs/AvailabilityUnit",
+          "description": "What `quantity` counts. Core terms: the `unit` terms of § 5.6.5, and `slots_per_loop` (as the § 5.2.4 key) | `unit_periods` (one unit for one period, such as a board for a 4-week cycle). A receiver that doesn't know a term can't compare the figure, and still reads the line item"
+        },
+        "window": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Interval",
+          "description": "The dates `quantity` covers. On a read (§ 3.3) or a decline (§ 5.6.1), the flight the buyer sent"
+        }
+      },
+      "required": [
+        "certainty",
+        "computed_at",
+        "quantity",
+        "unit",
+        "window"
+      ],
+      "type": "object"
+    },
+    "AvailabilityCertainty": {
+      "enum": [
+        "forecast",
+        "reservable"
+      ],
+      "type": "string"
+    },
+    "AvailabilityUnit": {
+      "anyOf": [
+        {
+          "enum": [
+            "impressions",
+            "viewable_impressions",
+            "clicks",
+            "completed_views",
+            "views",
+            "rating_points",
+            "actions",
+            "plays",
+            "hours",
+            "days",
+            "weeks",
+            "slots_per_loop",
+            "unit_periods"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "BuyerWritesAudienceSelectable": {
+      "additionalProperties": false,
+      "properties": {
+        "combine": {
+          "$ref": "#/$defs/BuyerWritesSelectable",
+          "description": "The line item's `audiences.combine`, projected to `selected[]`."
+        },
+        "excluded": {
+          "description": "The buyer's write: option ids of options whose `excludable` is `true`, disjoint from the seller audiences in effect. `max_select` does not count them",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "array"
+        },
+        "selected": {
+          "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "BuyerWritesBuyerRequirements": {
+      "additionalProperties": false,
+      "properties": {
+        "seat_owner": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Party",
+          "description": "The legal entity that owns the seats. Absent: the `buyer`"
+        },
+        "seats": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SeatRef",
+          "description": "The buyer's seats on the deal, as the Deals API 1.0 `wseat`"
+        }
+      },
+      "type": "object"
+    },
+    "BuyerWritesDeviceBounds": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainIntegerNarrowing",
+          "description": "The buyer's value."
+        }
+      },
+      "type": "object"
+    },
+    "BuyerWritesFrequencyCap": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "$ref": "#/$defs/BuyerWritesSettableRange",
+          "description": "The line item's `frequency_cap.count`, projected to `value`."
+        }
+      },
+      "type": "object"
+    },
+    "BuyerWritesGeoBounds": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/GeoCodeNarrowing",
+          "description": "The buyer's value."
+        }
+      },
+      "type": "object"
+    },
+    "BuyerWritesSelectable": {
+      "additionalProperties": false,
+      "properties": {
+        "selected": {
+          "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "BuyerWritesSettable": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/ClockWindowNarrowing",
+          "description": "The buyer's value."
+        }
+      },
+      "type": "object"
+    },
+    "BuyerWritesSettableRange": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "The buyer's value, between the bounds inclusive."
+        }
+      },
+      "type": "object"
+    },
+    "BuyerWritesShortfallRemedy": {
+      "additionalProperties": false,
+      "properties": {
+        "selected": {
+          "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "CancellationNotice": {
+      "additionalProperties": false,
+      "properties": {
+        "cancelled_share": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Fraction",
+          "description": "The share of the remaining commitment cancelled, up to the `max_share` that applies"
+        },
+        "notice_received_at": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Instant",
+          "description": "When the seller received notice"
+        },
+        "option_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "The `id` of the option in effect that the notice exercises"
+        },
+        "requested_effective_at": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Instant",
+          "description": "The effective date the buyer asks for"
+        }
+      },
+      "required": [
+        "cancelled_share",
+        "notice_received_at",
+        "option_id",
+        "requested_effective_at"
+      ],
+      "type": "object"
+    },
+    "CancellationOption": {
+      "additionalProperties": false,
+      "properties": {
+        "dated_shares": {
+          "description": "Dates with their own `max_share`. Outside every entry's `window`, the top-level `max_share` applies",
+          "items": {
+            "$ref": "#/$defs/DatedShare"
+          },
+          "type": "array"
+        },
+        "fees": {
+          "description": "The fee, by how long before the reference date notice arrives. MUST be non-empty",
+          "items": {
+            "$ref": "#/$defs/Fee"
+          },
+          "type": "array"
+        },
+        "id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "Option id (§ 3.1)"
+        },
+        "max_share": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Fraction",
+          "description": "Cancellable share of the remaining commitment. `0`: non-cancellable"
+        },
+        "notice_duration": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Duration",
+          "description": "Time from notice received to the earliest effective date: `P14D` is 14 days, `P0D` immediate"
+        },
+        "notice_reference": {
+          "$ref": "#/$defs/CancellationOptionNoticeReference",
+          "description": "The date `before_reference` counts to. Core terms: `flight` (default) | `install_date`. `flight`: `commitment.flight.start`. `install_date`: the posting or install date. No key in the record holds that date, so a fee that counts to it can't be computed from the record"
+        }
+      },
+      "required": [
+        "fees",
+        "id",
+        "max_share",
+        "notice_duration"
+      ],
+      "type": "object"
+    },
+    "CancellationOptionNoticeReference": {
+      "anyOf": [
+        {
+          "enum": [
+            "flight",
+            "install_date"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "CancellationPolicySelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, `selected[]` the buyer's choice, which replaces it, and `deltas` the price of each option outside `included[]`, each by option id.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "#/$defs/CancellationOption"
+          },
+          "type": "array"
+        },
+        "deltas": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Delta"
+          },
+          "description": "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta.",
+          "propertyNames": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "object"
+        },
+        "included": {
+          "description": "The options in the base rate, by option id.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "The most options that may be in effect."
+        },
+        "selected": {
+          "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "available",
+        "included"
+      ],
+      "type": "object"
+    },
+    "Commit": {
+      "additionalProperties": false,
+      "properties": {
+        "entry": {
+          "$ref": "#/$defs/AssentEntry",
+          "description": "The buyer's entry (§ 4.1.2), with `role: commitment`"
+        },
+        "writes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/LineItemWrites"
+          },
+          "description": "The buyer's writes (§ 3.4), keyed by each `line_item_id` that `entry.line_item_ids[]` names",
+          "propertyNames": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "entry",
+        "writes"
+      ],
+      "type": "object"
+    },
+    "CommitResult": {
+      "additionalProperties": false,
+      "properties": {
+        "availability": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Availability"
+          },
+          "description": "The figures that `decline` states, keyed by `line_item_id`. They are not part of the entry",
+          "propertyNames": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "object"
+        },
+        "entries": {
+          "description": "The buyer's `commitment` entry, then each matching `acceptance`, `decline`, or `withdrawal` entry written after it in `assent[]`",
+          "items": {
+            "$ref": "#/$defs/AssentEntry"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "entries"
+      ],
+      "type": "object"
+    },
+    "Commitment": {
+      "additionalProperties": false,
+      "properties": {
+        "advertisers": {
+          "description": "Whom the spend is for. It holds at least one entry",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Party"
+          },
+          "type": "array"
+        },
+        "amount": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainNumber",
+          "description": "The figure committed: an `Amount` when `basis` is `spend`, otherwise a whole number of the entry's units (§ 5.6.5)"
+        },
+        "basis": {
+          "$ref": "#/$defs/CommitmentAmountBasis",
+          "description": "`spend` | `units`"
+        },
+        "derived_units": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "The committed units, as § 5.6.5 derives them, whether or not this key is written. A written value is a copy, outside the record (§ 4.1.1); where it differs, the § 5.6.5 result applies"
+        },
+        "flight": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Interval",
+          "description": "The buyer's campaign. Distinct from `offer_window`"
+        },
+        "pricing_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "The entry the buyer commits under"
+        }
+      },
+      "required": [
+        "advertisers",
+        "amount",
+        "basis",
+        "flight"
+      ],
+      "type": "object"
+    },
+    "CommitmentAmount": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainNumber",
+          "description": "The figure committed: an `Amount` when `basis` is `spend`, otherwise a whole number of the entry's units (§ 5.6.5)"
+        },
+        "basis": {
+          "$ref": "#/$defs/CommitmentAmountBasis",
+          "description": "`spend` | `units`"
+        }
+      },
+      "required": [
+        "amount",
+        "basis"
+      ],
+      "type": "object"
+    },
+    "CommitmentAmountBasis": {
+      "enum": [
+        "spend",
+        "units"
+      ],
+      "type": "string"
+    },
+    "CommitmentBounds": {
+      "additionalProperties": false,
+      "properties": {
+        "earliest_start": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Instant",
+          "description": "Informative: the earliest `commitment.flight.start` the seller expects"
+        },
+        "latest_end": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Instant",
+          "description": "Informative: the latest `commitment.flight.end` the seller expects"
+        },
+        "spend": {
+          "$ref": "#/$defs/SpendRange",
+          "description": "Bounds on the seller total (§ 5.6.5)"
+        }
+      },
+      "type": "object"
+    },
+    "CostParameters": {
+      "additionalProperties": false,
+      "properties": {
+        "action_source": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Measurer",
+          "description": "Who reports the action"
+        },
+        "action_type": {
+          "$ref": "#/$defs/CostParametersActionType",
+          "description": "The kind of action counted, such as `shop.example:purchase`. This version lists no core terms"
+        },
+        "attribution_window": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Duration",
+          "description": "How long after exposure an action counts"
+        },
+        "demographic": {
+          "$ref": "#/$defs/CostParametersDemographic",
+          "description": "The rated demographic, such as `ratings.example:adults_25_54`. Its definition states whether co-viewers and impressions of unknown age count, or says `unknown`. This version lists no core terms"
+        },
+        "rate_unit": {
+          "$ref": "#/$defs/CostParametersRateUnit",
+          "description": "`hour` | `day` | `week`. The unit the rate buys, counted in elapsed units"
+        },
+        "rating_source": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Measurer",
+          "description": "Who supplies the ratings"
+        },
+        "view_fraction": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Fraction",
+          "description": "The fraction of the creative played that makes a view. Absent when `view_s` is present"
+        },
+        "view_s": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "Seconds played that make a view. Absent when `view_fraction` is present"
+        },
+        "viewability_standard": {
+          "$ref": "#/$defs/CostParametersViewabilityStandard",
+          "description": "The viewability standard that counts a unit. Core term: `mrc`, the MRC guidelines that `viewable_rate` cites (§ 5.7.1)"
+        }
+      },
+      "type": "object"
+    },
+    "CostParametersActionType": {
+      "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm",
+      "description": "No core terms are listed yet, so every term is namespaced."
+    },
+    "CostParametersDemographic": {
+      "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm",
+      "description": "No core terms are listed yet, so every term is namespaced."
+    },
+    "CostParametersRateUnit": {
+      "enum": [
+        "hour",
+        "day",
+        "week"
+      ],
+      "type": "string"
+    },
+    "CostParametersViewabilityStandard": {
+      "anyOf": [
+        {
+          "enum": [
+            "mrc"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "DatedShare": {
+      "additionalProperties": false,
+      "properties": {
+        "max_share": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Fraction",
+          "description": "Cancellable share of the remaining commitment when this entry applies"
+        },
+        "window": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Interval",
+          "description": "The dates it covers. An option's windows don't overlap"
+        }
+      },
+      "required": [
+        "max_share",
+        "window"
+      ],
+      "type": "object"
+    },
+    "DeliveryCounting": {
+      "additionalProperties": false,
+      "properties": {
+        "impression_multiplier": {
+          "$ref": "#/$defs/ImpressionMultiplier",
+          "description": "What turns a play into impressions. A line item that counts only plays needs none"
+        },
+        "partial_play_credit": {
+          "$ref": "#/$defs/DeliveryCountingPartialPlayCredit",
+          "description": "What a display on fewer than `min_screens_per_play` screens counts. Core terms: `none` (no play) | `pro_rata` (screens played ÷ `min_screens_per_play`)"
+        },
+        "play_tolerance_ms": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "How far short of its full duration a play may end and still count"
+        },
+        "proof_of_performance": {
+          "$ref": "#/$defs/ProofOfPerformance",
+          "description": "Who logs the plays and what the buyer receives"
+        }
+      },
+      "required": [
+        "play_tolerance_ms",
+        "proof_of_performance"
+      ],
+      "type": "object"
+    },
+    "DeliveryCountingPartialPlayCredit": {
+      "anyOf": [
+        {
+          "enum": [
+            "none",
+            "pro_rata"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "ExclusivityOption": {
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "scope": {
+            "const": "category"
+          }
+        },
+        "required": [
+          "scope"
+        ]
+      },
+      "properties": {
+        "categories": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/TaxonomyCodes",
+          "description": "`taxonomy` per AdCOM 1.0 List: Category Taxonomies. An id covers its descendants"
+        },
+        "competitors": {
+          "description": "Advertiser domains also excluded",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/RegistrableDomain"
+          },
+          "type": "array"
+        },
+        "id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "Option id (§ 3.1)"
+        },
+        "scope": {
+          "$ref": "#/$defs/ExclusivityOptionScope",
+          "description": "`category` | `sole`. `category`: no other advertiser in `categories`. `sole`: no other advertiser"
+        },
+        "separation": {
+          "$ref": "#/$defs/ExclusivityOptionSeparation",
+          "description": "Where the term holds. Core terms: `inventory` (all of this line item) | `page` (each page) | `pod` (each ad pod) | `stream` (each content stream an ad server fills) | `episode` (each podcast episode) | `loop` (each DOOH screen's loop) | `location` (each venue or site of this line item's properties, static or digital) | `paid_zone` (the part of each venue or site of this line item's properties past its paid entry, such as inside a station's fare gates)"
+        },
+        "window": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Interval",
+          "description": "The dates the term holds, only where they fall inside `commitment.flight`. Default: the whole flight. With no overlap, the term holds on no date and the option's deltas still count (§ 5.6)"
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "separation"
+      ],
+      "then": {
+        "required": [
+          "categories"
+        ]
+      },
+      "type": "object"
+    },
+    "ExclusivityOptionScope": {
+      "enum": [
+        "category",
+        "sole"
+      ],
+      "type": "string"
+    },
+    "ExclusivityOptionSeparation": {
+      "anyOf": [
+        {
+          "enum": [
+            "inventory",
+            "page",
+            "pod",
+            "stream",
+            "episode",
+            "loop",
+            "location",
+            "paid_zone"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "ExclusivitySelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, `selected[]` the buyer's choice, which replaces it, and `deltas` the price of each option outside `included[]`, each by option id.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "#/$defs/ExclusivityOption"
+          },
+          "type": "array"
+        },
+        "deltas": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Delta"
+          },
+          "description": "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta.",
+          "propertyNames": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "object"
+        },
+        "included": {
+          "description": "The options in the base rate, by option id.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "The most options that may be in effect."
+        },
+        "selected": {
+          "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "available",
+        "included"
+      ],
+      "type": "object"
+    },
+    "Fee": {
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "calculation": {
+            "const": "fixed"
+          }
+        },
+        "required": [
+          "calculation"
+        ]
+      },
+      "properties": {
+        "amount": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount",
+          "description": "The fee as money"
+        },
+        "before_reference": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Duration",
+          "description": "Default `P0D`. Measured from notice received to the `notice_reference` date, or to the `window.start` of the `dated_shares[]` entry that applies. The entry with the longest `before_reference` the notice meets applies; notice that meets none takes the shortest"
+        },
+        "calculation": {
+          "$ref": "#/$defs/FeeCalculation",
+          "description": "`none` | `cancelled` | `commitment` | `fixed`. `none`: no fee. `cancelled`: `share` of the cancelled amount. `commitment`: `share` of `commitment.amount` without `delta_flat` charges, whatever has been delivered. `fixed`: `amount`"
+        },
+        "share": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Fraction",
+          "description": "The fee as a share"
+        }
+      },
+      "required": [
+        "calculation"
+      ],
+      "then": {
+        "required": [
+          "amount"
+        ]
+      },
+      "type": "object"
+    },
+    "FeeCalculation": {
+      "enum": [
+        "none",
+        "cancelled",
+        "commitment",
+        "fixed"
+      ],
+      "type": "string"
+    },
+    "Hold": {
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "status": {
+            "const": "held"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "properties": {
+        "held_availability": {
+          "$ref": "#/$defs/Availability",
+          "description": "What the hold reserves, as the seller states it on a grant or a re-offer. It can be less than `requested_terms` asks"
+        },
+        "position": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "Seller-set, 1 for first in line, in the order granted. A later hold moves up only when the one ahead expires, is released or converts. Holds on the same inventory reserve it in that order, so a later hold reserves only what the holds granted ahead of it leave (§ 5.6.1)"
+        },
+        "reference": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "Seller-set. The seller's id for the reservation, so a buyer can reconcile a hold against the seller's systems"
+        },
+        "requested_terms": {
+          "$ref": "#/$defs/LineItemWrites",
+          "description": "The composition the buyer asks to hold, which is not a `commit`. A field it doesn't name reads as § 3.1 and § 3.2 put in effect"
+        },
+        "status": {
+          "$ref": "#/$defs/HoldStatus",
+          "description": "Moved by the transitions below"
+        },
+        "valid_until": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Instant",
+          "description": "The grant time plus `hold_terms.duration`, or the § 4.3.4 cap if that comes first. With no `duration`, the seller sets it within the cap. It MAY remain on `expired` and `released`"
+        },
+        "version": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "The `version` the hold is on (§ 4.1.3)"
+        }
+      },
+      "required": [
+        "status",
+        "version"
+      ],
+      "then": {
+        "required": [
+          "valid_until"
+        ]
+      },
+      "type": "object"
+    },
+    "HoldStatus": {
+      "enum": [
+        "requested",
+        "held",
+        "declined",
+        "expired",
+        "released",
+        "converted"
+      ],
+      "type": "string"
+    },
+    "HoldTerms": {
+      "additionalProperties": false,
+      "properties": {
+        "available": {
+          "description": "Whether this line item may be held",
+          "type": "boolean"
+        },
+        "duration": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Duration",
+          "description": "How long a hold runs from its grant"
+        }
+      },
+      "required": [
+        "available"
+      ],
+      "type": "object"
+    },
+    "ImpressionMultiplier": {
+      "additionalProperties": false,
+      "properties": {
+        "dataset": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "The source's named data release the multipliers come from. A new release is a new `dataset`"
+        },
+        "impression_type": {
+          "$ref": "#/$defs/ImpressionMultiplierImpressionType",
+          "description": "`gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them"
+        },
+        "settles_on": {
+          "$ref": "#/$defs/ImpressionMultiplierSettlesOn",
+          "description": "`declared` | `restated`. `declared`: the value `dataset` gives that screen, or sync group, and hour when the play runs. Under a deal mechanism (§ 5.9), the bid request carries it as OpenRTB 2.6 `imp.qty.multiplier`. `restated`: that value after any reissue of `dataset` by its source before the count is final (§ 5.7.1)"
+        },
+        "source_type": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "Who supplies the multiplier. A value from AdCOM 1.0 List: DOOH Multiplier Measurement Source Types other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries"
+        },
+        "vendor": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/RegistrableDomain",
+          "description": "The domain of the vendor or exchange that supplies the multipliers, as OpenRTB 2.6 `imp.qty.vendor` names a vendor"
+        }
+      },
+      "required": [
+        "dataset",
+        "impression_type",
+        "settles_on",
+        "source_type"
+      ],
+      "type": "object"
+    },
+    "ImpressionMultiplierImpressionType": {
+      "enum": [
+        "gross",
+        "viewable",
+        "lts",
+        "audience"
+      ],
+      "type": "string"
+    },
+    "ImpressionMultiplierSettlesOn": {
+      "enum": [
+        "declared",
+        "restated"
+      ],
+      "type": "string"
+    },
+    "LineItemRenewalRight": {
+      "anyOf": [
+        {
+          "enum": [
+            "first_refusal"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "LineItemWrites": {
+      "additionalProperties": false,
+      "properties": {
+        "activation_route": {
+          "$ref": "#/$defs/BuyerWritesSelectable",
+          "description": "The line item's `activation_route`, projected to `selected[]`."
+        },
+        "audiences": {
+          "$ref": "#/$defs/BuyerWritesAudienceSelectable",
+          "description": "The line item's `audiences`, projected to `selected[]`, `excluded[]`, and `combine.selected[]`."
+        },
+        "break_position": {
+          "$ref": "#/$defs/BuyerWritesSelectable",
+          "description": "The line item's `break_position`, projected to `selected[]`."
+        },
+        "buyer_requirements": {
+          "$ref": "#/$defs/BuyerWritesBuyerRequirements",
+          "description": "The line item's `buyer_requirements`, projected to `seats` and `seat_owner`."
+        },
+        "cancellation_policy": {
+          "$ref": "#/$defs/BuyerWritesSelectable",
+          "description": "The line item's `cancellation_policy`, projected to `selected[]`."
+        },
+        "commitment": {
+          "$ref": "#/$defs/Commitment",
+          "description": "The line item's `commitment` (§ 5.6.1)"
+        },
+        "controlling_measurement": {
+          "$ref": "#/$defs/BuyerWritesSelectable",
+          "description": "The line item's `controlling_measurement`, projected to `selected[]`."
+        },
+        "daypart": {
+          "$ref": "#/$defs/BuyerWritesSettable",
+          "description": "The line item's `daypart`, projected to `value`."
+        },
+        "device": {
+          "$ref": "#/$defs/BuyerWritesDeviceBounds",
+          "description": "The line item's `device`, projected to `value`."
+        },
+        "environments": {
+          "$ref": "#/$defs/BuyerWritesSelectable",
+          "description": "The line item's `environments`, projected to `selected[]`."
+        },
+        "exclusions": {
+          "additionalProperties": {
+            "$ref": "../../targeting/1/targeting.json#/$defs/ExclusionList"
+          },
+          "description": "The buyer's block lists, keyed by exclusion type. See below",
+          "propertyNames": {
+            "$ref": "../../targeting/1/targeting.json#/$defs/ExclusionType"
+          },
+          "type": "object"
+        },
+        "exclusivity": {
+          "$ref": "#/$defs/BuyerWritesSelectable",
+          "description": "The line item's `exclusivity`, projected to `selected[]`."
+        },
+        "formats": {
+          "$ref": "#/$defs/BuyerWritesSelectable",
+          "description": "The line item's `formats`, projected to `selected[]`."
+        },
+        "frequency_cap": {
+          "$ref": "#/$defs/BuyerWritesFrequencyCap",
+          "description": "The line item's `frequency_cap`, projected to `count.value`."
+        },
+        "geo": {
+          "$ref": "#/$defs/BuyerWritesGeoBounds",
+          "description": "The line item's `geo`, projected to `value`."
+        },
+        "markets": {
+          "$ref": "#/$defs/BuyerWritesSelectable",
+          "description": "The line item's `markets`, projected to `selected[]`."
+        },
+        "measurement_source": {
+          "$ref": "#/$defs/BuyerWritesSelectable",
+          "description": "The line item's `measurement_source`, projected to `selected[]`."
+        },
+        "production": {
+          "$ref": "#/$defs/BuyerWritesSelectable",
+          "description": "The line item's `production`, projected to `selected[]`."
+        },
+        "programs": {
+          "$ref": "#/$defs/BuyerWritesSelectable",
+          "description": "The line item's `programs`, projected to `selected[]`."
+        },
+        "properties": {
+          "$ref": "#/$defs/BuyerWritesSelectable",
+          "description": "The line item's `properties`, projected to `selected[]`."
+        },
+        "reporting": {
+          "$ref": "#/$defs/BuyerWritesSelectable",
+          "description": "The line item's `reporting`, projected to `selected[]`."
+        },
+        "shortfall_remedy": {
+          "$ref": "#/$defs/BuyerWritesShortfallRemedy",
+          "description": "The line item's `shortfall_remedy`, projected to `selected[]`."
+        },
+        "transaction_mechanism": {
+          "$ref": "#/$defs/BuyerWritesSelectable",
+          "description": "The line item's `transaction_mechanism`, projected to `selected[]`."
+        }
+      },
+      "required": [
+        "commitment"
+      ],
+      "type": "object"
+    },
+    "Preemption": {
+      "additionalProperties": false,
+      "properties": {
+        "notice_duration": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Duration",
+          "description": "The least time from the seller's notice to the first preempted delivery. Absent: no notice is owed"
+        },
+        "reason": {
+          "$ref": "#/$defs/PreemptionReason",
+          "description": "What can preempt this line item. Core term: `exclusivity`, an exclusivity term the seller accepts later that holds, under its `separation` and `window`, where and when this line item delivers"
+        },
+        "remedy": {
+          "$ref": "#/$defs/PreemptionRemedy",
+          "description": "What the buyer gets for the delivery a preemption takes, on any `delivery_type`. Core terms: `makegood` | `credit` | `none`, where `none` gives nothing for that delivery only. Absent: `shortfall_remedy` (§ 5.7) settles any shortfall the preemption causes"
+        }
+      },
+      "required": [
+        "reason"
+      ],
+      "type": "object"
+    },
+    "PreemptionReason": {
+      "anyOf": [
+        {
+          "enum": [
+            "exclusivity"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "PreemptionRemedy": {
+      "anyOf": [
+        {
+          "enum": [
+            "makegood",
+            "credit",
+            "none"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "PricingEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "agreed_rate": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount",
+          "description": "The transacted rate (below). Absent on every other entry"
+        },
+        "cost_definition": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/DocumentRef",
+          "description": "Public definition of one unit and the `cost_parameters` keys (§ 5.6.5)"
+        },
+        "cost_method": {
+          "$ref": "#/$defs/PricingEntryCostMethod",
+          "description": "The billable unit. Core terms in § 5.6.5"
+        },
+        "cost_parameters": {
+          "$ref": "#/$defs/CostParameters",
+          "description": "The keys the term requires (§ 5.6.5). Absent when it requires none"
+        },
+        "currency": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/CurrencyCode",
+          "description": "The currency of the entry's rates (below)"
+        },
+        "list_rate": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount",
+          "description": "The rate before options. A buyer MAY request another value, and a granted value is the `list_rate` of the next `version`"
+        },
+        "min_rate": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount",
+          "description": "A hint: the lowest `list_rate` the seller says it will consider. It grants nothing. Not a term, not the downstream auction floor, and never sent downstream"
+        },
+        "price_type": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "How `agreed_rate` clears, as Deals API 1.0 `terms.pricetype`: Dynamic (0), the auction type of each bid request; First Price (1); Second Price Plus (2); Fixed Price (3); or an exchange-specific value, 500 and up"
+        },
+        "price_valid_until": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Instant",
+          "description": "How long the entry holds (§ 4.3.2). Distinct from the proposal's `offer_window.end`"
+        },
+        "pricing_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "Names the entry within the line item. A revision MUST NOT reuse it for a different `cost_method`, `cost_parameters`, `currency`, or `transaction_mechanisms[]`"
+        },
+        "rate_per": {
+          "$ref": "#/$defs/PricingEntryRatePer",
+          "description": "`1` | `1000`. Units per rate. For a core term, the vocabulary sets it, and a present value MUST match"
+        },
+        "transaction_mechanisms": {
+          "description": "The `transaction_mechanism` options this entry prices. Absent: every offered option",
+          "items": {
+            "$ref": "../../execution/1/execution.json#/$defs/TransactionMechanism"
+          },
+          "type": "array"
+        },
+        "unit_bounds": {
+          "$ref": "#/$defs/UnitBoundsRange",
+          "description": "Bounds on the units committed under this entry, counted in its unit (§ 5.6.5): `commitment.amount` when `basis` is `units`, otherwise `derived_units`. A buyer MAY request another. Absent on a `FLAT` entry"
+        },
+        "unit_label": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "A short label for one unit, such as `engagement`"
+        }
+      },
+      "required": [
+        "cost_method",
+        "currency",
+        "list_rate",
+        "pricing_id"
+      ],
+      "type": "object"
+    },
+    "PricingEntryCostMethod": {
+      "anyOf": [
+        {
+          "enum": [
+            "CPM",
+            "CPMV",
+            "CPC",
+            "CPCV",
+            "CPV",
+            "CPP",
+            "CPA",
+            "PLAY",
+            "TIME",
+            "FLAT"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "PricingEntryRatePer": {
+      "description": "The values of `LineItem.pricing[].rate_per` its row lists",
+      "oneOf": [
+        {
+          "const": 1,
+          "title": "1"
+        },
+        {
+          "const": 1000,
+          "title": "1000"
+        }
+      ],
+      "title": "Pricing Entry Rate Per",
+      "type": "integer"
+    },
+    "ProofOfPerformance": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "description": "What the buyer receives. Core terms: `play_log` | `photo` | `audit_report`",
+          "items": {
+            "$ref": "#/$defs/ProofOfPerformanceEvidence"
+          },
+          "type": "array"
+        },
+        "logged_by": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Measurer",
+          "description": "Who keeps the proof-of-play log"
+        }
+      },
+      "required": [
+        "evidence",
+        "logged_by"
+      ],
+      "type": "object"
+    },
+    "ProofOfPerformanceEvidence": {
+      "anyOf": [
+        {
+          "enum": [
+            "play_log",
+            "photo",
+            "audit_report"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "SpendRange": {
+      "additionalProperties": false,
+      "description": "A range of values from `min` to `max`, with at least one bound, such as the time an ad stays in the content the seller distributes.",
+      "minProperties": 1,
+      "properties": {
+        "max": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount"
+        },
+        "min": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Amount"
+        }
+      },
+      "type": "object"
+    },
+    "UnitBoundsRange": {
+      "additionalProperties": false,
+      "description": "A range of values from `min` to `max`, with at least one bound, such as the time an ad stays in the content the seller distributes.",
+      "minProperties": 1,
+      "properties": {
+        "max": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger"
+        },
+        "min": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/modules/commercial/1/commercial.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `commercial` module: the vocabularies, objects, unions, and constructor copies of § 5.6, § 5.6.1, § 5.6.2, § 5.6.3, § 3.4, § 4.1.2, § 5.6.4, § 5.6.5, § 5.6.6, and § 5.6.7.",
+  "title": "commercial"
+}

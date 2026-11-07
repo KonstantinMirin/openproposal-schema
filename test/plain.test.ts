@@ -60,6 +60,6 @@ test("the exemptions file must be written for the pinned generator, with each ID
 
 test("the committed exemptions file is schema-valid and written for the pinned generator", () => {
   const ex = loadExemptions(join(SPEC, EXEMPTIONS_FILE));
-  assert.deepEqual(checkExemptionsFile(ex, pinnedPlainGenerator(ROOT), ["main", "with-open-prs"]), []);
+  assert.deepEqual(checkExemptionsFile(ex, pinnedPlainGenerator(ROOT), ["main", "with-open-prs", "with-our-stack"]), []);
   assert.equal(ex.file, join(SPEC, "plain-generator", "exemptions.yaml"));
 });

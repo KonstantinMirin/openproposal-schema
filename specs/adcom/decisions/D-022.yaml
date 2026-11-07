@@ -1,0 +1,35 @@
+format: 1
+id: D-022
+status: proposed
+kind: gap
+author: agent
+question: "List: Feed Types gives code 3 a name followed by an explanation in parentheses, too long to name the code. What is its short name?"
+covers:
+  - ir: def:list_feedtypes:3
+    digest: 74bd793443583a3d3782623ed2154f946d8266c0fb4d7265132019073d2698cd
+    quote: "`3` | AOD | Podcast (original, pre-recorded content distributed as episodes in a series)"
+options:
+  - id: short-name
+    summary: >-
+      Name code 3 "Podcast", the name its row starts with; the code keeps its
+      row as its description.
+  - id: row-text
+    summary: >-
+      Name the code by its row, cut to a usable length, so that the name ends
+      inside the parentheses.
+chosen: short-name
+rationale: >-
+  The parentheses explain what a podcast is, as the list's other rows explain
+  their codes, so they are no part of the code's name. An aside that tells
+  codes apart, or says a code is deprecated, stays in a name; this one does
+  neither. The other codes' names already end before their explanations; this
+  one's runs into it, since the row writes no break after "Podcast" that a
+  name could end at.
+evidence:
+  - "https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#L3715"
+names:
+  "def:list_feedtypes:3": Podcast
+feedback: >-
+  Give each code of List: Feed Types a short name, and move an explanation
+  such as code 3's to its definition, so that every implementation names the
+  codes alike.

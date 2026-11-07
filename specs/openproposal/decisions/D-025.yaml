@@ -8,15 +8,19 @@ covers:
   - ir: field:5.4:creative_delivery#description/object:1
     digest: 8d11a33a75a187ebd9affb849bab8593668de8189bf49460961af437a5c78c15
     quote: "{ method: buyer_hosted | seller_hosted | api | platform_managed, protocol, secure_required, endpoint }"
+    locks: [main, with-open-prs]
   - ir: field:5.4:assets[]#description/object:1
     digest: e2ecbfe1e06380fb7c9966174c58ecc73d617563de6860287b1cd414bebcfff6
     quote: "{ asset_id, format_ref, url_or_tag, submitted_at, approval_status }"
+    locks: [main, with-open-prs]
   - ir: field:5.4:production#description/object:1
     digest: 00eb00879b4a550444376e9812df5389c4a7066a43b48982f04bc6f35974f62d
     quote: "{ custom_unit, build_owner, lead_time, cost }"
+    locks: [main, with-open-prs]
   - ir: field:5.5:frequency_cap#description/object:1
     digest: adbcfc3ac2b7bc7c0bda1069751986267cf304dbafb4ee388d9c2f62b43ba305
     quote: "{ max: { min, max }, period, basis: device | household | listener }"
+    locks: [main, with-open-prs]
   - ir: field:5.5:exclusions_accepted#description/object:1
     digest: 9bc47a689b27eb49156befe81b0e37cb0c7d382ca9fc6096a3ae2018b393846c
     quote: "{ types[], max_entries, enforcement, verification[] }"

@@ -25,6 +25,7 @@
       "required": ["name", "description", "type", "concept", "constraints", "sources", "vectors", "showcase"],
       "properties": {
         "name": { "$ref": "#/$defs/name" },
+        "edition": { "description": "An edition of the type that one lock's text defines in another form, under the same name, as the stack's `Digest`. The spec's binding publishes it on its locks, where it stands in for the type without an edition.", "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
         "description": {
           "description": "The published description: what a value means, for someone who receives a payload.",
           "type": "string",

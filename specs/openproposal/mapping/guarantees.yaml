@@ -3,34 +3,121 @@
 format: 1
 module: guarantees
 sections: [ "5.7" ]
+lock_sections: { with-our-stack: [ 5.7.1 ] }
+lock_depends: { with-our-stack: [ commercial ] }
 types:
-  - name: Metric
-    kind: vocabulary
-    ir: "field:5.7:committed_metrics[]"
-    source: { decisions: [ D-013, D-014, D-027 ] }
-    open: true
-    terms: [ viewable_rate, completion_rate ]
   - name: MeasurementBasis
     kind: vocabulary
     ir: "field:5.7:committed_metrics[]#description/object:1"
+    locks: [ main, with-open-prs ]
     source: { decision: D-041 }
     open: true
   - name: ReportingDeliveryMechanism
     kind: vocabulary
     ir: field:5.7:reporting#description/object:1
+    locks: [ main, with-open-prs ]
     source: { decision: D-041 }
     open: true
+  - name: Metric
+    kind: vocabulary
+    ir: "field:5.7:committed_metrics[]"
+    locks: [ main, with-open-prs ]
+    source: { decisions: [ D-013, D-014, D-027 ] }
+    open: true
+    terms: [ viewable_rate, completion_rate ]
+  - name: CommittedMetric
+    kind: object
+    ir: key:5.7.1:CommittedMetric.metric
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: CommittedMetricDirection
+    kind: vocabulary
+    ir: key:5.7.1:CommittedMetric.direction#meaning/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: false
+    terms: [ at_least, at_most ]
+  - name: CommittedMetricMetric
+    kind: vocabulary
+    ir: def:5.7.1:metric.viewable_rate
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: true
+  - name: MeasurementOption
+    kind: object
+    ir: key:5.7.1:MeasurementOption.id
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: ControllingMeasurementOption
+    kind: object
+    ir: key:5.7.1:ControllingMeasurementOption.id
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: ReportingOption
+    kind: object
+    ir: key:5.7.1:ReportingOption.id
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: ReportingOptionReportType
+    kind: vocabulary
+    ir: key:5.7.1:ReportingOption.report_type#meaning/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: true
+    terms: [ log_level, aggregate ]
+  - name: ReportingOptionDeliveryMethod
+    kind: vocabulary
+    ir: key:5.7.1:ReportingOption.delivery_method#meaning/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: true
+    terms: [ api, s3 ]
+  - name: ReportingOptionProvidedMetric
+    kind: vocabulary
+    ir: "key:5.7.1:ReportingOption.provided_metrics[]"
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: true
+    terms:
+      - impressions
+      - viewable_impressions
+      - clicks
+      - completed_views
+      - views
+      - rating_points
+      - actions
+      - plays
+      - hours
+      - days
+      - weeks
+  - name: ShortfallRemedy
+    kind: object
+    ir: key:5.7.1:ShortfallRemedy.remedy_terms
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+    holds: [ { kind: apply, constructor: Selectable, arguments: { T: { kind: named, name: PreemptionRemedy } } } ]
+  - name: RemedyTerms
+    kind: object
+    ir: key:5.7.1:RemedyTerms.makegood_window
+    locks: [ with-our-stack ]
+    source: { rule: key-table-object }
+    open: false
+  - name: RemedyTermsMakegoodType
+    kind: vocabulary
+    ir: key:5.7.1:RemedyTerms.makegood_type#meaning/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: true
+    terms: [ same_unit, comparable_unit, added_time ]
 entries:
-  - ir: "field:5.7:committed_metrics[]"
-    digest: 2c123e829ef892456b09671dfd52243f1bef0db8b067aa9c5d184dc07411caf5
-    source: { rule: inline-object-row }
-    as:
-      role: property
-      object: LineItem
-      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: CommittedMetricsEntry } } }
-      presence: optional
   - ir: "field:5.7:committed_metrics[]#description/object:1"
     digest: 349c5917c07f1ded607f6a670f1be40b172938f6bf694e543bf0a189b6dfe255
+    locks: [ main, with-open-prs ]
     source: { decision: D-027 }
     as:
       role: type
@@ -43,21 +130,12 @@ entries:
         basis: { type: { kind: named, name: MeasurementBasis }, presence: optional }
   - ir: rule:5.7:4994173c
     digest: 49df828c767ca4a88396c5d0d566a026506a90ae23eec522d12849b159e6aff6
+    locks: [ main, with-open-prs ]
     source: { decision: D-030 }
     as: { role: rule, object: LineItem }
-  - ir: field:5.7:measurement_source
-    digest: b2908c3f817bef4cc596a8e15af373e8098053d36c37d34231eadae3e4351be5
-    source: { decision: D-018 }
-    as:
-      role: property
-      object: LineItem
-      type:
-        kind: apply
-        constructor: Selectable
-        arguments: { T: { kind: named, name: MeasurementSourceOption }, K: { kind: named, name: Uuid } }
-      presence: optional
   - ir: field:5.7:measurement_source#description/object:1
     digest: 7213fd41321c72d119261e7a84890af68599b6801c2fc5cef92127295fb4ed22
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-027, D-040 ] }
     as:
       role: type
@@ -68,34 +146,9 @@ entries:
         vendor: { type: { kind: named, name: ExternalId }, presence: optional }
         attribution_window: { type: { kind: named, name: Duration }, presence: optional }
         qualifier: { type: { kind: named, name: Text }, presence: optional }
-  - ir: field:5.7:shortfall_remedy
-    digest: 9fdb8ca07f421677f7d411f9e9d3bc189128d125a8229b9622fed9779af55824
-    source: { decisions: [ D-018, D-019 ] }
-    as:
-      role: property
-      object: LineItem
-      type:
-        kind: apply
-        constructor: Selectable
-        arguments: { T: { kind: named, name: ShortfallRemedy }, K: { kind: named, name: ShortfallRemedy } }
-      presence: optional
-  - ir: field:5.7:shortfall_remedy#description/values:1
-    digest: b53ff161073f8164e711051770d85f4df8e3711d22d803d03c1f9218aaf25746
-    source: { decisions: [ D-013, D-014 ] }
-    as: { role: type, name: ShortfallRemedy, layer: vocabulary, open: true }
-  - ir: field:5.7:reporting
-    digest: a3b05974750ac1c85b48f1edc5b0d8413d6ee3782abf19663dcc88605c30830e
-    source: { decision: D-018 }
-    as:
-      role: property
-      object: LineItem
-      type:
-        kind: apply
-        constructor: Selectable
-        arguments: { T: { kind: named, name: ReportingOption }, K: { kind: named, name: Uuid } }
-      presence: optional
   - ir: field:5.7:reporting#description/object:1
     digest: 15b343617f534633524b7226be5e3f1d36fa7042fd26aa52c5fde05bc1e50adb
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-027, D-040 ] }
     as:
       role: type
@@ -112,5 +165,614 @@ entries:
         latency: { type: { kind: named, name: Duration }, presence: optional }
   - ir: field:5.7:reporting#description/object:1/feed_type
     digest: 506920ab669bab54d6afbf774562700897334300d3800721e68549f279870e54
+    locks: [ main, with-open-prs ]
     source: { decisions: [ D-013, D-014 ] }
     as: { role: type, name: ReportingFeedType, layer: vocabulary, open: true }
+  - ir: "field:5.7:committed_metrics[]"
+    digest: 2c123e829ef892456b09671dfd52243f1bef0db8b067aa9c5d184dc07411caf5
+    locks: [ main, with-open-prs ]
+    source: { rule: inline-object-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: CommittedMetricsEntry } } }
+      presence: optional
+  - ir: "field:5.7:committed_metrics[]"
+    digest: f780f0eb75a5d9c437e7bcbf98c882ea50a0854c0b25beab8f57a96fdecfce11
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: CommittedMetric } } }
+      presence: optional
+  - ir: rule:5.7:13d06c59
+    digest: 686a127369ca4eb013f05a21cfc1522d1a7cf6ba8c570186881f61719ddee709
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.7:44693ff4
+    digest: 4fdac13f794b951768e50393483bc99afefb7162f42a2b025e754d038d6ad022
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: buyer }
+  - ir: rule:5.7:ae26d4ac
+    digest: f28fa7f51cc7da0d46c1a5d65560996009425406c875cb097fc3cc02f7a27b97
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: field:5.7:measurement_source
+    digest: b2908c3f817bef4cc596a8e15af373e8098053d36c37d34231eadae3e4351be5
+    locks: [ main, with-open-prs ]
+    source: { decision: D-018 }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: MeasurementSourceOption }, K: { kind: named, name: Uuid } }
+      presence: optional
+  - ir: field:5.7:measurement_source
+    digest: 0d90aa76970d95008477e84de28f3691697be0f608623f357f1ccee169e7d221
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: Selectable, arguments: { T: { kind: named, name: MeasurementOption } } }
+      presence: optional
+  - ir: rule:5.7:ae26d4ac-2
+    digest: 76d48153a6ce8b7f36c2c54572d9956fb104cae0f19005286b3df7fcb913991a
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: field:5.7:controlling_measurement
+    digest: 49502fe7e2df06af62949e7e1d39c6f61ab2d20743bb6e5a6af1f422c93cf593
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: ControllingMeasurementOption } }
+      presence: conditional
+  - ir: rule:5.7:76df804b
+    digest: c1ad8c132d41a5f46d02fe035f5895f7c0314505c6ead3321c0ae5ddd9c025df
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: rule, object: LineItem }
+  - ir: rule:5.7:dfffe633
+    digest: 884efa85c4476ee29c35e44f1a224350101c375f12366ebf4e1905ae80d6fcf4
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: field:5.7:shortfall_remedy
+    digest: 9fdb8ca07f421677f7d411f9e9d3bc189128d125a8229b9622fed9779af55824
+    locks: [ main, with-open-prs ]
+    source: { decisions: [ D-018, D-019 ] }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: ShortfallRemedy }, K: { kind: named, name: ShortfallRemedy } }
+      presence: optional
+  - ir: field:5.7:shortfall_remedy
+    digest: 699392b987c0cdab0b10b6c5ded1d0ae07e23407c6923c6e9cee166d3c7a8a88
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: LineItem, type: { kind: named, name: ShortfallRemedy }, presence: optional }
+  - ir: field:5.7:shortfall_remedy#description/values:1
+    digest: b53ff161073f8164e711051770d85f4df8e3711d22d803d03c1f9218aaf25746
+    locks: [ main, with-open-prs ]
+    source: { decisions: [ D-013, D-014 ] }
+    as: { role: type, name: ShortfallRemedy, layer: vocabulary, open: true }
+  - ir: field:5.7:shortfall_remedy#description/values:1
+    digest: a46ceeb424ccdb43840913451c071279ee6d106418132fa5df63c3872ffbff85
+    locks: [ with-our-stack ]
+    source: { decision: D-053 }
+    as: { role: schema, in: PreemptionRemedy }
+  - ir: rule:5.7:ae26d4ac-3
+    digest: 9ccb00452317f45ad8c5a0cc8bbe5b854088140fe0f8af9d8ebe5c9b972e999b
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: field:5.7:reporting
+    digest: a3b05974750ac1c85b48f1edc5b0d8413d6ee3782abf19663dcc88605c30830e
+    locks: [ main, with-open-prs ]
+    source: { decision: D-018 }
+    as:
+      role: property
+      object: LineItem
+      type:
+        kind: apply
+        constructor: Selectable
+        arguments: { T: { kind: named, name: ReportingOption }, K: { kind: named, name: Uuid } }
+      presence: optional
+  - ir: field:5.7:reporting
+    digest: c4809aff248d79eccf0a034d692d286d92e1ec23c475535452315a67b06159e4
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: LineItem
+      type: { kind: apply, constructor: Selectable, arguments: { T: { kind: named, name: ReportingOption } } }
+      presence: optional
+  - ir: rule:5.7:ae26d4ac-4
+    digest: 880076dcf3cbd813092b7e237de025fd49a3954fc3a310f7701f83b11cd80f80
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: LineItem }
+  - ir: sentence:5.7.1:3be5910a
+    digest: 55561c73b12c1b5ef1fc29edfea0b57d07c3f8a69b6fad2293462bd27c0a10ee
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.7.1:b41f4b95
+    digest: a6b19774cca1b3da3eb8150bc18b503672aac1cda4c4d8f686def5f60546bd54
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.7.1:ce9728e0
+    digest: fce054a6da5afc5e4cf556511c05e109d4a1a69a10f4ffc91df8fa2113c561ab
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.7.1:6d7c6000
+    digest: 7870734f82bb8872fbd42e47348f578d340b5dcf9ac2ab2981cfba1c5061d5d5
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.7.1:d1c1989b
+    digest: e9d22848a27239f733f64a08f4a9d0b1d5cb94131b298df531eb8f39b89e8663
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.7.1:758abe1e
+    digest: 9ca1f43a808d7b3df0cb8e1a047603421eafa1eb259020a78b86b405f92672f0
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.7.1:c6d017c6
+    digest: 5e29649d764a11c6274ea5ef425a7fb451042ba3bf39fee5b2944744ca90a392
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.7.1:CommittedMetric.metric
+    digest: 3ff5f55cf9dd210bdb9a2a1f05b4d2d10d45fcffce624b26a2d22ae1562d9f7c
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: CommittedMetric
+      type: { kind: named, name: CommittedMetricMetric }
+      presence: required
+  - ir: rule:5.7.1:373dbf11
+    digest: 027a9731a724438ce6141a722e87f57adf74cc6c581fbf2f6027fe302de906cb
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: CommittedMetric }
+  - ir: key:5.7.1:CommittedMetric.level
+    digest: d55f880f7cfb47eeb4395791bcd3842d67f3b4471748a026efb5d8557b576788
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: CommittedMetric, type: { kind: named, name: PlainNumber }, presence: required }
+  - ir: rule:5.7.1:373dbf11-2
+    digest: 119147d1574bfbc874d152f11123af647343946d93bcd3edae927a54c48001bb
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: CommittedMetric }
+  - ir: key:5.7.1:CommittedMetric.direction
+    digest: 95d2bd7f41da47d0c4bd824fc8c1cac742b7ef0976115d0910253dd15996f419
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: CommittedMetric
+      type: { kind: named, name: CommittedMetricDirection }
+      presence: required
+  - ir: key:5.7.1:CommittedMetric.direction#meaning/values:1
+    digest: e2dabd01c9ca27adf14bcdadbeb838365db14c79a7fa0f22f38b7cbca792b9fc
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: CommittedMetricDirection }
+  - ir: rule:5.7.1:373dbf11-3
+    digest: 1e6ef7854e404ead935119af4a01e68abb5d267392cc9450d02872cca7515872
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: CommittedMetric }
+  - ir: sentence:5.7.1:8a42ee73
+    digest: 4550c45dc4619b29a25c93cf88756c4432033da12d0e397629daf02aa13598b2
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: block:5.7.1:3/values:1
+    digest: 61f2bec7b245ca2c4dd09f004fb8c233da2b6cc9a906a85d9c553961f13cd590
+    locks: [ with-our-stack ]
+    source: { decision: D-058 }
+    as: { role: schema, in: CommittedMetricMetric }
+  - ir: sentence:5.7.1:c16f1346
+    digest: 5e5da36654b20dbec6929601c2cbea916ead79d8cb1cd45209b72679d628e4e1
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: def:5.7.1:metric.viewable_rate
+    digest: fde1024b839ab79f8271ec595da629f06c6701a730d02983d201ccaf2a6138e3
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: term, vocabulary: CommittedMetricMetric }
+  - ir: def:5.7.1:metric.completion_rate
+    digest: a2c9aadd84853bd84156d4e49125c12a8c0a4f9d5215dfd8471426ec175ff4c3
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: term, vocabulary: CommittedMetricMetric }
+  - ir: def:5.7.1:metric.ivt_rate
+    digest: e2b1725a95959cdd9ca7db0cf28cf281f1a6bea6e4cf86141b78c7e30f004b0d
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: term, vocabulary: CommittedMetricMetric }
+  - ir: def:5.7.1:metric.impressions
+    digest: 2c4a164b8725a8a7066e1ba110a60e1bb99dc94b3782cd6f52dbab68b00d2c07
+    locks: [ with-our-stack ]
+    source: { rule: table-term }
+    as: { role: term, vocabulary: CommittedMetricMetric }
+  - ir: sentence:5.7.1:b982fd5f
+    digest: 51669ce93d90540e89853ee6c430e6a2c1cd44f70f4bfc0396be27b8da7888f9
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.7.1:MeasurementOption.id
+    digest: 800219b4fb0ba124e44fdb19bf21d17cd73df66d9366503f851f0a540be0ab8a
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: MeasurementOption, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:5.7.1:373dbf11-4
+    digest: 61ec2c8bcdec279161baaec153ca76f69daa35a6249620a272bf0197791c70cc
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: MeasurementOption }
+  - ir: key:5.7.1:MeasurementOption.measured_by
+    digest: 03d3cedf74988a35beb9dc8c96979206e11cee3d929dc30ae9288a738c3854b9
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: MeasurementOption, type: { kind: named, name: Measurer }, presence: required }
+  - ir: rule:5.7.1:373dbf11-5
+    digest: c67dddd966b8efae5317cf16e9b5830861e8a562561f3abbb608a5fe9862a170
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: MeasurementOption }
+  - ir: key:5.7.1:MeasurementOption.attribution_window
+    digest: 7df3967dbf279e0233332589394f1aa515dc3f56b15f175dd03b0ae6ac057572
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: MeasurementOption, type: { kind: named, name: Duration }, presence: optional }
+  - ir: rule:5.7.1:ae26d4ac
+    digest: 07e5d515d19c9bd981ae83f0a00179d09568c97a8fbb9a363eb61a12c62cf0c4
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: MeasurementOption }
+  - ir: key:5.7.1:MeasurementOption.qualifier
+    digest: 92abe5f12865a556e2b4625291d737980892130cf84e4bab7b8564cf32a72a61
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: MeasurementOption, type: { kind: named, name: PlainString }, presence: optional }
+  - ir: rule:5.7.1:ae26d4ac-2
+    digest: 7385cb88355ad1447c34fe6d6a7f371aea245367842b94402679e9d8b0ff9097
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: MeasurementOption }
+  - ir: sentence:5.7.1:4c0d8bf4
+    digest: 875a64a197e5756fd8cd61f05a4f6f53cf86d4a74a3276ed2cecd0f4b11546b3
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.7.1:ControllingMeasurementOption.id
+    digest: 800219b4fb0ba124e44fdb19bf21d17cd73df66d9366503f851f0a540be0ab8a
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: ControllingMeasurementOption
+      type: { kind: named, name: PlainString }
+      presence: required
+  - ir: rule:5.7.1:373dbf11-6
+    digest: 26845583d7039193149cdce55352b5eaffc2a1a69d6de39e5ee31269e5910ee3
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ControllingMeasurementOption }
+  - ir: key:5.7.1:ControllingMeasurementOption.counted_by
+    digest: 2b12447b7233776e4f4d5d0a0803b038f4cf8a7d7f2a9f4ff4ceac7e2f60573b
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: ControllingMeasurementOption
+      type: { kind: named, name: Measurer }
+      presence: required
+  - ir: rule:5.7.1:373dbf11-7
+    digest: d69d0812de328223e6f2b65200a1c72896c02541e75908f2e937db000ae71fe6
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ControllingMeasurementOption }
+  - ir: rule:5.7.1:f7832319
+    digest: 142f347b9ee1055a0534b4db287be9a6bdf9e17705f301bc1219e2fa0a9cb1ae
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.7.1:f96c27c0
+    digest: d4c74c6bfc79e86db66ce38d65fa21a82a0b3ce961857d0ac80442f069a221dc
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: key:5.7.1:ControllingMeasurementOption.qualifier
+    digest: 2a4263ae98031d170ae661280b9c493961cca1ddde5cda5360b60aa11280159c
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: ControllingMeasurementOption
+      type: { kind: named, name: PlainString }
+      presence: optional
+  - ir: rule:5.7.1:ae26d4ac-3
+    digest: bfc6c8709e514698ffefb5303a07623e34f9110009153475d757f56f94246c9a
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ControllingMeasurementOption }
+  - ir: key:5.7.1:ControllingMeasurementOption.discrepancy_threshold
+    digest: 36ed715cfa9e1e36fffa65bf45118284917687ae9f0b46555261f953c6424371
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: ControllingMeasurementOption
+      type: { kind: named, name: Fraction }
+      presence: optional
+  - ir: rule:5.7.1:ae26d4ac-4
+    digest: cd2910f4253379153b9b1468d0ddd5c52bb39cac88ecc4d9be5199d5e21787ee
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ControllingMeasurementOption }
+  - ir: key:5.7.1:ControllingMeasurementOption.final_after
+    digest: 51a46da65ebf6604c57a882ecb4e3e98e08c7400093d0e262b0ad22ce62c8961
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: ControllingMeasurementOption
+      type: { kind: named, name: Duration }
+      presence: optional
+  - ir: rule:5.7.1:ae26d4ac-5
+    digest: 708653e8e534267ee825c876880b4d7b53c3eaba0ab2746dddb7b98b7fdb10a5
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ControllingMeasurementOption }
+  - ir: sentence:5.7.1:69fed52a
+    digest: c36f4d82deb1ff0ba2edcf60077cbe622b0b626876ff5210f454fe5d89b46f7f
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.7.1:ReportingOption.id
+    digest: 800219b4fb0ba124e44fdb19bf21d17cd73df66d9366503f851f0a540be0ab8a
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ReportingOption, type: { kind: named, name: PlainString }, presence: required }
+  - ir: rule:5.7.1:373dbf11-8
+    digest: 52522af443d96ef96d3f775fbd11776843bb547179935ca9084073b3ba3d6331
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ReportingOption }
+  - ir: key:5.7.1:ReportingOption.report_type
+    digest: 590602592a5594f2bdad62fb3107cd78e814512b3aa441abc49caadbe9844ebd
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: ReportingOption
+      type: { kind: named, name: ReportingOptionReportType }
+      presence: required
+  - ir: key:5.7.1:ReportingOption.report_type#meaning/values:1
+    digest: d5cd23c623a5fda79a3ba43ea96b7f45f4695bb042f527a7d703d3c754faa155
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: ReportingOptionReportType }
+  - ir: rule:5.7.1:373dbf11-9
+    digest: c5198f86fd13874e5c1cf02e2069dd467889f1ea34646019a66894bb8e10bffc
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ReportingOption }
+  - ir: key:5.7.1:ReportingOption.cadence
+    digest: 1ed8cbd0e08a5feff46582bec6316a6a8c777aeb8b5df3f0e7b6247eee59a36a
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ReportingOption, type: { kind: named, name: TimeUnit }, presence: optional }
+  - ir: rule:5.7.1:ae26d4ac-6
+    digest: efb04007b89718f2be7e446d0ba5a92d787a4b2ee33c1e3836de7902402f5b21
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ReportingOption }
+  - ir: key:5.7.1:ReportingOption.delivery_method
+    digest: ea9942c4bbb4ae0c761fdf2715dbf9ffdf37b1b290dd98af29e11447c2d66722
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: ReportingOption
+      type: { kind: named, name: ReportingOptionDeliveryMethod }
+      presence: optional
+  - ir: key:5.7.1:ReportingOption.delivery_method#meaning/values:1
+    digest: 926b916d16485b665c2da05aba42f5847c442789226cd3623ab72f8415673a18
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: ReportingOptionDeliveryMethod }
+  - ir: rule:5.7.1:ae26d4ac-7
+    digest: 6cd166ced2583a1e053d6bf1b5f84d04a5e3fe5342545a7d27ed61635cc7e053
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ReportingOption }
+  - ir: "key:5.7.1:ReportingOption.provided_metrics[]"
+    digest: 88047001dce48e5657919eaef3bf8a878e81b6793adb1ab1b6217f761dd1f0d9
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: ReportingOption
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: ReportingOptionProvidedMetric } } }
+      presence: optional
+  - ir: rule:5.7.1:ae26d4ac-8
+    digest: 99ba27945022c9ab2b16e3c04976838ae90fab7715073699a1a88f28e0cb6aaf
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ReportingOption }
+  - ir: key:5.7.1:ReportingOption.latency
+    digest: 47b9949def1fd4567d35f98d44bc1dddc98f500da7b7a077bc886ee5cd6194fb
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ReportingOption, type: { kind: named, name: Duration }, presence: optional }
+  - ir: rule:5.7.1:ae26d4ac-9
+    digest: e5373eef34e3736f180f7c9b11ba5b81dbf49d6ffbb0c4fee58e7b96d145147c
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ReportingOption }
+  - ir: sentence:5.7.1:a5747f87
+    digest: 014b6b713898866fb31e64194d161229f1f8a55f97c643bd656cfce3e772e4e1
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.7.1:ShortfallRemedy.remedy_terms
+    digest: 2303da89b08f8375a118e981c62453307da1ce9cd7c3f91e3a2e7e05840e5293
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: ShortfallRemedy, type: { kind: named, name: RemedyTerms }, presence: optional }
+  - ir: rule:5.7.1:ae26d4ac-10
+    digest: 241cc06fbc3f008ff64078f2d9dd3cd9c54fec65de8644706fcf449a4e257da3
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ShortfallRemedy }
+  - ir: sentence:5.7.1:7a4aebc4
+    digest: b1fd1c9001a866bd2d2cd7f3ecdd2f22ef64aee95643fd9fe09d6f2eba3c95b6
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: key:5.7.1:RemedyTerms.makegood_window
+    digest: 482304477bacaeca3e54ddeea9e360fcf7fd1d5e5bf51b288da4c3b07ea261d9
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: RemedyTerms, type: { kind: named, name: Duration }, presence: optional }
+  - ir: rule:5.7.1:ae26d4ac-11
+    digest: eaec55c9b76cfbfb69604d59c6823d7003fd7d1119bae0e24dc5d5e2ed53c28c
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: RemedyTerms }
+  - ir: key:5.7.1:RemedyTerms.makegood_type
+    digest: 8911952d0f45b1f8c19bc5ae366a10aba427d714a8a42d9ed8035c83fb7d4dfc
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: RemedyTerms
+      type: { kind: named, name: RemedyTermsMakegoodType }
+      presence: optional
+  - ir: key:5.7.1:RemedyTerms.makegood_type#meaning/values:1
+    digest: 5bc3be593d9813fd9433397018c718c997cb306dca61b4fe916a26e0ed3f0e58
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: RemedyTermsMakegoodType }
+  - ir: rule:5.7.1:ae26d4ac-12
+    digest: 7ae07e1c6c163d3a6b9da012620fc9a98c9ff055543ed86788ea9d658c53fba0
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: RemedyTerms }
+  - ir: sentence:5.7.1:5e8f12d3
+    digest: 3b4423e53fad43e45754d38bce88d2cffcc0dd8f3660789f01bd363d0b78d189
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.7.1:c903a153
+    digest: bfb246834f9b3ac1ecdffa13fb4e8ff5dbbdeb28edd7f8fc9241c78c8d149bd9
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.7.1:9f775fec
+    digest: 322d355b6a7e476774d4c3d7c839a8ce7b0dda44119780e0a0309ec9c118d815
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.7.1:9be5781a
+    digest: 23e82bf9665cbfea3ab6824a05be69d18c5fa2ac55bb1aee2b00ca286ded7cdd
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.7.1:4dcb6eae
+    digest: c5d8c9be20e0b178e29676ea86d48dc1af1f594ae0855ac947594ab8102a8ad1
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.7.1:b7791864
+    digest: 2cbe7cafd39a0cd738523e1c2f41110fb0a23f8663956e733d6ea22200f99f9d
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.7.1:0a8e3bf2
+    digest: dfe7473da76bce6f000f82bd876248f1986fd1440f276a7bf17d68acfc3f512b
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:5.7.1:aadd7eb9
+    digest: d4f8838a49f2eac49048d99b1e40a40d47cb1fa2d9e6ed5e2f330178ec758a18
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.7.1:5ea9f08c
+    digest: 482653530068f4dbc788f422c6e40e7aa208c1d23994a4f561841c3107ba44f3
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.7.1:2911055a
+    digest: 5eac361e4b8d9b5b8cbbb7dbd5d6d7aca3ddfa290a50c6096e1fc17ad0365317
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: buyer }
+  - ir: sentence:5.7.1:43489648
+    digest: abe692f0b3ae0d825f266bc8ed0e20ac068f066bd38391fdc2b3119b65839cae
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:5.7.1:2d69f4d8
+    digest: 6652d2e2a7aa36f4536f1428a64333625c5b145000ba7ee205e5a1679d0d60af
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.7.1:364afa20
+    digest: 5c2f846cfc155857aef1d34a530a03557d5c8b658d6b802f3e525ca1dd9bc455
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: seller }
+  - ir: sentence:5.7.1:e4c66ce6
+    digest: e59a1e12b2513f6af40f3bc0de9cac87d2c5f72dcbb6cef45bc58e138809c983
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.7.1:0f29149a
+    digest: 309c1c4afe096a6db53a153aed4a492d25ca416191514768698e005a2d97e500
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.7.1:d8c91fc7
+    digest: 7b3a1d265f515ebdeb0e68c9f2a3e2ad262f16e8839d6468576e7bd962f7d025
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.7.1:87eb5e07
+    digest: de2824e5e51dcb22c89408699f77079db91e509e8bad46573fa5fa659f5ab6b6
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.7.1:4b34946c
+    digest: 75136a9ab36139d5ecb5f191566f069b2194f1859fdec1700335567c06de09e6
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }

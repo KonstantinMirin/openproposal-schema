@@ -1,0 +1,23 @@
+format: 1
+id: G-131
+date: 2026-10-28
+question: What changes in the gates when the venv gains grpcio-tools, whose protoc the proto target's files will be compiled with?
+decision: >-
+  tools/proto/requirements.txt pins grpcio-tools 1.84.0 with its four
+  dependencies, each hash-locked for every platform, as the other tools'
+  requirements files are, and `npm run setup:proto` installs them into the
+  venv with --require-hashes and --no-deps. grpcio-tools bundles protoc
+  (libprotoc 35.1), so `python -m grpc_tools.protoc` is the same compiler
+  locally and in CI, at a version the toolchain gate holds to its pin. The
+  workflow runs the new setup script, as the workflow gate requires of
+  every setup script, and the toolchain gate's message for a missing venv
+  names it. A system protoc, from Homebrew or apt, would differ by machine
+  and the toolchain gate couldn't hold it to a pin; a release download
+  would need a step of its own outside the setup scripts.
+rationale: >-
+  No check is relaxed. The toolchain gate now also checks the five new
+  pins, and the workflow gate the new setup step; the test suite's
+  fingerprint changes only because package.json gains the script.
+accepts:
+  - { gate: npm-test, fingerprint: 4b4a1b32b53d628970cd9e1309b7c74cefe52af3a19a83fece2b7c18c145e6ff }
+  - { gate: toolchain, fingerprint: d6ee20d174add6bc76a7c2dd8f41ef74f1ab944282114238a722253fe6e4ae66 }

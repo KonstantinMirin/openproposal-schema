@@ -45,6 +45,8 @@ export interface KernelRule {
 
 export interface Primitive {
   name: string;
+  /** An edition of the type that one lock's text defines in another form (src/editions.ts). */
+  edition?: string;
   description: string;
   type: "string" | "number" | "integer";
   /** The concept of `kernel/domains.yaml` the primitive represents. */

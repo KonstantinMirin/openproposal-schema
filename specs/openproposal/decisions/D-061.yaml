@@ -1,0 +1,33 @@
+format: 1
+id: D-061
+status: proposed
+kind: gap
+author: agent
+question: "Where a member name recurs with different types across the locks, or within the stack, is it one concept?"
+covers:
+  - ir: sentence:2.6:44d6e818
+    digest: 1045ff7049795cd6efa7227143f4da7d25240241f87694d38ae71cac731f52b6
+    quote: A Type cell holds `String`, `Integer`, `Number`, `Boolean`, `Enum`, `Object`, a shared type (§ 2.2), a type its section names, or a named key table.
+    locks: [with-our-stack]
+  - ir: sentence:2.6:99abd19a
+    digest: e787c897332e965334ed2bcb2f9797a379bcef7b5326c2ef4898733f46cd4648
+    quote: A `VocabularyTerm` field says so and lists its core terms, or points to other lists, whole or in part, and adds any others; every other list is closed, and in a row it opens the Meaning cell.
+    locks: [with-our-stack]
+  - ir: def:2.2:VocabularyTerm
+    digest: 230b1f4131ea57db381354fb49edff8e0692b28a6969ba4ddf93a1288ce198b9
+    quote: "`VocabularyTerm` | String: a bare core term, or `<domain>:<term>` with `<domain>` a `Domain` the definer controls. A term is ASCII letters, digits, `_`, and `-` | See below"
+    locks: [with-our-stack]
+options:
+  - id: own-rows
+    summary: "No: each object's row gives its key its type, as the text writes it on that lock, so a name that recurs with different types is a homonym, each meaning what its own row says."
+  - id: merge
+    summary: "Merge each recurring name into one concept across the locks."
+chosen: own-rows
+rationale: >-
+  § 2.6 says each row's Type cell states its key's form, and § 2.2 that a
+  field holding a shared type uses it. The stack types its rows in its own
+  names, which the other locks' texts don't use, and it gives a name such as
+  `status` or `url` a different form in different objects. Each name keeps the
+  type its own row states.
+feedback: >-
+  None needed.

@@ -23,7 +23,7 @@ const parsed = (hash: string) => {
 };
 
 test("the router's canonical names are the ones the site's switches and builds use", () => {
-  assert.deepEqual(ROUTE.LOCKS, ["main", "with-open-prs"]);
+  assert.deepEqual(ROUTE.LOCKS, ["main", "with-open-prs", "with-our-stack"]);
   assert.deepEqual(ROUTE.VARIANTS, ["as-written", "proposals"]);
   assert.deepEqual(ROUTE.VIEWS, ["schema", "example"]);
   assert.deepEqual(ROUTE.DEFAULT, { type: "LineItem", lock: "main", variant: "as-written", view: "schema", open: [] });

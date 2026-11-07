@@ -65,9 +65,10 @@ export interface ModelExample {
 /** The model's examples, by ID. */
 export function modelExamples(model: ModelDoc): ModelExample[] {
   return model.examples
-    .map((x): ModelExample => {
+    .flatMap((x): ModelExample[] => {
+      if (x.files) return Object.entries(x.files).map(([id, object]) => ({ id, ir: x.ir, object, part: false }));
       const files = x.ir.startsWith("sentence:") ? exampleFilesOf(x.text) : [];
-      return files.length === 1 ? { id: files[0]!, ir: x.ir, object: x.object, part: false } : { id: x.ir, ir: x.ir, object: x.object, part: true, text: x.text };
+      return [files.length === 1 ? { id: files[0]!, ir: x.ir, object: x.object, part: false } : { id: x.ir, ir: x.ir, object: x.object, part: true, text: x.text }];
     })
     .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
 }
@@ -358,10 +359,24 @@ export function checkExamples(input: {
         failures.push({ example: ex.id, path, kind: p.kind, value: valueAt(t.value, path.slice(t.at.length)) ?? null, message: p.messages.join("; "), elements: walk.elementsAt(path) });
       }
       // Every rule one payload decides runs on each value of the type it reads (type rules § 11).
+      // A check reads what the value's containers hold, as `LineItem.channel` for a line item's `placement`: each key of each value
+      // that holds it, by the holder's type, the nearest holder's where two hold one key, and each holder whole, by its type, so a
+      // check can tell a key the holder leaves out from one the example doesn't show.
+      const contextOf = (path: string): Record<string, unknown> => {
+        const out: Record<string, unknown> = {};
+        const holders = [...(ex.part && isMap(loaded.value) ? [{ path: "", type: ex.object }] : []), ...walk.instances.filter((a) => a.path !== path && (a.path === "" || path.startsWith(`${a.path}/`)))];
+        for (const a of holders.sort((x, y) => x.path.length - y.path.length)) {
+          const v = a.path === "" && ex.part ? loaded.value : valueAt(t.value, a.path.slice(t.at.length));
+          if (!isMap(v)) continue;
+          out[a.type] = v;
+          for (const [k, x] of Object.entries(v)) out[`${a.type}.${k}`] = x;
+        }
+        return out;
+      };
       for (const i of walk.instances) {
         const bounds = orderOf(i.type);
         for (const r of checksOn.get(i.type) ?? []) {
-          const result = input.ruleChecks[r.id]!(valueAt(t.value, i.path.slice(t.at.length)), { context: {}, part: false, codes: input.codes, ...(bounds ? { order: bounds } : {}) });
+          const result = input.ruleChecks[r.id]!(valueAt(t.value, i.path.slice(t.at.length)), { context: contextOf(i.path), part: false, codes: input.codes, ...(bounds ? { order: bounds } : {}) });
           checks.ran++;
           if (result === null) checks.undecided.push({ example: ex.id, path: i.path, rule: r.id, elements: [...r.sources].sort() });
           for (const v of result ?? []) {
@@ -489,7 +504,8 @@ class Walker {
             if (Array.isArray(v)) v.forEach((_, i) => note(`${p}/${i}`, row));
             visitNode(`${key}/properties/${escape(k)}`, props[k], v, p, flag, null);
           } else if (isMap(node.additionalProperties)) visitNode(`${key}/additionalProperties`, node.additionalProperties, v, p, flag, null);
-          else if (node.additionalProperties !== false && flag) undefinedKeys.push(p);
+          // An object whose keys another definition sets, as the stack's `OpenObject`, leaves none undefined.
+          else if (node.additionalProperties !== false && flag && !(owner?.kind === "object" && owner.foreign_keys)) undefinedKeys.push(p);
         }
       }
       if (Array.isArray(x) && isMap(node.items)) x.forEach((v, i) => visitNode(`${key}/items`, node.items, v, `${path}/${i}`, flag, null));

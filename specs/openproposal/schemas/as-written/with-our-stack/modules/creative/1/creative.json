@@ -1,0 +1,312 @@
+{
+  "$defs": {
+    "Asset": {
+      "additionalProperties": false,
+      "properties": {
+        "approval_status": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/ApprovalStatus",
+          "description": "The seller's review outcome. The seller moves it"
+        },
+        "asset_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "Identity of the asset within the line item"
+        },
+        "built_by": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Side",
+          "description": "Which side built it. Absent: the buyer"
+        },
+        "format_id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/FormatId",
+          "description": "The `formats.available[]` id the asset is for"
+        },
+        "markup": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "The tag or creative markup"
+        },
+        "provenance": {
+          "$ref": "#/$defs/AssetProvenance",
+          "description": "How the asset was made"
+        },
+        "submitted_at": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Instant",
+          "description": "When it was delivered"
+        },
+        "url": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "Where the asset is, such as a tag URL with its macros unexpanded"
+        }
+      },
+      "required": [
+        "asset_id",
+        "format_id"
+      ],
+      "type": "object"
+    },
+    "AssetProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "content_digest": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Digest",
+          "description": "Over the exact bytes served at `url`"
+        },
+        "disclosure_methods": {
+          "description": "How the content is marked or disclosed. Core terms: `c2pa_manifest` | `watermark` | `audible_notice` | `visible_label`. A receiver that doesn't know a term reads that method as unstated",
+          "items": {
+            "$ref": "#/$defs/AssetProvenanceDisclosureMethod"
+          },
+          "type": "array"
+        },
+        "generator": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "The system that generated it"
+        },
+        "model_version": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "The version of the model that generated it"
+        },
+        "synthetic": {
+          "description": "True when the content is artificially generated or manipulated, in whole or in part",
+          "type": "boolean"
+        },
+        "voice_consent_ref": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/DocumentRef",
+          "description": "The consent of the person whose voice is synthesized"
+        }
+      },
+      "required": [
+        "synthetic"
+      ],
+      "type": "object"
+    },
+    "AssetProvenanceDisclosureMethod": {
+      "anyOf": [
+        {
+          "enum": [
+            "c2pa_manifest",
+            "watermark",
+            "audible_notice",
+            "visible_label"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "CreativeDelivery": {
+      "additionalProperties": false,
+      "properties": {
+        "endpoint": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Url",
+          "description": "Where the buyer sends creative"
+        },
+        "method": {
+          "$ref": "#/$defs/CreativeDeliveryMethod",
+          "description": "Core terms: `buyer_hosted` | `seller_hosted` | `api` | `platform_managed`, defined in the creative path below"
+        },
+        "other_protocols": {
+          "description": "How a creative that list has no code for is delivered. Core term: `javascript_tag`, a tag whose script renders the ad. A receiver that doesn't know a term treats only that term as unavailable",
+          "items": {
+            "$ref": "#/$defs/CreativeDeliveryOtherProtocol"
+          },
+          "type": "array"
+        },
+        "protocols": {
+          "description": "Values from AdCOM 1.0 List: Creative Subtypes - Audio/Video the seller accepts, wrappers included, such as VAST 4.2 (13). The values OpenRTB 2.6 `video.protocols` and `audio.protocols` carry",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger"
+          },
+          "type": "array"
+        },
+        "secure_required": {
+          "description": "Whether the creative must load over a secure connection. Absent: this line item states no such requirement",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "method"
+      ],
+      "type": "object"
+    },
+    "CreativeDeliveryMethod": {
+      "anyOf": [
+        {
+          "enum": [
+            "buyer_hosted",
+            "seller_hosted",
+            "api",
+            "platform_managed"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "CreativeDeliveryOtherProtocol": {
+      "anyOf": [
+        {
+          "enum": [
+            "javascript_tag"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
+    },
+    "FormatSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "spec": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/OpenObject",
+          "description": "The full specification. OpenProposal does not hardcode a shape per channel"
+        },
+        "spec_ref": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/EntryRef",
+          "description": "The format registry entry the spec comes from. Absent when the seller defines it"
+        }
+      },
+      "required": [
+        "spec"
+      ],
+      "type": "object"
+    },
+    "FormatsSelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, `selected[]` the buyer's choice, which replaces it, and `deltas` the price of each option outside `included[]`, each by option id.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/FormatId"
+          },
+          "type": "array"
+        },
+        "deltas": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Delta"
+          },
+          "description": "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta.",
+          "propertyNames": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "object"
+        },
+        "included": {
+          "description": "The options in the base rate, by option id.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "The most options that may be in effect."
+        },
+        "selected": {
+          "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "available",
+        "included"
+      ],
+      "type": "object"
+    },
+    "MaterialsDue": {
+      "additionalProperties": false,
+      "properties": {
+        "at": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Instant",
+          "description": "The deadline"
+        },
+        "before_start": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Duration",
+          "description": "The deadline, as a length of time before `commitment.flight.start`"
+        }
+      },
+      "type": "object"
+    },
+    "ProductionOption": {
+      "additionalProperties": false,
+      "properties": {
+        "built_by": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Side",
+          "description": "Which side builds it"
+        },
+        "custom_unit": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "The custom unit built"
+        },
+        "id": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
+          "description": "Option id (§ 3.1)"
+        },
+        "lead_time": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Duration",
+          "description": "Time the build needs"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "ProductionSelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, `selected[]` the buyer's choice, which replaces it, and `deltas` the price of each option outside `included[]`, each by option id.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "#/$defs/ProductionOption"
+          },
+          "type": "array"
+        },
+        "deltas": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Delta"
+          },
+          "description": "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta.",
+          "propertyNames": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "object"
+        },
+        "included": {
+          "description": "The options in the base rate, by option id.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "description": "The most options that may be in effect."
+        },
+        "selected": {
+          "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "available",
+        "included"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/modules/creative/1/creative.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal `creative` module: the vocabularies, objects, unions, and constructor copies of § 5.4 and § 5.4.1.",
+  "title": "creative"
+}

@@ -1,0 +1,73 @@
+{
+  "description": "The schemas as the specification and its examples write the points our proposals change: opaque string IDs, spans as the text or its examples write them, bare terms where the text lists none, calendar dates for a flight, and options with only the members the text lists. Every point the text leaves open is filled as in the schemas we propose.",
+  "format": 1,
+  "locks": [
+    {
+      "commit": "a4adff3efb85564d84a4439b27f554123feefd41",
+      "differences": [],
+      "examples": {
+        "proposed": {
+          "departure": 0,
+          "failures": 0,
+          "gap": 0,
+          "places": 0
+        },
+        "variant": {
+          "departure": 0,
+          "failures": 0,
+          "gap": 0,
+          "places": 0
+        }
+      },
+      "name": "with-our-stack"
+    }
+  ],
+  "switches": [
+    {
+      "chosen": "uuid",
+      "decision": "D-037",
+      "option": "opaque-string",
+      "proposed": "A UUID in the RFC 9562 string form, which JSON Schema's `uuid` format checks.",
+      "question": "How is the ID of a record a party mints written, so that every party compares it the same way?",
+      "reads": "Every ID a party mints, and every reference to one, is any string, as the text types `proposal_id` and `line_item_id`: `proposal_id`, `line_item_id`, `asset_id`, `correlation_id`, `idempotency_key`, a commitment's `proposal_id`, `requires`' line items, and the `id` of every object option, which `included[]` and the `pricing` keys name it by.",
+      "written": "Any string the minting party chooses."
+    },
+    {
+      "chosen": "duration",
+      "decision": "D-040",
+      "option": "as-written",
+      "proposed": "An ISO 8601 duration in the grammar of RFC 3339 Appendix A, as `hold_duration` is.",
+      "question": "How is a length of time written where the specification or its examples write it as prose, a word, or a count of seconds?",
+      "reads": "A production option's `lead_time` is prose, such as \"10 business days\"; a report's `cadence`, an availability's `granularity`, and a measurement source's `attribution_window` are bare words, such as `daily` and `30d`; and `placement.skipafter` and `refresh.min_interval_s` are whole seconds, as § 5.2.2 and AdCOM 1.0 write them. `hold_duration`, which the text writes as an ISO 8601 duration, stays one.",
+      "written": "Each as the specification or its examples write it, prose for `lead_time`, a word for `cadence` and `granularity`, `30d` for `attribution_window`, and integer seconds for `skipafter` and `min_interval_s`."
+    },
+    {
+      "chosen": "named-open-vocabulary",
+      "decision": "D-041",
+      "option": "bare-term",
+      "proposed": "Each field gets a named open vocabulary with the core terms the specification lists, none yet, so each accepts namespaced terms `<domain>:<term>` only.",
+      "question": "What does a field hold whose values are terms that the specification doesn't list?",
+      "reads": "Each field whose values are terms the text doesn't list takes a bare term, such as `modeled`, `vast_4_2`, `mrc`, or `s3`: an audience's `provenance`, `creative_delivery.protocol`, an asset's `approval_status`, `availability`'s `unit` and `basis`, `committed_metrics[]`'s `basis`, `reporting`'s `delivery_mechanism`, and, on `main`, an external reference's `role`.",
+      "written": "Each field takes any bare term, letters and digits joined by underscores, as the examples write them."
+    },
+    {
+      "chosen": "timestamp",
+      "decision": "D-042",
+      "option": "date",
+      "proposed": "A point in time, a `Timestamp`, as the offer window's `valid_from` and `valid_until` are.",
+      "question": "Is a commitment's flight start and end a calendar date, as the examples write them, or a point in time?",
+      "reads": "A commitment's `flight_start` and `flight_end` are calendar dates, such as `2026-10-06`, as the examples write them. The text names no time zone that reads them.",
+      "written": "A calendar date, `YYYY-MM-DD`, as the examples write it."
+    },
+    {
+      "chosen": "add-id",
+      "decision": "D-047",
+      "option": "as-written",
+      "proposed": "Yes. Each of these options carries `id`, required, beside the members the text lists, and `included[]` and the `pricing` keys name the option by it.",
+      "question": "Do the production, measurement source, and reporting options carry an `id` that `included[]` and the `pricing` keys name them by?",
+      "reads": "The production, measurement source, and reporting options have only the members the text lists, and no `id`, so `included[]` and the `pricing` keys can't name them.",
+      "written": "No. The options keep the members the text lists, and `included[]` and the `pricing` keys can't name them."
+    }
+  ],
+  "variant": "as-written"
+}

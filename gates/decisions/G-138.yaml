@@ -1,0 +1,21 @@
+format: 1
+id: G-138
+date: 2026-10-28
+question: What changes in the gates when AdCOM's last four codes whose proto names were cut mid-phrase are named by decision records?
+decision: >-
+  D-020 also names List: Playback Methods code 4 "Initiates on Mouse-Over
+  with Sound On", in the form of code 3, and three new gap records, each
+  quoting its row and asking AdCOM for short names, name List: Feed Types
+  code 3 "Podcast" (D-022), List: Creative Attributes code 10 "Shaky,
+  Flashing, or Extreme Animation" (D-023), and List: Playback Cessation
+  Modes code 3 "On Leaving Viewport Continues as Floating Unit" (D-024).
+  Each fits 48 characters and is its list's only name, which the emitter's
+  collision check and the proto target's package-wide check confirm; the
+  integer-coded test pins the four, each its list's only name of at most 48
+  characters. The independent review's corrections to the records' rationales
+  are in the same change.
+rationale: >-
+  No check changes; only the test suite gains assertions. Four titles and
+  four proto value names change; every code and number is unchanged.
+accepts:
+  - { gate: npm-test, fingerprint: 0b49dea249c3b40cdfedf5ce22a50b8bc6a39a3cdb0583a04b0075f6fd68875f }

@@ -8,12 +8,15 @@ covers:
   - ir: key:3.1:available[]
     digest: e56c463d4043e1f551eae09af84db75ecf3185079f60194536361b619af55af5
     quote: "`available[]` | REQUIRED | The options the seller offers"
+    locks: [main, with-open-prs]
   - ir: key:3.1:included[]
     digest: 8ec666d51bf96c60f03793156f832384d83126b7e98f3112259b423bc624b78b
     quote: "`included[]` | REQUIRED | Which options are in the base rate. MAY be empty"
+    locks: [main, with-open-prs]
   - ir: key:3.1:pricing
     digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
     quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+    locks: [main, with-open-prs]
 options:
   - id: option-key
     summary: >-

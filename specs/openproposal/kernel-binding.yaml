@@ -7,35 +7,46 @@ format: 1
 spec: openproposal
 primitives:
   - name: Uuid
+    locks: [main, with-open-prs]
     decision: D-037
+    decision_locks: [main, with-open-prs]
     sources:
       spec:
         - ir: field:4.1:proposal_id
           digest: fb8604e60eabfa2db105b17ca562af8ba2f20784907dcce349772ce83054088d
           quote: "`proposal_id` | String | immutable | Unique identity for the proposal object"
+          locks: [main, with-open-prs]
         - ir: field:5.1:line_item_id
           digest: 60cd2aeea40121597f5e2b0725417665bc560c9b677000d3dfbc432d1c88c969
           quote: "`line_item_id` | String | immutable | Identity within the proposal"
+          locks: [main, with-open-prs]
   - name: ExternalId
+    locks: [main, with-open-prs]
     sources:
       spec:
         - ir: field:4.1:seller_id
           digest: 98c167e650ac7cbe7a3fe910d218292ae19d16156e9a575875776ba335e4e833
           quote: "`seller_id` | String | immutable | IAB Tech Lab registry reference"
+          locks: [main, with-open-prs]
         - ir: field:5.8:eligible_bidders[]
           digest: 377ad11d09a2b66329d8d7f32f46f187f2d0ba5d06ac90980630554720456d9a
           quote: "`eligible_bidders[]` | Array[String] | seller-set | Permitted seat or buyer ids"
+          locks: [main, with-open-prs]
   - name: Text
+    locks: [main, with-open-prs]
     sources:
       spec:
         - ir: field:4.2:description
           digest: d8f9bd51c2ecf2a1311600c2fad1dda1b1b8f74269700a3f3ae6018a8beba30d
           quote: '`description` | String | seller-set | REQUIRED. Prose, not a name. Where the "why buy" case is made, including which channels a multi-channel proposal spans'
+          locks: [main, with-open-prs]
         - ir: field:4.2:seasonality_notes
           digest: 33869d96c87875efa58c05a56f748e10c70beaf72e89bec328f29de4c6c3ece6
           quote: "`seasonality_notes` | String | seller-set | When the proposal performs differently"
+          locks: [main, with-open-prs]
   - name: Url
     decision: D-006
+    decision_locks: [main, with-open-prs]
     sources:
       spec:
         - ir: rule:2.3:99777739
@@ -48,6 +59,7 @@ primitives:
           locks: [with-open-prs]
   - name: Domain
     decision: D-002
+    decision_locks: [main, with-open-prs]
     sources:
       spec:
         - ir: field:5.2:properties
@@ -64,91 +76,128 @@ primitives:
           locks: [with-open-prs]
   - name: FormatId
     decision: D-019
+    decision_locks: [main, with-open-prs]
     sources:
       spec:
         - ir: field:5.4:formats
           digest: 2a8a55ef5666b057f31306cadf667fc01dff13e5cc5e009f00d3f649de375016
           quote: "`formats` | Object | selectable | `available[]` of registry format ids namespaced by channel (`display/300x250`, `audio/host-read-30s`), `included[]`, `pricing`, `max_select`"
+          locks: [main, with-open-prs]
   - name: CurrencyCode
     sources:
       spec:
         - ir: field:5.6:pricing[].currency
           digest: c3fe3033ef8ca1012e67b36b728cc3383f4f4b4642ded0b50c4537216dcafde1
           quote: "`pricing[].currency` | String | seller-set | ISO-4217"
+          locks: [main, with-open-prs]
         - ir: key:5.6.1:commitment.currency
           digest: 19e4d985eb2f3a597bafe8f3233448688dcfd827a2e41bc2b8fe1886c5e9ce33
           quote: "`currency` | REQUIRED when `basis = spend` | ISO-4217"
+          locks: [main, with-open-prs]
+        - ir: sentence:5.6:87f50fab
+          digest: 99a2e36d6a1d3b66cc7a8d4082d96d722dc7589db1b26d059994e63c571d8fb3
+          quote: "`CurrencyCode` is a String: an ISO 4217 alphabetic code, such as `USD`."
+          locks: [with-our-stack]
   - name: Amount
     decision: D-036
+    decision_locks: [main, with-open-prs]
     sources:
       spec:
         - ir: field:5.6:min_spend
           digest: 9950b94692a4b0250d54a54d47eca0f63c96a7b9d26607cded57896d46e5c8c4
           quote: "`min_spend` | Number | seller-set | Minimum spend for this line item"
+          locks: [main, with-open-prs]
         - ir: key:5.6.1:commitment.amount
           digest: 9e4c291747cc047e67c9ef7b1b6f9776d02bb2e82de16dfe9b8079e42921e804
           quote: "`amount` | REQUIRED | The figure committed"
+          locks: [main, with-open-prs]
         - ir: field:5.6:pricing[].gross_rate
           digest: f432867a10e6b5662c58996ee4f1c3ea14cddc65968fb1f879bbc703940b9621
           quote: "`pricing[].gross_rate` | Number | seller-set | The list rate the buyer pays"
+          locks: [main, with-open-prs]
   - name: PriceAdjustment
+    locks: [main, with-open-prs]
     decision: D-036
+    decision_locks: [main, with-open-prs]
     sources:
       spec:
         - ir: key:3.1:pricing
           digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
           quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+          locks: [main, with-open-prs]
   - name: PercentChange
+    locks: [main, with-open-prs]
     decision: D-010
+    decision_locks: [main, with-open-prs]
     sources:
       spec:
         - ir: key:3.1:pricing
           digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
           quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+          locks: [main, with-open-prs]
   - name: Fraction
     decision: D-005
+    decision_locks: [main, with-open-prs]
     sources:
       spec:
         - ir: field:5.7:committed_metrics[]
           digest: 2c123e829ef892456b09671dfd52243f1bef0db8b067aa9c5d184dc07411caf5
           quote: "`committed_metrics[]` | Array[Object] | requestable | `{ metric, value, basis }` tuples — `viewable_rate` for display, `completion_rate` for video/audio/CTV, an audience-modelled metric for DOOH. Seller declares a ceiling; a buyer MAY request above it"
+          locks: [main, with-open-prs]
         - ir: field:5.3:buyer_supplied
           digest: 18d87a0de58116db76d7152a7f96bc722dc700b91f053406b32e4299e7910504
           quote: "`buyer_supplied` | Object | supplied | `{ segments_allowed, suppression_allowed, match_rate_expected, segments[], suppression_list }`. `match_rate_expected` is the seller's stated expectation; `segments[]` and `suppression_list` are buyer-populated"
+          locks: [main, with-open-prs]
+        - ir: def:2.2:Fraction
+          digest: 9024cdd485d132f1f11c353db7f2e211da12588fb6a049f230207d08d2e8fe1c
+          quote: "`Fraction` | Number from 0 to 1 | A proportion"
+          locks: [with-our-stack]
   - name: Count
+    locks: [main, with-open-prs]
     sources:
       spec:
         - ir: field:5.3:addressable_scale
           digest: 1289f106e9861b03225c1fc7056b164eac34f82d73fc327c7009b0c8b9111e24
           quote: "`addressable_scale` | Integer | derived | Reachable units in the flight, recomputed against the buyer's selection. Not segment size"
+          locks: [main, with-open-prs]
         - ir: key:3.1:max_select
           digest: 199cab600b78dcd9dc40358fa8a94ec4d323f2bcf2fd7922a62b008af465d820
           quote: "`max_select` | OPTIONAL | Cap on how many options the buyer may choose"
+          locks: [main, with-open-prs]
   - name: Measure
+    locks: [main, with-open-prs]
     decision: D-005
+    decision_locks: [main, with-open-prs]
     sources:
       spec:
         - ir: field:5.7:committed_metrics[]
           digest: 2c123e829ef892456b09671dfd52243f1bef0db8b067aa9c5d184dc07411caf5
           quote: "`committed_metrics[]` | Array[Object] | requestable | `{ metric, value, basis }` tuples — `viewable_rate` for display, `completion_rate` for video/audio/CTV, an audience-modelled metric for DOOH. Seller declares a ceiling; a buyer MAY request above it"
+          locks: [main, with-open-prs]
   - name: Timestamp
+    locks: [main, with-open-prs]
     decision: D-001
+    decision_locks: [main, with-open-prs]
     sources:
       spec:
         - ir: field:4.1:valid_from,valid_until
           digest: 9c5853eb24269fa128f158276e85a0e45be848cce58efe34fa1739a06514e9a0
           quote: "`valid_from` · `valid_until` | Timestamp | seller-set | ISO-8601 window the offer holds. This is the offer window, not the campaign flight"
+          locks: [main, with-open-prs]
         - ir: key:5.6.2:hold_status.hold_expires_at
           digest: d298da40613999b40a53bab56e17f7c8af9488207a3755391ce3c368a2556cb8
           quote: "`hold_expires_at` | Absolute timestamp, set when the hold is granted"
+          locks: [main, with-open-prs]
   - { name: UtcTimestamp, absent: true }
   - name: Duration
     decision: D-001
+    decision_locks: [main, with-open-prs]
     sources:
       spec:
         - ir: key:5.6.2:hold_status.hold_duration
           digest: 926e46e5c6325e98292a30a6655d0991d1979a9e07c1c637c9d256aa82659493
           quote: "`hold_duration` | ISO-8601 duration the hold runs for"
+          locks: [main, with-open-prs]
   - name: TimeOfDay
     decision: D-004
     decision_locks: [main]
@@ -166,6 +215,10 @@ primitives:
           digest: b653534aab2fd12f0dad1b1f4422634068e90af810a75414b00aa4d346e379fc
           quote: A `daypart` window is `{ days[], start, end }`, with `days[]` from Monday to Sunday, `start` and `end` as HH:MM, and `end` exclusive, later than `start`, and allowed to be `24:00`.
           locks: [with-open-prs]
+        - ir: sentence:5.5:8a0cbdb7
+          digest: 3b832bffee99526e562a0042f5d00067e807bdbdb1501a0981e0f78edbd79c80
+          quote: "`ClockTime` is a String: `HH:MM` on a 24-hour clock, two digits each, from `00:00` to `23:59`, or `24:00`, the end of the day."
+          locks: [with-our-stack]
   - name: DayName
     decision: D-004
     decision_locks: [main]
@@ -179,8 +232,12 @@ primitives:
           digest: b34d1818bf80b3e5947f9902057ac882707ef3a893fc370c97efc81487d64080
           quote: "`daypart` | Object | settable | `allowed[]` of `{ days[], start, end }`: `days[]` from `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`, HH:MM civil time, `end` exclusive, up to `24:00`"
           locks: [with-open-prs]
+        - ir: sentence:5.5:0b8ec236
+          digest: 127651172cb46c119486866258fb99696084e95d057affb088a17e3bc6b72047
+          quote: "`DayOfWeek` is `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`."
+          locks: [with-our-stack]
   - name: IntegerFlag
-    locks: [with-open-prs]
+    locks: [with-open-prs, with-our-stack]
     sources:
       spec:
         - ir: key:5.2.2:placement.reward#meaning/values:1
@@ -191,8 +248,12 @@ primitives:
           digest: eee71b1ff54c633f884713ce121e5b82ef4ecc041de54921c9ab66336402c469
           quote: Each key takes an integer, except `playmethod[]` and `api[]`, which take arrays of integers, and `refresh`, an object whose `min_interval_s` is a REQUIRED integer.
           locks: [with-open-prs]
+        - ir: def:2.2:IntegerFlag
+          digest: 8ccd938cec80d303890604d05b8fb931e7aa132dfca500cd59b2d3b9db29c5a4
+          quote: "`IntegerFlag` | Integer: `0` (no) | `1` (yes) | A yes or no that another standard writes as an integer. Each field says what `1` affirms"
+          locks: [with-our-stack]
   - name: TimeZone
-    locks: [with-open-prs]
+    locks: [with-open-prs, with-our-stack]
     sources:
       spec:
         - ir: field:5.5:time_zone
@@ -203,6 +264,10 @@ primitives:
           digest: d28f7a045f76828d2402a2595875e5dc09466aac3c71c79f5f20c833b51e312f
           quote: "`time_zone` names a zone in the IANA time zone database, such as America/New_York or UTC."
           locks: [with-open-prs]
+        - ir: def:2.2:ZoneName
+          digest: cec6f43072d265cffcfbc633af33a3754a3aca0edd981f46aba57fd9d17018b4
+          quote: "`ZoneName` | An `IanaZone`, or `viewer_local` | `viewer_local` is where the ad renders. On a `dooh` line item that is each screen's own zone, which its `time_zone` names when present"
+          locks: [with-our-stack]
     rules:
       - id: kernel:TimeZone:listed
         source:
@@ -213,10 +278,13 @@ primitives:
               locks: [with-open-prs]
   - name: NamespacedTerm
     decision: D-002
+    decision_locks: [main, with-open-prs]
   - name: VendorCode
     locks: [with-open-prs]
   - name: CatalogRef
+    locks: [main, with-open-prs]
     decision: D-009
+    decision_locks: [main, with-open-prs]
     sources:
       spec:
         - ir: code:2.2:1
@@ -224,11 +292,14 @@ primitives:
           quote: |-
             catalog_ref: "<seller_namespace>/<collection>/<entry_id>@<version>"
             example:     "examplepub/audiences/smb-decision-makers@3"
+          locks: [main, with-open-prs]
         - ir: rule:2.2:3916a8f2
           digest: 511cade5dc52dec990f091f7293a343392bae81a91404e3a81983b040edf9315
           quote: References MUST be version-pinned.
+          locks: [main, with-open-prs]
   - name: Digest
     decision: D-003
+    decision_locks: [main, with-open-prs]
     locks: [with-open-prs]
     sources:
       spec:
@@ -240,6 +311,185 @@ primitives:
   - { name: MediaOffset, absent: true }
   # The Deals API's country codes, which OpenProposal's text doesn't write.
   - { name: CountryCode, absent: true }
+  - name: Digest
+    edition: stack
+    locks: [with-our-stack]
+    decision: D-049
+    decision_locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: def:2.2:Digest
+          digest: 3d8eea53cc986aa9993abb94385caee4c6baba8fdf1ff4c7f9a027f7c2202e58
+          quote: "`Digest` | String of 71 characters: `sha256:` followed by the 64 lowercase hexadecimal characters of the SHA-256 of its input | The value carries the algorithm, and a field name never names it. `sha256` is the only algorithm in this version. Each field that holds a `Digest` states its input"
+          locks: [with-our-stack]
+  - name: Url
+    edition: stack
+    locks: [with-our-stack]
+    decision: D-049
+    decision_locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: def:2.2:Url
+          digest: ac1d3962a8fd84f62e1061d42d1e6d0741182bbc4679acf12ea6fa5e99c38ad3
+          quote: "`Url` | String: an absolute `http` or `https` URL (RFC 3986) | A location a client can fetch"
+          locks: [with-our-stack]
+  - name: Duration
+    edition: stack
+    locks: [with-our-stack]
+    decision: D-049
+    decision_locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: def:2.2:Duration
+          digest: b8964f62205468b2e358f311497bf7bac3b639dddf0eeead1ce15f5526490b06
+          quote: "`Duration` | String: the ISO 8601 grammar of RFC 3339 Appendix A without its week form (`P14D`, not `P2W`) | A length of time. A comparison names its anchor. A length within the playback of an ad or a placement, such as a play, view, read, loop, slot, or refresh, is instead an Integer whose key ends `_s` or `_ms`, except a key imported from another standard, which keeps its spelling (§ 2.6)"
+          locks: [with-our-stack]
+  - name: Domain
+    edition: stack
+    locks: [with-our-stack]
+    decision: D-049
+    decision_locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: def:2.2:Domain
+          digest: d671964da3ca199ac23b95c300f4348400e9cb5e63f6fb483f6fac0c98679265
+          quote: "`Domain` | String: lowercase ASCII, internationalized labels in A-label form (RFC 5890), with no scheme, port, path, or trailing dot | Producers MUST write this form. Consumers MUST compare byte for byte and MUST NOT normalize a value before comparing it. A value read from ads.txt or sellers.json is converted to this form before comparison"
+          locks: [with-our-stack]
+  - name: Amount
+    edition: stack
+    locks: [with-our-stack]
+    decision: D-049
+    decision_locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: def:2.2:Amount
+          digest: 7e43f7cc99e45c463678c46bb4532a1133af9e9fdff68dc37f7ec017ab97f0bb
+          quote: "`Amount` | Number within the limits of § 4.1.1 | Money. It carries no currency: § 5.6 states which one it reads in"
+          locks: [with-our-stack]
+  - name: NamespacedTerm
+    edition: stack
+    locks: [with-our-stack]
+    decision: D-053
+    decision_locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: def:2.2:VocabularyTerm
+          digest: 230b1f4131ea57db381354fb49edff8e0692b28a6969ba4ddf93a1288ce198b9
+          quote: "`VocabularyTerm` | String: a bare core term, or `<domain>:<term>` with `<domain>` a `Domain` the definer controls. A term is ASCII letters, digits, `_`, and `-` | See below"
+          locks: [with-our-stack]
+  - name: RegistrableDomain
+    locks: [with-our-stack]
+    decision: D-051
+    decision_locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: def:2.2:RegistrableDomain
+          digest: 996140da167fae546cefbbdb984df61f7cf0780a2eca6d4d5aa48a5bed5e2666
+          quote: "`RegistrableDomain` | A `Domain` that is the Public Suffix List registrable domain, taken over the whole list, PRIVATE section included | It names a business"
+          locks: [with-our-stack]
+  - name: HttpsUrl
+    locks: [with-our-stack]
+    decision: D-051
+    decision_locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: def:2.2:HttpsUrl
+          digest: c96e41b2cdd45c793be7b6e4b549806b234be39bba19fe5fd8ba60dabb141706
+          quote: "`HttpsUrl` | A `Url` whose scheme is `https` | A location fetched over TLS"
+          locks: [with-our-stack]
+  - name: Instant
+    locks: [with-our-stack]
+    decision: D-051
+    decision_locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: def:2.2:Instant
+          digest: df8f4931a29cab49ac4f7be005c0e543329982c6dd42ad24f6ca266927fde0bc
+          quote: "`Instant` | String: an RFC 3339 `date-time` in whole seconds, ending in `Z` | A point in time. One written form, so one instant has one digest input"
+          locks: [with-our-stack]
+  - name: EntryRef
+    locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: def:2.2:EntryRef
+          digest: f44558203adf4d0fe42abce8cd25edef3fdd370ff34a525e10a270d438c8235a
+          quote: "`EntryRef` | String: `<domain>/<collection>/<entry_id>@<version>`, with no `/` or `@` inside a part | A named entry at one exact version, whose content does not change. `<domain>` is a `Domain`. It carries no digest"
+          locks: [with-our-stack]
+  - name: FractionDelta
+    locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: def:2.2:FractionDelta
+          digest: d1df316a19e8a8701b794b94dd6737989aab1ed8e0fadfb55b30d418c261123d
+          quote: "`FractionDelta` | Number greater than -1 | Used only by `delta_fraction` (§ 3.1)"
+          locks: [with-our-stack]
+  - name: FieldPointer
+    locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: def:2.2:FieldPointer
+          digest: 81c9fe24955719224a5619829da66cd27e74ea53e642be90bb605fb6fcf9f39a
+          quote: "`FieldPointer` | String: a JSON Pointer (RFC 6901) | A location in the object this specification defines"
+          locks: [with-our-stack]
+  - name: IanaZone
+    locks: [with-our-stack]
+    decision: D-051
+    decision_locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: def:2.2:IanaZone
+          digest: a155797aac910548f8d5856f94bb63c7d3737a3a343dfac0a13179481951f330
+          quote: "`IanaZone` | String: a name in the IANA time zone database, such as `America/New_York` or `UTC` | A time zone"
+          locks: [with-our-stack]
+  - name: GeoCode
+    locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: sentence:5.5:0b79aa1d
+          digest: 8256e40973334ece5b8413433c759f14f9fcd72120d0be16710361b64531d328
+          quote: "`GeoCode` is a String: an ISO 3166-1 alpha-2 country code, an ISO 3166-2 subdivision code, or an extension `VocabularyTerm` for any other area, such as a metro list."
+          locks: [with-our-stack]
+  - name: PlainString
+    locks: [with-our-stack]
+    decision: D-052
+    decision_locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: sentence:2.6:44d6e818
+          digest: 1045ff7049795cd6efa7227143f4da7d25240241f87694d38ae71cac731f52b6
+          quote: A Type cell holds `String`, `Integer`, `Number`, `Boolean`, `Enum`, `Object`, a shared type (§ 2.2), a type its section names, or a named key table.
+          locks: [with-our-stack]
+  - name: PlainInteger
+    locks: [with-our-stack]
+    decision: D-052
+    decision_locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: sentence:2.6:44d6e818
+          digest: 1045ff7049795cd6efa7227143f4da7d25240241f87694d38ae71cac731f52b6
+          quote: A Type cell holds `String`, `Integer`, `Number`, `Boolean`, `Enum`, `Object`, a shared type (§ 2.2), a type its section names, or a named key table.
+          locks: [with-our-stack]
+  - name: PlainNumber
+    locks: [with-our-stack]
+    decision: D-052
+    decision_locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: sentence:2.6:44d6e818
+          digest: 1045ff7049795cd6efa7227143f4da7d25240241f87694d38ae71cac731f52b6
+          quote: A Type cell holds `String`, `Integer`, `Number`, `Boolean`, `Enum`, `Object`, a shared type (§ 2.2), a type its section names, or a named key table.
+          locks: [with-our-stack]
+  - name: FormatId
+    edition: stack
+    locks: [with-our-stack]
+    decision: D-049
+    decision_locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: sentence:5.4:75612a3e
+          digest: 05d8ff4481454a9e3746c619724bf506cef80e22376841d04065b3f9baf9caa9
+          quote: "`FormatId` is a String: `<channel>/<name>`, where `<channel>` is the line item's `channel`, with no `/` or `@` inside a part."
+          locks: [with-our-stack]
 constructors:
   - name: Selectable
     sources:
@@ -247,27 +497,35 @@ constructors:
         - ir: marker:3:selectable
           digest: 9d4920aaf4e7581b9e328b70600205e70277c7ca1a1f6275a8736c157cd1999d
           quote: "`selectable` | The buyer chooses from a seller-declared set. Each option MAY carry a price delta. Resolves without seller assent."
+          locks: [main, with-open-prs]
         - ir: rule:3.1:f3c3cab7
           digest: d228e1dfba5ae266474b8184f4d55612ea607481e33f1a1eeb8da4102ef906ae
           quote: "Every field marked `selectable` MUST declare:"
+          locks: [main, with-open-prs]
         - ir: key:3.1:available[]
           digest: e56c463d4043e1f551eae09af84db75ecf3185079f60194536361b619af55af5
           quote: "`available[]` | REQUIRED | The options the seller offers"
+          locks: [main, with-open-prs]
         - ir: key:3.1:included[]
           digest: 8ec666d51bf96c60f03793156f832384d83126b7e98f3112259b423bc624b78b
           quote: "`included[]` | REQUIRED | Which options are in the base rate. MAY be empty"
+          locks: [main, with-open-prs]
         - ir: rule:3.1:ff8838af
           digest: 36e4b0c48894abc60ddd2f7ebc3e9bda8f6e95efc4b28e17162a36e093a3143a
           quote: MAY be empty
+          locks: [main, with-open-prs]
         - ir: key:3.1:pricing
           digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
           quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+          locks: [main, with-open-prs]
         - ir: key:3.1:max_select
           digest: 199cab600b78dcd9dc40358fa8a94ec4d323f2bcf2fd7922a62b008af465d820
           quote: "`max_select` | OPTIONAL | Cap on how many options the buyer may choose"
+          locks: [main, with-open-prs]
         - ir: rule:3.1:f8b0c287
           digest: d60c77636afc33649141f8de560cbf2e0f599b124779ea89b069f9b08a9181cd
           quote: A field marked `selectable` that carries a bare value and no `available[]` MUST be treated as `seller-set`.
+          locks: [main, with-open-prs]
     fallback:
       statement: rule:3.1:f8b0c287
       decision: D-008
@@ -287,21 +545,26 @@ constructors:
             - ir: key:3.1:pricing
               digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
               quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+              locks: [main, with-open-prs]
             - ir: key:3.1:included[]
               digest: 8ec666d51bf96c60f03793156f832384d83126b7e98f3112259b423bc624b78b
               quote: "`included[]` | REQUIRED | Which options are in the base rate. MAY be empty"
+              locks: [main, with-open-prs]
   - name: Settable
     sources:
       spec:
         - ir: marker:3:settable
           digest: 66671c35883697ab396f64f940b5566cca0b389bef1aa9fcaed09f2b8c20d961
           quote: "`settable` | The buyer supplies a value within seller-declared bounds. Resolves without seller assent."
+          locks: [main, with-open-prs]
         - ir: rule:3.2:ee009430
           digest: b70f59e2c68b16af32a8ad7ee513de31c1f1bd7a3c1540f17ba556688780a7cf
           quote: "Every field marked `settable` MUST declare its bounds: either `allowed[]` (an enumerated set) or `min` / `max` (a numeric or date range)."
+          locks: [main, with-open-prs]
         - ir: rule:3.2:4f3b0a9c
           digest: 07c583d4952414b695fe884dd3b8b2257e046904bec68931d240feef4ad28988
           quote: A field marked `settable` that carries a bare value and no bounds MUST be treated as `seller-set`.
+          locks: [main, with-open-prs]
     fallback:
       statement: rule:3.2:4f3b0a9c
       decision: D-008
@@ -311,9 +574,11 @@ constructors:
         - ir: field:5.5:frequency_cap#description/object:1
           digest: adbcfc3ac2b7bc7c0bda1069751986267cf304dbafb4ee388d9c2f62b43ba305
           quote: "{ max: { min, max }, period, basis: device | household | listener }"
+          locks: [main, with-open-prs]
         - ir: rule:3.2:ee009430
           digest: b70f59e2c68b16af32a8ad7ee513de31c1f1bd7a3c1540f17ba556688780a7cf
           quote: "Every field marked `settable` MUST declare its bounds: either `allowed[]` (an enumerated set) or `min` / `max` (a numeric or date range)."
+          locks: [main, with-open-prs]
     rules:
       - id: constructor:Range:ordered
         source:
@@ -321,44 +586,184 @@ constructors:
             - ir: field:5.5:frequency_cap#description/object:1
               digest: adbcfc3ac2b7bc7c0bda1069751986267cf304dbafb4ee388d9c2f62b43ba305
               quote: "{ max: { min, max }, period, basis: device | household | listener }"
+              locks: [main, with-open-prs]
           decision: D-011
   - name: CatalogRefOr
+    locks: [main, with-open-prs]
     sources:
       spec:
         - ir: rule:2.2:c610e803
           digest: d92a309b641f5804a63417966289d0dd289ae5243884b49fab292652386ab7b0
           quote: "Any field whose value is drawn from a seller-maintained catalog MAY carry a reference in place of an inline value:"
+          locks: [main, with-open-prs]
         - ir: code:2.2:1
           digest: 5b0b87b43dbc9c1a24ed8f3e2bd71d22c5d790a6f786b980bd554f64a71436a0
           quote: |-
             catalog_ref: "<seller_namespace>/<collection>/<entry_id>@<version>"
             example:     "examplepub/audiences/smb-decision-makers@3"
+          locks: [main, with-open-prs]
         - ir: rule:2.2:696ee27b
           digest: 9b517ad2b69750533a5be0079e02aaf389a5e013eceb9c55d4f37b9bb2c67388
           quote: A field MUST carry either an inline value or a `catalog_ref`, never both.
+          locks: [main, with-open-prs]
   - name: List
     sources:
       spec:
         - ir: field:5.6:pricing[]
           digest: 362371b22d681a7cf62432d36c01b9a96ee682c497028234b637b2a3f0df8b0b
           quote: "`pricing[]` | Array[Object] | mixed | See below"
+          locks: [main, with-open-prs]
         - ir: key:3.1:available[]
           digest: e56c463d4043e1f551eae09af84db75ecf3185079f60194536361b619af55af5
           quote: "`available[]` | REQUIRED | The options the seller offers"
+          locks: [main, with-open-prs]
   - name: Map
     sources:
       spec:
         - ir: key:3.1:pricing#meaning/object:1
           digest: 1d2ea6996d7c3bbf4808776d7399e4719b79687764674d92f08a885763ad61fe
           quote: "{ option_id: { delta_cpm | delta_flat | delta_pct } }"
+          locks: [main, with-open-prs]
+  - name: Range
+    edition: stack
+    locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: key:2.2:Range.min
+          digest: 53f742f85601f1a10180c8f8eacaccd23af9e90035e2a652a90a102a59f51b34
+          quote: "`min` | OPTIONAL | The lower bound"
+          locks: [with-our-stack]
+        - ir: key:2.2:Range.max
+          digest: c77298c86565bb872ae64853f321a6653cbab99a5d367b2e3e14b904654d071b
+          quote: "`max` | OPTIONAL | The upper bound"
+          locks: [with-our-stack]
+        - ir: sentence:2.2:db4f2290
+          digest: 367211ca085a9ad45007a3f4c92665c6162325353d6f101cad75d068f329c731
+          quote: At least one bound is present, and `min` is no greater than `max`.
+          locks: [with-our-stack]
+    rules:
+      - id: constructor:Range:ordered
+        source:
+          spec:
+            - ir: sentence:2.2:db4f2290
+              digest: 367211ca085a9ad45007a3f4c92665c6162325353d6f101cad75d068f329c731
+              quote: At least one bound is present, and `min` is no greater than `max`.
+              locks: [with-our-stack]
+      - id: constructor:Range:duration-ordered
+        source:
+          spec:
+            - ir: sentence:2.2:db4f2290
+              digest: 367211ca085a9ad45007a3f4c92665c6162325353d6f101cad75d068f329c731
+              quote: At least one bound is present, and `min` is no greater than `max`.
+              locks: [with-our-stack]
+            - ir: field:5.9:retention
+              digest: d6da48e3ba2ad2ebe71cde6d131a3f183b1c4731c74ec54ab7ceb15b18d5e88e
+              quote: "`retention` | Range[Duration] | seller-set | From release or air. The ad stays in every copy of the content the seller distributes for at least `min` and is removed by `max`. No `max`: indefinitely. When `placement.feed` is present, only copies in that feed count toward delivery"
+              locks: [with-our-stack]
+          decision: D-062
+  - name: List
+    edition: stack
+    locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: sentence:2.6:44d6e818
+          digest: 1045ff7049795cd6efa7227143f4da7d25240241f87694d38ae71cac731f52b6
+          quote: A Type cell holds `String`, `Integer`, `Number`, `Boolean`, `Enum`, `Object`, a shared type (§ 2.2), a type its section names, or a named key table.
+          locks: [with-our-stack]
+  - name: Map
+    edition: stack
+    locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: sentence:2.6:44d6e818
+          digest: 1045ff7049795cd6efa7227143f4da7d25240241f87694d38ae71cac731f52b6
+          quote: A Type cell holds `String`, `Integer`, `Number`, `Boolean`, `Enum`, `Object`, a shared type (§ 2.2), a type its section names, or a named key table.
+          locks: [with-our-stack]
+  - name: Selectable
+    edition: stack
+    locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: key:3.1:Selectable.available[]
+          digest: 8bb943f22b2dcee8eb56a3baa8e9f0fb609852ba69d7f30e73bb0d47ba30bf4c
+          quote: "`available[]` | REQUIRED | The options the seller offers"
+          locks: [with-our-stack]
+        - ir: key:3.1:Selectable.included[]
+          digest: 659488665861929f507b596c583a50b4c0791fbad4a7507e4ba39c31d939e769
+          quote: "`included[]` | REQUIRED | The options in the base rate, by option id"
+          locks: [with-our-stack]
+        - ir: key:3.1:Selectable.selected[]
+          digest: c3543a69287e07596310a03ae02b51233274d1ee59a37d760eed584222c61b8b
+          quote: "`selected[]` | OPTIONAL | The buyer's choice, by option id"
+          locks: [with-our-stack]
+        - ir: key:3.1:Selectable.deltas
+          digest: 4700416237f4a50c06b55fc36d2f452b0e233bbc1df246421eb972e901716d8b
+          quote: "`deltas` | OPTIONAL | The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta"
+          locks: [with-our-stack]
+        - ir: key:3.1:Selectable.max_select
+          digest: 7c7ed88aab50f16fffbf63f809249a72f12304044dc8232a8bf91ede30f5d7e0
+          quote: "`max_select` | OPTIONAL | The most options that may be in effect"
+          locks: [with-our-stack]
+        - ir: sentence:3.1:0a88d171
+          digest: d240277ff38d441f3857a947a9acac5af9b28c25c4a084f2c5ed346d4a3188ce
+          quote: Every field marked `selectable` is a `Selectable[T]`, or a named type that holds its keys, where `T` is the option type.
+          locks: [with-our-stack]
+  - name: Settable
+    edition: stack
+    locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: key:3.2:Settable.allowed[]
+          digest: 99ac313dd4d11c45da6436074c10216089ec6c6388cec4f9b25e1849ebe94a66
+          quote: "`allowed[]` | REQUIRED | The entries the buyer narrows within"
+          locks: [with-our-stack]
+        - ir: key:3.2:Settable.default
+          digest: b03e032bcc72363f6c1aa4ecfb0dc143a22d48f5c11fee45938de7f412ffb7ed
+          quote: "`default` | REQUIRED | In effect when `value` is absent"
+          locks: [with-our-stack]
+        - ir: key:3.2:Settable.value
+          digest: 02e92c8959877a3c31fe8d7b3795cbfde20d441255c4008e1d5db2907a52d1da
+          quote: "`value` | OPTIONAL | The buyer's value"
+          locks: [with-our-stack]
+        - ir: sentence:3.2:f5da1fc4
+          digest: d7261d9e23038123e25f0b19bd4997d3c117b174efd03c3dfa67d79f39863ecd
+          quote: A field marked `settable` declares its bounds in one of two forms, and the buyer writes one key, `value`.
+          locks: [with-our-stack]
+  - name: Narrowing
+    locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: key:3.2:Narrowing.include[]
+          digest: bd426b77c0a4b508cd2dce247b84c7f79964c97482716ac06927372d5cedc327
+          quote: "`include[]` | REQUIRED | Each entry MUST be covered by an `allowed[]` entry"
+          locks: [with-our-stack]
+        - ir: key:3.2:Narrowing.exclude[]
+          digest: e92c11d0f82da1d2b48ba4da84d21be5d1ff567027eb2c2cc432c3cce03c5596
+          quote: "`exclude[]` | OPTIONAL | Each entry MUST be covered by an `include[]` entry"
+          locks: [with-our-stack]
+  - name: SettableRange
+    locks: [with-our-stack]
+    sources:
+      spec:
+        - ir: key:3.2:SettableRange.default
+          digest: d97d76912df4bb5ee849fc1802f93de600b0a3abae90401672b3282d10fd998e
+          quote: "`default` | REQUIRED | In effect when `value` is absent, between the bounds"
+          locks: [with-our-stack]
+        - ir: key:3.2:SettableRange.value
+          digest: d9a93239a54374af6e956d40481ad28395f1c29c1cd2c4efe42eb6b85e2f53cb
+          quote: "`value` | OPTIONAL | The buyer's value, between the bounds inclusive"
+          locks: [with-our-stack]
 parts:
   - name: PriceDelta
+    locks: [main, with-open-prs]
     sources:
       spec:
         - ir: key:3.1:pricing#meaning/object:1
           digest: 1d2ea6996d7c3bbf4808776d7399e4719b79687764674d92f08a885763ad61fe
           quote: "{ option_id: { delta_cpm | delta_flat | delta_pct } }"
+          locks: [main, with-open-prs]
   - name: CatalogReference
+    locks: [main, with-open-prs]
     sources:
       spec:
         - ir: code:2.2:1
@@ -366,10 +771,13 @@ parts:
           quote: |-
             catalog_ref: "<seller_namespace>/<collection>/<entry_id>@<version>"
             example:     "examplepub/audiences/smb-decision-makers@3"
+          locks: [main, with-open-prs]
         - ir: rule:2.2:696ee27b
           digest: 9b517ad2b69750533a5be0079e02aaf389a5e013eceb9c55d4f37b9bb2c67388
           quote: A field MUST carry either an inline value or a `catalog_ref`, never both.
+          locks: [main, with-open-prs]
   - name: DaypartWindow
+    locks: [main, with-open-prs]
     decisions:
       - { decision: D-004, locks: [main] }
       - { decision: D-038, locks: [main] }
@@ -399,6 +807,42 @@ parts:
           decision: D-004
           decision_locks: [main]
   - { name: Ext, absent: true }
+  - name: Delta
+    locks: [with-our-stack]
+    decisions:
+      - { decision: D-050, locks: [with-our-stack] }
+    sources:
+      spec:
+        - ir: key:3.1:Delta.delta_cpm
+          digest: 60e3140cbf8caa8ce10c19f0a23b13a7f0d40dc4fc36b058d8981464e4d6a48c
+          quote: "`delta_cpm` | OPTIONAL | Added to the rate of a `CPM` or `CPMV` entry (§ 5.6.5), and to no other"
+          locks: [with-our-stack]
+        - ir: key:3.1:Delta.delta_fraction
+          digest: 17f30605db1f38b66ff005598b7d60b6bdd839394eabac1b2343af4b612b8731
+          quote: "`delta_fraction` | OPTIONAL | Multiplies the rate of any entry by 1 plus this value. `0.20` is 20 percent more"
+          locks: [with-our-stack]
+        - ir: key:3.1:Delta.delta_flat
+          digest: 23ec4c9beccbcf91882b3a3777a542f6b92c6408c9f37fc9a6e3dc18d04dce51
+          quote: "`delta_flat` | OPTIONAL | A charge on any entry, outside the rate"
+          locks: [with-our-stack]
+  - name: ClockWindow
+    locks: [with-our-stack]
+    decisions:
+      - { decision: D-051, locks: [with-our-stack] }
+    sources:
+      spec:
+        - ir: key:5.5:ClockWindow.days[]
+          digest: 75d34865bfd1e0a581d00620d7eb3ef980d021a345ef1c6da96c1a114b1c64c1
+          quote: "`days[]` | REQUIRED | The days the window repeats on"
+          locks: [with-our-stack]
+        - ir: key:5.5:ClockWindow.start
+          digest: 7fec487433d27928cea2eca9db2671bf7d7b346e02056282524924d04206a45d
+          quote: "`start` | REQUIRED | The first minute. Not `24:00`"
+          locks: [with-our-stack]
+        - ir: key:5.5:ClockWindow.before
+          digest: d70b10f2d89e83df52a13d2440603029487cf760dfc0ccc049b34bf2707019d9
+          quote: "`before` | REQUIRED | The first minute after the window, later than `start`"
+          locks: [with-our-stack]
 domains:
   - name: identity
     concepts:
@@ -408,15 +852,19 @@ domains:
             - ir: field:4.1:proposal_id
               digest: fb8604e60eabfa2db105b17ca562af8ba2f20784907dcce349772ce83054088d
               quote: "`proposal_id` | String | immutable | Unique identity for the proposal object"
+              locks: [main, with-open-prs]
             - ir: field:5.1:line_item_id
               digest: 60cd2aeea40121597f5e2b0725417665bc560c9b677000d3dfbc432d1c88c969
               quote: "`line_item_id` | String | immutable | Identity within the proposal"
+              locks: [main, with-open-prs]
             - ir: field:5.10:correlation_id
               digest: e015a269b356797dbfe7737b7178f592b5fe280e8a95db0d446724b685cc80d9
               quote: "`correlation_id` | String | derived | One identity for this line item's commitment, carried across every system it touches"
+              locks: [main, with-open-prs]
             - ir: key:5.6.1:commitment.idempotency_key
               digest: 47264d377373977897dc60c399d4e61a15e862743a2ff4e2fab92830ca3f3550
               quote: "`idempotency_key` | REQUIRED | Buyer-generated, unique per commitment attempt"
+              locks: [main, with-open-prs]
             - ir: key:5.6.1:commitment.proposal_id
               digest: 5786eb882e01494be61d482b94b44011a8669f93a79419c1e74db23908e04453
               quote: "`proposal_id` | REQUIRED | The proposal the commitment is made against"
@@ -443,15 +891,19 @@ domains:
             - ir: field:4.1:brief_ref
               digest: 482c83600e1a104be57aaa70c91f4df5bec6b6bdc7621b8c8cdb9283d768eeaa
               quote: "`brief_ref` | String | supplied | Reference to the buyer's brief. REQUIRED when `type` is `custom`"
+              locks: [main, with-open-prs]
             - ir: field:4.1:seller_id
               digest: 98c167e650ac7cbe7a3fe910d218292ae19d16156e9a575875776ba335e4e833
               quote: "`seller_id` | String | immutable | IAB Tech Lab registry reference"
+              locks: [main, with-open-prs]
             - ir: field:5.8:eligible_bidders[]
               digest: 377ad11d09a2b66329d8d7f32f46f187f2d0ba5d06ac90980630554720456d9a
               quote: "`eligible_bidders[]` | Array[String] | seller-set | Permitted seat or buyer ids"
+              locks: [main, with-open-prs]
             - ir: field:5.10:supported_order_systems[]
               digest: 7aaf91ef69703a0a34d2843995fd0a71869f5ee333feecb94a1a897741380d07
               quote: "`supported_order_systems[]` | Array[String] | seller-set | Declared up front so the agent knows it will reconcile"
+              locks: [main, with-open-prs]
             - ir: key:5.2:apps[].bundle
               digest: 59f9924d3d8ee09a637650c5ab939c28dcf07905af01337dac1bfa74a038d6d0
               quote: "`bundle` | REQUIRED | Store ID. As OpenRTB 2.6 `app.bundle`"
@@ -460,6 +912,7 @@ domains:
             - ir: field:5.5:device
               digest: 265e83a84f1efb967c4a62daab8adb8b69139f794b7cc080b03c5c28cf4828d4
               quote: "`device` | Object | settable | `allowed[]` of device categories"
+              locks: [main, with-open-prs]
             - ir: sentence:5.5:8d595b9a
               digest: 0dae3f9597019a6d868e3a14e0548e9b34e8e22a6080e5ceec67b758f279d029
               quote: "`iab_content_category[]` entries are IAB Content Taxonomy ids."
@@ -468,9 +921,14 @@ domains:
       - name: format-id
         sources:
           spec:
+            - ir: sentence:5.4:75612a3e
+              digest: 05d8ff4481454a9e3746c619724bf506cef80e22376841d04065b3f9baf9caa9
+              quote: "`FormatId` is a String: `<channel>/<name>`, where `<channel>` is the line item's `channel`, with no `/` or `@` inside a part."
+              locks: [with-our-stack]
             - ir: field:5.4:formats
               digest: 2a8a55ef5666b057f31306cadf667fc01dff13e5cc5e009f00d3f649de375016
               quote: "`formats` | Object | selectable | `available[]` of registry format ids namespaced by channel (`display/300x250`, `audio/host-read-30s`), `included[]`, `pricing`, `max_select`"
+              locks: [main, with-open-prs]
   - name: reference
     concepts:
       - name: catalog-ref
@@ -481,9 +939,11 @@ domains:
               quote: |-
                 catalog_ref: "<seller_namespace>/<collection>/<entry_id>@<version>"
                 example:     "examplepub/audiences/smb-decision-makers@3"
+              locks: [main, with-open-prs]
             - ir: rule:2.2:3916a8f2
               digest: 511cade5dc52dec990f091f7293a343392bae81a91404e3a81983b040edf9315
               quote: References MUST be version-pinned.
+              locks: [main, with-open-prs]
       - name: digest
         sources:
           spec:
@@ -492,6 +952,20 @@ domains:
               quote: "`terms_ref` | Object | seller-set | OPTIONAL; REQUIRED when `terms_acceptance_required` is `true`. `{ url, sha256, version }`: the legal terms or IO template the buyer accepts at assent. Hash-pinned, so assent (§ 4.1) binds to an exact document"
               locks:
                 - with-open-prs
+      - name: entry-ref
+        sources:
+          spec:
+            - ir: def:2.2:EntryRef
+              digest: f44558203adf4d0fe42abce8cd25edef3fdd370ff34a525e10a270d438c8235a
+              quote: "`EntryRef` | String: `<domain>/<collection>/<entry_id>@<version>`, with no `/` or `@` inside a part | A named entry at one exact version, whose content does not change. `<domain>` is a `Domain`. It carries no digest"
+              locks: [with-our-stack]
+      - name: field-pointer
+        sources:
+          spec:
+            - ir: def:2.2:FieldPointer
+              digest: 81c9fe24955719224a5619829da66cd27e74ea53e642be90bb605fb6fcf9f39a
+              quote: "`FieldPointer` | String: a JSON Pointer (RFC 6901) | A location in the object this specification defines"
+              locks: [with-our-stack]
   - name: text
     concepts:
       - name: text
@@ -500,24 +974,38 @@ domains:
             - ir: field:4.2:description
               digest: d8f9bd51c2ecf2a1311600c2fad1dda1b1b8f74269700a3f3ae6018a8beba30d
               quote: '`description` | String | seller-set | REQUIRED. Prose, not a name. Where the "why buy" case is made, including which channels a multi-channel proposal spans'
+              locks: [main, with-open-prs]
             - ir: field:4.2:seasonality_notes
               digest: 33869d96c87875efa58c05a56f748e10c70beaf72e89bec328f29de4c6c3ece6
               quote: "`seasonality_notes` | String | seller-set | When the proposal performs differently"
+              locks: [main, with-open-prs]
             - ir: field:4.1:seller_name
               digest: 270af1c40363b766b5013891995f439c36dbfe87392a61eec853cc14203bb712
               quote: "`seller_name` | String | immutable | Canonical legal seller entity name, from the registry"
+              locks: [main, with-open-prs]
             - ir: field:4.2:best_for[]
               digest: 4a9b533b2efb864c58a34a23e06d7788501a0c07cba58bfa9ead7c89e9dcb4c2
               quote: "`best_for[]` | Array[String] | seller-set | Advisory planning hints. Non-normative, and never the basis for a match"
+              locks: [main, with-open-prs]
             - ir: field:4.2:not_suitable_for[]
               digest: 90017ea8f4ac27e03fb7a3655c68ef299f3e0d2705575c428bff5865b1da9f2b
               quote: "`not_suitable_for[]` | Array[String] | seller-set | Advisory exclusion guidance. Non-normative"
+              locks: [main, with-open-prs]
             - ir: field:5.9:deal_id_issuance
               digest: 064acb1a6dfcb9c0cd2788373080091ccd3a991f47a4b1d055046eb5f51272cb
               quote: "`deal_id_issuance` | String | derived | When and how the deal id is minted. Issued at commitment time"
+              locks: [main, with-open-prs]
             - ir: field:5.9:serving_platform
               digest: 6755aeee541637916ff2959d75837395628b01f5deea9a200accf26eea573107
               quote: "`serving_platform` | String | seller-set | Where the line item serves"
+              locks: [main, with-open-prs]
+      - name: plain-string
+        sources:
+          spec:
+            - ir: sentence:2.6:44d6e818
+              digest: 1045ff7049795cd6efa7227143f4da7d25240241f87694d38ae71cac731f52b6
+              quote: A Type cell holds `String`, `Integer`, `Number`, `Boolean`, `Enum`, `Object`, a shared type (§ 2.2), a type its section names, or a named key table.
+              locks: [with-our-stack]
   - name: network
     concepts:
       - name: url
@@ -546,6 +1034,20 @@ domains:
               quote: "`domain` | RECOMMENDED | Developer domain, against which `app-ads.txt` is checked. As `app.domain`"
               locks:
                 - with-open-prs
+      - name: registrable-domain
+        sources:
+          spec:
+            - ir: def:2.2:RegistrableDomain
+              digest: 996140da167fae546cefbbdb984df61f7cf0780a2eca6d4d5aa48a5bed5e2666
+              quote: "`RegistrableDomain` | A `Domain` that is the Public Suffix List registrable domain, taken over the whole list, PRIVATE section included | It names a business"
+              locks: [with-our-stack]
+      - name: https-url
+        sources:
+          spec:
+            - ir: def:2.2:HttpsUrl
+              digest: c96e41b2cdd45c793be7b6e4b549806b234be39bba19fe5fd8ba60dabb141706
+              quote: "`HttpsUrl` | A `Url` whose scheme is `https` | A location fetched over TLS"
+              locks: [with-our-stack]
   - name: money
     concepts:
       - name: amount
@@ -554,15 +1056,19 @@ domains:
             - ir: field:5.6:min_spend
               digest: 9950b94692a4b0250d54a54d47eca0f63c96a7b9d26607cded57896d46e5c8c4
               quote: "`min_spend` | Number | seller-set | Minimum spend for this line item"
+              locks: [main, with-open-prs]
             - ir: field:5.6:pricing[].gross_rate
               digest: f432867a10e6b5662c58996ee4f1c3ea14cddc65968fb1f879bbc703940b9621
               quote: "`pricing[].gross_rate` | Number | seller-set | The list rate the buyer pays"
+              locks: [main, with-open-prs]
             - ir: field:5.6:pricing[].agreed_rate
               digest: fddb11299e9061fe008737676d347a540cc4a21ffaadb153b5cf7765f312d3c6
               quote: "`pricing[].agreed_rate` | Number | derived | The transacted rate after selections and any agreed request"
+              locks: [main, with-open-prs]
             - ir: field:5.6:pricing[].seller_rate
               digest: 314758d24a50efd1b2b8813f612feb3630d3635c709cd98d136a482f6ebbc049
               quote: "`pricing[].seller_rate` | Number | seller-set | What the publisher receives"
+              locks: [main, with-open-prs]
             - ir: field:5.6:pricing[].floor
               digest: c635c8c9f7c2bc45268481c963866fc8a5bc289c2ed6c22c8ad5115b2529c1d7
               quote: "`pricing[].floor` | Number | seller-set | OPTIONAL. The lowest rate the seller will consider. Enables a `requestable` counter to be evaluated without a round trip"
@@ -576,61 +1082,91 @@ domains:
             - ir: key:5.6.1:commitment.amount
               digest: 9e4c291747cc047e67c9ef7b1b6f9776d02bb2e82de16dfe9b8079e42921e804
               quote: "`amount` | REQUIRED | The figure committed"
+              locks: [main, with-open-prs]
         requires:
           member: currency
           decision: D-036
           lacking:
+            - ir: "key:5.6.6:Fee.amount"
+              locks: [with-our-stack]
+            - ir: "key:4.1:RequestedValue.list_rate"
+              locks: [with-our-stack]
+            - ir: "key:3.1:Delta.delta_cpm"
+              locks: [with-our-stack]
             - ir: field:5.4:production#description/object:1
+              locks: [main, with-open-prs]
             - ir: field:5.6:min_spend
+              locks: [main, with-open-prs]
             - ir: field:5.6:commitment_bounds#description/object:1
+              locks: [main, with-open-prs]
       - name: price-adjustment
         sources:
           spec:
             - ir: key:3.1:pricing#meaning/object:1
               digest: 1d2ea6996d7c3bbf4808776d7399e4719b79687764674d92f08a885763ad61fe
               quote: "{ option_id: { delta_cpm | delta_flat | delta_pct } }"
+              locks: [main, with-open-prs]
         requires:
           member: currency
           decision: D-036
           lacking:
             - ir: key:3.1:pricing#meaning/object:1
+              locks: [main, with-open-prs]
       - name: option-price-delta
         sources:
           spec:
             - ir: key:3.1:pricing
               digest: 539b0422b84a2eec4d1a6247ff1c0e887e86cb8cb997396fdca33c03477a03ce
               quote: "`pricing` | OPTIONAL | Delta per option beyond those included, as `{ option_id: { delta_cpm | delta_flat | delta_pct } }`"
+              locks: [main, with-open-prs]
         requires:
           member: currency
           decision: D-036
           lacking:
             - ir: key:3.1:pricing#meaning/object:1
+              locks: [main, with-open-prs]
       - name: currency
         sources:
           spec:
             - ir: field:5.6:pricing[].currency
               digest: c3fe3033ef8ca1012e67b36b728cc3383f4f4b4642ded0b50c4537216dcafde1
               quote: "`pricing[].currency` | String | seller-set | ISO-4217"
+              locks: [main, with-open-prs]
             - ir: key:5.6.1:commitment.currency
               digest: 19e4d985eb2f3a597bafe8f3233448688dcfd827a2e41bc2b8fe1886c5e9ce33
               quote: "`currency` | REQUIRED when `basis = spend` | ISO-4217"
+              locks: [main, with-open-prs]
   - name: ratio
     concepts:
       - name: fraction
         sources:
           spec:
+            - ir: def:2.2:Fraction
+              digest: 9024cdd485d132f1f11c353db7f2e211da12588fb6a049f230207d08d2e8fe1c
+              quote: "`Fraction` | Number from 0 to 1 | A proportion"
+              locks: [with-our-stack]
             - ir: field:5.7:committed_metrics[]
               digest: 2c123e829ef892456b09671dfd52243f1bef0db8b067aa9c5d184dc07411caf5
               quote: "`committed_metrics[]` | Array[Object] | requestable | `{ metric, value, basis }` tuples — `viewable_rate` for display, `completion_rate` for video/audio/CTV, an audience-modelled metric for DOOH. Seller declares a ceiling; a buyer MAY request above it"
+              locks: [main, with-open-prs]
             - ir: field:5.3:buyer_supplied
               digest: 18d87a0de58116db76d7152a7f96bc722dc700b91f053406b32e4299e7910504
               quote: "`buyer_supplied` | Object | supplied | `{ segments_allowed, suppression_allowed, match_rate_expected, segments[], suppression_list }`. `match_rate_expected` is the seller's stated expectation; `segments[]` and `suppression_list` are buyer-populated"
+              locks: [main, with-open-prs]
       - name: percent-change
         sources:
           spec:
             - ir: key:3.1:pricing#meaning/object:1
               digest: 1d2ea6996d7c3bbf4808776d7399e4719b79687764674d92f08a885763ad61fe
               quote: "{ option_id: { delta_cpm | delta_flat | delta_pct } }"
+              locks: [main, with-open-prs]
+      - name: fraction-delta
+        sources:
+          spec:
+            - ir: def:2.2:FractionDelta
+              digest: d1df316a19e8a8701b794b94dd6737989aab1ed8e0fadfb55b30d418c261123d
+              quote: "`FractionDelta` | Number greater than -1 | Used only by `delta_fraction` (§ 3.1)"
+              locks: [with-our-stack]
   - name: quantity
     concepts:
       - name: count
@@ -639,12 +1175,15 @@ domains:
             - ir: field:5.3:addressable_scale
               digest: 1289f106e9861b03225c1fc7056b164eac34f82d73fc327c7009b0c8b9111e24
               quote: "`addressable_scale` | Integer | derived | Reachable units in the flight, recomputed against the buyer's selection. Not segment size"
+              locks: [main, with-open-prs]
             - ir: key:5.6.1:commitment.derived_units
               digest: a9f6d92f09ae371454efb08c6b7e3ae3a5d7340cedd195cb446ce3da2db6735f
               quote: "`derived_units` | derived | Computed from `amount`, `agreed_rate` and `cost_method`. Informative, not binding"
+              locks: [main, with-open-prs]
             - ir: key:3.1:max_select
               digest: 199cab600b78dcd9dc40358fa8a94ec4d323f2bcf2fd7922a62b008af465d820
               quote: "`max_select` | OPTIONAL | Cap on how many options the buyer may choose"
+              locks: [main, with-open-prs]
             - ir: field:4.1:version
               digest: 0d60d71f86bb7ba75bce82f30d59f3a971355af3191a622f5ee2e856069fb67f
               quote: "`version` | Integer | derived | Monotonically increasing revision number"
@@ -666,6 +1205,21 @@ domains:
             - ir: field:5.7:committed_metrics[]
               digest: 2c123e829ef892456b09671dfd52243f1bef0db8b067aa9c5d184dc07411caf5
               quote: "`committed_metrics[]` | Array[Object] | requestable | `{ metric, value, basis }` tuples — `viewable_rate` for display, `completion_rate` for video/audio/CTV, an audience-modelled metric for DOOH. Seller declares a ceiling; a buyer MAY request above it"
+              locks: [main, with-open-prs]
+      - name: plain-integer
+        sources:
+          spec:
+            - ir: sentence:2.6:44d6e818
+              digest: 1045ff7049795cd6efa7227143f4da7d25240241f87694d38ae71cac731f52b6
+              quote: A Type cell holds `String`, `Integer`, `Number`, `Boolean`, `Enum`, `Object`, a shared type (§ 2.2), a type its section names, or a named key table.
+              locks: [with-our-stack]
+      - name: plain-number
+        sources:
+          spec:
+            - ir: sentence:2.6:44d6e818
+              digest: 1045ff7049795cd6efa7227143f4da7d25240241f87694d38ae71cac731f52b6
+              quote: A Type cell holds `String`, `Integer`, `Number`, `Boolean`, `Enum`, `Object`, a shared type (§ 2.2), a type its section names, or a named key table.
+              locks: [with-our-stack]
   - name: time
     concepts:
       - name: instant
@@ -674,18 +1228,23 @@ domains:
             - ir: field:4.1:valid_from,valid_until
               digest: 9c5853eb24269fa128f158276e85a0e45be848cce58efe34fa1739a06514e9a0
               quote: "`valid_from` · `valid_until` | Timestamp | seller-set | ISO-8601 window the offer holds. This is the offer window, not the campaign flight"
+              locks: [main, with-open-prs]
             - ir: field:5.6:pricing[].price_valid_until
               digest: d5f73077d16f2df27e85bbb8df330143da8f86fd4c531ecf4da35b9cac37f6f1
               quote: "`pricing[].price_valid_until` | Timestamp | seller-set | How long the posted rate holds. Distinct from the proposal's `valid_until`"
+              locks: [main, with-open-prs]
             - ir: key:5.6.2:hold_status.hold_expires_at
               digest: d298da40613999b40a53bab56e17f7c8af9488207a3755391ce3c368a2556cb8
               quote: "`hold_expires_at` | Absolute timestamp, set when the hold is granted"
+              locks: [main, with-open-prs]
             - ir: key:5.6.1:commitment.flight_start
               digest: f55507bcfbcdffa24a4949e12e1e59a92cef3e9b56f23e47b59e6b8c20f0d4fb
               quote: "`flight_start` | REQUIRED | The buyer's campaign start. Distinct from `valid_from`"
+              locks: [main, with-open-prs]
             - ir: key:5.6.1:commitment.flight_end
               digest: d3bd830cbe989315172dc25dcb1f42bdb93752cfa4f6f0112d4fca784f286345
               quote: "`flight_end` | REQUIRED | The buyer's campaign end. Distinct from `valid_until`"
+              locks: [main, with-open-prs]
       - { name: utc-instant, absent: true }
       - name: duration
         sources:
@@ -693,6 +1252,7 @@ domains:
             - ir: key:5.6.2:hold_status.hold_duration
               digest: 926e46e5c6325e98292a30a6655d0991d1979a9e07c1c637c9d256aa82659493
               quote: "`hold_duration` | ISO-8601 duration the hold runs for"
+              locks: [main, with-open-prs]
             - ir: key:5.2.2:placement.skipafter
               digest: 7eb11e62931be7a67537c85a3e6e1609978155b48c0219644d3998f796a1c36d
               quote: "`skipafter` | OPTIONAL | When `skip` is `1`: seconds the ad plays before the placement enables skipping | `VideoPlacement.skipafter`, `AudioPlacement.skipafter`, `video.skipafter`"
@@ -720,17 +1280,44 @@ domains:
               digest: dd32a6368f87c6f3cc3b6ecb6ff87b8aa69d0332a9b99e1a2b7467f2c3ea5f00
               quote: Like the calendar Day of OpenDirect 2.1 `Line.frequencyinterval`, `frequency_cap.period` is a calendar period in `time_zone`; weeks start on Monday.
               locks: [with-open-prs]
+      - name: canonical-instant
+        sources:
+          spec:
+            - ir: def:2.2:Instant
+              digest: df8f4931a29cab49ac4f7be005c0e543329982c6dd42ad24f6ca266927fde0bc
+              quote: "`Instant` | String: an RFC 3339 `date-time` in whole seconds, ending in `Z` | A point in time. One written form, so one instant has one digest input"
+              locks: [with-our-stack]
+      - name: iana-zone
+        sources:
+          spec:
+            - ir: def:2.2:IanaZone
+              digest: a155797aac910548f8d5856f94bb63c7d3737a3a343dfac0a13179481951f330
+              quote: "`IanaZone` | String: a name in the IANA time zone database, such as `America/New_York` or `UTC` | A time zone"
+              locks: [with-our-stack]
+      - name: clock-window
+        sources:
+          spec:
+            - ir: key:5.5:ClockWindow.start
+              digest: 7fec487433d27928cea2eca9db2671bf7d7b346e02056282524924d04206a45d
+              quote: "`start` | REQUIRED | The first minute. Not `24:00`"
+              locks: [with-our-stack]
   - name: flag
     concepts:
       - name: flag
         sources:
           spec:
+            - ir: key:5.6.2:HoldTerms.available
+              digest: 5c3c5a05196378e5359143820b6d258a0b0f8427b71e71442b99e692b663adf7
+              quote: "`available` | REQUIRED | Whether this line item may be held"
+              locks: [with-our-stack]
             - ir: field:5.8:terms_acceptance_required
               digest: 0243a3b7686e677b229229ed525e3ceb6ac606d6e71bac139abf02de3260ceef
               quote: "`terms_acceptance_required` | Boolean | seller-set | Whether legal terms must be accepted before assent"
+              locks: [main, with-open-prs]
             - ir: key:5.6.2:hold_status.hold_available
               digest: 201a73f56ae7a6f7c81671b5a989999e5e68f5a5e75b72046ea852d93480867c
               quote: "`hold_available` | Whether this line item may be held"
+              locks: [main, with-open-prs]
       - name: integer-flag
         sources:
           spec:
@@ -747,9 +1334,195 @@ domains:
               quote: "`skip` | OPTIONAL | Video or audio. `0` (no) | `1` (yes). The placement lets the user skip the ad | `VideoPlacement.skip`, `AudioPlacement.skip`, `video.skip`"
               locks: [with-open-prs]
   - { name: media, absent: true }
-  - { name: place, absent: true }
+  - name: place
+    concepts:
+      - { name: country, absent: true }
+      - name: geo-code
+        sources:
+          spec:
+            - ir: sentence:5.5:0b79aa1d
+              digest: 8256e40973334ece5b8413433c759f14f9fcd72120d0be16710361b64531d328
+              quote: "`GeoCode` is a String: an ISO 3166-1 alpha-2 country code, an ISO 3166-2 subdivision code, or an extension `VocabularyTerm` for any other area, such as a metro list."
+              locks: [with-our-stack]
   - { name: extension, absent: true }
+  - name: option-pricing
+    concepts:
+      - name: option-delta
+        sources:
+          spec:
+            - ir: key:3.1:Delta.delta_cpm
+              digest: 60e3140cbf8caa8ce10c19f0a23b13a7f0d40dc4fc36b058d8981464e4d6a48c
+              quote: "`delta_cpm` | OPTIONAL | Added to the rate of a `CPM` or `CPMV` entry (§ 5.6.5), and to no other"
+              locks: [with-our-stack]
 homonyms:
+  - member: action
+    decision: D-061
+    reason: "Each lock's text types `action` in its own table rows, so the name means a different thing in each object that holds it: vocabulary HistoryEntryAction (HistoryEntry.action); vocabulary NegotiationAction (NegotiationHistoryEntry.action)."
+  - member: actor
+    decision: D-061
+    reason: "Each lock's text types `actor` in its own table rows, so the name means a different thing in each object that holds it: vocabulary Party (NegotiationHistoryEntry.actor); vocabulary Side (ChangeRequest.actor, HistoryEntry.actor)."
+  - member: agreement_id
+    decision: D-061
+    reason: "Each lock's text types `agreement_id` in its own table rows, so the name means a different thing in each object that holds it: external-id (AgreementRef.agreement_id); plain-string (Agreement.agreement_id)."
+  - member: amount
+    decision: D-061
+    reason: "Each lock's text types `amount` in its own table rows, so the name means a different thing in each object that holds it: amount (Commitment.amount, Fee.amount, MinCommitmentEntry.amount); plain-number (Commitment.amount, CommitmentAmount.amount, MinCommitment.amount)."
+  - member: api
+    decision: D-061
+    reason: "Each lock's text types `api` in its own table rows, so the name means a different thing in each object that holds it: plain-integer (Placement.api); vocabulary ApiFramework (Placement.api)."
+  - member: approval_status
+    decision: D-061
+    reason: "Each lock's text types `approval_status` in its own table rows, so the name means a different thing in each object that holds it: vocabulary ApprovalStatus (Asset.approval_status); vocabulary AssetApprovalStatus (AssetsEntry.approval_status)."
+  - member: asset_id
+    decision: D-061
+    reason: "Each lock's text types `asset_id` in its own table rows, so the name means a different thing in each object that holds it: minted-id (AssetsEntry.asset_id); plain-string (Asset.asset_id)."
+  - member: at
+    decision: D-061
+    reason: "Each lock's text types `at` in its own table rows, so the name means a different thing in each object that holds it: canonical-instant (AssentEntry.at, ChangeRequest.at, HistoryEntry.at, MaterialsDue.at); instant (NegotiationHistoryEntry.at)."
+  - member: available
+    decision: D-061
+    reason: "Each lock's text types `available` in its own table rows, so the name means a different thing in each object that holds it: flag (HoldTerms.available); vocabulary Environment (LineItemSummaryEnvironmentsSelection.available); vocabulary PreemptionRemedy (ShortfallRemedy.available)."
+  - member: best_for
+    decision: D-061
+    reason: "Each lock's text types `best_for` in its own table rows, so the name means a different thing in each object that holds it: plain-string (Proposal.best_for); text (Proposal.best_for)."
+  - member: bundle
+    decision: D-061
+    reason: "Each lock's text types `bundle` in its own table rows, so the name means a different thing in each object that holds it: external-id (AppBundleEntry.bundle, AppsEntry.bundle); plain-string (App.bundle, AppId.bundle, LineItemSummaryApp.bundle)."
+  - member: cadence
+    decision: D-061
+    reason: "Each lock's text types `cadence` in its own table rows, so the name means a different thing in each object that holds it: duration (ReportingOption.cadence); vocabulary TimeUnit (ReportingOption.cadence)."
+  - member: channel
+    decision: D-061
+    reason: "Each lock's text types `channel` in its own table rows, so the name means a different thing in each object that holds it: vocabulary Channel (LineItem.channel); vocabulary MediaChannel (LineItem.channel)."
+  - member: cost_method
+    decision: D-061
+    reason: "Each lock's text types `cost_method` in its own table rows, so the name means a different thing in each object that holds it: vocabulary CostMethod (LineItemSummaryPricingEntry.cost_method, PricingEntry.cost_method); vocabulary PricingEntryCostMethod (LineItemSummaryPricingEntry.cost_method, PricingEntry.cost_method)."
+  - member: custom_unit
+    decision: D-061
+    reason: "Each lock's text types `custom_unit` in its own table rows, so the name means a different thing in each object that holds it: plain-string (ProductionOption.custom_unit); text (ProductionOption.custom_unit)."
+  - member: derived_units
+    decision: D-061
+    reason: "Each lock's text types `derived_units` in its own table rows, so the name means a different thing in each object that holds it: count (Commitment.derived_units); plain-integer (Commitment.derived_units)."
+  - member: description
+    decision: D-061
+    reason: "Each lock's text types `description` in its own table rows, so the name means a different thing in each object that holds it: plain-string (Proposal.description); text (Proposal.description)."
+  - member: domain
+    decision: D-061
+    reason: "Each lock's text types `domain` in its own table rows, so the name means a different thing in each object that holds it: domain-name (AppsEntry.domain, Exclusions.domain); registrable-domain (Party.domain, ProposalSummaryParty.domain)."
+  - member: enforcement
+    decision: D-061
+    reason: "Each lock's text types `enforcement` in its own table rows, so the name means a different thing in each object that holds it: vocabulary Enforcement (ExclusionsAccepted.enforcement); vocabulary ExclusionTermsEnforcement (ExclusionTerms.enforcement)."
+  - member: generated_at
+    decision: D-061
+    reason: "Each lock's text types `generated_at` in its own table rows, so the name means a different thing in each object that holds it: canonical-instant (ProposalManifest.generated_at); instant (Manifest.generated_at)."
+  - member: granularity
+    decision: D-061
+    reason: "Each lock's text types `granularity` in its own table rows, so the name means a different thing in each object that holds it: duration (Availability.granularity); vocabulary CalendarUnit (Availability.granularity)."
+  - member: idempotency_key
+    decision: D-061
+    reason: "Each lock's text types `idempotency_key` in its own table rows, so the name means a different thing in each object that holds it: minted-id (Commitment.idempotency_key); plain-string (AssentEntry.idempotency_key)."
+  - member: included
+    decision: D-061
+    reason: "Each lock's text types `included` in its own table rows, so the name means a different thing in each object that holds it: format-id (LineItemSummaryFormatsSelection.included); plain-string (AudienceSelectable.included, LineItemSummaryFormatsSelection.included, ShortfallRemedy.included)."
+  - member: issuer
+    decision: D-061
+    reason: "Each lock's text types `issuer` in its own table rows, so the name means a different thing in each object that holds it: domain-name (RequiredCredential.issuer); external-id (RequiredCredentialsEntry.issuer)."
+  - member: line_item_id
+    decision: D-061
+    reason: "Each lock's text types `line_item_id` in its own table rows, so the name means a different thing in each object that holds it: minted-id (LineItem.line_item_id, MinCommitmentEntry.line_item_id); plain-string (HistoryPath.line_item_id, LineItem.line_item_id, MinCommitment.line_item_id, VersionRef.line_item_id)."
+  - member: max_entries
+    decision: D-061
+    reason: "Each lock's text types `max_entries` in its own table rows, so the name means a different thing in each object that holds it: count (ExclusionsAccepted.max_entries); plain-integer (ExclusionTerms.max_entries)."
+  - member: metric
+    decision: D-061
+    reason: "Each lock's text types `metric` in its own table rows, so the name means a different thing in each object that holds it: vocabulary CommittedMetricMetric (CommittedMetric.metric); vocabulary Metric (CommittedMetricsEntry.metric)."
+  - member: min_interval_s
+    decision: D-061
+    reason: "Each lock's text types `min_interval_s` in its own table rows, so the name means a different thing in each object that holds it: duration (Refresh.min_interval_s); plain-integer (Refresh.min_interval_s)."
+  - member: name
+    decision: D-061
+    reason: "Each lock's text types `name` in its own table rows, so the name means a different thing in each object that holds it: plain-string (AudienceOption.name, LineItemSummaryAudienceOption.name, LineItemSummaryPropertyOption.name, PropertyOption.name); text (AudiencesOption.name, LineItemSummaryPropertiesOption.name, PropertiesOption.name)."
+  - member: namespace
+    decision: D-061
+    reason: "Each lock's text types `namespace` in its own table rows, so the name means a different thing in each object that holds it: external-id (ExternalReferencesEntry.namespace); plain-string (ExternalReference.namespace)."
+  - member: not_suitable_for
+    decision: D-061
+    reason: "Each lock's text types `not_suitable_for` in its own table rows, so the name means a different thing in each object that holds it: plain-string (Proposal.not_suitable_for); text (Proposal.not_suitable_for)."
+  - member: payment_terms
+    decision: D-061
+    reason: "Each lock's text types `payment_terms` in its own table rows, so the name means a different thing in each object that holds it: plain-string (Billing.payment_terms); text (Billing.payment_terms)."
+  - member: period
+    decision: D-061
+    reason: "Each lock's text types `period` in its own table rows, so the name means a different thing in each object that holds it: vocabulary FrequencyCapPeriod (FrequencyCap.period); vocabulary TimeUnit (FrequencyCap.period)."
+  - member: playmethod
+    decision: D-061
+    reason: "Each lock's text types `playmethod` in its own table rows, so the name means a different thing in each object that holds it: plain-integer (Placement.playmethod); vocabulary PlaybackMethod (Placement.playmethod)."
+  - member: plcmt
+    decision: D-061
+    reason: "Each lock's text types `plcmt` in its own table rows, so the name means a different thing in each object that holds it: plain-integer (LineItemSummaryPlacement.plcmt, Placement.plcmt); vocabulary PlcmtSubtype (LineItemSummaryPlacement.plcmt, Placement.plcmt)."
+  - member: price_valid_until
+    decision: D-061
+    reason: "Each lock's text types `price_valid_until` in its own table rows, so the name means a different thing in each object that holds it: canonical-instant (PricingEntry.price_valid_until); instant (PricingEntry.price_valid_until)."
+  - member: proposal_id
+    decision: D-061
+    reason: "Each lock's text types `proposal_id` in its own table rows, so the name means a different thing in each object that holds it: minted-id (Commitment.proposal_id, Proposal.proposal_id); plain-string (Proposal.proposal_id, VersionRef.proposal_id)."
+  - member: proposal_template_id
+    decision: D-061
+    reason: "Each lock's text types `proposal_template_id` in its own table rows, so the name means a different thing in each object that holds it: external-id (Proposal.proposal_template_id); plain-string (Proposal.proposal_template_id)."
+  - member: qualifier
+    decision: D-061
+    reason: "Each lock's text types `qualifier` in its own table rows, so the name means a different thing in each object that holds it: plain-string (ControllingMeasurementOption.qualifier, MeasurementOption.qualifier); text (MeasurementSourceOption.qualifier)."
+  - member: quantity
+    decision: D-061
+    reason: "Each lock's text types `quantity` in its own table rows, so the name means a different thing in each object that holds it: count (Availability.quantity); plain-integer (AddressableScale.quantity); plain-number (Availability.quantity)."
+  - member: role
+    decision: D-061
+    reason: "Each lock's text types `role` in its own table rows, so the name means a different thing in each object that holds it: vocabulary AssentEntryRole (AssentEntry.role); vocabulary ExternalReferenceRole (ExternalReferencesEntry.role)."
+  - member: seasonality_notes
+    decision: D-061
+    reason: "Each lock's text types `seasonality_notes` in its own table rows, so the name means a different thing in each object that holds it: plain-string (Proposal.seasonality_notes); text (Proposal.seasonality_notes)."
+  - member: serving_mode
+    decision: D-061
+    reason: "Each lock's text types `serving_mode` in its own table rows, so the name means a different thing in each object that holds it: vocabulary LineItemServingMode (LineItem.serving_mode); vocabulary ServingMode (LineItem.serving_mode)."
+  - member: serving_platform
+    decision: D-061
+    reason: "Each lock's text types `serving_platform` in its own table rows, so the name means a different thing in each object that holds it: domain-name (LineItem.serving_platform); text (LineItem.serving_platform)."
+  - member: skipafter
+    decision: D-061
+    reason: "Each lock's text types `skipafter` in its own table rows, so the name means a different thing in each object that holds it: duration (Placement.skipafter); plain-integer (Placement.skipafter)."
+  - member: spec_version
+    decision: D-061
+    reason: "Each lock's text types `spec_version` in its own table rows, so the name means a different thing in each object that holds it: external-id (Manifest.spec_version); plain-string (Proposal.spec_version, ProposalManifest.spec_version)."
+  - member: submitted_at
+    decision: D-061
+    reason: "Each lock's text types `submitted_at` in its own table rows, so the name means a different thing in each object that holds it: canonical-instant (Asset.submitted_at); instant (AssetsEntry.submitted_at)."
+  - member: system
+    decision: D-061
+    reason: "Each lock's text types `system` in its own table rows, so the name means a different thing in each object that holds it: external-id (ExternalReferencesEntry.system); plain-string (ExternalReference.system)."
+  - member: time_zone
+    decision: D-061
+    reason: "Each lock's text types `time_zone` in its own table rows, so the name means a different thing in each object that holds it: iana-zone (Billing.time_zone, Screen.time_zone); time-zone (LineItem.time_zone)."
+  - member: unit
+    decision: D-061
+    reason: "Each lock's text types `unit` in its own table rows, so the name means a different thing in each object that holds it: vocabulary AddressableScaleUnit (AddressableScale.unit); vocabulary AvailabilityUnit (Availability.unit)."
+  - member: url
+    decision: D-061
+    reason: "Each lock's text types `url` in its own table rows, so the name means a different thing in each object that holds it: https-url (DocumentRef.url); plain-string (Asset.url); url (ListRef.url, TermsRef.url)."
+  - member: valid_until
+    decision: D-061
+    reason: "Each lock's text types `valid_until` in its own table rows, so the name means a different thing in each object that holds it: canonical-instant (Hold.valid_until); instant (AgreementRef.valid_until, Proposal.valid_until)."
+  - member: value
+    decision: D-061
+    reason: "Each lock's text types `value` in its own table rows, so the name means a different thing in each object that holds it: measure (CommittedMetricsEntry.value); plain-integer (BuyerWritesSettableRange.value)."
+  - member: vendor
+    decision: D-061
+    reason: "Each lock's text types `vendor` in its own table rows, so the name means a different thing in each object that holds it: external-id (MeasurementSourceOption.vendor); registrable-domain (ImpressionMultiplier.vendor)."
+  - member: verification
+    decision: D-061
+    reason: "Each lock's text types `verification` in its own table rows, so the name means a different thing in each object that holds it: external-id (ExclusionsAccepted.verification); registrable-domain (AcceptedExclusions.verification)."
+  - member: visibility
+    decision: D-061
+    reason: "Each lock's text types `visibility` in its own table rows, so the name means a different thing in each object that holds it: vocabulary LineItemVisibility (LineItem.visibility); vocabulary Visibility (LineItem.visibility)."
   - member: basis
     decision: D-013
     reason: Four lists go by `basis`, so each is the vocabulary of what it bases, named after it. A commitment's and a `min_commitment[]` threshold's `basis` say what the amount is (`CommitmentBasis`); an availability's, a committed metric's, and a frequency cap's each name a list of their own.
@@ -781,3 +1554,7 @@ shared_structures:
   - { concepts: [currency, country], absent: true }
   - concepts: [amount, measure]
     decisions: [D-005, D-036]
+  - concepts: [domain-name, registrable-domain]
+    decisions: [D-051]
+  - concepts: [amount, plain-number]
+    decisions: [D-052]

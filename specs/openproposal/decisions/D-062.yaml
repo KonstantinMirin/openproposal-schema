@@ -1,0 +1,34 @@
+format: 1
+id: D-062
+status: proposed
+kind: gap
+author: agent
+question: "§ 2.2 says a range's `min` is no greater than its `max`, and § 5.9 types `retention` as a range of durations. When is one duration no greater than another, given that `P1M` and `P30D` can be the same length or not?"
+covers:
+  - ir: sentence:2.2:db4f2290
+    digest: 367211ca085a9ad45007a3f4c92665c6162325353d6f101cad75d068f329c731
+    quote: At least one bound is present, and `min` is no greater than `max`.
+    locks: [with-our-stack]
+  - ir: field:5.9:retention
+    digest: d6da48e3ba2ad2ebe71cde6d131a3f183b1c4731c74ec54ab7ceb15b18d5e88e
+    quote: "`retention` | Range[Duration] | seller-set | From release or air. The ad stays in every copy of the content the seller distributes for at least `min` and is removed by `max`. No `max`: indefinitely. When `placement.feed` is present, only copies in that feed count toward delivery"
+    locks: [with-our-stack]
+options:
+  - id: part-by-part
+    summary: "One duration is no greater than another when it has no more years and months, and no more days, hours, minutes and seconds. `P14D` is no greater than `P30D`, and `PT48H` no greater than `P3D`. A pair where each is greater in one part, such as `P1M` and `P30D`, has no order, and a range with those bounds is neither accepted nor refused by the check."
+  - id: nominal-lengths
+    summary: "Give each year and month a fixed length, such as 365 and 30 days, and compare the totals."
+  - id: unordered
+    summary: "Don't compare durations, and check only the bounds' form."
+chosen: part-by-part
+rationale: >-
+  RFC 3339 Appendix A gives a duration's grammar but no order, and a month
+  or a year has no fixed length until it starts on a date. The part-by-part
+  order decides every pair whose answer doesn't depend on that date, which is
+  every pair the stack's examples write, and invents no length the text
+  doesn't give. The nominal lengths would refuse ranges a calendar allows,
+  and leaving durations unordered would drop a rule the text states.
+feedback: >-
+  § 2.2 could say how two durations compare in a range, or limit
+  `Range[Duration]` to days, hours, minutes and seconds, whose lengths are
+  fixed.

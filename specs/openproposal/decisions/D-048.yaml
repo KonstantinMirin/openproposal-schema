@@ -1,0 +1,81 @@
+format: 1
+id: D-048
+status: proposed
+kind: gap
+author: agent
+question: Is each type the text writes as a list of values, in a § 2.2 row such as `Side` or in a sentence such as "`HoldStatus` is `requested` | …", a closed vocabulary?
+covers:
+  - ir: def:2.2:Side#form/values:1
+    digest: db7f956e3731f7e83fa665f03a2f49e2405d5c25e102e1a68acfacaac9da2eaa
+    quote: "`buyer` | `seller`"
+    locks: [with-our-stack]
+  - ir: def:2.2:ProposalStatus#form/values:1
+    digest: c38c42958062053c640d849423aa31a23b0e6957f77553ec24a10a7e76173e49
+    quote: "`draft` | `published` | `under_review` | `agreed` | `withdrawn` | `expired`"
+    locks: [with-our-stack]
+  - ir: def:2.2:ApprovalStatus#form/values:1
+    digest: e60b10cec482a18b210de9461c83fa0b9985834ea73597cd45ca1cbdc6276268
+    quote: "`PENDING` | `APPROVED` | `REJECTED`"
+    locks: [with-our-stack]
+  - ir: def:2.2:CalendarUnit#form/values:1
+    digest: c56def0779ff065afa3ccaebd068369b8ca6f8d9dd2e718319cb5424a33b7a82
+    quote: "`hour` | `day` | `week` | `month`"
+    locks: [with-our-stack]
+  - ir: sentence:2.2:a2848c31
+    digest: 8a4439771d9b33dbef13946355bf4e3e872dfd2e5d827a47daf3b3fe78cb618f
+    quote: A field that takes a `VocabularyTerm` lists its core terms.
+    locks: [with-our-stack]
+  - ir: rule:2.2:32c53f84
+    digest: 46ddd5951d89aaa54a6a5e8eaee4b2ba3055f080cbaac43b113d8bf5de1f632b
+    quote: Anyone MAY define an extension term.
+    locks: [with-our-stack]
+  - ir: sentence:5.3:d7819ead
+    digest: f36117b4a3a0ef3b794bd162e502fd4e2394d023b692112c0b43d1e191bd9334
+    quote: "`CombineOperator` is `any` | `all`."
+    locks: [with-our-stack]
+  - ir: sentence:5.6.2:893bf1b3
+    digest: 224eb43da59308808a3b6319b6f12a78c6508fc6802b7c680a91a4c646cc89af
+    quote: "`HoldStatus` is `requested` | `held` | `declined` | `expired` | `released` | `converted`."
+    locks: [with-our-stack]
+  - ir: sentence:5.9:b2ad07c2
+    digest: c33681a71e3a7ea085aaf21ff9eda31b3a78d2eea7afd482f145cf104d8a7e86
+    quote: "`TransactionMechanism` is `direct_io` | `programmatic_guaranteed` | `preferred_deal` | `private_auction`."
+    locks: [with-our-stack]
+  - ir: sentence:5.9:c0a264aa
+    digest: 51de1e8673b1f717c5303af6a78b0f141cc610bbb9bca5ca8d70a803825d5504
+    quote: "`DeliveryType` is `guaranteed` | `share_of_voice` | `non_guaranteed`: what the seller promises to deliver, independent of how the line item transacts and how it is priced."
+    locks: [with-our-stack]
+  - ir: block:5.3:3/values:1
+    digest: 64a9ead90c53872934c97421e65444a99cac6e09d4dca25c1af6a5126248474b
+    quote: "`any` | `all`"
+    locks: [with-our-stack]
+  - ir: block:5.6.2:4/values:1
+    digest: 69a6da34777893e557e8b512a885f085844a3f365d0b6c1851f6880db9ef64da
+    quote: "`requested` | `held` | `declined` | `expired` | `released` | `converted`"
+    locks: [with-our-stack]
+  - ir: block:5.9:2/values:1
+    digest: 858303b428f6779e718da3b7ca48602b19b0ee2438c5d0d385667ee5ee835c85
+    quote: "`direct_io` | `programmatic_guaranteed` | `preferred_deal` | `private_auction`"
+    locks: [with-our-stack]
+  - ir: block:5.9:4/values:1
+    digest: d1953e479a8f4c45c473a316204c9ddd222f6dbe031e40f2accc3d1556234500
+    quote: "`guaranteed` | `share_of_voice` | `non_guaranteed`"
+    locks: [with-our-stack]
+options:
+  - id: closed
+    summary: >-
+      Each is a closed vocabulary of the values its row or sentence lists,
+      named as the text names it. A value outside the list is invalid.
+  - id: open
+    summary: Each is an open vocabulary whose listed values are its core terms, so another party may add a term.
+chosen: closed
+rationale: >-
+  § 2.2 writes an open list as a `VocabularyTerm`: a field that takes one
+  lists its core terms, and anyone may define an extension term. `Side`,
+  `ProposalStatus`, `ApprovalStatus`, and `CalendarUnit` are not
+  `VocabularyTerm`s. Their Form cells are the values themselves, so the
+  text closes them. `ApprovalStatus` keeps OpenDirect 2.1's uppercase
+  spelling, as its row says.
+feedback: >-
+  None needed. § 2.2 already tells an open list from a closed one: an open
+  list is a `VocabularyTerm`.

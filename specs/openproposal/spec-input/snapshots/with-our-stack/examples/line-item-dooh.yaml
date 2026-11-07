@@ -1,0 +1,73 @@
+# OpenProposal 3.0 — Example: DOOH line item (spec § 6.9)
+# Illustrative only. Plays and impressions as in § 5.6.4. A buyer's composed record
+# (§ 4.1.1) of a line item issued to it (§ 4.3), before its commit.
+line_item_id:   "metro-platforms-dooh"
+status:         published
+channel:        dooh
+properties:
+  available:
+    - id: "metro-platforms-north"
+      name: "Metro platforms, north line"
+      domains: ["metro-media.example"]
+      child_audience: general
+      seller_relationship: owner
+      seller_accounts: [{ asi: "ssp-a.example", sid: "pub-3001" }]
+      venue_type: { taxonomy: 5, ids: ["10502"] }   # 5: OpenOOH Venue Taxonomy 1.1; 10502: transit.subway.platform
+      screens:                                      # abridged: 200 screens with these keys
+        - screen_id: "np-001"
+          lat: 40.7128
+          lon: -74.0060
+          time_zone: "America/New_York"
+          operating_hours: [{ days: [monday, tuesday, wednesday, thursday, friday, saturday, sunday],
+                              start: "06:00", before: "24:00" }]
+          loop: { length_s: 60, slot_s: 10 }
+      slots_per_loop: 1
+  included: ["metro-platforms-north"]
+environments:   { available: ["dooh"], included: ["dooh"] }
+formats:        { available: ["dooh/landscape-1920x1080-10s"],
+                  included: ["dooh/landscape-1920x1080-10s"] }
+format_specs:
+  "dooh/landscape-1920x1080-10s":           # seller-defined: no spec_ref
+    spec:        { asset: video_file, w: 1920, h: 1080, duration: { nominal_s: 10, tolerance_ms: 500 } }
+
+delivery_counting:
+  play_tolerance_ms: 500
+  proof_of_performance: { logged_by: seller, evidence: ["play_log", "photo"] }
+  impression_multiplier:
+    impression_type: viewable
+    source_type:     1            # Measurement Vendor Provided
+    vendor:          "audience-vendor.example"
+    dataset:         "2026-R2"    # the vendor's named release, with its reference period
+    settles_on:      declared
+
+pricing:
+  - { pricing_id: "metro-cpm-usd", cost_method: CPM, list_rate: 8.00, agreed_rate: 8.00, currency: USD, price_type: 3,
+      price_valid_until: "2026-12-15T23:59:59Z" }
+
+commitment:
+  basis: spend
+  amount: 70156.80
+  flight: { start: "2026-11-02T00:00:00Z", end: "2026-11-15T23:59:59Z" }
+  derived_units: 8769600       # impressions: 3,024,000 plays × 2.9 average
+  advertisers: [{ domain: "brand-a.example" }]
+
+controlling_measurement:
+  available:    [{ id: vendor-count, counted_by: "audience-vendor.example",   # MUST be the multiplier's source
+                   discrepancy_threshold: 0.10, final_after: "P30D" }]
+  included:     ["vendor-count"]
+  max_select:   1
+shortfall_remedy:
+  available:    ["makegood"]
+  included:     ["makegood"]
+  remedy_terms: { makegood_window: "P60D", makegood_type: same_unit }
+time_zone:      viewer_local                  # on dooh: each screen's time_zone
+frequency_cap:  { count: { min: 1, max: 60, default: 60 }, period: hour, per: screen }   # plays per screen
+visibility:     named
+eligible_buyers: ["agency-a.example"]
+transaction_mechanism:
+  available:
+    - { id: direct_io, delivery_type: guaranteed }
+    - { id: programmatic_guaranteed, delivery_type: guaranteed }
+  included:   ["direct_io"]
+  max_select: 1
+deal_origin:    "ssp-a.example"

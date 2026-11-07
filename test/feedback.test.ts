@@ -12,14 +12,14 @@ import { loadLock } from "../src/lock.ts";
 import { loadDecisions, loadMappings } from "../src/mapping.ts";
 import { DIFFERENCES_FILE, loadDifferences } from "../src/render.ts";
 import { loadVectors, VECTORS_DIR } from "../src/rules.ts";
-import { OP_FEEDBACK, ROOT, SPEC } from "./helpers.ts";
+import { oldConstructors, oldKernel, OP_FEEDBACK, ROOT, SPEC } from "./helpers.ts";
 
 const INPUT = {
   root: SPEC,
   mappings: loadMappings(join(SPEC, "mapping")),
   decisions: loadDecisions(join(SPEC, "decisions")),
-  kernel: loadKernel(ROOT, SPEC),
-  constructors: loadConstructors(ROOT, SPEC),
+  kernel: oldKernel(loadKernel(ROOT, SPEC)),
+  constructors: oldConstructors(loadConstructors(ROOT, SPEC)),
   vectors: loadVectors(join(SPEC, VECTORS_DIR)),
 };
 

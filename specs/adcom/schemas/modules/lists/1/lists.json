@@ -6,7 +6,7 @@
         {
           "const": 1,
           "description": "An ID which is tied to a specific web browser or device (cookie-based, probabilistic, or other).",
-          "title": "An ID which is tied to a specific web browser or device"
+          "title": "Browser or device ID"
         },
         {
           "const": 2,
@@ -16,7 +16,7 @@
         {
           "const": 3,
           "description": "A person-based ID, i.e., that is the same across devices.",
-          "title": "A person-based ID, i.e., that is the same across devices"
+          "title": "Person-based ID"
         },
         {
           "description": "Vendor-specific codes.",
@@ -140,7 +140,7 @@
         {
           "const": 3,
           "description": "Time:Time-based refresh. Ads refresh on a predefined time interval even without user activity.",
-          "title": "Time:Time-based refresh"
+          "title": "Time"
         }
       ],
       "title": "List: Auto Refresh Triggers",
@@ -286,27 +286,33 @@
       "oneOf": [
         {
           "const": 1,
-          "title": "Video (i.e., video file or stream such as Internet TV broadcasts)"
+          "description": "Video (i.e., video file or stream such as Internet TV broadcasts)",
+          "title": "Video"
         },
         {
           "const": 2,
-          "title": "Game (i.e., an interactive software game)"
+          "description": "Game (i.e., an interactive software game)",
+          "title": "Game"
         },
         {
           "const": 3,
-          "title": "Music (i.e., audio file or stream such as Internet radio broadcasts)"
+          "description": "Music (i.e., audio file or stream such as Internet radio broadcasts)",
+          "title": "Music"
         },
         {
           "const": 4,
-          "title": "Application (i.e., an interactive software application)"
+          "description": "Application (i.e., an interactive software application)",
+          "title": "Application"
         },
         {
           "const": 5,
-          "title": "Text (i.e., primarily textual document such as a web page, eBook, or news article)"
+          "description": "Text (i.e., primarily textual document such as a web page, eBook, or news article)",
+          "title": "Text"
         },
         {
           "const": 6,
-          "title": "Other (i.e., none of the other categories applies)"
+          "description": "Other (i.e., none of the other categories applies)",
+          "title": "Other"
         },
         {
           "const": 7,
@@ -349,7 +355,8 @@
         },
         {
           "const": 8,
-          "title": "Pop (e.g., Over, Under, or Upon Exit)"
+          "description": "Pop (e.g., Over, Under, or Upon Exit)",
+          "title": "Pop"
         },
         {
           "const": 9,
@@ -357,7 +364,8 @@
         },
         {
           "const": 10,
-          "title": "Shaky, Flashing, Flickering, Extreme Animation, Smileys"
+          "description": "Shaky, Flashing, Flickering, Extreme Animation, Smileys",
+          "title": "Shaky, Flashing, or Extreme Animation"
         },
         {
           "const": 11,
@@ -369,7 +377,8 @@
         },
         {
           "const": 13,
-          "title": "User Interactive (e.g., Embedded Games)"
+          "description": "User Interactive (e.g., Embedded Games)",
+          "title": "User Interactive"
         },
         {
           "const": 14,
@@ -391,7 +400,7 @@
         {
           "const": 18,
           "description": "Responsive; Sizeless; Fluid (i.e., creatives that dynamically resize to environment)",
-          "title": "Responsive"
+          "title": "Responsive; Sizeless; Fluid"
         },
         {
           "const": 19,
@@ -609,7 +618,7 @@
         {
           "const": 15,
           "description": "- User-generated content (e.g., forums, comments, etc.).",
-          "title": "User-generated content (e.g., forums, comments, etc.)"
+          "title": "User-generated content"
         },
         {
           "const": 20,
@@ -851,7 +860,7 @@
         {
           "const": 3,
           "description": "AOD: Podcast (original, pre-recorded content distributed as episodes in a series)",
-          "title": "Podcast (original, pre-recorded content distributed as episodes in a series)"
+          "title": "Podcast"
         },
         {
           "const": 4,
@@ -965,7 +974,8 @@
         },
         {
           "const": 2,
-          "title": "Non-Linear (i.e., Overlay)"
+          "description": "Non-Linear (i.e., Overlay)",
+          "title": "Non-Linear"
         }
       ],
       "title": "List: Linearity Modes",
@@ -984,7 +994,8 @@
         },
         {
           "const": 3,
-          "title": "User Provided (e.g., registration data)"
+          "description": "User Provided (e.g., registration data)",
+          "title": "User Provided"
         }
       ],
       "title": "List: Location Types",
@@ -1247,7 +1258,8 @@
         },
         {
           "const": 2,
-          "title": "Locked (i.e., fixed position)"
+          "description": "Locked (i.e., fixed position)",
+          "title": "Locked"
         },
         {
           "const": 3,
@@ -1326,7 +1338,8 @@
         },
         {
           "const": 3,
-          "title": "On Leaving Viewport Continues as a Floating/Slider Unit until Video Completion or when Terminated by User"
+          "description": "On Leaving Viewport Continues as a Floating/Slider Unit until Video Completion or when Terminated by User",
+          "title": "On Leaving Viewport Continues as Floating Unit"
         }
       ],
       "title": "List: Playback Cessation Modes",
@@ -1337,11 +1350,13 @@
       "oneOf": [
         {
           "const": 1,
-          "title": "Initiates without any specific user interaction with Sound On"
+          "description": "Initiates without any specific user interaction with Sound On",
+          "title": "Initiates Automatically with Sound On"
         },
         {
           "const": 2,
-          "title": "Initiates without any specific user interaction Sound Off by Default"
+          "description": "Initiates without any specific user interaction Sound Off by Default",
+          "title": "Initiates Automatically with Sound Off"
         },
         {
           "const": 3,
@@ -1349,15 +1364,18 @@
         },
         {
           "const": 4,
-          "title": "Initiates on Mouse-Over or cursor over with Sound On"
+          "description": "Initiates on Mouse-Over or cursor over with Sound On",
+          "title": "Initiates on Mouse-Over with Sound On"
         },
         {
           "const": 5,
-          "title": "Initiates on Entering Viewport or scrolling into view with Sound On"
+          "description": "Initiates on Entering Viewport or scrolling into view with Sound On",
+          "title": "Initiates on Entering Viewport with Sound On"
         },
         {
           "const": 6,
-          "title": "Initiates on Entering Viewport or scrolling into view with Sound Off by Default"
+          "description": "Initiates on Entering Viewport or scrolling into view with Sound Off by Default",
+          "title": "Initiates on Entering Viewport with Sound Off"
         },
         {
           "const": 7,
@@ -1374,11 +1392,13 @@
         },
         {
           "const": 10,
-          "title": "Initiated by idling (e.g. screensaver), Sound on"
+          "description": "Initiated by idling (e.g. screensaver), Sound on",
+          "title": "Initiated by idling, Sound on"
         },
         {
           "const": 11,
-          "title": "Initiated by idling (e.g. screensaver), Sound off"
+          "description": "Initiated by idling (e.g. screensaver), Sound off",
+          "title": "Initiated by idling, Sound off"
         }
       ],
       "title": "List: Playback Methods",
@@ -1400,7 +1420,7 @@
         {
           "const": 3,
           "description": "Interstitial:Video ads that are played without video content. During playback, it must be the primary focus of the page and take up the majority of the viewport and cannot be scrolled out of view. This can be in placements like in-app video or slideshows.",
-          "title": "Interstitial:Video ads that are played without video content"
+          "title": "Interstitial"
         },
         {
           "const": 4,
@@ -1586,12 +1606,12 @@
         {
           "const": 1,
           "description": "User-Agent Client Hints (only low-entropy headers were available)",
-          "title": "User-Agent Client Hints (1)"
+          "title": "Low-Entropy Client Hints"
         },
         {
           "const": 2,
           "description": "User-Agent Client Hints (with high-entropy headers available)",
-          "title": "User-Agent Client Hints (2)"
+          "title": "High-Entropy Client Hints"
         },
         {
           "const": 3,

@@ -6,6 +6,7 @@ rules:
   # The hold transitions: none → requested → held → (expired | released | converted).
   - rule: block:5.6.2:1/values:1
     digest: c4f05bca19873a07f8a165ff6a69d25967eec96b3611c0dba1accd7c5c24b3fb
+    locks: [main, with-open-prs]
     decision: D-034
     # "`converted` is terminal", on the next line, decides invalid vector 4.
     sources: [sentence:5.6.2:774f52b4]
@@ -20,3 +21,256 @@ rules:
       - { party: seller, before: { state: requested }, after: { state: converted } }
       - { party: seller, before: { state: expired }, after: { state: held } }
       - { party: buyer, before: { state: converted }, after: { state: requested } }
+
+  # `pricing[].cost_parameters` REQUIRED when the term requires keys (D-060).
+  - rule: rule:5.6:0f8d396f
+    digest: 32bc109b3441be001719afaeecfaf260d3b08279427292d7884d1e09c4d91b1d
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["field:5.6:pricing[].cost_parameters"]
+    valid:
+      - {"value": {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}}
+      - {"value": {"cost_method": "TIME", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "cost_parameters": {"rate_unit": "hour"}}}
+    invalid:
+      - {"value": {"cost_method": "TIME", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}}
+
+  # `pricing[].agreed_rate` REQUIRED when this is the committed entry (D-060).
+  - rule: rule:5.6:62e21e38
+    digest: a5fc7801d7e0e75f77186ffcfb53329a8c87fb0c4580a2f7d3cfb3eac828a00a
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["field:5.6:pricing[].agreed_rate"]
+    valid:
+      - {"value": {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}, "context": {"Commitment.pricing_id": "other-entry"}}
+      - {"value": {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "agreed_rate": 18}, "context": {"Commitment.pricing_id": "audio-cpm-usd"}}
+    invalid:
+      - {"value": {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}, "context": {"Commitment.pricing_id": "audio-cpm-usd"}}
+
+  # `pricing[].rate_per` REQUIRED when `cost_method` is an extension term (D-060).
+  - rule: rule:5.6:7235466d
+    digest: edbebf8628d97f9afbeea2352a2a296273d83835abad92ddac174165a51593f5
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["field:5.6:pricing[].rate_per"]
+    valid:
+      - {"value": {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}}
+      - {"value": {"cost_method": "examplepub.example:per-spot", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "rate_per": 1, "unit_label": "spot", "cost_definition": {"digest": "sha256:83e44f6fa723c35fef1b3528b16cc13a8a19ee34a32b658f6d3cc243ce12592e", "url": "https://examplepub.example/legal/io-terms-2026.pdf"}}}
+    invalid:
+      - {"value": {"cost_method": "examplepub.example:per-spot", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "unit_label": "spot", "cost_definition": {"digest": "sha256:83e44f6fa723c35fef1b3528b16cc13a8a19ee34a32b658f6d3cc243ce12592e", "url": "https://examplepub.example/legal/io-terms-2026.pdf"}}}
+
+  # `pricing[].unit_label` REQUIRED when `cost_method` is an extension term (D-060).
+  - rule: rule:5.6:7235466d-2
+    digest: f97eafcfa7d6a33bca948caddbb79968c143502ff3a16a8f1228017f1afeeedc
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["field:5.6:pricing[].unit_label"]
+    valid:
+      - {"value": {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}}
+      - {"value": {"cost_method": "examplepub.example:per-spot", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "rate_per": 1, "unit_label": "spot", "cost_definition": {"digest": "sha256:83e44f6fa723c35fef1b3528b16cc13a8a19ee34a32b658f6d3cc243ce12592e", "url": "https://examplepub.example/legal/io-terms-2026.pdf"}}}
+    invalid:
+      - {"value": {"cost_method": "examplepub.example:per-spot", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "rate_per": 1, "cost_definition": {"digest": "sha256:83e44f6fa723c35fef1b3528b16cc13a8a19ee34a32b658f6d3cc243ce12592e", "url": "https://examplepub.example/legal/io-terms-2026.pdf"}}}
+
+  # `pricing[].cost_definition` REQUIRED when `cost_method` is an extension term (D-060).
+  - rule: rule:5.6:7235466d-3
+    digest: 2012ba8bd8a1634147a31367da8e8b9242b46230781381b8f6dbba629e699bfd
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["field:5.6:pricing[].cost_definition"]
+    valid:
+      - {"value": {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}}
+      - {"value": {"cost_method": "examplepub.example:per-spot", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "rate_per": 1, "unit_label": "spot", "cost_definition": {"digest": "sha256:83e44f6fa723c35fef1b3528b16cc13a8a19ee34a32b658f6d3cc243ce12592e", "url": "https://examplepub.example/legal/io-terms-2026.pdf"}}}
+    invalid:
+      - {"value": {"cost_method": "examplepub.example:per-spot", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "rate_per": 1, "unit_label": "spot"}}
+
+  # `pricing[].price_type` REQUIRED when the entry prices a deal mechanism (D-060).
+  - rule: rule:5.6:8288302a
+    digest: 14845c24a6584a33e2511f328e76d63744a32697970793ff90942fffd2a9da7c
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["field:5.6:pricing[].price_type"]
+    valid:
+      - {"value": {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}}
+      - {"value": {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "transaction_mechanisms": ["programmatic_guaranteed"], "price_type": 1}}
+    invalid:
+      - {"value": {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "transaction_mechanisms": ["programmatic_guaranteed"]}}
+
+  # `Commitment.pricing_id` REQUIRED when `pricing[]` has more than one entry (D-060).
+  - rule: rule:5.6.1:7b200076
+    digest: 9e18907555be656084a26c328b8c8eb77fb599431a8da02c7e479e93c92e450f
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.6.1:Commitment.pricing_id"]
+    valid:
+      - {"value": {"advertisers": [], "amount": 80000, "basis": "spend", "flight": {"end": "2026-12-31T23:59:59Z", "start": "2026-10-01T00:00:00Z"}}, "context": {"LineItem.pricing": [{"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}]}}
+      - {"value": {"advertisers": [], "amount": 80000, "basis": "spend", "flight": {"end": "2026-12-31T23:59:59Z", "start": "2026-10-01T00:00:00Z"}, "pricing_id": "audio-cpm-usd"}, "context": {"LineItem.pricing": [{"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}, {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "b"}]}}
+    invalid:
+      - {"value": {"advertisers": [], "amount": 80000, "basis": "spend", "flight": {"end": "2026-12-31T23:59:59Z", "start": "2026-10-01T00:00:00Z"}}, "context": {"LineItem.pricing": [{"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}, {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "b"}]}}
+
+  # `CommitResult.availability` REQUIRED when `entries[]` holds a `decline` for lack of availability (D-060).
+  - rule: rule:5.6.1:94be9998
+    digest: 38ff50f3f0dfa34548278f8ba4e33081dcfe7d8c801d8bac6bae715f7986be66
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.6.1:CommitResult.availability"]
+    valid:
+      - {"value": {"entries": []}}
+      - {"value": {"entries": [{"at": "2026-09-22T10:14:03Z", "ground": "availability", "line_item_ids": ["business-daily-display", "weather-app-ctv"], "record_digest": "sha256:a9290958d7f148d212b552b51b6cc3ccca86edbc817f2058252b3ee9d7d3a10a", "role": "decline", "version": 2}], "availability": {"x": {"certainty": "reservable", "computed_at": "2026-10-06T16:20:00Z", "granularity": "hour", "quantity": 3555555, "unit": "slots_per_loop", "window": {"end": "2026-12-31T23:59:59Z", "start": "2026-10-01T00:00:00Z"}}}}}
+    invalid:
+      - {"value": {"entries": [{"at": "2026-09-22T10:14:03Z", "ground": "availability", "line_item_ids": ["business-daily-display", "weather-app-ctv"], "record_digest": "sha256:a9290958d7f148d212b552b51b6cc3ccca86edbc817f2058252b3ee9d7d3a10a", "role": "decline", "version": 2}]}}
+
+  # `DeliveryCounting.partial_play_credit` REQUIRED when a property has `sync_groups[]` (D-060).
+  - rule: rule:5.6.4:615bf228
+    digest: 919b9bf1f25088f695ee7d6a8be5b52f8c590af183570a1e9d4724b9e0a3bd5b
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.6.4:DeliveryCounting.partial_play_credit"]
+    valid:
+      - {"value": {"play_tolerance_ms": 500, "proof_of_performance": {"evidence": [], "logged_by": "seller"}}, "context": {"LineItem.properties": {"available": [], "included": []}}}
+    invalid:
+      - {"value": {"play_tolerance_ms": 500, "proof_of_performance": {"evidence": [], "logged_by": "seller"}}, "context": {"LineItem.properties": {"available": [{"allocation": "all", "apps": [], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner", "domains": ["tune-stream.example", "business-daily.example"], "sync_groups": [{"min_screens_per_play": 3, "screen_ids": [], "sync_group_id": "examplepub-q4-sports"}]}], "included": []}}}
+
+  # `DeliveryCounting.impression_multiplier` REQUIRED when the line item counts impressions (D-060).
+  - rule: rule:5.6.4:e58650b7
+    digest: ae43a5c3f5ade9914aaa18fc5e59aec9ee10bea1c71c4435fae9b1997bc6113a
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.6.4:DeliveryCounting.impression_multiplier"]
+    valid:
+      - {"value": {"play_tolerance_ms": 500, "proof_of_performance": {"evidence": [], "logged_by": "seller"}}, "context": {"LineItem.pricing": [{"cost_method": "TIME", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}]}}
+      - {"value": {"play_tolerance_ms": 500, "proof_of_performance": {"evidence": [], "logged_by": "seller"}, "impression_multiplier": {"dataset": "examplepub-q4-sports", "impression_type": "gross", "settles_on": "declared", "source_type": 1}}, "context": {"LineItem.pricing": [{"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}]}}
+    invalid:
+      - {"value": {"play_tolerance_ms": 500, "proof_of_performance": {"evidence": [], "logged_by": "seller"}}, "context": {"LineItem.pricing": [{"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}]}}
+
+  # `ImpressionMultiplier.vendor` REQUIRED when `source_type` is not Publisher Provided (`2`) (D-060).
+  - rule: rule:5.6.4:b6f5be4c
+    digest: a8da9f49baf1a471cef2b65811934b6ab98701aa669fa7de550d7a07c97acf39
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.6.4:ImpressionMultiplier.vendor"]
+    valid:
+      - {"value": {"dataset": "examplepub-q4-sports", "impression_type": "gross", "settles_on": "declared", "source_type": 2}}
+      - {"value": {"dataset": "examplepub-q4-sports", "impression_type": "gross", "settles_on": "declared", "source_type": 1, "vendor": "audience-vendor.example"}}
+    invalid:
+      - {"value": {"dataset": "examplepub-q4-sports", "impression_type": "gross", "settles_on": "declared", "source_type": 1}}
+
+  # `Fee.share` REQUIRED when `calculation` is `cancelled` or `commitment` (D-060).
+  - rule: rule:5.6.6:11a40445
+    digest: cad04ebb97eb461ca5f32fe81412134bd363422d1403a0186870c468b5cf5fec
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.6.6:Fee.share"]
+    valid:
+      - {"value": {"calculation": "none"}}
+      - {"value": {"calculation": "cancelled", "share": 0.25}}
+    invalid:
+      - {"value": {"calculation": "cancelled"}}
+
+  # `CostParameters.rate_unit` REQUIRED when `cost_method` is `TIME` (D-060).
+  - rule: rule:5.6.5:119b216f
+    digest: 01cde1f2da64d635b8b9eeb7bf07124cbe2b32437fdb9a8da0f9d7348e9b7382
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.6.5:CostParameters.rate_unit"]
+    valid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPM"}}
+      - {"value": {"rate_unit": "hour"}, "context": {"PricingEntry.cost_method": "TIME"}}
+    invalid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "TIME"}}
+
+  # `CostParameters.viewability_standard` REQUIRED when `cost_method` is `CPMV` (D-060).
+  - rule: rule:5.6.5:1f435d20
+    digest: ff0a56d1ef6678b94894fe41368168fb5353c9a14550b17b1f9c80345e12f727
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.6.5:CostParameters.viewability_standard"]
+    valid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPM"}}
+      - {"value": {"viewability_standard": "examplepub.example:podcast-host-read"}, "context": {"PricingEntry.cost_method": "CPMV"}}
+    invalid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPMV"}}
+
+  # `CostParameters.action_type` REQUIRED when `cost_method` is `CPA` (D-060).
+  - rule: rule:5.6.5:449027fe
+    digest: 09463a33881539b359828013565f62011814a82ff0fc4412ed89438866b4b004
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.6.5:CostParameters.action_type"]
+    valid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPM"}}
+      - {"value": {"action_type": "examplepub.example:podcast-host-read"}, "context": {"PricingEntry.cost_method": "CPA"}}
+    invalid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPA"}}
+
+  # `CostParameters.attribution_window` REQUIRED when `cost_method` is `CPA` (D-060).
+  - rule: rule:5.6.5:449027fe-2
+    digest: 7e9aa34a55da2441ba5236f0eedf69d82bb6ba759bd480e69b26a312ee5d9fb1
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.6.5:CostParameters.attribution_window"]
+    valid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPM"}}
+      - {"value": {"attribution_window": "P14D"}, "context": {"PricingEntry.cost_method": "CPA"}}
+    invalid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPA"}}
+
+  # `CostParameters.action_source` REQUIRED when `cost_method` is `CPA` (D-060).
+  - rule: rule:5.6.5:449027fe-3
+    digest: 0d8c9c152642d8d0ad925ec5f0ebc35166edd864c3644cb2b9d1adc74440ddaf
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.6.5:CostParameters.action_source"]
+    valid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPM"}}
+      - {"value": {"action_source": "seller"}, "context": {"PricingEntry.cost_method": "CPA"}}
+    invalid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPA"}}
+
+  # `CostParameters.demographic` REQUIRED when `cost_method` is `CPP` (D-060).
+  - rule: rule:5.6.5:acca3c1c
+    digest: f13e25bdd0b8b7b2491fe48364a02b8aa32fed911f9a4c463e88527ae606b23e
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.6.5:CostParameters.demographic"]
+    valid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPM"}}
+      - {"value": {"demographic": "examplepub.example:podcast-host-read"}, "context": {"PricingEntry.cost_method": "CPP"}}
+    invalid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPP"}}
+
+  # `CostParameters.rating_source` REQUIRED when `cost_method` is `CPP` (D-060).
+  - rule: rule:5.6.5:acca3c1c-2
+    digest: 003f6ff6820230313bf76da952419795e7a197f7a3571ac083e21176a7e5937c
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.6.5:CostParameters.rating_source"]
+    valid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPM"}}
+      - {"value": {"rating_source": "seller"}, "context": {"PricingEntry.cost_method": "CPP"}}
+    invalid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPP"}}
+
+  # `CostParameters.view_fraction` REQUIRED when `cost_method` is `CPV` and `view_s` is absent (D-060).
+  - rule: rule:5.6.5:26b080e2
+    digest: 53b66673be9dfda59cddab0d08036d45c14649449fcd51605f979677c3e2e60b
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.6.5:CostParameters.view_fraction"]
+    valid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPM"}}
+      - {"value": {"view_s": 3}, "context": {"PricingEntry.cost_method": "CPV"}}
+      - {"value": {"view_fraction": 0.7}, "context": {"PricingEntry.cost_method": "CPV"}}
+    invalid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPV"}}
+
+  # `CostParameters.view_s` REQUIRED when `cost_method` is `CPV` and `view_fraction` is absent (D-060).
+  - rule: rule:5.6.5:f959ab87
+    digest: f9d2c3fbfce7a94efbbda207d68a95babb2b39c16b73991db6579abedb475247
+    locks: [with-our-stack]
+    decision: D-060
+    sources: ["key:5.6.5:CostParameters.view_s"]
+    valid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPM"}}
+      - {"value": {"view_fraction": 0.7}, "context": {"PricingEntry.cost_method": "CPV"}}
+      - {"value": {"view_s": 3}, "context": {"PricingEntry.cost_method": "CPV"}}
+    invalid:
+      - {"value": {}, "context": {"PricingEntry.cost_method": "CPV"}}
