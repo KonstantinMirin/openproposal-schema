@@ -28,6 +28,7 @@ import { constructorEditionsOn, kernelEditionsOn } from "./editions.ts";
 import { decisionsOf, sectionsOn, stands, type DecisionRecord, type MappingFile, type Members, type Presence, type Source, type TypeRef } from "./mapping.ts";
 import { documentOf, exampleFilesOf, KERNEL_MODULE, restatesPart } from "./mapping-rules.ts";
 import { requiredLists } from "./mapping-sources.ts";
+import { place } from "./placement.ts";
 
 /** Each kind of named type, with the layer type rules § 3 puts it in. A copy's layer is computed (`copyLayer`). */
 export const LAYER = { primitive: 1, constructor: 2, part: 2, vocabulary: 3, object: 4, union: 4, document: 5, profile: 5 } as const;
@@ -85,6 +86,10 @@ interface Base {
   decisions: string[];
   /** Every named type the type's emitted schema references, sorted. */
   references: string[];
+  /** A type that restates a JSON type and that the specification doesn't name, which each use writes inline (type rules § 4, src/placement.ts). */
+  inline?: true;
+  /** Where the schema defines the type: `kernel`, a module, or `composition`, the top layer (type rules § 3, src/placement.ts); none for a type it leaves out or writes inline. */
+  home?: string;
 }
 
 export type ModelType = Base &
@@ -1112,6 +1117,9 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
       }
     }
   }
+
+  // Where the schema writes each type: inline, in the kernel, in a module, or in the top layer's composition (type rules § 3 and § 4).
+  place(types);
 
   // A module whose every section exists only on other locks, as one the stack's sections alone give, isn't in this lock's model.
   const onThisLock = (m: MappingFile) => m.module === KERNEL_MODULE || m.sections.length === 0 || sectionsOn(m, lock).length > 0;

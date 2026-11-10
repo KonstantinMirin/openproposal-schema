@@ -6,7 +6,7 @@
  * constructor as a generic type and a function that builds its schema.
  */
 import type { z } from "zod";
-import { Amount, App, AppId, AppIdStore, ApprovalStatus, BareTerm, CalendarDate, CalendarUnit, ClockWindow, ClockWindowNarrowing, CurrencyCode, DayName, Delta, Digest, DocumentRef, Domain, Duration, EntryRef, ErrorObject, ErrorObjectCode, ErrorObjectRetry, FieldPointer, FormatId, Fraction, FractionDelta, GeoCode, GeoCodeNarrowing, HttpsUrl, IanaZone, Identifier, Instant, IntegerFlag, Interval, LineItemStatus, Measurer, NamespacedTerm, Narrowing, OpenObject, Party, PlainInteger, PlainIntegerNarrowing, PlainNumber, PlainString, ProposalStatus, Range, RegistrableDomain, SeatRef, Selectable, Settable, SettableRange, Side, TaxonomyCodes, TimeOfDay, TimeUnit, TimeZone, Url, VersionRef } from "./kernel.js";
+import { Amount, App, AppId, AppIdStore, ApprovalStatus, BareTerm, CalendarDate, CalendarUnit, ClockWindow, ClockWindowNarrowing, CurrencyCode, DayName, Delta, Digest, DocumentRef, Domain, Duration, EntryRef, ErrorObject, ErrorObjectCode, ErrorObjectRetry, FieldPointer, FormatId, Fraction, FractionDelta, GeoCode, GeoCodeNarrowing, HttpsUrl, IanaZone, Identifier, Instant, IntegerFlag, Interval, LineItemStatus, Measurer, NamespacedTerm, Narrowing, OpenObject, Party, PlainNumber, PlainString, ProposalStatus, Range, RegistrableDomain, SafeInteger, SafeIntegerNarrowing, SeatRef, Selectable, Settable, SettableRange, Side, TaxonomyCodes, TimeOfDay, TimeUnit, TimeZone, Url, VersionRef } from "./kernel.js";
 import { ActivationRouteSelection, AddressableScale, AddressableScaleUnit, AudienceOption, AudienceOptionSensitiveCategory, AudienceSelectable, BuyerList, BuyerListMatchMethod, BuyerSupplied, CombineOperator, CombineSelection, LineItemActivationRoute } from "./audience.js";
 import { AssentEntry, AssentEntryGround, AssentEntryRole, Availability, AvailabilityCertainty, AvailabilityUnit, BuyerWrites, BuyerWritesAudienceSelectable, BuyerWritesBuyerRequirements, BuyerWritesDeviceBounds, BuyerWritesFrequencyCap, BuyerWritesGeoBounds, BuyerWritesSelectable, BuyerWritesSettable, BuyerWritesSettableRange, BuyerWritesShortfallRemedy, CancellationNotice, CancellationOption, CancellationOptionNoticeReference, CancellationPolicySelection, Commit, CommitResult, Commitment, CommitmentAmount, CommitmentAmountBasis, CommitmentBounds, CostParameters, CostParametersActionType, CostParametersDemographic, CostParametersRateUnit, CostParametersViewabilityStandard, DatedShare, DeliveryCounting, DeliveryCountingPartialPlayCredit, ExclusivityOption, ExclusivityOptionScope, ExclusivityOptionSeparation, ExclusivitySelection, Fee, FeeCalculation, Hold, HoldStatus, HoldTerms, ImpressionMultiplier, ImpressionMultiplierImpressionType, ImpressionMultiplierSettlesOn, LineItemRenewalRight, LineItemWrites, Preemption, PreemptionReason, PreemptionRemedy, PricingEntry, PricingEntryCostMethod, PricingEntryRatePer, ProofOfPerformance, ProofOfPerformanceEvidence, SpendRange, UnitBoundsRange } from "./commercial.js";
 import { Asset, AssetProvenance, AssetProvenanceDisclosureMethod, CreativeDelivery, CreativeDeliveryMethod, CreativeDeliveryOtherProtocol, FormatSpec, FormatsSelection, MaterialsDue, ProductionOption, ProductionSelection } from "./creative.js";
@@ -41,10 +41,10 @@ export * from "./registry.js";
 export { isFormat, type Format } from "./runtime.js";
 
 /** The commit of the OpenProposal specification repository that the types are generated from. */
-export const SPEC_COMMIT = "a4adff3efb85564d84a4439b27f554123feefd41";
+export const SPEC_COMMIT = "43f4c723c3250091572fa31a3ab2f355f5d712df";
 
 /** The Git blob SHA of the specification file at that commit. */
-export const SPEC_BLOB = "179980bae43c78855432408cd6c6609109963d22";
+export const SPEC_BLOB = "7ed55dbc2a60d112f1dc9fc342ee6b598d050e2b";
 
 /** The lock that pins the commit: `main`, or `with-open-prs`, which is `main` with the pull requests that were open on the day of the lock merged in. */
 export const LOCK = "with-our-stack";
@@ -53,7 +53,7 @@ export const LOCK = "with-our-stack";
 export const VARIANT = "as-written";
 
 /** The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it. */
-export const SCHEMA_RELEASE = "fbab39049a573adb36643a6f5e0f2f821cdd91b94ed12ed82eaf6887d30611ff";
+export const SCHEMA_RELEASE = "93aec0290996e48f230a1502b6146946663189e996ae02871ceae160bec58e44";
 
 /** A constructor's schema function, applied to its arguments' schemas. */
 export type Template = (...args: z.ZodType[]) => z.ZodType;
@@ -238,8 +238,6 @@ export const TYPES: Readonly<Record<string, z.ZodType>> = {
   PackageSummary: PackageSummary,
   Party: Party,
   Placement: Placement,
-  PlainInteger: PlainInteger,
-  PlainIntegerNarrowing: PlainIntegerNarrowing,
   PlainNumber: PlainNumber,
   PlainString: PlainString,
   Preemption: Preemption,
@@ -280,6 +278,8 @@ export const TYPES: Readonly<Record<string, z.ZodType>> = {
   RequiredCredential: RequiredCredential,
   RequiredCredentialCredentialType: RequiredCredentialCredentialType,
   RetentionRange: RetentionRange,
+  SafeInteger: SafeInteger,
+  SafeIntegerNarrowing: SafeIntegerNarrowing,
   Screen: Screen,
   SeatRef: SeatRef,
   SellerAccount: SellerAccount,

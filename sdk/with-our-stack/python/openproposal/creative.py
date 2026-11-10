@@ -10,7 +10,7 @@ from pydantic import AfterValidator, BeforeValidator, Field, Strict
 from typing_extensions import TypeAliasType
 
 from . import _runtime as rt
-from .kernel import ApprovalStatus, Digest, DocumentRef, Duration, EntryRef, FormatId, Instant, NamespacedTerm, OpenObject, PlainInteger, PlainString, Selectable, Side, Url
+from .kernel import ApprovalStatus, Digest, DocumentRef, Duration, EntryRef, FormatId, Instant, NamespacedTerm, OpenObject, PlainString, SafeInteger, Selectable, Side, Url
 
 class MaterialsDue(rt.Closed):
     """The `MaterialsDue` object of the `creative` module."""
@@ -142,7 +142,7 @@ class CreativeDelivery(rt.Closed):
     """Core terms: `buyer_hosted` | `seller_hosted` | `api` | `platform_managed`, defined in the creative path below"""
     other_protocols: Optional[list[CreativeDeliveryOtherProtocol]] = None
     """How a creative that list has no code for is delivered. Core term: `javascript_tag`, a tag whose script renders the ad. A receiver that doesn't know a term treats only that term as unavailable"""
-    protocols: Optional[list[PlainInteger]] = None
+    protocols: Optional[list[SafeInteger]] = None
     """Values from AdCOM 1.0 List: Creative Subtypes - Audio/Video the seller accepts, wrappers included, such as VAST 4.2 (13). The values OpenRTB 2.6 `video.protocols` and `audio.protocols` carry"""
     secure_required: Optional[rt.Boolean] = None
     """Whether the creative must load over a secure connection. Absent: this line item states no such requirement"""

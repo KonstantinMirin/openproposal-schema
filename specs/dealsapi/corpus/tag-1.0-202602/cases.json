@@ -64,7 +64,7 @@
         "version": "seat-99812"
       },
       "path": "",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/buyer-seat.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/BuyerSeat",
       "type": "BuyerSeat"
     },
     {
@@ -82,7 +82,39 @@
         "version": "seat-99812"
       },
       "path": "/buyerstatus",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/buyer-seat.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/BuyerSeat",
+      "type": "BuyerSeat"
+    },
+    {
+      "at": "/properties/id",
+      "baseline": {
+        "id": "seat-99812",
+        "version": "seat-99812"
+      },
+      "id": "BuyerSeat#/properties/id/type",
+      "keyword": "type",
+      "mutant": {
+        "id": 0,
+        "version": "seat-99812"
+      },
+      "path": "/id",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/BuyerSeat",
+      "type": "BuyerSeat"
+    },
+    {
+      "at": "/properties/version",
+      "baseline": {
+        "id": "seat-99812",
+        "version": "seat-99812"
+      },
+      "id": "BuyerSeat#/properties/version/type",
+      "keyword": "type",
+      "mutant": {
+        "id": "seat-99812",
+        "version": 0
+      },
+      "path": "/version",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/BuyerSeat",
       "type": "BuyerSeat"
     },
     {
@@ -98,7 +130,7 @@
       },
       "name": "id",
       "path": "",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/buyer-seat.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/BuyerSeat",
       "type": "BuyerSeat"
     },
     {
@@ -114,7 +146,7 @@
       },
       "name": "version",
       "path": "",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/buyer-seat.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/BuyerSeat",
       "type": "BuyerSeat"
     },
     {
@@ -127,7 +159,7 @@
       "keyword": "type",
       "mutant": "",
       "path": "",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/buyer-seat.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/BuyerSeat",
       "type": "BuyerSeat"
     },
     {
@@ -139,6 +171,20 @@
         "undefined_member": true
       },
       "path": "",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/modules/buyer-seat/1/buyer-seat.json#/$defs/BuyerStatus",
+      "type": "BuyerStatus"
+    },
+    {
+      "at": "/properties/buyerseatid",
+      "baseline": {
+        "buyerseatid": "seat-99812"
+      },
+      "id": "BuyerStatus#/properties/buyerseatid/type",
+      "keyword": "type",
+      "mutant": {
+        "buyerseatid": 0
+      },
+      "path": "/buyerseatid",
       "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/modules/buyer-seat/1/buyer-seat.json#/$defs/BuyerStatus",
       "type": "BuyerStatus"
     },
@@ -216,6 +262,20 @@
       "type": "Curation"
     },
     {
+      "at": "/properties/cdealid",
+      "baseline": {
+        "cdealid": "seat-99812"
+      },
+      "id": "Curation#/properties/cdealid/type",
+      "keyword": "type",
+      "mutant": {
+        "cdealid": 0
+      },
+      "path": "/cdealid",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/modules/deal/1/deal.json#/$defs/Curation",
+      "type": "Curation"
+    },
+    {
       "at": "",
       "baseline": {},
       "id": "Curation#/type",
@@ -272,7 +332,7 @@
         "undefined_member": true
       },
       "path": "",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/deal.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
       "type": "Deal"
     },
     {
@@ -292,7 +352,31 @@
         "terms": {}
       },
       "path": "/adtypes",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/deal.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
+      "type": "Deal"
+    },
+    {
+      "at": "/properties/bseat/items",
+      "baseline": {
+        "bseat": [
+          "seat-99812"
+        ],
+        "id": "seat-99812",
+        "origin": "examplepub.example",
+        "terms": {}
+      },
+      "id": "Deal#/properties/bseat/items/type",
+      "keyword": "type",
+      "mutant": {
+        "bseat": [
+          0
+        ],
+        "id": "seat-99812",
+        "origin": "examplepub.example",
+        "terms": {}
+      },
+      "path": "/bseat/0",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
       "type": "Deal"
     },
     {
@@ -312,7 +396,89 @@
         "terms": {}
       },
       "path": "/bseat",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/deal.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
+      "type": "Deal"
+    },
+    {
+      "at": "/properties/desc",
+      "baseline": {
+        "desc": "Prose, not a name.",
+        "id": "seat-99812",
+        "origin": "examplepub.example",
+        "terms": {}
+      },
+      "id": "Deal#/properties/desc/type",
+      "keyword": "type",
+      "mutant": {
+        "desc": 0,
+        "id": "seat-99812",
+        "origin": "examplepub.example",
+        "terms": {}
+      },
+      "path": "/desc",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
+      "type": "Deal"
+    },
+    {
+      "at": "/properties/id",
+      "baseline": {
+        "id": "seat-99812",
+        "origin": "examplepub.example",
+        "terms": {}
+      },
+      "id": "Deal#/properties/id/type",
+      "keyword": "type",
+      "mutant": {
+        "id": 0,
+        "origin": "examplepub.example",
+        "terms": {}
+      },
+      "path": "/id",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
+      "type": "Deal"
+    },
+    {
+      "at": "/properties/name",
+      "baseline": {
+        "id": "seat-99812",
+        "name": "Prose, not a name.",
+        "origin": "examplepub.example",
+        "terms": {}
+      },
+      "id": "Deal#/properties/name/type",
+      "keyword": "type",
+      "mutant": {
+        "id": "seat-99812",
+        "name": 0,
+        "origin": "examplepub.example",
+        "terms": {}
+      },
+      "path": "/name",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
+      "type": "Deal"
+    },
+    {
+      "at": "/properties/wseat/items",
+      "baseline": {
+        "id": "seat-99812",
+        "origin": "examplepub.example",
+        "terms": {},
+        "wseat": [
+          "seat-99812"
+        ]
+      },
+      "id": "Deal#/properties/wseat/items/type",
+      "keyword": "type",
+      "mutant": {
+        "id": "seat-99812",
+        "origin": "examplepub.example",
+        "terms": {},
+        "wseat": [
+          0
+        ]
+      },
+      "path": "/wseat/0",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
       "type": "Deal"
     },
     {
@@ -332,7 +498,7 @@
         "wseat": ""
       },
       "path": "/wseat",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/deal.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
       "type": "Deal"
     },
     {
@@ -350,7 +516,7 @@
       },
       "name": "id",
       "path": "",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/deal.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
       "type": "Deal"
     },
     {
@@ -368,7 +534,7 @@
       },
       "name": "origin",
       "path": "",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/deal.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
       "type": "Deal"
     },
     {
@@ -386,7 +552,7 @@
       },
       "name": "terms",
       "path": "",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/deal.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
       "type": "Deal"
     },
     {
@@ -400,7 +566,7 @@
       "keyword": "type",
       "mutant": "",
       "path": "",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/deal.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
       "type": "Deal"
     },
     {
@@ -456,16 +622,6 @@
     },
     {
       "at": "",
-      "baseline": "seat-99812",
-      "id": "ExternalId#/type",
-      "keyword": "type",
-      "mutant": 42,
-      "path": "",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/kernel/1/kernel.json#/$defs/ExternalId",
-      "type": "ExternalId"
-    },
-    {
-      "at": "",
       "baseline": 1,
       "id": "IncludedInventory#/oneOf",
       "keyword": "oneOf",
@@ -497,6 +653,24 @@
       "type": "Inventory"
     },
     {
+      "at": "/properties/appbundles/items",
+      "baseline": {
+        "appbundles": [
+          "seat-99812"
+        ]
+      },
+      "id": "Inventory#/properties/appbundles/items/type",
+      "keyword": "type",
+      "mutant": {
+        "appbundles": [
+          0
+        ]
+      },
+      "path": "/appbundles/0",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/modules/deal/1/deal.json#/$defs/Inventory",
+      "type": "Inventory"
+    },
+    {
       "at": "/properties/appbundles",
       "baseline": {
         "appbundles": []
@@ -507,6 +681,24 @@
         "appbundles": ""
       },
       "path": "/appbundles",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/modules/deal/1/deal.json#/$defs/Inventory",
+      "type": "Inventory"
+    },
+    {
+      "at": "/properties/cat/items",
+      "baseline": {
+        "cat": [
+          "seat-99812"
+        ]
+      },
+      "id": "Inventory#/properties/cat/items/type",
+      "keyword": "type",
+      "mutant": {
+        "cat": [
+          0
+        ]
+      },
+      "path": "/cat/0",
       "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/modules/deal/1/deal.json#/$defs/Inventory",
       "type": "Inventory"
     },
@@ -549,6 +741,24 @@
         "inclinventory": ""
       },
       "path": "/inclinventory",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/modules/deal/1/deal.json#/$defs/Inventory",
+      "type": "Inventory"
+    },
+    {
+      "at": "/properties/sellerids/items",
+      "baseline": {
+        "sellerids": [
+          "seat-99812"
+        ]
+      },
+      "id": "Inventory#/properties/sellerids/items/type",
+      "keyword": "type",
+      "mutant": {
+        "sellerids": [
+          0
+        ]
+      },
+      "path": "/sellerids/0",
       "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/modules/deal/1/deal.json#/$defs/Inventory",
       "type": "Inventory"
     },
@@ -655,16 +865,6 @@
       "path": "",
       "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/modules/deal/1/deal.json#/$defs/Terms",
       "type": "Terms"
-    },
-    {
-      "at": "",
-      "baseline": "Prose, not a name.",
-      "id": "Text#/type",
-      "keyword": "type",
-      "mutant": 7,
-      "path": "",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/kernel/1/kernel.json#/$defs/Text",
-      "type": "Text"
     },
     {
       "at": "",
@@ -874,7 +1074,7 @@
       ],
       "owner": "BuyerSeat",
       "rule": "rule:object-buyerseat:be619ed4",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/buyer-seat.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/BuyerSeat",
       "severity": "warning",
       "type": "BuyerSeat",
       "valid": [
@@ -924,7 +1124,7 @@
       ],
       "owner": "Deal",
       "rule": "rule:object-deal:1ff4e5fa",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/deal.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
       "severity": "warning",
       "type": "Deal",
       "valid": [
@@ -979,7 +1179,7 @@
       ],
       "owner": "Deal",
       "rule": "rule:object-deal:5e652de0",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/deal.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
       "severity": "warning",
       "type": "Deal",
       "valid": [
@@ -1035,7 +1235,7 @@
       ],
       "owner": "Deal",
       "rule": "rule:object-deal:c221f2e9",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/deal.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
       "severity": "warning",
       "type": "Deal",
       "valid": [

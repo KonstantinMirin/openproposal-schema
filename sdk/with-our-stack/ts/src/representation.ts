@@ -8,7 +8,7 @@ import { RequiredCredential } from "./eligibility.js";
 import { MechanismOption } from "./execution.js";
 import { CommittedMetric } from "./guarantees.js";
 import { Environment, LineItemEpisodes } from "./inventory.js";
-import { Amount, AppIdStore, CurrencyCode, Domain, GeoCode, IntegerFlag, Interval, OpenObject, PlainInteger, PlainString, Range, RegistrableDomain, Selectable, Settable, TaxonomyCodes } from "./kernel.js";
+import { Amount, AppIdStore, CurrencyCode, Domain, GeoCode, IntegerFlag, Interval, OpenObject, PlainString, Range, RegistrableDomain, SafeInteger, Selectable, Settable, TaxonomyCodes } from "./kernel.js";
 import { MediaChannel } from "./line-item.js";
 import { PropertyOptionChildAudience, PropertyOptionSellerRelationship } from "./properties.js";
 import { MinCommitment } from "./proposal.js";
@@ -20,48 +20,6 @@ export interface LineItemSummaryEnvironmentsSelection {
 }
 export const LineItemSummaryEnvironmentsSelection: z.ZodType<LineItemSummaryEnvironmentsSelection> = z.strictObject({
   available: z.array(Environment),
-});
-
-/** The `LineItemSummaryImpressionMultiplier` object of the `representation` module. */
-export interface LineItemSummaryImpressionMultiplier {
-  /** `gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them */
-  impression_type: ImpressionMultiplierImpressionType;
-  /** Who supplies the multiplier. A value from AdCOM 1.0 List: DOOH Multiplier Measurement Source Types other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries */
-  source_type: PlainInteger;
-}
-export const LineItemSummaryImpressionMultiplier: z.ZodType<LineItemSummaryImpressionMultiplier> = z.strictObject({
-  impression_type: ImpressionMultiplierImpressionType,
-  source_type: PlainInteger,
-});
-
-/** The `LineItemSummaryDeliveryCounting` object of the `representation` module. */
-export interface LineItemSummaryDeliveryCounting {
-  /** The line item's `delivery_counting.impression_multiplier`, projected to `impression_type` and `source_type`. */
-  impression_multiplier?: LineItemSummaryImpressionMultiplier;
-}
-export const LineItemSummaryDeliveryCounting: z.ZodType<LineItemSummaryDeliveryCounting> = z.strictObject({
-  impression_multiplier: LineItemSummaryImpressionMultiplier.optional(),
-});
-
-/** The `LineItemSummaryPlacement` object of the `representation` module. */
-export interface LineItemSummaryPlacement {
-  /** A value from List: Feed Types, such as Podcast (3) */
-  feed?: PlainInteger;
-  /** The ad is interstitial or full screen */
-  instl?: IntegerFlag;
-  /** A value from List: Plcmt Subtypes - Video, such as Instream (1). Its presence states that the line item is video, so a `ctv` line item that sells video carries it */
-  plcmt?: PlainInteger;
-  /** The user receives a reward for viewing the ad */
-  reward?: IntegerFlag;
-  /** Video or audio. The placement lets the user skip the ad */
-  skip?: IntegerFlag;
-}
-export const LineItemSummaryPlacement: z.ZodType<LineItemSummaryPlacement> = z.strictObject({
-  feed: PlainInteger.optional(),
-  instl: IntegerFlag.optional(),
-  plcmt: PlainInteger.optional(),
-  reward: IntegerFlag.optional(),
-  skip: IntegerFlag.optional(),
 });
 
 /** The `LineItemSummaryApp` object of the `representation` module. */
@@ -95,30 +53,6 @@ export interface LineItemSummaryAudienceSelectable {
 }
 export const LineItemSummaryAudienceSelectable: z.ZodType<LineItemSummaryAudienceSelectable> = z.strictObject({
   available: z.array(LineItemSummaryAudienceOption),
-});
-
-/** The `LineItemSummaryBreakPositionOption` object of the `representation` module. */
-export interface LineItemSummaryBreakPositionOption {
-  /** A value from List: Start Delay Modes, such as Pre-Roll (0) */
-  delay?: PlainInteger;
-  /** Option id (§ 3.1) */
-  id: PlainString;
-  /** A value from List: Slot Position in Pod */
-  slotinpod?: PlainInteger;
-}
-export const LineItemSummaryBreakPositionOption: z.ZodType<LineItemSummaryBreakPositionOption> = z.strictObject({
-  delay: PlainInteger.optional(),
-  id: PlainString,
-  slotinpod: PlainInteger.optional(),
-});
-
-/** The `LineItemSummaryBreakPositionSelection` object of the `representation` module. */
-export interface LineItemSummaryBreakPositionSelection {
-  /** The line item's `break_position.available[]`, each entry projected to `id`, `delay`, and `slotinpod`. */
-  available: Array<LineItemSummaryBreakPositionOption>;
-}
-export const LineItemSummaryBreakPositionSelection: z.ZodType<LineItemSummaryBreakPositionSelection> = z.strictObject({
-  available: z.array(LineItemSummaryBreakPositionOption),
 });
 
 /** The `LineItemSummaryFormatsSelection` object of the `representation` module. */
@@ -170,6 +104,72 @@ export interface ProposalSummaryParty {
 export const ProposalSummaryParty: z.ZodType<ProposalSummaryParty> = z.strictObject({
   domain: RegistrableDomain,
   legal_name: PlainString.optional(),
+});
+
+/** The `LineItemSummaryBreakPositionOption` object of the `representation` module. */
+export interface LineItemSummaryBreakPositionOption {
+  /** A value from List: Start Delay Modes, such as Pre-Roll (0) */
+  delay?: SafeInteger;
+  /** Option id (§ 3.1) */
+  id: PlainString;
+  /** A value from List: Slot Position in Pod */
+  slotinpod?: SafeInteger;
+}
+export const LineItemSummaryBreakPositionOption: z.ZodType<LineItemSummaryBreakPositionOption> = z.strictObject({
+  delay: SafeInteger.optional(),
+  id: PlainString,
+  slotinpod: SafeInteger.optional(),
+});
+
+/** The `LineItemSummaryBreakPositionSelection` object of the `representation` module. */
+export interface LineItemSummaryBreakPositionSelection {
+  /** The line item's `break_position.available[]`, each entry projected to `id`, `delay`, and `slotinpod`. */
+  available: Array<LineItemSummaryBreakPositionOption>;
+}
+export const LineItemSummaryBreakPositionSelection: z.ZodType<LineItemSummaryBreakPositionSelection> = z.strictObject({
+  available: z.array(LineItemSummaryBreakPositionOption),
+});
+
+/** The `LineItemSummaryImpressionMultiplier` object of the `representation` module. */
+export interface LineItemSummaryImpressionMultiplier {
+  /** `gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them */
+  impression_type: ImpressionMultiplierImpressionType;
+  /** Who supplies the multiplier. A value from AdCOM 1.0 List: DOOH Multiplier Measurement Source Types other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries */
+  source_type: SafeInteger;
+}
+export const LineItemSummaryImpressionMultiplier: z.ZodType<LineItemSummaryImpressionMultiplier> = z.strictObject({
+  impression_type: ImpressionMultiplierImpressionType,
+  source_type: SafeInteger,
+});
+
+/** The `LineItemSummaryDeliveryCounting` object of the `representation` module. */
+export interface LineItemSummaryDeliveryCounting {
+  /** The line item's `delivery_counting.impression_multiplier`, projected to `impression_type` and `source_type`. */
+  impression_multiplier?: LineItemSummaryImpressionMultiplier;
+}
+export const LineItemSummaryDeliveryCounting: z.ZodType<LineItemSummaryDeliveryCounting> = z.strictObject({
+  impression_multiplier: LineItemSummaryImpressionMultiplier.optional(),
+});
+
+/** The `LineItemSummaryPlacement` object of the `representation` module. */
+export interface LineItemSummaryPlacement {
+  /** A value from List: Feed Types, such as Podcast (3) */
+  feed?: SafeInteger;
+  /** The ad is interstitial or full screen */
+  instl?: IntegerFlag;
+  /** A value from List: Plcmt Subtypes - Video, such as Instream (1). Its presence states that the line item is video, so a `ctv` line item that sells video carries it */
+  plcmt?: SafeInteger;
+  /** The user receives a reward for viewing the ad */
+  reward?: IntegerFlag;
+  /** Video or audio. The placement lets the user skip the ad */
+  skip?: IntegerFlag;
+}
+export const LineItemSummaryPlacement: z.ZodType<LineItemSummaryPlacement> = z.strictObject({
+  feed: SafeInteger.optional(),
+  instl: IntegerFlag.optional(),
+  plcmt: SafeInteger.optional(),
+  reward: IntegerFlag.optional(),
+  skip: IntegerFlag.optional(),
 });
 
 /** The `LineItemSummaryPropertyOption` object of the `representation` module. */
@@ -225,17 +225,17 @@ export interface LineItemSummaryPricingEntry {
   /** The rate before options. A buyer MAY request another value, and a granted value is the `list_rate` of the next `version` */
   list_rate: Amount;
   /** How `agreed_rate` clears, as Deals API 1.0 `terms.pricetype`: Dynamic (0), the auction type of each bid request; First Price (1); Second Price Plus (2); Fixed Price (3); or an exchange-specific value, 500 and up */
-  price_type?: PlainInteger;
+  price_type?: SafeInteger;
   /** Names the entry within the line item. A revision MUST NOT reuse it for a different `cost_method`, `cost_parameters`, `currency`, or `transaction_mechanisms[]` */
   pricing_id: PlainString;
   /** Bounds on the units committed under this entry, counted in its unit (§ 5.6.5): `commitment.amount` when `basis` is `units`, otherwise `derived_units`. A buyer MAY request another. Absent on a `FLAT` entry */
-  unit_bounds?: Range<PlainInteger>;
+  unit_bounds?: Range<SafeInteger>;
 }
 export const LineItemSummaryPricingEntry: z.ZodType<LineItemSummaryPricingEntry> = z.strictObject({
   cost_method: PricingEntryCostMethod,
   currency: CurrencyCode,
   list_rate: Amount,
-  price_type: PlainInteger.optional(),
+  price_type: SafeInteger.optional(),
   pricing_id: PlainString,
   unit_bounds: UnitBoundsRange.optional(),
 });
@@ -339,7 +339,7 @@ export interface ProposalSummary {
   /** The proposal's `seller`, projected to `domain` and `legal_name`. */
   seller: ProposalSummaryParty;
   /** Monotonically increasing revision number, starting at 1, held by the seller. Each version is a snapshot of the proposal's offered terms (§ 4.1.3). A version is frozen at the earliest of: the proposal's `status` leaving `draft`; a `negotiation_history[]` or `assent[]` entry naming it; a counterparty receiving it in any representation (§ 2.1). The offered terms of a frozen version MUST NOT change; a change to them creates version `n+1`. The values § 4.1.3 lists as not offered terms change without a new version */
-  version: PlainInteger;
+  version: SafeInteger;
 }
 export const ProposalSummary: z.ZodType<ProposalSummary> = z.strictObject({
   description: PlainString,
@@ -348,5 +348,5 @@ export const ProposalSummary: z.ZodType<ProposalSummary> = z.strictObject({
   packages: z.array(PackageSummary).optional(),
   proposal_id: PlainString,
   seller: ProposalSummaryParty,
-  version: PlainInteger,
+  version: SafeInteger,
 });

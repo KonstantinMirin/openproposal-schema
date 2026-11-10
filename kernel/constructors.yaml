@@ -273,7 +273,7 @@ constructors:
     rules:
       - id: constructor:Range:ordered
         statement: "`min` is no greater than `max`: numbers compare as numbers, and timestamps as instants."
-        arguments: { T: { kind: named, name: PlainInteger } }
+        arguments: { T: { kind: named, name: SafeInteger } }
         valid:
           - { min: 1, max: 6 }
           - { min: 4, max: 4 }
@@ -290,7 +290,7 @@ constructors:
           - { min: "P30D", max: "P14D" }
           - { min: "P1Y", max: "P6M" }
     vectors:
-      - arguments: { T: { kind: named, name: PlainInteger } }
+      - arguments: { T: { kind: named, name: SafeInteger } }
         valid:
           - { min: 1, max: 6 }
           - { min: 1 }
@@ -355,7 +355,7 @@ constructors:
       propertyNames: { $model: { kind: parameter, name: K } }
       additionalProperties: { $model: { kind: parameter, name: V } }
     vectors:
-      - arguments: { K: { kind: named, name: FormatId }, V: { kind: named, name: PlainInteger } }
+      - arguments: { K: { kind: named, name: FormatId }, V: { kind: named, name: SafeInteger } }
         valid:
           - {}
           - { "display/300x250": 5000, "display/728x90": 500 }
@@ -387,7 +387,7 @@ constructors:
         included: { $model: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PlainString } } }, description: "The options in the base rate, by option id." }
         selected: { $model: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PlainString } } }, description: "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`." }
         deltas: { $model: { kind: apply, constructor: Map, arguments: { K: { kind: named, name: PlainString }, V: { kind: named, name: Delta } } }, description: "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta." }
-        max_select: { $model: { kind: named, name: PlainInteger }, description: "The most options that may be in effect." }
+        max_select: { $model: { kind: named, name: SafeInteger }, description: "The most options that may be in effect." }
       required: [available, included]
       additionalProperties: false
     vectors:
@@ -485,7 +485,7 @@ constructors:
       required: [default]
       additionalProperties: false
     vectors:
-      - arguments: { T: { kind: named, name: PlainInteger } }
+      - arguments: { T: { kind: named, name: SafeInteger } }
         valid:
           - { min: 1, max: 6, default: 3 }
           - { min: 1, default: 1, value: 4 }

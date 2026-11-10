@@ -17,7 +17,7 @@ from .eligibility import LineItemVisibility, RequiredCredential
 from .execution import BuyerRequirements, LineItemServingMode, LineItemSovBasis, MechanismOption, RetentionRange, TransactionMechanismSelection
 from .guarantees import CommittedMetric, ControllingMeasurementOption, ControllingMeasurementSelection, MeasurementOption, MeasurementSourceSelection, ReportingOption, ReportingSelection, ShortfallRemedy
 from .inventory import BreakPositionOption, BreakPositionSelection, Environment, EnvironmentsSelection, LineItemEpisodes, Placement, ProgramOption, ProgramsSelection, PropertiesSelection
-from .kernel import ClockWindow, DocumentRef, Domain, Duration, FormatId, Fraction, GeoCode, Interval, LineItemStatus, NamespacedTerm, OpenObject, PlainInteger, PlainString, Range, RegistrableDomain, SeatRef, Selectable, Settable, TimeZone, VersionRef
+from .kernel import ClockWindow, DocumentRef, Domain, Duration, FormatId, Fraction, GeoCode, Interval, LineItemStatus, NamespacedTerm, OpenObject, PlainString, Range, RegistrableDomain, SafeInteger, SeatRef, Selectable, Settable, TimeZone, VersionRef
 from .properties import PropertyOption
 from .settlement import Agreement, Billing, ExternalReference
 from .targeting import AcceptedExclusions, DaypartBounds, DeviceBounds, ExclusionList, ExclusionType, FrequencyCap, GeoBounds, MarketsSelection
@@ -90,7 +90,7 @@ class LineItem(rt.Closed):
     """Absent otherwise. The advertising system domain whose namespace holds the deal ID and that pushes the deal, as the Deals API 1.0 `origin`: typically an SSP, or the ad server for a deal it books itself"""
     delivery_counting: Optional[DeliveryCounting] = None
     """How the line item counts plays and, when it counts impressions, turns them into impressions. See 5.6.4"""
-    device: Optional[Settable[PlainInteger]] = None
+    device: Optional[Settable[SafeInteger]] = None
     """`allowed[]` of AdCOM 1.0 List: Device Types codes, the values of OpenRTB 2.6 `device.devicetype`. It narrows `environments` (§ 5.2.1). Mobile/Tablet - General (1) covers Phone (4) and Tablet (5)"""
     eligible_buyers: Optional[list[RegistrableDomain]] = None
     """The buyers that may commit, by `buyer.domain`"""

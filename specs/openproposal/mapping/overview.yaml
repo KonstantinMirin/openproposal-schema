@@ -3,7 +3,7 @@
 format: 1
 module: overview
 sections: [ front, "1", "1.1", "2", "6", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6", "6.7", "7", "8" ]
-lock_sections: { with-our-stack: [ "1.2", "2.6", "2.7", "2.8", "6.8", "6.9", "6.10", "6.11", "6.12" ] }
+lock_sections: { with-our-stack: [ "1.2", "2.6", "2.7", "2.8", 2.8.1, 2.8.2, 2.8.3, 2.8.4, 2.8.5, 2.8.6, 2.8.7, "6.8", "6.9", "6.10", "6.11", "6.12" ] }
 types: []
 entries:
   - ir: rule:front:ceff832d
@@ -614,48 +614,323 @@ entries:
     locks: [ with-our-stack ]
     source: { rule: prose-sentence }
     as: { role: informative }
-  - ir: rule:2.8:2bb38cac
-    digest: 7b403c99e8fc9226d723474e2b62590bda82e817ad02368e70a740bce800922c
+  - ir: sentence:2.7:0451130b
+    digest: ec58f973164313055b5f40cf04c8c0937fb9e18de26199df9e4dd4fead8ceb09
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.7:264120fd
+    digest: 55f707940319e39735ede471828f80fd32191fdd1e46c621428340f33e760f73
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.7:a5a6458b
+    digest: 00fa7e615adbca35d94bfb40c30715e6255285e71eca4dd6d31844f818a07a15
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:2.8:cc948a48
+    digest: b6d3be0a4508e65180a9874541b462e288bedfdd28df8693dc6eec7a8ff646f2
     locks: [ with-our-stack ]
     source: { decision: D-057 }
     as: { role: obligation, party: implementation }
-  - ir: concept:2.8:1
-    digest: c87e060d5ccebf9fc3944573a0dbfdef928c35184b5bf54c44865795cda125e2
+  - ir: rule:2.8:909151f9
+    digest: d001429e07f16a95de754111900eb9e5d2e889e29b6c15a6071244c233d02f14
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:2.8:4fffaeb0
+    digest: 9362eb3d4dfc2b3ad8b0a88f93b5c5f0cb4c41b8f620d3a318634edd3019d2d8
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.1:ac1cb74a
+    digest: 674b1377274636dc04aaf3ef186716cf9e4dea1b1e6bdfd1ef20309b5551d988
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.1:131debe6
+    digest: d79c46074c397c3cf566da2c47f7bc50451e909feddca21ab3540bd6c585e737
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.1:c12e4dd3
+    digest: c80fb0bc1cfd4ec9f8f34dc45354d1f51a354b3ce05a1e09ec5ea4e6a97e2be3
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.1:7ec86c38
+    digest: 08a1f64865369198a3f25d81931fda82e166d565549cf5cc64bad3421acef529
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.1:8d85c3e3
+    digest: cc35e2ce06f0aa8a4a24363d041c1e4d6268362522bae41b4f37a0740182cf07
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.1:180d2b81
+    digest: 556c570c1a400c19d8d8662692c89c8b90d66ee4398c14a3ef1597716604e316
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: code:2.8.1:1
+    digest: 54811d0ad1eb14e49caedfae055a3750a867891c2ca3b89744de51480d922f61
+    locks: [ with-our-stack ]
+    source: { decision: D-058 }
+    as: { role: informative }
+  - ir: sentence:2.8.1:65217794
+    digest: 5256aa3470f935c2b9147a4a1a3edb46e064260617716364e7a83e80eef8376a
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: concept:2.8.2:1
+    digest: ae2c857fc6416abacfd9eac824531514f0b875377185d900b39a030fbe9f72d0
     locks: [ with-our-stack ]
     source: { rule: concept-row }
     as: { role: informative }
-  - ir: concept:2.8:2
-    digest: 65655ecceaedb7d3a64bc42a6eedae1f77bc9455ffa8c00edbf56909ebed99cd
+  - ir: concept:2.8.2:2
+    digest: 9754014b4381ee2f5912bea1a7980922a2ff272e4dcc18d761d31c48fd6aa242
     locks: [ with-our-stack ]
     source: { rule: concept-row }
     as: { role: informative }
-  - ir: concept:2.8:3
-    digest: 461ebce362d1088b51531454bfe375c7f1bf89023a3e91a33551e844fe70f348
+  - ir: concept:2.8.2:3
+    digest: f7ea680fe3df282a9d86d6c9e296b39439f945f78b3f8d934e54b8212ab142f8
     locks: [ with-our-stack ]
     source: { rule: concept-row }
     as: { role: informative }
-  - ir: concept:2.8:4
-    digest: 6097d26f2c9c39d18f8c442a0141074dc6461ae61776c111f36ed524fadd9c81
+  - ir: concept:2.8.2:4
+    digest: 32f4605ea1e1a0590a402c9a8f0ecb5a9fecd656cc178568779aa57b558ab41b
     locks: [ with-our-stack ]
     source: { rule: concept-row }
     as: { role: informative }
-  - ir: concept:2.8:5
-    digest: 470117ae55b2a811ae43a858db7b413b33ce398fae9f52fd3acdd87dbdf0d850
+  - ir: concept:2.8.2:5
+    digest: 0aa2dcc06683a68f23f9b6fbce47283921cfc1cbb5b7aae2b96d9d782d5d4a5a
     locks: [ with-our-stack ]
     source: { rule: concept-row }
     as: { role: informative }
-  - ir: concept:2.8:6
-    digest: 99177b7879615cf95b6f42e7f3cb0e7b89734b6e68dd86514f53934a525db402
+  - ir: concept:2.8.2:6
+    digest: 96ea9d4bdf2df845b863cf149be90475ec5d68d9f428cd279767ee6896a47913
     locks: [ with-our-stack ]
     source: { rule: concept-row }
     as: { role: informative }
-  - ir: concept:2.8:7
-    digest: 891082bca430606588ddf7468dd842c8ee1f961a6abfba6a4437a019c802e769
+  - ir: sentence:2.8.2:8d453a2c
+    digest: b9df5d49a56f233101b94ca72c017af58a95e4cc82c0c831b79e77f2c18ee512
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.2:0ce0c8db
+    digest: 6763d7fe89df151b1b995df6f08bd3eddf8af18145616a8c5d8a5e2e5a0b1250
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.2:cf6fab93
+    digest: 8c68674a81808649ef154a459a1a25bc8868ef024dc0a9609b8e236aee821da8
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.2:fd94415a
+    digest: c5678e6c2baa7b9ff1f260df1cd0cf85108cfedf9751ea15e8e2eb9840311508
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.3:f9d8c7c5
+    digest: 6ed0370e1674c73b07c6b7e71ff7dac4e9261605325911804456ce93807dc245
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.3:53f69938
+    digest: d18ba2015cb252c73008c60f0b7732b18a783dfdbaad4e3d0c9a6715bbd350e0
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.3:838d5bd8
+    digest: 38d68142e00abd1fe51acf09d0fae467223f048eb45ac781913f5d2902575050
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.3:0de19395
+    digest: adabc0f818e21c8d374cd02e842fae32ef141332365317cc392e568a24d4c3ff
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.3:ee683b3a
+    digest: bb22c323c4a29483e1e64f0805976e730aeab8d6cad0b56959107f84efc11439
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.3:a138a82f
+    digest: 405b0e40a44bf2bc83941d05afdcc204c0657d824d8926f908c528acb77c0b0c
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.3:0ea425d8
+    digest: ce6a3ceeffb208ef24f381607ee95ef93e59198f0b951e0fef5bd508e681920b
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.3:924ce060
+    digest: 15d01080ed8e53aa49acf8732e5488695cefa93f94cb5660186d06cb6453dadd
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.3:a46ece5b
+    digest: 9448ce321182fe67540dd8c85c078ca64d5c5114a7838d2690540543de3513ac
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.3:c4e9602c
+    digest: 0b6c34d68d457bdba690de41771ef513a95009a5e4a6bf5dc8165cbc0bfe1b3c
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.3:a4687a55
+    digest: de72853895e5306e38f42da3183467004bc124fd66a116a434bf76a868230a85
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.3:bebe2fc2
+    digest: 7d9bf47e095157fd0716e8cc6dbf80c57574c1e8559296904228555ca8919f48
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.3:b05b889a
+    digest: 42e435e2f4d073695a351f01b38167ffa9f98fe55e1e16797cce6b7102a39429
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.4:e1613972
+    digest: fd34f3bfd5cc32498794217ede8fc91584a545285fdafea538ecc742d31283ad
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.4:e05ad9a0
+    digest: 692cf7ed619c517e47362de08610ce60d99a4818f9fdaf4079200e235c60d779
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.4:4b39a491
+    digest: 16d602869567649b5c5c1cad186ad054ffb4eb00e88dbd9c6fea9f8d72f81cfa
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.4:615ad845
+    digest: 932feb45d066fd56adcf5ea7b170298202e061ac3992d2d3a4834716c7b35f42
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.4:e341d14c
+    digest: 51c2b751a7ee56f3b79afce17d3ed9f9df422a60fe5e193ba4393b89355e9b6d
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.4:771241e7
+    digest: dfcb4ff0c4fe08ede2063af2a1c9f43b09dc28adf462ab6903efd03ed532825d
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.4:a3f79a4d
+    digest: d9aa0ec3360911d003e99bfcf47db6a73fc596cbb1597eea74fc64e9ed758038
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.4:4ae468cc
+    digest: 4cb8ccb741bdd791ea4845f1e041d1839eafe36cce9f5130934036884e1fe9ea
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.4:d0259c60
+    digest: f046d41f87eb7ecdadd060a62548f2b191a0d115cf0aa45e4b11487d7c2c0f0d
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.4:ced61d10
+    digest: 2a6cbf8235c673ebc2c3ae8087ddaebfe2e3d5b941572dc24a1d1976f5b4f7c7
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.4:345665bb
+    digest: 147284850777d4f5cf62716f26065a6fc9f5a5d49e2e37b15843f55086783b52
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.4:353405c3
+    digest: f97218bcafe0bdc699b134a97a6b0b823533d380d251b0fcdbc6efd95c2dbc5a
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.4:52dd2fa8
+    digest: 5a167e6429073ae1689b42a03f7048b8e4f9cc8e72986012d7da8d26aef881e4
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.4:bc6b56cc
+    digest: f6e4b927582b8a08c48ab395c327b3999f19dcc3f21660e5b9dd423e3df49b39
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.4:bd4a52e3
+    digest: 79f75be415228535a582b216854c1342e9e6f55a3ef939cd06873ab115cf7a52
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:2.8.5:d717d522
+    digest: fd5ccb063f131e740344652c34bde26b8fff8d90d32c09c5388d18073f8e93ea
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:2.8.5:0f754399
+    digest: 57b6cada8842757127ef0bf71a344861252c3a9203c809ad3604a8ad0459046e
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.5:8963e64c
+    digest: 0e643c2a8987e2eee85ecad9a450cb4f2f31ece6647ef958383f4ee53925a008
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:2.8.5:991bcaae
+    digest: 3b78e2f39883e91245ac6551b3abb2c297cd2d13a15f5496ff3bface9406cea5
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: concept:2.8.6:1
+    digest: 23a4eb81234d636ddac771bfc25253a6eb9900b609a348fc70b480ef1d1c5767
     locks: [ with-our-stack ]
     source: { rule: concept-row }
     as: { role: informative }
-  - ir: rule:2.8:1a572833
-    digest: 0bf63c496b8a523331e7c92f6fda51430c09d8592f65328a6a879074ef5eb3c7
+  - ir: concept:2.8.6:2
+    digest: 4dd7bb01a991544547bf872b3bc293a878c0c23ef347d1b83b6cd70951fcafb3
+    locks: [ with-our-stack ]
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: concept:2.8.6:3
+    digest: 1ad9b34c24fad47c9983b3cafb9419d9bd9f5722765a3814efe36f99aa6d77fc
+    locks: [ with-our-stack ]
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: concept:2.8.6:4
+    digest: 32a85a44f624c5ef8d525cda03462bec4c2732e6036cbf50c0d51a758c920619
+    locks: [ with-our-stack ]
+    source: { rule: concept-row }
+    as: { role: informative }
+  - ir: rule:2.8.6:60100c34
+    digest: acc352fde7446e98773dc9952b72f06a3f183905cace6ad894afd78818dc5c57
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: sentence:2.8.6:679a5c7a
+    digest: 1cdcde66b811f466b5d7f91ae47084e619bae6a68d3b0395e24c00593fef0d4a
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: rule:2.8.6:0f9375d8
+    digest: 0fbf556136db6a6713a8cce3c5a4d47b59dbe02de3c1f433d74bf975d85d4b9e
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:2.8.7:bb44896e
+    digest: dc402f006842598bfd7f33c2eea58c7495b050fea4d39aa9256e59c0356a062f
     locks: [ with-our-stack ]
     source: { decision: D-057 }
     as: { role: obligation, party: implementation }

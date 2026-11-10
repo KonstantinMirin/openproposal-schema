@@ -981,7 +981,7 @@
     {
       "change": "widened-type",
       "class": "additive",
-      "detail": "Commitment.derived_units: PlainInteger accepts every value of Count",
+      "detail": "Commitment.derived_units: SafeInteger accepts every value of Count",
       "member": "derived_units",
       "type": "Commitment",
       "view": "model"
@@ -3894,20 +3894,6 @@
     {
       "change": "added-type",
       "class": "additive",
-      "detail": "the primitive PlainInteger is added",
-      "type": "PlainInteger",
-      "view": "model"
-    },
-    {
-      "change": "added-type",
-      "class": "additive",
-      "detail": "the copy PlainIntegerNarrowing is added",
-      "type": "PlainIntegerNarrowing",
-      "view": "model"
-    },
-    {
-      "change": "added-type",
-      "class": "additive",
       "detail": "the primitive PlainNumber is added",
       "type": "PlainNumber",
       "view": "model"
@@ -4255,6 +4241,13 @@
       "class": "breaking",
       "detail": "the copy PropertiesOptionOrCatalogRef is removed",
       "type": "PropertiesOptionOrCatalogRef",
+      "view": "model"
+    },
+    {
+      "change": "moved-type",
+      "class": "breaking",
+      "detail": "PropertiesSelection moves from modules/inventory/1/inventory.json#/$defs/PropertiesSelection to modules/properties/1/properties.json#/$defs/PropertiesSelection",
+      "type": "PropertiesSelection",
       "view": "model"
     },
     {
@@ -4606,7 +4599,7 @@
     {
       "change": "widened-type",
       "class": "additive",
-      "detail": "Proposal.version: PlainInteger accepts every value of Count",
+      "detail": "Proposal.version: SafeInteger accepts every value of Count",
       "member": "version",
       "type": "Proposal",
       "view": "model"
@@ -5058,6 +5051,20 @@
     {
       "change": "added-type",
       "class": "additive",
+      "detail": "the primitive SafeInteger is added",
+      "type": "SafeInteger",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
+      "detail": "the copy SafeIntegerNarrowing is added",
+      "type": "SafeIntegerNarrowing",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
       "detail": "the object Screen is added",
       "type": "Screen",
       "view": "model"
@@ -5192,6 +5199,13 @@
       "change": "closed-vocabulary",
       "class": "breaking",
       "detail": "TransactionMechanism no longer accepts a namespaced term",
+      "type": "TransactionMechanism",
+      "view": "model"
+    },
+    {
+      "change": "moved-type",
+      "class": "breaking",
+      "detail": "TransactionMechanism moves from modules/execution/1/execution.json#/$defs/TransactionMechanism to kernel/1/kernel.json#/$defs/TransactionMechanism",
       "type": "TransactionMechanism",
       "view": "model"
     },
@@ -5901,38 +5915,371 @@
       "view": "files"
     },
     {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/AvailabilityRead is added",
+      "member": "AvailabilityRead",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/BuyerWrites is added",
+      "member": "BuyerWrites",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/BuyerWritesAudienceSelectable is added",
+      "member": "BuyerWritesAudienceSelectable",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/BuyerWritesBuyerRequirements is added",
+      "member": "BuyerWritesBuyerRequirements",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/BuyerWritesDeviceBounds is added",
+      "member": "BuyerWritesDeviceBounds",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/BuyerWritesFrequencyCap is added",
+      "member": "BuyerWritesFrequencyCap",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/BuyerWritesGeoBounds is added",
+      "member": "BuyerWritesGeoBounds",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/BuyerWritesSelectable is added",
+      "member": "BuyerWritesSelectable",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/BuyerWritesSettable is added",
+      "member": "BuyerWritesSettable",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/BuyerWritesSettableRange is added",
+      "member": "BuyerWritesSettableRange",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/BuyerWritesShortfallRemedy is added",
+      "member": "BuyerWritesShortfallRemedy",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/ChangeRequest is added",
+      "member": "ChangeRequest",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/Commit is added",
+      "member": "Commit",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/HistoryEntry is added",
+      "member": "HistoryEntry",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/HistoryPath is added",
+      "member": "HistoryPath",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/Hold is added",
+      "member": "Hold",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
       "change": "narrowed-schema",
       "class": "breaking",
-      "detail": "documents/1/line-item-summary.json/properties/addressable_scale: the new schema no longer accepts the JSON type integer; documents/1/line-item-summary.json/properties/addressable_scale/properties/quantity: the new schema restricts the JSON type to \"integer\"; documents/1/line-item-summary.json/properties/addressable_scale/properties/quantity: minimum added: none to -9007199254740991; documents/1/line-item-summary.json/properties/addressable_scale/properties/quantity: maximum added: none to 9007199254740991; documents/1/line-item-summary.json/properties/addressable_scale/properties/unit: no branch of the new union accepts every value of the old schema; documents/1/line-item-summary.json/properties/addressable_scale/properties/window: the new schema restricts the JSON type to \"object\"; documents/1/line-item-summary.json/properties/addressable_scale/properties/window/properties/end: the new schema restricts the JSON type to \"string\"; documents/1/line-item-summary.json/properties/addressable_scale/properties/window/properties/end: pattern added: null to \"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$\"; documents/1/line-item-summary.json/properties/addressable_scale/properties/window/properties/end: format added: null to \"date-time\"; documents/1/line-item-summary.json/properties/addressable_scale/properties/window/properties/start: the new schema restricts the JSON type to \"string\"; documents/1/line-item-summary.json/properties/addressable_scale/properties/window/properties/start: pattern added: null to \"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$\"; documents/1/line-item-summary.json/properties/addressable_scale/properties/window/properties/start: format added: null to \"date-time\"; documents/1/line-item-summary.json/properties/addressable_scale/properties/window/additionalProperties: the new schema rejects values the old one accepts; documents/1/line-item-summary.json/properties/addressable_scale/properties/window: newly requires \"end\", \"start\"; documents/1/line-item-summary.json/properties/addressable_scale/additionalProperties: the new schema rejects values the old one accepts; documents/1/line-item-summary.json/properties/addressable_scale: newly requires \"quantity\", \"unit\", \"window\"; documents/1/line-item-summary.json/properties/channel/anyOf/1: no branch of the new union accepts every value of the old schema; documents/1/line-item-summary.json/properties/committed_metrics/items: the property \"basis\" is removed; documents/1/line-item-summary.json/properties/committed_metrics/items/properties/metric/anyOf/1: no branch of the new union accepts every value of the old schema; documents/1/line-item-summary.json/properties/committed_metrics/items: the property \"value\" is removed; documents/1/line-item-summary.json/properties/committed_metrics/items: newly requires \"direction\", \"level\", \"metric\"; documents/1/line-item-summary.json: the property \"content_detail\" is removed; documents/1/line-item-summary.json: the property \"min_spend\" is removed; documents/1/line-item-summary.json/properties/transaction_mechanism/properties/available/items/anyOf/0: the new schema no longer accepts the JSON type string; documents/1/line-item-summary.json/properties/transaction_mechanism/properties/available/items/anyOf/0/properties/delivery_type: the new schema restricts the JSON type to \"string\"; documents/1/line-item-summary.json/properties/transaction_mechanism/properties/available/items/anyOf/0/properties/delivery_type: the new schema restricts the values to an enum; documents/1/line-item-summary.json/properties/transaction_mechanism/properties/available/items/anyOf/0/properties/id: the new schema restricts the JSON type to \"string\"; documents/1/line-item-summary.json/properties/transaction_mechanism/properties/available/items/anyOf/0/properties/id: the new schema restricts the values to an enum; documents/1/line-item-summary.json/properties/transaction_mechanism/properties/available/items/anyOf/0/additionalProperties: the new schema rejects values the old one accepts; documents/1/line-item-summary.json/properties/transaction_mechanism/properties/available/items/anyOf/0: newly requires \"delivery_type\", \"id\"; documents/1/line-item-summary.json/properties/transaction_mechanism/properties/available/items/anyOf/1: the new schema no longer accepts the JSON type string; documents/1/line-item-summary.json/properties/transaction_mechanism/properties/available/items/anyOf/1/properties/delivery_type: the new schema restricts the JSON type to \"string\"; documents/1/line-item-summary.json/properties/transaction_mechanism/properties/available/items/anyOf/1/properties/delivery_type: the new schema restricts the values to an enum; documents/1/line-item-summary.json/properties/transaction_mechanism/properties/available/items/anyOf/1/properties/id: the new schema restricts the JSON type to \"string\"; documents/1/line-item-summary.json/properties/transaction_mechanism/properties/available/items/anyOf/1/properties/id: the new schema restricts the values to an enum; documents/1/line-item-summary.json/properties/transaction_mechanism/properties/available/items/anyOf/1/additionalProperties: the new schema rejects values the old one accepts; documents/1/line-item-summary.json/properties/transaction_mechanism/properties/available/items/anyOf/1: newly requires \"delivery_type\", \"id\"; documents/1/line-item-summary.json/properties/transaction_mechanism: the property \"included\" is removed; documents/1/line-item-summary.json/properties/transaction_mechanism: the property \"pricing\" is removed; documents/1/line-item-summary.json/properties/transaction_mechanism: the property \"max_select\" is removed",
-      "type": "documents/1/line-item-summary.json",
+      "detail": "documents/1/composition.json#/$defs/LineItem/properties/addressable_scale: the new schema no longer accepts the JSON type integer; documents/1/composition.json#/$defs/LineItem/properties/addressable_scale/properties/quantity: the new schema restricts the JSON type to \"integer\"; documents/1/composition.json#/$defs/LineItem/properties/addressable_scale/properties/quantity: minimum added: none to -9007199254740991; documents/1/composition.json#/$defs/LineItem/properties/addressable_scale/properties/quantity: maximum added: none to 9007199254740991; documents/1/composition.json#/$defs/LineItem/properties/addressable_scale/properties/unit: no branch of the new union accepts every value of the old schema; documents/1/composition.json#/$defs/LineItem/properties/addressable_scale/properties/window: the new schema restricts the JSON type to \"object\"; documents/1/composition.json#/$defs/LineItem/properties/addressable_scale/properties/window/properties/end: the new schema restricts the JSON type to \"string\"; documents/1/composition.json#/$defs/LineItem/properties/addressable_scale/properties/window/properties/end: pattern added: null to \"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$\"; documents/1/composition.json#/$defs/LineItem/properties/addressable_scale/properties/window/properties/end: format added: null to \"date-time\"; documents/1/composition.json#/$defs/LineItem/properties/addressable_scale/properties/window/properties/start: the new schema restricts the JSON type to \"string\"; documents/1/composition.json#/$defs/LineItem/properties/addressable_scale/properties/window/properties/start: pattern added: null to \"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$\"; documents/1/composition.json#/$defs/LineItem/properties/addressable_scale/properties/window/properties/start: format added: null to \"date-time\"; documents/1/composition.json#/$defs/LineItem/properties/addressable_scale/properties/window/additionalProperties: the new schema rejects values the old one accepts; documents/1/composition.json#/$defs/LineItem/properties/addressable_scale/properties/window: newly requires \"end\", \"start\"; documents/1/composition.json#/$defs/LineItem/properties/addressable_scale/additionalProperties: the new schema rejects values the old one accepts; documents/1/composition.json#/$defs/LineItem/properties/addressable_scale: newly requires \"quantity\", \"unit\", \"window\"; documents/1/composition.json#/$defs/LineItem/properties/approval: the new schema no longer accepts the JSON type object; documents/1/composition.json#/$defs/LineItem/properties/assets/items/properties/approval_status: the new schema restricts the values to an enum; documents/1/composition.json#/$defs/LineItem/properties/assets/items: the property \"format_ref\" is removed; documents/1/composition.json#/$defs/LineItem/properties/assets/items/properties/submitted_at: pattern changed: \"^[0-9]{4}-[0-9]{2}-[0-9]{2}[Tt][0-9]{2}:[0-9]{2}:[0-9]{2}(\\\\.[0-9]+)?([Zz]|[+-][0-9]{2}:[0-9]{2})$\" to \"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$\"; documents/1/composition.json#/$defs/LineItem/properties/assets/items: the property \"url_or_tag\" is removed; documents/1/composition.json#/$defs/LineItem/properties/assets/items: newly requires \"asset_id\", \"format_id\"; documents/1/composition.json#/$defs/LineItem/properties/audiences/properties/available/items/anyOf/0: the property \"addressable_scale\" is removed; documents/1/composition.json#/$defs/LineItem/properties/audiences/properties/available/items/anyOf/0: the property \"provenance\" is removed; documents/1/composition.json#/$defs/LineItem/properties/audiences/properties/available/items/anyOf/0: the property \"taxonomy_ref\" is removed; documents/1/composition.json#/$defs/LineItem/properties/audiences/properties/available/items/anyOf/0: newly requires \"data_label\", \"sensitive_categories\", \"taxonomy\"; documents/1/composition.json#/$defs/LineItem/properties/audiences/properties/available/items/anyOf/1: the property \"catalog_ref\" is removed; documents/1/composition.json#/$defs/LineItem/properties/audiences/properties/available/items/anyOf/1: newly requires \"data_label\", \"id\", \"sensitive_categories\", \"taxonomy\"; documents/1/composition.json#/$defs/LineItem/properties/audiences: the property \"pricing\" is removed; documents/1/composition.json#/$defs/LineItem: the property \"buying_route\" is removed; documents/1/composition.json#/$defs/LineItem/properties/channel/anyOf/1: no branch of the new union accepts every value of the old schema; documents/1/composition.json#/$defs/LineItem/properties/committed_metrics/items: the property \"basis\" is removed; documents/1/composition.json#/$defs/LineItem/properties/committed_metrics/items/properties/metric/anyOf/1: no branch of the new union accepts every value of the old schema; documents/1/composition.json#/$defs/LineItem/properties/committed_metrics/items: the property \"value\" is removed; documents/1/composition.json#/$defs/LineItem/properties/committed_metrics/items: newly requires \"direction\", \"level\", \"metric\"; documents/1/composition.json#/$defs/LineItem: the property \"content_detail\" is removed; documents/1/composition.json#/$defs/LineItem: the property \"correlation_id\" is removed; documents/1/composition.json#/$defs/LineItem/properties/creative_policy: the new schema no longer accepts the JSON type object; documents/1/composition.json#/$defs/LineItem: the property \"deal_id_issuance\" is removed; documents/1/composition.json#/$defs/LineItem: the property \"eligible_bidders\" is removed; documents/1/composition.json#/$defs/LineItem/properties/external_references/items: the property \"role\" is removed; documents/1/composition.json#/$defs/LineItem/properties/external_references/items: newly requires \"id\", \"reference_type\", \"system\"; documents/1/composition.json#/$defs/LineItem: the property \"hold_status\" is removed; documents/1/composition.json#/$defs/LineItem: the property \"min_spend\" is removed; documents/1/composition.json#/$defs/LineItem/properties/properties/properties/available/items/anyOf/0: the property \"supported_formats\" is removed; documents/1/composition.json#/$defs/LineItem/properties/properties/properties/available/items/anyOf/0: newly requires \"child_audience\", \"seller_relationship\"; documents/1/composition.json#/$defs/LineItem/properties/properties/properties/available/items/anyOf/0: if added; documents/1/composition.json#/$defs/LineItem/properties/properties/properties/available/items/anyOf/0: then added; documents/1/composition.json#/$defs/LineItem/properties/properties/properties/available/items/anyOf/1: the property \"catalog_ref\" is removed; documents/1/composition.json#/$defs/LineItem/properties/properties/properties/available/items/anyOf/1: newly requires \"child_audience\", \"id\", \"seller_relationship\"; documents/1/composition.json#/$defs/LineItem/properties/properties/properties/available/items/anyOf/1: if added; documents/1/composition.json#/$defs/LineItem/properties/properties/properties/available/items/anyOf/1: then added; documents/1/composition.json#/$defs/LineItem/properties/properties: the property \"pricing\" is removed; documents/1/composition.json#/$defs/LineItem/properties/required_credentials/items: the property \"id_required\" is removed; documents/1/composition.json#/$defs/LineItem/properties/required_credentials/items/properties/issuer: maxLength added: none to 253; documents/1/composition.json#/$defs/LineItem/properties/required_credentials/items/properties/issuer: pattern added: null to \"^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$\"; documents/1/composition.json#/$defs/LineItem/properties/required_credentials/items: the property \"scheme\" is removed; documents/1/composition.json#/$defs/LineItem/properties/required_credentials/items: the property \"type\" is removed; documents/1/composition.json#/$defs/LineItem/properties/required_credentials/items: newly requires \"credential_type\", \"issuer\"; documents/1/composition.json#/$defs/LineItem/properties/serving_mode/anyOf/0: no branch of the new union accepts every value of the old schema; documents/1/composition.json#/$defs/LineItem/properties/serving_mode/anyOf/1: no branch of the new union accepts every value of the old schema; documents/1/composition.json#/$defs/LineItem/properties/serving_platform: maxLength added: none to 253; documents/1/composition.json#/$defs/LineItem/properties/serving_platform: pattern added: null to \"^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$\"; documents/1/composition.json#/$defs/LineItem/properties/shortfall_remedy: the property \"pricing\" is removed; documents/1/composition.json#/$defs/LineItem: the property \"specs\" is removed; documents/1/composition.json#/$defs/LineItem: the property \"supported_order_systems\" is removed; documents/1/composition.json#/$defs/LineItem: the property \"terms_acceptance_required\" is removed; documents/1/composition.json#/$defs/LineItem: the property \"third_party_tags\" is removed; documents/1/composition.json#/$defs/LineItem: newly requires \"channel\", \"line_item_id\", \"pricing\", \"status\", \"transaction_mechanism\", \"visibility\"; documents/1/composition.json#/$defs/LineItem: if added; documents/1/composition.json#/$defs/LineItem: then added",
+      "member": "LineItem",
+      "type": "documents/1/composition.json",
       "view": "files"
     },
     {
       "change": "narrowed-schema",
       "class": "breaking",
-      "detail": "documents/1/line-item.json/properties/addressable_scale: the new schema no longer accepts the JSON type integer; documents/1/line-item.json/properties/addressable_scale/properties/quantity: the new schema restricts the JSON type to \"integer\"; documents/1/line-item.json/properties/addressable_scale/properties/quantity: minimum added: none to -9007199254740991; documents/1/line-item.json/properties/addressable_scale/properties/quantity: maximum added: none to 9007199254740991; documents/1/line-item.json/properties/addressable_scale/properties/unit: no branch of the new union accepts every value of the old schema; documents/1/line-item.json/properties/addressable_scale/properties/window: the new schema restricts the JSON type to \"object\"; documents/1/line-item.json/properties/addressable_scale/properties/window/properties/end: the new schema restricts the JSON type to \"string\"; documents/1/line-item.json/properties/addressable_scale/properties/window/properties/end: pattern added: null to \"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$\"; documents/1/line-item.json/properties/addressable_scale/properties/window/properties/end: format added: null to \"date-time\"; documents/1/line-item.json/properties/addressable_scale/properties/window/properties/start: the new schema restricts the JSON type to \"string\"; documents/1/line-item.json/properties/addressable_scale/properties/window/properties/start: pattern added: null to \"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$\"; documents/1/line-item.json/properties/addressable_scale/properties/window/properties/start: format added: null to \"date-time\"; documents/1/line-item.json/properties/addressable_scale/properties/window/additionalProperties: the new schema rejects values the old one accepts; documents/1/line-item.json/properties/addressable_scale/properties/window: newly requires \"end\", \"start\"; documents/1/line-item.json/properties/addressable_scale/additionalProperties: the new schema rejects values the old one accepts; documents/1/line-item.json/properties/addressable_scale: newly requires \"quantity\", \"unit\", \"window\"; documents/1/line-item.json/properties/approval: the new schema no longer accepts the JSON type object; documents/1/line-item.json/properties/assets/items/properties/approval_status: the new schema restricts the values to an enum; documents/1/line-item.json/properties/assets/items: the property \"format_ref\" is removed; documents/1/line-item.json/properties/assets/items/properties/submitted_at: pattern changed: \"^[0-9]{4}-[0-9]{2}-[0-9]{2}[Tt][0-9]{2}:[0-9]{2}:[0-9]{2}(\\\\.[0-9]+)?([Zz]|[+-][0-9]{2}:[0-9]{2})$\" to \"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$\"; documents/1/line-item.json/properties/assets/items: the property \"url_or_tag\" is removed; documents/1/line-item.json/properties/assets/items: newly requires \"asset_id\", \"format_id\"; documents/1/line-item.json/properties/audiences/properties/available/items/anyOf/0: the property \"addressable_scale\" is removed; documents/1/line-item.json/properties/audiences/properties/available/items/anyOf/0: the property \"provenance\" is removed; documents/1/line-item.json/properties/audiences/properties/available/items/anyOf/0: the property \"taxonomy_ref\" is removed; documents/1/line-item.json/properties/audiences/properties/available/items/anyOf/0: newly requires \"data_label\", \"sensitive_categories\", \"taxonomy\"; documents/1/line-item.json/properties/audiences/properties/available/items/anyOf/1: the property \"catalog_ref\" is removed; documents/1/line-item.json/properties/audiences/properties/available/items/anyOf/1: newly requires \"data_label\", \"id\", \"sensitive_categories\", \"taxonomy\"; documents/1/line-item.json/properties/audiences: the property \"pricing\" is removed; documents/1/line-item.json: the property \"buying_route\" is removed; documents/1/line-item.json/properties/channel/anyOf/1: no branch of the new union accepts every value of the old schema; documents/1/line-item.json/properties/committed_metrics/items: the property \"basis\" is removed; documents/1/line-item.json/properties/committed_metrics/items/properties/metric/anyOf/1: no branch of the new union accepts every value of the old schema; documents/1/line-item.json/properties/committed_metrics/items: the property \"value\" is removed; documents/1/line-item.json/properties/committed_metrics/items: newly requires \"direction\", \"level\", \"metric\"; documents/1/line-item.json: the property \"content_detail\" is removed; documents/1/line-item.json: the property \"correlation_id\" is removed; documents/1/line-item.json/properties/creative_policy: the new schema no longer accepts the JSON type object; documents/1/line-item.json: the property \"deal_id_issuance\" is removed; documents/1/line-item.json: the property \"eligible_bidders\" is removed; documents/1/line-item.json/properties/external_references/items: the property \"role\" is removed; documents/1/line-item.json/properties/external_references/items: newly requires \"id\", \"reference_type\", \"system\"; documents/1/line-item.json: the property \"hold_status\" is removed; documents/1/line-item.json: the property \"min_spend\" is removed; documents/1/line-item.json/properties/required_credentials/items: the property \"id_required\" is removed; documents/1/line-item.json/properties/required_credentials/items/properties/issuer: maxLength added: none to 253; documents/1/line-item.json/properties/required_credentials/items/properties/issuer: pattern added: null to \"^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$\"; documents/1/line-item.json/properties/required_credentials/items: the property \"scheme\" is removed; documents/1/line-item.json/properties/required_credentials/items: the property \"type\" is removed; documents/1/line-item.json/properties/required_credentials/items: newly requires \"credential_type\", \"issuer\"; documents/1/line-item.json/properties/serving_mode/anyOf/0: no branch of the new union accepts every value of the old schema; documents/1/line-item.json/properties/serving_mode/anyOf/1: no branch of the new union accepts every value of the old schema; documents/1/line-item.json/properties/serving_platform: maxLength added: none to 253; documents/1/line-item.json/properties/serving_platform: pattern added: null to \"^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$\"; documents/1/line-item.json/properties/shortfall_remedy: the property \"pricing\" is removed; documents/1/line-item.json: the property \"specs\" is removed; documents/1/line-item.json: the property \"supported_order_systems\" is removed; documents/1/line-item.json: the property \"terms_acceptance_required\" is removed; documents/1/line-item.json: the property \"third_party_tags\" is removed; documents/1/line-item.json: newly requires \"channel\", \"line_item_id\", \"pricing\", \"status\", \"transaction_mechanism\", \"visibility\"; documents/1/line-item.json: if added; documents/1/line-item.json: then added",
-      "type": "documents/1/line-item.json",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummary/properties/addressable_scale: the new schema no longer accepts the JSON type integer; documents/1/composition.json#/$defs/LineItemSummary/properties/addressable_scale/properties/quantity: the new schema restricts the JSON type to \"integer\"; documents/1/composition.json#/$defs/LineItemSummary/properties/addressable_scale/properties/quantity: minimum added: none to -9007199254740991; documents/1/composition.json#/$defs/LineItemSummary/properties/addressable_scale/properties/quantity: maximum added: none to 9007199254740991; documents/1/composition.json#/$defs/LineItemSummary/properties/addressable_scale/properties/unit: no branch of the new union accepts every value of the old schema; documents/1/composition.json#/$defs/LineItemSummary/properties/addressable_scale/properties/window: the new schema restricts the JSON type to \"object\"; documents/1/composition.json#/$defs/LineItemSummary/properties/addressable_scale/properties/window/properties/end: the new schema restricts the JSON type to \"string\"; documents/1/composition.json#/$defs/LineItemSummary/properties/addressable_scale/properties/window/properties/end: pattern added: null to \"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$\"; documents/1/composition.json#/$defs/LineItemSummary/properties/addressable_scale/properties/window/properties/end: format added: null to \"date-time\"; documents/1/composition.json#/$defs/LineItemSummary/properties/addressable_scale/properties/window/properties/start: the new schema restricts the JSON type to \"string\"; documents/1/composition.json#/$defs/LineItemSummary/properties/addressable_scale/properties/window/properties/start: pattern added: null to \"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$\"; documents/1/composition.json#/$defs/LineItemSummary/properties/addressable_scale/properties/window/properties/start: format added: null to \"date-time\"; documents/1/composition.json#/$defs/LineItemSummary/properties/addressable_scale/properties/window/additionalProperties: the new schema rejects values the old one accepts; documents/1/composition.json#/$defs/LineItemSummary/properties/addressable_scale/properties/window: newly requires \"end\", \"start\"; documents/1/composition.json#/$defs/LineItemSummary/properties/addressable_scale/additionalProperties: the new schema rejects values the old one accepts; documents/1/composition.json#/$defs/LineItemSummary/properties/addressable_scale: newly requires \"quantity\", \"unit\", \"window\"; documents/1/composition.json#/$defs/LineItemSummary/properties/channel/anyOf/1: no branch of the new union accepts every value of the old schema; documents/1/composition.json#/$defs/LineItemSummary/properties/committed_metrics/items: the property \"basis\" is removed; documents/1/composition.json#/$defs/LineItemSummary/properties/committed_metrics/items/properties/metric/anyOf/1: no branch of the new union accepts every value of the old schema; documents/1/composition.json#/$defs/LineItemSummary/properties/committed_metrics/items: the property \"value\" is removed; documents/1/composition.json#/$defs/LineItemSummary/properties/committed_metrics/items: newly requires \"direction\", \"level\", \"metric\"; documents/1/composition.json#/$defs/LineItemSummary: the property \"content_detail\" is removed; documents/1/composition.json#/$defs/LineItemSummary: the property \"min_spend\" is removed; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism/properties/available/items/anyOf/0: the new schema no longer accepts the JSON type string; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism/properties/available/items/anyOf/0/properties/delivery_type: the new schema restricts the JSON type to \"string\"; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism/properties/available/items/anyOf/0/properties/delivery_type: the new schema restricts the values to an enum; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism/properties/available/items/anyOf/0/properties/id: the new schema restricts the JSON type to \"string\"; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism/properties/available/items/anyOf/0/properties/id: the new schema restricts the values to an enum; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism/properties/available/items/anyOf/0/additionalProperties: the new schema rejects values the old one accepts; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism/properties/available/items/anyOf/0: newly requires \"delivery_type\", \"id\"; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism/properties/available/items/anyOf/1: the new schema no longer accepts the JSON type string; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism/properties/available/items/anyOf/1/properties/delivery_type: the new schema restricts the JSON type to \"string\"; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism/properties/available/items/anyOf/1/properties/delivery_type: the new schema restricts the values to an enum; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism/properties/available/items/anyOf/1/properties/id: the new schema restricts the JSON type to \"string\"; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism/properties/available/items/anyOf/1/properties/id: the new schema restricts the values to an enum; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism/properties/available/items/anyOf/1/additionalProperties: the new schema rejects values the old one accepts; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism/properties/available/items/anyOf/1: newly requires \"delivery_type\", \"id\"; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism: the property \"included\" is removed; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism: the property \"pricing\" is removed; documents/1/composition.json#/$defs/LineItemSummary/properties/transaction_mechanism: the property \"max_select\" is removed",
+      "member": "LineItemSummary",
+      "type": "documents/1/composition.json",
       "view": "files"
     },
     {
-      "change": "added-file",
+      "change": "added-definition",
       "class": "additive",
-      "detail": "documents/1/manifest-entry.json is added",
-      "type": "documents/1/manifest-entry.json",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryApp is added",
+      "member": "LineItemSummaryApp",
+      "type": "documents/1/composition.json",
       "view": "files"
     },
     {
-      "change": "added-file",
+      "change": "added-definition",
       "class": "additive",
-      "detail": "documents/1/package-summary.json is added",
-      "type": "documents/1/package-summary.json",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryAudienceOption is added",
+      "member": "LineItemSummaryAudienceOption",
+      "type": "documents/1/composition.json",
       "view": "files"
     },
     {
-      "change": "added-file",
+      "change": "added-definition",
       "class": "additive",
-      "detail": "documents/1/package.json is added",
-      "type": "documents/1/package.json",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryAudienceSelectable is added",
+      "member": "LineItemSummaryAudienceSelectable",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryBreakPositionOption is added",
+      "member": "LineItemSummaryBreakPositionOption",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryBreakPositionSelection is added",
+      "member": "LineItemSummaryBreakPositionSelection",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryBuyerRequirements is added",
+      "member": "LineItemSummaryBuyerRequirements",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryDeliveryCounting is added",
+      "member": "LineItemSummaryDeliveryCounting",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryEnvironmentsSelection is added",
+      "member": "LineItemSummaryEnvironmentsSelection",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "widened-schema",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryFormatsSelection accepts every value it accepted",
+      "member": "LineItemSummaryFormatsSelection",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryImpressionMultiplier is added",
+      "member": "LineItemSummaryImpressionMultiplier",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryPlacement is added",
+      "member": "LineItemSummaryPlacement",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "narrowed-schema",
+      "class": "breaking",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryPricingEntry/properties/cost_method/anyOf/0: no branch of the new union accepts every value of the old schema; documents/1/composition.json#/$defs/LineItemSummaryPricingEntry/properties/cost_method/anyOf/1: no branch of the new union accepts every value of the old schema; documents/1/composition.json#/$defs/LineItemSummaryPricingEntry: the property \"gross_rate\" is removed; documents/1/composition.json#/$defs/LineItemSummaryPricingEntry: newly requires \"list_rate\", \"pricing_id\"",
+      "member": "LineItemSummaryPricingEntry",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryProgramOption is added",
+      "member": "LineItemSummaryProgramOption",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryProgramsSelection is added",
+      "member": "LineItemSummaryProgramsSelection",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "removed-definition",
+      "class": "breaking",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryPropertiesOption is removed",
+      "member": "LineItemSummaryPropertiesOption",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "removed-definition",
+      "class": "breaking",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryPropertiesOptionOrCatalogRef is removed",
+      "member": "LineItemSummaryPropertiesOptionOrCatalogRef",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "narrowed-schema",
+      "class": "breaking",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryPropertiesSelection/properties/available/items/anyOf/0: newly requires \"child_audience\", \"id\", \"seller_relationship\"; documents/1/composition.json#/$defs/LineItemSummaryPropertiesSelection/properties/available/items/anyOf/1: the property \"catalog_ref\" is removed; documents/1/composition.json#/$defs/LineItemSummaryPropertiesSelection/properties/available/items/anyOf/1: newly requires \"child_audience\", \"id\", \"seller_relationship\"",
+      "member": "LineItemSummaryPropertiesSelection",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryPropertyOption is added",
+      "member": "LineItemSummaryPropertyOption",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryTransactionMechanismSelection is added",
+      "member": "LineItemSummaryTransactionMechanismSelection",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/LineItemWrites is added",
+      "member": "LineItemWrites",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/ManifestEntry is added",
+      "member": "ManifestEntry",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/Package is added",
+      "member": "Package",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/PackageSummary is added",
+      "member": "PackageSummary",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "narrowed-schema",
+      "class": "breaking",
+      "detail": "documents/1/composition.json#/$defs/Proposal/properties/assent: the new schema no longer accepts the JSON type object; documents/1/composition.json#/$defs/Proposal/properties/assent/items: the new schema restricts the JSON type to \"object\"; documents/1/composition.json#/$defs/Proposal/properties/assent/items/properties/at: the new schema restricts the JSON type to \"string\"; documents/1/composition.json#/$defs/Proposal/properties/assent/items/properties/at: pattern added: null to \"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$\"; documents/1/composition.json#/$defs/Proposal/properties/assent/items/properties/at: format added: null to \"date-time\"; documents/1/composition.json#/$defs/Proposal/properties/assent/items/properties/ground: no branch of the new union accepts every value of the old schema; documents/1/composition.json#/$defs/Proposal/properties/assent/items/properties/idempotency_key: the new schema restricts the JSON type to \"string\"; documents/1/composition.json#/$defs/Proposal/properties/assent/items/properties/line_item_ids: the new schema restricts the JSON type to \"array\"; documents/1/composition.json#/$defs/Proposal/properties/assent/items/properties/line_item_ids/items: the new schema restricts the JSON type to \"string\"; documents/1/composition.json#/$defs/Proposal/properties/assent/items/properties/record_digest: the new schema restricts the JSON type to \"string\"; documents/1/composition.json#/$defs/Proposal/properties/assent/items/properties/record_digest: pattern added: null to \"^sha256:[0-9a-f]{64}$\"; documents/1/composition.json#/$defs/Proposal/properties/assent/items/properties/role: the new schema restricts the JSON type to \"string\"; documents/1/composition.json#/$defs/Proposal/properties/assent/items/properties/role: the new schema restricts the values to an enum; documents/1/composition.json#/$defs/Proposal/properties/assent/items/properties/version: the new schema restricts the JSON type to \"integer\"; documents/1/composition.json#/$defs/Proposal/properties/assent/items/properties/version: minimum added: none to -9007199254740991; documents/1/composition.json#/$defs/Proposal/properties/assent/items/properties/version: maximum added: none to 9007199254740991; documents/1/composition.json#/$defs/Proposal/properties/assent/items/additionalProperties: the new schema rejects values the old one accepts; documents/1/composition.json#/$defs/Proposal/properties/assent/items: newly requires \"at\", \"line_item_ids\", \"record_digest\", \"role\", \"version\"; documents/1/composition.json#/$defs/Proposal/properties/assent/items: else added; documents/1/composition.json#/$defs/Proposal/properties/assent/items: if added; documents/1/composition.json#/$defs/Proposal/properties/assent/items: then added; documents/1/composition.json#/$defs/Proposal: the property \"brief_ref\" is removed; documents/1/composition.json#/$defs/Proposal/properties/negotiation_history/items/properties/action: the new enum drops \"proposed\", \"accepted\"; documents/1/composition.json#/$defs/Proposal/properties/negotiation_history/items/properties/at: pattern changed: \"^[0-9]{4}-[0-9]{2}-[0-9]{2}[Tt][0-9]{2}:[0-9]{2}:[0-9]{2}(\\\\.[0-9]+)?([Zz]|[+-][0-9]{2}:[0-9]{2})$\" to \"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$\"; documents/1/composition.json#/$defs/Proposal/properties/negotiation_history/items: the property \"fields_changed\" is removed; documents/1/composition.json#/$defs/Proposal/properties/negotiation_history/items: newly requires \"action\", \"actor\", \"at\", \"paths\", \"version\"; documents/1/composition.json#/$defs/Proposal: the property \"seller_id\" is removed; documents/1/composition.json#/$defs/Proposal: the property \"seller_name\" is removed; documents/1/composition.json#/$defs/Proposal: the property \"specifications\" is removed; documents/1/composition.json#/$defs/Proposal: the property \"valid_from\" is removed; documents/1/composition.json#/$defs/Proposal: the property \"valid_until\" is removed; documents/1/composition.json#/$defs/Proposal: newly requires \"proposal_id\", \"seller\", \"spec_version\", \"status\", \"type\", \"version\"; documents/1/composition.json#/$defs/Proposal: then changed",
+      "member": "Proposal",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/ProposalManifest is added",
+      "member": "ProposalManifest",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "narrowed-schema",
+      "class": "breaking",
+      "detail": "documents/1/composition.json#/$defs/ProposalSummary: the property \"seller_name\" is removed; documents/1/composition.json#/$defs/ProposalSummary: the property \"valid_from\" is removed; documents/1/composition.json#/$defs/ProposalSummary: the property \"valid_until\" is removed; documents/1/composition.json#/$defs/ProposalSummary: newly requires \"seller\", \"version\"",
+      "member": "ProposalSummary",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/ProposalSummaryParty is added",
+      "member": "ProposalSummaryParty",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/RequestedValue is added",
+      "member": "RequestedValue",
+      "type": "documents/1/composition.json",
       "view": "files"
     },
     {
@@ -5940,20 +6287,6 @@
       "class": "additive",
       "detail": "documents/1/proposal-manifest.json is added",
       "type": "documents/1/proposal-manifest.json",
-      "view": "files"
-    },
-    {
-      "change": "narrowed-schema",
-      "class": "breaking",
-      "detail": "documents/1/proposal-summary.json: the property \"seller_name\" is removed; documents/1/proposal-summary.json: the property \"valid_from\" is removed; documents/1/proposal-summary.json: the property \"valid_until\" is removed; documents/1/proposal-summary.json: newly requires \"seller\", \"version\"",
-      "type": "documents/1/proposal-summary.json",
-      "view": "files"
-    },
-    {
-      "change": "narrowed-schema",
-      "class": "breaking",
-      "detail": "documents/1/proposal.json/properties/assent: the new schema no longer accepts the JSON type object; documents/1/proposal.json/properties/assent/items: the new schema restricts the JSON type to \"object\"; documents/1/proposal.json/properties/assent/items/properties/at: the new schema restricts the JSON type to \"string\"; documents/1/proposal.json/properties/assent/items/properties/at: pattern added: null to \"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$\"; documents/1/proposal.json/properties/assent/items/properties/at: format added: null to \"date-time\"; documents/1/proposal.json/properties/assent/items/properties/ground: no branch of the new union accepts every value of the old schema; documents/1/proposal.json/properties/assent/items/properties/idempotency_key: the new schema restricts the JSON type to \"string\"; documents/1/proposal.json/properties/assent/items/properties/line_item_ids: the new schema restricts the JSON type to \"array\"; documents/1/proposal.json/properties/assent/items/properties/line_item_ids/items: the new schema restricts the JSON type to \"string\"; documents/1/proposal.json/properties/assent/items/properties/record_digest: the new schema restricts the JSON type to \"string\"; documents/1/proposal.json/properties/assent/items/properties/record_digest: pattern added: null to \"^sha256:[0-9a-f]{64}$\"; documents/1/proposal.json/properties/assent/items/properties/role: the new schema restricts the JSON type to \"string\"; documents/1/proposal.json/properties/assent/items/properties/role: the new schema restricts the values to an enum; documents/1/proposal.json/properties/assent/items/properties/version: the new schema restricts the JSON type to \"integer\"; documents/1/proposal.json/properties/assent/items/properties/version: minimum added: none to -9007199254740991; documents/1/proposal.json/properties/assent/items/properties/version: maximum added: none to 9007199254740991; documents/1/proposal.json/properties/assent/items/additionalProperties: the new schema rejects values the old one accepts; documents/1/proposal.json/properties/assent/items: newly requires \"at\", \"line_item_ids\", \"record_digest\", \"role\", \"version\"; documents/1/proposal.json/properties/assent/items: else added; documents/1/proposal.json/properties/assent/items: if added; documents/1/proposal.json/properties/assent/items: then added; documents/1/proposal.json: the property \"brief_ref\" is removed; documents/1/proposal.json/properties/negotiation_history/items/properties/action: the new enum drops \"proposed\", \"accepted\"; documents/1/proposal.json/properties/negotiation_history/items/properties/at: pattern changed: \"^[0-9]{4}-[0-9]{2}-[0-9]{2}[Tt][0-9]{2}:[0-9]{2}:[0-9]{2}(\\\\.[0-9]+)?([Zz]|[+-][0-9]{2}:[0-9]{2})$\" to \"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$\"; documents/1/proposal.json/properties/negotiation_history/items: the property \"fields_changed\" is removed; documents/1/proposal.json/properties/negotiation_history/items: newly requires \"action\", \"actor\", \"at\", \"paths\", \"version\"; documents/1/proposal.json: the property \"seller_id\" is removed; documents/1/proposal.json: the property \"seller_name\" is removed; documents/1/proposal.json: the property \"specifications\" is removed; documents/1/proposal.json: the property \"valid_from\" is removed; documents/1/proposal.json: the property \"valid_until\" is removed; documents/1/proposal.json: newly requires \"proposal_id\", \"seller\", \"spec_version\", \"status\", \"type\", \"version\"; documents/1/proposal.json: then changed",
-      "type": "documents/1/proposal.json",
       "view": "files"
     },
     {
@@ -6031,8 +6364,8 @@
     {
       "change": "added-definition",
       "class": "additive",
-      "detail": "kernel/1/kernel.json#/$defs/ClockWindowNarrowing is added",
-      "member": "ClockWindowNarrowing",
+      "detail": "kernel/1/kernel.json#/$defs/CommitmentAmountBasis is added",
+      "member": "CommitmentAmountBasis",
       "type": "kernel/1/kernel.json",
       "view": "files"
     },
@@ -6125,14 +6458,6 @@
       "view": "files"
     },
     {
-      "change": "removed-definition",
-      "class": "breaking",
-      "detail": "kernel/1/kernel.json#/$defs/ExternalId is removed",
-      "member": "ExternalId",
-      "type": "kernel/1/kernel.json",
-      "view": "files"
-    },
-    {
       "change": "added-definition",
       "class": "additive",
       "detail": "kernel/1/kernel.json#/$defs/FieldPointer is added",
@@ -6161,14 +6486,6 @@
       "class": "additive",
       "detail": "kernel/1/kernel.json#/$defs/GeoCode is added",
       "member": "GeoCode",
-      "type": "kernel/1/kernel.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "kernel/1/kernel.json#/$defs/GeoCodeNarrowing is added",
-      "member": "GeoCodeNarrowing",
       "type": "kernel/1/kernel.json",
       "view": "files"
     },
@@ -6245,14 +6562,6 @@
       "view": "files"
     },
     {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "kernel/1/kernel.json#/$defs/OpenObject is added",
-      "member": "OpenObject",
-      "type": "kernel/1/kernel.json",
-      "view": "files"
-    },
-    {
       "change": "narrowed-schema",
       "class": "breaking",
       "detail": "kernel/1/kernel.json#/$defs/Party: the new schema no longer accepts the JSON type string; kernel/1/kernel.json#/$defs/Party/properties/domain: the new schema restricts the JSON type to \"string\"; kernel/1/kernel.json#/$defs/Party/properties/domain: maxLength added: none to 253; kernel/1/kernel.json#/$defs/Party/properties/domain: pattern added: null to \"^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$\"; kernel/1/kernel.json#/$defs/Party/properties/legal_name: the new schema restricts the JSON type to \"string\"; kernel/1/kernel.json#/$defs/Party/properties/registry_id: the new schema restricts the JSON type to \"string\"; kernel/1/kernel.json#/$defs/Party/additionalProperties: the new schema rejects values the old one accepts; kernel/1/kernel.json#/$defs/Party: newly requires \"domain\"",
@@ -6271,40 +6580,8 @@
     {
       "change": "added-definition",
       "class": "additive",
-      "detail": "kernel/1/kernel.json#/$defs/PlainInteger is added",
-      "member": "PlainInteger",
-      "type": "kernel/1/kernel.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "kernel/1/kernel.json#/$defs/PlainIntegerNarrowing is added",
-      "member": "PlainIntegerNarrowing",
-      "type": "kernel/1/kernel.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "kernel/1/kernel.json#/$defs/PlainNumber is added",
-      "member": "PlainNumber",
-      "type": "kernel/1/kernel.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "kernel/1/kernel.json#/$defs/PlainString is added",
-      "member": "PlainString",
-      "type": "kernel/1/kernel.json",
-      "view": "files"
-    },
-    {
-      "change": "removed-definition",
-      "class": "breaking",
-      "detail": "kernel/1/kernel.json#/$defs/PriceAdjustment is removed",
-      "member": "PriceAdjustment",
+      "detail": "kernel/1/kernel.json#/$defs/PreemptionRemedy is added",
+      "member": "PreemptionRemedy",
       "type": "kernel/1/kernel.json",
       "view": "files"
     },
@@ -6335,6 +6612,14 @@
     {
       "change": "added-definition",
       "class": "additive",
+      "detail": "kernel/1/kernel.json#/$defs/SafeInteger is added",
+      "member": "SafeInteger",
+      "type": "kernel/1/kernel.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
       "detail": "kernel/1/kernel.json#/$defs/SeatRef is added",
       "member": "SeatRef",
       "type": "kernel/1/kernel.json",
@@ -6353,14 +6638,6 @@
       "class": "additive",
       "detail": "kernel/1/kernel.json#/$defs/TaxonomyCodes is added",
       "member": "TaxonomyCodes",
-      "type": "kernel/1/kernel.json",
-      "view": "files"
-    },
-    {
-      "change": "removed-definition",
-      "class": "breaking",
-      "detail": "kernel/1/kernel.json#/$defs/Text is removed",
-      "member": "Text",
       "type": "kernel/1/kernel.json",
       "view": "files"
     },
@@ -6385,6 +6662,14 @@
       "class": "breaking",
       "detail": "kernel/1/kernel.json#/$defs/Timestamp is removed",
       "member": "Timestamp",
+      "type": "kernel/1/kernel.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "kernel/1/kernel.json#/$defs/TransactionMechanism is added",
+      "member": "TransactionMechanism",
       "type": "kernel/1/kernel.json",
       "view": "files"
     },
@@ -6549,14 +6834,6 @@
       "view": "files"
     },
     {
-      "change": "removed-definition",
-      "class": "breaking",
-      "detail": "modules/audience/1/audience.json#/$defs/SuppressionList is removed",
-      "member": "SuppressionList",
-      "type": "modules/audience/1/audience.json",
-      "view": "files"
-    },
-    {
       "change": "added-definition",
       "class": "additive",
       "detail": "modules/commercial/1/commercial.json#/$defs/AssentEntry is added",
@@ -6623,78 +6900,6 @@
     {
       "change": "added-definition",
       "class": "additive",
-      "detail": "modules/commercial/1/commercial.json#/$defs/BuyerWritesAudienceSelectable is added",
-      "member": "BuyerWritesAudienceSelectable",
-      "type": "modules/commercial/1/commercial.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/commercial/1/commercial.json#/$defs/BuyerWritesBuyerRequirements is added",
-      "member": "BuyerWritesBuyerRequirements",
-      "type": "modules/commercial/1/commercial.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/commercial/1/commercial.json#/$defs/BuyerWritesDeviceBounds is added",
-      "member": "BuyerWritesDeviceBounds",
-      "type": "modules/commercial/1/commercial.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/commercial/1/commercial.json#/$defs/BuyerWritesFrequencyCap is added",
-      "member": "BuyerWritesFrequencyCap",
-      "type": "modules/commercial/1/commercial.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/commercial/1/commercial.json#/$defs/BuyerWritesGeoBounds is added",
-      "member": "BuyerWritesGeoBounds",
-      "type": "modules/commercial/1/commercial.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/commercial/1/commercial.json#/$defs/BuyerWritesSelectable is added",
-      "member": "BuyerWritesSelectable",
-      "type": "modules/commercial/1/commercial.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/commercial/1/commercial.json#/$defs/BuyerWritesSettable is added",
-      "member": "BuyerWritesSettable",
-      "type": "modules/commercial/1/commercial.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/commercial/1/commercial.json#/$defs/BuyerWritesSettableRange is added",
-      "member": "BuyerWritesSettableRange",
-      "type": "modules/commercial/1/commercial.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/commercial/1/commercial.json#/$defs/BuyerWritesShortfallRemedy is added",
-      "member": "BuyerWritesShortfallRemedy",
-      "type": "modules/commercial/1/commercial.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
       "detail": "modules/commercial/1/commercial.json#/$defs/CancellationNotice is added",
       "member": "CancellationNotice",
       "type": "modules/commercial/1/commercial.json",
@@ -6735,14 +6940,6 @@
     {
       "change": "added-definition",
       "class": "additive",
-      "detail": "modules/commercial/1/commercial.json#/$defs/Commit is added",
-      "member": "Commit",
-      "type": "modules/commercial/1/commercial.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
       "detail": "modules/commercial/1/commercial.json#/$defs/CommitResult is added",
       "member": "CommitResult",
       "type": "modules/commercial/1/commercial.json",
@@ -6761,14 +6958,6 @@
       "class": "additive",
       "detail": "modules/commercial/1/commercial.json#/$defs/CommitmentAmount is added",
       "member": "CommitmentAmount",
-      "type": "modules/commercial/1/commercial.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/commercial/1/commercial.json#/$defs/CommitmentAmountBasis is added",
-      "member": "CommitmentAmountBasis",
       "type": "modules/commercial/1/commercial.json",
       "view": "files"
     },
@@ -6833,14 +7022,6 @@
       "class": "additive",
       "detail": "modules/commercial/1/commercial.json#/$defs/CostParametersViewabilityStandard is added",
       "member": "CostParametersViewabilityStandard",
-      "type": "modules/commercial/1/commercial.json",
-      "view": "files"
-    },
-    {
-      "change": "removed-definition",
-      "class": "breaking",
-      "detail": "modules/commercial/1/commercial.json#/$defs/CreativePolicy is removed",
-      "member": "CreativePolicy",
       "type": "modules/commercial/1/commercial.json",
       "view": "files"
     },
@@ -6917,14 +7098,6 @@
       "view": "files"
     },
     {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/commercial/1/commercial.json#/$defs/Hold is added",
-      "member": "Hold",
-      "type": "modules/commercial/1/commercial.json",
-      "view": "files"
-    },
-    {
       "change": "removed-definition",
       "class": "breaking",
       "detail": "modules/commercial/1/commercial.json#/$defs/HoldScope is removed",
@@ -6991,14 +7164,6 @@
     {
       "change": "added-definition",
       "class": "additive",
-      "detail": "modules/commercial/1/commercial.json#/$defs/LineItemWrites is added",
-      "member": "LineItemWrites",
-      "type": "modules/commercial/1/commercial.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
       "detail": "modules/commercial/1/commercial.json#/$defs/Preemption is added",
       "member": "Preemption",
       "type": "modules/commercial/1/commercial.json",
@@ -7009,14 +7174,6 @@
       "class": "additive",
       "detail": "modules/commercial/1/commercial.json#/$defs/PreemptionReason is added",
       "member": "PreemptionReason",
-      "type": "modules/commercial/1/commercial.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/commercial/1/commercial.json#/$defs/PreemptionRemedy is added",
-      "member": "PreemptionRemedy",
       "type": "modules/commercial/1/commercial.json",
       "view": "files"
     },
@@ -7074,14 +7231,6 @@
       "detail": "modules/commercial/1/commercial.json#/$defs/UnitBoundsRange is added",
       "member": "UnitBoundsRange",
       "type": "modules/commercial/1/commercial.json",
-      "view": "files"
-    },
-    {
-      "change": "removed-definition",
-      "class": "breaking",
-      "detail": "modules/creative/1/creative.json#/$defs/Approval is removed",
-      "member": "Approval",
-      "type": "modules/creative/1/creative.json",
       "view": "files"
     },
     {
@@ -7185,22 +7334,6 @@
       "class": "breaking",
       "detail": "modules/creative/1/creative.json#/$defs/ProductionSelection: the property \"pricing\" is removed",
       "member": "ProductionSelection",
-      "type": "modules/creative/1/creative.json",
-      "view": "files"
-    },
-    {
-      "change": "removed-definition",
-      "class": "breaking",
-      "detail": "modules/creative/1/creative.json#/$defs/Specs is removed",
-      "member": "Specs",
-      "type": "modules/creative/1/creative.json",
-      "view": "files"
-    },
-    {
-      "change": "removed-definition",
-      "class": "breaking",
-      "detail": "modules/creative/1/creative.json#/$defs/ThirdPartyTags is removed",
-      "member": "ThirdPartyTags",
       "type": "modules/creative/1/creative.json",
       "view": "files"
     },
@@ -7325,9 +7458,9 @@
       "view": "files"
     },
     {
-      "change": "narrowed-schema",
+      "change": "removed-definition",
       "class": "breaking",
-      "detail": "modules/execution/1/execution.json#/$defs/TransactionMechanism/anyOf/0: the new enum drops \"DIRECT_IO\", \"PROGRAMMATIC_GUARANTEED\", \"PREFERRED_DEAL\", \"PRIVATE_AUCTION\", \"OPEN_AUCTION\"; modules/execution/1/execution.json#/$defs/TransactionMechanism/anyOf/1: the new schema restricts the values to an enum",
+      "detail": "modules/execution/1/execution.json#/$defs/TransactionMechanism is removed",
       "member": "TransactionMechanism",
       "type": "modules/execution/1/execution.json",
       "view": "files"
@@ -7503,7 +7636,7 @@
     {
       "change": "narrowed-schema",
       "class": "breaking",
-      "detail": "modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0: the new schema no longer accepts the JSON type string; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/available: the new schema restricts the JSON type to \"array\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/available/items: no branch of the new union accepts every value of the old schema; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas: the new schema restricts the JSON type to \"object\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas/propertyNames: the new schema restricts the JSON type to \"string\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas/additionalProperties: the new schema restricts the JSON type to \"object\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas/additionalProperties: minProperties added: none to 1; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas/additionalProperties/properties/delta_cpm: the new schema restricts the JSON type to \"number\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas/additionalProperties/properties/delta_fraction: the new schema restricts the JSON type to \"number\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas/additionalProperties/properties/delta_fraction: exclusiveMinimum added: none to -1; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas/additionalProperties/properties/delta_flat: the new schema restricts the JSON type to \"number\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas/additionalProperties/additionalProperties: the new schema rejects values the old one accepts; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/included: the new schema restricts the JSON type to \"array\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/included/items: the new schema restricts the JSON type to \"string\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/max_select: the new schema restricts the JSON type to \"integer\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/max_select: minimum added: none to -9007199254740991; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/max_select: maximum added: none to 9007199254740991; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/remedy_terms: the new schema restricts the JSON type to \"object\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/remedy_terms/properties/makegood_type: no branch of the new union accepts every value of the old schema; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/remedy_terms/properties/makegood_window: the new schema restricts the JSON type to \"string\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/remedy_terms/properties/makegood_window: pattern added: null to \"^[0-9PYMDTHS]+$\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/remedy_terms/properties/makegood_window: format added: null to \"duration\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/remedy_terms/additionalProperties: the new schema rejects values the old one accepts; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/selected: the new schema restricts the JSON type to \"array\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/selected/items: the new schema restricts the JSON type to \"string\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/additionalProperties: the new schema rejects values the old one accepts; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0: newly requires \"available\", \"included\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1: the new schema no longer accepts the JSON type string; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/available: the new schema restricts the JSON type to \"array\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/available/items: no branch of the new union accepts every value of the old schema; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas: the new schema restricts the JSON type to \"object\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas/propertyNames: the new schema restricts the JSON type to \"string\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas/additionalProperties: the new schema restricts the JSON type to \"object\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas/additionalProperties: minProperties added: none to 1; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas/additionalProperties/properties/delta_cpm: the new schema restricts the JSON type to \"number\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas/additionalProperties/properties/delta_fraction: the new schema restricts the JSON type to \"number\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas/additionalProperties/properties/delta_fraction: exclusiveMinimum added: none to -1; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas/additionalProperties/properties/delta_flat: the new schema restricts the JSON type to \"number\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas/additionalProperties/additionalProperties: the new schema rejects values the old one accepts; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/included: the new schema restricts the JSON type to \"array\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/included/items: the new schema restricts the JSON type to \"string\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/max_select: the new schema restricts the JSON type to \"integer\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/max_select: minimum added: none to -9007199254740991; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/max_select: maximum added: none to 9007199254740991; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/remedy_terms: the new schema restricts the JSON type to \"object\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/remedy_terms/properties/makegood_type: no branch of the new union accepts every value of the old schema; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/remedy_terms/properties/makegood_window: the new schema restricts the JSON type to \"string\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/remedy_terms/properties/makegood_window: pattern added: null to \"^[0-9PYMDTHS]+$\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/remedy_terms/properties/makegood_window: format added: null to \"duration\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/remedy_terms/additionalProperties: the new schema rejects values the old one accepts; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/selected: the new schema restricts the JSON type to \"array\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/selected/items: the new schema restricts the JSON type to \"string\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/additionalProperties: the new schema rejects values the old one accepts; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1: newly requires \"available\", \"included\"",
+      "detail": "modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0: the new schema no longer accepts the JSON type string; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/available: the new schema restricts the JSON type to \"array\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/available/items: no branch of the new union accepts every value of the old schema; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas: the new schema restricts the JSON type to \"object\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas/additionalProperties: the new schema restricts the JSON type to \"object\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas/additionalProperties: minProperties added: none to 1; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas/additionalProperties/properties/delta_cpm: the new schema restricts the JSON type to \"number\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas/additionalProperties/properties/delta_fraction: the new schema restricts the JSON type to \"number\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas/additionalProperties/properties/delta_fraction: exclusiveMinimum added: none to -1; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas/additionalProperties/properties/delta_flat: the new schema restricts the JSON type to \"number\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/deltas/additionalProperties/additionalProperties: the new schema rejects values the old one accepts; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/included: the new schema restricts the JSON type to \"array\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/included/items: the new schema restricts the JSON type to \"string\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/max_select: the new schema restricts the JSON type to \"integer\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/max_select: minimum added: none to -9007199254740991; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/max_select: maximum added: none to 9007199254740991; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/remedy_terms: the new schema restricts the JSON type to \"object\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/remedy_terms/properties/makegood_type: no branch of the new union accepts every value of the old schema; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/remedy_terms/properties/makegood_window: the new schema restricts the JSON type to \"string\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/remedy_terms/properties/makegood_window: pattern added: null to \"^[0-9PYMDTHS]+$\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/remedy_terms/properties/makegood_window: format added: null to \"duration\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/remedy_terms/additionalProperties: the new schema rejects values the old one accepts; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/selected: the new schema restricts the JSON type to \"array\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/properties/selected/items: the new schema restricts the JSON type to \"string\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0/additionalProperties: the new schema rejects values the old one accepts; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/0: newly requires \"available\", \"included\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1: the new schema no longer accepts the JSON type string; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/available: the new schema restricts the JSON type to \"array\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/available/items: no branch of the new union accepts every value of the old schema; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas: the new schema restricts the JSON type to \"object\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas/additionalProperties: the new schema restricts the JSON type to \"object\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas/additionalProperties: minProperties added: none to 1; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas/additionalProperties/properties/delta_cpm: the new schema restricts the JSON type to \"number\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas/additionalProperties/properties/delta_fraction: the new schema restricts the JSON type to \"number\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas/additionalProperties/properties/delta_fraction: exclusiveMinimum added: none to -1; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas/additionalProperties/properties/delta_flat: the new schema restricts the JSON type to \"number\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/deltas/additionalProperties/additionalProperties: the new schema rejects values the old one accepts; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/included: the new schema restricts the JSON type to \"array\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/included/items: the new schema restricts the JSON type to \"string\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/max_select: the new schema restricts the JSON type to \"integer\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/max_select: minimum added: none to -9007199254740991; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/max_select: maximum added: none to 9007199254740991; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/remedy_terms: the new schema restricts the JSON type to \"object\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/remedy_terms/properties/makegood_type: no branch of the new union accepts every value of the old schema; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/remedy_terms/properties/makegood_window: the new schema restricts the JSON type to \"string\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/remedy_terms/properties/makegood_window: pattern added: null to \"^[0-9PYMDTHS]+$\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/remedy_terms/properties/makegood_window: format added: null to \"duration\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/remedy_terms/additionalProperties: the new schema rejects values the old one accepts; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/selected: the new schema restricts the JSON type to \"array\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/properties/selected/items: the new schema restricts the JSON type to \"string\"; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1/additionalProperties: the new schema rejects values the old one accepts; modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedy/anyOf/1: newly requires \"available\", \"included\"",
       "member": "ShortfallRemedy",
       "type": "modules/guarantees/1/guarantees.json",
       "view": "files"
@@ -7529,14 +7662,6 @@
       "class": "additive",
       "detail": "modules/inventory/1/inventory.json#/$defs/BreakPositionSelection is added",
       "member": "BreakPositionSelection",
-      "type": "modules/inventory/1/inventory.json",
-      "view": "files"
-    },
-    {
-      "change": "removed-definition",
-      "class": "breaking",
-      "detail": "modules/inventory/1/inventory.json#/$defs/ContentDetail is removed",
-      "member": "ContentDetail",
       "type": "modules/inventory/1/inventory.json",
       "view": "files"
     },
@@ -7621,9 +7746,9 @@
       "view": "files"
     },
     {
-      "change": "narrowed-schema",
+      "change": "removed-definition",
       "class": "breaking",
-      "detail": "modules/inventory/1/inventory.json#/$defs/PropertiesSelection/properties/available/items/anyOf/0: the property \"supported_formats\" is removed; modules/inventory/1/inventory.json#/$defs/PropertiesSelection/properties/available/items/anyOf/0: newly requires \"child_audience\", \"seller_relationship\"; modules/inventory/1/inventory.json#/$defs/PropertiesSelection/properties/available/items/anyOf/0: if added; modules/inventory/1/inventory.json#/$defs/PropertiesSelection/properties/available/items/anyOf/0: then added; modules/inventory/1/inventory.json#/$defs/PropertiesSelection/properties/available/items/anyOf/1: the property \"catalog_ref\" is removed; modules/inventory/1/inventory.json#/$defs/PropertiesSelection/properties/available/items/anyOf/1: newly requires \"child_audience\", \"id\", \"seller_relationship\"; modules/inventory/1/inventory.json#/$defs/PropertiesSelection/properties/available/items/anyOf/1: if added; modules/inventory/1/inventory.json#/$defs/PropertiesSelection/properties/available/items/anyOf/1: then added; modules/inventory/1/inventory.json#/$defs/PropertiesSelection: the property \"pricing\" is removed",
+      "detail": "modules/inventory/1/inventory.json#/$defs/PropertiesSelection is removed",
       "member": "PropertiesSelection",
       "type": "modules/inventory/1/inventory.json",
       "view": "files"
@@ -7634,14 +7759,6 @@
       "detail": "modules/inventory/1/inventory.json#/$defs/Refresh is added",
       "member": "Refresh",
       "type": "modules/inventory/1/inventory.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/line-item/1/line-item.json#/$defs/AvailabilityRead is added",
-      "member": "AvailabilityRead",
-      "type": "modules/line-item/1/line-item.json",
       "view": "files"
     },
     {
@@ -7676,42 +7793,10 @@
       "view": "files"
     },
     {
-      "change": "removed-definition",
-      "class": "breaking",
-      "detail": "modules/proposal/1/proposal.json#/$defs/Assent is removed",
-      "member": "Assent",
-      "type": "modules/proposal/1/proposal.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/proposal/1/proposal.json#/$defs/ChangeRequest is added",
-      "member": "ChangeRequest",
-      "type": "modules/proposal/1/proposal.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/proposal/1/proposal.json#/$defs/HistoryEntry is added",
-      "member": "HistoryEntry",
-      "type": "modules/proposal/1/proposal.json",
-      "view": "files"
-    },
-    {
       "change": "added-definition",
       "class": "additive",
       "detail": "modules/proposal/1/proposal.json#/$defs/HistoryEntryAction is added",
       "member": "HistoryEntryAction",
-      "type": "modules/proposal/1/proposal.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/proposal/1/proposal.json#/$defs/HistoryPath is added",
-      "member": "HistoryPath",
       "type": "modules/proposal/1/proposal.json",
       "view": "files"
     },
@@ -7756,14 +7841,6 @@
       "view": "files"
     },
     {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/proposal/1/proposal.json#/$defs/RequestedValue is added",
-      "member": "RequestedValue",
-      "type": "modules/proposal/1/proposal.json",
-      "view": "files"
-    },
-    {
       "change": "removed-definition",
       "class": "breaking",
       "detail": "modules/proposal/1/proposal.json#/$defs/Specifications is removed",
@@ -7772,178 +7849,10 @@
       "view": "files"
     },
     {
-      "change": "removed-definition",
-      "class": "breaking",
-      "detail": "modules/proposal/1/proposal.json#/$defs/SpecificationsDetail is removed",
-      "member": "SpecificationsDetail",
-      "type": "modules/proposal/1/proposal.json",
-      "view": "files"
-    },
-    {
       "change": "added-file",
       "class": "additive",
       "detail": "modules/publication/1/publication.json is added",
       "type": "modules/publication/1/publication.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryApp is added",
-      "member": "LineItemSummaryApp",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryAudienceOption is added",
-      "member": "LineItemSummaryAudienceOption",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryAudienceSelectable is added",
-      "member": "LineItemSummaryAudienceSelectable",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryBreakPositionOption is added",
-      "member": "LineItemSummaryBreakPositionOption",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryBreakPositionSelection is added",
-      "member": "LineItemSummaryBreakPositionSelection",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryBuyerRequirements is added",
-      "member": "LineItemSummaryBuyerRequirements",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryDeliveryCounting is added",
-      "member": "LineItemSummaryDeliveryCounting",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryEnvironmentsSelection is added",
-      "member": "LineItemSummaryEnvironmentsSelection",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "widened-schema",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryFormatsSelection accepts every value it accepted",
-      "member": "LineItemSummaryFormatsSelection",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryImpressionMultiplier is added",
-      "member": "LineItemSummaryImpressionMultiplier",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryPlacement is added",
-      "member": "LineItemSummaryPlacement",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "narrowed-schema",
-      "class": "breaking",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryPricingEntry/properties/cost_method/anyOf/0: no branch of the new union accepts every value of the old schema; modules/representation/1/representation.json#/$defs/LineItemSummaryPricingEntry/properties/cost_method/anyOf/1: no branch of the new union accepts every value of the old schema; modules/representation/1/representation.json#/$defs/LineItemSummaryPricingEntry: the property \"gross_rate\" is removed; modules/representation/1/representation.json#/$defs/LineItemSummaryPricingEntry: newly requires \"list_rate\", \"pricing_id\"",
-      "member": "LineItemSummaryPricingEntry",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryProgramOption is added",
-      "member": "LineItemSummaryProgramOption",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryProgramsSelection is added",
-      "member": "LineItemSummaryProgramsSelection",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "removed-definition",
-      "class": "breaking",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesOption is removed",
-      "member": "LineItemSummaryPropertiesOption",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "removed-definition",
-      "class": "breaking",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesOptionOrCatalogRef is removed",
-      "member": "LineItemSummaryPropertiesOptionOrCatalogRef",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "narrowed-schema",
-      "class": "breaking",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesSelection/properties/available/items/anyOf/0: newly requires \"child_audience\", \"id\", \"seller_relationship\"; modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesSelection/properties/available/items/anyOf/1: the property \"catalog_ref\" is removed; modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesSelection/properties/available/items/anyOf/1: newly requires \"child_audience\", \"id\", \"seller_relationship\"",
-      "member": "LineItemSummaryPropertiesSelection",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryPropertyOption is added",
-      "member": "LineItemSummaryPropertyOption",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryTransactionMechanismSelection is added",
-      "member": "LineItemSummaryTransactionMechanismSelection",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/ProposalSummaryParty is added",
-      "member": "ProposalSummaryParty",
-      "type": "modules/representation/1/representation.json",
       "view": "files"
     },
     {
@@ -8015,6 +7924,14 @@
       "class": "additive",
       "detail": "modules/targeting/1/targeting.json#/$defs/AcceptedExclusions is added",
       "member": "AcceptedExclusions",
+      "type": "modules/targeting/1/targeting.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/targeting/1/targeting.json#/$defs/ClockWindowNarrowing is added",
+      "member": "ClockWindowNarrowing",
       "type": "modules/targeting/1/targeting.json",
       "view": "files"
     },
@@ -8125,6 +8042,14 @@
     {
       "change": "added-definition",
       "class": "additive",
+      "detail": "modules/targeting/1/targeting.json#/$defs/GeoCodeNarrowing is added",
+      "member": "GeoCodeNarrowing",
+      "type": "modules/targeting/1/targeting.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
       "detail": "modules/targeting/1/targeting.json#/$defs/MarketsSelection is added",
       "member": "MarketsSelection",
       "type": "modules/targeting/1/targeting.json",
@@ -8135,6 +8060,14 @@
       "class": "breaking",
       "detail": "modules/targeting/1/targeting.json#/$defs/MaxRange is removed",
       "member": "MaxRange",
+      "type": "modules/targeting/1/targeting.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "modules/targeting/1/targeting.json#/$defs/SafeIntegerNarrowing is added",
+      "member": "SafeIntegerNarrowing",
       "type": "modules/targeting/1/targeting.json",
       "view": "files"
     }
@@ -8566,7 +8499,7 @@
       {
         "id": "appendix-a:92",
         "kind": "appendix_a",
-        "text": "`retention` | 5.9 Execution | Range[Duration] | seller-set"
+        "text": "`retention` | 5.9 Execution | Range[Duration] | requestable"
       },
       {
         "id": "appendix-a:93",
@@ -8714,6 +8647,11 @@
         "text": "ext:\n  examplepub.example: { placement_code: \"BD-ROS-300x250-Q4\" }"
       },
       {
+        "id": "code:2.8.1:1",
+        "kind": "code_block",
+        "text": "Signature-Agent member  ->  host  ->  https://<host>/.well-known/http-message-signatures-directory"
+      },
+      {
         "id": "code:3.4:1",
         "kind": "code_block",
         "text": "<selectable>.selected[]\n<settable>.value\naudiences.excluded[]\naudiences.combine.selected[]\nfrequency_cap.count.value\nexclusions\nbuyer_requirements.seats\nbuyer_requirements.seat_owner"
@@ -8849,39 +8787,54 @@
         "text": "Legal assent | Which legal entity agreed to which bytes? | Two matching `assent[]` entries over one `record_digest`, with both parties named in the record; as optional evidence, the signed messages that carried them | This specification for the record, digest, entry, and what each party keeps (§ 4.1.1, § 4.1.2); § 2.8 for how a message is signed and its key found | Parties, digest, entries"
       },
       {
-        "id": "concept:2.8:1",
+        "id": "concept:2.8.2:1",
         "kind": "concept",
-        "text": "Identity | An `https` origin. The signer names it in a covered `Signature-Agent` member, as the ASCII serialization of the origin (RFC 6454 § 6.2): a lowercase host, no default port, and no path, query, fragment, or userinfo"
+        "text": "Tag | `tag=\"web-bot-auth\"` | `tag=\"web-bot-auth\"`"
       },
       {
-        "id": "concept:2.8:2",
+        "id": "concept:2.8.2:2",
         "kind": "concept",
-        "text": "Keys | The origin's key directory, at `/.well-known/http-message-signatures-directory` with the media type `application/http-message-signatures-directory+json`. Each signing key is an Ed25519 key (`kty` `OKP`, `crv` `Ed25519`), and its `kid` is its JWK thumbprint (RFC 7638)"
+        "text": "Count | Exactly one `web-bot-auth` member in `Signature-Input`, and exactly one `Signature-Agent` member, keyed to its label. A verifier doesn't verify members with other tags, but every member must be well formed (RFC 9421 §§ 4.1–4.2) | Same"
       },
       {
-        "id": "concept:2.8:3",
+        "id": "concept:2.8.2:3",
         "kind": "concept",
-        "text": "Signature | One signature, with `tag=\"web-bot-auth\"`, `alg=\"ed25519\"`, `keyid` set to the key's thumbprint, `created`, and `expires` no more than 300 seconds after `created`. A request also carries a `nonce`"
+        "text": "Components | `@method`, `@target-uri`, `@authority`, `\"signature-agent\";key=<label>` | `@status`, `\"@method\";req`, `\"@target-uri\";req`, `\"signature-agent\";key=<label>`, and, when the request carried a `web-bot-auth` signature, `\"signature\";req;key=<request label>`"
       },
       {
-        "id": "concept:2.8:4",
+        "id": "concept:2.8.2:4",
         "kind": "concept",
-        "text": "Request components | `@method`, `@target-uri`, `@authority`, and `\"signature-agent\";key=<label>`"
+        "text": "Body | With a body, also `content-type` and `content-digest`. `Content-Digest` (RFC 9530) uses `sha-256`, and a verifier checks it against the body bytes | Same"
       },
       {
-        "id": "concept:2.8:5",
+        "id": "concept:2.8.2:5",
         "kind": "concept",
-        "text": "Response components | `@status`, `\"@method\";req`, `\"@target-uri\";req`, and `\"signature-agent\";key=<label>`"
+        "text": "Parameters | `created`; `expires`, at most 300 seconds after `created`; `keyid`, the key's thumbprint; `alg=\"ed25519\"`; and `nonce`, 64 random bytes as unpadded base64url or padded base64 | The same, without `nonce`"
       },
       {
-        "id": "concept:2.8:6",
+        "id": "concept:2.8.2:6",
         "kind": "concept",
-        "text": "Body | A message with a body carries `Content-Digest` (RFC 9530) with `sha-256`, and its signature also covers `content-type` and `content-digest`. A verifier checks the digest against the body bytes"
+        "text": "Clock | A verifier allows 60 seconds of clock skew | Same"
       },
       {
-        "id": "concept:2.8:7",
+        "id": "concept:2.8.6:1",
         "kind": "concept",
-        "text": "Failures | A request whose signature fields do not parse gets `400`. One that fails verification or a rule of this profile gets `403`. A party that cannot verify a response MAY refuse to write its own entry (§ 4.1.2)"
+        "text": "`400` | The signature fields don't parse | Section 5.4"
+      },
+      {
+        "id": "concept:2.8.6:2",
+        "kind": "concept",
+        "text": "`403` | The signature fails verification or a rule of this profile, or a party that requires a signature gets none | Section 5.3"
+      },
+      {
+        "id": "concept:2.8.6:3",
+        "kind": "concept",
+        "text": "`429` | The `nonce` was used before. Sign again with a new one | Section 5.3; RFC 9421 § 7.2.2"
+      },
+      {
+        "id": "concept:2.8.6:4",
+        "kind": "concept",
+        "text": "`503` | The verifier can't check and record the `nonce`. Retry later, as `Retry-After` says, with the same or a new signature | Appendix C.6"
       },
       {
         "id": "concept:4.3.1:1",
@@ -9616,7 +9569,7 @@
       {
         "id": "field:5.9:retention",
         "kind": "field",
-        "text": "`retention` | Range[Duration] | seller-set | From release or air. The ad stays in every copy of the content the seller distributes for at least `min` and is removed by `max`. No `max`: indefinitely. When `placement.feed` is present, only copies in that feed count toward delivery"
+        "text": "`retention` | Range[Duration] | requestable | From release or air. The ad stays in every copy of the content the seller distributes for at least `min` and is removed by `max`. No `max`: indefinitely. When `placement.feed` is present, only copies in that feed count toward delivery"
       },
       {
         "id": "field:5.9:sov_basis",
@@ -10384,6 +10337,16 @@
         "text": "`sync_groups[]` | OPTIONAL | Screens that show the same ad at the same moment, sold as one (§ 5.2.8)"
       },
       {
+        "id": "key:5.2.4:PropertyOption.tv_channel",
+        "kind": "key",
+        "text": "`tv_channel` | OPTIONAL | The TV channel or station the property carries, as an AdCOM 1.0 `Channel` object in AdCOM's keys and meanings. It SHOULD carry `domain`. Properties whose `tv_channel.domain` is the same carry the same channel, so a buyer can tell when two sellers offer it. Each seller assigns its own `id`, so `id` matches only within one seller"
+      },
+      {
+        "id": "key:5.2.4:PropertyOption.tv_network",
+        "kind": "key",
+        "text": "`tv_network` | OPTIONAL | The network that owns the property's channel, as an AdCOM 1.0 `Network` object in AdCOM's keys and meanings, matched by `domain` the same way"
+      },
+      {
         "id": "key:5.2.4:PropertyOption.venue_type",
         "kind": "key",
         "text": "`venue_type` | REQUIRED when `channel` is `dooh` | `taxonomy` is a value of AdCOM 1.0 List: DOOH Venue Taxonomies. `ids[]` holds exactly one id. It covers only itself, not its descendants. The values OpenRTB 2.6 `dooh.venuetypetax` and `dooh.venuetype` carry"
@@ -10992,6 +10955,11 @@
         "id": "key:5.6.4:ImpressionMultiplier.dataset",
         "kind": "key",
         "text": "`dataset` | REQUIRED | The source's named data release the multipliers come from. A new release is a new `dataset`"
+      },
+      {
+        "id": "key:5.6.4:ImpressionMultiplier.demographic",
+        "kind": "key",
+        "text": "`demographic` | OPTIONAL | The demographic whose value settles when `dataset` gives a value per demographic. The same kind of term as `cost_parameters.demographic` (§ 5.6.5)"
       },
       {
         "id": "key:5.6.4:ImpressionMultiplier.impression_type",
@@ -11794,14 +11762,34 @@
         "text": "A key table has the columns Key, Type, Required, and Meaning, and MAY add a last column that names a source standard."
       },
       {
-        "id": "rule:2.8:1a572833",
+        "id": "rule:2.8.5:d717d522",
         "kind": "statement",
-        "text": "A party that cannot verify a response MAY refuse to write its own entry (§ 4.1.2)"
+        "text": "A verifier MUST reject a `nonce` it has already seen from the same origin within the signature's lifetime, with `429`."
       },
       {
-        "id": "rule:2.8:2bb38cac",
+        "id": "rule:2.8.6:0f9375d8",
         "kind": "statement",
-        "text": "Signing is OPTIONAL: § 4.1.2 states what a signature shows, and `agreed` never depends on one."
+        "text": "A requester that can't verify a response MAY refuse to write its own entry (§ 4.1.2)."
+      },
+      {
+        "id": "rule:2.8.6:60100c34",
+        "kind": "statement",
+        "text": "On a `403` or `429`, a party SHOULD send `Accept-Signature` (RFC 9421 § 5.1) naming the components and parameters of § 2.8.2, and on a `503` it sends `Retry-After` instead."
+      },
+      {
+        "id": "rule:2.8.7:bb44896e",
+        "kind": "statement",
+        "text": "The private keys in its `keys.json` are public test keys: section 6.8 says they \"MUST NOT be used in production\", and a verifier SHOULD reject them."
+      },
+      {
+        "id": "rule:2.8:909151f9",
+        "kind": "statement",
+        "text": "A party MAY require a signature on the routes it serves."
+      },
+      {
+        "id": "rule:2.8:cc948a48",
+        "kind": "statement",
+        "text": "Signing is OPTIONAL in this specification: § 4.1.2 states what a signature shows, and `agreed` never depends on one."
       },
       {
         "id": "rule:2:ddbf85da",
@@ -12754,6 +12742,21 @@
         "text": "OPTIONAL"
       },
       {
+        "id": "rule:5.2.4:ae26d4ac-7",
+        "kind": "statement",
+        "text": "OPTIONAL"
+      },
+      {
+        "id": "rule:5.2.4:ae26d4ac-8",
+        "kind": "statement",
+        "text": "OPTIONAL"
+      },
+      {
+        "id": "rule:5.2.4:c122ccdd",
+        "kind": "statement",
+        "text": "It SHOULD carry `domain`."
+      },
+      {
         "id": "rule:5.2.4:c8e6720e",
         "kind": "statement",
         "text": "REQUIRED when `apps[]` is absent"
@@ -13109,9 +13112,19 @@
         "text": "The inspector MUST NOT request a destination or redirect that sends a production notification; it MAY use a separate inspection URL or the receiving service's documented test mode under the conditions below."
       },
       {
+        "id": "rule:5.4.1:725c4a7c",
+        "kind": "statement",
+        "text": "If the service cannot provide such a session, the creative MUST be inspected outside the stitched stream."
+      },
+      {
         "id": "rule:5.4.1:7adf48a7",
         "kind": "statement",
         "text": "An implementation performing inspection MUST NOT send any production notification."
+      },
+      {
+        "id": "rule:5.4.1:9a1bf7bd",
+        "kind": "statement",
+        "text": "A preview served through server-side ad insertion MUST use a session in which the insertion service sends no production notifications."
       },
       {
         "id": "rule:5.4.1:ef1a453e",
@@ -13677,6 +13690,11 @@
         "id": "rule:5.6.4:615bf228",
         "kind": "statement",
         "text": "REQUIRED when a property has `sync_groups[]`"
+      },
+      {
+        "id": "rule:5.6.4:ae26d4ac",
+        "kind": "statement",
+        "text": "OPTIONAL"
       },
       {
         "id": "rule:5.6.4:b6f5be4c",
@@ -14999,6 +15017,11 @@
         "text": "A name that isn't a noun keeps its form, such as `available[]`, `include[]`, `best_for[]`, and `all_of[]`."
       },
       {
+        "id": "sentence:2.7:0451130b",
+        "kind": "sentence",
+        "text": "Anyone who may read a line item reads its `min_rate` (§ 5.8), so on a `public` line item it is public."
+      },
+      {
         "id": "sentence:2.7:0a2ab4b6",
         "kind": "sentence",
         "text": "Agents that can spend read this object, and much of it is text the counterparty wrote: `description`, `media_kit_detail`, `best_for[]`, `not_suitable_for[]`, `seasonality_notes`, `approval`, `creative_policy`, `ext` values, a `FormatSpec`'s `spec`, a change request's `comments`, an error's `detail`, and the document behind a `DocumentRef`."
@@ -15007,6 +15030,11 @@
         "id": "sentence:2.7:0fe01aca",
         "kind": "sentence",
         "text": "A client uses `https`, bounds the size of a response and the number of redirects, and refuses an address inside its own network, on every redirect as well."
+      },
+      {
+        "id": "sentence:2.7:264120fd",
+        "kind": "sentence",
+        "text": "`pricing[].min_rate` shows a seller's negotiating position."
       },
       {
         "id": "sentence:2.7:63ef97de",
@@ -15029,9 +15057,234 @@
         "text": "`exclusions`, `buyer_supplied.segments[]`, and `buyer_supplied.suppression_list` show a buyer's strategy and can hold data about people."
       },
       {
+        "id": "sentence:2.7:a5a6458b",
+        "kind": "sentence",
+        "text": "A seller that treats its floor as confidential leaves `min_rate` off, or states it on a `named` line item."
+      },
+      {
         "id": "sentence:2.7:ded42f9e",
         "kind": "sentence",
         "text": "§ 5.5 states the disclosure rule for `exclusions`."
+      },
+      {
+        "id": "sentence:2.8.1:131debe6",
+        "kind": "sentence",
+        "text": "The origin's key directory is always at `https://<host>/.well-known/http-message-signatures-directory`."
+      },
+      {
+        "id": "sentence:2.8.1:180d2b81",
+        "kind": "sentence",
+        "text": "It ignores a member that carries parameters, and a request whose covered member it ignores gets `403`."
+      },
+      {
+        "id": "sentence:2.8.1:65217794",
+        "kind": "sentence",
+        "text": "A verifier selects a key by the pair of origin and `kid`, never by `kid` alone."
+      },
+      {
+        "id": "sentence:2.8.1:7ec86c38",
+        "kind": "sentence",
+        "text": "A verifier accepts a member value only when it is exactly that URL for some host, or exactly the origin `https://<host>`, the form of draft -00."
+      },
+      {
+        "id": "sentence:2.8.1:8d85c3e3",
+        "kind": "sentence",
+        "text": "It compares the value as a string, without normalizing it, and refuses any other value with `403`, including `http`, any port, an uppercase host, a trailing `/`, another path, a query, a fragment, and userinfo."
+      },
+      {
+        "id": "sentence:2.8.1:ac1cb74a",
+        "kind": "sentence",
+        "text": "An identity is an origin, `https://<host>`, and an application names it by its host, such as `buyer.example`."
+      },
+      {
+        "id": "sentence:2.8.1:c12e4dd3",
+        "kind": "sentence",
+        "text": "The signer sends that directory URL in the `Signature-Agent` member keyed to the signature's label, with no member parameters, and the signature covers the member as `\"signature-agent\";key=<label>`."
+      },
+      {
+        "id": "sentence:2.8.2:0ce0c8db",
+        "kind": "sentence",
+        "text": "`@authority` is that URL's authority."
+      },
+      {
+        "id": "sentence:2.8.2:8d453a2c",
+        "kind": "sentence",
+        "text": "`@target-uri` is the request URL as it travels on the wire: its WHATWG URL serialization, normalized as RFC 3986 § 6.2.2 describes (lowercase scheme and host, no default port, dot segments removed), without userinfo, a fragment, or an empty query, and with no other character encoded or decoded."
+      },
+      {
+        "id": "sentence:2.8.2:cf6fab93",
+        "kind": "sentence",
+        "text": "Nobody can replay it as the answer to another request, so a response carries no `nonce`."
+      },
+      {
+        "id": "sentence:2.8.2:fd94415a",
+        "kind": "sentence",
+        "text": "A responder's `Signature-Agent` names the origin of the host the request was sent to (§ 2.8.1), whatever the request URL's scheme and port."
+      },
+      {
+        "id": "sentence:2.8.3:0de19395",
+        "kind": "sentence",
+        "text": "A signer also sends `alg=\"ed25519\"`."
+      },
+      {
+        "id": "sentence:2.8.3:0ea425d8",
+        "kind": "sentence",
+        "text": "A verifier checks each signature with the key the directory provides, and rejects a directory in which an Ed25519 key doesn't sign, a signature whose `created` is more than the 60-second skew allowance in the future, or one whose `expires` has passed."
+      },
+      {
+        "id": "sentence:2.8.3:53f69938",
+        "kind": "sentence",
+        "text": "Each signing key is an Ed25519 key (`kty` `OKP`, `crv` `Ed25519`), and its `kid` is its JWK thumbprint (RFC 7638; RFC 8037 Appendix A.3)."
+      },
+      {
+        "id": "sentence:2.8.3:838d5bd8",
+        "kind": "sentence",
+        "text": "Each signature covers `\"@authority\";req` and `content-digest`, and carries `created`, `expires`, the key's thumbprint as `keyid`, and `tag=\"http-message-signatures-directory\"`."
+      },
+      {
+        "id": "sentence:2.8.3:924ce060",
+        "kind": "sentence",
+        "text": "A verifier fetches a directory over HTTPS only, follows no redirects, and asks for no content coding (`Accept-Encoding: identity`)."
+      },
+      {
+        "id": "sentence:2.8.3:a138a82f",
+        "kind": "sentence",
+        "text": "Covering the request's authority stops another domain from serving the key set again, so a directory server signs for its own configured authority, never for the `Host` a client sends."
+      },
+      {
+        "id": "sentence:2.8.3:a4687a55",
+        "kind": "sentence",
+        "text": "While a cached copy is less than 5 minutes old, a verifier answers an unknown `kid` from it without fetching again, so a client can't force a fetch with random key ids."
+      },
+      {
+        "id": "sentence:2.8.3:a46ece5b",
+        "kind": "sentence",
+        "text": "It treats as a failure any status other than `200`, another media type, a `Content-Encoding`, a body that isn't UTF-8 JSON, and a `Content-Digest` without `sha-256`."
+      },
+      {
+        "id": "sentence:2.8.3:b05b889a",
+        "kind": "sentence",
+        "text": "A party publishes the new key beside the old one and keeps signing with the old key until verifiers' cached copies can refresh (section 5.5.2): at least its directory response's `Cache-Control` `max-age`, since a CDN can serve the old copy that long, plus 5 minutes."
+      },
+      {
+        "id": "sentence:2.8.3:bebe2fc2",
+        "kind": "sentence",
+        "text": "After a failed fetch, a verifier doesn't fetch that origin's directory again for 60 seconds, and with no cached copy it answers `403` meanwhile (Appendix C.5)."
+      },
+      {
+        "id": "sentence:2.8.3:c4e9602c",
+        "kind": "sentence",
+        "text": "A fetched directory verifies until the earliest `expires` among its signatures, with no skew allowance."
+      },
+      {
+        "id": "sentence:2.8.3:ee683b3a",
+        "kind": "sentence",
+        "text": "A verifier accepts a signature without `alg`, as in Appendix E.2.3, and refuses any other value."
+      },
+      {
+        "id": "sentence:2.8.3:f9d8c7c5",
+        "kind": "sentence",
+        "text": "A key directory is a JWK Set served with the media type `application/http-message-signatures-directory+json` (section 5.5.1)."
+      },
+      {
+        "id": "sentence:2.8.4:345665bb",
+        "kind": "sentence",
+        "text": "Resolve `@authority` and `@target-uri` from the verifier's own configured authority, never from the request's `Host`, so a request signed for another server fails."
+      },
+      {
+        "id": "sentence:2.8.4:353405c3",
+        "kind": "sentence",
+        "text": "Verify the signature and `Content-Digest`."
+      },
+      {
+        "id": "sentence:2.8.4:4ae468cc",
+        "kind": "sentence",
+        "text": "If one fails, answer `403`."
+      },
+      {
+        "id": "sentence:2.8.4:4b39a491",
+        "kind": "sentence",
+        "text": "Parse `Signature`, `Signature-Input`, and `Signature-Agent` as Structured Field Dictionaries (RFC 9651 § 3.2)."
+      },
+      {
+        "id": "sentence:2.8.4:52dd2fa8",
+        "kind": "sentence",
+        "text": "If a check fails, answer `403`."
+      },
+      {
+        "id": "sentence:2.8.4:615ad845",
+        "kind": "sentence",
+        "text": "If one fails to parse, answer `400`."
+      },
+      {
+        "id": "sentence:2.8.4:771241e7",
+        "kind": "sentence",
+        "text": "Select the `web-bot-auth` member and the `Signature-Agent` member with its label."
+      },
+      {
+        "id": "sentence:2.8.4:a3f79a4d",
+        "kind": "sentence",
+        "text": "If either is missing or repeated, or the signature doesn't cover the member, answer `403`."
+      },
+      {
+        "id": "sentence:2.8.4:bc6b56cc",
+        "kind": "sentence",
+        "text": "For a request, check the `nonce` (§ 2.8.5)."
+      },
+      {
+        "id": "sentence:2.8.4:bd4a52e3",
+        "kind": "sentence",
+        "text": "What that origin may do is authorization (§ 1.2, § 5.8), and § 4.1.2 states when the signature attributes an `assent[]` entry to a party."
+      },
+      {
+        "id": "sentence:2.8.4:ced61d10",
+        "kind": "sentence",
+        "text": "If there is none, answer `403`."
+      },
+      {
+        "id": "sentence:2.8.4:d0259c60",
+        "kind": "sentence",
+        "text": "Resolve the origin's directory (§ 2.8.3), and select the key whose `kid` equals `keyid`."
+      },
+      {
+        "id": "sentence:2.8.4:e05ad9a0",
+        "kind": "sentence",
+        "text": "A verifier applies these steps to a message that carries `Signature-Input`:"
+      },
+      {
+        "id": "sentence:2.8.4:e1613972",
+        "kind": "sentence",
+        "text": "A message without `Signature-Input` is unsigned, whatever other signature fields it carries."
+      },
+      {
+        "id": "sentence:2.8.4:e341d14c",
+        "kind": "sentence",
+        "text": "So does a `Signature-Input` member that isn't an Inner List, a `Signature` member that isn't a Byte Sequence, and the legacy bare-String `Signature-Agent` of section 5.2.1, which this profile doesn't accept."
+      },
+      {
+        "id": "sentence:2.8.5:0f754399",
+        "kind": "sentence",
+        "text": "It keeps each `nonce` for the signature's remaining lifetime plus the 60-second skew allowance."
+      },
+      {
+        "id": "sentence:2.8.5:8963e64c",
+        "kind": "sentence",
+        "text": "A verifier that can't check and record the `nonce`, because its store is full or unavailable, answers `503` rather than accept the request (Appendix C.6)."
+      },
+      {
+        "id": "sentence:2.8.5:991bcaae",
+        "kind": "sentence",
+        "text": "`idempotency_key` keeps its role: a repeated `commit` gets the stored result (§ 5.6.1), and the signature covers it through `content-digest`."
+      },
+      {
+        "id": "sentence:2.8.6:679a5c7a",
+        "kind": "sentence",
+        "text": "These statuses answer the transport, before the request is read, so they carry no `errors[]` (§ 2.4)."
+      },
+      {
+        "id": "sentence:2.8:4fffaeb0",
+        "kind": "sentence",
+        "text": "It then refuses an unsigned request with `403` (§ 2.8.6)."
       },
       {
         "id": "sentence:2:6d07fde0",
@@ -16559,6 +16812,11 @@
         "text": "On a `dooh` line item, a play is one display of an ad on one screen, inside the screen's operating hours, that ends no more than `play_tolerance_ms` short of the ad's full duration and that the proof-of-play log records."
       },
       {
+        "id": "sentence:5.6.4:4cb2203c",
+        "kind": "sentence",
+        "text": "A play is inside a window, such as the operating hours, a `daypart` window or `commitment.flight`, when it starts inside it."
+      },
+      {
         "id": "sentence:5.6.4:6475cdc3",
         "kind": "sentence",
         "text": "The multiplier's source controls the count of impressions: `seller` when `source_type` is Publisher Provided (`2`) or `vendor` is the proposal's `seller.domain`, and `vendor` otherwise."
@@ -16634,6 +16892,11 @@
         "text": "`TIME`."
       },
       {
+        "id": "sentence:5.6.5:8a25cede",
+        "kind": "sentence",
+        "text": "The seller total is `derived_units` × `agreed_rate` plus those charges."
+      },
+      {
         "id": "sentence:5.6.5:8b8feaa4",
         "kind": "sentence",
         "text": "An entry's unit is the term in the `unit` column for its `cost_method`."
@@ -16654,11 +16917,6 @@
         "text": "Delivery is counted in the entry's unit, and each unit is worth `agreed_rate` ÷ rate per, with rate per as above."
       },
       {
-        "id": "sentence:5.6.5:bebb70ec",
-        "kind": "sentence",
-        "text": "`derived_units` is the whole `rate_unit`s elapsed from `commitment.flight.start` through `commitment.flight.end`, inclusive, and the seller total is `derived_units` × `agreed_rate` plus those charges."
-      },
-      {
         "id": "sentence:5.6.5:c41055d4",
         "kind": "sentence",
         "text": "Terms are upper case, like OpenDirect 2.1 `Line.ratetype`."
@@ -16677,6 +16935,11 @@
         "id": "sentence:5.6.5:d857cda3",
         "kind": "sentence",
         "text": "`FLAT`."
+      },
+      {
+        "id": "sentence:5.6.5:d956510e",
+        "kind": "sentence",
+        "text": "`derived_units` is the time from `commitment.flight.start` through `commitment.flight.end`, inclusive, in `rate_unit`s rounded to the nearest whole unit, half up, so a clock change inside the flight doesn't change it."
       },
       {
         "id": "sentence:5.6.5:dd8b2621",
@@ -17867,7 +18130,7 @@
       {
         "id": "appendix-b:requestable",
         "kind": "appendix_b",
-        "text": "`requestable` | 5 | The buyer MAY ask for a value outside the declared space. An ask changes the value only through a seller `grant` or `counter` (§ 4.3.1). A change on the seller's own initiative follows § 4.1.3.",
+        "text": "`requestable` | 6 | The buyer MAY ask for a value outside the declared space. An ask changes the value only through a seller `grant` or `counter` (§ 4.3.1). A change on the seller's own initiative follows § 4.1.3.",
         "was": "`requestable` | 3 | Buyer may ask outside the declared space. Requires seller assent."
       },
       {
@@ -17879,7 +18142,7 @@
       {
         "id": "appendix-b:seller-set",
         "kind": "appendix_b",
-        "text": "`seller-set` | 46 | The seller sets it and MAY revise it while the `status` of the object that carries it is `draft`, `published` or `under_review`. § 4.3.2 states what a revision does to a line item `under_review`. The buyer cannot change it directly.",
+        "text": "`seller-set` | 45 | The seller sets it and MAY revise it while the `status` of the object that carries it is `draft`, `published` or `under_review`. § 4.3.2 states what a revision does to a line item `under_review`. The buyer cannot change it directly.",
         "was": "`seller-set` | 29 | Seller sets and may revise while `draft` or `published`."
       },
       {
@@ -19667,6 +19930,18 @@
           "verdict": "open"
         },
         {
+          "id": "must_without_field:rule:2.8.5:d717d522",
+          "kind": "must_without_field",
+          "message": "A MUST statement in § 2.8.5 names no field or key: \"A verifier MUST reject a `nonce` it has already seen from the same origin within the signature's lifetime, with `429`.\"",
+          "verdict": "open"
+        },
+        {
+          "id": "must_without_field:rule:2.8.7:bb44896e",
+          "kind": "must_without_field",
+          "message": "A MUST NOT statement in § 2.8.7 names no field or key: \"The private keys in its `keys.json` are public test keys: section 6.8 says they \"MUST NOT be used in production\", and a verifier SHOULD reject them.\"",
+          "verdict": "open"
+        },
+        {
           "id": "must_without_field:rule:3:e1b586de",
           "kind": "must_without_field",
           "message": "A MUST NOT statement in § 3 names no field or key: \"The buyer MUST NOT alter the keys the seller declares beside them.\"",
@@ -19751,9 +20026,21 @@
           "verdict": "open"
         },
         {
+          "id": "must_without_field:rule:5.4.1:725c4a7c",
+          "kind": "must_without_field",
+          "message": "A MUST statement in § 5.4.1 names no field or key: \"If the service cannot provide such a session, the creative MUST be inspected outside the stitched stream.\"",
+          "verdict": "open"
+        },
+        {
           "id": "must_without_field:rule:5.4.1:7adf48a7",
           "kind": "must_without_field",
           "message": "A MUST NOT statement in § 5.4.1 names no field or key: \"An implementation performing inspection MUST NOT send any production notification.\"",
+          "verdict": "open"
+        },
+        {
+          "id": "must_without_field:rule:5.4.1:9a1bf7bd",
+          "kind": "must_without_field",
+          "message": "A MUST statement in § 5.4.1 names no field or key: \"A preview served through server-side ad insertion MUST use a session in which the insertion service sends no production notifications.\"",
           "verdict": "open"
         },
         {
@@ -19841,6 +20128,18 @@
           "verdict": "open"
         },
         {
+          "id": "unresolved_identifier:Accept-Encoding",
+          "kind": "unresolved_identifier",
+          "message": "`Accept-Encoding` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:Accept-Signature",
+          "kind": "unresolved_identifier",
+          "message": "`Accept-Signature` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
           "id": "unresolved_identifier:Account",
           "kind": "unresolved_identifier",
           "message": "`Account` resolves to no table row, key, or table-declared value.",
@@ -19901,6 +20200,12 @@
           "verdict": "open"
         },
         {
+          "id": "unresolved_identifier:Cache-Control",
+          "kind": "unresolved_identifier",
+          "message": "`Cache-Control` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
           "id": "unresolved_identifier:ChangeRequestLifecycle",
           "kind": "unresolved_identifier",
           "message": "`ChangeRequestLifecycle` resolves to no table row, key, or table-declared value.",
@@ -19934,6 +20239,12 @@
           "id": "unresolved_identifier:Content-Digest",
           "kind": "unresolved_identifier",
           "message": "`Content-Digest` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:Content-Encoding",
+          "kind": "unresolved_identifier",
+          "message": "`Content-Encoding` resolves to no table row, key, or table-declared value.",
           "verdict": "open"
         },
         {
@@ -20099,6 +20410,12 @@
           "verdict": "open"
         },
         {
+          "id": "unresolved_identifier:Host",
+          "kind": "unresolved_identifier",
+          "message": "`Host` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
           "id": "unresolved_identifier:INVENTORYPARTNERDOMAIN",
           "kind": "unresolved_identifier",
           "message": "`INVENTORYPARTNERDOMAIN` resolves to no table row, key, or table-declared value.",
@@ -20222,6 +20539,12 @@
           "id": "unresolved_identifier:Modeled",
           "kind": "unresolved_identifier",
           "message": "`Modeled` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:Network",
+          "kind": "unresolved_identifier",
+          "message": "`Network` resolves to no table row, key, or table-declared value.",
           "verdict": "open"
         },
         {
@@ -20363,9 +20686,27 @@
           "verdict": "open"
         },
         {
+          "id": "unresolved_identifier:Retry-After",
+          "kind": "unresolved_identifier",
+          "message": "`Retry-After` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:Signature",
+          "kind": "unresolved_identifier",
+          "message": "`Signature` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
           "id": "unresolved_identifier:Signature-Agent",
           "kind": "unresolved_identifier",
           "message": "`Signature-Agent` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:Signature-Input",
+          "kind": "unresolved_identifier",
+          "message": "`Signature-Input` resolves to no table row, key, or table-declared value.",
           "verdict": "open"
         },
         {
@@ -20531,6 +20872,12 @@
           "verdict": "open"
         },
         {
+          "id": "unresolved_identifier:alg",
+          "kind": "unresolved_identifier",
+          "message": "`alg` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
           "id": "unresolved_identifier:all_of[]",
           "kind": "unresolved_identifier",
           "message": "`all_of[]` resolves to no table row, key, or table-declared value.",
@@ -20594,6 +20941,12 @@
           "id": "unresolved_identifier:bookingstatus",
           "kind": "unresolved_identifier",
           "message": "`bookingstatus` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:buyer.example",
+          "kind": "unresolved_identifier",
+          "message": "`buyer.example` resolves to no table row, key, or table-declared value; no table defines `example`.",
           "verdict": "open"
         },
         {
@@ -20843,6 +21196,12 @@
           "verdict": "open"
         },
         {
+          "id": "unresolved_identifier:keys.json",
+          "kind": "unresolved_identifier",
+          "message": "`keys.json` resolves to no table row, key, or table-declared value; no table defines `keys`.",
+          "verdict": "open"
+        },
+        {
           "id": "unresolved_identifier:kid",
           "kind": "unresolved_identifier",
           "message": "`kid` resolves to no table row, key, or table-declared value.",
@@ -20864,6 +21223,12 @@
           "id": "unresolved_identifier:livestream",
           "kind": "unresolved_identifier",
           "message": "`livestream` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:max-age",
+          "kind": "unresolved_identifier",
+          "message": "`max-age` resolves to no table row, key, or table-declared value.",
           "verdict": "open"
         },
         {
@@ -21146,6 +21511,12 @@
           "id": "unresolved_identifier:voice",
           "kind": "unresolved_identifier",
           "message": "`voice` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:web-bot-auth",
+          "kind": "unresolved_identifier",
+          "message": "`web-bot-auth` resolves to no table row, key, or table-declared value.",
           "verdict": "open"
         },
         {
@@ -21506,33 +21877,33 @@
   },
   "format": 1,
   "lock": {
-    "blob": "179980bae43c78855432408cd6c6609109963d22",
-    "commit": "a4adff3efb85564d84a4439b27f554123feefd41",
+    "blob": "7ed55dbc2a60d112f1dc9fc342ee6b598d050e2b",
+    "commit": "43f4c723c3250091572fa31a3ab2f355f5d712df",
     "counts": {
       "decisions": 18,
       "elements.appendix_a": 98,
       "elements.appendix_b": 11,
-      "elements.code_block": 11,
-      "elements.concept": 44,
+      "elements.code_block": 12,
+      "elements.concept": 47,
       "elements.definition": 79,
       "elements.field": 98,
-      "elements.key": 324,
+      "elements.key": 327,
       "elements.marker": 11,
-      "elements.sentence": 601,
-      "elements.statement": 602,
+      "elements.sentence": 650,
+      "elements.statement": 612,
       "elements.value_list": 73,
       "findings.conditions": 51,
       "findings.examples": 0,
       "findings.round_trip": 0,
-      "findings.spec": 272,
-      "findings.spec_open": 271,
-      "properties": 517,
+      "findings.spec": 290,
+      "findings.spec_open": 289,
+      "properties": 520,
       "rules": 67,
-      "schema_files": 24,
+      "schema_files": 21,
       "statements.example": 12,
-      "statements.obligation": 175,
+      "statements.obligation": 182,
       "statements.rule": 53,
-      "statements.schema": 496,
+      "statements.schema": 499,
       "types.constructor": 7,
       "types.copy": 26,
       "types.document": 3,
@@ -21543,7 +21914,7 @@
       "types.union": 3,
       "types.vocabulary": 69
     },
-    "ir_sha256": "b1c86b1ea66d7dd3e197e6ee5e481f8658ff8e98381689c50148b5f9724624b5",
+    "ir_sha256": "3f115f762e5e25bf0fef347d9750fd760097223a20df541df45b8b515a1ddbe5",
     "lock": "with-our-stack"
   },
   "statements": {
@@ -22527,16 +22898,40 @@
         "text": "A key table has the columns Key, Type, Required, and Meaning, and MAY add a last column that names a source standard."
       },
       {
-        "ir": "rule:2.8:1a572833",
-        "level": "MAY",
+        "ir": "rule:2.8.5:d717d522",
+        "level": "MUST",
         "placed": "obligation implementation",
-        "text": "A party that cannot verify a response MAY refuse to write its own entry (§ 4.1.2)"
+        "text": "A verifier MUST reject a `nonce` it has already seen from the same origin within the signature's lifetime, with `429`."
       },
       {
-        "ir": "rule:2.8:2bb38cac",
+        "ir": "rule:2.8.6:0f9375d8",
+        "level": "MAY",
+        "placed": "obligation implementation",
+        "text": "A requester that can't verify a response MAY refuse to write its own entry (§ 4.1.2)."
+      },
+      {
+        "ir": "rule:2.8.6:60100c34",
+        "level": "SHOULD",
+        "placed": "obligation implementation",
+        "text": "On a `403` or `429`, a party SHOULD send `Accept-Signature` (RFC 9421 § 5.1) naming the components and parameters of § 2.8.2, and on a `503` it sends `Retry-After` instead."
+      },
+      {
+        "ir": "rule:2.8.7:bb44896e",
+        "level": "MUST NOT",
+        "placed": "obligation implementation",
+        "text": "The private keys in its `keys.json` are public test keys: section 6.8 says they \"MUST NOT be used in production\", and a verifier SHOULD reject them."
+      },
+      {
+        "ir": "rule:2.8:909151f9",
+        "level": "MAY",
+        "placed": "obligation implementation",
+        "text": "A party MAY require a signature on the routes it serves."
+      },
+      {
+        "ir": "rule:2.8:cc948a48",
         "level": "OPTIONAL",
         "placed": "obligation implementation",
-        "text": "Signing is OPTIONAL: § 4.1.2 states what a signature shows, and `agreed` never depends on one."
+        "text": "Signing is OPTIONAL in this specification: § 4.1.2 states what a signature shows, and `agreed` never depends on one."
       },
       {
         "ir": "rule:2:ddbf85da",
@@ -23679,6 +24074,24 @@
         "text": "OPTIONAL"
       },
       {
+        "ir": "rule:5.2.4:ae26d4ac-7",
+        "level": "OPTIONAL",
+        "placed": "schema PropertyOption",
+        "text": "OPTIONAL"
+      },
+      {
+        "ir": "rule:5.2.4:ae26d4ac-8",
+        "level": "OPTIONAL",
+        "placed": "schema PropertyOption",
+        "text": "OPTIONAL"
+      },
+      {
+        "ir": "rule:5.2.4:c122ccdd",
+        "level": "SHOULD",
+        "placed": "obligation seller",
+        "text": "It SHOULD carry `domain`."
+      },
+      {
         "ir": "rule:5.2.4:c8e6720e",
         "level": "REQUIRED",
         "placed": "rule PropertyOption",
@@ -24105,10 +24518,22 @@
         "text": "The inspector MUST NOT request a destination or redirect that sends a production notification; it MAY use a separate inspection URL or the receiving service's documented test mode under the conditions below."
       },
       {
+        "ir": "rule:5.4.1:725c4a7c",
+        "level": "MUST",
+        "placed": "obligation implementation",
+        "text": "If the service cannot provide such a session, the creative MUST be inspected outside the stitched stream."
+      },
+      {
         "ir": "rule:5.4.1:7adf48a7",
         "level": "MUST NOT",
         "placed": "obligation implementation",
         "text": "An implementation performing inspection MUST NOT send any production notification."
+      },
+      {
+        "ir": "rule:5.4.1:9a1bf7bd",
+        "level": "MUST",
+        "placed": "obligation implementation",
+        "text": "A preview served through server-side ad insertion MUST use a session in which the insertion service sends no production notifications."
       },
       {
         "ir": "rule:5.4.1:ef1a453e",
@@ -24787,6 +25212,12 @@
         "level": "REQUIRED",
         "placed": "rule DeliveryCounting",
         "text": "REQUIRED when a property has `sync_groups[]`"
+      },
+      {
+        "ir": "rule:5.6.4:ae26d4ac",
+        "level": "OPTIONAL",
+        "placed": "schema ImpressionMultiplier",
+        "text": "OPTIONAL"
       },
       {
         "ir": "rule:5.6.4:b6f5be4c",

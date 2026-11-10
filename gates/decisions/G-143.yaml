@@ -1,0 +1,23 @@
+format: 1
+id: G-143
+date: 2026-11-10
+question: What changes in the gates when the with-our-stack lock moves to the stack's head at `43f4c72`?
+decision: >-
+  The lock reads op30-packages at `43f4c72`, whose text adds two statements
+  to § 5.4.1, that a preview through server-side ad insertion uses a session
+  with no production notifications or is inspected outside the stitched
+  stream, both obligations of an implementation (D-057); rounds `TIME`'s
+  derived units half up in § 5.6.5, an informative sentence; and corrects
+  Appendix B's "What the distribution says" to the counts the field rows
+  give. The round trip's four recorded differences for that paragraph no
+  longer occur, so they are removed, and D-058 no longer asks for the
+  correction. The extractor's golden snapshot of the stack is the new
+  text's.
+rationale: >-
+  No check is weaker: the round trip now renders Appendix B's paragraph with
+  no difference, where it had four recorded ones, and the test suite's
+  golden snapshot holds the extraction of the new text. The other locks' IR
+  and outputs are unchanged by the lock move.
+accepts:
+  - { gate: npm-test, fingerprint: ea7a17b4fe8f0f971ac00a4207dbe2dd5b98fba974d96bdd0e277081090c0dc4 }
+  - { gate: round-trip, fingerprint: 153f0226bf0dc488e85eaf30f64a4d3e9441c9df25066f8e6ba714ad8fb1e9cf }

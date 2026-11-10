@@ -111,7 +111,7 @@ export const STAGE_ENTRIES: Readonly<Record<Stage, readonly string[]>> = {
   extract: ["ir"],
   model: ["mapping", "decisions", "kernel-binding.yaml"],
   schemas: ["vectors", "schemas", "rules"],
-  outputs: ["corpus", "type-examples", "comparison", "feedback", "variants", "examples", "releases", "roundtrip", "field-examples", "plain-generator", "enum-drift", "proto"],
+  outputs: ["corpus", "type-examples", "comparison", "feedback", "variants", "examples", "desk-tests", "releases", "roundtrip", "field-examples", "plain-generator", "enum-drift", "proto"],
 };
 
 /** A spec's SDK packages. Throws for a spec with no SDK types, whose profile names none. */

@@ -2,19 +2,19 @@
 
 /** The OpenProposal `publication` module's types. */
 import { z } from "zod";
-import { Instant, Interval, PlainInteger, PlainString, Url } from "./kernel.js";
+import { Instant, Interval, PlainString, SafeInteger, Url } from "./kernel.js";
 import { LineItemSummary, PackageSummary, ProposalSummaryParty } from "./representation.js";
 
 /** The `HoldLimits` object of the `publication` module. */
 export interface HoldLimits {
   /** Holds whose `status` is `held` for one advertiser, counted by the `commitment.advertisers[]` in each hold's `requested_terms`. A hold that names several advertisers counts once for each */
-  per_advertiser?: PlainInteger;
+  per_advertiser?: SafeInteger;
   /** Holds whose `status` is `held` on proposals issued to one `buyer.domain` */
-  per_buyer?: PlainInteger;
+  per_buyer?: SafeInteger;
 }
 export const HoldLimits: z.ZodType<HoldLimits> = z.strictObject({
-  per_advertiser: PlainInteger.optional(),
-  per_buyer: PlainInteger.optional(),
+  per_advertiser: SafeInteger.optional(),
+  per_buyer: SafeInteger.optional(),
 });
 
 /** The `ManifestEntry` object of the `publication` module. */
@@ -34,7 +34,7 @@ export interface ManifestEntry {
   /** The proposal's `seller`, projected to `domain` and `legal_name`. */
   seller: ProposalSummaryParty;
   /** Monotonically increasing revision number, starting at 1, held by the seller. Each version is a snapshot of the proposal's offered terms (§ 4.1.3). A version is frozen at the earliest of: the proposal's `status` leaving `draft`; a `negotiation_history[]` or `assent[]` entry naming it; a counterparty receiving it in any representation (§ 2.1). The offered terms of a frozen version MUST NOT change; a change to them creates version `n+1`. The values § 4.1.3 lists as not offered terms change without a new version */
-  version: PlainInteger;
+  version: SafeInteger;
 }
 export const ManifestEntry: z.ZodType<ManifestEntry> = z.strictObject({
   description: PlainString,
@@ -44,7 +44,7 @@ export const ManifestEntry: z.ZodType<ManifestEntry> = z.strictObject({
   packages: z.array(PackageSummary).optional(),
   proposal_id: PlainString,
   seller: ProposalSummaryParty,
-  version: PlainInteger,
+  version: SafeInteger,
 });
 
 /** The OpenProposal `ProposalManifest` document. */

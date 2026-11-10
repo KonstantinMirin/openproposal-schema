@@ -39,7 +39,7 @@ import { baseOf, schemaIdOf } from "./emit.ts";
 import { ORACLE_REQUIREMENTS, pinnedOracle } from "./engines.ts";
 import { materializeExamples } from "./fetch.ts";
 import type { SpecLock } from "./lock.ts";
-import { inScope, readYaml, retired, stands, type DecisionRecord } from "./mapping.ts";
+import { inScope, readYaml, retired, stands, type DecisionRecord, type TypeRef } from "./mapping.ts";
 import { exampleFilesOf } from "./mapping-rules.ts";
 import type { ModelDoc, ModelType } from "./model.ts";
 import { compileSchema } from "./pipeline.ts";
@@ -325,7 +325,7 @@ export function checkExamples(input: {
       const props = "properties" in doc ? doc.properties : {};
       for (const [k, v] of Object.entries(loaded.value)) {
         if (!(k in props)) failures.push({ example: ex.id, path: `/${escape(k)}`, kind: "undefined_key", value: v, message: `${ex.object} has no property "${k}"`, elements: [ex.ir] });
-        else targets.push({ at: `/${escape(k)}`, ref: `${docId}#/properties/${escape(k)}`, value: v, type: doc, property: k });
+        else targets.push({ at: `/${escape(k)}`, ref: `${docId.includes("#") ? docId : `${docId}#`}/properties/${escape(k)}`, value: v, type: doc, property: k });
       }
     }
     for (const t of targets) {
@@ -472,7 +472,26 @@ class Walker {
       elements.set(path, s);
     };
     if (type && property !== null && "properties" in type) note(at, type.properties[property]?.sources ?? []);
-    const visitNode = (key: string, node: unknown, x: unknown, path: string, flag: boolean, owner: ModelType | null): void => {
+    // A type the schema writes inline has no reference to name it, so the model says which it is: a property's, a list's
+    // item's, a map's value's, or a union branch's (type rules § 4).
+    const inlineNamed = (r: TypeRef | undefined): ModelType | null => {
+      const t = r?.kind === "named" ? this.byName.get(r.name) : undefined;
+      return t?.inline ? t : null;
+    };
+    const inlineIn = (owner: ModelType | null, k: string): { self?: ModelType | null; items?: ModelType | null; values?: ModelType | null } => {
+      const p = owner && "properties" in owner ? owner.properties[k] : undefined;
+      if (!p) return {};
+      if (p.type.kind === "named") return { self: inlineNamed(p.type) };
+      if (p.type.kind === "apply" && p.type.constructor === "List") return { items: inlineNamed(p.type.arguments.T) };
+      if (p.type.kind === "apply" && p.type.constructor === "Map") return { values: inlineNamed(p.type.arguments.V) };
+      return {};
+    };
+    const seen = (t: ModelType | null | undefined, path: string, flag: boolean) => {
+      if (!t) return;
+      note(path, t.sources);
+      if (flag && !instances.some((i) => i.path === path && i.type === t.name)) instances.push({ path, type: t.name });
+    };
+    const visitNode = (key: string, node: unknown, x: unknown, path: string, flag: boolean, owner: ModelType | null, inner: { items?: ModelType | null; values?: ModelType | null } = {}): void => {
       if (!isMap(node)) return;
       const [file] = key.split("#");
       if (typeof node.$ref === "string") {
@@ -488,7 +507,10 @@ class Walker {
         if (!Array.isArray(branches)) continue;
         branches.forEach((b, i) => {
           const bk = `${key}/${k}/${i}`;
-          visitNode(bk, b, x, path, flag && (this.validator(bk)(x) as boolean), null);
+          const ok = flag && (this.validator(bk)(x) as boolean);
+          const branch = owner?.kind === "union" ? inlineNamed(owner.any_of[i]) : null;
+          if (ok) seen(branch, path, ok);
+          visitNode(bk, b, x, path, ok, branch);
         });
       }
       if (isMap(x) && (node.type === "object" || isMap(node.properties))) {
@@ -502,13 +524,22 @@ class Walker {
             const row = owner?.kind === "copy" ? this.rowOf(owner, k) : [];
             note(p, row);
             if (Array.isArray(v)) v.forEach((_, i) => note(`${p}/${i}`, row));
-            visitNode(`${key}/properties/${escape(k)}`, props[k], v, p, flag, null);
-          } else if (isMap(node.additionalProperties)) visitNode(`${key}/additionalProperties`, node.additionalProperties, v, p, flag, null);
+            const c = inlineIn(owner, k);
+            seen(c.self, p, flag);
+            visitNode(`${key}/properties/${escape(k)}`, props[k], v, p, flag, c.self ?? null, c);
+          } else if (isMap(node.additionalProperties)) {
+            seen(inner.values, p, flag);
+            visitNode(`${key}/additionalProperties`, node.additionalProperties, v, p, flag, inner.values ?? null);
+          }
           // An object whose keys another definition sets, as the stack's `OpenObject`, leaves none undefined.
           else if (node.additionalProperties !== false && flag && !(owner?.kind === "object" && owner.foreign_keys)) undefinedKeys.push(p);
         }
       }
-      if (Array.isArray(x) && isMap(node.items)) x.forEach((v, i) => visitNode(`${key}/items`, node.items, v, `${path}/${i}`, flag, null));
+      if (Array.isArray(x) && isMap(node.items))
+        x.forEach((v, i) => {
+          seen(inner.items, `${path}/${i}`, flag);
+          visitNode(`${key}/items`, node.items, v, `${path}/${i}`, flag, inner.items ?? null);
+        });
       // A map's keys are values of its key type, so a key that type rejects rests on the type's elements, at the map.
       if (isMap(x) && isMap(node.propertyNames) && typeof node.propertyNames.$ref === "string") {
         const r = this.resolve(node.propertyNames.$ref, file!);

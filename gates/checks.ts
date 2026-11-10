@@ -1,7 +1,8 @@
 /** The gates that check the model against the specification's own forms: the round trip of its tables, and its examples. */
-import { join } from "node:path";
+import { basename, join } from "node:path";
 import type { EmittedFile } from "../src/emit.ts";
 import { checkExamples, checkFindings, checkUndecided, lockExamples, loadFindings, oracleAgrees, type ExampleCase, type FindingsFile, type Loaded, type ModelExample } from "../src/examples.ts";
+import { checkDeskTests, loadDeskTests, type DeskTestsInput } from "../src/desk-tests.ts";
 import type { SpecIR } from "../src/ir-types.ts";
 import type { SpecLock } from "../src/lock.ts";
 import type { DecisionRecord } from "../src/mapping.ts";
@@ -227,4 +228,80 @@ export const examplesOracle = defineGate<{ files: EmittedFile[]; cases: ExampleC
   code: ["src/examples.ts#oracleAgrees"],
   check: (i) => oracleAgrees(ROOT, i.files, i.cases),
   fixtures: [{ name: "a verdict the oracle doesn't reach", mutate: (i) => ({ ...i, cases: i.cases.map((c, n) => (n === 0 ? { ...c, valid: !c.valid } : c)) }), expect: /: Ajv says (valid|invalid), the oracle (valid|invalid)$/ }],
+});
+
+// Desk tests ----------------------------------------------------------------------
+
+export const deskTestsLoad = defineGate<{ file: string }>({
+  id: "desk-tests-load",
+  title: "desk tests: expected file schema-valid",
+  code: ["src/desk-tests.ts#loadDeskTests"],
+  check: (i) => {
+    const s = loadDeskTests(i.file);
+    return { problems: [], note: `${basename(s.dir)}: ${s.examples.length} payloads, ${s.findings.length} expected rejections, on lock "${s.lock}"` };
+  },
+  fixtures: [{ name: "a finding with no reason", mutate: () => ({ file: join(ROOT, "gates/data/desk-tests-load/expected.yaml") }), expect: "not a valid desk-tests file" }],
+});
+
+export const deskTests = defineGate<DeskTestsInput>({
+  id: "desk-tests",
+  title: (i) => `desk tests ${basename(i.set.dir)}: each payload gets its recorded verdict from the schemas and rules and from the lock's own checker`,
+  // The spec plugins' rule checks reach the check through its input, as for the examples gate; the checker's run is part of the input.
+  code: ["src/desk-tests.ts#checkDeskTests", "src/desk-tests.ts#runDeskChecker", "src/rule-checks.ts#CHECKS", "src/specs/index.ts#PLUGINS"],
+  exemptions: ["specs/*/desk-tests/*/expected.yaml"],
+  check: (i) => {
+    const r = checkDeskTests(i);
+    const rejected = new Set(i.set.findings.map((f) => f.example)).size;
+    return {
+      problems: r.problems,
+      note: `${i.set.examples.length} payloads: ${i.set.examples.length - rejected} clean and ${rejected} rejected, each at its recorded location, by the schemas and rules and by ${i.checker.label}; 0 mismatches; ${i.set.undecided.length} recorded undecided`,
+    };
+  },
+  fixtures: [
+    {
+      name: "an expected rejection removed",
+      mutate: (i) => ({ ...i, set: { ...i.set, findings: i.set.findings.filter((f) => f.example !== "dooh-v2-p9-demographic.yaml") } }),
+      expect: "dooh-v2-p9-demographic.yaml /delivery_counting/impression_multiplier/demographic (invalid): the schemas and rules on lock",
+    },
+    {
+      name: "a clean payload that now fails the schemas",
+      mutate: (i) => {
+        const at = i.payloads.get("dooh-v2-b-pg.yaml")!;
+        const payloads = new Map(i.payloads);
+        if (at.ok) payloads.set("dooh-v2-b-pg.yaml", { ok: true, value: { ...(at.value as Record<string, unknown>), route_note: "both" } });
+        return { ...i, payloads };
+      },
+      expect: "dooh-v2-b-pg.yaml /route_note (undefined_key): the schemas and rules",
+    },
+    {
+      name: "a payload the checker no longer rejects",
+      mutate: (i) => ({ ...i, checker: { ...i.checker, failures: i.checker.failures.filter((f) => f.example !== "dooh-v2-p11-c-no-multiplier.yaml") } }),
+      expect: "dooh-v2-p11-c-no-multiplier.yaml /delivery_counting: scripts/check_examples.py at",
+    },
+    {
+      name: "a clean payload the checker rejects",
+      mutate: (i) => ({ ...i, checker: { ...i.checker, failures: [...i.checker.failures, { example: "dooh-v2-c-both.yaml", path: "/pricing/0", message: "a changed verdict" }] } }),
+      expect: "dooh-v2-c-both.yaml /pricing/0: scripts/check_examples.py at",
+    },
+    {
+      name: "a rejection the checker reports elsewhere",
+      mutate: (i) => ({ ...i, checker: { ...i.checker, failures: i.checker.failures.map((f) => (f.example === "dooh-v2-p8-phases.yaml" ? { ...f, path: "/commitment" } : f)) } }),
+      expect: "dooh-v2-p8-phases.yaml /commitment/phases: scripts/check_examples.py at",
+    },
+    {
+      name: "a payload the expected file doesn't list",
+      mutate: (i) => ({ ...i, payloads: new Map([...i.payloads, ["extra.yaml", { ok: true, value: {} }]]) }),
+      expect: "extra.yaml is in the folder and isn't listed under examples",
+    },
+    {
+      name: "a recorded undecided check removed",
+      mutate: (i) => ({ ...i, set: { ...i.set, undecided: i.set.undecided.filter((u) => u.example !== "dooh-v2-a0-direct-12wk.yaml") } }),
+      expect: "dooh-v2-a0-direct-12wk.yaml / (rule:5.4:3a677601): undecided on lock",
+    },
+    {
+      name: "a checker run that failed",
+      mutate: (i) => ({ ...i, checker: { ...i.checker, problems: ["scripts/check_examples.py exited 2: Traceback"] } }),
+      expect: "exited 2",
+    },
+  ],
 });

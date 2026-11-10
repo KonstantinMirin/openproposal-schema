@@ -16,12 +16,13 @@ const EXCEPTION_FILES = `specs/*/${EXCEPTIONS}`;
 
 export const snapshot = defineGate<{ lock: SpecLock }>({
   id: "snapshot",
-  title: "snapshot holds the locked specification and examples/, so every gate runs without the clone",
+  title: "snapshot holds the locked specification, examples/, and pinned scripts, so every gate runs without the clone",
   code: ["src/fetch.ts#checkSnapshot"],
   check: (i) => checkSnapshot(i.lock),
   fixtures: [
     { name: "a blob the snapshot's specification isn't", mutate: (i) => ({ lock: { ...i.lock, blob: "0".repeat(40) } }), expect: `not the locked ${"0".repeat(40)}` },
     { name: "an example file the snapshot lacks", mutate: (i) => ({ lock: { ...i.lock, examples: { ...i.lock.examples, "examples/missing.yaml": "0".repeat(40) } } }), expect: "the snapshot has no examples/missing.yaml" },
+    { name: "a pinned script the snapshot lacks", mutate: (i) => ({ lock: { ...i.lock, scripts: { ...i.lock.scripts, "scripts/missing.py": "0".repeat(40) } } }), expect: "the snapshot has no scripts/missing.py" },
   ],
 });
 

@@ -30,7 +30,7 @@ import { Ajv2020 } from "ajv/dist/2020.js";
 import { installFormats } from "./formats.ts";
 import { canonicalJson } from "./canonical.ts";
 import { elementDigest, indexElements, type Element } from "./elements.ts";
-import { baseOf, type EmittedFile, schemaIdOf } from "./emit.ts";
+import { baseOf, type EmittedFile, inlineSchemaOf, schemaIdOf } from "./emit.ts";
 import type { SpecIR } from "./ir-types.ts";
 import { inScope, readYaml, type DecisionRecord, type TypeRef, stands, retired } from "./mapping.ts";
 import { compileSchema } from "./pipeline.ts";
@@ -429,10 +429,10 @@ export function checkRuleVectors(doc: RulesDoc, model: ModelDoc, files: EmittedF
     return [`Ajv doesn't load the schemas: ${(e as Error).message}`];
   }
   const types = new Map(model.types.map((t) => [t.name, t]));
-  const verdict = (schema: string, value: unknown): string | null => {
+  const verdict = (schema: string | Record<string, unknown>, value: unknown): string | null => {
     let validate;
     try {
-      validate = ajv.getSchema(schema);
+      validate = typeof schema === "string" ? ajv.getSchema(schema) : ajv.compile(schema);
     } catch (e) {
       return `Ajv doesn't compile ${schema}: ${(e as Error).message}`;
     }
@@ -440,13 +440,15 @@ export function checkRuleVectors(doc: RulesDoc, model: ModelDoc, files: EmittedF
     if (validate(value)) return null;
     return (validate.errors ?? []).slice(0, 3).map((x) => `${x.instancePath || "/"} ${x.message ?? ""}`).join(", ");
   };
-  const contextSchema = (key: string): string | null => {
+  // A type the schema writes inline is checked against the schema each use writes for it (type rules § 4).
+  const schemaOf = (named: ModelType): string | Record<string, unknown> | null => inlineSchemaOf(named) ?? schemaIdOf(named, schemaDir, baseOf(files, schemaDir));
+  const contextSchema = (key: string): string | Record<string, unknown> | null => {
     const [t, p] = key.split(".");
     const owner = types.get(t!);
     const prop = owner && "properties" in owner ? owner.properties[p!] : undefined;
     if (!prop || prop.type.kind !== "named") return null;
     const named = types.get(prop.type.name);
-    return named ? schemaIdOf(named, schemaDir, baseOf(files, schemaDir)) : null;
+    return named ? schemaOf(named) : null;
   };
   const propOf = (key: string) => {
     const [t, p] = key.split(".");
@@ -454,11 +456,11 @@ export function checkRuleVectors(doc: RulesDoc, model: ModelDoc, files: EmittedF
     return owner && "properties" in owner ? owner.properties[p!] : undefined;
   };
   /** The schema of each item of a context key's list, where its property is a list of a named type. */
-  const contextList = (key: string): string | null => {
+  const contextList = (key: string): string | Record<string, unknown> | null => {
     const prop = propOf(key);
     const item = prop?.type.kind === "apply" && prop.type.constructor === "List" ? prop.type.arguments.T : undefined;
     const named = item?.kind === "named" ? types.get(item.name) : undefined;
-    return named ? schemaIdOf(named, schemaDir, baseOf(files, schemaDir)) : null;
+    return named ? schemaOf(named) : null;
   };
   /** The schema of a context key's copy, where its property is a constructor's copy. */
   const contextCopy = (key: string): string | null => {

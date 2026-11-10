@@ -10,7 +10,7 @@ from pydantic import AfterValidator, BeforeValidator, Field, Strict
 from typing_extensions import TypeAliasType
 
 from . import _runtime as rt
-from .kernel import AppId, ClockWindow, DocumentRef, GeoCode, NamespacedTerm, PlainInteger, PlainString, RegistrableDomain, Selectable, Settable, SettableRange, TaxonomyCodes, TimeUnit
+from .kernel import AppId, ClockWindow, DocumentRef, GeoCode, NamespacedTerm, PlainString, RegistrableDomain, SafeInteger, Selectable, Settable, SettableRange, TaxonomyCodes, TimeUnit
 
 ExclusionTermsEnforcement = TypeAliasType("ExclusionTermsEnforcement", Literal["pre_serve", "best_effort"])
 """The `ExclusionTermsEnforcement` vocabulary: `pre_serve`, `best_effort`."""
@@ -60,7 +60,7 @@ class ExclusionTerms(rt.Closed):
 
     enforcement: ExclusionTermsEnforcement
     """`pre_serve` | `best_effort`"""
-    max_entries: Optional[PlainInteger] = None
+    max_entries: Optional[SafeInteger] = None
     """The most entries of this type the seller accepts"""
 
 
@@ -77,16 +77,16 @@ MarketsSelection = Selectable[GeoCode]
 """The copy `Selectable<T=GeoCode>`."""
 
 
-DeviceBounds = Settable[PlainInteger]
-"""The copy `Settable<T=PlainInteger>`."""
+DeviceBounds = Settable[SafeInteger]
+"""The copy `Settable<T=SafeInteger>`."""
 
 
 GeoBounds = Settable[GeoCode]
 """The copy `Settable<T=GeoCode>`."""
 
 
-CountSettableRange = SettableRange[PlainInteger]
-"""The copy `SettableRange<T=PlainInteger>`."""
+CountSettableRange = SettableRange[SafeInteger]
+"""The copy `SettableRange<T=SafeInteger>`."""
 
 
 ExclusionEntry = TypeAliasType("ExclusionEntry", Union[PlainString, AppId, TaxonomyCodes])
@@ -104,7 +104,7 @@ DaypartBounds = Settable[ClockWindow]
 class FrequencyCap(rt.Closed):
     """The `FrequencyCap` object of the `targeting` module."""
 
-    count: SettableRange[PlainInteger]
+    count: SettableRange[SafeInteger]
     """The cap. The buyer's `value` is the count, and `period` and `per` stay the seller's"""
     per: FrequencyCapPer
     """Who is capped. It matters: CTV typically caps at household, audio at listener. Core terms: `device` | `household` | `listener` | `screen`"""

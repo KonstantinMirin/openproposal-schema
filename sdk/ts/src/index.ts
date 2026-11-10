@@ -49,7 +49,7 @@ export const LOCK = "main";
 export const VARIANT = "as-written";
 
 /** The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it. */
-export const SCHEMA_RELEASE = "d1fb2d22266e15e2384156622b8563ffbcc296ab8739b355730d96c909243138";
+export const SCHEMA_RELEASE = "4bd12edee211eb2666b908a3b0eb379b6230981e6733fb87331ded2380246424";
 
 /** A constructor's schema function, applied to its arguments' schemas. */
 export type Template = (...args: z.ZodType[]) => z.ZodType;

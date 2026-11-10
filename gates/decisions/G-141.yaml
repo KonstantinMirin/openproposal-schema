@@ -1,0 +1,65 @@
+format: 1
+id: G-141
+date: 2026-11-09
+question: How do the schema files layer, so that no reference runs sideways within the kernel, between modules, or between documents?
+decision: >-
+  Three tiers, and the layer gate fails a sideways reference (type rules § 3,
+  src/placement.ts). The model places each type it emits (`home`): a
+  document, a profile, an object a profile projects, an object that includes
+  a profile or holds a document, and a type that holds another module's
+  object, union, or copy compose, and so does every type that references one
+  of them; they go to `documents/1/composition.json`, once each. A copy goes
+  with the types it is built from, or with the one module that uses it, or
+  the kernel when several do. A module's scalar that another module or the
+  kernel uses moves to the kernel. Each document's or profile's file is a
+  root, a `$ref` to its definition in the composition and nothing else, so no
+  document references another and the line item a proposal and a package
+  hold is defined once. The convention-layers gate adds, beside its layer and
+  cycle checks: inside the kernel, a primitive references at most a
+  primitive that stands alone and a composite only primitives; a module
+  references only the kernel and itself; nothing below the top tier
+  references the composition; and every emitted type has a home. The output
+  gate fails a root file that references anything but its document's
+  definition. A type's `module` stays the module that owns its section, so the
+  module gates and the SDK packages are as they were. The fidelity fixtures
+  and the tests read a document's definition through its root.
+rationale: >-
+  The new checks only add failures, each with a fixture: a module's object
+  that references another module's object, a kernel part that references
+  another part, a kernel primitive that references a part, a module's object
+  that references the composition, a type with no home, and a document root
+  that references another document. Measured on with-our-stack, the kernel's
+  42 internal references fall to 28, all from a composite to a primitive, and
+  module-to-module references fall from 13 edges to none, and
+  document-to-document from 9 edges to none; main and the open PRs lose their
+  module-to-module edges too. Every example and vector keeps its verdict.
+accepts:
+  - { gate: comparison, fingerprint: 29e597162e068f421d991752f6a47f2af9cf7481fedd28d2c39abb9f2f11a9ff }
+  - { gate: convention-beside-reference, fingerprint: 9f18b2243b8a1b4b453f9d863d7b26f9c459062df2369e4a3a6369240f277d0f }
+  - { gate: convention-keywords, fingerprint: 762433fad3b339bdb4ebca76114df8d27e28bab19f063452299f5e5276d05a2d }
+  - { gate: convention-layers, fingerprint: 399227a895b0cd1c7dca75a6249a31354ef18ba713731136eca12e8e31710aa6 }
+  - { gate: convention-lists, fingerprint: a483594f98b95908227ba6d254cb8bd1009e6db494646f7f71216d45a7c45f15 }
+  - { gate: convention-modules, fingerprint: 8532035f7371304ce0ef97d96e69c71ffef9619b1fe27a2b6c582f95150911d2 }
+  - { gate: convention-unions, fingerprint: 0613ccfcbc49ab6ccae3103567659a5a6f73d8cc79add3e93d59c50034c3fd18 }
+  - { gate: enum-drift-sources, fingerprint: a6ac66ab5b239cdbe6b60027389294ec0d2b04153e0fd64df71697ef3066f04f }
+  - { gate: examples-listing, fingerprint: ffb15bf3d2fcf10955cdf7bc5ec0c568ea6cab27dd3d620535eae37176190eb7 }
+  - { gate: extraction, fingerprint: 2b9334791e1305d4c5c5625d15da2f4945ebe4045592a74256e12009852eecf4 }
+  - { gate: feedback, fingerprint: bcdb26551de48d4372e95ccb5e603061ad2d3d3ba8b73c3c0398d19d89235cdc }
+  - { gate: fidelity, fingerprint: a9267eda3f7bfae35d89319e61be6b1dce586cc95c652c745e65046f5df001cf }
+  - { gate: frozen-releases, fingerprint: f0a2235831731bccbae7ada0dcf8330ed0ac1e824eae1902b44b0b1f20e96cce }
+  - { gate: frozen-reviewed, fingerprint: ba33c86fae64d984c3da9f271abb0df81b70f5e87b430aef1c8796699cf30977 }
+  - { gate: guard, fingerprint: c473671543114427a402326e500ed883467e7cac5c15e7bd6b87dc0ba5a3cccd }
+  - { gate: modules-depends, fingerprint: d68eedd68cdcde8f6786031de4a9e4ace9ed1bd7a3bee99b4c3f6640196eb7d4 }
+  - { gate: record-wording, fingerprint: 236a20e14b6365c8709855f698bb3338900773130306fb39c4abbbf6a446dd2f }
+  - { gate: registry-agreement, fingerprint: 3798a2310e30c2dcbd9987d844f3c77a52a67762c27009440d7a2b0652240d52 }
+  - { gate: release-breaking, fingerprint: 7dc48f1f4f202fba2873aee2379256a125a97511fb6066f3d43e365f0173ea5f }
+  - { gate: release-builds, fingerprint: 00a3ed7e6e3e47b3120d362de16e144d48ad7d3f7f95f7c48e8bf61ab301f6a2 }
+  - { gate: release-digests, fingerprint: 72e7da08183cf9b716adc8242e7c1bc2a6cfccbdcdde4df50e8be16fe28a0fe3 }
+  - { gate: round-trip, fingerprint: 91fc0206a9701db8b3f83489d3cf31932cf056ed4020c2ea8cfad09c4b6ecd3b }
+  - { gate: rule-checks, fingerprint: c8b7322a476143a148ed6e931853b84673ca83d38a47bebe90da38d75d5e6459 }
+  - { gate: schemas-conventions, fingerprint: e57ff13030b78cc9994830eaca2c817ff13014b81e3dcf3a53c730606aa17583 }
+  - { gate: schemas-emit, fingerprint: 047d2c63d935626de2086904979cdc6f59b5cc8ac7494a8d90eaaf41a2a6c913 }
+  - { gate: site-builds, fingerprint: 0699679e12b7b4e74fb4e2398ee080783abd4de806406ef819a040b628f57665 }
+  - { gate: spec-profile, fingerprint: 41e60586b6d344f2c9382778bccca59dcd349d97867a21f3822abb251595f48b }
+  - { gate: variant-diff, fingerprint: fc71191d36d23ea23cd430d5ae4cb5ef010f35e192a688c1dc6d89b990939d53 }
+  - { gate: variant-examples, fingerprint: aadef8a61194a681f06ffc4d5444dec58b294de9e9b467593adccc5e74b15551 }

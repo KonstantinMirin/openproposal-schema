@@ -63,7 +63,7 @@
 import { posix } from "node:path";
 import { canonicalJson } from "./canonical.ts";
 import { baselines, partSeeds, Validators } from "./corpus.ts";
-import { baseOf, type EmittedFile, schemaIdOf } from "./emit.ts";
+import { baseOf, type EmittedFile, inlinedFrom, inlinedKeys, schemaIdOf } from "./emit.ts";
 import { instanceChecker, type InstanceCheck, type Loaded, type ModelExample } from "./examples.ts";
 import { fieldKey, fieldLocations, type FieldExample } from "./field-examples.ts";
 import type { Kernel } from "./kernel.ts";
@@ -371,6 +371,9 @@ export function generateTypeExamples(input: TypeExamplesInput): { doc: TypeExamp
     const given = fromSpec(at, n, from);
     if (given !== undefined) return given;
     if (typeof node.$ref === "string") return fullType(locationOf(new URL(node.$ref, file).href), stack, n).value;
+    // A primitive the schema writes inline shows its showcase value, as a reference to it would (type rules § 4).
+    const inlined = inlinedFrom.get(node);
+    if (inlined !== undefined && showcases.has(inlined)) return structuredClone(showcaseOf(inlined, at, n));
     for (const k of ["anyOf", "oneOf"] as const) {
       if (Array.isArray(node[k])) {
         const branch = node[k][0];
@@ -420,7 +423,8 @@ export function generateTypeExamples(input: TypeExamplesInput): { doc: TypeExamp
     }
     // A map: one key, a value of the key type, with one value.
     if (Object.keys(props).length === 0 && isMap(node.additionalProperties)) {
-      const key = isMap(node.propertyNames) ? fullNode(node.propertyNames, file, `${at}/propertyNames`, stack, n) : "key";
+      const keyType = inlinedKeys.get(node);
+      const key = isMap(node.propertyNames) ? fullNode(node.propertyNames, file, `${at}/propertyNames`, stack, n) : keyType !== undefined && showcases.has(keyType) ? showcaseOf(keyType, `${at}/additionalProperties`, n) : "key";
       out[String(key)] = fullNode(node.additionalProperties, file, `${at}/additionalProperties`, stack, n);
     }
     // The condition that holds, along the chain of `else`, narrows the members its `then` types; a member's value the specification gives
@@ -488,6 +492,9 @@ export function generateTypeExamples(input: TypeExamplesInput): { doc: TypeExamp
       if (isScalar(x) && (t?.kind === "primitive" || (t?.kind === "vocabulary" && termsOf(t, target).length > 0))) return fullType(target, [], 0).value;
       return shown(target, x, false);
     }
+    // A primitive the schema writes inline shows its showcase value, as a reference to it would (type rules § 4).
+    const inlined = inlinedFrom.get(node);
+    if (isScalar(x) && inlined !== undefined && showcases.has(inlined)) return structuredClone(showcaseOf(inlined, loc, 0));
     for (const k of ["anyOf", "oneOf"] as const) {
       if (!Array.isArray(node[k])) continue;
       const i = node[k].findIndex((_, i) => v.valid(`${loc}/${k}/${i}`, x));

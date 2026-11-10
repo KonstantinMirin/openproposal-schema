@@ -3,7 +3,7 @@
 /** The OpenProposal `targeting` module's types. */
 import { z } from "zod";
 import * as rt from "./runtime.js";
-import { AppId, ClockWindow, DocumentRef, GeoCode, NamespacedTerm, PlainInteger, PlainString, RegistrableDomain, Selectable, Settable, SettableRange, TaxonomyCodes, TimeUnit } from "./kernel.js";
+import { AppId, ClockWindow, DocumentRef, GeoCode, NamespacedTerm, PlainString, RegistrableDomain, SafeInteger, Selectable, Settable, SettableRange, TaxonomyCodes, TimeUnit } from "./kernel.js";
 
 /** The `ExclusionTermsEnforcement` vocabulary: `pre_serve`, `best_effort`. */
 export type ExclusionTermsEnforcement = "pre_serve" | "best_effort";
@@ -44,11 +44,11 @@ export interface ExclusionTerms {
   /** `pre_serve` | `best_effort` */
   enforcement: ExclusionTermsEnforcement;
   /** The most entries of this type the seller accepts */
-  max_entries?: PlainInteger;
+  max_entries?: SafeInteger;
 }
 export const ExclusionTerms: z.ZodType<ExclusionTerms> = z.strictObject({
   enforcement: ExclusionTermsEnforcement,
-  max_entries: PlainInteger.optional(),
+  max_entries: SafeInteger.optional(),
 });
 
 /** The `AcceptedExclusions` object of the `targeting` module. */
@@ -67,17 +67,17 @@ export const AcceptedExclusions: z.ZodType<AcceptedExclusions> = z.strictObject(
 export type MarketsSelection = Selectable<GeoCode>;
 export const MarketsSelection: z.ZodType<MarketsSelection> = Selectable(GeoCode);
 
-/** The copy `Settable<T=PlainInteger>`. */
-export type DeviceBounds = Settable<PlainInteger>;
-export const DeviceBounds: z.ZodType<DeviceBounds> = Settable(PlainInteger);
+/** The copy `Settable<T=SafeInteger>`. */
+export type DeviceBounds = Settable<SafeInteger>;
+export const DeviceBounds: z.ZodType<DeviceBounds> = Settable(SafeInteger);
 
 /** The copy `Settable<T=GeoCode>`. */
 export type GeoBounds = Settable<GeoCode>;
 export const GeoBounds: z.ZodType<GeoBounds> = Settable(GeoCode);
 
-/** The copy `SettableRange<T=PlainInteger>`. */
-export type CountSettableRange = SettableRange<PlainInteger>;
-export const CountSettableRange: z.ZodType<CountSettableRange> = SettableRange(PlainInteger);
+/** The copy `SettableRange<T=SafeInteger>`. */
+export type CountSettableRange = SettableRange<SafeInteger>;
+export const CountSettableRange: z.ZodType<CountSettableRange> = SettableRange(SafeInteger);
 
 /** The `ExclusionEntry` union: a value of any one of its branches. */
 export type ExclusionEntry = PlainString | AppId | TaxonomyCodes;
@@ -94,7 +94,7 @@ export const DaypartBounds: z.ZodType<DaypartBounds> = Settable(ClockWindow);
 /** The `FrequencyCap` object of the `targeting` module. */
 export interface FrequencyCap {
   /** The cap. The buyer's `value` is the count, and `period` and `per` stay the seller's */
-  count: SettableRange<PlainInteger>;
+  count: SettableRange<SafeInteger>;
   /** Who is capped. It matters: CTV typically caps at household, audio at listener. Core terms: `device` | `household` | `listener` | `screen` */
   per: FrequencyCapPer;
   /** The bucket the count runs over */

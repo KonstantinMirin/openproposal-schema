@@ -13,7 +13,7 @@ from . import _runtime as rt
 from .commercial import AssentEntry, CancellationNotice, CommitmentAmountBasis, CommitmentBounds
 from .creative import MaterialsDue
 from .guarantees import CommittedMetric
-from .kernel import Amount, ApprovalStatus, Domain, FieldPointer, Instant, Interval, OpenObject, Party, PlainInteger, PlainNumber, PlainString, ProposalStatus, Range, Side, VersionRef
+from .kernel import Amount, ApprovalStatus, Domain, FieldPointer, Instant, Interval, OpenObject, Party, PlainNumber, PlainString, ProposalStatus, Range, SafeInteger, Side, VersionRef
 from .line_item import LineItem
 
 HistoryEntryAction = TypeAliasType("HistoryEntryAction", Literal["published", "requested", "granted", "countered", "declined", "withdrawn"])
@@ -57,8 +57,8 @@ class ProposalTypes:
     CUSTOM: Final = "custom"
 
 
-RequestedUnitBoundsRange = Range[PlainInteger]
-"""The copy `Range<T=PlainInteger>`."""
+RequestedUnitBoundsRange = Range[SafeInteger]
+"""The copy `Range<T=SafeInteger>`."""
 
 
 class RequestedValue(rt.Closed):
@@ -72,7 +72,7 @@ class RequestedValue(rt.Closed):
     """A `pricing[].list_rate`"""
     materials_due: Optional[MaterialsDue] = None
     """The line item's `materials_due`"""
-    unit_bounds: Optional[Range[PlainInteger]] = None
+    unit_bounds: Optional[Range[SafeInteger]] = None
     """A `pricing[].unit_bounds`"""
 
 
@@ -98,7 +98,7 @@ class HistoryEntry(rt.Closed):
     """When the side acted"""
     paths: list[HistoryPath]
     """The fields the act changed or asked about. MAY be empty"""
-    version: PlainInteger
+    version: SafeInteger
     """The version the act created or refers to (§ 4.1.3)"""
 
 
@@ -195,5 +195,5 @@ class Proposal(rt.Closed):
     """Computed from the line items (§ 4.3.3)"""
     type: ProposalType
     """`standard` | `custom`"""
-    version: PlainInteger
+    version: SafeInteger
     """Monotonically increasing revision number, starting at 1, held by the seller. Each version is a snapshot of the proposal's offered terms (§ 4.1.3). A version is frozen at the earliest of: the proposal's `status` leaving `draft`; a `negotiation_history[]` or `assent[]` entry naming it; a counterparty receiving it in any representation (§ 2.1). The offered terms of a frozen version MUST NOT change; a change to them creates version `n+1`. The values § 4.1.3 lists as not offered terms change without a new version"""

@@ -1,9 +1,5 @@
 {
   "$defs": {
-    "Approval": {
-      "description": "The seller's creative review SLA and revision policy. The specification states no members, so the object accepts any.",
-      "type": "object"
-    },
     "AssetApprovalStatus": {
       "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm",
       "description": "No core terms are listed yet, so every term is namespaced."
@@ -24,7 +20,7 @@
           "$ref": "../../../kernel/1/kernel.json#/$defs/Timestamp"
         },
         "url_or_tag": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+          "type": "string"
         }
       },
       "type": "object"
@@ -124,7 +120,7 @@
           "$ref": "../../../kernel/1/kernel.json#/$defs/Amount"
         },
         "custom_unit": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+          "type": "string"
         },
         "id": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/Uuid",
@@ -174,14 +170,6 @@
         "available",
         "included"
       ],
-      "type": "object"
-    },
-    "Specs": {
-      "description": "A format's specs, as the referenced format registry entry defines them; the specification hardcodes no shape per channel, so the object accepts any member.",
-      "type": "object"
-    },
-    "ThirdPartyTags": {
-      "description": "The third-party tag wrapper types and VAST versions the seller accepts. The specification states no members, so the object accepts any.",
       "type": "object"
     }
   },

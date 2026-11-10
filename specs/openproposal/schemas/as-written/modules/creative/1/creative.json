@@ -1,9 +1,5 @@
 {
   "$defs": {
-    "Approval": {
-      "description": "The seller's creative review SLA and revision policy. The specification states no members, so the object accepts any.",
-      "type": "object"
-    },
     "AssetsEntry": {
       "additionalProperties": false,
       "properties": {
@@ -11,7 +7,7 @@
           "$ref": "../../../kernel/1/kernel.json#/$defs/BareTerm"
         },
         "asset_id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
+          "type": "string"
         },
         "format_ref": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/FormatId"
@@ -20,7 +16,7 @@
           "$ref": "../../../kernel/1/kernel.json#/$defs/Timestamp"
         },
         "url_or_tag": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+          "type": "string"
         }
       },
       "type": "object"
@@ -116,10 +112,10 @@
           "$ref": "../../../kernel/1/kernel.json#/$defs/Amount"
         },
         "custom_unit": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+          "type": "string"
         },
         "lead_time": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+          "type": "string"
         }
       },
       "type": "object"
@@ -137,7 +133,7 @@
         "included": {
           "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the identity the seller mints for it.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
+            "type": "string"
           },
           "type": "array"
         },
@@ -149,9 +145,6 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
           },
           "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the identity the seller mints for it.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
-          },
           "type": "object"
         }
       },
@@ -159,14 +152,6 @@
         "available",
         "included"
       ],
-      "type": "object"
-    },
-    "Specs": {
-      "description": "A format's specs, as the referenced format registry entry defines them; the specification hardcodes no shape per channel, so the object accepts any member.",
-      "type": "object"
-    },
-    "ThirdPartyTags": {
-      "description": "The third-party tag wrapper types and VAST versions the seller accepts. The specification states no members, so the object accepts any.",
       "type": "object"
     }
   },

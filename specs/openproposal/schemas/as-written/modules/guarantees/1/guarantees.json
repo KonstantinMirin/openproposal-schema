@@ -63,10 +63,10 @@
           "$ref": "../../../kernel/1/kernel.json#/$defs/BareTerm"
         },
         "qualifier": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+          "type": "string"
         },
         "vendor": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          "type": "string"
         }
       },
       "type": "object"
@@ -84,7 +84,7 @@
         "included": {
           "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the identity the seller mints for it.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
+            "type": "string"
           },
           "type": "array"
         },
@@ -96,9 +96,6 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
           },
           "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the identity the seller mints for it.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
-          },
           "type": "object"
         }
       },
@@ -174,7 +171,7 @@
         "included": {
           "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the identity the seller mints for it.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
+            "type": "string"
           },
           "type": "array"
         },
@@ -186,9 +183,6 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
           },
           "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the identity the seller mints for it.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
-          },
           "type": "object"
         }
       },

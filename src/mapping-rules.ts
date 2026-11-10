@@ -242,7 +242,7 @@ const kernelNames = (ctx: RuleContext): Map<string, string> => {
 };
 
 /** The scalar names the stack's § 2.6 Type cells use, and the plain kernel type each takes where the row gives no other form. */
-const PLAIN: Readonly<Record<string, string>> = { String: "PlainString", Integer: "PlainInteger", Number: "PlainNumber", Object: "OpenObject" };
+const PLAIN: Readonly<Record<string, string>> = { String: "PlainString", Integer: "SafeInteger", Number: "PlainNumber", Object: "OpenObject" };
 
 /** The names the in-scope declarations of the lock define, as the vocabularies and unions a decision gives. */
 const declaredNames = (ctx: RuleContext): Set<string> => new Set((ctx.declared ?? []).map((d) => d.name));

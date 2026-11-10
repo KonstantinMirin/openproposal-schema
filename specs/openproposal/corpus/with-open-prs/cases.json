@@ -146,6 +146,38 @@
       "type": "AgreementRef"
     },
     {
+      "at": "/properties/agreement_id",
+      "baseline": {
+        "agreement_id": "seat-99812"
+      },
+      "id": "AgreementRef#/properties/agreement_id/type",
+      "keyword": "type",
+      "mutant": {
+        "agreement_id": 0
+      },
+      "path": "/agreement_id",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/settlement/1/settlement.json#/$defs/AgreementRef",
+      "type": "AgreementRef"
+    },
+    {
+      "at": "/properties/parties/items",
+      "baseline": {
+        "parties": [
+          "seat-99812"
+        ]
+      },
+      "id": "AgreementRef#/properties/parties/items/type",
+      "keyword": "type",
+      "mutant": {
+        "parties": [
+          0
+        ]
+      },
+      "path": "/parties/0",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/settlement/1/settlement.json#/$defs/AgreementRef",
+      "type": "AgreementRef"
+    },
+    {
       "at": "/properties/parties",
       "baseline": {
         "parties": []
@@ -218,6 +250,22 @@
       "type": "AppBundleEntry"
     },
     {
+      "at": "/properties/bundle",
+      "baseline": {
+        "bundle": "seat-99812",
+        "platform": "ios"
+      },
+      "id": "AppBundleEntry#/properties/bundle/type",
+      "keyword": "type",
+      "mutant": {
+        "bundle": 0,
+        "platform": "ios"
+      },
+      "path": "/bundle",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/AppBundleEntry",
+      "type": "AppBundleEntry"
+    },
+    {
       "at": "",
       "baseline": {
         "bundle": "seat-99812",
@@ -264,16 +312,6 @@
     },
     {
       "at": "",
-      "baseline": {},
-      "id": "Approval#/type",
-      "keyword": "type",
-      "mutant": "",
-      "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/Approval",
-      "type": "Approval"
-    },
-    {
-      "at": "",
       "baseline": {
         "bundle": "seat-99812",
         "platform": "ios"
@@ -286,6 +324,22 @@
         "undefined_member": true
       },
       "path": "",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/AppsEntry",
+      "type": "AppsEntry"
+    },
+    {
+      "at": "/properties/bundle",
+      "baseline": {
+        "bundle": "seat-99812",
+        "platform": "ios"
+      },
+      "id": "AppsEntry#/properties/bundle/type",
+      "keyword": "type",
+      "mutant": {
+        "bundle": 0,
+        "platform": "ios"
+      },
+      "path": "/bundle",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/AppsEntry",
       "type": "AppsEntry"
     },
@@ -337,22 +391,26 @@
     {
       "at": "",
       "baseline": {},
-      "id": "Assent#/type",
-      "keyword": "type",
-      "mutant": "",
-      "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/proposal/1/proposal.json#/$defs/Assent",
-      "type": "Assent"
-    },
-    {
-      "at": "",
-      "baseline": {},
       "id": "AssetsEntry#/additionalProperties",
       "keyword": "additionalProperties",
       "mutant": {
         "undefined_member": true
       },
       "path": "",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/AssetsEntry",
+      "type": "AssetsEntry"
+    },
+    {
+      "at": "/properties/url_or_tag",
+      "baseline": {
+        "url_or_tag": "Prose, not a name."
+      },
+      "id": "AssetsEntry#/properties/url_or_tag/type",
+      "keyword": "type",
+      "mutant": {
+        "url_or_tag": 0
+      },
+      "path": "/url_or_tag",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/AssetsEntry",
       "type": "AssetsEntry"
     },
@@ -378,6 +436,38 @@
         "undefined_member": true
       },
       "path": "",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json#/$defs/AudiencesOption",
+      "type": "AudiencesOption"
+    },
+    {
+      "at": "/properties/name",
+      "baseline": {
+        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "name": "Prose, not a name."
+      },
+      "id": "AudiencesOption#/properties/name/type",
+      "keyword": "type",
+      "mutant": {
+        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "name": 0
+      },
+      "path": "/name",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json#/$defs/AudiencesOption",
+      "type": "AudiencesOption"
+    },
+    {
+      "at": "/properties/taxonomy_ref",
+      "baseline": {
+        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "taxonomy_ref": "seat-99812"
+      },
+      "id": "AudiencesOption#/properties/taxonomy_ref/type",
+      "keyword": "type",
+      "mutant": {
+        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "taxonomy_ref": 0
+      },
+      "path": "/taxonomy_ref",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json#/$defs/AudiencesOption",
       "type": "AudiencesOption"
     },
@@ -576,6 +666,62 @@
       "type": "Billing"
     },
     {
+      "at": "/properties/billing_supplier_id",
+      "baseline": {
+        "billing_supplier_id": "seat-99812"
+      },
+      "id": "Billing#/properties/billing_supplier_id/type",
+      "keyword": "type",
+      "mutant": {
+        "billing_supplier_id": 0
+      },
+      "path": "/billing_supplier_id",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/settlement/1/settlement.json#/$defs/Billing",
+      "type": "Billing"
+    },
+    {
+      "at": "/properties/invoicing_party",
+      "baseline": {
+        "invoicing_party": "Prose, not a name."
+      },
+      "id": "Billing#/properties/invoicing_party/type",
+      "keyword": "type",
+      "mutant": {
+        "invoicing_party": 0
+      },
+      "path": "/invoicing_party",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/settlement/1/settlement.json#/$defs/Billing",
+      "type": "Billing"
+    },
+    {
+      "at": "/properties/payment_terms",
+      "baseline": {
+        "payment_terms": "Prose, not a name."
+      },
+      "id": "Billing#/properties/payment_terms/type",
+      "keyword": "type",
+      "mutant": {
+        "payment_terms": 0
+      },
+      "path": "/payment_terms",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/settlement/1/settlement.json#/$defs/Billing",
+      "type": "Billing"
+    },
+    {
+      "at": "/properties/supplier_id",
+      "baseline": {
+        "supplier_id": "seat-99812"
+      },
+      "id": "Billing#/properties/supplier_id/type",
+      "keyword": "type",
+      "mutant": {
+        "supplier_id": 0
+      },
+      "path": "/supplier_id",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/settlement/1/settlement.json#/$defs/Billing",
+      "type": "Billing"
+    },
+    {
       "at": "",
       "baseline": {},
       "id": "Billing#/type",
@@ -598,6 +744,24 @@
       "type": "BuyerRequirements"
     },
     {
+      "at": "/properties/dsp_allowed/items",
+      "baseline": {
+        "dsp_allowed": [
+          "seat-99812"
+        ]
+      },
+      "id": "BuyerRequirements#/properties/dsp_allowed/items/type",
+      "keyword": "type",
+      "mutant": {
+        "dsp_allowed": [
+          0
+        ]
+      },
+      "path": "/dsp_allowed/0",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/execution/1/execution.json#/$defs/BuyerRequirements",
+      "type": "BuyerRequirements"
+    },
+    {
       "at": "/properties/dsp_allowed",
       "baseline": {
         "dsp_allowed": []
@@ -608,6 +772,48 @@
         "dsp_allowed": ""
       },
       "path": "/dsp_allowed",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/execution/1/execution.json#/$defs/BuyerRequirements",
+      "type": "BuyerRequirements"
+    },
+    {
+      "at": "/properties/dsp_id",
+      "baseline": {
+        "dsp_id": "seat-99812"
+      },
+      "id": "BuyerRequirements#/properties/dsp_id/type",
+      "keyword": "type",
+      "mutant": {
+        "dsp_id": 0
+      },
+      "path": "/dsp_id",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/execution/1/execution.json#/$defs/BuyerRequirements",
+      "type": "BuyerRequirements"
+    },
+    {
+      "at": "/properties/dsp_seat_id",
+      "baseline": {
+        "dsp_seat_id": "seat-99812"
+      },
+      "id": "BuyerRequirements#/properties/dsp_seat_id/type",
+      "keyword": "type",
+      "mutant": {
+        "dsp_seat_id": 0
+      },
+      "path": "/dsp_seat_id",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/execution/1/execution.json#/$defs/BuyerRequirements",
+      "type": "BuyerRequirements"
+    },
+    {
+      "at": "/properties/seat_owner_entity",
+      "baseline": {
+        "seat_owner_entity": "Prose, not a name."
+      },
+      "id": "BuyerRequirements#/properties/seat_owner_entity/type",
+      "keyword": "type",
+      "mutant": {
+        "seat_owner_entity": 0
+      },
+      "path": "/seat_owner_entity",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/execution/1/execution.json#/$defs/BuyerRequirements",
       "type": "BuyerRequirements"
     },
@@ -644,6 +850,24 @@
         "undefined_member": true
       },
       "path": "",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json#/$defs/BuyerSupplied",
+      "type": "BuyerSupplied"
+    },
+    {
+      "at": "/properties/segments/items",
+      "baseline": {
+        "segments": [
+          "seat-99812"
+        ]
+      },
+      "id": "BuyerSupplied#/properties/segments/items/type",
+      "keyword": "type",
+      "mutant": {
+        "segments": [
+          0
+        ]
+      },
+      "path": "/segments/0",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json#/$defs/BuyerSupplied",
       "type": "BuyerSupplied"
     },
@@ -686,6 +910,20 @@
         "suppression_allowed": ""
       },
       "path": "/suppression_allowed",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json#/$defs/BuyerSupplied",
+      "type": "BuyerSupplied"
+    },
+    {
+      "at": "/properties/suppression_list",
+      "baseline": {
+        "suppression_list": {}
+      },
+      "id": "BuyerSupplied#/properties/suppression_list/type",
+      "keyword": "type",
+      "mutant": {
+        "suppression_list": ""
+      },
+      "path": "/suppression_list",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json#/$defs/BuyerSupplied",
       "type": "BuyerSupplied"
     },
@@ -1343,16 +1581,6 @@
     },
     {
       "at": "",
-      "baseline": {},
-      "id": "ContentDetail#/type",
-      "keyword": "type",
-      "mutant": "",
-      "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/ContentDetail",
-      "type": "ContentDetail"
-    },
-    {
-      "at": "",
       "baseline": "CPM",
       "id": "CostMethod#/anyOf",
       "keyword": "anyOf",
@@ -1458,16 +1686,6 @@
       "path": "",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/CreativeDeliveryMethod",
       "type": "CreativeDeliveryMethod"
-    },
-    {
-      "at": "",
-      "baseline": {},
-      "id": "CreativePolicy#/type",
-      "keyword": "type",
-      "mutant": "",
-      "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/commercial/1/commercial.json#/$defs/CreativePolicy",
-      "type": "CreativePolicy"
     },
     {
       "at": "",
@@ -1801,6 +2019,24 @@
       "type": "DeviceBounds"
     },
     {
+      "at": "/properties/allowed/items",
+      "baseline": {
+        "allowed": [
+          "seat-99812"
+        ]
+      },
+      "id": "DeviceBounds#/properties/allowed/items/type",
+      "keyword": "type",
+      "mutant": {
+        "allowed": [
+          0
+        ]
+      },
+      "path": "/allowed/0",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/DeviceBounds",
+      "type": "DeviceBounds"
+    },
+    {
       "at": "/properties/allowed",
       "baseline": {
         "allowed": []
@@ -2108,6 +2344,24 @@
       "type": "Exclusions"
     },
     {
+      "at": "/properties/iab_content_category/items",
+      "baseline": {
+        "iab_content_category": [
+          "seat-99812"
+        ]
+      },
+      "id": "Exclusions#/properties/iab_content_category/items/type",
+      "keyword": "type",
+      "mutant": {
+        "iab_content_category": [
+          0
+        ]
+      },
+      "path": "/iab_content_category/0",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/Exclusions",
+      "type": "Exclusions"
+    },
+    {
       "at": "/properties/iab_content_category",
       "baseline": {
         "iab_content_category": []
@@ -2118,6 +2372,24 @@
         "iab_content_category": ""
       },
       "path": "/iab_content_category",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/Exclusions",
+      "type": "Exclusions"
+    },
+    {
+      "at": "/properties/keyword/items",
+      "baseline": {
+        "keyword": [
+          "Prose, not a name."
+        ]
+      },
+      "id": "Exclusions#/properties/keyword/items/type",
+      "keyword": "type",
+      "mutant": {
+        "keyword": [
+          0
+        ]
+      },
+      "path": "/keyword/0",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/Exclusions",
       "type": "Exclusions"
     },
@@ -2196,6 +2468,24 @@
         "types": ""
       },
       "path": "/types",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/ExclusionsAccepted",
+      "type": "ExclusionsAccepted"
+    },
+    {
+      "at": "/properties/verification/items",
+      "baseline": {
+        "verification": [
+          "seat-99812"
+        ]
+      },
+      "id": "ExclusionsAccepted#/properties/verification/items/type",
+      "keyword": "type",
+      "mutant": {
+        "verification": [
+          0
+        ]
+      },
+      "path": "/verification/0",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/ExclusionsAccepted",
       "type": "ExclusionsAccepted"
     },
@@ -2362,16 +2652,6 @@
     },
     {
       "at": "",
-      "baseline": "seat-99812",
-      "id": "ExternalId#/type",
-      "keyword": "type",
-      "mutant": 42,
-      "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/ExternalId",
-      "type": "ExternalId"
-    },
-    {
-      "at": "",
       "baseline": "io",
       "id": "ExternalReferenceRole#/anyOf",
       "keyword": "anyOf",
@@ -2400,6 +2680,48 @@
         "undefined_member": true
       },
       "path": "",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/settlement/1/settlement.json#/$defs/ExternalReferencesEntry",
+      "type": "ExternalReferencesEntry"
+    },
+    {
+      "at": "/properties/id",
+      "baseline": {
+        "id": "seat-99812"
+      },
+      "id": "ExternalReferencesEntry#/properties/id/type",
+      "keyword": "type",
+      "mutant": {
+        "id": 0
+      },
+      "path": "/id",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/settlement/1/settlement.json#/$defs/ExternalReferencesEntry",
+      "type": "ExternalReferencesEntry"
+    },
+    {
+      "at": "/properties/namespace",
+      "baseline": {
+        "namespace": "seat-99812"
+      },
+      "id": "ExternalReferencesEntry#/properties/namespace/type",
+      "keyword": "type",
+      "mutant": {
+        "namespace": 0
+      },
+      "path": "/namespace",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/settlement/1/settlement.json#/$defs/ExternalReferencesEntry",
+      "type": "ExternalReferencesEntry"
+    },
+    {
+      "at": "/properties/system",
+      "baseline": {
+        "system": "seat-99812"
+      },
+      "id": "ExternalReferencesEntry#/properties/system/type",
+      "keyword": "type",
+      "mutant": {
+        "system": 0
+      },
+      "path": "/system",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/settlement/1/settlement.json#/$defs/ExternalReferencesEntry",
       "type": "ExternalReferencesEntry"
     },
@@ -2659,6 +2981,24 @@
       "type": "GeoBounds"
     },
     {
+      "at": "/properties/allowed/items",
+      "baseline": {
+        "allowed": [
+          "seat-99812"
+        ]
+      },
+      "id": "GeoBounds#/properties/allowed/items/type",
+      "keyword": "type",
+      "mutant": {
+        "allowed": [
+          0
+        ]
+      },
+      "path": "/allowed/0",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/GeoBounds",
+      "type": "GeoBounds"
+    },
+    {
       "at": "/properties/allowed",
       "baseline": {
         "allowed": []
@@ -2715,6 +3055,26 @@
       "type": "GeoSelection"
     },
     {
+      "at": "/properties/available/items",
+      "baseline": {
+        "available": [
+          "seat-99812"
+        ],
+        "included": []
+      },
+      "id": "GeoSelection#/properties/available/items/type",
+      "keyword": "type",
+      "mutant": {
+        "available": [
+          0
+        ],
+        "included": []
+      },
+      "path": "/available/0",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/GeoSelection",
+      "type": "GeoSelection"
+    },
+    {
       "at": "/properties/available",
       "baseline": {
         "available": [],
@@ -2727,6 +3087,26 @@
         "included": []
       },
       "path": "/available",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/GeoSelection",
+      "type": "GeoSelection"
+    },
+    {
+      "at": "/properties/included/items",
+      "baseline": {
+        "available": [],
+        "included": [
+          "seat-99812"
+        ]
+      },
+      "id": "GeoSelection#/properties/included/items/type",
+      "keyword": "type",
+      "mutant": {
+        "available": [],
+        "included": [
+          0
+        ]
+      },
+      "path": "/included/0",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/targeting/1/targeting.json#/$defs/GeoSelection",
       "type": "GeoSelection"
     },
@@ -2886,7 +3266,7 @@
         "undefined_member": true
       },
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "type": "LineItem"
     },
     {
@@ -2907,7 +3287,7 @@
       },
       "name": "time_zone",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "type": "LineItem"
     },
     {
@@ -2927,7 +3307,21 @@
       },
       "name": "time_zone",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
+      "type": "LineItem"
+    },
+    {
+      "at": "/properties/approval",
+      "baseline": {
+        "approval": {}
+      },
+      "id": "LineItem#/properties/approval/type",
+      "keyword": "type",
+      "mutant": {
+        "approval": ""
+      },
+      "path": "/approval",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "type": "LineItem"
     },
     {
@@ -2941,7 +3335,7 @@
         "assets": ""
       },
       "path": "/assets",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "type": "LineItem"
     },
     {
@@ -2955,7 +3349,67 @@
         "committed_metrics": ""
       },
       "path": "/committed_metrics",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
+      "type": "LineItem"
+    },
+    {
+      "at": "/properties/content_detail",
+      "baseline": {
+        "content_detail": {}
+      },
+      "id": "LineItem#/properties/content_detail/type",
+      "keyword": "type",
+      "mutant": {
+        "content_detail": ""
+      },
+      "path": "/content_detail",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
+      "type": "LineItem"
+    },
+    {
+      "at": "/properties/creative_policy",
+      "baseline": {
+        "creative_policy": {}
+      },
+      "id": "LineItem#/properties/creative_policy/type",
+      "keyword": "type",
+      "mutant": {
+        "creative_policy": ""
+      },
+      "path": "/creative_policy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
+      "type": "LineItem"
+    },
+    {
+      "at": "/properties/deal_id_issuance",
+      "baseline": {
+        "deal_id_issuance": "Prose, not a name."
+      },
+      "id": "LineItem#/properties/deal_id_issuance/type",
+      "keyword": "type",
+      "mutant": {
+        "deal_id_issuance": 0
+      },
+      "path": "/deal_id_issuance",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
+      "type": "LineItem"
+    },
+    {
+      "at": "/properties/eligible_bidders/items",
+      "baseline": {
+        "eligible_bidders": [
+          "seat-99812"
+        ]
+      },
+      "id": "LineItem#/properties/eligible_bidders/items/type",
+      "keyword": "type",
+      "mutant": {
+        "eligible_bidders": [
+          0
+        ]
+      },
+      "path": "/eligible_bidders/0",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "type": "LineItem"
     },
     {
@@ -2969,7 +3423,7 @@
         "eligible_bidders": ""
       },
       "path": "/eligible_bidders",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "type": "LineItem"
     },
     {
@@ -2983,7 +3437,7 @@
         "external_references": ""
       },
       "path": "/external_references",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "type": "LineItem"
     },
     {
@@ -2997,7 +3451,7 @@
         "pricing": ""
       },
       "path": "/pricing",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "type": "LineItem"
     },
     {
@@ -3011,7 +3465,53 @@
         "required_credentials": ""
       },
       "path": "/required_credentials",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
+      "type": "LineItem"
+    },
+    {
+      "at": "/properties/serving_platform",
+      "baseline": {
+        "serving_platform": "Prose, not a name."
+      },
+      "id": "LineItem#/properties/serving_platform/type",
+      "keyword": "type",
+      "mutant": {
+        "serving_platform": 0
+      },
+      "path": "/serving_platform",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
+      "type": "LineItem"
+    },
+    {
+      "at": "/properties/specs",
+      "baseline": {
+        "specs": {}
+      },
+      "id": "LineItem#/properties/specs/type",
+      "keyword": "type",
+      "mutant": {
+        "specs": ""
+      },
+      "path": "/specs",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
+      "type": "LineItem"
+    },
+    {
+      "at": "/properties/supported_order_systems/items",
+      "baseline": {
+        "supported_order_systems": [
+          "seat-99812"
+        ]
+      },
+      "id": "LineItem#/properties/supported_order_systems/items/type",
+      "keyword": "type",
+      "mutant": {
+        "supported_order_systems": [
+          0
+        ]
+      },
+      "path": "/supported_order_systems/0",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "type": "LineItem"
     },
     {
@@ -3025,7 +3525,7 @@
         "supported_order_systems": ""
       },
       "path": "/supported_order_systems",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "type": "LineItem"
     },
     {
@@ -3041,7 +3541,21 @@
         "terms_ref": {}
       },
       "path": "/terms_acceptance_required",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
+      "type": "LineItem"
+    },
+    {
+      "at": "/properties/third_party_tags",
+      "baseline": {
+        "third_party_tags": {}
+      },
+      "id": "LineItem#/properties/third_party_tags/type",
+      "keyword": "type",
+      "mutant": {
+        "third_party_tags": ""
+      },
+      "path": "/third_party_tags",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "type": "LineItem"
     },
     {
@@ -3057,7 +3571,7 @@
       },
       "name": "terms_ref",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "type": "LineItem"
     },
     {
@@ -3067,7 +3581,7 @@
       "keyword": "type",
       "mutant": "",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "type": "LineItem"
     },
     {
@@ -3127,7 +3641,7 @@
         "undefined_member": true
       },
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "type": "LineItemSummary"
     },
     {
@@ -3175,7 +3689,55 @@
         }
       },
       "path": "/committed_metrics",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
+      "type": "LineItemSummary"
+    },
+    {
+      "at": "/properties/content_detail",
+      "baseline": {
+        "addressable_scale": 0,
+        "channel": "display",
+        "committed_metrics": [],
+        "content_detail": {},
+        "environments": {
+          "available": []
+        },
+        "formats": {
+          "included": []
+        },
+        "has_requires": true,
+        "line_item_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "min_spend": 0,
+        "pricing": [],
+        "transaction_mechanism": {
+          "available": [],
+          "included": []
+        }
+      },
+      "id": "LineItemSummary#/properties/content_detail/type",
+      "keyword": "type",
+      "mutant": {
+        "addressable_scale": 0,
+        "channel": "display",
+        "committed_metrics": [],
+        "content_detail": "",
+        "environments": {
+          "available": []
+        },
+        "formats": {
+          "included": []
+        },
+        "has_requires": true,
+        "line_item_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "min_spend": 0,
+        "pricing": [],
+        "transaction_mechanism": {
+          "available": [],
+          "included": []
+        }
+      },
+      "path": "/content_detail",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "type": "LineItemSummary"
     },
     {
@@ -3223,7 +3785,7 @@
         }
       },
       "path": "/has_requires",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "type": "LineItemSummary"
     },
     {
@@ -3271,7 +3833,7 @@
         }
       },
       "path": "/pricing",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "type": "LineItemSummary"
     },
     {
@@ -3319,7 +3881,7 @@
       },
       "name": "addressable_scale",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "type": "LineItemSummary"
     },
     {
@@ -3367,7 +3929,7 @@
       },
       "name": "channel",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "type": "LineItemSummary"
     },
     {
@@ -3415,7 +3977,7 @@
       },
       "name": "committed_metrics",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "type": "LineItemSummary"
     },
     {
@@ -3463,7 +4025,7 @@
       },
       "name": "content_detail",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "type": "LineItemSummary"
     },
     {
@@ -3509,7 +4071,7 @@
       },
       "name": "environments",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "type": "LineItemSummary"
     },
     {
@@ -3555,7 +4117,7 @@
       },
       "name": "formats",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "type": "LineItemSummary"
     },
     {
@@ -3603,7 +4165,7 @@
       },
       "name": "has_requires",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "type": "LineItemSummary"
     },
     {
@@ -3651,7 +4213,7 @@
       },
       "name": "line_item_id",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "type": "LineItemSummary"
     },
     {
@@ -3699,7 +4261,7 @@
       },
       "name": "min_spend",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "type": "LineItemSummary"
     },
     {
@@ -3747,7 +4309,7 @@
       },
       "name": "pricing",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "type": "LineItemSummary"
     },
     {
@@ -3792,7 +4354,7 @@
       },
       "name": "transaction_mechanism",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "type": "LineItemSummary"
     },
     {
@@ -3821,7 +4383,7 @@
       "keyword": "type",
       "mutant": "",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "type": "LineItemSummary"
     },
     {
@@ -3836,7 +4398,7 @@
         "undefined_member": true
       },
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryEnvironmentsSelection",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryEnvironmentsSelection",
       "type": "LineItemSummaryEnvironmentsSelection"
     },
     {
@@ -3850,7 +4412,7 @@
         "available": ""
       },
       "path": "/available",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryEnvironmentsSelection",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryEnvironmentsSelection",
       "type": "LineItemSummaryEnvironmentsSelection"
     },
     {
@@ -3863,7 +4425,7 @@
       "mutant": {},
       "name": "available",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryEnvironmentsSelection",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryEnvironmentsSelection",
       "type": "LineItemSummaryEnvironmentsSelection"
     },
     {
@@ -3875,7 +4437,7 @@
       "keyword": "type",
       "mutant": "",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryEnvironmentsSelection",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryEnvironmentsSelection",
       "type": "LineItemSummaryEnvironmentsSelection"
     },
     {
@@ -3890,7 +4452,7 @@
         "undefined_member": true
       },
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryFormatsSelection",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryFormatsSelection",
       "type": "LineItemSummaryFormatsSelection"
     },
     {
@@ -3904,7 +4466,7 @@
         "included": ""
       },
       "path": "/included",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryFormatsSelection",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryFormatsSelection",
       "type": "LineItemSummaryFormatsSelection"
     },
     {
@@ -3917,7 +4479,7 @@
       "mutant": {},
       "name": "included",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryFormatsSelection",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryFormatsSelection",
       "type": "LineItemSummaryFormatsSelection"
     },
     {
@@ -3929,7 +4491,7 @@
       "keyword": "type",
       "mutant": "",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryFormatsSelection",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryFormatsSelection",
       "type": "LineItemSummaryFormatsSelection"
     },
     {
@@ -3941,7 +4503,7 @@
         "undefined_member": true
       },
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPlacement",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPlacement",
       "type": "LineItemSummaryPlacement"
     },
     {
@@ -3951,7 +4513,7 @@
       "keyword": "type",
       "mutant": "",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPlacement",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPlacement",
       "type": "LineItemSummaryPlacement"
     },
     {
@@ -3970,7 +4532,7 @@
         "undefined_member": true
       },
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPricingEntry",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPricingEntry",
       "type": "LineItemSummaryPricingEntry"
     },
     {
@@ -3988,7 +4550,7 @@
       },
       "name": "cost_method",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPricingEntry",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPricingEntry",
       "type": "LineItemSummaryPricingEntry"
     },
     {
@@ -4006,7 +4568,7 @@
       },
       "name": "currency",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPricingEntry",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPricingEntry",
       "type": "LineItemSummaryPricingEntry"
     },
     {
@@ -4024,7 +4586,7 @@
       },
       "name": "gross_rate",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPricingEntry",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPricingEntry",
       "type": "LineItemSummaryPricingEntry"
     },
     {
@@ -4038,7 +4600,7 @@
       "keyword": "type",
       "mutant": "",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPricingEntry",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPricingEntry",
       "type": "LineItemSummaryPricingEntry"
     },
     {
@@ -4050,7 +4612,21 @@
         "undefined_member": true
       },
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesOption",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPropertiesOption",
+      "type": "LineItemSummaryPropertiesOption"
+    },
+    {
+      "at": "/properties/name",
+      "baseline": {
+        "name": "Prose, not a name."
+      },
+      "id": "LineItemSummaryPropertiesOption#/properties/name/type",
+      "keyword": "type",
+      "mutant": {
+        "name": 0
+      },
+      "path": "/name",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPropertiesOption",
       "type": "LineItemSummaryPropertiesOption"
     },
     {
@@ -4060,7 +4636,7 @@
       "keyword": "type",
       "mutant": "",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesOption",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPropertiesOption",
       "type": "LineItemSummaryPropertiesOption"
     },
     {
@@ -4070,7 +4646,7 @@
       "keyword": "anyOf",
       "mutant": "",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesOptionOrCatalogRef",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPropertiesOptionOrCatalogRef",
       "type": "LineItemSummaryPropertiesOptionOrCatalogRef"
     },
     {
@@ -4085,7 +4661,7 @@
         "undefined_member": true
       },
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesSelection",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPropertiesSelection",
       "type": "LineItemSummaryPropertiesSelection"
     },
     {
@@ -4099,7 +4675,7 @@
         "available": ""
       },
       "path": "/available",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesSelection",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPropertiesSelection",
       "type": "LineItemSummaryPropertiesSelection"
     },
     {
@@ -4112,7 +4688,7 @@
       "mutant": {},
       "name": "available",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesSelection",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPropertiesSelection",
       "type": "LineItemSummaryPropertiesSelection"
     },
     {
@@ -4124,7 +4700,7 @@
       "keyword": "type",
       "mutant": "",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesSelection",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPropertiesSelection",
       "type": "LineItemSummaryPropertiesSelection"
     },
     {
@@ -4169,7 +4745,7 @@
         "undefined_member": true
       },
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/manifest.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Manifest",
       "type": "Manifest"
     },
     {
@@ -4183,7 +4759,35 @@
         "proposals": ""
       },
       "path": "/proposals",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/manifest.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Manifest",
+      "type": "Manifest"
+    },
+    {
+      "at": "/properties/seller_id",
+      "baseline": {
+        "seller_id": "seat-99812"
+      },
+      "id": "Manifest#/properties/seller_id/type",
+      "keyword": "type",
+      "mutant": {
+        "seller_id": 0
+      },
+      "path": "/seller_id",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Manifest",
+      "type": "Manifest"
+    },
+    {
+      "at": "/properties/spec_version",
+      "baseline": {
+        "spec_version": "seat-99812"
+      },
+      "id": "Manifest#/properties/spec_version/type",
+      "keyword": "type",
+      "mutant": {
+        "spec_version": 0
+      },
+      "path": "/spec_version",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Manifest",
       "type": "Manifest"
     },
     {
@@ -4193,7 +4797,7 @@
       "keyword": "type",
       "mutant": "",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/manifest.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Manifest",
       "type": "Manifest"
     },
     {
@@ -4277,6 +4881,38 @@
         "undefined_member": true
       },
       "path": "",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/guarantees/1/guarantees.json#/$defs/MeasurementSourceOption",
+      "type": "MeasurementSourceOption"
+    },
+    {
+      "at": "/properties/qualifier",
+      "baseline": {
+        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "qualifier": "Prose, not a name."
+      },
+      "id": "MeasurementSourceOption#/properties/qualifier/type",
+      "keyword": "type",
+      "mutant": {
+        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "qualifier": 0
+      },
+      "path": "/qualifier",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/guarantees/1/guarantees.json#/$defs/MeasurementSourceOption",
+      "type": "MeasurementSourceOption"
+    },
+    {
+      "at": "/properties/vendor",
+      "baseline": {
+        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "vendor": "seat-99812"
+      },
+      "id": "MeasurementSourceOption#/properties/vendor/type",
+      "keyword": "type",
+      "mutant": {
+        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "vendor": 0
+      },
+      "path": "/vendor",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/guarantees/1/guarantees.json#/$defs/MeasurementSourceOption",
       "type": "MeasurementSourceOption"
     },
@@ -4556,6 +5192,24 @@
       "type": "NegotiationHistoryEntry"
     },
     {
+      "at": "/properties/fields_changed/items",
+      "baseline": {
+        "fields_changed": [
+          "seat-99812"
+        ]
+      },
+      "id": "NegotiationHistoryEntry#/properties/fields_changed/items/type",
+      "keyword": "type",
+      "mutant": {
+        "fields_changed": [
+          0
+        ]
+      },
+      "path": "/fields_changed/0",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/proposal/1/proposal.json#/$defs/NegotiationHistoryEntry",
+      "type": "NegotiationHistoryEntry"
+    },
+    {
       "at": "/properties/fields_changed",
       "baseline": {
         "fields_changed": []
@@ -4662,16 +5316,6 @@
     },
     {
       "at": "",
-      "baseline": -2.5,
-      "id": "PriceAdjustment#/type",
-      "keyword": "type",
-      "mutant": "-2.5",
-      "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/PriceAdjustment",
-      "type": "PriceAdjustment"
-    },
-    {
-      "at": "",
       "baseline": {
         "delta_cpm": -2.5
       },
@@ -4708,6 +5352,34 @@
       "keyword": "minProperties",
       "mutant": {},
       "path": "",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/PriceDelta",
+      "type": "PriceDelta"
+    },
+    {
+      "at": "/properties/delta_cpm",
+      "baseline": {
+        "delta_cpm": -2.5
+      },
+      "id": "PriceDelta#/properties/delta_cpm/type",
+      "keyword": "type",
+      "mutant": {
+        "delta_cpm": ""
+      },
+      "path": "/delta_cpm",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/PriceDelta",
+      "type": "PriceDelta"
+    },
+    {
+      "at": "/properties/delta_flat",
+      "baseline": {
+        "delta_flat": -2.5
+      },
+      "id": "PriceDelta#/properties/delta_flat/type",
+      "keyword": "type",
+      "mutant": {
+        "delta_flat": ""
+      },
+      "path": "/delta_flat",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/PriceDelta",
       "type": "PriceDelta"
     },
@@ -4825,6 +5497,22 @@
         "undefined_member": true
       },
       "path": "",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/ProductionOption",
+      "type": "ProductionOption"
+    },
+    {
+      "at": "/properties/custom_unit",
+      "baseline": {
+        "custom_unit": "Prose, not a name.",
+        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+      },
+      "id": "ProductionOption#/properties/custom_unit/type",
+      "keyword": "type",
+      "mutant": {
+        "custom_unit": 0,
+        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+      },
+      "path": "/custom_unit",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/ProductionOption",
       "type": "ProductionOption"
     },
@@ -5013,6 +5701,22 @@
       "type": "PropertiesOption"
     },
     {
+      "at": "/properties/name",
+      "baseline": {
+        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "name": "Prose, not a name."
+      },
+      "id": "PropertiesOption#/properties/name/type",
+      "keyword": "type",
+      "mutant": {
+        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "name": 0
+      },
+      "path": "/name",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/PropertiesOption",
+      "type": "PropertiesOption"
+    },
+    {
       "at": "/properties/supported_formats",
       "baseline": {
         "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
@@ -5189,7 +5893,43 @@
         "undefined_member": true
       },
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
+      "type": "Proposal"
+    },
+    {
+      "at": "/properties/assent",
+      "baseline": {
+        "assent": {},
+        "description": "Prose, not a name."
+      },
+      "id": "Proposal#/properties/assent/type",
+      "keyword": "type",
+      "mutant": {
+        "assent": "",
+        "description": "Prose, not a name."
+      },
+      "path": "/assent",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
+      "type": "Proposal"
+    },
+    {
+      "at": "/properties/best_for/items",
+      "baseline": {
+        "best_for": [
+          "Prose, not a name."
+        ],
+        "description": "Prose, not a name."
+      },
+      "id": "Proposal#/properties/best_for/items/type",
+      "keyword": "type",
+      "mutant": {
+        "best_for": [
+          0
+        ],
+        "description": "Prose, not a name."
+      },
+      "path": "/best_for/0",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
       "type": "Proposal"
     },
     {
@@ -5205,7 +5945,37 @@
         "description": "Prose, not a name."
       },
       "path": "/best_for",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
+      "type": "Proposal"
+    },
+    {
+      "at": "/properties/brief_ref",
+      "baseline": {
+        "brief_ref": "seat-99812",
+        "description": "Prose, not a name."
+      },
+      "id": "Proposal#/properties/brief_ref/type",
+      "keyword": "type",
+      "mutant": {
+        "brief_ref": 0,
+        "description": "Prose, not a name."
+      },
+      "path": "/brief_ref",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
+      "type": "Proposal"
+    },
+    {
+      "at": "/properties/description",
+      "baseline": {
+        "description": "Prose, not a name."
+      },
+      "id": "Proposal#/properties/description/type",
+      "keyword": "type",
+      "mutant": {
+        "description": 0
+      },
+      "path": "/description",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
       "type": "Proposal"
     },
     {
@@ -5221,7 +5991,27 @@
         "negotiation_history": ""
       },
       "path": "/negotiation_history",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
+      "type": "Proposal"
+    },
+    {
+      "at": "/properties/not_suitable_for/items",
+      "baseline": {
+        "description": "Prose, not a name.",
+        "not_suitable_for": [
+          "Prose, not a name."
+        ]
+      },
+      "id": "Proposal#/properties/not_suitable_for/items/type",
+      "keyword": "type",
+      "mutant": {
+        "description": "Prose, not a name.",
+        "not_suitable_for": [
+          0
+        ]
+      },
+      "path": "/not_suitable_for/0",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
       "type": "Proposal"
     },
     {
@@ -5237,7 +6027,71 @@
         "not_suitable_for": ""
       },
       "path": "/not_suitable_for",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
+      "type": "Proposal"
+    },
+    {
+      "at": "/properties/proposal_template_id",
+      "baseline": {
+        "description": "Prose, not a name.",
+        "proposal_template_id": "seat-99812"
+      },
+      "id": "Proposal#/properties/proposal_template_id/type",
+      "keyword": "type",
+      "mutant": {
+        "description": "Prose, not a name.",
+        "proposal_template_id": 0
+      },
+      "path": "/proposal_template_id",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
+      "type": "Proposal"
+    },
+    {
+      "at": "/properties/seasonality_notes",
+      "baseline": {
+        "description": "Prose, not a name.",
+        "seasonality_notes": "Prose, not a name."
+      },
+      "id": "Proposal#/properties/seasonality_notes/type",
+      "keyword": "type",
+      "mutant": {
+        "description": "Prose, not a name.",
+        "seasonality_notes": 0
+      },
+      "path": "/seasonality_notes",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
+      "type": "Proposal"
+    },
+    {
+      "at": "/properties/seller_id",
+      "baseline": {
+        "description": "Prose, not a name.",
+        "seller_id": "seat-99812"
+      },
+      "id": "Proposal#/properties/seller_id/type",
+      "keyword": "type",
+      "mutant": {
+        "description": "Prose, not a name.",
+        "seller_id": 0
+      },
+      "path": "/seller_id",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
+      "type": "Proposal"
+    },
+    {
+      "at": "/properties/seller_name",
+      "baseline": {
+        "description": "Prose, not a name.",
+        "seller_name": "Prose, not a name."
+      },
+      "id": "Proposal#/properties/seller_name/type",
+      "keyword": "type",
+      "mutant": {
+        "description": "Prose, not a name.",
+        "seller_name": 0
+      },
+      "path": "/seller_name",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
       "type": "Proposal"
     },
     {
@@ -5250,7 +6104,7 @@
       "mutant": {},
       "name": "description",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
       "type": "Proposal"
     },
     {
@@ -5268,7 +6122,7 @@
       },
       "name": "brief_ref",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
       "type": "Proposal"
     },
     {
@@ -5280,7 +6134,7 @@
       "keyword": "type",
       "mutant": "",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
       "type": "Proposal"
     },
     {
@@ -5316,7 +6170,55 @@
         "valid_until": "2026-10-25T09:00:00Z"
       },
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalSummary",
+      "type": "ProposalSummary"
+    },
+    {
+      "at": "/properties/description",
+      "baseline": {
+        "description": "Prose, not a name.",
+        "linked_execution": "none",
+        "proposal_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "seller_name": "Prose, not a name.",
+        "valid_from": "2026-10-25T09:00:00Z",
+        "valid_until": "2026-10-25T09:00:00Z"
+      },
+      "id": "ProposalSummary#/properties/description/type",
+      "keyword": "type",
+      "mutant": {
+        "description": 0,
+        "linked_execution": "none",
+        "proposal_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "seller_name": "Prose, not a name.",
+        "valid_from": "2026-10-25T09:00:00Z",
+        "valid_until": "2026-10-25T09:00:00Z"
+      },
+      "path": "/description",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalSummary",
+      "type": "ProposalSummary"
+    },
+    {
+      "at": "/properties/seller_name",
+      "baseline": {
+        "description": "Prose, not a name.",
+        "linked_execution": "none",
+        "proposal_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "seller_name": "Prose, not a name.",
+        "valid_from": "2026-10-25T09:00:00Z",
+        "valid_until": "2026-10-25T09:00:00Z"
+      },
+      "id": "ProposalSummary#/properties/seller_name/type",
+      "keyword": "type",
+      "mutant": {
+        "description": "Prose, not a name.",
+        "linked_execution": "none",
+        "proposal_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "seller_name": 0,
+        "valid_from": "2026-10-25T09:00:00Z",
+        "valid_until": "2026-10-25T09:00:00Z"
+      },
+      "path": "/seller_name",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalSummary",
       "type": "ProposalSummary"
     },
     {
@@ -5340,7 +6242,7 @@
       },
       "name": "description",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalSummary",
       "type": "ProposalSummary"
     },
     {
@@ -5364,7 +6266,7 @@
       },
       "name": "linked_execution",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalSummary",
       "type": "ProposalSummary"
     },
     {
@@ -5388,7 +6290,7 @@
       },
       "name": "proposal_id",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalSummary",
       "type": "ProposalSummary"
     },
     {
@@ -5412,7 +6314,7 @@
       },
       "name": "seller_name",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalSummary",
       "type": "ProposalSummary"
     },
     {
@@ -5436,7 +6338,7 @@
       },
       "name": "valid_from",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalSummary",
       "type": "ProposalSummary"
     },
     {
@@ -5460,7 +6362,7 @@
       },
       "name": "valid_until",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalSummary",
       "type": "ProposalSummary"
     },
     {
@@ -5477,7 +6379,7 @@
       "keyword": "type",
       "mutant": "",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalSummary",
       "type": "ProposalSummary"
     },
     {
@@ -5490,6 +6392,54 @@
       "path": "",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/proposal/1/proposal.json#/$defs/ProposalType",
       "type": "ProposalType"
+    },
+    {
+      "at": "/properties/description",
+      "baseline": {
+        "description": "Prose, not a name.",
+        "linked_execution": "none",
+        "proposal_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "seller_name": "Prose, not a name.",
+        "valid_from": "2026-10-25T09:00:00Z",
+        "valid_until": "2026-10-25T09:00:00Z"
+      },
+      "id": "ProposalsEntry#/properties/description/type",
+      "keyword": "type",
+      "mutant": {
+        "description": 0,
+        "linked_execution": "none",
+        "proposal_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "seller_name": "Prose, not a name.",
+        "valid_from": "2026-10-25T09:00:00Z",
+        "valid_until": "2026-10-25T09:00:00Z"
+      },
+      "path": "/description",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalsEntry",
+      "type": "ProposalsEntry"
+    },
+    {
+      "at": "/properties/seller_name",
+      "baseline": {
+        "description": "Prose, not a name.",
+        "linked_execution": "none",
+        "proposal_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "seller_name": "Prose, not a name.",
+        "valid_from": "2026-10-25T09:00:00Z",
+        "valid_until": "2026-10-25T09:00:00Z"
+      },
+      "id": "ProposalsEntry#/properties/seller_name/type",
+      "keyword": "type",
+      "mutant": {
+        "description": "Prose, not a name.",
+        "linked_execution": "none",
+        "proposal_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "seller_name": 0,
+        "valid_from": "2026-10-25T09:00:00Z",
+        "valid_until": "2026-10-25T09:00:00Z"
+      },
+      "path": "/seller_name",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalsEntry",
+      "type": "ProposalsEntry"
     },
     {
       "at": "",
@@ -5512,7 +6462,7 @@
       },
       "name": "description",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/publication/1/publication.json#/$defs/ProposalsEntry",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalsEntry",
       "type": "ProposalsEntry"
     },
     {
@@ -5536,7 +6486,7 @@
       },
       "name": "linked_execution",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/publication/1/publication.json#/$defs/ProposalsEntry",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalsEntry",
       "type": "ProposalsEntry"
     },
     {
@@ -5560,7 +6510,7 @@
       },
       "name": "proposal_id",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/publication/1/publication.json#/$defs/ProposalsEntry",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalsEntry",
       "type": "ProposalsEntry"
     },
     {
@@ -5584,7 +6534,7 @@
       },
       "name": "seller_name",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/publication/1/publication.json#/$defs/ProposalsEntry",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalsEntry",
       "type": "ProposalsEntry"
     },
     {
@@ -5608,7 +6558,7 @@
       },
       "name": "valid_from",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/publication/1/publication.json#/$defs/ProposalsEntry",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalsEntry",
       "type": "ProposalsEntry"
     },
     {
@@ -5632,7 +6582,7 @@
       },
       "name": "valid_until",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/publication/1/publication.json#/$defs/ProposalsEntry",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalsEntry",
       "type": "ProposalsEntry"
     },
     {
@@ -5649,7 +6599,7 @@
       "keyword": "type",
       "mutant": "",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/publication/1/publication.json#/$defs/ProposalsEntry",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/ProposalsEntry",
       "type": "ProposalsEntry"
     },
     {
@@ -5908,6 +6858,20 @@
       "type": "RequiredCredentialsEntry"
     },
     {
+      "at": "/properties/issuer",
+      "baseline": {
+        "issuer": "seat-99812"
+      },
+      "id": "RequiredCredentialsEntry#/properties/issuer/type",
+      "keyword": "type",
+      "mutant": {
+        "issuer": 0
+      },
+      "path": "/issuer",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/eligibility/1/eligibility.json#/$defs/RequiredCredentialsEntry",
+      "type": "RequiredCredentialsEntry"
+    },
+    {
       "at": "",
       "baseline": {},
       "id": "RequiredCredentialsEntry#/type",
@@ -6146,24 +7110,24 @@
       "type": "Specifications"
     },
     {
-      "at": "",
-      "baseline": {},
-      "id": "SpecificationsDetail#/type",
+      "at": "/anyOf/0",
+      "baseline": "Prose, not a name.",
+      "id": "Specifications#/anyOf/0/type",
       "keyword": "type",
-      "mutant": "",
+      "mutant": 0,
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/proposal/1/proposal.json#/$defs/SpecificationsDetail",
-      "type": "SpecificationsDetail"
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/proposal/1/proposal.json#/$defs/Specifications",
+      "type": "Specifications"
     },
     {
-      "at": "",
+      "at": "/anyOf/1",
       "baseline": {},
-      "id": "Specs#/type",
+      "id": "Specifications#/anyOf/1/type",
       "keyword": "type",
-      "mutant": "",
+      "mutant": 0,
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/Specs",
-      "type": "Specs"
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/proposal/1/proposal.json#/$defs/Specifications",
+      "type": "Specifications"
     },
     {
       "at": "",
@@ -6172,7 +7136,7 @@
       "keyword": "anyOf",
       "mutant": "",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/StorePlatform",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/StorePlatform",
       "type": "StorePlatform"
     },
     {
@@ -6183,18 +7147,8 @@
       "mutant": "",
       "newline": "ios\n",
       "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json#/$defs/StorePlatform",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/StorePlatform",
       "type": "StorePlatform"
-    },
-    {
-      "at": "",
-      "baseline": {},
-      "id": "SuppressionList#/type",
-      "keyword": "type",
-      "mutant": "",
-      "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json#/$defs/SuppressionList",
-      "type": "SuppressionList"
     },
     {
       "at": "",
@@ -6209,6 +7163,20 @@
       "type": "TermsRef"
     },
     {
+      "at": "/properties/version",
+      "baseline": {
+        "version": "seat-99812"
+      },
+      "id": "TermsRef#/properties/version/type",
+      "keyword": "type",
+      "mutant": {
+        "version": 0
+      },
+      "path": "/version",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/eligibility/1/eligibility.json#/$defs/TermsRef",
+      "type": "TermsRef"
+    },
+    {
       "at": "",
       "baseline": {},
       "id": "TermsRef#/type",
@@ -6217,26 +7185,6 @@
       "path": "",
       "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/eligibility/1/eligibility.json#/$defs/TermsRef",
       "type": "TermsRef"
-    },
-    {
-      "at": "",
-      "baseline": "Prose, not a name.",
-      "id": "Text#/type",
-      "keyword": "type",
-      "mutant": 7,
-      "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/kernel/1/kernel.json#/$defs/Text",
-      "type": "Text"
-    },
-    {
-      "at": "",
-      "baseline": {},
-      "id": "ThirdPartyTags#/type",
-      "keyword": "type",
-      "mutant": "",
-      "path": "",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/creative/1/creative.json#/$defs/ThirdPartyTags",
-      "type": "ThirdPartyTags"
     },
     {
       "at": "",
@@ -7176,7 +8124,7 @@
       ],
       "owner": "Marker",
       "rule": "marker:3:derived",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "error",
       "type": "LineItem",
       "valid": [
@@ -7232,7 +8180,7 @@
       ],
       "owner": "Marker",
       "rule": "marker:3:immutable",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "error",
       "type": "LineItem",
       "valid": [
@@ -7272,7 +8220,7 @@
       ],
       "owner": "Marker",
       "rule": "marker:3:requestable",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "error",
       "type": "LineItem",
       "valid": [
@@ -7370,7 +8318,7 @@
       ],
       "owner": "Marker",
       "rule": "marker:3:selectable",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "error",
       "type": "LineItem",
       "valid": [
@@ -7439,7 +8387,7 @@
       ],
       "owner": "Marker",
       "rule": "marker:3:seller-set",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "error",
       "type": "LineItem",
       "valid": [
@@ -7490,7 +8438,7 @@
       ],
       "owner": "Marker",
       "rule": "marker:3:settable",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "error",
       "type": "LineItem",
       "valid": [
@@ -7534,7 +8482,7 @@
       ],
       "owner": "Marker",
       "rule": "marker:3:supplied",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "error",
       "type": "LineItem",
       "valid": [
@@ -7572,7 +8520,7 @@
       ],
       "owner": "LineItem",
       "rule": "rule:2.2:06ccee9f",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "error",
       "type": "LineItem",
       "valid": [
@@ -7725,7 +8673,7 @@
       ],
       "owner": "Proposal",
       "rule": "rule:4.1:8e9aacb8",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/proposal.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/Proposal",
       "severity": "error",
       "type": "Proposal",
       "valid": [
@@ -7790,7 +8738,7 @@
       ],
       "owner": "LineItem",
       "rule": "rule:5.1.1:ce115ccf",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "error",
       "type": "LineItem",
       "valid": [
@@ -7835,7 +8783,7 @@
       ],
       "owner": "LineItem",
       "rule": "rule:5.2.1:cc42a1f8",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "error",
       "type": "LineItem",
       "valid": [
@@ -7958,7 +8906,7 @@
       ],
       "owner": "LineItem",
       "rule": "rule:5.2.2:f9a1a6d5",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "warning",
       "type": "LineItem",
       "valid": [
@@ -8080,7 +9028,7 @@
       ],
       "owner": "LineItem",
       "rule": "rule:5.2:f3d3f9e8",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "error",
       "type": "LineItem",
       "valid": [
@@ -8121,7 +9069,7 @@
       ],
       "owner": "LineItem",
       "rule": "rule:5.4:2eaa294f",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "error",
       "type": "LineItem",
       "valid": [
@@ -8162,7 +9110,7 @@
       ],
       "owner": "LineItem",
       "rule": "rule:5.5:16494a1a",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "error",
       "type": "LineItem",
       "valid": [
@@ -8217,7 +9165,7 @@
       ],
       "owner": "LineItem",
       "rule": "rule:5.5:2eab2842",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "error",
       "type": "LineItem",
       "valid": [
@@ -8267,7 +9215,7 @@
       ],
       "owner": "LineItem",
       "rule": "rule:5.7:4994173c",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "error",
       "type": "LineItem",
       "valid": [
@@ -8336,7 +9284,7 @@
       ],
       "owner": "LineItem",
       "rule": "rule:5.8:59a01393",
-      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "severity": "error",
       "type": "LineItem",
       "valid": [

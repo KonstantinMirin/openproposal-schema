@@ -59,17 +59,17 @@
           "$ref": "../../../kernel/1/kernel.json#/$defs/Count"
         },
         "id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier",
-          "description": "The identity the seller mints for the option, which `included[]` and the `pricing` keys name it by."
+          "description": "The identity the seller mints for the option, which `included[]` and the `pricing` keys name it by.",
+          "type": "string"
         },
         "name": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+          "type": "string"
         },
         "provenance": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/BareTerm"
         },
         "taxonomy_ref": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          "type": "string"
         }
       },
       "required": [
@@ -101,7 +101,7 @@
         "included": {
           "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the identity the seller mints for it.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
+            "type": "string"
           },
           "type": "array"
         },
@@ -113,9 +113,6 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
           },
           "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the identity the seller mints for it.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
-          },
           "type": "object"
         }
       },
@@ -133,7 +130,7 @@
         },
         "segments": {
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+            "type": "string"
           },
           "type": "array"
         },
@@ -144,13 +141,9 @@
           "type": "boolean"
         },
         "suppression_list": {
-          "$ref": "#/$defs/SuppressionList"
+          "type": "object"
         }
       },
-      "type": "object"
-    },
-    "SuppressionList": {
-      "description": "The buyer's suppression list. The specification states no members, so the object accepts any.",
       "type": "object"
     }
   },

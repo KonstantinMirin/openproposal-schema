@@ -2,7 +2,7 @@
 
 /** The OpenProposal `creative` module's types. */
 import { z } from "zod";
-import { ApprovalStatus, Digest, DocumentRef, Duration, EntryRef, FormatId, Instant, NamespacedTerm, OpenObject, PlainInteger, PlainString, Selectable, Side, Url } from "./kernel.js";
+import { ApprovalStatus, Digest, DocumentRef, Duration, EntryRef, FormatId, Instant, NamespacedTerm, OpenObject, PlainString, SafeInteger, Selectable, Side, Url } from "./kernel.js";
 
 /** The `MaterialsDue` object of the `creative` module. */
 export interface MaterialsDue {
@@ -150,7 +150,7 @@ export interface CreativeDelivery {
   /** How a creative that list has no code for is delivered. Core term: `javascript_tag`, a tag whose script renders the ad. A receiver that doesn't know a term treats only that term as unavailable */
   other_protocols?: Array<CreativeDeliveryOtherProtocol>;
   /** Values from AdCOM 1.0 List: Creative Subtypes - Audio/Video the seller accepts, wrappers included, such as VAST 4.2 (13). The values OpenRTB 2.6 `video.protocols` and `audio.protocols` carry */
-  protocols?: Array<PlainInteger>;
+  protocols?: Array<SafeInteger>;
   /** Whether the creative must load over a secure connection. Absent: this line item states no such requirement */
   secure_required?: boolean;
 }
@@ -158,6 +158,6 @@ export const CreativeDelivery: z.ZodType<CreativeDelivery> = z.strictObject({
   endpoint: Url.optional(),
   method: CreativeDeliveryMethod,
   other_protocols: z.array(CreativeDeliveryOtherProtocol).optional(),
-  protocols: z.array(PlainInteger).optional(),
+  protocols: z.array(SafeInteger).optional(),
   secure_required: z.boolean().optional(),
 });

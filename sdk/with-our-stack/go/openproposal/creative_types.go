@@ -253,7 +253,7 @@ type CreativeDelivery struct {
 	// OtherProtocols: How a creative that list has no code for is delivered. Core term: `javascript_tag`, a tag whose script renders the ad. A receiver that doesn't know a term treats only that term as unavailable
 	OtherProtocols List[CreativeDeliveryOtherProtocol] `json:"other_protocols,omitzero"`
 	// Protocols: Values from AdCOM 1.0 List: Creative Subtypes - Audio/Video the seller accepts, wrappers included, such as VAST 4.2 (13). The values OpenRTB 2.6 `video.protocols` and `audio.protocols` carry
-	Protocols List[PlainInteger] `json:"protocols,omitzero"`
+	Protocols List[SafeInteger] `json:"protocols,omitzero"`
 	// SecureRequired: Whether the creative must load over a secure connection. Absent: this line item states no such requirement
 	SecureRequired *bool `json:"secure_required,omitempty"`
 }
@@ -276,7 +276,7 @@ func (CreativeDelivery) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[List[CreativeDeliveryOtherProtocol]](x, member(at, "other_protocols"), errs)
 	}
 	if x, ok := m["protocols"]; ok {
-		validateAs[List[PlainInteger]](x, member(at, "protocols"), errs)
+		validateAs[List[SafeInteger]](x, member(at, "protocols"), errs)
 	}
 	if x, ok := m["secure_required"]; ok {
 		validateBool(x, member(at, "secure_required"), errs)

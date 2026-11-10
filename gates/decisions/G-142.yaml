@@ -1,0 +1,43 @@
+format: 1
+id: G-142
+date: 2026-11-09
+question: What changes in the gates when the with-our-stack lock moves to the stack's current head, and the impression multiplier's rule reads every count § 5.6.4 names?
+decision: >-
+  The lock reads op30-packages at `b718eb5`, which adds the Web Bot Auth
+  profile's subsections (§ 2.8.1 to § 2.8.7), `ImpressionMultiplier.demographic`
+  (§ 5.6.4), `tv_channel` and `tv_network` (§ 5.2.4), and makes `retention`
+  `requestable`. The extractor reads the profile's two new informative
+  tables, its signature rules and its failure statuses, in place of the one
+  table they replace. The check of "`impression_multiplier` REQUIRED when the
+  line item counts impressions" (D-060) reads the definition § 5.6.4 gives: a
+  `pricing[]` entry in impressions or viewable impressions, an `availability`
+  in either, or a `committed_metrics[]` tuple of `impressions`, and its
+  vectors show each. The round trip records Appendix B's four prose figures
+  that still count `retention` as `seller-set` (D-058), and the spec lint
+  reports them; the feedback gate reads an appendix heading, such as
+  "Appendix B", as the section its findings link, where it read no section.
+rationale: >-
+  No check is weaker: the extractor knows two more informative layouts, and
+  an unknown layout still fails; the rule's check decides more payloads than
+  before and decides every vector, which the rule-checks gate verifies; and
+  each round-trip difference cites the decision that reads it. The feedback
+  gate now checks an appendix finding's link against its appendix, where it
+  had no section to check it against. The extractor's golden snapshot of the
+  stack is the new text's. The other locks' IR and outputs are unchanged by
+  the lock move.
+accepts:
+  - { gate: comparison, fingerprint: 3fccc01e251174b3a346cb94919c07d21be7e643d8562e53588eea0a2ee141ca }
+  - { gate: examples-validate, fingerprint: 7924190bc804e35b1023b0fabbcefbef078a4e853945384abb94a87e81661f00 }
+  - { gate: extraction, fingerprint: 9db6797c213ccea4bd30569a181703d000364e539a09ce62663a083a0aa40618 }
+  - { gate: feedback, fingerprint: 0d7721514b3cd06184da701a7d549f7bbcb3a2f079ae426d7c47dfd80dcf00bb }
+  - { gate: fidelity, fingerprint: 26762e594dbb9017b06bf9b460cef94dbd51a0c38f860b3eb22d07b2ad6d8e95 }
+  - { gate: field-examples, fingerprint: 79fb6a52fe75d12392f92a5124a098b509fc28e0d9885a41bfc835fd6db948de }
+  - { gate: npm-test, fingerprint: cf7aab2af80b50b019721a9918d1a68d3edb6dacef2a4f63dbdcffef52c5098c }
+  - { gate: record-wording, fingerprint: 794592788adcb04027f03bb7df1b56593f2636792a9f8af5d482504868506e10 }
+  - { gate: round-trip, fingerprint: 5367f988983cdee89b79139c015e7195f0cd495dbfadf57e5f4e973ad871452a }
+  - { gate: rule-checks, fingerprint: ae7cc3e3410c5d33f13111f587b6b8472ecf97f9cd0eb13a17f042b4add719b5 }
+  - { gate: site-builds, fingerprint: eebc893ea5db1cd711c012a8dc09488fa3f371863533717af91dc0f7712275d9 }
+  - { gate: spec-profile, fingerprint: eff783b93b4225433f6bd3fbe5ba9569c964bedccef1e75a0ef7bab60262be9c }
+  - { gate: type-examples-generate, fingerprint: fc54fc2dc973ef996f0742497132fc0feec988e7498585d363e4be53e030bde8 }
+  - { gate: type-examples-valid, fingerprint: 555b051b3dda5af87abea62590e39e6ea5aa1661c9457997267c9c704a141d97 }
+  - { gate: variant-examples, fingerprint: 5982a1cbe12d07a6afe07ed7180fd2c083e7f62caa5df09d627fa35ecaf54d8d }

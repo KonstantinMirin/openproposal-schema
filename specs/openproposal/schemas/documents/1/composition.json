@@ -1,0 +1,499 @@
+{
+  "$defs": {
+    "LineItem": {
+      "additionalProperties": false,
+      "properties": {
+        "activation_route": {
+          "$ref": "../../modules/audience/1/audience.json#/$defs/ActivationRouteSelection",
+          "description": "`available[]` from `publisher_side` | `clean_room` | `id_partner`, `included[]`, `pricing`"
+        },
+        "addressable_scale": {
+          "$ref": "../../kernel/1/kernel.json#/$defs/Count",
+          "description": "Reachable units in the flight, recomputed against the buyer's selection. Not segment size"
+        },
+        "approval": {
+          "description": "Review SLA and revision policy",
+          "type": "object"
+        },
+        "assets": {
+          "description": "Buyer-delivered. `{ asset_id, format_ref, url_or_tag, submitted_at, approval_status }`",
+          "items": {
+            "$ref": "../../modules/creative/1/creative.json#/$defs/AssetsEntry"
+          },
+          "type": "array"
+        },
+        "audiences": {
+          "$ref": "../../modules/audience/1/audience.json#/$defs/AudiencesSelection",
+          "description": "`available[]` of `{ id, name, taxonomy_ref, provenance, addressable_scale }`, `included[]`, `pricing` as `delta_cpm` per option, `max_select`"
+        },
+        "availability": {
+          "$ref": "../../modules/commercial/1/commercial.json#/$defs/Availability",
+          "description": "`{ unit, basis, as_of, granularity, type: forecast | reservable, quantity }`. Recomputed against the buyer's selection"
+        },
+        "billing": {
+          "$ref": "../../modules/settlement/1/settlement.json#/$defs/Billing",
+          "description": "`{ supplier_id, billing_supplier_id, payment_terms, invoicing_party }`. Who delivers is not always who invoices"
+        },
+        "buyer_requirements": {
+          "$ref": "../../modules/execution/1/execution.json#/$defs/BuyerRequirements",
+          "description": "`{ seat_required, dsp_allowed[] }` are seller-set; `{ dsp_seat_id, dsp_id, seat_owner_entity }` are supplied"
+        },
+        "buyer_supplied": {
+          "$ref": "../../modules/audience/1/audience.json#/$defs/BuyerSupplied",
+          "description": "`{ segments_allowed, suppression_allowed, match_rate_expected, segments[], suppression_list }`. `match_rate_expected` is the seller's stated expectation; `segments[]` and `suppression_list` are buyer-populated"
+        },
+        "buying_route": {
+          "$ref": "../../modules/execution/1/execution.json#/$defs/BuyingRoute",
+          "description": "`DIRECT_PUBLISHER` | `PUBLISHER_AD_SERVER` | `SSP_PLATFORM` | `DSP` | `SEARCH_SOCIAL`"
+        },
+        "cancellation_policy": {
+          "$ref": "../../modules/commercial/1/commercial.json#/$defs/CancellationPolicySelection",
+          "description": "`available[]` of cancellation rights with `pricing` per option"
+        },
+        "channel": {
+          "$ref": "../../modules/line-item/1/line-item.json#/$defs/Channel",
+          "description": "`display` | `video` | `audio` | `ctv` | `dooh` | `native`. The discriminator for how the rest of the line item is read"
+        },
+        "commitment": {
+          "$ref": "../../modules/commercial/1/commercial.json#/$defs/Commitment",
+          "description": "The buyer's actual commitment. See 5.6.1"
+        },
+        "commitment_bounds": {
+          "$ref": "../../modules/commercial/1/commercial.json#/$defs/CommitmentBounds",
+          "description": "The envelope inside which a buyer may commit: `{ min_impressions, max_impressions, min_budget, max_budget }`"
+        },
+        "committed_metrics": {
+          "description": "`{ metric, value, basis }` tuples — `viewable_rate` for display, `completion_rate` for video/audio/CTV, an audience-modelled metric for DOOH. Seller declares a ceiling; a buyer MAY request above it",
+          "items": {
+            "$ref": "../../modules/guarantees/1/guarantees.json#/$defs/CommittedMetricsEntry"
+          },
+          "type": "array"
+        },
+        "content_detail": {
+          "description": "Shows, series, sections, network verticals",
+          "type": "object"
+        },
+        "correlation_id": {
+          "$ref": "../../kernel/1/kernel.json#/$defs/Uuid",
+          "description": "One identity for this line item's commitment, carried across every system it touches"
+        },
+        "creative_delivery": {
+          "$ref": "../../modules/creative/1/creative.json#/$defs/CreativeDelivery",
+          "description": "`{ method: buyer_hosted | seller_hosted | api | platform_managed, protocol, secure_required, endpoint }`"
+        },
+        "creative_policy": {
+          "description": "Content and category restrictions on creative",
+          "type": "object"
+        },
+        "daypart": {
+          "$ref": "../../modules/targeting/1/targeting.json#/$defs/DaypartBounds",
+          "description": "`allowed[]` of time windows"
+        },
+        "deal_id_issuance": {
+          "description": "When and how the deal id is minted. Issued at commitment time",
+          "type": "string"
+        },
+        "device": {
+          "$ref": "../../modules/targeting/1/targeting.json#/$defs/DeviceBounds",
+          "description": "`allowed[]` of device categories"
+        },
+        "eligible_bidders": {
+          "description": "Permitted seat or buyer ids",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "environments": {
+          "$ref": "../../modules/inventory/1/inventory.json#/$defs/EnvironmentsSelection",
+          "description": "`available[]` from `web_desktop` | `web_mobile` | `app_mobile` | `ctv` | `dooh` | `audio_streaming`"
+        },
+        "exclusivity": {
+          "$ref": "../../modules/commercial/1/commercial.json#/$defs/ExclusivitySelection",
+          "description": "`available[]` of exclusivity terms with `pricing`"
+        },
+        "external_references": {
+          "description": "`{ system, namespace, id, role }`. Replaces platform-specific key names. A buyer-owned reference such as a Prisma `io_id` is supplied",
+          "items": {
+            "$ref": "../../modules/settlement/1/settlement.json#/$defs/ExternalReferencesEntry"
+          },
+          "type": "array"
+        },
+        "formats": {
+          "$ref": "../../modules/creative/1/creative.json#/$defs/FormatsSelection",
+          "description": "`available[]` of registry format ids namespaced by channel (`display/300x250`, `audio/host-read-30s`), `included[]`, `pricing`, `max_select`"
+        },
+        "frequency_cap": {
+          "$ref": "../../modules/targeting/1/targeting.json#/$defs/FrequencyCap",
+          "description": "`{ max: { min, max }, period, basis: device | household | listener }`. Basis matters: CTV typically caps at household, audio at listener"
+        },
+        "geo": {
+          "$ref": "../../modules/targeting/1/targeting.json#/$defs/GeoBounds",
+          "description": "`allowed[]` of geo codes the buyer may select within"
+        },
+        "hold_status": {
+          "$ref": "../../modules/commercial/1/commercial.json#/$defs/HoldStatus",
+          "description": "See 5.6.2"
+        },
+        "line_item_id": {
+          "$ref": "../../kernel/1/kernel.json#/$defs/Uuid",
+          "description": "Identity within the proposal"
+        },
+        "materials_due": {
+          "$ref": "../../modules/creative/1/creative.json#/$defs/MaterialsDue",
+          "description": "Deadline for creative to land. A buyer MAY request a later date"
+        },
+        "measurement_source": {
+          "$ref": "../../modules/guarantees/1/guarantees.json#/$defs/MeasurementSourceSelection",
+          "description": "`available[]` of `{ vendor, attribution_window, qualifier }` with `pricing`. Lets a buyer transact in its own currency"
+        },
+        "min_spend": {
+          "$ref": "../../kernel/1/kernel.json#/$defs/Amount",
+          "description": "Minimum spend for this line item"
+        },
+        "pricing": {
+          "description": "See below",
+          "items": {
+            "$ref": "../../modules/commercial/1/commercial.json#/$defs/PricingEntry"
+          },
+          "type": "array"
+        },
+        "production": {
+          "$ref": "../../modules/creative/1/creative.json#/$defs/ProductionSelection",
+          "description": "Custom units. `available[]` of build options with `pricing` and `lead_time`; `{ custom_unit, build_owner, lead_time, cost }`"
+        },
+        "properties": {
+          "$ref": "../../modules/inventory/1/inventory.json#/$defs/PropertiesSelection",
+          "description": "`available[]` of `{ id, name, domains, supported_formats }`, `included[]`, `pricing`, `max_select`"
+        },
+        "reporting": {
+          "$ref": "../../modules/guarantees/1/guarantees.json#/$defs/ReportingSelection",
+          "description": "`available[]` of `{ feed_type: log_level | aggregate | none, cadence, delivery_mechanism, metrics_provided[], latency }` with `pricing`"
+        },
+        "required_credentials": {
+          "description": "`{ type: iab_registry | dsp_seat | custom, scheme: api_key | oauth2_client_credentials | jwt_keypair | oidc_federated | none, issuer, id_required }`",
+          "items": {
+            "$ref": "../../modules/eligibility/1/eligibility.json#/$defs/RequiredCredentialsEntry"
+          },
+          "type": "array"
+        },
+        "serving_mode": {
+          "$ref": "../../modules/execution/1/execution.json#/$defs/ServingMode",
+          "description": "`client_side` | `ssai` | `dai`"
+        },
+        "serving_platform": {
+          "description": "Where the line item serves",
+          "type": "string"
+        },
+        "shortfall_remedy": {
+          "$ref": "../../modules/guarantees/1/guarantees.json#/$defs/ShortfallRemedySelection",
+          "description": "`available[]` from `makegood` | `credit` | `none`, plus `remedy_terms`"
+        },
+        "specs": {
+          "description": "As defined by the referenced format registry entry. OpenProposal does not hardcode a shape per channel",
+          "type": "object"
+        },
+        "status": {
+          "$ref": "../../modules/line-item/1/line-item.json#/$defs/LineItemStatus",
+          "description": "`draft` | `published` | `under_review` | `agreed` | `withdrawn` | `sold_out` | `expired`. Independent of the proposal's status, so one line item may sell out while the rest of the shelf stays live"
+        },
+        "supported_order_systems": {
+          "description": "Declared up front so the agent knows it will reconcile",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "terms_acceptance_required": {
+          "description": "Whether legal terms must be accepted before assent",
+          "type": "boolean"
+        },
+        "third_party_tags": {
+          "description": "Accepted wrapper types and VAST versions",
+          "type": "object"
+        },
+        "transaction_mechanism": {
+          "$ref": "../../modules/execution/1/execution.json#/$defs/TransactionMechanismSelection",
+          "description": "`available[]` from `DIRECT_IO` | `PROGRAMMATIC_GUARANTEED` | `PREFERRED_DEAL` | `PRIVATE_AUCTION` | `OPEN_AUCTION`. A seller MAY offer the same inventory through more than one"
+        },
+        "visibility": {
+          "$ref": "../../modules/eligibility/1/eligibility.json#/$defs/Visibility",
+          "description": "`public` | `registry_gated` | `named`"
+        }
+      },
+      "type": "object"
+    },
+    "LineItemSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "addressable_scale": {
+          "$ref": "../../kernel/1/kernel.json#/$defs/Count",
+          "description": "Reachable units in the flight, recomputed against the buyer's selection. Not segment size"
+        },
+        "channel": {
+          "$ref": "../../modules/line-item/1/line-item.json#/$defs/Channel",
+          "description": "`display` | `video` | `audio` | `ctv` | `dooh` | `native`. The discriminator for how the rest of the line item is read"
+        },
+        "committed_metrics": {
+          "description": "`{ metric, value, basis }` tuples — `viewable_rate` for display, `completion_rate` for video/audio/CTV, an audience-modelled metric for DOOH. Seller declares a ceiling; a buyer MAY request above it",
+          "items": {
+            "$ref": "../../modules/guarantees/1/guarantees.json#/$defs/CommittedMetricsEntry"
+          },
+          "type": "array"
+        },
+        "content_detail": {
+          "description": "Shows, series, sections, network verticals",
+          "type": "object"
+        },
+        "formats": {
+          "$ref": "#/$defs/LineItemSummaryFormatsSelection",
+          "description": "The line item's `formats`, projected to `included[]`."
+        },
+        "line_item_id": {
+          "$ref": "../../kernel/1/kernel.json#/$defs/Uuid",
+          "description": "Identity within the proposal"
+        },
+        "min_spend": {
+          "$ref": "../../kernel/1/kernel.json#/$defs/Amount",
+          "description": "Minimum spend for this line item"
+        },
+        "pricing": {
+          "description": "The line item's `pricing[]`, each entry projected to `cost_method`, `gross_rate`, and `currency`.",
+          "items": {
+            "$ref": "#/$defs/LineItemSummaryPricingEntry"
+          },
+          "type": "array"
+        },
+        "properties": {
+          "$ref": "#/$defs/LineItemSummaryPropertiesSelection",
+          "description": "The line item's `properties`, projected to `available[].name`."
+        },
+        "transaction_mechanism": {
+          "$ref": "../../modules/execution/1/execution.json#/$defs/TransactionMechanismSelection",
+          "description": "`available[]` from `DIRECT_IO` | `PROGRAMMATIC_GUARANTEED` | `PREFERRED_DEAL` | `PRIVATE_AUCTION` | `OPEN_AUCTION`. A seller MAY offer the same inventory through more than one"
+        }
+      },
+      "required": [
+        "addressable_scale",
+        "channel",
+        "committed_metrics",
+        "content_detail",
+        "formats",
+        "line_item_id",
+        "min_spend",
+        "pricing",
+        "transaction_mechanism"
+      ],
+      "type": "object"
+    },
+    "LineItemSummaryFormatsSelection": {
+      "additionalProperties": false,
+      "properties": {
+        "included": {
+          "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the UUID the seller mints for it.",
+          "items": {
+            "$ref": "../../kernel/1/kernel.json#/$defs/FormatId"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "included"
+      ],
+      "type": "object"
+    },
+    "LineItemSummaryPricingEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "cost_method": {
+          "$ref": "../../modules/commercial/1/commercial.json#/$defs/CostMethod",
+          "description": "CPM, CPC, flat, etc."
+        },
+        "currency": {
+          "$ref": "../../kernel/1/kernel.json#/$defs/CurrencyCode",
+          "description": "ISO-4217"
+        },
+        "gross_rate": {
+          "$ref": "../../kernel/1/kernel.json#/$defs/Amount",
+          "description": "The list rate the buyer pays"
+        }
+      },
+      "required": [
+        "cost_method",
+        "currency",
+        "gross_rate"
+      ],
+      "type": "object"
+    },
+    "LineItemSummaryPropertiesOption": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "LineItemSummaryPropertiesOptionOrCatalogRef": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LineItemSummaryPropertiesOption"
+        },
+        {
+          "$ref": "../../kernel/1/kernel.json#/$defs/CatalogReference"
+        }
+      ],
+      "description": "A value given inline, or a reference to the seller's catalog entry that holds it, never both."
+    },
+    "LineItemSummaryPropertiesSelection": {
+      "additionalProperties": false,
+      "properties": {
+        "available": {
+          "description": "The line item's `properties.available[]`, each entry projected to `name`.",
+          "items": {
+            "$ref": "#/$defs/LineItemSummaryPropertiesOptionOrCatalogRef"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "available"
+      ],
+      "type": "object"
+    },
+    "Proposal": {
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "type": {
+            "const": "custom"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "properties": {
+        "assent": {
+          "description": "Buyer and seller assent records and timestamps for the binding version. Signature scheme is WS1",
+          "type": "object"
+        },
+        "best_for": {
+          "description": "Advisory planning hints. Non-normative, and never the basis for a match",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "brief_ref": {
+          "description": "Reference to the buyer's brief. REQUIRED when `type` is `custom`",
+          "type": "string"
+        },
+        "description": {
+          "description": "REQUIRED. Prose, not a name. Where the \"why buy\" case is made, including which channels a multi-channel proposal spans",
+          "type": "string"
+        },
+        "negotiation_history": {
+          "description": "Ordered, append-only. `{ version, actor: buyer | seller, action: proposed | countered | accepted | declined | withdrawn, fields_changed[], at }`. Entries MUST NOT be edited or removed",
+          "items": {
+            "$ref": "../../modules/proposal/1/proposal.json#/$defs/NegotiationHistoryEntry"
+          },
+          "type": "array"
+        },
+        "not_suitable_for": {
+          "description": "Advisory exclusion guidance. Non-normative",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "proposal_id": {
+          "$ref": "../../kernel/1/kernel.json#/$defs/Uuid",
+          "description": "Unique identity for the proposal object"
+        },
+        "seasonality_notes": {
+          "description": "When the proposal performs differently",
+          "type": "string"
+        },
+        "seller_id": {
+          "description": "IAB Tech Lab registry reference",
+          "type": "string"
+        },
+        "seller_name": {
+          "description": "Canonical legal seller entity name, from the registry",
+          "type": "string"
+        },
+        "specifications": {
+          "$ref": "../../modules/proposal/1/proposal.json#/$defs/Specifications",
+          "description": "Structured detail at media-kit depth"
+        },
+        "status": {
+          "$ref": "../../modules/proposal/1/proposal.json#/$defs/ProposalStatus",
+          "description": "`draft` | `published` | `under_review` | `agreed` | `withdrawn` | `expired`"
+        },
+        "type": {
+          "$ref": "../../modules/proposal/1/proposal.json#/$defs/ProposalType",
+          "description": "`standard` | `custom`"
+        },
+        "valid_from": {
+          "$ref": "../../kernel/1/kernel.json#/$defs/Timestamp",
+          "description": "ISO-8601 window the offer holds. This is the offer window, not the campaign flight"
+        },
+        "valid_until": {
+          "$ref": "../../kernel/1/kernel.json#/$defs/Timestamp",
+          "description": "ISO-8601 window the offer holds. This is the offer window, not the campaign flight"
+        },
+        "version": {
+          "$ref": "../../kernel/1/kernel.json#/$defs/Count",
+          "description": "Monotonically increasing revision number"
+        }
+      },
+      "required": [
+        "description"
+      ],
+      "then": {
+        "required": [
+          "brief_ref"
+        ]
+      },
+      "type": "object"
+    },
+    "ProposalSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "REQUIRED. Prose, not a name. Where the \"why buy\" case is made, including which channels a multi-channel proposal spans",
+          "type": "string"
+        },
+        "proposal_id": {
+          "$ref": "../../kernel/1/kernel.json#/$defs/Uuid",
+          "description": "Unique identity for the proposal object"
+        },
+        "seller_name": {
+          "description": "Canonical legal seller entity name, from the registry",
+          "type": "string"
+        },
+        "valid_from": {
+          "$ref": "../../kernel/1/kernel.json#/$defs/Timestamp",
+          "description": "ISO-8601 window the offer holds. This is the offer window, not the campaign flight"
+        },
+        "valid_until": {
+          "$ref": "../../kernel/1/kernel.json#/$defs/Timestamp",
+          "description": "ISO-8601 window the offer holds. This is the offer window, not the campaign flight"
+        }
+      },
+      "required": [
+        "description",
+        "proposal_id",
+        "seller_name",
+        "valid_from",
+        "valid_until"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://openproposal.noetis.dev/schemas/documents/1/composition.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The OpenProposal composition: the documents and profiles, and every type that composes the modules' types, each defined once; each document's file is a reference to its definition here.",
+  "title": "composition"
+}

@@ -121,13 +121,33 @@ covers:
     digest: 8112fbcaae72dfa0381049a8e16859c1f7056a99b47f3154102cd0117b944797
     quote: A key table has the columns Key, Type, Required, and Meaning, and MAY add a last column that names a source standard.
     locks: [with-our-stack]
-  - ir: rule:2.8:2bb38cac
-    digest: 7b403c99e8fc9226d723474e2b62590bda82e817ad02368e70a740bce800922c
-    quote: "Signing is OPTIONAL: § 4.1.2 states what a signature shows, and `agreed` never depends on one."
+  - ir: rule:2.8:cc948a48
+    digest: b6d3be0a4508e65180a9874541b462e288bedfdd28df8693dc6eec7a8ff646f2
+    quote: "Signing is OPTIONAL in this specification: § 4.1.2 states what a signature shows, and `agreed` never depends on one."
     locks: [with-our-stack]
-  - ir: rule:2.8:1a572833
-    digest: 0bf63c496b8a523331e7c92f6fda51430c09d8592f65328a6a879074ef5eb3c7
-    quote: A party that cannot verify a response MAY refuse to write its own entry (§ 4.1.2)
+  - ir: rule:2.8:909151f9
+    digest: d001429e07f16a95de754111900eb9e5d2e889e29b6c15a6071244c233d02f14
+    quote: A party MAY require a signature on the routes it serves.
+    locks: [with-our-stack]
+  - ir: rule:2.8.5:d717d522
+    digest: fd5ccb063f131e740344652c34bde26b8fff8d90d32c09c5388d18073f8e93ea
+    quote: A verifier MUST reject a `nonce` it has already seen from the same origin within the signature's lifetime, with `429`.
+    locks: [with-our-stack]
+  - ir: rule:2.8.6:60100c34
+    digest: acc352fde7446e98773dc9952b72f06a3f183905cace6ad894afd78818dc5c57
+    quote: On a `403` or `429`, a party SHOULD send `Accept-Signature` (RFC 9421 § 5.1) naming the components and parameters of § 2.8.2, and on a `503` it sends `Retry-After` instead.
+    locks: [with-our-stack]
+  - ir: rule:2.8.6:0f9375d8
+    digest: 0fbf556136db6a6713a8cce3c5a4d47b59dbe02de3c1f433d74bf975d85d4b9e
+    quote: A requester that can't verify a response MAY refuse to write its own entry (§ 4.1.2).
+    locks: [with-our-stack]
+  - ir: rule:2.8.7:bb44896e
+    digest: dc402f006842598bfd7f33c2eea58c7495b050fea4d39aa9256e59c0356a062f
+    quote: 'The private keys in its `keys.json` are public test keys: section 6.8 says they "MUST NOT be used in production", and a verifier SHOULD reject them.'
+    locks: [with-our-stack]
+  - ir: rule:5.2.4:c122ccdd
+    digest: bb4c8a176a20b7ccb46fbb8d5199bce8886b697591b5e91b0aa3158b1bbf20ef
+    quote: It SHOULD carry `domain`.
     locks: [with-our-stack]
   - ir: rule:3:e5ff81ed
     digest: c13252b8934b84a3fe7175a9c96a970a5223e3b7aed4f26ab7df606162db9035
@@ -437,12 +457,20 @@ covers:
     digest: 7e3b3907d31559ccc90897194631f46013b0ec3b728f9a696294c52ebe81d7f3
     quote: Synthetic events MAY be sent to test endpoints, or through a test mode that the receiving service documents as excluding those events from production measurement and delivery diagnostics.
     locks: [with-our-stack]
+  - ir: rule:5.4.1:9a1bf7bd
+    digest: e9ff92a09a50feb9cc3f16cdfa50d0a93aeb2749ac812c5eb89ff2d539a8572e
+    quote: A preview served through server-side ad insertion MUST use a session in which the insertion service sends no production notifications.
+    locks: [with-our-stack]
+  - ir: rule:5.4.1:725c4a7c
+    digest: 4e2a13f0aaedca6bfad34b0a0fc0d68333db667543034768ce861497f925c155
+    quote: If the service cannot provide such a session, the creative MUST be inspected outside the stitched stream.
+    locks: [with-our-stack]
   - ir: rule:5.4.1:fbc60b60
-    digest: 2363f416b6b2353371d78c1593b13505592d6809025796a42fcac47619a1cc4a
+    digest: 0d5de1d4c83484fda64cf5e84d308dbed6b8a21f135de467c80c77c205c36f02
     quote: Inspection failures MUST be reported through diagnostics, without firing a production VAST `<Error>` or `verificationNotExecuted` URL.
     locks: [with-our-stack]
   - ir: rule:5.4.1:3a29e732
-    digest: 3f3cbe85c4ed9eeaea55c1c4b6b0874b78d5d5e83ff86d0c534628c1592a8911
+    digest: fd52a5b573a4af1d650c39a96cc29eb4b5b3e00f6c9a0eda125e7c768ae123ee
     quote: An implementation MUST NOT report a check that was skipped or could not finish as passed.
     locks: [with-our-stack]
   - ir: rule:5.5:9d06dca4

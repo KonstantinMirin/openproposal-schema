@@ -1,0 +1,69 @@
+format: 1
+id: G-144
+date: 2026-11-10
+question: How do payloads that IAB Australia wrote to desk-test the stack become fixtures that CI holds to their verdicts?
+decision: >-
+  A spec's folder may hold desk-test sets, `desk-tests/<set>/`, each with its
+  payloads, a README that says where they come from, and `expected.yaml`
+  (desk-tests/desk-tests.schema.json), which names the lock, the document
+  every payload is, the lock's checker, every payload, the location and kind
+  of each expected rejection, and the undecided checks. The new
+  desk-tests-load gate validates the file; the new desk-tests gate, after a
+  lock's examples, judges every payload with the lock's schemas and rule
+  checks, as the examples gate judges an example, and with the lock's own
+  checker, run on a fresh tree of the lock's specification and examples with
+  the payloads added, and fails on any verdict, location, or undecided check
+  the file doesn't record. A lock may pin scripts of the specification
+  repository under `scripts`, by blob, which its snapshot keeps and a
+  reachable clone confirms; the stack lock pins `scripts/check_examples.py`.
+  The first set is IAB Australia's 23 line items, on the stack lock: 9 are
+  rejected and 14 are clean.
+rationale: >-
+  No check is weaker: every gate whose code reaches the lock or the snapshot
+  checks what it did, and the snapshot gate also checks each pinned script's
+  blob, against the pin and, where a clone is reachable, at the commit. The
+  desk-tests gate adds two engines' verdicts on 23 payloads that no other
+  gate reads, and it runs on the gates' fixtures for a removed expected
+  rejection, a clean payload that fails the schemas, a payload the checker no
+  longer rejects, a clean payload it rejects, a rejection at another
+  location, an unlisted payload, a removed undecided check, and a failed
+  checker run. The test suite gains a test of the lock's scripts and their
+  snapshot, and its minimum count rises to 548. The spec-profile gate knows
+  `desk-tests` as a folder of the outputs stage, whose gates read it, so any
+  other unknown folder still fails it. The guard changes with the CI
+  script.
+accepts:
+  - { gate: committed-files, fingerprint: ca9e3d9591ccca9fbbcae713f4e417e49cef3db23b42476449ce8227e6e6d346 }
+  - { gate: comparison, fingerprint: 30e700417300ee72d38a9dc6d92f86b3ca13787c797b4b22dca082e1803814a9 }
+  - { gate: corpus-generates, fingerprint: 9699d54da60263b53ec55434a0137d7cb5e219ac27c5599c5ecd94f9734fa20c }
+  - { gate: corpus-isolation, fingerprint: c9afa5d7d28f35589eb4366d8ada1f085bf2b23984b9ea94b1f565f1382e0a74 }
+  - { gate: corpus-labels, fingerprint: 833922c3753ff1eaba070adcf68ed312d2938884b932ac5147a2ceda334defaf }
+  - { gate: desk-tests, fingerprint: 92faeb5df45193ebf8c74afb0b4b5f2a04153016306c9d4290872df15fc08fe5 }
+  - { gate: desk-tests-load, fingerprint: f1f9a032feccae53815e02f6f7dd8ee79f2ba333b7e72c1916468862b2497e33 }
+  - { gate: examples-listing, fingerprint: 4343021577ae14c581f6f1b6e388517aa2f617bdbe64825fc5d900c8d8bee1bc }
+  - { gate: examples-oracle, fingerprint: 202c527ee1351c8238917cf2bebc6168b8ed9274b87d7812ea90e41d4ae73295 }
+  - { gate: examples-validate, fingerprint: 107e9a96edddbfeea960159dcb0ba0ca4f5436cabd54a325285c921b223fff1d }
+  - { gate: extraction, fingerprint: 2e25132053782d499e59a5da7fff91f4c8eaca8efb13e4a5c2df34dc33304d61 }
+  - { gate: feedback, fingerprint: 383901cc23abc00262b5a2ed106ee5c7dd2758edc2447bd37f4c67449b348599 }
+  - { gate: fidelity, fingerprint: a43cf9d6ea1b98f5aca561e2b45ec294f076647fa7d20ae7ae04477a1e2739c7 }
+  - { gate: field-examples, fingerprint: 8f9a3008fac1252d9de541f24c208c9aacc9f5b78a4a2ff4e761e6834b302b94 }
+  - { gate: guard, fingerprint: 272d1bf33dfd7204777d642885d4c0ca26fe24dc2b4e8e32b2489c15bba097fd }
+  - { gate: kernel-load, fingerprint: f61e8aaec1d691866a5ce49967050d51af493dc36e48081142d31fc0f1baba9e }
+  - { gate: npm-test, fingerprint: 8569cc9ac2ac1d8449c1aa7c1efe30d87cac7cdbba358e01d0c0ae39f4e9196b }
+  - { gate: plain-generates, fingerprint: 9d229892b0a010bf5e832e85f65b6c05e77442d4691eb8f351b85f9ea963dc06 }
+  - { gate: record-wording, fingerprint: e9c315a76b5aea100c429ee43d311de8d239865ea910836929c8f4a0dfafd88f }
+  - { gate: release-breaking, fingerprint: 6dd616f78995ce9e7d4f062e1c4c90133f0c118fc60eb2741349c8d51a98013e }
+  - { gate: release-breaking-corpus, fingerprint: 4413f589ea398984cf88271f332662c0c16c334e6c5712f62936f738584f66d2 }
+  - { gate: release-builds, fingerprint: b10f59a7c2311a50553b4d028e41f97e1abbeae2ad63ff057df9db3bf1549a67 }
+  - { gate: rule-vectors, fingerprint: 0f207fc73e0c06b2e258dc4245737ca3dda6307ddda777c4ada32254f6792507 }
+  - { gate: schemas-ajv, fingerprint: afa1307900456313ee180b90f527a69cdc11eb613568558d0a6cce963683e57e }
+  - { gate: schemas-conventions, fingerprint: 2537f0bc8ca17ea9e4b727c254439ef20c01ae95ac92105c747945fc6acb0f1e }
+  - { gate: schemas-oracle, fingerprint: c12132af0253581909ad6dc2a53f9e7358e429dccf3f3e99dcd0141d928e9856 }
+  - { gate: site-builds, fingerprint: 25f7e208f498d425af2ed89032723f1c9fbd2bfb78c6886eb076e2e5ec9caae1 }
+  - { gate: snapshot, fingerprint: 7e3537721dea43ea06943c7ab3417086e5e7d73a7b082c673c9823305ce45960 }
+  - { gate: spec-input, fingerprint: 5421791807abde32e90bd25614d358f421f3d1c67c996a38e3ca012c4f0ff91e }
+  - { gate: spec-profile, fingerprint: 9b458a8c509e66805e548eaab1f4e54b6db98da0523c26630edcdc5feb0c963a }
+  - { gate: type-examples-generate, fingerprint: 68a53dd9a2591a624d2dd69e3101ec7832ec07b28769ef9af0014b460bd26e3f }
+  - { gate: type-examples-valid, fingerprint: 3d6dfda4a0ef18ae2a729729cc48936c3f8e5087cd32a4ec8c6d0708ad7a32f3 }
+  - { gate: variant-diff, fingerprint: 5f2b09558be2fc5fedaecd5caaee4f09a7a26cf1aeb35753dd12efda6e68f3ae }
+  - { gate: variant-examples, fingerprint: 1c8dbd18fe2a330de4a588a3c3b1de33b90efba4c4f8a553304a93b50a2efe92 }

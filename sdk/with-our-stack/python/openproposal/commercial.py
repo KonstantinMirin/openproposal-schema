@@ -11,7 +11,7 @@ from typing_extensions import TypeAliasType
 
 from . import _runtime as rt
 from .execution import TransactionMechanism
-from .kernel import Amount, CalendarUnit, ClockWindow, ClockWindowNarrowing, CurrencyCode, Digest, DocumentRef, Duration, Fraction, GeoCode, GeoCodeNarrowing, Instant, Interval, Measurer, NamespacedTerm, Narrowing, Party, PlainInteger, PlainIntegerNarrowing, PlainNumber, PlainString, Range, RegistrableDomain, SeatRef, Selectable, TaxonomyCodes
+from .kernel import Amount, CalendarUnit, ClockWindow, ClockWindowNarrowing, CurrencyCode, Digest, DocumentRef, Duration, Fraction, GeoCode, GeoCodeNarrowing, Instant, Interval, Measurer, NamespacedTerm, Narrowing, Party, PlainNumber, PlainString, Range, RegistrableDomain, SafeInteger, SafeIntegerNarrowing, SeatRef, Selectable, TaxonomyCodes
 from .targeting import ExclusionList, ExclusionType
 
 AssentEntryRole = TypeAliasType("AssentEntryRole", Literal["commitment", "acceptance", "withdrawal", "decline"])
@@ -297,27 +297,6 @@ class BuyerWritesGeoBounds(rt.Closed):
     """The buyer's value."""
 
 
-class BuyerWritesSettableRange(rt.Closed):
-    """The `BuyerWritesSettableRange` object of the `commercial` module."""
-
-    value: Optional[PlainInteger] = None
-    """The buyer's value, between the bounds inclusive."""
-
-
-class BuyerWritesFrequencyCap(rt.Closed):
-    """The `BuyerWritesFrequencyCap` object of the `commercial` module."""
-
-    count: Optional[BuyerWritesSettableRange] = None
-    """The line item's `frequency_cap.count`, projected to `value`."""
-
-
-class BuyerWritesDeviceBounds(rt.Closed):
-    """The `BuyerWritesDeviceBounds` object of the `commercial` module."""
-
-    value: Optional[Narrowing[PlainInteger]] = None
-    """The buyer's value."""
-
-
 class Availability(rt.Closed):
     """The `Availability` object of the `commercial` module."""
 
@@ -342,27 +321,6 @@ class CommitmentAmount(rt.Closed):
     """The figure committed: an `Amount` when `basis` is `spend`, otherwise a whole number of the entry's units (§ 5.6.5)"""
     basis: CommitmentAmountBasis
     """`spend` | `units`"""
-
-
-class AssentEntry(rt.Closed):
-    """The `AssentEntry` object of the `commercial` module."""
-
-    __shape__: ClassVar[rt.Shape] = rt.Shape(conditions=(("role", "commitment", ("idempotency_key",), ()), ("role", "decline", ("ground",), ())))
-
-    at: Instant
-    """When the party wrote the entry, by its own statement. No rule reads order from it"""
-    ground: Optional[AssentEntryGround] = None
-    """Why the seller declined. Core terms: `availability` | `exclusivity` | `terms`, the grounds of § 4.3.2. Absent on any other entry. A receiver that doesn't know a term still reads the entry as a `decline`"""
-    idempotency_key: Optional[PlainString] = None
-    """Buyer-generated, unique per `commit`, opaque, and scoped to one buyer and seller pair. The seller MUST NOT interpret it (§ 5.6.1)"""
-    line_item_ids: list[PlainString]
-    """The line items the entry names. MUST be non-empty"""
-    record_digest: Digest
-    """Of the binding record for the line items in `line_item_ids[]` (§ 4.1.1)"""
-    role: AssentEntryRole
-    """`commitment` | `acceptance` | `withdrawal` | `decline`. It says what the entry does, and it implies the party"""
-    version: PlainInteger
-    """The `version` of the record the digest was computed over. `version` is outside the binding record, so the entry binds it"""
 
 
 class BuyerWritesSelectable(rt.Closed):
@@ -418,15 +376,6 @@ class CancellationOption(rt.Closed):
     """Time from notice received to the earliest effective date: `P14D` is 14 days, `P0D` immediate"""
     notice_reference: Optional[CancellationOptionNoticeReference] = None
     """The date `before_reference` counts to. Core terms: `flight` (default) | `install_date`. `flight`: `commitment.flight.start`. `install_date`: the posting or install date. No key in the record holds that date, so a fee that counts to it can't be computed from the record"""
-
-
-class CommitResult(rt.Closed):
-    """The `CommitResult` object of the `commercial` module."""
-
-    availability: Optional[dict[PlainString, Availability]] = None
-    """The figures that `decline` states, keyed by `line_item_id`. They are not part of the entry"""
-    entries: list[AssentEntry]
-    """The buyer's `commitment` entry, then each matching `acceptance`, `decline`, or `withdrawal` entry written after it in `assent[]`"""
 
 
 PreemptionReason = TypeAliasType("PreemptionReason", Union[Literal["exclusivity"], NamespacedTerm])
@@ -514,19 +463,48 @@ class ProofOfPerformanceEvidences:
     AUDIT_REPORT: Final = "audit_report"
 
 
-class ImpressionMultiplier(rt.Closed):
-    """The `ImpressionMultiplier` object of the `commercial` module."""
+class AssentEntry(rt.Closed):
+    """The `AssentEntry` object of the `commercial` module."""
 
-    dataset: PlainString
-    """The source's named data release the multipliers come from. A new release is a new `dataset`"""
-    impression_type: ImpressionMultiplierImpressionType
-    """`gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them"""
-    settles_on: ImpressionMultiplierSettlesOn
-    """`declared` | `restated`. `declared`: the value `dataset` gives that screen, or sync group, and hour when the play runs. Under a deal mechanism (§ 5.9), the bid request carries it as OpenRTB 2.6 `imp.qty.multiplier`. `restated`: that value after any reissue of `dataset` by its source before the count is final (§ 5.7.1)"""
-    source_type: PlainInteger
-    """Who supplies the multiplier. A value from AdCOM 1.0 List: DOOH Multiplier Measurement Source Types other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries"""
-    vendor: Optional[RegistrableDomain] = None
-    """The domain of the vendor or exchange that supplies the multipliers, as OpenRTB 2.6 `imp.qty.vendor` names a vendor"""
+    __shape__: ClassVar[rt.Shape] = rt.Shape(conditions=(("role", "commitment", ("idempotency_key",), ()), ("role", "decline", ("ground",), ())))
+
+    at: Instant
+    """When the party wrote the entry, by its own statement. No rule reads order from it"""
+    ground: Optional[AssentEntryGround] = None
+    """Why the seller declined. Core terms: `availability` | `exclusivity` | `terms`, the grounds of § 4.3.2. Absent on any other entry. A receiver that doesn't know a term still reads the entry as a `decline`"""
+    idempotency_key: Optional[PlainString] = None
+    """Buyer-generated, unique per `commit`, opaque, and scoped to one buyer and seller pair. The seller MUST NOT interpret it (§ 5.6.1)"""
+    line_item_ids: list[PlainString]
+    """The line items the entry names. MUST be non-empty"""
+    record_digest: Digest
+    """Of the binding record for the line items in `line_item_ids[]` (§ 4.1.1)"""
+    role: AssentEntryRole
+    """`commitment` | `acceptance` | `withdrawal` | `decline`. It says what the entry does, and it implies the party"""
+    version: SafeInteger
+    """The `version` of the record the digest was computed over. `version` is outside the binding record, so the entry binds it"""
+
+
+class BuyerWritesSettableRange(rt.Closed):
+    """The `BuyerWritesSettableRange` object of the `commercial` module."""
+
+    value: Optional[SafeInteger] = None
+    """The buyer's value, between the bounds inclusive."""
+
+
+class BuyerWritesFrequencyCap(rt.Closed):
+    """The `BuyerWritesFrequencyCap` object of the `commercial` module."""
+
+    count: Optional[BuyerWritesSettableRange] = None
+    """The line item's `frequency_cap.count`, projected to `value`."""
+
+
+class CommitResult(rt.Closed):
+    """The `CommitResult` object of the `commercial` module."""
+
+    availability: Optional[dict[PlainString, Availability]] = None
+    """The figures that `decline` states, keyed by `line_item_id`. They are not part of the entry"""
+    entries: list[AssentEntry]
+    """The buyer's `commitment` entry, then each matching `acceptance`, `decline`, or `withdrawal` entry written after it in `assent[]`"""
 
 
 class Commitment(rt.Closed):
@@ -538,12 +516,36 @@ class Commitment(rt.Closed):
     """The figure committed: an `Amount` when `basis` is `spend`, otherwise a whole number of the entry's units (§ 5.6.5)"""
     basis: CommitmentAmountBasis
     """`spend` | `units`"""
-    derived_units: Optional[PlainInteger] = None
+    derived_units: Optional[SafeInteger] = None
     """The committed units, as § 5.6.5 derives them, whether or not this key is written. A written value is a copy, outside the record (§ 4.1.1); where it differs, the § 5.6.5 result applies"""
     flight: Interval
     """The buyer's campaign. Distinct from `offer_window`"""
     pricing_id: Optional[PlainString] = None
     """The entry the buyer commits under"""
+
+
+class ImpressionMultiplier(rt.Closed):
+    """The `ImpressionMultiplier` object of the `commercial` module."""
+
+    dataset: PlainString
+    """The source's named data release the multipliers come from. A new release is a new `dataset`"""
+    demographic: Optional[CostParametersDemographic] = None
+    """The demographic whose value settles when `dataset` gives a value per demographic. The same kind of term as `cost_parameters.demographic` (§ 5.6.5)"""
+    impression_type: ImpressionMultiplierImpressionType
+    """`gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them"""
+    settles_on: ImpressionMultiplierSettlesOn
+    """`declared` | `restated`. `declared`: the value `dataset` gives that screen, or sync group, and hour when the play runs. Under a deal mechanism (§ 5.9), the bid request carries it as OpenRTB 2.6 `imp.qty.multiplier`. `restated`: that value after any reissue of `dataset` by its source before the count is final (§ 5.7.1)"""
+    source_type: SafeInteger
+    """Who supplies the multiplier. A value from AdCOM 1.0 List: DOOH Multiplier Measurement Source Types other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries"""
+    vendor: Optional[RegistrableDomain] = None
+    """The domain of the vendor or exchange that supplies the multipliers, as OpenRTB 2.6 `imp.qty.vendor` names a vendor"""
+
+
+class BuyerWritesDeviceBounds(rt.Closed):
+    """The `BuyerWritesDeviceBounds` object of the `commercial` module."""
+
+    value: Optional[Narrowing[SafeInteger]] = None
+    """The buyer's value."""
 
 
 class BuyerWritesBuyerRequirements(rt.Closed):
@@ -576,7 +578,7 @@ class CostParameters(rt.Closed):
     """Who supplies the ratings"""
     view_fraction: Optional[Fraction] = None
     """The fraction of the creative played that makes a view. Absent when `view_s` is present"""
-    view_s: Optional[PlainInteger] = None
+    view_s: Optional[SafeInteger] = None
     """Seconds played that make a view. Absent when `view_fraction` is present"""
     viewability_standard: Optional[CostParametersViewabilityStandard] = None
     """The viewability standard that counts a unit. Core term: `mrc`, the MRC guidelines that `viewable_rate` cites (§ 5.7.1)"""
@@ -598,7 +600,7 @@ class DeliveryCounting(rt.Closed):
     """What turns a play into impressions. A line item that counts only plays needs none"""
     partial_play_credit: Optional[DeliveryCountingPartialPlayCredit] = None
     """What a display on fewer than `min_screens_per_play` screens counts. Core terms: `none` (no play) | `pro_rata` (screens played ÷ `min_screens_per_play`)"""
-    play_tolerance_ms: PlainInteger
+    play_tolerance_ms: SafeInteger
     """How far short of its full duration a play may end and still count"""
     proof_of_performance: ProofOfPerformance
     """Who logs the plays and what the buyer receives"""
@@ -765,7 +767,7 @@ class Hold(rt.Closed):
 
     held_availability: Optional[Availability] = None
     """What the hold reserves, as the seller states it on a grant or a re-offer. It can be less than `requested_terms` asks"""
-    position: Optional[PlainInteger] = None
+    position: Optional[SafeInteger] = None
     """Seller-set, 1 for first in line, in the order granted. A later hold moves up only when the one ahead expires, is released or converts. Holds on the same inventory reserve it in that order, so a later hold reserves only what the holds granted ahead of it leave (§ 5.6.1)"""
     reference: Optional[PlainString] = None
     """Seller-set. The seller's id for the reservation, so a buyer can reconcile a hold against the seller's systems"""
@@ -775,12 +777,12 @@ class Hold(rt.Closed):
     """Moved by the transitions below"""
     valid_until: Optional[Instant] = None
     """The grant time plus `hold_terms.duration`, or the § 4.3.4 cap if that comes first. With no `duration`, the seller sets it within the cap. It MAY remain on `expired` and `released`"""
-    version: PlainInteger
+    version: SafeInteger
     """The `version` the hold is on (§ 4.1.3)"""
 
 
-UnitBoundsRange = Range[PlainInteger]
-"""The copy `Range<T=PlainInteger>`."""
+UnitBoundsRange = Range[SafeInteger]
+"""The copy `Range<T=SafeInteger>`."""
 
 
 class PricingEntry(rt.Closed):
@@ -800,7 +802,7 @@ class PricingEntry(rt.Closed):
     """The rate before options. A buyer MAY request another value, and a granted value is the `list_rate` of the next `version`"""
     min_rate: Optional[Amount] = None
     """A hint: the lowest `list_rate` the seller says it will consider. It grants nothing. Not a term, not the downstream auction floor, and never sent downstream"""
-    price_type: Optional[PlainInteger] = None
+    price_type: Optional[SafeInteger] = None
     """How `agreed_rate` clears, as Deals API 1.0 `terms.pricetype`: Dynamic (0), the auction type of each bid request; First Price (1); Second Price Plus (2); Fixed Price (3); or an exchange-specific value, 500 and up"""
     price_valid_until: Optional[Instant] = None
     """How long the entry holds (§ 4.3.2). Distinct from the proposal's `offer_window.end`"""
@@ -810,7 +812,7 @@ class PricingEntry(rt.Closed):
     """`1` | `1000`. Units per rate. For a core term, the vocabulary sets it, and a present value MUST match"""
     transaction_mechanisms: Optional[list[TransactionMechanism]] = None
     """The `transaction_mechanism` options this entry prices. Absent: every offered option"""
-    unit_bounds: Optional[Range[PlainInteger]] = None
+    unit_bounds: Optional[Range[SafeInteger]] = None
     """Bounds on the units committed under this entry, counted in its unit (§ 5.6.5): `commitment.amount` when `basis` is `units`, otherwise `derived_units`. A buyer MAY request another. Absent on a `FLAT` entry"""
     unit_label: Optional[PlainString] = None
     """A short label for one unit, such as `engagement`"""

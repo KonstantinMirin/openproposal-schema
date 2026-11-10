@@ -1,8 +1,8 @@
 {
   "format": 1,
   "input": {
-    "blob": "179980bae43c78855432408cd6c6609109963d22",
-    "commit": "a4adff3efb85564d84a4439b27f554123feefd41",
+    "blob": "7ed55dbc2a60d112f1dc9fc342ee6b598d050e2b",
+    "commit": "43f4c723c3250091572fa31a3ab2f355f5d712df",
     "lock": "with-our-stack"
   },
   "rules": [
@@ -86,7 +86,7 @@
         "arguments": {
           "T": {
             "kind": "named",
-            "name": "PlainInteger"
+            "name": "SafeInteger"
           }
         },
         "invalid": [
@@ -266,7 +266,7 @@
             "party": "buyer"
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -457,7 +457,7 @@
             "party": "seller"
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -627,7 +627,7 @@
             "party": "buyer"
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -729,7 +729,7 @@
             "party": "buyer"
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -874,7 +874,7 @@
             "party": "buyer"
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -1079,7 +1079,7 @@
             "party": "seller"
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -1137,6 +1137,7 @@
         "LineItem.commitment_bounds",
         "LineItem.committed_metrics",
         "LineItem.materials_due",
+        "LineItem.retention",
         "LineItemSummary.commitment_bounds",
         "LineItemSummary.committed_metrics",
         "LineItemSummaryPricingEntry.list_rate",
@@ -1204,7 +1205,7 @@
             "party": "buyer"
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -1355,7 +1356,7 @@
             "party": "buyer"
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -1433,7 +1434,6 @@
         "LineItem.preemption",
         "LineItem.renewal_right",
         "LineItem.required_credentials",
-        "LineItem.retention",
         "LineItem.serving_mode",
         "LineItem.serving_platform",
         "LineItem.sov_basis",
@@ -1562,7 +1562,7 @@
             "party": "seller"
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -1694,7 +1694,7 @@
             "party": "buyer"
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -1828,7 +1828,7 @@
             "party": "seller"
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -2013,7 +2013,7 @@
             }
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/proposal.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/Proposal",
         "type": "Proposal",
         "valid": [
           {
@@ -2123,7 +2123,7 @@
             }
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/proposal.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/Proposal",
         "type": "Proposal",
         "valid": [
           {
@@ -2212,7 +2212,7 @@
             }
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/modules/proposal/1/proposal.json#/$defs/HistoryPath",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/HistoryPath",
         "type": "HistoryPath",
         "valid": [
           {
@@ -2287,7 +2287,7 @@
             }
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/proposal.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/Proposal",
         "type": "Proposal",
         "valid": [
           {
@@ -2378,7 +2378,7 @@
             }
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/proposal.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/Proposal",
         "type": "Proposal",
         "valid": [
           {
@@ -2478,7 +2478,7 @@
             }
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/modules/proposal/1/proposal.json#/$defs/HistoryPath",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/HistoryPath",
         "type": "HistoryPath",
         "valid": [
           {
@@ -2567,7 +2567,7 @@
             }
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/modules/proposal/1/proposal.json#/$defs/ChangeRequest",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/ChangeRequest",
         "type": "ChangeRequest",
         "valid": [
           {
@@ -3123,7 +3123,7 @@
             }
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -3221,7 +3221,7 @@
             }
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -3403,7 +3403,7 @@
             "party": "buyer"
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -3507,7 +3507,7 @@
             }
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -3805,7 +3805,7 @@
             }
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -4183,7 +4183,8 @@
       "severity": "error",
       "sources": [
         "key:5.6.4:DeliveryCounting.impression_multiplier",
-        "rule:5.6.4:e58650b7"
+        "rule:5.6.4:e58650b7",
+        "sentence:5.6.4:a001cab1"
       ],
       "statement": "REQUIRED when the line item counts impressions",
       "vectors": {
@@ -4206,6 +4207,64 @@
                 "logged_by": "seller"
               }
             }
+          },
+          {
+            "context": {
+              "LineItem.committed_metrics": [
+                {
+                  "direction": "at_least",
+                  "level": 8000000,
+                  "metric": "impressions"
+                }
+              ],
+              "LineItem.pricing": [
+                {
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "week"
+                  },
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "audio-week-usd"
+                }
+              ]
+            },
+            "value": {
+              "play_tolerance_ms": 500,
+              "proof_of_performance": {
+                "evidence": [],
+                "logged_by": "seller"
+              }
+            }
+          },
+          {
+            "context": {
+              "LineItem.availability": {
+                "certainty": "reservable",
+                "computed_at": "2026-10-06T16:20:00Z",
+                "quantity": 3555555,
+                "unit": "impressions",
+                "window": {
+                  "end": "2026-12-31T23:59:59Z",
+                  "start": "2026-10-01T00:00:00Z"
+                }
+              },
+              "LineItem.pricing": [
+                {
+                  "cost_method": "PLAY",
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "audio-play-usd"
+                }
+              ]
+            },
+            "value": {
+              "play_tolerance_ms": 500,
+              "proof_of_performance": {
+                "evidence": [],
+                "logged_by": "seller"
+              }
+            }
           }
         ],
         "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/modules/commercial/1/commercial.json#/$defs/DeliveryCounting",
@@ -4213,12 +4272,26 @@
         "valid": [
           {
             "context": {
+              "LineItem.availability": {
+                "certainty": "reservable",
+                "computed_at": "2026-10-06T16:20:00Z",
+                "quantity": 3555555,
+                "unit": "plays",
+                "window": {
+                  "end": "2026-12-31T23:59:59Z",
+                  "start": "2026-10-01T00:00:00Z"
+                }
+              },
+              "LineItem.committed_metrics": [],
               "LineItem.pricing": [
                 {
                   "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "week"
+                  },
                   "currency": "USD",
                   "list_rate": 18,
-                  "pricing_id": "audio-cpm-usd"
+                  "pricing_id": "audio-week-usd"
                 }
               ]
             },
@@ -4238,6 +4311,41 @@
                   "currency": "USD",
                   "list_rate": 18,
                   "pricing_id": "audio-cpm-usd"
+                }
+              ]
+            },
+            "value": {
+              "impression_multiplier": {
+                "dataset": "examplepub-q4-sports",
+                "impression_type": "gross",
+                "settles_on": "declared",
+                "source_type": 1
+              },
+              "play_tolerance_ms": 500,
+              "proof_of_performance": {
+                "evidence": [],
+                "logged_by": "seller"
+              }
+            }
+          },
+          {
+            "context": {
+              "LineItem.committed_metrics": [
+                {
+                  "direction": "at_least",
+                  "level": 8000000,
+                  "metric": "impressions"
+                }
+              ],
+              "LineItem.pricing": [
+                {
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "week"
+                  },
+                  "currency": "USD",
+                  "list_rate": 18,
+                  "pricing_id": "audio-week-usd"
                 }
               ]
             },
@@ -5111,7 +5219,7 @@
             }
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -5190,7 +5298,7 @@
             }
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -5268,7 +5376,7 @@
             }
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -5379,7 +5487,7 @@
             }
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {
@@ -5451,7 +5559,7 @@
             }
           }
         ],
-        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/line-item.json",
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
         "type": "LineItem",
         "valid": [
           {

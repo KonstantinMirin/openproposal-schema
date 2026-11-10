@@ -75,8 +75,8 @@ func (ProposalType) ValidateValue(v any, at string, errs *Errors) {
 	checkEnum(v, at, errs, termsProposalType...)
 }
 
-// RequestedUnitBoundsRange: The copy `Range<T=PlainInteger>`.
-type RequestedUnitBoundsRange = Range[PlainInteger]
+// RequestedUnitBoundsRange: The copy `Range<T=SafeInteger>`.
+type RequestedUnitBoundsRange = Range[SafeInteger]
 
 // RequestedValue: The `RequestedValue` object of the `proposal` module.
 type RequestedValue struct {
@@ -89,7 +89,7 @@ type RequestedValue struct {
 	// MaterialsDue: The line item's `materials_due`
 	MaterialsDue *MaterialsDue `json:"materials_due,omitempty"`
 	// UnitBounds: A `pricing[].unit_bounds`
-	UnitBounds *Range[PlainInteger] `json:"unit_bounds,omitempty"`
+	UnitBounds *Range[SafeInteger] `json:"unit_bounds,omitempty"`
 }
 
 // ValidateValue implements Value.
@@ -112,7 +112,7 @@ func (RequestedValue) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[MaterialsDue](x, member(at, "materials_due"), errs)
 	}
 	if x, ok := m["unit_bounds"]; ok {
-		validateAs[Range[PlainInteger]](x, member(at, "unit_bounds"), errs)
+		validateAs[Range[SafeInteger]](x, member(at, "unit_bounds"), errs)
 	}
 }
 
@@ -156,7 +156,7 @@ type HistoryEntry struct {
 	// Paths: The fields the act changed or asked about. MAY be empty
 	Paths List[HistoryPath] `json:"paths"`
 	// Version: The version the act created or refers to (§ 4.1.3)
-	Version PlainInteger `json:"version"`
+	Version SafeInteger `json:"version"`
 }
 
 // ValidateValue implements Value.
@@ -180,7 +180,7 @@ func (HistoryEntry) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[List[HistoryPath]](x, member(at, "paths"), errs)
 	}
 	if x, ok := m["version"]; ok {
-		validateAs[PlainInteger](x, member(at, "version"), errs)
+		validateAs[SafeInteger](x, member(at, "version"), errs)
 	}
 }
 
@@ -347,7 +347,7 @@ type Proposal struct {
 	// Type: `standard` | `custom`
 	Type ProposalType `json:"type"`
 	// Version: Monotonically increasing revision number, starting at 1, held by the seller. Each version is a snapshot of the proposal's offered terms (§ 4.1.3). A version is frozen at the earliest of: the proposal's `status` leaving `draft`; a `negotiation_history[]` or `assent[]` entry naming it; a counterparty receiving it in any representation (§ 2.1). The offered terms of a frozen version MUST NOT change; a change to them creates version `n+1`. The values § 4.1.3 lists as not offered terms change without a new version
-	Version PlainInteger `json:"version"`
+	Version SafeInteger `json:"version"`
 }
 
 // ValidateValue implements Value.
@@ -422,7 +422,7 @@ func (Proposal) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[ProposalType](x, member(at, "type"), errs)
 	}
 	if x, ok := m["version"]; ok {
-		validateAs[PlainInteger](x, member(at, "version"), errs)
+		validateAs[SafeInteger](x, member(at, "version"), errs)
 	}
 	if x, ok := m["type"]; ok && jsonEqual(x, "custom") {
 		checkRequiredWhen(m, at, errs, "type", "brief_id")

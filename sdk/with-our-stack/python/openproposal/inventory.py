@@ -10,7 +10,7 @@ from pydantic import AfterValidator, BeforeValidator, Field, Strict
 from typing_extensions import TypeAliasType
 
 from . import _runtime as rt
-from .kernel import Instant, IntegerFlag, OpenObject, PlainInteger, PlainString, Selectable
+from .kernel import Instant, IntegerFlag, OpenObject, PlainString, SafeInteger, Selectable
 from .properties import PropertyOption
 
 Environment = TypeAliasType("Environment", Literal["web_desktop", "web_mobile", "app_mobile", "ctv", "dooh"])
@@ -70,23 +70,6 @@ class LineItemEpisodeses:
     ALL: Final = "all"
 
 
-class BreakPositionOption(rt.Closed):
-    """The `BreakPositionOption` object of the `inventory` module."""
-
-    delay: Optional[PlainInteger] = None
-    """A value from List: Start Delay Modes, such as Pre-Roll (0)"""
-    id: PlainString
-    """Option id (§ 3.1)"""
-    maxseq: Optional[PlainInteger] = None
-    """Ceiling: the most ads a served pod holds"""
-    poddur: Optional[PlainInteger] = None
-    """Ceiling: the most seconds of dynamic ad time a served pod holds"""
-    podseq: Optional[PlainInteger] = None
-    """A value from List: Pod Sequence"""
-    slotinpod: Optional[PlainInteger] = None
-    """A value from List: Slot Position in Pod"""
-
-
 class ProgramOption(rt.Closed):
     """The `ProgramOption` object of the `inventory` module."""
 
@@ -98,25 +81,42 @@ class ProgramOption(rt.Closed):
     """When the event airs. An option for a scheduled event carries it"""
 
 
+class BreakPositionOption(rt.Closed):
+    """The `BreakPositionOption` object of the `inventory` module."""
+
+    delay: Optional[SafeInteger] = None
+    """A value from List: Start Delay Modes, such as Pre-Roll (0)"""
+    id: PlainString
+    """Option id (§ 3.1)"""
+    maxseq: Optional[SafeInteger] = None
+    """Ceiling: the most ads a served pod holds"""
+    poddur: Optional[SafeInteger] = None
+    """Ceiling: the most seconds of dynamic ad time a served pod holds"""
+    podseq: Optional[SafeInteger] = None
+    """A value from List: Pod Sequence"""
+    slotinpod: Optional[SafeInteger] = None
+    """A value from List: Slot Position in Pod"""
+
+
 class Refresh(rt.Closed):
     """The `Refresh` object of the `inventory` module."""
 
-    min_interval_s: PlainInteger
+    min_interval_s: SafeInteger
     """Minimum seconds a creative renders before the slot refreshes"""
 
 
 class Placement(rt.Closed):
     """The `Placement` object of the `inventory` module."""
 
-    api: Optional[list[PlainInteger]] = None
+    api: Optional[list[SafeInteger]] = None
     """Values from List: API Frameworks that every impression supports, such as MRAID 3.0 (6), OMID 1.0 (7) and SIMID 1.1 (9)"""
-    feed: Optional[PlainInteger] = None
+    feed: Optional[SafeInteger] = None
     """A value from List: Feed Types, such as Podcast (3)"""
     instl: Optional[IntegerFlag] = None
     """The ad is interstitial or full screen"""
-    playmethod: Optional[list[PlainInteger]] = None
+    playmethod: Optional[list[SafeInteger]] = None
     """Video or audio. Values from List: Playback Methods in use, such as Initiates without any specific user interaction with Sound On (1), Initiates without any specific user interaction Sound Off by Default (2), Initiates on Click with Sound On (3) and Continuous Playback (7)"""
-    plcmt: Optional[PlainInteger] = None
+    plcmt: Optional[SafeInteger] = None
     """A value from List: Plcmt Subtypes - Video, such as Instream (1). Its presence states that the line item is video, so a `ctv` line item that sells video carries it"""
     refresh: Optional[Refresh] = None
     """How often the slot refreshes"""
@@ -124,9 +124,9 @@ class Placement(rt.Closed):
     """The user receives a reward for viewing the ad"""
     skip: Optional[IntegerFlag] = None
     """Video or audio. The placement lets the user skip the ad"""
-    skipafter: Optional[PlainInteger] = None
+    skipafter: Optional[SafeInteger] = None
     """When `skip` is `1`: seconds the ad plays before the placement enables skipping"""
-    ssai: Optional[PlainInteger] = None
+    ssai: Optional[SafeInteger] = None
     """Whether server-side ad insertion is in use and what it does to asset and tracker retrieval, in the values of AdCOM 1.0 `Placement.ssai`, such as all server-side (3)"""
 
 

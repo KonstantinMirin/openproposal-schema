@@ -3,7 +3,7 @@
 /** The OpenProposal `audience` module's types. */
 import { z } from "zod";
 import * as rt from "./runtime.js";
-import { Delta, Fraction, Interval, NamespacedTerm, OpenObject, PlainInteger, PlainString, Selectable } from "./kernel.js";
+import { Delta, Fraction, Interval, NamespacedTerm, OpenObject, PlainString, SafeInteger, Selectable } from "./kernel.js";
 
 /** The `CombineOperator` vocabulary: `any`, `all`. */
 export type CombineOperator = "any" | "all";
@@ -70,14 +70,14 @@ export const LineItemActivationRoutes = {
 /** The `AddressableScale` object of the `audience` module. */
 export interface AddressableScale {
   /** How many */
-  quantity: PlainInteger;
+  quantity: SafeInteger;
   /** What `quantity` counts. Core terms: the `frequency_cap.per` terms (§ 5.5), and `person`. A receiver that doesn't know a term reads the figure as unstated */
   unit: AddressableScaleUnit;
   /** The dates `quantity` covers */
   window: Interval;
 }
 export const AddressableScale: z.ZodType<AddressableScale> = z.strictObject({
-  quantity: PlainInteger,
+  quantity: SafeInteger,
   unit: AddressableScaleUnit,
   window: Interval,
 });
@@ -95,7 +95,7 @@ export interface AudienceOption {
   /** The categories the option's membership is derived from or reveals. Core terms: `racial_or_ethnic_origin` | `political_opinions` | `religious_or_philosophical_beliefs` | `trade_union_membership` | `genetic` | `biometric` | `health` | `sex_life_or_sexual_orientation` | `precise_geolocation` | `minors` (under 18). An empty array declares none */
   sensitive_categories: Array<AudienceOptionSensitiveCategory>;
   /** The integer from the OpenRTB segment taxonomies list for the IDs that name this option: `4` (IAB Tech Lab Audience Taxonomy 1.1) for the label's `taxonomy_id_list`, or the seller's registered vendor value (500 and up) for the label's `audience_id`. When the seller signals the segment in an OpenRTB 2.6 request, these are the `data.ext.segtax` and `segment.id` values */
-  taxonomy: PlainInteger;
+  taxonomy: SafeInteger;
 }
 export const AudienceOption: z.ZodType<AudienceOption> = z.strictObject({
   data_label: OpenObject,
@@ -103,7 +103,7 @@ export const AudienceOption: z.ZodType<AudienceOption> = z.strictObject({
   id: PlainString,
   name: PlainString.optional(),
   sensitive_categories: z.array(AudienceOptionSensitiveCategory),
-  taxonomy: PlainInteger,
+  taxonomy: SafeInteger,
 });
 
 /** The `BuyerList` object of the `audience` module. */
@@ -113,14 +113,14 @@ export interface BuyerList {
   /** How its members match users. Core terms: `hashed_email` | `device_id`. A receiver that doesn't know a term reads the method as unstated */
   match_method?: BuyerListMatchMethod;
   /** How many members it holds */
-  size?: PlainInteger;
+  size?: SafeInteger;
   /** Where the list comes from, such as `advertiser_crm` */
   source?: PlainString;
 }
 export const BuyerList: z.ZodType<BuyerList> = z.strictObject({
   list_id: PlainString,
   match_method: BuyerListMatchMethod.optional(),
-  size: PlainInteger.optional(),
+  size: SafeInteger.optional(),
   source: PlainString.optional(),
 });
 
@@ -165,7 +165,7 @@ export interface AudienceSelectable {
   /** The options in the base rate, by option id. */
   included: Array<PlainString>;
   /** The most options that may be in effect. */
-  max_select?: PlainInteger;
+  max_select?: SafeInteger;
   /** The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`. */
   selected?: Array<PlainString>;
 }
@@ -175,6 +175,6 @@ export const AudienceSelectable: z.ZodType<AudienceSelectable> = z.strictObject(
   deltas: rt.map(PlainString, Delta).optional(),
   excluded: z.array(PlainString).optional(),
   included: z.array(PlainString),
-  max_select: PlainInteger.optional(),
+  max_select: SafeInteger.optional(),
   selected: z.array(PlainString).optional(),
 });

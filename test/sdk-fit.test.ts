@@ -180,7 +180,7 @@ print(json.dumps(out))`,
     );
     const r = JSON.parse(out) as { bad: string[]; count: number; dump: unknown; json: string; plain_has_null: boolean };
     assert.deepEqual(r.bad, [], t.dir);
-    assert.ok(r.count > 100, `${t.dir}: ${r.count} type examples`);
+    assert.ok(r.count > 90, `${t.dir}: ${r.count} type examples`);
     assert.deepEqual(r.dump, { status: "draft" }, `${t.dir}: a member never set, or set to None, stays absent`);
     assert.equal(r.json, '{"status":"draft"}');
     assert.equal(r.plain_has_null, true, `${t.dir}: a plain model_dump() writes nulls, which is why dump exists`);

@@ -15,4 +15,4 @@ const Lock = "with-open-prs"
 const Variant = "as-written"
 
 // SchemaRelease is the schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it.
-const SchemaRelease = "312b5f7f2749c6edc38e013bde5e8cc48613fe7981ab1dcff8c6c129183011cf"
+const SchemaRelease = "69e5099c4894c847d1a51dedad5e5742bbc5ccd16ca2db7ee41b78cc6dd3c0e4"

@@ -193,7 +193,7 @@ entries:
     digest: 95abf292cdcc32a9365e568b756c093f4d7e96c011d58783a43c90db738b0db5
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: Proposal, type: { kind: named, name: PlainInteger }, presence: required }
+    as: { role: property, object: Proposal, type: { kind: named, name: SafeInteger }, presence: required }
   - ir: rule:4.1:373dbf11-2
     digest: 4adcc06185ba356e3ff96976b913609ea1c0a3c51cef5a72f707138f6fcb7b45
     locks: [ with-our-stack ]
@@ -440,7 +440,7 @@ entries:
     digest: 2d917d282442becae950ee7a953543fc4d226962b82e46ae68cf4b72c93d9ccd
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: HistoryEntry, type: { kind: named, name: PlainInteger }, presence: required }
+    as: { role: property, object: HistoryEntry, type: { kind: named, name: SafeInteger }, presence: required }
   - ir: rule:4.1:373dbf11-7
     digest: efad1d5cd6e75dbed028f9a9816d08b0bb2efc4deff6248802cded215ebfc100
     locks: [ with-our-stack ]
@@ -565,7 +565,7 @@ entries:
       type:
         kind: apply
         constructor: Range
-        arguments: { T: { kind: named, name: PlainInteger } }
+        arguments: { T: { kind: named, name: SafeInteger } }
         name: RequestedUnitBoundsRange
       presence: optional
   - ir: rule:4.1:ae26d4ac-7

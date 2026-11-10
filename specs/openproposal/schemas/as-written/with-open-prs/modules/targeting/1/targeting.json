@@ -4,10 +4,10 @@
       "additionalProperties": false,
       "properties": {
         "bundle": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          "type": "string"
         },
         "platform": {
-          "$ref": "../../inventory/1/inventory.json#/$defs/StorePlatform"
+          "$ref": "../../../kernel/1/kernel.json#/$defs/StorePlatform"
         }
       },
       "required": [
@@ -38,7 +38,7 @@
       "properties": {
         "allowed": {
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+            "type": "string"
           },
           "type": "array"
         }
@@ -82,13 +82,13 @@
         "iab_content_category": {
           "description": "IDs of categories of the IAB Tech Lab Content Taxonomy, each carried as written. The specification's example writes one as `IAB-CT3.0:<id>`, the taxonomy's version and the category's ID.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+            "type": "string"
           },
           "type": "array"
         },
         "keyword": {
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+            "type": "string"
           },
           "type": "array"
         },
@@ -127,7 +127,7 @@
         },
         "verification": {
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+            "type": "string"
           },
           "type": "array"
         }
@@ -191,7 +191,7 @@
       "properties": {
         "allowed": {
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+            "type": "string"
           },
           "type": "array"
         }
@@ -207,14 +207,14 @@
       "properties": {
         "available": {
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+            "type": "string"
           },
           "type": "array"
         },
         "included": {
           "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the identity the seller mints for it.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+            "type": "string"
           },
           "type": "array"
         },
@@ -226,9 +226,6 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
           },
           "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the identity the seller mints for it.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
-          },
           "type": "object"
         }
       },

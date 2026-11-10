@@ -656,30 +656,201 @@ it before reading the bytes, and `unresolved_reference` (§ 2.4) reports a misma
 people. A party that holds them limits who can read them, in stored records and
 logs as well as in responses. § 5.5 states the disclosure rule for `exclusions`.
 
+**Seller prices.** `pricing[].min_rate` shows a seller's negotiating position. Anyone
+who may read a line item reads its `min_rate` (§ 5.8), so on a `public` line item it is
+public. A seller that treats its floor as confidential leaves `min_rate` off, or states
+it on a `named` line item.
+
 ### 2.8 Web Bot Auth profile
 
-This section is the OpenProposal profile of [Web Bot Auth](https://datatracker.ietf.org/doc/draft-ietf-webbotauth-httpsig-protocol/), the IETF
+This section is the OpenProposal profile of [Web Bot Auth](https://datatracker.ietf.org/doc/draft-ietf-webbotauth-httpsig-protocol/01/), the IETF
 protocol for signing automated HTTP traffic with
 [HTTP Message Signatures](https://www.rfc-editor.org/rfc/rfc9421). It selects options
-those documents define and adds no header, tag, key field, or error code. A party
-that signs an OpenProposal request or response signs it under this profile. Signing
-is OPTIONAL: § 4.1.2 states what a signature shows, and `agreed` never depends on one.
-When the AAMP agent identity and signing profile (provisional name) is published, it
-replaces this section.
+those documents define and adds no header, tag, key field, or error code, so a Web
+Bot Auth implementation configured with these rules signs and verifies OpenProposal
+traffic. A party that signs an OpenProposal request or response signs it under this
+profile. Section numbers in § 2.8 refer to draft-ietf-webbotauth-httpsig-protocol-01
+unless they name another document.
 
-| Rule | Profile choice |
-| :--- | :--- |
-| Identity | An `https` origin. The signer names it in a covered `Signature-Agent` member, as the ASCII serialization of the origin ([RFC 6454 § 6.2](https://www.rfc-editor.org/rfc/rfc6454#section-6.2)): a lowercase host, no default port, and no path, query, fragment, or userinfo |
-| Keys | The origin's key directory, at `/.well-known/http-message-signatures-directory` with the media type `application/http-message-signatures-directory+json`. Each signing key is an Ed25519 key (`kty` `OKP`, `crv` `Ed25519`), and its `kid` is its JWK thumbprint ([RFC 7638](https://www.rfc-editor.org/rfc/rfc7638)) |
-| Signature | One signature, with `tag="web-bot-auth"`, `alg="ed25519"`, `keyid` set to the key's thumbprint, `created`, and `expires` no more than 300 seconds after `created`. A request also carries a `nonce` |
-| Request components | `@method`, `@target-uri`, `@authority`, and `"signature-agent";key=<label>` |
-| Response components | `@status`, `"@method";req`, `"@target-uri";req`, and `"signature-agent";key=<label>` |
-| Body | A message with a body carries `Content-Digest` ([RFC 9530](https://www.rfc-editor.org/rfc/rfc9530)) with `sha-256`, and its signature also covers `content-type` and `content-digest`. A verifier checks the digest against the body bytes |
-| Failures | A request whose signature fields do not parse gets `400`. One that fails verification or a rule of this profile gets `403`. A party that cannot verify a response MAY refuse to write its own entry (§ 4.1.2) |
+Signing is OPTIONAL in this specification: § 4.1.2 states what a signature shows, and
+`agreed` never depends on one. A party MAY require a signature on the routes it
+serves. It then refuses an unsigned request with `403` (§ 2.8.6).
 
-Requests and responses are both signed, so the seller's answers carry the same
-evidence as the buyer's entries. A standard Web Bot Auth verifier configured with
-these rules checks a request before the application reads its body.
+NOTE: No IAB Tech Lab specification defines how agents sign HTTP messages.
+[CoMP 1.0](https://github.com/IABTechLab/CoMP/blob/518e9afe2109ddb2a82bc08fb2b48ae4bfd9677f/CoMP-1.0.md#list-aiauth)
+lists Web Bot Auth as an AI authentication method. ads.cert 2.0 Authenticated
+Connections signs with a key that only the two parties share, so no third party can
+verify the signature (section 6.4), and it can't serve as the evidence § 4.1.2
+describes. If IAB
+Tech Lab publishes an agent signing profile, it replaces this section.
+
+#### 2.8.1 Identity and keys
+
+An identity is an origin, `https://<host>`, and an application names it by its host,
+such as `buyer.example`. The host is canonical: lowercase IDNA-2008 A-labels that
+encode to themselves, with no trailing dot and a last label that isn't a number, or
+an IP literal in compressed form, with an IPv6 address in brackets and no zone. No
+port, path, query, fragment, or userinfo follows it. The origin's key directory is
+always at `https://<host>/.well-known/http-message-signatures-directory`.
+
+The signer sends that directory URL in the `Signature-Agent` member keyed to the
+signature's label, with no member parameters, and the signature covers the member as
+`"signature-agent";key=<label>`. This is the form
+draft-ietf-webbotauth-httpsig-protocol-01 defines, in which a verifier fetches the
+member value directly.
+
+A verifier accepts a member value only when it is exactly that URL for some host, or
+exactly the origin `https://<host>`, the form of draft -00. It compares the value as
+a string, without normalizing it, and refuses any other value with `403`, including
+`http`, any port, an uppercase host, a trailing `/`, another path, a query, a
+fragment, and userinfo. It ignores a member that carries parameters, and a request
+whose covered member it ignores gets `403`. Both forms identify the origin, and the
+verifier fetches exactly the directory URL:
+
+```text
+Signature-Agent member  ->  host  ->  https://<host>/.well-known/http-message-signatures-directory
+```
+
+The directory is the only key location this profile recognizes. A verifier selects a
+key by the pair of origin and `kid`, never by `kid` alone. Each agent has its own
+origin: an operator that runs several agents gives each one its own, such as a
+subdomain (section 6.5).
+
+#### 2.8.2 Signatures
+
+| Rule | Requests | Responses |
+| :--- | :--- | :--- |
+| Tag | `tag="web-bot-auth"` | `tag="web-bot-auth"` |
+| Count | Exactly one `web-bot-auth` member in `Signature-Input`, and exactly one `Signature-Agent` member, keyed to its label. A verifier doesn't verify members with other tags, but every member must be well formed ([RFC 9421 §§ 4.1–4.2](https://www.rfc-editor.org/rfc/rfc9421#section-4.1)) | Same |
+| Components | `@method`, `@target-uri`, `@authority`, `"signature-agent";key=<label>` | `@status`, `"@method";req`, `"@target-uri";req`, `"signature-agent";key=<label>`, and, when the request carried a `web-bot-auth` signature, `"signature";req;key=<request label>` |
+| Body | With a body, also `content-type` and `content-digest`. `Content-Digest` ([RFC 9530](https://www.rfc-editor.org/rfc/rfc9530)) uses `sha-256`, and a verifier checks it against the body bytes | Same |
+| Parameters | `created`; `expires`, at most 300 seconds after `created`; `keyid`, the key's thumbprint; `alg="ed25519"`; and `nonce`, 64 random bytes as unpadded base64url or padded base64 | The same, without `nonce` |
+| Clock | A verifier allows 60 seconds of clock skew | Same |
+
+`@target-uri` is the request URL as it travels on the wire: its
+[WHATWG URL](https://url.spec.whatwg.org/) serialization, normalized as
+[RFC 3986 § 6.2.2](https://www.rfc-editor.org/rfc/rfc3986#section-6.2.2) describes
+(lowercase scheme and host, no default port, dot segments removed), without userinfo,
+a fragment, or an empty query, and with no other character encoded or decoded.
+`@authority` is that URL's authority.
+
+A response signature that covers the request's signature binds the response to that
+exact request ([RFC 9421 § 2.4](https://www.rfc-editor.org/rfc/rfc9421#section-2.4)).
+Nobody can replay it as the answer to another request, so a response carries no
+`nonce`. A responder's `Signature-Agent` names the origin of the host the request was
+sent to (§ 2.8.1), whatever the request URL's scheme and port. A requester signs each
+request for its own target URI and never sends that signature to another URI, such as
+a redirect target.
+
+#### 2.8.3 Key directories
+
+A key directory is a JWK Set served with the media type
+`application/http-message-signatures-directory+json` (section 5.5.1). Each signing key
+is an Ed25519 key (`kty` `OKP`, `crv` `Ed25519`), and its `kid` is its JWK thumbprint
+([RFC 7638](https://www.rfc-editor.org/rfc/rfc7638);
+[RFC 8037 Appendix A.3](https://www.rfc-editor.org/rfc/rfc8037#appendix-A.3)). A
+publisher lists each key once, and adds a key to its directory before it signs with
+that key.
+
+The directory response is signed once with each Ed25519 key it lists (Appendix B.1),
+so the host proves it holds every private key it publishes. Each signature
+covers `"@authority";req` and `content-digest`, and carries `created`, `expires`, the
+key's thumbprint as `keyid`, and `tag="http-message-signatures-directory"`. A signer
+also sends `alg="ed25519"`. A verifier accepts a signature without `alg`, as in
+Appendix E.2.3, and refuses any other value.
+Covering the request's authority stops another domain from serving the key set again,
+so a directory server signs for its own configured authority, never for the `Host`
+a client sends. A verifier checks each signature with the key the directory provides,
+and rejects a directory in which an Ed25519 key doesn't sign, a signature whose
+`created` is more than the 60-second skew allowance in the future, or one whose
+`expires` has passed. It ignores keys of other types and the signatures they make.
+
+**Fetch.** A verifier fetches a directory over HTTPS only, follows no redirects, and
+asks for no content coding (`Accept-Encoding: identity`). It treats as a failure any
+status other than `200`, another media type, a `Content-Encoding`, a body that isn't
+UTF-8 JSON, and a `Content-Digest` without `sha-256`. It reads at most 256 KiB and 16
+keys, and gives up after 5 seconds to connect or 10 seconds in total (Appendix C.3).
+Which addresses it may connect to is the deployment's policy (section 6.7).
+
+**Cache.** A fetched directory verifies until the earliest `expires` among its
+signatures, with no skew allowance. While a cached copy is less than 5 minutes old, a
+verifier answers an unknown `kid` from it without fetching again, so a client can't
+force a fetch with random key ids. A directory that resolves without a key is
+evidence that the key was removed, and it replaces the cached copy. A failed fetch is
+not evidence and evicts nothing (section 6.10). After a failed fetch, a verifier
+doesn't fetch that origin's directory again for 60 seconds, and with no cached copy
+it answers `403` meanwhile (Appendix C.5).
+
+**Rotation.** A party publishes the new key beside the old one and keeps signing with
+the old key until verifiers' cached copies can refresh (section 5.5.2): at least its
+directory response's `Cache-Control` `max-age`, since a CDN can serve the old copy
+that long, plus 5 minutes. It then signs with the new key, and removes the old key once every
+signature the old key made has expired.
+
+#### 2.8.4 Verification
+
+A message without `Signature-Input` is unsigned, whatever other signature fields it
+carries. A verifier applies these steps to a message that carries `Signature-Input`:
+
+1. Parse `Signature`, `Signature-Input`, and `Signature-Agent` as Structured Field
+   Dictionaries ([RFC 9651 § 3.2](https://www.rfc-editor.org/rfc/rfc9651#section-3.2)).
+   If one fails to parse, answer `400`. So does a `Signature-Input` member that isn't
+   an Inner List, a `Signature` member that isn't a Byte Sequence, and the legacy
+   bare-String `Signature-Agent` of section 5.2.1, which this profile doesn't accept.
+2. Select the `web-bot-auth` member and the `Signature-Agent` member with its label.
+   If either is missing or repeated, or the signature doesn't cover the member,
+   answer `403`.
+3. Check the origin string (§ 2.8.1), and the covered components and parameters
+   (§ 2.8.2). If one fails, answer `403`.
+4. Resolve the origin's directory (§ 2.8.3), and select the key whose `kid` equals
+   `keyid`. If there is none, answer `403`.
+5. Verify the signature and `Content-Digest`. Resolve `@authority` and `@target-uri`
+   from the verifier's own configured authority, never from the request's `Host`, so
+   a request signed for another server fails. If a check fails, answer `403`.
+6. For a request, check the `nonce` (§ 2.8.5). For a response, check that the covered
+   request signature is the one the requester sent.
+
+A standard Web Bot Auth verifier configured with these rules performs steps 1 to 5
+before the application reads the body. The verified origin is the sender's identity.
+What that origin may do is authorization (§ 1.2, § 5.8), and § 4.1.2 states when the
+signature attributes an `assent[]` entry to a party.
+
+#### 2.8.5 Replay
+
+A verifier MUST reject a `nonce` it has already seen from the same origin within the
+signature's lifetime, with `429`. It keeps each `nonce` for the signature's remaining
+lifetime plus the 60-second skew allowance. A verifier that can't check and record
+the `nonce`, because its store is full or unavailable, answers `503` rather than
+accept the request (Appendix C.6). `idempotency_key` keeps its role: a
+repeated `commit` gets the stored result (§ 5.6.1), and the signature covers it
+through `content-digest`.
+
+#### 2.8.6 Failures
+
+| Status | Meaning | Basis |
+| :--- | :--- | :--- |
+| `400` | The signature fields don't parse | Section 5.4 |
+| `403` | The signature fails verification or a rule of this profile, or a party that requires a signature gets none | Section 5.3 |
+| `429` | The `nonce` was used before. Sign again with a new one | Section 5.3; [RFC 9421 § 7.2.2](https://www.rfc-editor.org/rfc/rfc9421#section-7.2.2) |
+| `503` | The verifier can't check and record the `nonce`. Retry later, as `Retry-After` says, with the same or a new signature | Appendix C.6 |
+
+On a `403` or `429`, a party SHOULD send `Accept-Signature`
+([RFC 9421 § 5.1](https://www.rfc-editor.org/rfc/rfc9421#section-5.1)) naming the
+components and parameters of § 2.8.2, and on a `503` it sends `Retry-After` instead.
+These statuses answer the transport, before
+the request is read, so they carry no `errors[]` (§ 2.4). A requester that can't
+verify a response MAY refuse to write its own entry (§ 4.1.2).
+
+#### 2.8.7 Conformance vectors
+
+The [reference implementation](https://github.com/IABTechLab/iab-agentic-primitives/pull/4) publishes the profile's conformance
+vectors: its test keys, positive and negative vectors for requests and responses, a
+positive directory vector, and failure scenarios for requests, responses, and
+directories that a harness signs at run time. Each request and response case states
+its expected status, and each case says whether a standard Web Bot Auth verifier
+reaches it alone or needs a rule of this profile. The private keys in its `keys.json` are public
+test keys: section 6.8 says they "MUST NOT be used in production", and a verifier
+SHOULD reject them.
 
 ---
 
@@ -1587,6 +1758,8 @@ Each option in `available[]`:
 | `name` | String | OPTIONAL | The property's name, for people |
 | `domains[]` | Array[Domain] | REQUIRED when `apps[]` is absent | The property's domains. On a `dooh` line item, the inventory owner's domain, as OpenRTB 2.6 `dooh.domain` |
 | `apps[]` | Array[App] | REQUIRED when `domains[]` is absent | The apps behind a property sold in `app_mobile` or `ctv` (§ 5.2.5) |
+| `tv_channel` | Object | OPTIONAL | The TV channel or station the property carries, as an [AdCOM 1.0 `Channel`](https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#object_channel) object in AdCOM's keys and meanings. It SHOULD carry `domain`. Properties whose `tv_channel.domain` is the same carry the same channel, so a buyer can tell when two sellers offer it. Each seller assigns its own `id`, so `id` matches only within one seller |
+| `tv_network` | Object | OPTIONAL | The network that owns the property's channel, as an [AdCOM 1.0 `Network`](https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#object_network) object in AdCOM's keys and meanings, matched by `domain` the same way |
 | `seller_relationship` | Enum | REQUIRED | `owner` \| `manager` \| `inventory_partner` \| `reseller`, checked as § 5.2.6 states |
 | `inventory_partner_domain` | Domain | OPTIONAL | As OpenRTB 2.6 `site.inventorypartnerdomain` and `app.inventorypartnerdomain` |
 | `seller_accounts[]` | Array[SellerAccount] | REQUIRED when `seller_relationship` is `reseller`, or the line item offers a deal mechanism (§ 5.9) | The accounts that sell the property |
@@ -1945,6 +2118,10 @@ endpoints, or through a test mode that the receiving service documents as
 excluding those events from production measurement and delivery diagnostics. An
 inspector's own test flag is insufficient unless the receiving service supports
 it.
+
+A preview served through server-side ad insertion MUST use a session in which the
+insertion service sends no production notifications. If the service cannot provide
+such a session, the creative MUST be inspected outside the stitched stream.
 
 Inspection failures MUST be reported through diagnostics, without firing a
 production VAST `<Error>` or `verificationNotExecuted` URL. An implementation
@@ -2366,7 +2543,8 @@ inside the screen's operating hours, that ends no more than
 `play_tolerance_ms` short of the ad's full duration and that the
 proof-of-play log records. On a sync group (§ 5.2.8), a display that
 meets those conditions on at least `min_screens_per_play` of its screens is
-one play, not one per screen. An **impression** is a play times the
+one play, not one per screen. A play is inside a window, such as the operating hours,
+a `daypart` window or `commitment.flight`, when it starts inside it. An **impression** is a play times the
 multiplier for that screen or sync group at that time. Every impression
 count on the line item (`pricing[]`, `commitment`, `availability`,
 `committed_metrics[]`) counts these. A line item counts impressions when any of those
@@ -2403,6 +2581,7 @@ without a loop, plays are also reported. A `committed_metrics[]` tuple commits i
 | `source_type` | Integer | REQUIRED | Who supplies the multiplier. A value from AdCOM 1.0 [List: DOOH Multiplier Measurement Source Types](https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/26c59ba1b235cd8d938c9877409e506f1b8d3f0c/AdCOM%20v1.0%20FINAL.md#list_doohmultipliermeasurementmourcetypes) other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries |
 | `vendor` | RegistrableDomain | REQUIRED when `source_type` is not Publisher Provided (`2`) | The domain of the vendor or exchange that supplies the multipliers, as OpenRTB 2.6 `imp.qty.vendor` names a vendor |
 | `dataset` | String | REQUIRED | The source's named data release the multipliers come from. A new release is a new `dataset` |
+| `demographic` | VocabularyTerm | OPTIONAL | The demographic whose value settles when `dataset` gives a value per demographic. The same kind of term as `cost_parameters.demographic` (§ 5.6.5) |
 | `settles_on` | Enum | REQUIRED | `declared` \| `restated`. `declared`: the value `dataset` gives that screen, or sync group, and hour when the play runs. Under a deal mechanism (§ 5.9), the bid request carries it as OpenRTB 2.6 `imp.qty.multiplier`. `restated`: that value after any reissue of `dataset` by its source before the count is final (§ 5.7.1) |
 
 The multiplier's source controls the count of impressions: `seller` when `source_type`
@@ -2478,9 +2657,10 @@ that reads `commitment.amount` on such an entry reads them: the seller total whe
 `agreed_rate` plus those charges. `commitment.basis` MUST be `spend`, and
 `derived_units` is absent.
 
-**`TIME`.** `derived_units` is the whole `rate_unit`s elapsed from
-`commitment.flight.start` through `commitment.flight.end`, inclusive, and the seller
-total is `derived_units` × `agreed_rate` plus those charges.
+**`TIME`.** `derived_units` is the time from `commitment.flight.start` through
+`commitment.flight.end`, inclusive, in `rate_unit`s rounded to the nearest whole unit,
+half up, so a clock change inside the flight doesn't change it. The seller total is
+`derived_units` × `agreed_rate` plus those charges.
 
 **Delivery** is counted in the entry's unit, and each unit is worth `agreed_rate` ÷ rate
 per, with rate per as above. A `FLAT` entry has no unit, so its
@@ -2759,9 +2939,9 @@ decline (§ 4.3.2, § 5.6.1) do not apply. A mandate is not a field of this obje
 A consumer that does not know a `credential_type` MUST NOT treat the proposal or
 line item as invalid for that reason. It MUST treat that entry as unsatisfiable.
 
-Message authentication follows the Web Bot Auth profile (§ 2.8). Agent identity is
-defined by the AAMP agent identity and signing profile (provisional name). Neither is
-expressed through `required_credentials[]`.
+Message authentication and agent identity follow the Web Bot Auth profile (§ 2.8):
+an agent is the origin that signs its messages. Neither is expressed through
+`required_credentials[]`.
 
 ### 5.9 Execution
 
@@ -2771,7 +2951,7 @@ expressed through `required_credentials[]`.
 | `sov_basis` | Enum | REQUIRED when an option's `delivery_type` is `share_of_voice` | seller-set | `impressions` \| `loop_time`. `impressions`: a share of the line item's eligible impressions (digital placements, pooled DOOH products). `loop_time`: a share of each named screen's loop time (fixed-loop DOOH spots) |
 | `sov_share` | Fraction | REQUIRED when `sov_basis` is `impressions` | seller-set | Absent under `loop_time`. The promised share, greater than 0 |
 | `serving_mode` | VocabularyTerm | OPTIONAL | seller-set | How the ad reaches the content or the player. Core terms: `dai` \| `scheduled` \| `embedded`, defined below. `placement.ssai` states server-side insertion |
-| `retention` | Range[Duration] | REQUIRED when `serving_mode` is `embedded` | seller-set | From release or air. The ad stays in every copy of the content the seller distributes for at least `min` and is removed by `max`. No `max`: indefinitely. When `placement.feed` is present, only copies in that feed count toward delivery |
+| `retention` | Range[Duration] | REQUIRED when `serving_mode` is `embedded` | requestable | From release or air. The ad stays in every copy of the content the seller distributes for at least `min` and is removed by `max`. No `max`: indefinitely. When `placement.feed` is present, only copies in that feed count toward delivery |
 | `deal_origin` | RegistrableDomain | REQUIRED when the line item offers a deal mechanism | seller-set | Absent otherwise. The advertising system domain whose namespace holds the deal ID and that pushes the deal, as the Deals API 1.0 `origin`: typically an SSP, or the ad server for a deal it books itself |
 | `buyer_requirements` | BuyerRequirements | OPTIONAL | mixed | See below |
 | `serving_platform` | Domain | OPTIONAL | seller-set | The ad platform that serves the line item, such as the seller's ad server, by its domain. For a deal sold through a separate SSP it differs from `deal_origin` |
@@ -3192,7 +3372,7 @@ body is normative.**
 | `sov_basis` | 5.9 Execution | Enum | REQUIRED when an option's `delivery_type` is `share_of_voice` | seller-set |
 | `sov_share` | 5.9 Execution | Fraction | REQUIRED when `sov_basis` is `impressions` | seller-set |
 | `serving_mode` | 5.9 Execution | VocabularyTerm | OPTIONAL | seller-set |
-| `retention` | 5.9 Execution | Range[Duration] | REQUIRED when `serving_mode` is `embedded` | seller-set |
+| `retention` | 5.9 Execution | Range[Duration] | REQUIRED when `serving_mode` is `embedded` | requestable |
 | `deal_origin` | 5.9 Execution | RegistrableDomain | REQUIRED when the line item offers a deal mechanism | seller-set |
 | `buyer_requirements` | 5.9 Execution | BuyerRequirements | OPTIONAL | mixed |
 | `serving_platform` | 5.9 Execution | Domain | OPTIONAL | seller-set |
@@ -3207,11 +3387,11 @@ body is normative.**
 | Marker | Count | Meaning | Fields |
 | :--- | :--- | :--- | :--- |
 | immutable | 10 | Set once at creation. Neither party may change it. | `proposal_id`, `seller`, `buyer`, `type`, `proposal_template_id`, `issued_from`, `brief_id`, `line_item_id`, `channel`, `pricing[].pricing_id` |
-| seller-set | 46 | The seller sets it and MAY revise it while the `status` of the object that carries it is `draft`, `published` or `under_review`. § 4.3.2 states what a revision does to a line item `under_review`. The buyer cannot change it directly. | `spec_version`, `offer_window`, `line_items[]`, `packages[]`, `ext` (proposal), `description`, `media_kit_detail`, `best_for[]`, `not_suitable_for[]`, `seasonality_notes`, `ext` (line item), `episodes`, `placement`, `format_specs`, `creative_delivery`, `approval`, `creative_policy`, `time_zone`, `accepted_exclusions`, `pricing[].cost_method`, `pricing[].rate_per`, `pricing[].unit_label`, `pricing[].cost_definition`, `pricing[].cost_parameters`, `pricing[].transaction_mechanisms[]`, `pricing[].price_valid_until`, `pricing[].currency`, `pricing[].price_type`, `pricing[].min_rate`, `delivery_counting`, `hold_terms`, `renewal_right`, `preemption`, `visibility`, `required_credentials[]`, `eligible_buyers[]`, `eligible_seats[]`, `terms_refs[]`, `sov_basis`, `sov_share`, `serving_mode`, `retention`, `deal_origin`, `serving_platform`, `agreement`, `billing` |
+| seller-set | 45 | The seller sets it and MAY revise it while the `status` of the object that carries it is `draft`, `published` or `under_review`. § 4.3.2 states what a revision does to a line item `under_review`. The buyer cannot change it directly. | `spec_version`, `offer_window`, `line_items[]`, `packages[]`, `ext` (proposal), `description`, `media_kit_detail`, `best_for[]`, `not_suitable_for[]`, `seasonality_notes`, `ext` (line item), `episodes`, `placement`, `format_specs`, `creative_delivery`, `approval`, `creative_policy`, `time_zone`, `accepted_exclusions`, `pricing[].cost_method`, `pricing[].rate_per`, `pricing[].unit_label`, `pricing[].cost_definition`, `pricing[].cost_parameters`, `pricing[].transaction_mechanisms[]`, `pricing[].price_valid_until`, `pricing[].currency`, `pricing[].price_type`, `pricing[].min_rate`, `delivery_counting`, `hold_terms`, `renewal_right`, `preemption`, `visibility`, `required_credentials[]`, `eligible_buyers[]`, `eligible_seats[]`, `terms_refs[]`, `sov_basis`, `sov_share`, `serving_mode`, `deal_origin`, `serving_platform`, `agreement`, `billing` |
 | selectable | 16 | The buyer chooses from a seller-declared set. Each option MAY carry a price delta. Resolves without a round trip. | `properties`, `programs`, `environments`, `break_position`, `audiences`, `activation_route`, `formats`, `production`, `markets`, `cancellation_policy`, `exclusivity`, `measurement_source`, `controlling_measurement`, `shortfall_remedy`, `reporting`, `transaction_mechanism` |
 | settable | 4 | The buyer supplies a value within seller-declared bounds. Resolves without a round trip. | `geo`, `device`, `daypart`, `frequency_cap` |
 | supplied | 1 | The buyer provides data or an artifact. The seller does not pre-populate it. | `exclusions` |
-| requestable | 5 | The buyer MAY ask for a value outside the declared space. An ask changes the value only through a seller `grant` or `counter` (§ 4.3.1). A change on the seller's own initiative follows § 4.1.3. | `materials_due`, `pricing[].list_rate`, `pricing[].unit_bounds`, `commitment_bounds`, `committed_metrics[]` |
+| requestable | 6 | The buyer MAY ask for a value outside the declared space. An ask changes the value only through a seller `grant` or `counter` (§ 4.3.1). A change on the seller's own initiative follows § 4.1.3. | `materials_due`, `pricing[].list_rate`, `pricing[].unit_bounds`, `commitment_bounds`, `committed_metrics[]`, `retention` |
 | derived | 3 | Computed by a rule this specification states. Neither party sets it directly. | `version`, `status` (proposal), `pricing[].agreed_rate` |
 | lifecycle | 2 | Live state of the object. The party its section names moves it between the stated values. Not a term. | `status` (line item), `hold` |
 | recorded | 4 | Written by the party that acted. Append-only: an entry is never edited or removed. Not a term. | `assent[]`, `negotiation_history[]`, `change_requests[]`, `external_references[]` |
@@ -3220,13 +3400,13 @@ body is normative.**
 
 ### What the distribution says
 
-Of 98 fields, **26 are touched by the buyer** — 16 `selectable`, 4 `settable`, 1
-`supplied` and 5 `requestable`. The remaining 72 are `seller-set`, `immutable`,
+Of 98 fields, **27 are touched by the buyer** — 16 `selectable`, 4 `settable`, 1
+`supplied` and 6 `requestable`. The remaining 71 are `seller-set`, `immutable`,
 `derived`, `lifecycle`, `recorded`, `asserted` or `mixed`. The buyer also writes some of
 those: its own entries in `assent[]` and `change_requests[]`, its `hold`, and its keys of
 `commitment`, `assets[]`, `buyer_supplied`, and `buyer_requirements`.
 
-Only the 5 `requestable` fields require a round trip to resolve (§ 5.6.1).
+Only the 6 `requestable` fields require a round trip to resolve (§ 5.6.1).
 Everything else the buyer touches — 21 fields — resolves against bounds the seller
 declared up front. That ratio is the design claim: composition is constraint
 satisfaction, and negotiation is the exception.

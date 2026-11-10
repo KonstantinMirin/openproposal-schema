@@ -611,7 +611,7 @@ entries:
     as:
       role: property
       object: CreativeDelivery
-      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PlainInteger } } }
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: SafeInteger } } }
       presence: optional
   - ir: rule:5.4:ae26d4ac-18
     digest: 26cba82bfc23dff7473c4d1411dc8e7b4f4be66931b0c3c6ea336f5c58f1446e
@@ -767,13 +767,23 @@ entries:
     locks: [ with-our-stack ]
     source: { decision: D-057 }
     as: { role: obligation, party: implementation }
+  - ir: rule:5.4.1:9a1bf7bd
+    digest: e9ff92a09a50feb9cc3f16cdfa50d0a93aeb2749ac812c5eb89ff2d539a8572e
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
+  - ir: rule:5.4.1:725c4a7c
+    digest: 4e2a13f0aaedca6bfad34b0a0fc0d68333db667543034768ce861497f925c155
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
   - ir: rule:5.4.1:fbc60b60
-    digest: 2363f416b6b2353371d78c1593b13505592d6809025796a42fcac47619a1cc4a
+    digest: 0d5de1d4c83484fda64cf5e84d308dbed6b8a21f135de467c80c77c205c36f02
     locks: [ with-our-stack ]
     source: { decision: D-057 }
     as: { role: obligation, party: implementation }
   - ir: rule:5.4.1:3a29e732
-    digest: 3f3cbe85c4ed9eeaea55c1c4b6b0874b78d5d5e83ff86d0c534628c1592a8911
+    digest: fd52a5b573a4af1d650c39a96cc29eb4b5b3e00f6c9a0eda125e7c768ae123ee
     locks: [ with-our-stack ]
     source: { decision: D-057 }
     as: { role: obligation, party: implementation }

@@ -534,7 +534,7 @@ entries:
     digest: e3090907130d670141bad2596b056c351584f8e5c03f535354eb3b341b606143
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: Placement, type: { kind: named, name: PlainInteger }, presence: conditional }
+    as: { role: property, object: Placement, type: { kind: named, name: SafeInteger }, presence: conditional }
   - ir: rule:5.2.2:40e6089f
     digest: f82ed4d064117d6d3dd53462c727d016e794470aed81c4e47d5a060a2fb3ec94
     locks: [ with-our-stack ]
@@ -554,7 +554,7 @@ entries:
     digest: d52c7f497d5028b2767e0376aeaf1b4dd9f3f61a2be2f89ff6722573f0e546aa
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: Placement, type: { kind: named, name: PlainInteger }, presence: optional }
+    as: { role: property, object: Placement, type: { kind: named, name: SafeInteger }, presence: optional }
   - ir: rule:5.2.2:ae26d4ac-4
     digest: e899af801ba8de8c1b3f4b7125ec77b9a8b4309fdbdee11d10373cae8890e40e
     locks: [ with-our-stack ]
@@ -567,7 +567,7 @@ entries:
     as:
       role: property
       object: Placement
-      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PlainInteger } } }
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: SafeInteger } } }
       presence: optional
   - ir: rule:5.2.2:ae26d4ac-5
     digest: 7a40bafb9cc813ba4001fd9cec5a7187f9bfca9695b6c5c90c5a708568aa7697
@@ -581,7 +581,7 @@ entries:
     as:
       role: property
       object: Placement
-      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: PlainInteger } } }
+      type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: SafeInteger } } }
       presence: optional
   - ir: rule:5.2.2:ae26d4ac-6
     digest: da16410c6953e36ba77a26dfd47706f08226f1fd5153ebb676418de0bf1b5dee
@@ -602,7 +602,7 @@ entries:
     digest: 333168c63745e6f2a46254e2397e6759e1bca501db2eb4e6dde83ae08a9d7fc7
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: Placement, type: { kind: named, name: PlainInteger }, presence: conditional }
+    as: { role: property, object: Placement, type: { kind: named, name: SafeInteger }, presence: conditional }
   - ir: rule:5.2.2:87d20470
     digest: 8227488d01efae710c86ea34b96fe8ed7f7217837a82769a793710c833762f5a
     locks: [ with-our-stack ]
@@ -612,7 +612,7 @@ entries:
     digest: e4dc1163a0e9b2eb6e169545fbe874a884db7e8974cc5f36a4dc0e07b0023577
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: Placement, type: { kind: named, name: PlainInteger }, presence: optional }
+    as: { role: property, object: Placement, type: { kind: named, name: SafeInteger }, presence: optional }
   - ir: rule:5.2.2:ae26d4ac-8
     digest: 9b74d4081367160dfa4f4d46809392501f25fdbcae0e1f2dba3a362ab21d8cd9
     locks: [ with-our-stack ]
@@ -627,7 +627,7 @@ entries:
     digest: 858d83b183216c3319adeb6bb3882f4c9b9efc6d5f54ee31fc71a54ba64b3743
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: Refresh, type: { kind: named, name: PlainInteger }, presence: required }
+    as: { role: property, object: Refresh, type: { kind: named, name: SafeInteger }, presence: required }
   - ir: rule:5.2.2:373dbf11
     digest: 9baa22e303b327348b204d2c52777d532dac9deb1d7f45f7e692d0df59d7ab6f
     locks: [ with-our-stack ]
@@ -732,7 +732,7 @@ entries:
     digest: d63561085e0c0ccde432d5879c3aeb5cda949edaec2f04fb1cf59450d0635c28
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: BreakPositionOption, type: { kind: named, name: PlainInteger }, presence: optional }
+    as: { role: property, object: BreakPositionOption, type: { kind: named, name: SafeInteger }, presence: optional }
   - ir: rule:5.2.3:ae26d4ac
     digest: b0d464b1e3a06828d009ae70c61ac1e03b431632596f20c2742282f9f11046ce
     locks: [ with-our-stack ]
@@ -742,7 +742,7 @@ entries:
     digest: ae0ce09fe21092d7a7d0b27488286827932824167b0ded710ade27fffe26700d
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: BreakPositionOption, type: { kind: named, name: PlainInteger }, presence: optional }
+    as: { role: property, object: BreakPositionOption, type: { kind: named, name: SafeInteger }, presence: optional }
   - ir: rule:5.2.3:ae26d4ac-2
     digest: c8e088e785a44b7728ee421f166a195a0d78deef81b1c8aa4ca18bd6df9585cb
     locks: [ with-our-stack ]
@@ -752,7 +752,7 @@ entries:
     digest: 70660d55ea0099ed60b1cb0f8b24ef3436293d3c92f4bd2fc1979d1b7e9ca877
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: BreakPositionOption, type: { kind: named, name: PlainInteger }, presence: optional }
+    as: { role: property, object: BreakPositionOption, type: { kind: named, name: SafeInteger }, presence: optional }
   - ir: rule:5.2.3:ae26d4ac-3
     digest: 24724c266b26ba43c867373b4ffe101deeecf2916036d196b54e06af021956da
     locks: [ with-our-stack ]
@@ -762,7 +762,7 @@ entries:
     digest: 0621ab83e2302b50b004c6b0eb70a73924d8a6cd6c52f6fce386a43446f424c5
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: BreakPositionOption, type: { kind: named, name: PlainInteger }, presence: optional }
+    as: { role: property, object: BreakPositionOption, type: { kind: named, name: SafeInteger }, presence: optional }
   - ir: rule:5.2.3:ae26d4ac-4
     digest: 82685f78c0e75bb69b12c9fa2c610e48935e0cb00e20683145edaf065aa31228
     locks: [ with-our-stack ]
@@ -772,7 +772,7 @@ entries:
     digest: 37180c898a9cfe74fa941482b963b5a8517e7560080ad41c3fd03570807dc9cd
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: BreakPositionOption, type: { kind: named, name: PlainInteger }, presence: optional }
+    as: { role: property, object: BreakPositionOption, type: { kind: named, name: SafeInteger }, presence: optional }
   - ir: rule:5.2.3:ae26d4ac-5
     digest: b9d66eac06662e5bf0beca9a722b9d76dce0998d8cd16ec8d1d2e84f8d4878fe
     locks: [ with-our-stack ]

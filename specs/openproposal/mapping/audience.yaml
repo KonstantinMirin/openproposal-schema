@@ -238,7 +238,7 @@ entries:
     digest: b42e48e3049a702e8ade1c662cf09257fb36ee1d9579abae9525a44f2b1c6a22
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: AudienceOption, type: { kind: named, name: PlainInteger }, presence: required }
+    as: { role: property, object: AudienceOption, type: { kind: named, name: SafeInteger }, presence: required }
   - ir: rule:5.3:373dbf11-2
     digest: 99d6b9da61c3eedcf0d98ba56745fb151fab3d592e7a8891e6c38431d24bb7f1
     locks: [ with-our-stack ]
@@ -459,7 +459,7 @@ entries:
     digest: f0a72a68121097bc48004f061d2c3da1312a2156a657d9c3c85ae3e6911e2def
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: BuyerList, type: { kind: named, name: PlainInteger }, presence: optional }
+    as: { role: property, object: BuyerList, type: { kind: named, name: SafeInteger }, presence: optional }
   - ir: rule:5.3:ae26d4ac-14
     digest: 3473554657ef27eaa83fc3862d82d7973cee6ae395f90b3463761ef1c1433b37
     locks: [ with-our-stack ]
@@ -489,7 +489,7 @@ entries:
     digest: 97bf7301c757d616f4535d83357efab46ba49281508a20f633fe3b4ab8672552
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: AddressableScale, type: { kind: named, name: PlainInteger }, presence: required }
+    as: { role: property, object: AddressableScale, type: { kind: named, name: SafeInteger }, presence: required }
   - ir: rule:5.3:373dbf11-6
     digest: 1e16620b72b12b453487895440e6fde172cd0b345f35034ed336617fa09e8452
     locks: [ with-our-stack ]

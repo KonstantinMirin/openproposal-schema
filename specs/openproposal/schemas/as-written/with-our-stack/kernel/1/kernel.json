@@ -8,8 +8,8 @@
       "additionalProperties": false,
       "properties": {
         "bundle": {
-          "$ref": "#/$defs/PlainString",
-          "description": "Store ID. As OpenRTB 2.6 `app.bundle`"
+          "description": "Store ID. As OpenRTB 2.6 `app.bundle`",
+          "type": "string"
         },
         "developer_domain": {
           "$ref": "#/$defs/Domain",
@@ -34,8 +34,8 @@
       "additionalProperties": false,
       "properties": {
         "bundle": {
-          "$ref": "#/$defs/PlainString",
-          "description": "Store ID. As OpenRTB 2.6 `app.bundle`"
+          "description": "Store ID. As OpenRTB 2.6 `app.bundle`",
+          "type": "string"
         },
         "store": {
           "$ref": "#/$defs/AppIdStore",
@@ -119,29 +119,12 @@
       ],
       "type": "object"
     },
-    "ClockWindowNarrowing": {
-      "additionalProperties": false,
-      "description": "Entries the buyer narrows to, `include[]`, less those it excludes, `exclude[]`. Exclusion wins.",
-      "properties": {
-        "exclude": {
-          "description": "The entries excluded from those included.",
-          "items": {
-            "$ref": "#/$defs/ClockWindow"
-          },
-          "type": "array"
-        },
-        "include": {
-          "description": "The entries included.",
-          "items": {
-            "$ref": "#/$defs/ClockWindow"
-          },
-          "type": "array"
-        }
-      },
-      "required": [
-        "include"
+    "CommitmentAmountBasis": {
+      "enum": [
+        "spend",
+        "units"
       ],
-      "type": "object"
+      "type": "string"
     },
     "CurrencyCode": {
       "description": "An ISO 4217 alphabetic currency code, such as `USD`.",
@@ -228,8 +211,8 @@
           "description": "A core code (below) or an extension code"
         },
         "detail": {
-          "$ref": "#/$defs/PlainString",
-          "description": "Human-readable. A receiver SHOULD NOT parse it"
+          "description": "Human-readable. A receiver SHOULD NOT parse it",
+          "type": "string"
         },
         "pointer": {
           "$ref": "#/$defs/FieldPointer",
@@ -240,7 +223,7 @@
           "description": "`same` | `refetch` | `none`. `same`: the same request can succeed later. `refetch`: a new attempt, composed on the current `version`, can succeed. `none`: only a changed request can succeed. On a `commit`, `same` keeps the `idempotency_key` and such an error is not a stored result (§ 5.6.1), and `refetch` and `none` take a new `idempotency_key`"
         },
         "version": {
-          "$ref": "#/$defs/PlainInteger",
+          "$ref": "#/$defs/SafeInteger",
           "description": "The proposal's `version` when the error was decided"
         }
       },
@@ -307,30 +290,6 @@
       "pattern": "^([A-Z]{2}(-[A-Z0-9]{1,3})?|[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*:[A-Za-z0-9_-]+)$",
       "type": "string"
     },
-    "GeoCodeNarrowing": {
-      "additionalProperties": false,
-      "description": "Entries the buyer narrows to, `include[]`, less those it excludes, `exclude[]`. Exclusion wins.",
-      "properties": {
-        "exclude": {
-          "description": "The entries excluded from those included.",
-          "items": {
-            "$ref": "#/$defs/GeoCode"
-          },
-          "type": "array"
-        },
-        "include": {
-          "description": "The entries included.",
-          "items": {
-            "$ref": "#/$defs/GeoCode"
-          },
-          "type": "array"
-        }
-      },
-      "required": [
-        "include"
-      ],
-      "type": "object"
-    },
     "HttpsUrl": {
       "description": "An absolute `https` URL, a location fetched over TLS.",
       "format": "uri",
@@ -340,10 +299,6 @@
     "IanaZone": {
       "description": "A time zone, named as the IANA time zone database names it, such as `America/New_York` or `UTC`.",
       "pattern": "^[A-Z][A-Za-z0-9_+-]*(/[A-Za-z0-9_+-]+)*$",
-      "type": "string"
-    },
-    "Identifier": {
-      "description": "The identity of a record a party mints, such as a proposal or a line item, written as any string, as the specification types it. The text states no form, so a receiver compares two identities by exact string equality.",
       "type": "string"
     },
     "Instant": {
@@ -411,10 +366,6 @@
       "pattern": "^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*:[A-Za-z0-9_-]+$",
       "type": "string"
     },
-    "OpenObject": {
-      "description": "An object whose keys another definition sets, such as an owner's extension or an object another standard defines, which the field that holds it names.",
-      "type": "object"
-    },
     "Party": {
       "additionalProperties": false,
       "properties": {
@@ -423,12 +374,12 @@
           "description": "The party's domain"
         },
         "legal_name": {
-          "$ref": "#/$defs/PlainString",
-          "description": "The party's legal name. A `registry_id` entry that applies can attest it; the value alone attests nothing"
+          "description": "The party's legal name. A `registry_id` entry that applies can attest it; the value alone attests nothing",
+          "type": "string"
         },
         "registry_id": {
-          "$ref": "#/$defs/PlainString",
-          "description": "An IAB Tech Lab Agent Registry reference for the entity controlling `domain`"
+          "description": "An IAB Tech Lab Agent Registry reference for the entity controlling `domain`",
+          "type": "string"
         }
       },
       "required": [
@@ -436,43 +387,20 @@
       ],
       "type": "object"
     },
-    "PlainInteger": {
-      "description": "A whole number the text types as Integer and gives no other range, within the integers every JSON implementation reads exactly, from −(2^53 − 1) to 2^53 − 1; the field that holds it says what it counts.",
-      "maximum": 9007199254740991,
-      "minimum": -9007199254740991,
-      "type": "integer"
-    },
-    "PlainIntegerNarrowing": {
-      "additionalProperties": false,
-      "description": "Entries the buyer narrows to, `include[]`, less those it excludes, `exclude[]`. Exclusion wins.",
-      "properties": {
-        "exclude": {
-          "description": "The entries excluded from those included.",
-          "items": {
-            "$ref": "#/$defs/PlainInteger"
-          },
-          "type": "array"
+    "PreemptionRemedy": {
+      "anyOf": [
+        {
+          "enum": [
+            "makegood",
+            "credit",
+            "none"
+          ],
+          "type": "string"
         },
-        "include": {
-          "description": "The entries included.",
-          "items": {
-            "$ref": "#/$defs/PlainInteger"
-          },
-          "type": "array"
+        {
+          "$ref": "#/$defs/NamespacedTerm"
         }
-      },
-      "required": [
-        "include"
-      ],
-      "type": "object"
-    },
-    "PlainNumber": {
-      "description": "A number the text types as Number and gives no other range; the field that holds it says what it measures.",
-      "type": "number"
-    },
-    "PlainString": {
-      "description": "A string the text types as String and gives no other form; the field that holds it says what it means.",
-      "type": "string"
+      ]
     },
     "ProposalStatus": {
       "enum": [
@@ -491,6 +419,12 @@
       "pattern": "^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$",
       "type": "string"
     },
+    "SafeInteger": {
+      "description": "A whole number that every JSON implementation reads exactly, from −(2^53 − 1) to 2^53 − 1, for a row the text types as Integer and gives no other range; the field that holds it says what it counts.",
+      "maximum": 9007199254740991,
+      "minimum": -9007199254740991,
+      "type": "integer"
+    },
     "SeatRef": {
       "additionalProperties": false,
       "properties": {
@@ -501,7 +435,7 @@
         "ids": {
           "description": "The ids the DSP issues, the same values OpenRTB 2.6 carries in `Deal.wseat`",
           "items": {
-            "$ref": "#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         }
@@ -524,12 +458,12 @@
         "ids": {
           "description": "Ids in that taxonomy",
           "items": {
-            "$ref": "#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         },
         "taxonomy": {
-          "$ref": "#/$defs/PlainInteger",
+          "$ref": "#/$defs/SafeInteger",
           "description": "A value from the list the field names"
         }
       },
@@ -559,6 +493,15 @@
       "pattern": "^(viewer_local|[A-Z][A-Za-z0-9_+-]*(/[A-Za-z0-9_+-]+)*)$",
       "type": "string"
     },
+    "TransactionMechanism": {
+      "enum": [
+        "direct_io",
+        "programmatic_guaranteed",
+        "preferred_deal",
+        "private_auction"
+      ],
+      "type": "string"
+    },
     "Url": {
       "description": "An absolute `http` or `https` URL, as RFC 3986 writes one, that a client can fetch.",
       "format": "uri",
@@ -569,19 +512,19 @@
       "additionalProperties": false,
       "properties": {
         "line_item_id": {
-          "$ref": "#/$defs/PlainString",
-          "description": "A line item in that version"
+          "description": "A line item in that version",
+          "type": "string"
         },
         "proposal_id": {
-          "$ref": "#/$defs/PlainString",
-          "description": "The proposal"
+          "description": "The proposal",
+          "type": "string"
         },
         "seller_domain": {
           "$ref": "#/$defs/RegistrableDomain",
           "description": "The proposal's `seller.domain`"
         },
         "version": {
-          "$ref": "#/$defs/PlainInteger",
+          "$ref": "#/$defs/SafeInteger",
           "description": "The proposal's `version`"
         }
       },

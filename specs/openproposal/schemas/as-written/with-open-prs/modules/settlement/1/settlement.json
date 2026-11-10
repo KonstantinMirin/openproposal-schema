@@ -4,11 +4,11 @@
       "additionalProperties": false,
       "properties": {
         "agreement_id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          "type": "string"
         },
         "parties": {
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+            "type": "string"
           },
           "type": "array"
         },
@@ -37,16 +37,16 @@
       "additionalProperties": false,
       "properties": {
         "billing_supplier_id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          "type": "string"
         },
         "invoicing_party": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+          "type": "string"
         },
         "payment_terms": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+          "type": "string"
         },
         "supplier_id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          "type": "string"
         }
       },
       "type": "object"
@@ -69,16 +69,16 @@
       "additionalProperties": false,
       "properties": {
         "id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          "type": "string"
         },
         "namespace": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          "type": "string"
         },
         "role": {
           "$ref": "#/$defs/ExternalReferenceRole"
         },
         "system": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          "type": "string"
         }
       },
       "type": "object"

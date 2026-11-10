@@ -10,16 +10,7 @@ from pydantic import AfterValidator, BeforeValidator, Field, Strict
 from typing_extensions import TypeAliasType
 
 from . import _runtime as rt
-from .kernel import App, ClockWindow, Domain, IanaZone, PlainInteger, PlainNumber, PlainString, TaxonomyCodes
-
-class Loop(rt.Closed):
-    """The `Loop` object of the `properties` module."""
-
-    length_s: PlainInteger
-    """Loop length, in seconds"""
-    slot_s: PlainInteger
-    """Slot length, in seconds"""
-
+from .kernel import App, ClockWindow, Domain, IanaZone, OpenObject, PlainNumber, PlainString, SafeInteger, TaxonomyCodes
 
 PropertyOptionAllocation = TypeAliasType("PropertyOptionAllocation", Literal["all", "seller_allocated"])
 """The `PropertyOptionAllocation` vocabulary: `all`, `seller_allocated`."""
@@ -76,6 +67,15 @@ class PropertyOptionSellerRelationships:
     RESELLER: Final = "reseller"
 
 
+class Loop(rt.Closed):
+    """The `Loop` object of the `properties` module."""
+
+    length_s: SafeInteger
+    """Loop length, in seconds"""
+    slot_s: SafeInteger
+    """Slot length, in seconds"""
+
+
 class SellerAccount(rt.Closed):
     """The `SellerAccount` object of the `properties` module."""
 
@@ -88,7 +88,7 @@ class SellerAccount(rt.Closed):
 class SyncGroup(rt.Closed):
     """The `SyncGroup` object of the `properties` module."""
 
-    min_screens_per_play: PlainInteger
+    min_screens_per_play: SafeInteger
     """The fewest of the group's screens that must show a display for it to count as one play (§ 5.6.4)"""
     screen_ids: list[PlainString]
     """The `screen_id` of each screen in the group"""
@@ -134,7 +134,7 @@ class PropertyOption(rt.Closed):
     """Option id (§ 3.1)"""
     inventory_partner_domain: Optional[Domain] = None
     """As OpenRTB 2.6 `site.inventorypartnerdomain` and `app.inventorypartnerdomain`"""
-    min_screens: Optional[PlainInteger] = None
+    min_screens: Optional[SafeInteger] = None
     """With `seller_allocated`, the fewest screens the seller allocates to the line item"""
     name: Optional[PlainString] = None
     """The property's name, for people"""
@@ -144,9 +144,13 @@ class PropertyOption(rt.Closed):
     """The accounts that sell the property"""
     seller_relationship: PropertyOptionSellerRelationship
     """`owner` | `manager` | `inventory_partner` | `reseller`, checked as § 5.2.6 states"""
-    slots_per_loop: Optional[PlainInteger] = None
+    slots_per_loop: Optional[SafeInteger] = None
     """The slots per loop the line item buys on each screen of the property that has a `loop`"""
     sync_groups: Optional[list[SyncGroup]] = None
     """Screens that show the same ad at the same moment, sold as one (§ 5.2.8)"""
+    tv_channel: Optional[OpenObject] = None
+    """The TV channel or station the property carries, as an AdCOM 1.0 `Channel` object in AdCOM's keys and meanings. It SHOULD carry `domain`. Properties whose `tv_channel.domain` is the same carry the same channel, so a buyer can tell when two sellers offer it. Each seller assigns its own `id`, so `id` matches only within one seller"""
+    tv_network: Optional[OpenObject] = None
+    """The network that owns the property's channel, as an AdCOM 1.0 `Network` object in AdCOM's keys and meanings, matched by `domain` the same way"""
     venue_type: Optional[TaxonomyCodes] = None
     """`taxonomy` is a value of AdCOM 1.0 List: DOOH Venue Taxonomies. `ids[]` holds exactly one id. It covers only itself, not its descendants. The values OpenRTB 2.6 `dooh.venuetypetax` and `dooh.venuetype` carry"""

@@ -8,8 +8,8 @@
           "description": "The seller's review outcome. The seller moves it"
         },
         "asset_id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "Identity of the asset within the line item"
+          "description": "Identity of the asset within the line item",
+          "type": "string"
         },
         "built_by": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/Side",
@@ -20,8 +20,8 @@
           "description": "The `formats.available[]` id the asset is for"
         },
         "markup": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "The tag or creative markup"
+          "description": "The tag or creative markup",
+          "type": "string"
         },
         "provenance": {
           "$ref": "#/$defs/AssetProvenance",
@@ -32,8 +32,8 @@
           "description": "When it was delivered"
         },
         "url": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "Where the asset is, such as a tag URL with its macros unexpanded"
+          "description": "Where the asset is, such as a tag URL with its macros unexpanded",
+          "type": "string"
         }
       },
       "required": [
@@ -57,12 +57,12 @@
           "type": "array"
         },
         "generator": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "The system that generated it"
+          "description": "The system that generated it",
+          "type": "string"
         },
         "model_version": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "The version of the model that generated it"
+          "description": "The version of the model that generated it",
+          "type": "string"
         },
         "synthetic": {
           "description": "True when the content is artificially generated or manipulated, in whole or in part",
@@ -115,7 +115,7 @@
         "protocols": {
           "description": "Values from AdCOM 1.0 List: Creative Subtypes - Audio/Video the seller accepts, wrappers included, such as VAST 4.2 (13). The values OpenRTB 2.6 `video.protocols` and `audio.protocols` carry",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger"
+            "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger"
           },
           "type": "array"
         },
@@ -162,8 +162,8 @@
       "additionalProperties": false,
       "properties": {
         "spec": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/OpenObject",
-          "description": "The full specification. OpenProposal does not hardcode a shape per channel"
+          "description": "The full specification. OpenProposal does not hardcode a shape per channel",
+          "type": "object"
         },
         "spec_ref": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/EntryRef",
@@ -190,26 +190,23 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/Delta"
           },
           "description": "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
           "type": "object"
         },
         "included": {
           "description": "The options in the base rate, by option id.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         },
         "max_select": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The most options that may be in effect."
         },
         "selected": {
           "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         }
@@ -242,12 +239,12 @@
           "description": "Which side builds it"
         },
         "custom_unit": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "The custom unit built"
+          "description": "The custom unit built",
+          "type": "string"
         },
         "id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "Option id (§ 3.1)"
+          "description": "Option id (§ 3.1)",
+          "type": "string"
         },
         "lead_time": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/Duration",
@@ -274,26 +271,23 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/Delta"
           },
           "description": "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
           "type": "object"
         },
         "included": {
           "description": "The options in the base rate, by option id.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         },
         "max_select": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The most options that may be in effect."
         },
         "selected": {
           "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         }

@@ -84,7 +84,7 @@ test("snapshot: an extra, altered, or stray file fails the check, and an extra e
     writeFileSync(join(snap, "README.md"), "stray\n");
     writeFileSync(join(snap, "examples", "a.yaml"), "a: 2\n");
     const p = checkSnapshot(lock).problems.join("; ");
-    assert.match(p, /README\.md is neither the specification nor a file directly under examples\//);
+    assert.match(p, /README\.md is neither the specification, a file directly under examples\/, nor a script the lock pins/);
     assert.match(p, /examples\/a\.yaml has blob [0-9a-f]{40}, not the locked/);
     assert.match(p, /the snapshot's examples\/ is tree [0-9a-f]{40}, not the locked/);
     await assert.rejects(materializeExamples(lock), /no source for lock "t" yields its 2 locked examples/);

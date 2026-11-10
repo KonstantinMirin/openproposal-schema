@@ -5,18 +5,18 @@
       "properties": {
         "dsp_allowed": {
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+            "type": "string"
           },
           "type": "array"
         },
         "dsp_id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          "type": "string"
         },
         "dsp_seat_id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          "type": "string"
         },
         "seat_owner_entity": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+          "type": "string"
         },
         "seat_required": {
           "type": "boolean"

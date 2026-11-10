@@ -1,9 +1,5 @@
 {
   "$defs": {
-    "ContentDetail": {
-      "description": "The shows, series, sections, and network verticals the line item's inventory holds. The specification states no members, so the object accepts any.",
-      "type": "object"
-    },
     "Environment": {
       "anyOf": [
         {
@@ -73,7 +69,7 @@
           "description": "The identity the seller mints for the option, which `included[]` and the `pricing` keys name it by."
         },
         "name": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+          "type": "string"
         },
         "supported_formats": {
           "items": {

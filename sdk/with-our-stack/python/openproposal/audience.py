@@ -10,7 +10,7 @@ from pydantic import AfterValidator, BeforeValidator, Field, Strict
 from typing_extensions import TypeAliasType
 
 from . import _runtime as rt
-from .kernel import Delta, Fraction, Interval, NamespacedTerm, OpenObject, PlainInteger, PlainString, Selectable
+from .kernel import Delta, Fraction, Interval, NamespacedTerm, OpenObject, PlainString, SafeInteger, Selectable
 
 CombineOperator = TypeAliasType("CombineOperator", Literal["any", "all"])
 """The `CombineOperator` vocabulary: `any`, `all`."""
@@ -92,7 +92,7 @@ class LineItemActivationRoutes:
 class AddressableScale(rt.Closed):
     """The `AddressableScale` object of the `audience` module."""
 
-    quantity: PlainInteger
+    quantity: SafeInteger
     """How many"""
     unit: AddressableScaleUnit
     """What `quantity` counts. Core terms: the `frequency_cap.per` terms (§ 5.5), and `person`. A receiver that doesn't know a term reads the figure as unstated"""
@@ -113,7 +113,7 @@ class AudienceOption(rt.Closed):
     """The audience's name, for people"""
     sensitive_categories: list[AudienceOptionSensitiveCategory]
     """The categories the option's membership is derived from or reveals. Core terms: `racial_or_ethnic_origin` | `political_opinions` | `religious_or_philosophical_beliefs` | `trade_union_membership` | `genetic` | `biometric` | `health` | `sex_life_or_sexual_orientation` | `precise_geolocation` | `minors` (under 18). An empty array declares none"""
-    taxonomy: PlainInteger
+    taxonomy: SafeInteger
     """The integer from the OpenRTB segment taxonomies list for the IDs that name this option: `4` (IAB Tech Lab Audience Taxonomy 1.1) for the label's `taxonomy_id_list`, or the seller's registered vendor value (500 and up) for the label's `audience_id`. When the seller signals the segment in an OpenRTB 2.6 request, these are the `data.ext.segtax` and `segment.id` values"""
 
 
@@ -124,7 +124,7 @@ class BuyerList(rt.Closed):
     """Identity of the list within the line item. The buyer uses it wherever the list's members travel"""
     match_method: Optional[BuyerListMatchMethod] = None
     """How its members match users. Core terms: `hashed_email` | `device_id`. A receiver that doesn't know a term reads the method as unstated"""
-    size: Optional[PlainInteger] = None
+    size: Optional[SafeInteger] = None
     """How many members it holds"""
     source: Optional[PlainString] = None
     """Where the list comes from, such as `advertiser_crm`"""
@@ -165,7 +165,7 @@ class AudienceSelectable(rt.Closed):
     """The buyer's write: option ids of options whose `excludable` is `true`, disjoint from the seller audiences in effect. `max_select` does not count them"""
     included: list[PlainString]
     """The options in the base rate, by option id."""
-    max_select: Optional[PlainInteger] = None
+    max_select: Optional[SafeInteger] = None
     """The most options that may be in effect."""
     selected: Optional[list[PlainString]] = None
     """The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`."""

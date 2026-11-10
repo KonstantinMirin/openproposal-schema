@@ -5,7 +5,7 @@ import { parse } from "yaml";
 /**
  * One way to obtain the specification bytes. Sources are tried in order. A
  * clone is read at the commit; a snapshot is a directory in this repository
- * that holds the commit's specification and `examples/` files at their paths
+ * that holds the commit's specification, `examples/` files, and pinned scripts at their paths
  * (`npm run fetch -- --snapshot` writes it); a URL serves the raw file.
  */
 export type Source = { git: string } | { snapshot: string } | { url: string };
@@ -31,6 +31,8 @@ export interface SpecLock {
   examples: Record<string, string>;
   /** The git tree SHA of `examples/` at `commit`, which pins the directory's listing; null when the lock pins none. */
   examples_tree: string | null;
+  /** Scripts of the specification repository at `commit`, by path from its root, with their git blob SHAs, such as the checker a desk test runs; empty when the lock pins none. The snapshot keeps them. */
+  scripts: Record<string, string>;
   /** The day, `YYYY-MM-DD`, on which each head in `merge_order` was its PR's live head; null for a lock that merges nothing. */
   heads_on: string | null;
   /** What the integration changed outside the PRs, apart from resolving their conflicts, each as a clause for the working group, such as "added `x` to the example of #70"; empty when nothing. */
@@ -54,7 +56,7 @@ export function loadLock(file: string): SpecLock {
     if (typeof v !== "string" || v === "") return fail(`"${key}" must be a non-empty string`);
     return v;
   };
-  const known = new Set(["name", "upstream", "commit", "path", "blob", "ir_dir", "required", "sources", "base", "merge_order", "examples", "examples_tree", "heads_on", "edits", "tag"]);
+  const known = new Set(["name", "upstream", "commit", "path", "blob", "ir_dir", "required", "sources", "base", "merge_order", "examples", "examples_tree", "scripts", "heads_on", "edits", "tag"]);
   for (const key of Object.keys(doc)) if (!known.has(key)) fail(`unknown key "${key}"`);
   const commit = str("commit");
   const blob = str("blob");
@@ -81,6 +83,12 @@ export function loadLock(file: string): SpecLock {
     if (!/^examples\/[^/]+$/.test(path)) fail(`example "${path}" isn't a file directly under examples/`);
     if (typeof sha !== "string" || !SHA1.test(sha)) fail(`example "${path}" needs a full 40-character blob SHA`);
   }
+  const scripts = doc.scripts === undefined ? {} : doc.scripts;
+  if (scripts === null || typeof scripts !== "object" || Array.isArray(scripts)) fail(`"scripts" maps each script's path to its blob SHA`);
+  for (const [path, sha] of Object.entries(scripts as Record<string, unknown>)) {
+    if (!/^scripts\/[^/]+$/.test(path)) fail(`script "${path}" isn't a file directly under scripts/`);
+    if (typeof sha !== "string" || !SHA1.test(sha)) fail(`script "${path}" needs a full 40-character blob SHA`);
+  }
   const examplesTree = doc.examples_tree === undefined ? null : str("examples_tree");
   if (examplesTree !== null && !SHA1.test(examplesTree)) fail(`"examples_tree" must be a full 40-character SHA`);
   const headsOn = doc.heads_on === undefined ? null : str("heads_on");
@@ -103,6 +111,7 @@ export function loadLock(file: string): SpecLock {
     merge_order: mergeOrder as unknown[] | null,
     examples: examples as Record<string, string>,
     examples_tree: examplesTree,
+    scripts: scripts as Record<string, string>,
     heads_on: headsOn,
     edits: edits as string[],
     tag: doc.tag === undefined ? null : str("tag"),

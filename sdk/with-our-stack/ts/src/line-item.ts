@@ -10,7 +10,7 @@ import { LineItemVisibility, RequiredCredential } from "./eligibility.js";
 import { BuyerRequirements, LineItemServingMode, LineItemSovBasis, MechanismOption, RetentionRange, TransactionMechanismSelection } from "./execution.js";
 import { CommittedMetric, ControllingMeasurementOption, ControllingMeasurementSelection, MeasurementOption, MeasurementSourceSelection, ReportingOption, ReportingSelection, ShortfallRemedy } from "./guarantees.js";
 import { BreakPositionOption, BreakPositionSelection, Environment, EnvironmentsSelection, LineItemEpisodes, Placement, ProgramOption, ProgramsSelection, PropertiesSelection } from "./inventory.js";
-import { ClockWindow, DocumentRef, Domain, Duration, FormatId, Fraction, GeoCode, Interval, LineItemStatus, NamespacedTerm, OpenObject, PlainInteger, PlainString, Range, RegistrableDomain, SeatRef, Selectable, Settable, TimeZone, VersionRef } from "./kernel.js";
+import { ClockWindow, DocumentRef, Domain, Duration, FormatId, Fraction, GeoCode, Interval, LineItemStatus, NamespacedTerm, OpenObject, PlainString, Range, RegistrableDomain, SafeInteger, SeatRef, Selectable, Settable, TimeZone, VersionRef } from "./kernel.js";
 import { PropertyOption } from "./properties.js";
 import { Agreement, Billing, ExternalReference } from "./settlement.js";
 import { AcceptedExclusions, DaypartBounds, DeviceBounds, ExclusionList, ExclusionType, FrequencyCap, GeoBounds, MarketsSelection } from "./targeting.js";
@@ -78,7 +78,7 @@ export interface LineItem {
   /** How the line item counts plays and, when it counts impressions, turns them into impressions. See 5.6.4 */
   delivery_counting?: DeliveryCounting;
   /** `allowed[]` of AdCOM 1.0 List: Device Types codes, the values of OpenRTB 2.6 `device.devicetype`. It narrows `environments` (§ 5.2.1). Mobile/Tablet - General (1) covers Phone (4) and Tablet (5) */
-  device?: Settable<PlainInteger>;
+  device?: Settable<SafeInteger>;
   /** The buyers that may commit, by `buyer.domain` */
   eligible_buyers?: Array<RegistrableDomain>;
   /** The seats that may commit. An entry with an absent or empty `ids[]` names no seat and admits no one, unlike an absent OpenRTB 2.6 `Deal.wseat`, which sets no restriction */

@@ -4,7 +4,7 @@
 import { z } from "zod";
 import * as rt from "./runtime.js";
 import { PreemptionRemedy } from "./commercial.js";
-import { Delta, Duration, Fraction, Measurer, NamespacedTerm, PlainInteger, PlainNumber, PlainString, Selectable, TimeUnit } from "./kernel.js";
+import { Delta, Duration, Fraction, Measurer, NamespacedTerm, PlainNumber, PlainString, SafeInteger, Selectable, TimeUnit } from "./kernel.js";
 
 /** The `CommittedMetricDirection` vocabulary: `at_least`, `at_most`. */
 export type CommittedMetricDirection = "at_least" | "at_most";
@@ -113,7 +113,7 @@ export interface ShortfallRemedy {
   /** The options in the base rate, by option id. */
   included: Array<PlainString>;
   /** The most options that may be in effect. */
-  max_select?: PlainInteger;
+  max_select?: SafeInteger;
   /** The seller's terms for a remedy */
   remedy_terms?: RemedyTerms;
   /** The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`. */
@@ -123,7 +123,7 @@ export const ShortfallRemedy: z.ZodType<ShortfallRemedy> = z.strictObject({
   available: z.array(PreemptionRemedy),
   deltas: rt.map(PlainString, Delta).optional(),
   included: z.array(PlainString),
-  max_select: PlainInteger.optional(),
+  max_select: SafeInteger.optional(),
   remedy_terms: RemedyTerms.optional(),
   selected: z.array(PlainString).optional(),
 });

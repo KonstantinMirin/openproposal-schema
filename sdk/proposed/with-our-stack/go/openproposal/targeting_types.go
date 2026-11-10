@@ -72,7 +72,7 @@ type ExclusionTerms struct {
 	// Enforcement: `pre_serve` | `best_effort`
 	Enforcement ExclusionTermsEnforcement `json:"enforcement"`
 	// MaxEntries: The most entries of this type the seller accepts
-	MaxEntries *PlainInteger `json:"max_entries,omitempty"`
+	MaxEntries *SafeInteger `json:"max_entries,omitempty"`
 }
 
 // ValidateValue implements Value.
@@ -87,7 +87,7 @@ func (ExclusionTerms) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[ExclusionTermsEnforcement](x, member(at, "enforcement"), errs)
 	}
 	if x, ok := m["max_entries"]; ok {
-		validateAs[PlainInteger](x, member(at, "max_entries"), errs)
+		validateAs[SafeInteger](x, member(at, "max_entries"), errs)
 	}
 }
 
@@ -118,14 +118,14 @@ func (AcceptedExclusions) ValidateValue(v any, at string, errs *Errors) {
 // MarketsSelection: The copy `Selectable<T=GeoCode>`.
 type MarketsSelection = Selectable[GeoCode]
 
-// DeviceBounds: The copy `Settable<T=PlainInteger>`.
-type DeviceBounds = Settable[PlainInteger]
+// DeviceBounds: The copy `Settable<T=SafeInteger>`.
+type DeviceBounds = Settable[SafeInteger]
 
 // GeoBounds: The copy `Settable<T=GeoCode>`.
 type GeoBounds = Settable[GeoCode]
 
-// CountSettableRange: The copy `SettableRange<T=PlainInteger>`.
-type CountSettableRange = SettableRange[PlainInteger]
+// CountSettableRange: The copy `SettableRange<T=SafeInteger>`.
+type CountSettableRange = SettableRange[SafeInteger]
 
 // ExclusionEntry: The `ExclusionEntry` union: a value of any one of its branches.
 type ExclusionEntry struct {
@@ -224,7 +224,7 @@ type DaypartBounds = Settable[ClockWindow]
 // FrequencyCap: The `FrequencyCap` object of the `targeting` module.
 type FrequencyCap struct {
 	// Count: The cap. The buyer's `value` is the count, and `period` and `per` stay the seller's
-	Count SettableRange[PlainInteger] `json:"count"`
+	Count SettableRange[SafeInteger] `json:"count"`
 	// Per: Who is capped. It matters: CTV typically caps at household, audio at listener. Core terms: `device` | `household` | `listener` | `screen`
 	Per FrequencyCapPer `json:"per"`
 	// Period: The bucket the count runs over
@@ -240,7 +240,7 @@ func (FrequencyCap) ValidateValue(v any, at string, errs *Errors) {
 	checkRequired(m, at, errs, "count", "per", "period")
 	checkClosed(m, at, errs, "count", "per", "period")
 	if x, ok := m["count"]; ok {
-		validateAs[SettableRange[PlainInteger]](x, member(at, "count"), errs)
+		validateAs[SettableRange[SafeInteger]](x, member(at, "count"), errs)
 	}
 	if x, ok := m["per"]; ok {
 		validateAs[FrequencyCapPer](x, member(at, "per"), errs)

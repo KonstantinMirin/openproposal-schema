@@ -383,7 +383,7 @@ entries:
     as:
       role: property
       object: LineItem
-      type: { kind: apply, constructor: Settable, arguments: { T: { kind: named, name: PlainInteger } } }
+      type: { kind: apply, constructor: Settable, arguments: { T: { kind: named, name: SafeInteger } } }
       presence: optional
   - ir: rule:5.5:ae26d4ac-3
     digest: 090348a7323350dedde6b1c639161126ce13917ebf40d95c41bb3ea4a158e398
@@ -608,7 +608,7 @@ entries:
     digest: 2d70f74f6199650feac5e1a8667c03121611c06a15e9ccd500c27581f1c7d069
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: ExclusionTerms, type: { kind: named, name: PlainInteger }, presence: optional }
+    as: { role: property, object: ExclusionTerms, type: { kind: named, name: SafeInteger }, presence: optional }
   - ir: rule:5.5:ae26d4ac-9
     digest: 14a4161e8d6c9d60c151157d5eeaa14cb585614e232da851e2057b49ec889440
     locks: [ with-our-stack ]
@@ -751,7 +751,7 @@ entries:
     as:
       role: property
       object: FrequencyCap
-      type: { kind: apply, constructor: SettableRange, arguments: { T: { kind: named, name: PlainInteger } } }
+      type: { kind: apply, constructor: SettableRange, arguments: { T: { kind: named, name: SafeInteger } } }
       presence: required
   - ir: rule:5.5:373dbf11-6
     digest: 160babf61fd25d53e00980fd6465ef5333761db77a2949d621637e6c43c47f73

@@ -1,0 +1,75 @@
+# OpenProposal 3.0 open-PR stack (op30-packages @ 56cbd4da), IAB Australia DOOH desk test v2, 7 Nov 2026. Prices replaced with placeholders (A$10.00 CPM) for publication, 10 Nov 2026.
+# THEORETICAL. Every screen, id, coordinate, domain and figure is invented.
+line_item_id:   "v2-p8-phases"
+status:         published
+channel:        dooh
+properties:
+  available:
+    - id: "rail-concourse-portrait"
+      name: "Rail concourse portrait screens (invented)"
+      domains: ["outdoor-owner.example"]
+      child_audience: general
+      seller_relationship: owner
+      venue_type: { taxonomy: 5, ids: ["10502"] }   # the spec's own example id (§ 6.9); invented network
+      screens:
+        - { screen_id: "rc-001", lat: -33.8830, lon: 151.2060, time_zone: "Australia/Sydney",
+            operating_hours: [{ days: [monday, tuesday, wednesday, thursday, friday, saturday, sunday], start: "05:00", before: "24:00" }],
+            loop: { length_s: 60, slot_s: 10 } }
+        - { screen_id: "rc-002", lat: -33.8832, lon: 151.2063, time_zone: "Australia/Sydney",
+            operating_hours: [{ days: [monday, tuesday, wednesday, thursday, friday, saturday, sunday], start: "05:00", before: "24:00" }],
+            loop: { length_s: 60, slot_s: 10 } }
+        - { screen_id: "rc-003", lat: -37.8183, lon: 144.9671, time_zone: "Australia/Melbourne",
+            operating_hours: [{ days: [monday, tuesday, wednesday, thursday, friday, saturday, sunday], start: "05:00", before: "24:00" }],
+            loop: { length_s: 60, slot_s: 10 } }
+        - { screen_id: "rc-004", lat: -37.8185, lon: 144.9675, time_zone: "Australia/Melbourne",
+            operating_hours: [{ days: [monday, tuesday, wednesday, thursday, friday, saturday, sunday], start: "05:00", before: "24:00" }],
+            loop: { length_s: 60, slot_s: 10 } }
+      slots_per_loop: 1
+  included: ["rail-concourse-portrait"]
+environments:   { available: ["dooh"], included: ["dooh"] }
+formats:        { available: ["dooh/portrait-1080x1920-10s"],
+                  included: ["dooh/portrait-1080x1920-10s"] }
+format_specs:
+  "dooh/portrait-1080x1920-10s":
+    spec:        { asset: image_file, w: 1080, h: 1920, duration: { nominal_s: 10, tolerance_ms: 500 } }
+creative_policy: "Seller moderation; industry advertising codes apply. Food and drink restrictions near schools vary by screen."
+
+pricing:
+  - { pricing_id: "v2-p8-phases-week", cost_method: TIME, cost_parameters: { rate_unit: week },
+      list_rate: 20000.00, agreed_rate: 20000.00, currency: AUD,
+      price_valid_until: "2026-08-31T13:59:59Z" }
+commitment:
+  basis: spend
+  amount: 240000.00
+  flight: { start: "2026-09-06T14:00:00Z", end: "2026-11-29T12:59:59Z" }
+  derived_units: 12
+  advertisers: [{ domain: "brand-a.example" }]
+  phases:
+    - { start: "2026-09-06T14:00:00Z", end: "2026-09-20T13:59:59Z", amount: 120000.00 }
+    - { start: "2026-10-04T13:00:00Z", end: "2026-10-18T12:59:59Z", amount: 60000.00 }
+    - { start: "2026-11-01T13:00:00Z", end: "2026-11-15T12:59:59Z", amount: 60000.00 }
+
+delivery_counting:
+  play_tolerance_ms: 500
+  proof_of_performance: { logged_by: seller, evidence: ["play_log", "photo"] }
+hold_terms:     { available: true, duration: "PT24H" }
+exclusivity:
+  available:
+    - id: "finance-loop"
+      scope: category
+      categories: { taxonomy: 8, ids: ["1335"] }   # Ad Product Taxonomy 2.0: Finance and Insurance
+      separation: loop
+  included:     []
+  deltas:       { finance-loop: { delta_fraction: 0.15 } }
+shortfall_remedy:
+  available:    ["makegood"]
+  included:     ["makegood"]
+  remedy_terms: { makegood_window: "P14D", makegood_type: comparable_unit }
+time_zone:      viewer_local
+visibility:     named
+eligible_buyers: ["agency-a.example"]
+transaction_mechanism:
+  available:    [{ id: direct_io, delivery_type: share_of_voice }]
+  included:     ["direct_io"]
+  max_select:   1
+sov_basis:      loop_time

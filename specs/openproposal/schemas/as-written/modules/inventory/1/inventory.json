@@ -1,9 +1,5 @@
 {
   "$defs": {
-    "ContentDetail": {
-      "description": "The shows, series, sections, and network verticals the line item's inventory holds. The specification states no members, so the object accepts any.",
-      "type": "object"
-    },
     "Environment": {
       "anyOf": [
         {
@@ -69,11 +65,11 @@
           "type": "array"
         },
         "id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier",
-          "description": "The identity the seller mints for the option, which `included[]` and the `pricing` keys name it by."
+          "description": "The identity the seller mints for the option, which `included[]` and the `pricing` keys name it by.",
+          "type": "string"
         },
         "name": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+          "type": "string"
         },
         "supported_formats": {
           "items": {
@@ -111,7 +107,7 @@
         "included": {
           "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the identity the seller mints for it.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
+            "type": "string"
           },
           "type": "array"
         },
@@ -123,9 +119,6 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
           },
           "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the identity the seller mints for it.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
-          },
           "type": "object"
         }
       },

@@ -24,13 +24,18 @@ options:
     summary: "A domain concept per row, as the other locks' rows take, each a decision."
 chosen: plain
 rationale: >-
-  The model calls these types `PlainString`, `PlainInteger`, `PlainNumber`, and
-  `OpenObject`.
   § 2.6 lists `String`, `Integer`, `Number`, and `Object` among the Type cells
   and says a row that holds a shared type uses it, so a row typed only
   `String` states no further form, and `Object` holds keys another definition
   sets. A plain type for each takes what the row states and adds nothing.
-  `PlainInteger` keeps to the integers every JSON implementation reads
-  exactly, as RFC 7493 advises.
+  The model keeps one type for each, `PlainString`, `SafeInteger`,
+  `PlainNumber`, and `OpenObject`, for its concept. A type that restates a
+  JSON type and that the text doesn't name has no definition in the schema
+  (type rules § 4), so each row holding `PlainString`, `PlainNumber`, or
+  `OpenObject` writes `{ "type": "string" }`, `{ "type": "number" }`, or
+  `{ "type": "object" }` with its own description. `SafeInteger` keeps to the
+  integers every JSON implementation reads exactly, as RFC 7493 advises,
+  which is a constraint, so it is one definition in the kernel that every
+  such row references.
 feedback: >-
   None needed.

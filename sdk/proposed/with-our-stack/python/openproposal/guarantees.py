@@ -11,7 +11,7 @@ from typing_extensions import TypeAliasType
 
 from . import _runtime as rt
 from .commercial import PreemptionRemedy
-from .kernel import Delta, Duration, Fraction, Measurer, NamespacedTerm, PlainInteger, PlainNumber, PlainString, Selectable, TimeUnit
+from .kernel import Delta, Duration, Fraction, Measurer, NamespacedTerm, PlainNumber, PlainString, SafeInteger, Selectable, TimeUnit
 
 CommittedMetricDirection = TypeAliasType("CommittedMetricDirection", Literal["at_least", "at_most"])
 """The `CommittedMetricDirection` vocabulary: `at_least`, `at_most`."""
@@ -131,7 +131,7 @@ class ShortfallRemedy(rt.Closed):
     """The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta."""
     included: list[PlainString]
     """The options in the base rate, by option id."""
-    max_select: Optional[PlainInteger] = None
+    max_select: Optional[SafeInteger] = None
     """The most options that may be in effect."""
     remedy_terms: Optional[RemedyTerms] = None
     """The seller's terms for a remedy"""

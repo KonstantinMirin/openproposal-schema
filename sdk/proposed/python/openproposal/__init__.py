@@ -40,7 +40,7 @@ LOCK: Final = "main"
 VARIANT: Final = "proposed"
 """The build: `as-written`, the specification as its text and examples write it, or `proposed`, with the changes we propose."""
 
-SCHEMA_RELEASE: Final = "c29c818fe069a7467901fc4673d6f8c4753176c73d651cae35cfb791b4a7bc3d"
+SCHEMA_RELEASE: Final = "bc0f34bc7a31f087c629be93f6c3d3d7dce9aaff63cf2091d0edfc995b392b0c"
 """The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it."""
 
 TYPES: dict[str, Any] = {

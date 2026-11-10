@@ -261,28 +261,30 @@ exemptions:
     reason: >-
       With strict types, Pydantic's strict `int` rejects an integral float
       such as `3.0`, which JSON Schema counts as an integer, as in PG-7, for
-      the stack's `PlainInteger`.
+      the stack's `SafeInteger`.
     locks: [with-our-stack]
     cases:
-      - { label: "primitive PlainInteger valid vector 1 written 0.0", kind: verdict }
-      - { label: "primitive PlainInteger valid vector 1 written 0e0", kind: verdict }
-      - { label: "primitive PlainInteger valid vector 2 written 3.0", kind: verdict }
-      - { label: "primitive PlainInteger valid vector 2 written 3e0", kind: verdict }
-      - { label: "primitive PlainInteger valid vector 3 written -1.0", kind: verdict }
-      - { label: "primitive PlainInteger valid vector 3 written -1e0", kind: verdict }
-      - { label: "primitive PlainInteger valid vector 4 written 9007199254740991.0", kind: verdict }
-      - { label: "primitive PlainInteger valid vector 4 written 9007199254740991e0", kind: verdict }
+      - { label: "primitive SafeInteger valid vector 1 written 0.0", kind: verdict }
+      - { label: "primitive SafeInteger valid vector 1 written 0e0", kind: verdict }
+      - { label: "primitive SafeInteger valid vector 2 written 3.0", kind: verdict }
+      - { label: "primitive SafeInteger valid vector 2 written 3e0", kind: verdict }
+      - { label: "primitive SafeInteger valid vector 3 written -1.0", kind: verdict }
+      - { label: "primitive SafeInteger valid vector 3 written -1e0", kind: verdict }
+      - { label: "primitive SafeInteger valid vector 4 written 9007199254740991.0", kind: verdict }
+      - { label: "primitive SafeInteger valid vector 4 written 9007199254740991e0", kind: verdict }
   - id: PG-22
     reason: >-
       For an object keyed by `propertyNames` with a `$ref`, the generator
       writes a dict keyed by a `RootModel` class, which isn't hashable, as in
       PG-8, so validating a non-empty map raises a `TypeError`: the stack's
       `format_specs`, keyed by `FormatId`, its `exclusions`, keyed by
-      `ExclusionType`, and a commit result's `availability`, keyed by line
-      item id.
+      `ExclusionType`, and the `ext` of a line item, a proposal, and a change
+      request, keyed by `Domain`.
     locks: [with-our-stack]
     cases:
       - { label: "corpus rule \"marker:3:supplied\" valid vector 1 after", kind: error }
       - { label: "corpus rule \"marker:3:supplied\" invalid vector 1 after", kind: error }
-      - { label: "corpus rule \"rule:5.6.1:94be9998\" valid vector 2 value", kind: error }
-      - { label: "constructor Map vectors[0] as Map<FormatId, PlainInteger> valid 2", kind: error }
+      - { label: "corpus ChangeRequest#/properties/ext/additionalProperties/type baseline", kind: error }
+      - { label: "corpus LineItem#/properties/ext/additionalProperties/type baseline", kind: error }
+      - { label: "corpus Proposal#/properties/ext/additionalProperties/type baseline", kind: error }
+      - { label: "constructor Map vectors[0] as Map<FormatId, SafeInteger> valid 2", kind: error }

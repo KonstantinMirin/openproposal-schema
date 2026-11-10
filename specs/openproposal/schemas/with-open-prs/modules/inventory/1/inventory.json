@@ -8,15 +8,15 @@
       "additionalProperties": false,
       "properties": {
         "bundle": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId",
-          "description": "Store ID. As OpenRTB 2.6 `app.bundle`"
+          "description": "Store ID. As OpenRTB 2.6 `app.bundle`",
+          "type": "string"
         },
         "domain": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/Domain",
           "description": "Developer domain, against which `app-ads.txt` is checked. As `app.domain`"
         },
         "platform": {
-          "$ref": "#/$defs/StorePlatform",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/StorePlatform",
           "description": "`ios` | `android` | `roku` | `fire_tv` | `samsung_tv` and other store platforms. No OpenRTB equivalent"
         },
         "storeurl": {
@@ -28,10 +28,6 @@
         "bundle",
         "platform"
       ],
-      "type": "object"
-    },
-    "ContentDetail": {
-      "description": "The shows, series, sections, and network verticals the line item's inventory holds. The specification states no members, so the object accepts any.",
       "type": "object"
     },
     "Environment": {
@@ -160,7 +156,7 @@
           "description": "The identity the seller mints for the option, which `included[]` and the `pricing` keys name it by."
         },
         "name": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+          "type": "string"
         },
         "supported_formats": {
           "items": {
@@ -233,23 +229,6 @@
         "min_interval_s"
       ],
       "type": "object"
-    },
-    "StorePlatform": {
-      "anyOf": [
-        {
-          "enum": [
-            "ios",
-            "android",
-            "roku",
-            "fire_tv",
-            "samsung_tv"
-          ],
-          "type": "string"
-        },
-        {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
-        }
-      ]
     }
   },
   "$id": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/inventory/1/inventory.json",

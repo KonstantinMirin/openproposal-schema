@@ -32,7 +32,7 @@
           "type": "boolean"
         },
         "issuer": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          "type": "string"
         },
         "scheme": {
           "$ref": "#/$defs/CredentialScheme"
@@ -53,8 +53,8 @@
           "$ref": "../../../kernel/1/kernel.json#/$defs/Url"
         },
         "version": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId",
-          "description": "The terms document's version as its publisher writes it, such as `2026.1`. It is compared by exact equality, with no order."
+          "description": "The terms document's version as its publisher writes it, such as `2026.1`. It is compared by exact equality, with no order.",
+          "type": "string"
         }
       },
       "type": "object"

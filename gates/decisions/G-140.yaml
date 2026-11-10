@@ -1,0 +1,59 @@
+format: 1
+id: G-140
+date: 2026-11-09
+question: Should the schema define a named type that only restates a JSON type, such as `PlainString`, `ExternalId`, `Text`, or an open object with no member?
+decision: >-
+  No. A type the specification doesn't name whose schema is its `type` alone,
+  a primitive of `type` alone or an open object with no member, is written
+  inline at each use, `{ "type": "string" }`, `{ "type": "number" }`, or
+  `{ "type": "object" }`, with the use's own description (type rules § 4,
+  src/placement.ts). The model marks it `inline` and keeps it, so the
+  domain-model, mapping, and naming gates still type every row by its
+  concept's type, and the SDKs, which the model generates, keep its name: the
+  SDK-names gate takes the schema's definitions and its inline types, and fails
+  on a type defined twice or both defined and inlined. A map keyed by such a
+  string names no `propertyNames`. A primitive with a constraint keeps one
+  definition: the stack's `PlainInteger`, bounded to the integers every JSON
+  implementation reads exactly (RFC 7493, D-052), is renamed `SafeInteger`,
+  and its narrowing `SafeIntegerNarrowing`. A type the specification names
+  keeps its definition, as the stack's § 2.2 `Amount` does. The rule checks'
+  context, the examples walker, and the example builders read an inline type
+  from the model, or from the node the emitter writes for it, so every rule
+  vector, example verdict, corpus baseline, and type example value is what it
+  was. The plain-generator exemption PG-22 trades the commit result's
+  `availability`, which no longer names its keys, for the `ext` maps' corpus
+  cases, which the generator keys by `Domain`.
+rationale: >-
+  No gate is weaker. The model and its gates are unchanged for these types;
+  only where the schema writes them moves, and a JSON type at each use states
+  exactly what a reference to the restating type stated. Every example and
+  vector of every build gets the verdict it had: a harness that validates the
+  committed corpus, rule vectors, type examples, primitive vectors, the
+  specification's examples, and the IAB Australia desk-test line items
+  against every build before and after finds no difference. Dropping
+  SafeInteger's bound would change what the stack accepts, so it stays a
+  constraint, and a definition.
+accepts:
+  - { gate: convention-inline, fingerprint: e7330c0416a40175a0fad57e2cfbecb6cbba3fb196202fe5ab6c809fbdc39b4f }
+  - { gate: corpus-generates, fingerprint: 21fb3dc42ee756628ab47338aa51898d81d0cb367b92b240e4885a7c0c9a4182 }
+  - { gate: corpus-isolation, fingerprint: 82d53a260c5f2365518ee63b59fa512b4df68a8444ff8cbcdc5d155b712548ca }
+  - { gate: domains-homonyms, fingerprint: a526303a2ba7352b6bad7380a5d7d5105d1f61410ae497017e18136840457819 }
+  - { gate: domains-properties, fingerprint: 1a3d7181148c469681f2edb76e6c5690a3b85c5b1ab026f47d50eeee70e3a020 }
+  - { gate: domains-used, fingerprint: 452b349862fda7ed8b8a91d8c0aaa5f60def63cb32e7358fea79ee9ec77cc394 }
+  - { gate: duplication-model, fingerprint: ac50b6823291c8969815ec0eab4ce1639fc2b947c0b09be8a9e6ce5df9586831 }
+  - { gate: examples-validate, fingerprint: d7356831a9df7ba3882983791f3464d9f85792f70c3a5413d9dc53db3c8031a3 }
+  - { gate: field-examples, fingerprint: f6fe2d9e1fe532a7d73f53b003a7b7ea9378120756b4ef507d74cf1d3f3cf701 }
+  - { gate: map-drift, fingerprint: 5f3963c1a385d0296ecef026e98c000f8b8cf4670eecea9b9df9f8ce21f7f159 }
+  - { gate: mapping-bijection, fingerprint: 35455bb24c629660282a5b44ac5884d1db3a5dbcacc698ccc5b41cd3e0fab099 }
+  - { gate: mapping-location, fingerprint: db785db12e168b9853472fa6c459813675501a9e59de1dfcc1bfe47eda15d444 }
+  - { gate: mapping-rules, fingerprint: d8771e4ead45c4816ccad154f578b04028e2d1346f9e9b794b77ee6ab38695db }
+  - { gate: model-resolves, fingerprint: e83c49e4a3ad91c9c268cbbf6cecf4a116b544ade783b17d53b25a399afc0f2e }
+  - { gate: npm-test, fingerprint: cf1c44459a181df6f8d3dd5b6b2e95a650c548729399cd6c8325dcf402646e31 }
+  - { gate: plain-exemptions-file, fingerprint: 3cf874fddf0489c34688c7b1e26503f0c7d2626e46ec66a23b7c9817c90fd10c }
+  - { gate: plain-parity, fingerprint: 455aaae2622ffdc833a5155f0fe817717abd9a59cfcc43ada739795769d50622 }
+  - { gate: rule-vectors, fingerprint: b9b1d9cc2f51c101618f5e9ab153b0a56ca3bd5f0d3b9e68368199c1efc1e5b9 }
+  - { gate: rules-emit, fingerprint: 90ed18f91200d153402bf931b59723b8bfdefa65f4ae42d6894b8b606c262953 }
+  - { gate: sdk-generate, fingerprint: 144dbaddca77615c1661e65f5bc91889636a491b410cc9c76afd43bbb641777a }
+  - { gate: sdk-names, fingerprint: d39bbceef2604ef83730c7d035f1e139b4d3798f3a5018dfd28c60cc44a2a12a }
+  - { gate: type-examples-generate, fingerprint: fa7910f4f60a91f2a56e957866e14787a2d90dd10710591f04978a1a1242d715 }
+  - { gate: type-examples-valid, fingerprint: 3b1f68b09d796431561afee84b670bbedcb00c9e0716ed8e24140d90eceec9e1 }

@@ -242,14 +242,6 @@ export interface OpenObject {
 }
 export const OpenObject: z.ZodType<OpenObject> = z.looseObject({});
 
-/** A whole number the text types as Integer and gives no other range, within the integers every JSON implementation reads exactly, from −(2^53 − 1) to 2^53 − 1; the field that holds it says what it counts. */
-export type PlainInteger = number;
-export const PlainInteger: z.ZodType<PlainInteger> = z.number().gte(-9007199254740991).lte(9007199254740991).refine(Number.isInteger, "isn't an integer");
-
-/** The copy `Narrowing<T=PlainInteger>`. */
-export type PlainIntegerNarrowing = Narrowing<PlainInteger>;
-export const PlainIntegerNarrowing: z.ZodType<PlainIntegerNarrowing> = Narrowing(PlainInteger);
-
 /** A number the text types as Number and gives no other range; the field that holds it says what it measures. */
 export type PlainNumber = number;
 export const PlainNumber: z.ZodType<PlainNumber> = z.number();
@@ -268,27 +260,6 @@ export interface AppId {
 export const AppId: z.ZodType<AppId> = z.strictObject({
   bundle: PlainString,
   store: AppIdStore,
-});
-
-/** The `ErrorObject` object of the `kernel` module. */
-export interface ErrorObject {
-  /** A core code (below) or an extension code */
-  code: ErrorObjectCode;
-  /** Human-readable. A receiver SHOULD NOT parse it */
-  detail: PlainString;
-  /** Into the object this specification defines that the request carries, to the value that caused the error */
-  pointer?: FieldPointer;
-  /** `same` | `refetch` | `none`. `same`: the same request can succeed later. `refetch`: a new attempt, composed on the current `version`, can succeed. `none`: only a changed request can succeed. On a `commit`, `same` keeps the `idempotency_key` and such an error is not a stored result (§ 5.6.1), and `refetch` and `none` take a new `idempotency_key` */
-  retry: ErrorObjectRetry;
-  /** The proposal's `version` when the error was decided */
-  version?: PlainInteger;
-}
-export const ErrorObject: z.ZodType<ErrorObject> = z.strictObject({
-  code: ErrorObjectCode,
-  detail: PlainString,
-  pointer: FieldPointer.optional(),
-  retry: ErrorObjectRetry,
-  version: PlainInteger.optional(),
 });
 
 /** The `ProposalStatus` vocabulary: `draft`, `published`, `under_review`, `agreed`, `withdrawn`, `expired`. */
@@ -343,6 +314,35 @@ export const Party: z.ZodType<Party> = z.strictObject({
   registry_id: PlainString.optional(),
 });
 
+/** A whole number that every JSON implementation reads exactly, from −(2^53 − 1) to 2^53 − 1, for a row the text types as Integer and gives no other range; the field that holds it says what it counts. */
+export type SafeInteger = number;
+export const SafeInteger: z.ZodType<SafeInteger> = z.number().gte(-9007199254740991).lte(9007199254740991).refine(Number.isInteger, "isn't an integer");
+
+/** The `ErrorObject` object of the `kernel` module. */
+export interface ErrorObject {
+  /** A core code (below) or an extension code */
+  code: ErrorObjectCode;
+  /** Human-readable. A receiver SHOULD NOT parse it */
+  detail: PlainString;
+  /** Into the object this specification defines that the request carries, to the value that caused the error */
+  pointer?: FieldPointer;
+  /** `same` | `refetch` | `none`. `same`: the same request can succeed later. `refetch`: a new attempt, composed on the current `version`, can succeed. `none`: only a changed request can succeed. On a `commit`, `same` keeps the `idempotency_key` and such an error is not a stored result (§ 5.6.1), and `refetch` and `none` take a new `idempotency_key` */
+  retry: ErrorObjectRetry;
+  /** The proposal's `version` when the error was decided */
+  version?: SafeInteger;
+}
+export const ErrorObject: z.ZodType<ErrorObject> = z.strictObject({
+  code: ErrorObjectCode,
+  detail: PlainString,
+  pointer: FieldPointer.optional(),
+  retry: ErrorObjectRetry,
+  version: SafeInteger.optional(),
+});
+
+/** The copy `Narrowing<T=SafeInteger>`. */
+export type SafeIntegerNarrowing = Narrowing<SafeInteger>;
+export const SafeIntegerNarrowing: z.ZodType<SafeIntegerNarrowing> = Narrowing(SafeInteger);
+
 /** The `SeatRef` object of the `kernel` module. */
 export interface SeatRef {
   /** The DSP's primary domain */
@@ -365,7 +365,7 @@ export interface Selectable<T> {
   /** The options in the base rate, by option id. */
   included: Array<PlainString>;
   /** The most options that may be in effect. */
-  max_select?: PlainInteger;
+  max_select?: SafeInteger;
   /** The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`. */
   selected?: Array<PlainString>;
 }
@@ -379,7 +379,7 @@ export function Selectable<T>(t: z.ZodType<T>): z.ZodType<Selectable<T>> {
     available: z.array(t),
     deltas: rt.map(PlainString, Delta).optional(),
     included: z.array(PlainString),
-    max_select: PlainInteger.optional(),
+    max_select: SafeInteger.optional(),
     selected: z.array(PlainString).optional(),
   });
 }
@@ -454,11 +454,11 @@ export interface TaxonomyCodes {
   /** Ids in that taxonomy */
   ids: Array<PlainString>;
   /** A value from the list the field names */
-  taxonomy: PlainInteger;
+  taxonomy: SafeInteger;
 }
 export const TaxonomyCodes: z.ZodType<TaxonomyCodes> = z.strictObject({
   ids: z.array(PlainString),
-  taxonomy: PlainInteger,
+  taxonomy: SafeInteger,
 });
 
 /** A civil time of day, written `HH:MM` from `00:00` to `24:00`, read on the line item's clock. `24:00` is the end of the day, so it ends a window and never starts one. */
@@ -532,11 +532,11 @@ export interface VersionRef {
   /** The proposal's `seller.domain` */
   seller_domain?: RegistrableDomain;
   /** The proposal's `version` */
-  version: PlainInteger;
+  version: SafeInteger;
 }
 export const VersionRef: z.ZodType<VersionRef> = z.strictObject({
   line_item_id: PlainString.optional(),
   proposal_id: PlainString,
   seller_domain: RegistrableDomain.optional(),
-  version: PlainInteger,
+  version: SafeInteger,
 });

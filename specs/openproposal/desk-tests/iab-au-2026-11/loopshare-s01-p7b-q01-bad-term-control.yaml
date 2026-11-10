@@ -1,0 +1,70 @@
+# OpenProposal 3.0 open-PR stack (op30-packages @ 598f5c8a), IAB Australia desk test of a loop-share DOOH deal (OOH-S01), 9 Nov 2026. Prices replaced with placeholders (A$10.00 CPM) for publication, 10 Nov 2026.
+# P7 variant of Q01-c: only the committed metric term differs. THEORETICAL. Every screen, id, coordinate, domain and figure is invented, from a practitioner's synthetic brief.
+line_item_id:   "s01-p7b-q01-bad-term-control"
+status:         published
+channel:        dooh
+properties:
+  available:
+    - id: "office-lobby-portrait"
+      name: "Office lobby portrait screen (invented)"
+      domains: ["outdoor-owner.example"]
+      child_audience: general
+      seller_relationship: owner
+      seller_accounts: [{ asi: "dooh-ssp.example", sid: "pub-0001" }]
+      venue_type: { taxonomy: 5, ids: ["10502"] }   # the spec's own example id (6.9); invented venue
+      allocation: all
+      screens:
+        - { screen_id: "OFFICE-SCR-TEST-01", lat: -37.8140, lon: 144.9633, time_zone: "Australia/Melbourne",
+            operating_hours: [{ days: [monday, tuesday, wednesday, thursday, friday], start: "07:00", before: "19:00" }],
+            loop: { length_s: 70, slot_s: 7 } }
+      slots_per_loop: 1
+  included: ["office-lobby-portrait"]
+environments:   { available: ["dooh"], included: ["dooh"] }
+formats:        { available: ["dooh/portrait-1080x1920-7s"],
+                  included: ["dooh/portrait-1080x1920-7s"] }
+format_specs:
+  "dooh/portrait-1080x1920-7s":
+    spec:        { asset: video_file, w: 1080, h: 1920, duration: { nominal_s: 7, tolerance_ms: 500 } }
+creative_policy: "Seller moderation. Invented."
+
+delivery_counting:
+  play_tolerance_ms: 500
+  proof_of_performance: { logged_by: seller, evidence: ["play_log"] }
+  impression_multiplier:
+    impression_type: audience
+    source_type:     1
+    vendor:          "audience-measure.example"
+    dataset:         "2026-R1"
+    settles_on:      declared
+pricing:
+  - { pricing_id: "s01-cpm", cost_method: CPM, list_rate: 10.00, agreed_rate: 10.00, currency: AUD, price_type: 3,
+      price_valid_until: "2026-11-30T12:59:59Z" }
+commitment:
+  basis: units
+  amount: 8610
+  flight: { start: "2026-11-30T13:00:00Z", end: "2026-12-07T12:59:59Z" }
+  derived_units: 8610
+  advertisers: [{ domain: "banksia-home.example" }]
+hold_terms:     { available: false }
+committed_metrics: [{ metric: impressions, level: 8610, direction: at_least }, { metric: "outdoor-owner.example:play count", level: 2870, direction: at_least }]
+controlling_measurement:
+  available:    [{ id: vendor-count, counted_by: "audience-measure.example", final_after: "P30D" }]
+  included:     ["vendor-count"]
+  max_select:   1
+daypart:
+  allowed:
+    - { days: [monday, tuesday, wednesday, thursday, friday, saturday, sunday], start: "06:00", before: "10:00" }
+    - { days: [monday, tuesday, wednesday, thursday, friday, saturday, sunday], start: "15:00", before: "19:00" }
+  default:
+    include:
+      - { days: [monday, tuesday, wednesday, thursday, friday, saturday, sunday], start: "06:00", before: "10:00" }
+      - { days: [monday, tuesday, wednesday, thursday, friday, saturday, sunday], start: "15:00", before: "19:00" }
+time_zone:      "Australia/Melbourne"
+visibility:     named
+eligible_buyers: ["agency-a.example"]
+transaction_mechanism:
+  available:    [{ id: programmatic_guaranteed, delivery_type: share_of_voice }]
+  included:     ["programmatic_guaranteed"]
+  max_select:   1
+sov_basis:      loop_time
+deal_origin:    "dooh-ssp.example"

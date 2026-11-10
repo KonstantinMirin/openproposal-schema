@@ -2,7 +2,7 @@
 
 /** The OpenProposal `inventory` module's types. */
 import { z } from "zod";
-import { Instant, IntegerFlag, OpenObject, PlainInteger, PlainString, Selectable } from "./kernel.js";
+import { Instant, IntegerFlag, OpenObject, PlainString, SafeInteger, Selectable } from "./kernel.js";
 import { PropertyOption } from "./properties.js";
 
 /** The `Environment` vocabulary: `web_desktop`, `web_mobile`, `app_mobile`, `ctv`, `dooh`. */
@@ -58,30 +58,6 @@ export const LineItemEpisodeses = {
   ALL: "all",
 } as const;
 
-/** The `BreakPositionOption` object of the `inventory` module. */
-export interface BreakPositionOption {
-  /** A value from List: Start Delay Modes, such as Pre-Roll (0) */
-  delay?: PlainInteger;
-  /** Option id (§ 3.1) */
-  id: PlainString;
-  /** Ceiling: the most ads a served pod holds */
-  maxseq?: PlainInteger;
-  /** Ceiling: the most seconds of dynamic ad time a served pod holds */
-  poddur?: PlainInteger;
-  /** A value from List: Pod Sequence */
-  podseq?: PlainInteger;
-  /** A value from List: Slot Position in Pod */
-  slotinpod?: PlainInteger;
-}
-export const BreakPositionOption: z.ZodType<BreakPositionOption> = z.strictObject({
-  delay: PlainInteger.optional(),
-  id: PlainString,
-  maxseq: PlainInteger.optional(),
-  poddur: PlainInteger.optional(),
-  podseq: PlainInteger.optional(),
-  slotinpod: PlainInteger.optional(),
-});
-
 /** The `ProgramOption` object of the `inventory` module. */
 export interface ProgramOption {
   /** An AdCOM 1.0 `Content` object, in AdCOM's keys and meanings, `series`, `title`, `network`, `channel`, `genres`, `rating`, `live`, and `realtime` included. Its `channel` is the AdCOM `Channel` object, the TV channel or station the content is on */
@@ -97,27 +73,51 @@ export const ProgramOption: z.ZodType<ProgramOption> = z.strictObject({
   schedule: EventSchedule.optional(),
 });
 
+/** The `BreakPositionOption` object of the `inventory` module. */
+export interface BreakPositionOption {
+  /** A value from List: Start Delay Modes, such as Pre-Roll (0) */
+  delay?: SafeInteger;
+  /** Option id (§ 3.1) */
+  id: PlainString;
+  /** Ceiling: the most ads a served pod holds */
+  maxseq?: SafeInteger;
+  /** Ceiling: the most seconds of dynamic ad time a served pod holds */
+  poddur?: SafeInteger;
+  /** A value from List: Pod Sequence */
+  podseq?: SafeInteger;
+  /** A value from List: Slot Position in Pod */
+  slotinpod?: SafeInteger;
+}
+export const BreakPositionOption: z.ZodType<BreakPositionOption> = z.strictObject({
+  delay: SafeInteger.optional(),
+  id: PlainString,
+  maxseq: SafeInteger.optional(),
+  poddur: SafeInteger.optional(),
+  podseq: SafeInteger.optional(),
+  slotinpod: SafeInteger.optional(),
+});
+
 /** The `Refresh` object of the `inventory` module. */
 export interface Refresh {
   /** Minimum seconds a creative renders before the slot refreshes */
-  min_interval_s: PlainInteger;
+  min_interval_s: SafeInteger;
 }
 export const Refresh: z.ZodType<Refresh> = z.strictObject({
-  min_interval_s: PlainInteger,
+  min_interval_s: SafeInteger,
 });
 
 /** The `Placement` object of the `inventory` module. */
 export interface Placement {
   /** Values from List: API Frameworks that every impression supports, such as MRAID 3.0 (6), OMID 1.0 (7) and SIMID 1.1 (9) */
-  api?: Array<PlainInteger>;
+  api?: Array<SafeInteger>;
   /** A value from List: Feed Types, such as Podcast (3) */
-  feed?: PlainInteger;
+  feed?: SafeInteger;
   /** The ad is interstitial or full screen */
   instl?: IntegerFlag;
   /** Video or audio. Values from List: Playback Methods in use, such as Initiates without any specific user interaction with Sound On (1), Initiates without any specific user interaction Sound Off by Default (2), Initiates on Click with Sound On (3) and Continuous Playback (7) */
-  playmethod?: Array<PlainInteger>;
+  playmethod?: Array<SafeInteger>;
   /** A value from List: Plcmt Subtypes - Video, such as Instream (1). Its presence states that the line item is video, so a `ctv` line item that sells video carries it */
-  plcmt?: PlainInteger;
+  plcmt?: SafeInteger;
   /** How often the slot refreshes */
   refresh?: Refresh;
   /** The user receives a reward for viewing the ad */
@@ -125,21 +125,21 @@ export interface Placement {
   /** Video or audio. The placement lets the user skip the ad */
   skip?: IntegerFlag;
   /** When `skip` is `1`: seconds the ad plays before the placement enables skipping */
-  skipafter?: PlainInteger;
+  skipafter?: SafeInteger;
   /** Whether server-side ad insertion is in use and what it does to asset and tracker retrieval, in the values of AdCOM 1.0 `Placement.ssai`, such as all server-side (3) */
-  ssai?: PlainInteger;
+  ssai?: SafeInteger;
 }
 export const Placement: z.ZodType<Placement> = z.strictObject({
-  api: z.array(PlainInteger).optional(),
-  feed: PlainInteger.optional(),
+  api: z.array(SafeInteger).optional(),
+  feed: SafeInteger.optional(),
   instl: IntegerFlag.optional(),
-  playmethod: z.array(PlainInteger).optional(),
-  plcmt: PlainInteger.optional(),
+  playmethod: z.array(SafeInteger).optional(),
+  plcmt: SafeInteger.optional(),
   refresh: Refresh.optional(),
   reward: IntegerFlag.optional(),
   skip: IntegerFlag.optional(),
-  skipafter: PlainInteger.optional(),
-  ssai: PlainInteger.optional(),
+  skipafter: SafeInteger.optional(),
+  ssai: SafeInteger.optional(),
 });
 
 /** The copy `Selectable<T=BreakPositionOption>`. */

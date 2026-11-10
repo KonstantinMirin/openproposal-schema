@@ -28,6 +28,24 @@ The schema validates and explains one payload. Nothing else.
 
 Types build bottom-up. A layer uses only the layers below it. **Gate:** a reference to a higher layer, or a cycle, fails.
 
+The schema files form three tiers, and no reference runs sideways within one, apart from the composition the top tier exists for (G-140):
+
+| Tier | File | Holds | References |
+|---|---|---|---|
+| Kernel | `kernel/1/kernel.json` | The primitives, the parts, the kernel vocabularies, the kernel's objects, and every scalar more than one module uses | A primitive stands alone, or references one primitive that stands alone, as an open vocabulary its extension term. A composite (an object, a part, a copy) references only primitives |
+| Modules | `modules/<module>/1/<module>.json` | Each module's own types | The kernel and the module itself, never another module |
+| Documents | `documents/1/composition.json` and `documents/1/<document>.json` | The composition: the documents and profiles, and every type that composes the modules' types, each defined once; and one root file per document or profile | The composition references the kernel, the modules, and itself. A root file is a `$ref` to its document's definition in the composition, and nothing else, so no document references another |
+
+The model places each type (`home`, [`src/placement.ts`](../../src/placement.ts)), by these rules, applied until nothing moves:
+
+- **Composition.** A document, a profile, an object a profile projects, an object that includes a profile, and an object that holds a document or a profile compose, and so does a type that holds another module's structure: an object, a union, or a copy of another module. So does every type that references one of them. The § 4 proposal's `line_items[]` and a package's `line_items[]` hold the line item's definition, which the line-item document's root references too, so the line item is defined once and no document embeds another document's file.
+- **Copies.** A copy goes with the types it is built from: to the module of its non-kernel arguments, or, built from kernel types alone, to the one module that uses it, or the kernel when several do.
+- **Shared.** A module's type that another module or the kernel uses moves down to the kernel. What is left to move once the composition is placed is a scalar, such as the stack's `TransactionMechanism`, which both a price entry and an execution option name.
+
+**Gate:** in the model, a kernel primitive that references a type that references others, a kernel composite that references a composite, a module type that references another module's type, a type below the top tier that references the composition, and an emitted type with no home each fail; in the files, a document's root that references anything but its definition in the composition fails.
+
+A type's `module` stays the module that owns its section, which the mapping files, the module gates below, and the SDK packages read; its tier says only where the schema defines it.
+
 | Layer | Holds | Examples |
 |---|---|---|
 | 1. Primitives | Every scalar that validates differently from the others, or that a receiver processes differently, including a closed list that a standard fixes and no module owns (§ 3a) | `Uuid`, `ExternalId`, `Url`, `Domain`, `CurrencyCode`, `CountryCode`, `IntegerFlag`, `Amount`, `PercentChange`, `Fraction`, `Count`, `Measure`, `Timestamp`, `UtcTimestamp`, `Duration`, `TimeOfDay`, `DayName`, `TimeZone`, `Digest`, `CatalogRef` |
@@ -38,7 +56,7 @@ Types build bottom-up. A layer uses only the layers below it. **Gate:** a refere
 
 Primitives form the kernel, with the vocabularies no module owns: `Marker`, the § 3 markers, and `Party`, the two parties every marker names, whose entry stays in the file of the module that owns its section and names the kernel as its module. **Gate:** a type entry that names the kernel as its module, `module: kernel`, in a file of another module cites a decision with a sentence that says the type, written as code, is the kernel's and why ("so", "because", or "since"), as D-013 says of `Party`. Modules hold the other vocabularies and the objects, and depend only on the kernel and on the modules they declare. A module declares them in its mapping file's `depends`; the kernel needs no listing, and the kernel depends on no module. **Gate:** every reference from a module's type to another module's type goes to the kernel or to a module that `depends` lists, every listed module is referenced on some lock, and the declared module graph is a DAG.
 
-The layer of a reference is the layer of the type the emitted schema names. A copy of a constructor (§ 7) sits at the layer of the highest type it holds, and never below layer 2: `FormatsSelection`, a `Selectable` of format IDs, holds primitives, so it is in layer 2, and `AudiencesSelection` holds an object, so it is in layer 4. Its template stays in layer 2. A copy belongs to the module that states it, and a copy named after its argument, such as `AudiencesOptionOrCatalogRef`, to its argument's module. A union sits with the objects, in layer 4. A profile is a document, in layer 5.
+The layer of a reference is the layer of the type the emitted schema names; a type written inline (§ 4) is no reference. A copy of a constructor (§ 7) sits at the layer of the highest type it holds, and never below layer 2: `FormatsSelection`, a `Selectable` of format IDs, holds primitives, so it is in layer 2, and `AudiencesSelection` holds an object, so it is in layer 4. Its template stays in layer 2. A copy belongs to the module that states it, and a copy named after its argument, such as `AudiencesOptionOrCatalogRef`, to its argument's module. A union sits with the objects, in layer 4. A profile is a document, in layer 5.
 
 A module owns specification sections: the line-item modules map one to one to § 5.2 through § 5.10, `proposal` to § 4, and `kernel` to § 2.2 and § 3 to § 3.2, whose types the kernel files define. § 3.3 belongs to `line-item`, with § 5 and § 5.1: its re-computation statements are about line-item fields such as `addressable_scale`, not about kernel types. Every element of a section is mapped in its module's file. **Gate:** every section belongs to exactly one module.
 
@@ -85,6 +103,8 @@ Only two forms may be inline:
 - a list or map whose items are named types, such as a list of `ExternalId`.
 
 **Gate:** any other inline form fails.
+
+**A type that restates a JSON type has no definition of its own** (G-140). A primitive whose schema is its `type` alone, such as `ExternalId`, `Text`, `PriceAdjustment`, or the stack's `PlainString` and `PlainNumber`, and an open object with no member, such as `CreativePolicy` or the stack's `OpenObject`, add nothing a validator or a reader needs beyond the JSON type, so the schema writes `{ "type": "string" }`, `{ "type": "number" }`, or `{ "type": "object" }` at each use, with the use's own description, and a composite holds that form, such as a map of strings, `{ "type": "object", "additionalProperties": { "type": "string" } }`. A map keyed by any string names no `propertyNames`, since every JSON key is a string. A primitive is defined once only where it carries a constraint, such as `Uuid`'s format or the stack's `SafeInteger`, which keeps to the integers every JSON implementation reads exactly, or where the specification names it, as the stack's § 2.2 names `Amount`. The model keeps every such type, for its concept (§ 3a) and for the SDK classes, which name it (§ 10); the mapping still types each row by it, and the rules above hold in the model.
 
 This sets the depth of extraction. Every type is either named, or a container of named types one level deep.
 

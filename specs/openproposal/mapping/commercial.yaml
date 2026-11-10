@@ -431,7 +431,7 @@ entries:
     digest: 3c6efa0c80c07aee50994da32d3a0f71d6a090fce9d2f24d2bf9d1524b268deb
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: AssentEntry, type: { kind: named, name: PlainInteger }, presence: required }
+    as: { role: property, object: AssentEntry, type: { kind: named, name: SafeInteger }, presence: required }
   - ir: rule:4.1.2:373dbf11-2
     digest: ee326f2bd30a8310305f61b281f3b608927a2f908d65979a77ebbbc7d0f0f5d2
     locks: [ with-our-stack ]
@@ -915,7 +915,7 @@ entries:
     digest: 4ef76dd54651ea69ff33e03b64b711f7432f602686abc603ae4fba14befd6e7f
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: PricingEntry, type: { kind: named, name: PlainInteger }, presence: conditional }
+    as: { role: property, object: PricingEntry, type: { kind: named, name: SafeInteger }, presence: conditional }
   - ir: rule:5.6:8288302a
     digest: 14845c24a6584a33e2511f328e76d63744a32697970793ff90942fffd2a9da7c
     locks: [ with-our-stack ]
@@ -938,7 +938,7 @@ entries:
     as:
       role: property
       object: PricingEntry
-      type: { kind: apply, constructor: Range, arguments: { T: { kind: named, name: PlainInteger } } }
+      type: { kind: apply, constructor: Range, arguments: { T: { kind: named, name: SafeInteger } } }
       presence: optional
   - ir: rule:5.6:ae26d4ac-4
     digest: 1d1637f6520e1f2e2a1135f5cfb09ad191d8ca1f734c52822820acb5739cdaee
@@ -1514,7 +1514,7 @@ entries:
     digest: 2f071a5c115cbd4afc5600faf55a107b1dea05c5aa98f94841bba45962f1f7d2
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: Commitment, type: { kind: named, name: PlainInteger }, presence: optional }
+    as: { role: property, object: Commitment, type: { kind: named, name: SafeInteger }, presence: optional }
   - ir: rule:5.6.1:ae26d4ac
     digest: cea215fe819790165681c47234e1ce8a2f10922e11a1abd450ee3f7258107f5b
     locks: [ with-our-stack ]
@@ -1846,7 +1846,7 @@ entries:
     digest: ca6cb0ebf234ad53b53011ecaa81eef0823cdfe75d77e7f246987efe5c2ce83f
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: Hold, type: { kind: named, name: PlainInteger }, presence: required }
+    as: { role: property, object: Hold, type: { kind: named, name: SafeInteger }, presence: required }
   - ir: rule:5.6.2:373dbf11-3
     digest: 58754a9928ac3b05038b85f6358dfddb5b2c7d90cb8c96f619066570f8f7af80
     locks: [ with-our-stack ]
@@ -1876,7 +1876,7 @@ entries:
     digest: 22f86a1bf96d764540fc3c09bfa1b2d02eaa77e71e3e52d12bc4307b49d12bf3
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: Hold, type: { kind: named, name: PlainInteger }, presence: optional }
+    as: { role: property, object: Hold, type: { kind: named, name: SafeInteger }, presence: optional }
   - ir: rule:5.6.2:ae26d4ac-4
     digest: c119350493c224200c6acaa6b102fc62acb18ae53505e7f32d42a89fc4cfe9e5
     locks: [ with-our-stack ]
@@ -2128,6 +2128,11 @@ entries:
     locks: [ with-our-stack ]
     source: { rule: prose-sentence }
     as: { role: informative }
+  - ir: sentence:5.6.4:4cb2203c
+    digest: 0161d179fa6d53be8cfe3b1bdedf3a75e39cebba2ef290a2e404689fbb0facb3
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
   - ir: sentence:5.6.4:a001cab1
     digest: 434f541571d47df721ddb349c0c783e49355ffeb0922ce46010510754e5a94a1
     locks: [ with-our-stack ]
@@ -2157,7 +2162,7 @@ entries:
     digest: 9585d4f990efb99da04a661aa118cd4ce6adfea1a12c785b93cb0e3705dff933
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: DeliveryCounting, type: { kind: named, name: PlainInteger }, presence: required }
+    as: { role: property, object: DeliveryCounting, type: { kind: named, name: SafeInteger }, presence: required }
   - ir: rule:5.6.4:373dbf11
     digest: e4875eb2c1a27ff15763aed50796ede4ae8e633aca72fb10d40721d3efe392b8
     locks: [ with-our-stack ]
@@ -2272,7 +2277,7 @@ entries:
     digest: 9e9656697e8c68a4311e3227a7fd8afa89006e88f658c6e4d89b1284e0e6f011
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: ImpressionMultiplier, type: { kind: named, name: PlainInteger }, presence: required }
+    as: { role: property, object: ImpressionMultiplier, type: { kind: named, name: SafeInteger }, presence: required }
   - ir: rule:5.6.4:373dbf11-6
     digest: e4de3ba9f63d0260955742a24aa67adea43d0ce727cbfaabcfc2a3598fa2c564
     locks: [ with-our-stack ]
@@ -2299,6 +2304,20 @@ entries:
     as: { role: property, object: ImpressionMultiplier, type: { kind: named, name: PlainString }, presence: required }
   - ir: rule:5.6.4:373dbf11-7
     digest: d8927f7bdeb0cb671e693f47dde6b5fdc3fc067630ed79365046e082df0559ee
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ImpressionMultiplier }
+  - ir: key:5.6.4:ImpressionMultiplier.demographic
+    digest: 131967025f960f6bfeaa0f32e5482f8b05a4231955c8d50ac3b7d05e93bb4cf6
+    locks: [ with-our-stack ]
+    source: { decision: D-053 }
+    as:
+      role: property
+      object: ImpressionMultiplier
+      type: { kind: named, name: CostParametersDemographic }
+      presence: optional
+  - ir: rule:5.6.4:ae26d4ac
+    digest: 12aa44374513974215c65cbd56204075cce1e6b2866762d762dbfd1cf70aae8b
     locks: [ with-our-stack ]
     source: { rule: required-cell }
     as: { role: schema, in: ImpressionMultiplier }
@@ -2464,7 +2483,7 @@ entries:
     digest: 07c3ce92aff2f4d5079df371767846cbd707637eec0a113f9b1737580634ae30
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: CostParameters, type: { kind: named, name: PlainInteger }, presence: conditional }
+    as: { role: property, object: CostParameters, type: { kind: named, name: SafeInteger }, presence: conditional }
   - ir: rule:5.6.5:f959ab87
     digest: f9d2c3fbfce7a94efbbda207d68a95babb2b39c16b73991db6579abedb475247
     locks: [ with-our-stack ]
@@ -2617,8 +2636,13 @@ entries:
     locks: [ with-our-stack ]
     source: { rule: prose-sentence }
     as: { role: informative }
-  - ir: sentence:5.6.5:bebb70ec
-    digest: 3f98a017e42ad868a86d64d1e8cf4bc8fe0be00cf59e9b026c6969d95785da5b
+  - ir: sentence:5.6.5:d956510e
+    digest: a135311b7f79473c91dab53326907396f1adfb9d14ba0f99af25e6378df3bbdf
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.6.5:8a25cede
+    digest: 9282be941b2bc058deb96412e3d257eb728c677ce137d8ddc0dfe0e85d21eee3
     locks: [ with-our-stack ]
     source: { rule: prose-sentence }
     as: { role: informative }

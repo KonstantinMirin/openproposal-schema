@@ -2,7 +2,7 @@
 
 We now generate the schemas from the specification. It took 20 decisions: 20 where the text leaves a point open, and 0 changes we propose to what the text or its examples settle. Of the 20 open points, 19 ask the specification to state something, and each one says what, so that the next revision needs none of them. The outputs are JSON Schema 2020-12, the rules JSON Schema can't express with their test vectors, and TypeScript, Python, and Go types.
 
-Inputs: `with-our-stack` at `a4adff3`.
+Inputs: `with-our-stack` at `43f4c72`.
 
 | Open points about | Count | The specification should state |
 | :--- | ---: | :--- |
@@ -20,7 +20,7 @@ The lint findings in this issue, by the authoring rule that removes them. No aut
 | :--- | ---: |
 | 4. A value list is written once, and an open list says that it is open | 14 |
 | 6. Paths in prose match the table rows | 1 |
-| 7. Every backticked name resolves to a row or a key, or is listed as an external reference | 221 |
-| MUST statements that need conformance test vectors or bind a party | 35 |
+| 7. Every backticked name resolves to a row or a key, or is listed as an external reference | 235 |
+| MUST statements that need conformance test vectors or bind a party | 39 |
 
 Every decision, with the rows it rests on, and every finding: [details](<details-gist-url>).

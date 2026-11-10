@@ -63,7 +63,7 @@
           "description": "What the seller promises under this mechanism. The value on the mechanism in effect (§ 3.1) applies to the line item"
         },
         "id": {
-          "$ref": "#/$defs/TransactionMechanism",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/TransactionMechanism",
           "description": "The mechanism, which is the option id (§ 3.1)"
         }
       },
@@ -87,15 +87,6 @@
       },
       "type": "object"
     },
-    "TransactionMechanism": {
-      "enum": [
-        "direct_io",
-        "programmatic_guaranteed",
-        "preferred_deal",
-        "private_auction"
-      ],
-      "type": "string"
-    },
     "TransactionMechanismSelection": {
       "additionalProperties": false,
       "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, `selected[]` the buyer's choice, which replaces it, and `deltas` the price of each option outside `included[]`, each by option id.",
@@ -111,26 +102,23 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/Delta"
           },
           "description": "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
           "type": "object"
         },
         "included": {
           "description": "The options in the base rate, by option id.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         },
         "max_select": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The most options that may be in effect."
         },
         "selected": {
           "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         }

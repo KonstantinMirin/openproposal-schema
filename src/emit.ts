@@ -5,15 +5,19 @@
  * Every named type the model holds is emitted once, except the constructors,
  * which are templates that exist only in the model (type rules § 3), and a
  * vocabulary that lists a model attribute's values, such as the mutability
- * markers, which belong to the rules (§ 2). A type's file follows from its
- * layer and module:
+ * markers, which belong to the rules (§ 2), and a type that restates a JSON
+ * type, which each use writes in place (§ 4). A type's file follows from the
+ * home the model places it in (§ 3, src/placement.ts):
  *
- * - `kernel/1/kernel.json`: the kernel's primitives and parts, and any
- *   vocabulary it emits, under `$defs`;
- * - `modules/<module>/1/<module>.json`: a module's vocabularies, objects,
- *   unions, and the copies it states, under `$defs`;
- * - `documents/1/<document>.json`: one document or profile (layer 5), as the
- *   file's root schema, so a payload validates against the file itself.
+ * - `kernel/1/kernel.json`: the kernel's primitives, parts, vocabularies,
+ *   and objects, and the scalars several modules use, under `$defs`;
+ * - `modules/<module>/1/<module>.json`: a module's own vocabularies,
+ *   objects, unions, and copies, under `$defs`;
+ * - `documents/1/composition.json`: the documents, the profiles, and every
+ *   type that composes the modules' types, under `$defs`;
+ * - `documents/1/<document>.json`: one document's or profile's root, a
+ *   `$ref` to its definition in the composition, so a payload validates
+ *   against the file itself.
  *
  * The `1` is the major version, which goes in the path and the `$id`; minor
  * versions and digests live only in the release manifest. Each file's `$id`
@@ -44,6 +48,7 @@ import { Ajv2020 } from "ajv/dist/2020.js";
 import { installFormats } from "./formats.ts";
 import { registryFileById, withImports } from "./imports.ts";
 import { extensionOf, type ModelDoc, type ModelProperty, type ModelType } from "./model.ts";
+import { COMPOSITION, emittedReferences, leftOut } from "./placement.ts";
 
 export const DIALECT = "https://json-schema.org/draft/2020-12/schema";
 /** The base of every emitted `$id`: the public site, which serves each schema file at the path its `$id` names (`npm run site`). */
@@ -110,18 +115,50 @@ export interface Location {
   fragment: string;
 }
 
+/** The file of the top layer, which defines every type that composes others, the documents' bodies among them (type rules § 3). */
+export const COMPOSITION_FILE = `documents/${MAJOR}/composition.json`;
+
 /**
- * Where a type is emitted, or null when the schema leaves it out: a
- * constructor, a template that exists only in the model (type rules § 3), and
- * a vocabulary that lists a model attribute's values, such as the mutability
- * markers, which are rules (§ 2).
+ * Where a type is defined, or null when the schema leaves it out or writes it
+ * inline: a constructor, a template that exists only in the model (type rules
+ * § 3), a vocabulary that lists a model attribute's values, such as the
+ * mutability markers, which are rules (§ 2), and a type that restates a JSON
+ * type, which each use writes in place (§ 4). The model places the others
+ * (src/placement.ts): the kernel, a module, or the top layer's composition.
  */
 export function locationOf(t: ModelType): Location | null {
-  if (t.kind === "constructor") return null;
-  if (t.kind === "vocabulary" && t.attribute !== undefined) return null;
-  if (t.layer === 5) return { file: `documents/${MAJOR}/${kebab(t.name)}.json`, fragment: "" };
-  if (t.module === KERNEL_MODULE) return { file: `kernel/${MAJOR}/kernel.json`, fragment: `#/$defs/${t.name}` };
-  return { file: `modules/${t.module}/${MAJOR}/${t.module}.json`, fragment: `#/$defs/${t.name}` };
+  if (leftOut(t) || t.inline) return null;
+  const home = t.home ?? t.module;
+  if (home === COMPOSITION) return { file: COMPOSITION_FILE, fragment: `#/$defs/${t.name}` };
+  if (home === KERNEL_MODULE) return { file: `kernel/${MAJOR}/kernel.json`, fragment: `#/$defs/${t.name}` };
+  return { file: `modules/${home}/${MAJOR}/${home}.json`, fragment: `#/$defs/${t.name}` };
+}
+
+/**
+ * The type each node of an emitted file that a type written inline fills
+ * stands for, by the node itself, for the builders of example values
+ * (src/corpus.ts, src/type-examples.ts), which give a type's own sample
+ * values, such as a primitive's first valid vector, where the schema shows
+ * only its JSON type. It holds the nodes `emitSchemas` writes in this
+ * process; a file read back from disk has none.
+ */
+export const inlinedFrom = new WeakMap<object, string>();
+/** The key type of each map node whose keys a type written inline types, for which the schema names no `propertyNames`; held as `inlinedFrom` is. */
+export const inlinedKeys = new WeakMap<object, string>();
+
+/** The schema a type written inline stands for at each use (type rules § 4): a primitive's own, without its description, or an object's `type`; null for a type the schema defines. */
+export function inlineSchemaOf(t: ModelType): Record<string, unknown> | null {
+  if (!t.inline) return null;
+  if (t.kind === "primitive") {
+    const { description: _, ...rest } = t.schema;
+    return rest;
+  }
+  return { type: "object" };
+}
+
+/** The root file of a document or a profile, a `$ref` to its definition in the composition, so a payload validates against the file itself; null for any other type. */
+export function rootOf(t: ModelType): string | null {
+  return (t.kind === "document" || t.kind === "profile") && locationOf(t) !== null ? `documents/${MAJOR}/${kebab(t.name)}.json` : null;
 }
 
 /**
@@ -177,6 +214,8 @@ export function nestedIf(node: Record<string, unknown>, member: string): string[
 /** The schema of each named type the schema emits, with every `$ref` still local (`#/$defs/<name>`), the conditions, and the problems. */
 export interface LocalSchemas {
   schemas: Map<string, Record<string, unknown>>;
+  /** The schema of each type written inline, which each use copies (type rules § 4). */
+  inline: Map<string, Record<string, unknown>>;
   conditions: { expressed: string[]; left: string[] };
   problems: string[];
 }
@@ -381,10 +420,14 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
   };
 
   const schemas = new Map<string, Record<string, unknown>>();
-  for (const t of model.types) if (locationOf(t)) schemas.set(t.name, typeSchema(t));
+  const inline = new Map<string, Record<string, unknown>>();
+  for (const t of model.types) {
+    if (locationOf(t)) schemas.set(t.name, typeSchema(t));
+    else if (t.inline) inline.set(t.name, typeSchema(t));
+  }
   conditions.expressed.sort();
   conditions.left.sort();
-  return { schemas, conditions, problems };
+  return { schemas, inline, conditions, problems };
 }
 
 /**
@@ -404,17 +447,44 @@ export function emitSchemas(model: ModelDoc, dir: string, names: SchemaNames): E
     if (l) locations.set(t.name, l);
   }
   const documents = new Map<string, string>();
-  for (const [name, l] of locations) {
-    if (l.fragment !== "") continue;
-    const other = documents.get(l.file);
-    if (other) problems.push(`the documents "${other}" and "${name}" would both be ${l.file}`);
-    documents.set(l.file, name);
+  for (const t of model.types) {
+    const file = rootOf(t);
+    if (file === null) continue;
+    const other = documents.get(file);
+    if (other) problems.push(`the documents "${other}" and "${t.name}" would both be ${file}`);
+    documents.set(file, t.name);
+  }
+  // A type written inline: its schema, without its own description, which each use replaces with its own.
+  const inlined = new Map<string, Record<string, unknown>>();
+  for (const t of model.types) {
+    if (!t.inline) continue;
+    const { description: _, ...rest } = localOf.inline.get(t.name) ?? {};
+    inlined.set(t.name, rest);
   }
 
   /** Rewrites every local `$ref` of a schema in `file` to where its type is emitted. */
   const relocate = (schema: unknown, file: string, where: string): unknown => {
     if (Array.isArray(schema)) return schema.map((s) => relocate(s, file, where));
     if (!isMap(schema)) return schema;
+    // A reference to a type written inline becomes that type's schema, beside the description the use gives.
+    const inlineName = typeof schema.$ref === "string" ? schema.$ref.replace(/^#\/\$defs\//, "") : "";
+    const inline = inlined.get(inlineName);
+    if (inline !== undefined) {
+      const { $ref: _, ...beside } = schema;
+      const node = relocate({ ...structuredClone(inline), ...beside }, file, where) as Record<string, unknown>;
+      inlinedFrom.set(node, inlineName);
+      return node;
+    }
+    // A map keyed by any string names no key schema: every JSON key is a string already.
+    if (isMap(schema.propertyNames) && typeof schema.propertyNames.$ref === "string") {
+      const key = inlined.get(schema.propertyNames.$ref.replace(/^#\/\$defs\//, ""));
+      if (key !== undefined && canonicalJson(key) === canonicalJson({ type: "string" })) {
+        const { propertyNames: _, ...rest } = schema;
+        const node = relocate(rest, file, where) as Record<string, unknown>;
+        inlinedKeys.set(node, schema.propertyNames.$ref.replace(/^#\/\$defs\//, ""));
+        return node;
+      }
+    }
     return Object.fromEntries(
       Object.entries(schema).map(([k, v]) => {
         if (k !== "$ref" || typeof v !== "string") return [k, relocate(v, file, where)];
@@ -422,6 +492,7 @@ export function emitSchemas(model: ModelDoc, dir: string, names: SchemaNames): E
         if (/^https:\/\//.test(v)) return [k, v];
         const name = v.replace(/^#\/\$defs\//, "");
         const l = locations.get(name);
+        if (!l && inlined.has(name)) return [k, v];
         if (!l) {
           const t = types.get(name);
           const why = t?.kind === "vocabulary" && t.attribute !== undefined ? `, since it lists the model's \`${t.attribute}\` attribute, which is a rule (type rules § 2)` : "";
@@ -441,16 +512,17 @@ export function emitSchemas(model: ModelDoc, dir: string, names: SchemaNames): E
     if (!l) continue;
     const where = `${l.file}: ${t.kind} "${t.name}"`;
     const local = localOf.schemas.get(t.name)!;
-    const refs = [...new Set(refNamesOf(local))].sort();
+    const refs = [...new Set(refNamesOf(local))].filter((n) => !inlined.has(n)).sort();
     // A registry's vocabulary is the registry's schema, so its extension, which the model and the SDK keep, is the registry's too.
     // An integer-coded vocabulary writes its extension as a branch of its own, so its schema references no primitive, though the model and the SDK keep it.
-    const references = t.kind === "vocabulary" && (t.list?.registry || isIntegerCoded(t)) ? [] : t.references;
+    const references = t.kind === "vocabulary" && (t.list?.registry || isIntegerCoded(t)) ? [] : emittedReferences(t, types);
     if (canonicalJson(refs) !== canonicalJson(references)) {
       problems.push(`${where}: the schema references ${refs.join(", ") || "nothing"}, but the model says ${references.join(", ") || "nothing"}`);
     }
     const schema = relocate(local, l.file, where) as Record<string, unknown>;
-    if (l.fragment === "") roots.set(l.file, { type: t, schema });
-    else defs.set(l.file, { ...(defs.get(l.file) ?? {}), [t.name]: schema });
+    defs.set(l.file, { ...(defs.get(l.file) ?? {}), [t.name]: schema });
+    const root = rootOf(t);
+    if (root !== null) roots.set(root, { type: t, schema: { $ref: `${posix.relative(posix.dirname(root), l.file)}${l.fragment}` } });
   }
 
   const modules = new Map(model.modules.map((m) => [m.name, m]));
@@ -458,7 +530,7 @@ export function emitSchemas(model: ModelDoc, dir: string, names: SchemaNames): E
   const add = (path: string, schema: Record<string, unknown>) => files.push({ path, schema, text: canonicalJson(schema) });
   const head = (path: string, title: string, description: string) => ({ $schema: DIALECT, $id: `${names.base}${posix.join(dir, path)}`, title, description });
   for (const [file, d] of defs) {
-    const module = file.startsWith("kernel/") ? KERNEL_MODULE : file.split("/")[1]!;
+    const module = file.startsWith("kernel/") ? KERNEL_MODULE : file === COMPOSITION_FILE ? COMPOSITION : file.split("/")[1]!;
     const ids = modules.get(module)?.sections ?? [];
     const kinds = new Set(Object.keys(d).map((n) => types.get(n)?.kind));
     // A text whose sections carry anchors, not numbers, as AdCOM's, names a module by what it holds.
@@ -474,7 +546,9 @@ export function emitSchemas(model: ModelDoc, dir: string, names: SchemaNames): E
     const holds = [...count("vocabulary", "vocabulary", "vocabularies"), ...count("object", "object", "objects"), ...count("union", "union", "unions"), ...count("copy", "constructor copy", "constructor copies")];
     const series = (xs: string[]) => (xs.length > 2 ? `${xs.slice(0, -1).join(", ")}, and ${xs.at(-1)}` : xs.join(" and "));
     const description =
-      module === KERNEL_MODULE
+      module === COMPOSITION
+        ? `The ${names.short} composition: the documents and profiles, and every type that composes the modules' types, each defined once; each document's file is a reference to its definition here.`
+        : module === KERNEL_MODULE
         ? `The ${names.short} kernel: ${series(kernelHolds)}${sections ? `, from ${sections}` : ""}.`
         : anchored
           ? `The ${names.short} \`${module}\` module: its ${series(holds)}.`
@@ -683,9 +757,16 @@ export function checkEmitted(files: EmittedFile[], model: ModelDoc, dir: string,
     if (f.text !== canonicalJson(s)) problems.push(`${f.path}: the bytes aren't the schema's canonical JSON`);
 
     const isDocument = !("$defs" in s);
-    const roots: [string, unknown, ModelType | undefined][] = isDocument
-      ? [["", s, types.get(String(s.title))]]
-      : Object.entries(isMap(s.$defs) ? s.$defs : {}).map(([name, d]) => [`/$defs/${name}`, d, types.get(name)]);
+    if (isDocument) {
+      // A document's file is its root: a reference to its definition in the composition, and nothing else (type rules § 3).
+      const doc = types.get(String(s.title));
+      const want = doc ? `${posix.relative(posix.dirname(f.path), COMPOSITION_FILE)}#/$defs/${doc.name}` : undefined;
+      if (!doc || rootOf(doc) !== f.path) problems.push(`${f.path}: a root file whose title names no document or profile the model roots here`);
+      else if (s.$ref !== want) problems.push(`${f.path}: the root references ${JSON.stringify(s.$ref)}, not its document's definition ${want}; a document references only the composition (type rules § 3)`);
+      const extra = Object.keys(s).filter((k) => !["$schema", "$id", "title", "description", "$ref"].includes(k));
+      if (extra.length > 0) problems.push(`${f.path}: ${extra.map((k) => `"${k}"`).join(", ")} in a document's root file, which holds only its reference`);
+    }
+    const roots: [string, unknown, ModelType | undefined][] = isDocument ? [] : Object.entries(isMap(s.$defs) ? s.$defs : {}).map(([name, d]) => [`/$defs/${name}`, d, types.get(name)]);
     const nodes = new Map<string, Record<string, unknown>>();
     walkSchemas(s, (node, pointer) => nodes.set(pointer, node));
     walkSchemas(s, (node, pointer) => {
@@ -714,7 +795,7 @@ export function checkEmitted(files: EmittedFile[], model: ModelDoc, dir: string,
       if (pointer !== "" && ("$schema" in node || "$id" in node)) problems.push(`${at}: a nested "$schema" or "$id"; every file is one resource`);
       if ("$ref" in node) {
         // Annotations may sit beside a $ref: the description, and the default a row states; a constraint may not.
-        const extra = Object.keys(node).filter((k) => k !== "$ref" && k !== "description" && k !== "default");
+        const extra = Object.keys(node).filter((k) => k !== "$ref" && k !== "description" && k !== "default" && !(isDocument && pointer === "" && ["$schema", "$id", "title"].includes(k)));
         if (extra.length > 0) problems.push(`${at}: ${extra.map((k) => `"${k}"`).join(", ")} beside a $ref; constraints live only on named types (type rules § 5)`);
         if ("default" in node) defaults.push({ at, file: String(s.$id), ref: String(node.$ref), value: node.default });
         const problem = refProblem(String(node.$ref), f.path, byPath);

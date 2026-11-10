@@ -51,7 +51,7 @@ export const LOCK = "with-open-prs";
 export const VARIANT = "proposed";
 
 /** The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it. */
-export const SCHEMA_RELEASE = "980545df4c010ca3fb969aede1d2a2dcde6d9433a77c95cae8f376cfb94df708";
+export const SCHEMA_RELEASE = "469d94af40de40de3215adc5bc022acd12588ee779945db313dea1d41a5bf99e";
 
 /** A constructor's schema function, applied to its arguments' schemas. */
 export type Template = (...args: z.ZodType[]) => z.ZodType;

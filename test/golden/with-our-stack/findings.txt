@@ -8,6 +8,8 @@ value_set_subset:declined | expired | released	open
 value_set_subset:exclusivity	open
 value_set_subset:held | requested	open
 value_set_subset:published | under_review	open
+unresolved_identifier:Accept-Encoding	open
+unresolved_identifier:Accept-Signature	open
 unresolved_identifier:Account	open
 unresolved_identifier:AdvertiserBrand	open
 unresolved_identifier:Audio	open
@@ -18,12 +20,14 @@ unresolved_identifier:Boolean	open
 unresolved_identifier:BuyerStatus.status	open
 unresolved_identifier:BuyerWrites	open
 unresolved_identifier:CPD	open
+unresolved_identifier:Cache-Control	open
 unresolved_identifier:ChangeRequestLifecycle	open
 unresolved_identifier:Channel	open
 unresolved_identifier:ClockTime	open
 unresolved_identifier:CombineOperator	open
 unresolved_identifier:Content	open
 unresolved_identifier:Content-Digest	open
+unresolved_identifier:Content-Encoding	open
 unresolved_identifier:Creative	open
 unresolved_identifier:CurrencyCode	open
 unresolved_identifier:DIRECT	open
@@ -51,6 +55,7 @@ unresolved_identifier:FormatId	open
 unresolved_identifier:Geo	open
 unresolved_identifier:GeoCode	open
 unresolved_identifier:HoldStatus	open
+unresolved_identifier:Host	open
 unresolved_identifier:INVENTORYPARTNERDOMAIN	open
 unresolved_identifier:Imp	open
 unresolved_identifier:Integer	open
@@ -72,6 +77,7 @@ unresolved_identifier:LineItemSummary	open
 unresolved_identifier:MANAGERDOMAIN	open
 unresolved_identifier:MediaChannel	open
 unresolved_identifier:Modeled	open
+unresolved_identifier:Network	open
 unresolved_identifier:Number	open
 unresolved_identifier:OKP	open
 unresolved_identifier:OPTIONAL	open
@@ -95,7 +101,10 @@ unresolved_identifier:Product	open
 unresolved_identifier:RECOMMENDED	open
 unresolved_identifier:REQUIRED	open
 unresolved_identifier:RESELLER	open
+unresolved_identifier:Retry-After	open
+unresolved_identifier:Signature	open
 unresolved_identifier:Signature-Agent	open
+unresolved_identifier:Signature-Input	open
 unresolved_identifier:Site	open
 unresolved_identifier:Stats	open
 unresolved_identifier:String	open
@@ -123,6 +132,7 @@ unresolved_identifier:accept	open
 unresolved_identifier:actions	open
 unresolved_identifier:adtypes	open
 unresolved_identifier:advertiser_crm	open
+unresolved_identifier:alg	open
 unresolved_identifier:all_of[]	open
 unresolved_identifier:any	open
 unresolved_identifier:app.bundle	open
@@ -134,6 +144,7 @@ unresolved_identifier:asset	open
 unresolved_identifier:audience_expansion	open
 unresolved_identifier:audience_id	open
 unresolved_identifier:bookingstatus	open
+unresolved_identifier:buyer.example	open
 unresolved_identifier:clicks	open
 unresolved_identifier:commit	open
 unresolved_identifier:complete	open
@@ -175,10 +186,12 @@ unresolved_identifier:imp.qty.vendor	open
 unresolved_identifier:imp.rwdd	open
 unresolved_identifier:imp.video	open
 unresolved_identifier:keyid	open
+unresolved_identifier:keys.json	open
 unresolved_identifier:kid	open
 unresolved_identifier:kty	open
 unresolved_identifier:live	open
 unresolved_identifier:livestream	open
+unresolved_identifier:max-age	open
 unresolved_identifier:min_line_items	accepted
 unresolved_identifier:n	open
 unresolved_identifier:network	open
@@ -227,6 +240,7 @@ unresolved_identifier:viewable_impressions	open
 unresolved_identifier:viewer_local	open
 unresolved_identifier:views	open
 unresolved_identifier:voice	open
+unresolved_identifier:web-bot-auth	open
 unresolved_identifier:webhook	open
 unresolved_identifier:withdraw	open
 unresolved_identifier:wseat	open
@@ -240,6 +254,8 @@ must_without_field:rule:2.3:59a4ca91	open
 must_without_field:rule:2.4:c17390d3	open
 must_without_field:rule:2.5:7bd50d5a	open
 must_without_field:rule:2.5:95586079	open
+must_without_field:rule:2.8.5:d717d522	open
+must_without_field:rule:2.8.7:bb44896e	open
 must_without_field:rule:2:4ae8f775	open
 must_without_field:rule:3:07a16404	open
 must_without_field:rule:3:e1b586de	open
@@ -256,7 +272,9 @@ must_without_field:rule:5.2.8:66d19e2d	open
 must_without_field:rule:5.2.9:28e8ca66	open
 must_without_field:rule:5.4.1:3a29e732	open
 must_without_field:rule:5.4.1:52bc805d	open
+must_without_field:rule:5.4.1:725c4a7c	open
 must_without_field:rule:5.4.1:7adf48a7	open
+must_without_field:rule:5.4.1:9a1bf7bd	open
 must_without_field:rule:5.4.1:f25ad098	open
 must_without_field:rule:5.4.1:fbc60b60	open
 must_without_field:rule:5.5:7fdb152c	open

@@ -48,7 +48,7 @@ import { join, posix } from "node:path";
 import { Ajv2020 } from "ajv/dist/2020.js";
 import { installFormats } from "./formats.ts";
 import { canonicalJson } from "./canonical.ts";
-import { baseOf, type EmittedFile, nestedIf, schemaIdOf } from "./emit.ts";
+import { baseOf, type EmittedFile, inlinedFrom, inlinedKeys, nestedIf, schemaIdOf } from "./emit.ts";
 import type { InstanceOracle } from "./examples.ts";
 import type { Kernel } from "./kernel.ts";
 import type { TypeRef } from "./mapping.ts";
@@ -435,6 +435,9 @@ export function baselines(model: ModelDoc, v: Validators, kernel: Kernel, schema
    */
   const build = (node: Schema, file: string, force: string[], stack: string[], pin: Record<string, unknown> = {}): unknown => {
     const [head, next, ...rest] = force;
+    // A type the schema writes inline gives its own first valid vector, as a reference to it would (type rules § 4).
+    const inlined = force.length === 0 ? inlinedFrom.get(node) : undefined;
+    if (inlined !== undefined && (vectors.get(inlined) ?? []).length > 0) return structuredClone(vectors.get(inlined)![0]);
     if (typeof node.$ref === "string") {
       if (force.length > 0) throw new Error(`the path ${pointerOf(force)} runs through a $ref`);
       return typeValue(new URL(node.$ref, file).href, stack);
@@ -497,7 +500,8 @@ export function baselines(model: ModelDoc, v: Validators, kernel: Kernel, schema
       if (head === "additionalProperties") {
         const values = node.additionalProperties;
         if (!isMap(values)) throw new Error(`no additionalProperties schema at ${pointerOf(force)}`);
-        const key = isMap(node.propertyNames) ? String(build(node.propertyNames, file, [], stack)) : "key";
+        const keyType = inlinedKeys.get(node);
+        const key = isMap(node.propertyNames) ? String(build(node.propertyNames, file, [], stack)) : keyType !== undefined && typeof vectors.get(keyType)?.[0] === "string" ? String(vectors.get(keyType)![0]) : "key";
         out[key] = build(values, file, force.slice(1), stack);
       } else if (head !== undefined && !["properties", "dependentSchemas", "then", "else"].includes(head)) {
         throw new Error(`the corpus can't reach ${pointerOf(force)} in an object`);

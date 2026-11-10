@@ -13,6 +13,7 @@
  * widen a projection; the readings, `reads` in the mapping, are part of the
  * gate's fingerprint, as its other exemptions are.
  */
+import { posix } from "node:path";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse } from "yaml";
@@ -78,13 +79,12 @@ const withProperty = (files: EmittedFile[], def: string, name: string, change: (
 const PROPOSAL = "modules/proposal/1/proposal.json";
 const LINE_ITEM = "documents/1/line-item.json";
 const TIME_ZONE = "field:5.5:time_zone#conditional@line_item.time_zone";
-/** The schema files with one document's root schema changed. */
-const withDocument = (files: EmittedFile[], path: string, change: (s: Record<string, unknown>) => Record<string, unknown>): EmittedFile[] =>
-  files.map((f) => {
-    if (f.path !== path) return f;
-    const schema = change(structuredClone(f.schema));
-    return { ...f, schema, text: JSON.stringify(schema) };
-  });
+/** The schema files with one document's schema changed: the definition its root file references in the composition (type rules § 3). */
+const withDocument = (files: EmittedFile[], path: string, change: (s: Record<string, unknown>) => Record<string, unknown>): EmittedFile[] => {
+  const ref = String(files.find((f) => f.path === path)?.schema.$ref ?? "");
+  const [file, pointer] = ref.split("#");
+  return withDef(files, posix.join(posix.dirname(path), file!), pointer!.replace(/^\/\$defs\//, ""), change);
+};
 
 /** The schema files with one `$defs` entry changed. */
 const withDef = (files: EmittedFile[], path: string, name: string, change: (s: Record<string, unknown>) => Record<string, unknown>): EmittedFile[] =>
@@ -171,7 +171,7 @@ export const fidelity = defineGate<FidelityInput & { expected: ExpectedFile; nam
     },
     {
       name: "an Integer row typed as text",
-      mutate: (i) => ({ ...i, files: i.files.map((f) => (f.path === "documents/1/proposal.json" ? { ...f, schema: { ...f.schema, properties: { ...(f.schema.properties as object), version: { type: "string" } } } } : f)) }),
+      mutate: (i) => ({ ...i, files: withDocument(i.files, "documents/1/proposal.json", (s) => ({ ...s, properties: { ...(s.properties as object), version: { type: "string" } } })) }),
       expect: "the stated type is Integer",
     },
     {

@@ -117,6 +117,47 @@ export async function materializeExamples(lock: SpecLock): Promise<MaterializedE
   throw new Error(`no source for lock "${lock.name}" yields its ${paths.length} locked examples:\n  ${errors.join("\n  ")}`);
 }
 
+/** The materialized scripts of a lock: each pinned script's bytes by its path, such as `scripts/check_examples.py`. */
+export interface MaterializedScripts {
+  files: Map<string, Buffer>;
+  via: string;
+}
+
+/**
+ * Reads each script the lock pins under `scripts` from its first source that
+ * yields every one with its pinned blob: a clone at the commit, the
+ * snapshot, or a raw URL with the script's path in place of the
+ * specification's. Throws if no source does.
+ */
+export async function materializeScripts(lock: SpecLock): Promise<MaterializedScripts> {
+  const paths = Object.keys(lock.scripts).sort();
+  const errors: string[] = [];
+  for (const source of lock.sources) {
+    const via = sourceLabel(source);
+    const files = new Map<string, Buffer>();
+    try {
+      for (const p of paths) {
+        if ("git" in source) files.set(p, fromGit(resolve(repoRoot(lock), source.git), lock.commit, p));
+        else if ("snapshot" in source) files.set(p, fromSnapshot(lock, source.snapshot, p));
+        else {
+          if (!source.url.endsWith(`/${lock.path}`)) throw new Error(`the URL doesn't end with the specification's path ${lock.path}`);
+          files.set(p, await fromUrl(`${source.url.slice(0, -lock.path.length)}${p}`));
+        }
+      }
+    } catch (e) {
+      errors.push(`${via}: ${(e as Error).message.split("\n")[0]}`);
+      continue;
+    }
+    const wrong = paths.filter((p) => gitBlobSha(files.get(p)!) !== lock.scripts[p]);
+    if (wrong.length > 0) {
+      errors.push(`${via}: ${wrong.map((p) => `${p} has blob ${gitBlobSha(files.get(p)!)}, not the locked ${lock.scripts[p]}`).join("; ")}`);
+      continue;
+    }
+    return { files, via };
+  }
+  throw new Error(`no source for lock "${lock.name}" yields its ${paths.length} pinned scripts:\n  ${errors.join("\n  ")}`);
+}
+
 /** The files directly under `examples/` of a snapshot, by path, with their bytes; empty when it has no `examples/`. Throws on anything but a regular file. */
 function snapshotExamples(lock: SpecLock, dir: string): Map<string, Buffer> {
   const abs = join(repoRoot(lock), dir, "examples");
@@ -149,11 +190,12 @@ export function snapshotOf(lock: SpecLock): string | null {
 
 /**
  * Checks a lock's snapshot against the lock's pins, with no other source: it
- * holds the specification, with the locked blob, and the files under
- * `examples/` and nothing else; every locked example has its blob; and the
- * `examples/` listing hashes to `examples_tree`. Where a clone source is
- * reachable, the tree at the commit must be `examples_tree` too, so the pin
- * itself is checked.
+ * holds the specification, with the locked blob, the files under
+ * `examples/`, and the pinned scripts, and nothing else; every locked
+ * example and script has its blob; and the `examples/` listing hashes to
+ * `examples_tree`. Where a clone source is reachable, the tree at the commit
+ * must be `examples_tree` too, and each script at the commit its pinned
+ * blob, so the pins themselves are checked.
  */
 export function checkSnapshot(lock: SpecLock): { problems: string[]; note: string } {
   const dir = snapshotOf(lock);
@@ -166,7 +208,7 @@ export function checkSnapshot(lock: SpecLock): { problems: string[]; note: strin
       const p = rel === "" ? e.name : `${rel}/${e.name}`;
       return e.isDirectory() ? walk(p) : [p];
     });
-  for (const p of walk("").sort()) if (p !== lock.path && !/^examples\/[^/]+$/.test(p)) problems.push(`${posix.join(dir, p)} is neither the specification nor a file directly under examples/`);
+  for (const p of walk("").sort()) if (p !== lock.path && !/^examples\/[^/]+$/.test(p) && !(p in lock.scripts)) problems.push(`${posix.join(dir, p)} is neither the specification, a file directly under examples/, nor a script the lock pins`);
   const spec = existsSync(join(root, dir, lock.path)) ? readFileSync(join(root, dir, lock.path)) : null;
   if (spec === null) problems.push(`the snapshot has no ${lock.path}`);
   else if (gitBlobSha(spec) !== lock.blob) problems.push(`${posix.join(dir, lock.path)} has blob ${gitBlobSha(spec)}, not the locked ${lock.blob}`);
@@ -181,6 +223,11 @@ export function checkSnapshot(lock: SpecLock): { problems: string[]; note: strin
     if (!bytes) problems.push(`the snapshot has no ${p}`);
     else if (gitBlobSha(bytes) !== sha) problems.push(`${posix.join(dir, p)} has blob ${gitBlobSha(bytes)}, not the locked ${sha}`);
   }
+  for (const [p, sha] of Object.entries(lock.scripts)) {
+    const bytes = existsSync(join(root, dir, p)) ? readFileSync(join(root, dir, p)) : null;
+    if (bytes === null) problems.push(`the snapshot has no ${p}`);
+    else if (gitBlobSha(bytes) !== sha) problems.push(`${posix.join(dir, p)} has blob ${gitBlobSha(bytes)}, not the locked ${sha}`);
+  }
   const tree = examplesTree(listing);
   if (listing.size > 0 || lock.examples_tree !== null) {
     if (lock.examples_tree === null) problems.push(`${basename(lock.file)} pins no examples_tree; the snapshot's examples/ is tree ${tree}`);
@@ -193,6 +240,10 @@ export function checkSnapshot(lock: SpecLock): { problems: string[]; note: strin
     try {
       const atCommit = listing.size > 0 || lock.examples_tree !== null ? gitTree(clone, lock.commit, "examples") : null;
       if (atCommit !== null && atCommit !== lock.examples_tree) problems.push(`examples/ at ${lock.commit.slice(0, 7)} in ${clones[0]} is tree ${atCommit}, not the locked ${lock.examples_tree}`);
+      for (const [p, sha] of Object.entries(lock.scripts)) {
+        const atScript = gitBlob(clone, lock.commit, p);
+        if (atScript !== sha) problems.push(`${p} at ${lock.commit.slice(0, 7)} in ${clones[0]} is ${atScript === null ? "no file" : `blob ${atScript}`}, not the locked ${sha}`);
+      }
       // A tag can move; the lock's tag must still name its commit.
       if (lock.tag !== null) {
         const tagged = gitTagCommit(clone, lock.tag);
@@ -203,13 +254,15 @@ export function checkSnapshot(lock: SpecLock): { problems: string[]; note: strin
       problems.push(`${clones[0]}: ${(e as Error).message.split("\n")[0]}`);
     }
   }
-  return { problems, note: `${dir}: the specification and ${listing.size} example files, ${note}` };
+  const scripts = Object.keys(lock.scripts).length;
+  return { problems, note: `${dir}: the specification, ${listing.size} example files${scripts > 0 ? `, and ${scripts} pinned script${scripts === 1 ? "" : "s"}` : ""}, ${note}` };
 }
 
 /**
- * Writes a lock's snapshot from its first reachable clone: the specification
- * and every file under `examples/` at the commit, each verified against the
- * lock's blob SHAs and the listing against `examples_tree`. The directory is
+ * Writes a lock's snapshot from its first reachable clone: the specification,
+ * every file under `examples/`, and each pinned script at the commit, each
+ * verified against the lock's blob SHAs and the listing against
+ * `examples_tree`. The directory is
  * replaced whole. Throws when no clone yields the locked bytes.
  */
 export function writeSnapshot(lock: SpecLock): { dir: string; files: number; via: string } {
@@ -224,7 +277,7 @@ export function writeSnapshot(lock: SpecLock): { dir: string; files: number; via
     let tree: string | null = null;
     try {
       const listed = gitList(clone, lock.commit, "examples/");
-      files = new Map([[lock.path, fromGit(clone, lock.commit, lock.path)], ...listed.map((p): [string, Buffer] => [p, fromGit(clone, lock.commit, p)])]);
+      files = new Map([[lock.path, fromGit(clone, lock.commit, lock.path)], ...listed.map((p): [string, Buffer] => [p, fromGit(clone, lock.commit, p)]), ...Object.keys(lock.scripts).map((p): [string, Buffer] => [p, fromGit(clone, lock.commit, p)])]);
       if (listed.length > 0) tree = gitTree(clone, lock.commit, "examples");
     } catch (e) {
       errors.push(`git ${source.git}: ${(e as Error).message.split("\n")[0]}`);
@@ -233,6 +286,7 @@ export function writeSnapshot(lock: SpecLock): { dir: string; files: number; via
     const wrong = [
       ...(gitBlobSha(files.get(lock.path)!) === lock.blob ? [] : [`${lock.path} has blob ${gitBlobSha(files.get(lock.path)!)}, not the locked ${lock.blob}`]),
       ...Object.entries(lock.examples).flatMap(([p, sha]) => (!files.has(p) ? [`${p} isn't at the commit`] : gitBlobSha(files.get(p)!) === sha ? [] : [`${p} has blob ${gitBlobSha(files.get(p)!)}, not the locked ${sha}`])),
+      ...Object.entries(lock.scripts).flatMap(([p, sha]) => (gitBlobSha(files.get(p)!) === sha ? [] : [`${p} has blob ${gitBlobSha(files.get(p)!)}, not the locked ${sha}`])),
       ...(tree === lock.examples_tree ? [] : [tree === null ? `the commit has no examples/, and the lock pins examples_tree ${lock.examples_tree}` : `examples/ at the commit is tree ${tree}; pin it in ${basename(lock.file)} as examples_tree: ${tree}`]),
     ];
     if (wrong.length > 0) throw new Error(`git ${source.git}: ${wrong.join("; ")}`);
@@ -259,6 +313,16 @@ function gitTagCommit(clone: string, tag: string): string | null {
 function gitTree(clone: string, commit: string, dir: string): string {
   if (!existsSync(clone)) throw new Error(`no clone at ${clone}`);
   return execFileSync("git", ["-C", clone, "rev-parse", `${commit}:${dir}`], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
+}
+
+/** The blob SHA of a file of a clone at a commit, or null when the commit has no such file. */
+function gitBlob(clone: string, commit: string, path: string): string | null {
+  if (!existsSync(clone)) throw new Error(`no clone at ${clone}`);
+  try {
+    return execFileSync("git", ["-C", clone, "rev-parse", "--verify", "--quiet", `${commit}:${path}`], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim() || null;
+  } catch {
+    return null;
+  }
 }
 
 /** The files directly under a directory of a clone at a commit. */

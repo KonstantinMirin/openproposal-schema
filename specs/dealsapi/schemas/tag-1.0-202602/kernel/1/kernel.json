@@ -32,10 +32,6 @@
       "description": "An object for members the specification leaves to the parties to define, such as the Deals API's `ext` on each of its objects. It takes any members, and a receiver keeps the ones it doesn't know.",
       "type": "object"
     },
-    "ExternalId": {
-      "description": "The identity of a record, a code, or a version that another system or list defines, such as a registry entry, a DSP seat, a geo code, a content category, a published document's version, or a field of the specification, named by its path as the specification's tables write it, carried as that system writes it. A receiver compares it by exact string equality and doesn't parse it; the field's description names where it comes from.",
-      "type": "string"
-    },
     "IntegerFlag": {
       "description": "A yes or no written as an integer, `0` for no and `1` for yes, as AdCOM 1.0 and OpenRTB 2.6 write their flags, such as a placement's `instl`. A receiver reads it as a flag, never as a count, and a field that takes it keeps the integer its text writes.",
       "oneOf": [
@@ -49,10 +45,6 @@
         }
       ],
       "type": "integer"
-    },
-    "Text": {
-      "description": "Prose for people and agents to read. A receiver doesn't parse it or compare it.",
-      "type": "string"
     },
     "UtcTimestamp": {
       "description": "A point in time in UTC, written as an RFC 3339 date-time whose offset is zero, such as `2026-11-02T00:00:00Z`, for a specification that says its timestamps are UTC. It follows `Timestamp`'s grammar, with an offset of `Z`, `z`, or `+00:00`, a time in UTC, or `-00:00`, a time in UTC whose local offset is unknown (RFC 3339 section 4.3), and never another, so a value whose offset isn't zero is no UTC timestamp. A receiver compares two of them as instants, not as strings.",

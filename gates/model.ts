@@ -111,12 +111,19 @@ const convention = (key: string) => (i: ConventionInput) => ({ problems: checkCo
 
 export const layers = defineGate<ConventionInput>({
   id: "convention-layers",
-  title: "layers: no reference to a higher layer, and no cycle among the types",
+  title: "layers: no reference to a higher layer, none sideways within the kernel or between modules, and no cycle among the types",
   code: ["src/conventions.ts#checkConventions"],
   check: convention("layers"),
   fixtures: [
     { name: "a primitive that references an object", mutate: (i) => ({ ...i, model: withType(i.model, "Amount", (t) => ({ ...t, references: [...t.references, "Commitment"] })) }), expect: "a layer uses only the layers below it" },
     { name: "a type that references a type nobody defines", mutate: (i) => ({ ...i, model: withType(i.model, "Commitment", (t) => ({ ...t, references: [...t.references, "NoSuchType"] })) }), expect: "which the model doesn't define" },
+    // No reference runs sideways (type rules § 3): between two modules, from a kernel composite to another, from a kernel
+    // primitive to a type that references others, or up to the top layer's composition from below it.
+    { name: "a module's object that references another module's object", mutate: (i) => ({ ...i, model: withType(i.model, "Commitment", (t) => ({ ...t, references: [...t.references, "FrequencyCap"].sort() })) }), expect: "a module references only the kernel and itself" },
+    { name: "a kernel part that references another part", mutate: (i) => ({ ...i, model: withType(i.model, "DaypartWindow", (t) => ({ ...t, references: [...t.references, "PriceDelta"].sort() })) }), expect: "a kernel composite references only primitives" },
+    { name: "a kernel primitive that references a part", mutate: (i) => ({ ...i, model: withType(i.model, "Amount", (t) => ({ ...t, references: [...t.references, "DaypartWindow"] })) }), expect: "a kernel primitive references at most a primitive that stands alone" },
+    { name: "a module's object that references the composition", mutate: (i) => ({ ...i, model: withType(i.model, "Commitment", (t) => ({ ...t, references: [...t.references, "LineItemSummaryPricingEntry"].sort() })) }), expect: "only the top layer composes" },
+    { name: "a type the model doesn't place", mutate: (i) => ({ ...i, model: withType(i.model, "Commitment", (t) => ({ ...t, home: undefined })) }), expect: "has no home" },
   ],
 });
 

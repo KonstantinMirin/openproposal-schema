@@ -79,7 +79,7 @@ type LineItem struct {
 	// DeliveryCounting: How the line item counts plays and, when it counts impressions, turns them into impressions. See 5.6.4
 	DeliveryCounting *DeliveryCounting `json:"delivery_counting,omitempty"`
 	// Device: `allowed[]` of AdCOM 1.0 List: Device Types codes, the values of OpenRTB 2.6 `device.devicetype`. It narrows `environments` (§ 5.2.1). Mobile/Tablet - General (1) covers Phone (4) and Tablet (5)
-	Device *Settable[PlainInteger] `json:"device,omitempty"`
+	Device *Settable[SafeInteger] `json:"device,omitempty"`
 	// EligibleBuyers: The buyers that may commit, by `buyer.domain`
 	EligibleBuyers List[RegistrableDomain] `json:"eligible_buyers,omitzero"`
 	// EligibleSeats: The seats that may commit. An entry with an absent or empty `ids[]` names no seat and admits no one, unlike an absent OpenRTB 2.6 `Deal.wseat`, which sets no restriction
@@ -236,7 +236,7 @@ func (LineItem) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[DeliveryCounting](x, member(at, "delivery_counting"), errs)
 	}
 	if x, ok := m["device"]; ok {
-		validateAs[Settable[PlainInteger]](x, member(at, "device"), errs)
+		validateAs[Settable[SafeInteger]](x, member(at, "device"), errs)
 	}
 	if x, ok := m["eligible_buyers"]; ok {
 		validateAs[List[RegistrableDomain]](x, member(at, "eligible_buyers"), errs)

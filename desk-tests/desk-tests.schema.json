@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/desk-tests/desk-tests.schema.json",
+  "title": "Desk-test verdicts",
+  "description": "The verdict each payload of a desk-test set must get on one lock: payloads that someone outside this repository wrote to test the lock's text, kept beside this file in `desk-tests/<set>/`. A payload with a finding is rejected at that location, and only there, both by the schemas and rules and by the lock's own checker; every other payload passes both. The desk-tests gate fails on any other verdict, on an undecided check not recorded here, and on a recorded one that is decided now.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "lock", "document", "checker", "examples", "findings", "undecided"],
+  "properties": {
+    "format": {
+      "description": "Version of this format.",
+      "const": 1
+    },
+    "lock": {
+      "description": "The lock whose text the payloads test, by name.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*([-.][a-z0-9]+)*$"
+    },
+    "document": {
+      "description": "The model document every payload is, such as `LineItem`.",
+      "type": "string",
+      "pattern": "^[A-Z][A-Za-z0-9]*$"
+    },
+    "checker": {
+      "description": "The lock's own checker: the path of a script the lock pins under `scripts`, run from the root of a tree that holds the lock's specification, its examples with the payloads added, and its scripts.",
+      "type": "string",
+      "pattern": "^scripts/[A-Za-z0-9_][A-Za-z0-9._-]*\\.py$"
+    },
+    "examples": {
+      "description": "Every payload of the set, by file name in this folder.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/example" }
+    },
+    "findings": {
+      "description": "The payloads that must be rejected, each at one location.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/finding" }
+    },
+    "undecided": {
+      "description": "The rules' checks that a payload's values can't decide, because the verdict turns on what the payload leaves out, as for an example.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/undecided" }
+    }
+  },
+  "$defs": {
+    "example": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*\\.(yaml|json)$"
+    },
+    "pointer": {
+      "type": "string",
+      "pattern": "^(/[^/]*)*$"
+    },
+    "rule": {
+      "type": "string",
+      "pattern": "^[a-z][a-z-]*:\\S+$"
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["example", "path", "kind", "reason"],
+      "properties": {
+        "example": { "$ref": "#/$defs/example" },
+        "path": {
+          "description": "The JSON pointer of the location both engines reject, `\"\"` for the whole payload. The checker reports a key its table doesn't list at the key's object, which the gate reads as the key's own location, as the schemas report it.",
+          "$ref": "#/$defs/pointer"
+        },
+        "kind": {
+          "description": "How the schemas and rules reject it, as an example finding's kind: `load`, `invalid`, `undefined_key`, or `rule`, with the rule it breaks.",
+          "enum": ["load", "invalid", "undefined_key", "rule"]
+        },
+        "rule": {
+          "description": "The rule a `rule` finding breaks, as rules.json names it.",
+          "$ref": "#/$defs/rule"
+        },
+        "reason": {
+          "description": "Why the payload is rejected there, with the section or issue that says so, in one or two sentences.",
+          "type": "string",
+          "minLength": 12
+        }
+      },
+      "if": { "properties": { "kind": { "const": "rule" } }, "required": ["kind"] },
+      "then": { "properties": { "rule": { "type": "string" } }, "required": ["rule"] },
+      "dependentSchemas": { "rule": { "properties": { "kind": { "const": "rule" } } } }
+    },
+    "undecided": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["example", "path", "rule", "reason"],
+      "properties": {
+        "example": { "$ref": "#/$defs/example" },
+        "path": {
+          "description": "The JSON pointer of the value the rule reads, `\"\"` for the whole payload.",
+          "$ref": "#/$defs/pointer"
+        },
+        "rule": { "$ref": "#/$defs/rule" },
+        "reason": {
+          "description": "What the verdict turns on that the payload leaves out.",
+          "type": "string",
+          "minLength": 12
+        }
+      }
+    }
+  }
+}

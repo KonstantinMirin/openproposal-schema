@@ -111,50 +111,6 @@ func (LineItemEpisodes) ValidateValue(v any, at string, errs *Errors) {
 	checkEnum(v, at, errs, termsLineItemEpisodes...)
 }
 
-// BreakPositionOption: The `BreakPositionOption` object of the `inventory` module.
-type BreakPositionOption struct {
-	// Delay: A value from List: Start Delay Modes, such as Pre-Roll (0)
-	Delay *PlainInteger `json:"delay,omitempty"`
-	// Id: Option id (§ 3.1)
-	Id PlainString `json:"id"`
-	// Maxseq: Ceiling: the most ads a served pod holds
-	Maxseq *PlainInteger `json:"maxseq,omitempty"`
-	// Poddur: Ceiling: the most seconds of dynamic ad time a served pod holds
-	Poddur *PlainInteger `json:"poddur,omitempty"`
-	// Podseq: A value from List: Pod Sequence
-	Podseq *PlainInteger `json:"podseq,omitempty"`
-	// Slotinpod: A value from List: Slot Position in Pod
-	Slotinpod *PlainInteger `json:"slotinpod,omitempty"`
-}
-
-// ValidateValue implements Value.
-func (BreakPositionOption) ValidateValue(v any, at string, errs *Errors) {
-	m, ok := objectValue(v, at, errs)
-	if !ok {
-		return
-	}
-	checkRequired(m, at, errs, "id")
-	checkClosed(m, at, errs, "delay", "id", "maxseq", "poddur", "podseq", "slotinpod")
-	if x, ok := m["delay"]; ok {
-		validateAs[PlainInteger](x, member(at, "delay"), errs)
-	}
-	if x, ok := m["id"]; ok {
-		validateAs[PlainString](x, member(at, "id"), errs)
-	}
-	if x, ok := m["maxseq"]; ok {
-		validateAs[PlainInteger](x, member(at, "maxseq"), errs)
-	}
-	if x, ok := m["poddur"]; ok {
-		validateAs[PlainInteger](x, member(at, "poddur"), errs)
-	}
-	if x, ok := m["podseq"]; ok {
-		validateAs[PlainInteger](x, member(at, "podseq"), errs)
-	}
-	if x, ok := m["slotinpod"]; ok {
-		validateAs[PlainInteger](x, member(at, "slotinpod"), errs)
-	}
-}
-
 // ProgramOption: The `ProgramOption` object of the `inventory` module.
 type ProgramOption struct {
 	// Content: An AdCOM 1.0 `Content` object, in AdCOM's keys and meanings, `series`, `title`, `network`, `channel`, `genres`, `rating`, `live`, and `realtime` included. Its `channel` is the AdCOM `Channel` object, the TV channel or station the content is on
@@ -184,10 +140,54 @@ func (ProgramOption) ValidateValue(v any, at string, errs *Errors) {
 	}
 }
 
+// BreakPositionOption: The `BreakPositionOption` object of the `inventory` module.
+type BreakPositionOption struct {
+	// Delay: A value from List: Start Delay Modes, such as Pre-Roll (0)
+	Delay *SafeInteger `json:"delay,omitempty"`
+	// Id: Option id (§ 3.1)
+	Id PlainString `json:"id"`
+	// Maxseq: Ceiling: the most ads a served pod holds
+	Maxseq *SafeInteger `json:"maxseq,omitempty"`
+	// Poddur: Ceiling: the most seconds of dynamic ad time a served pod holds
+	Poddur *SafeInteger `json:"poddur,omitempty"`
+	// Podseq: A value from List: Pod Sequence
+	Podseq *SafeInteger `json:"podseq,omitempty"`
+	// Slotinpod: A value from List: Slot Position in Pod
+	Slotinpod *SafeInteger `json:"slotinpod,omitempty"`
+}
+
+// ValidateValue implements Value.
+func (BreakPositionOption) ValidateValue(v any, at string, errs *Errors) {
+	m, ok := objectValue(v, at, errs)
+	if !ok {
+		return
+	}
+	checkRequired(m, at, errs, "id")
+	checkClosed(m, at, errs, "delay", "id", "maxseq", "poddur", "podseq", "slotinpod")
+	if x, ok := m["delay"]; ok {
+		validateAs[SafeInteger](x, member(at, "delay"), errs)
+	}
+	if x, ok := m["id"]; ok {
+		validateAs[PlainString](x, member(at, "id"), errs)
+	}
+	if x, ok := m["maxseq"]; ok {
+		validateAs[SafeInteger](x, member(at, "maxseq"), errs)
+	}
+	if x, ok := m["poddur"]; ok {
+		validateAs[SafeInteger](x, member(at, "poddur"), errs)
+	}
+	if x, ok := m["podseq"]; ok {
+		validateAs[SafeInteger](x, member(at, "podseq"), errs)
+	}
+	if x, ok := m["slotinpod"]; ok {
+		validateAs[SafeInteger](x, member(at, "slotinpod"), errs)
+	}
+}
+
 // Refresh: The `Refresh` object of the `inventory` module.
 type Refresh struct {
 	// MinIntervalS: Minimum seconds a creative renders before the slot refreshes
-	MinIntervalS PlainInteger `json:"min_interval_s"`
+	MinIntervalS SafeInteger `json:"min_interval_s"`
 }
 
 // ValidateValue implements Value.
@@ -199,22 +199,22 @@ func (Refresh) ValidateValue(v any, at string, errs *Errors) {
 	checkRequired(m, at, errs, "min_interval_s")
 	checkClosed(m, at, errs, "min_interval_s")
 	if x, ok := m["min_interval_s"]; ok {
-		validateAs[PlainInteger](x, member(at, "min_interval_s"), errs)
+		validateAs[SafeInteger](x, member(at, "min_interval_s"), errs)
 	}
 }
 
 // Placement: The `Placement` object of the `inventory` module.
 type Placement struct {
 	// Api: Values from List: API Frameworks that every impression supports, such as MRAID 3.0 (6), OMID 1.0 (7) and SIMID 1.1 (9)
-	Api List[PlainInteger] `json:"api,omitzero"`
+	Api List[SafeInteger] `json:"api,omitzero"`
 	// Feed: A value from List: Feed Types, such as Podcast (3)
-	Feed *PlainInteger `json:"feed,omitempty"`
+	Feed *SafeInteger `json:"feed,omitempty"`
 	// Instl: The ad is interstitial or full screen
 	Instl *IntegerFlag `json:"instl,omitempty"`
 	// Playmethod: Video or audio. Values from List: Playback Methods in use, such as Initiates without any specific user interaction with Sound On (1), Initiates without any specific user interaction Sound Off by Default (2), Initiates on Click with Sound On (3) and Continuous Playback (7)
-	Playmethod List[PlainInteger] `json:"playmethod,omitzero"`
+	Playmethod List[SafeInteger] `json:"playmethod,omitzero"`
 	// Plcmt: A value from List: Plcmt Subtypes - Video, such as Instream (1). Its presence states that the line item is video, so a `ctv` line item that sells video carries it
-	Plcmt *PlainInteger `json:"plcmt,omitempty"`
+	Plcmt *SafeInteger `json:"plcmt,omitempty"`
 	// Refresh: How often the slot refreshes
 	Refresh *Refresh `json:"refresh,omitempty"`
 	// Reward: The user receives a reward for viewing the ad
@@ -222,9 +222,9 @@ type Placement struct {
 	// Skip: Video or audio. The placement lets the user skip the ad
 	Skip *IntegerFlag `json:"skip,omitempty"`
 	// Skipafter: When `skip` is `1`: seconds the ad plays before the placement enables skipping
-	Skipafter *PlainInteger `json:"skipafter,omitempty"`
+	Skipafter *SafeInteger `json:"skipafter,omitempty"`
 	// Ssai: Whether server-side ad insertion is in use and what it does to asset and tracker retrieval, in the values of AdCOM 1.0 `Placement.ssai`, such as all server-side (3)
-	Ssai *PlainInteger `json:"ssai,omitempty"`
+	Ssai *SafeInteger `json:"ssai,omitempty"`
 }
 
 // ValidateValue implements Value.
@@ -235,19 +235,19 @@ func (Placement) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkClosed(m, at, errs, "api", "feed", "instl", "playmethod", "plcmt", "refresh", "reward", "skip", "skipafter", "ssai")
 	if x, ok := m["api"]; ok {
-		validateAs[List[PlainInteger]](x, member(at, "api"), errs)
+		validateAs[List[SafeInteger]](x, member(at, "api"), errs)
 	}
 	if x, ok := m["feed"]; ok {
-		validateAs[PlainInteger](x, member(at, "feed"), errs)
+		validateAs[SafeInteger](x, member(at, "feed"), errs)
 	}
 	if x, ok := m["instl"]; ok {
 		validateAs[IntegerFlag](x, member(at, "instl"), errs)
 	}
 	if x, ok := m["playmethod"]; ok {
-		validateAs[List[PlainInteger]](x, member(at, "playmethod"), errs)
+		validateAs[List[SafeInteger]](x, member(at, "playmethod"), errs)
 	}
 	if x, ok := m["plcmt"]; ok {
-		validateAs[PlainInteger](x, member(at, "plcmt"), errs)
+		validateAs[SafeInteger](x, member(at, "plcmt"), errs)
 	}
 	if x, ok := m["refresh"]; ok {
 		validateAs[Refresh](x, member(at, "refresh"), errs)
@@ -259,10 +259,10 @@ func (Placement) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[IntegerFlag](x, member(at, "skip"), errs)
 	}
 	if x, ok := m["skipafter"]; ok {
-		validateAs[PlainInteger](x, member(at, "skipafter"), errs)
+		validateAs[SafeInteger](x, member(at, "skipafter"), errs)
 	}
 	if x, ok := m["ssai"]; ok {
-		validateAs[PlainInteger](x, member(at, "ssai"), errs)
+		validateAs[SafeInteger](x, member(at, "ssai"), errs)
 	}
 }
 

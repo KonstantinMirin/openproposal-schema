@@ -41,7 +41,7 @@ LOCK: Final = "with-open-prs"
 VARIANT: Final = "proposed"
 """The build: `as-written`, the specification as its text and examples write it, or `proposed`, with the changes we propose."""
 
-SCHEMA_RELEASE: Final = "980545df4c010ca3fb969aede1d2a2dcde6d9433a77c95cae8f376cfb94df708"
+SCHEMA_RELEASE: Final = "469d94af40de40de3215adc5bc022acd12588ee779945db313dea1d41a5bf99e"
 """The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it."""
 
 TYPES: dict[str, Any] = {

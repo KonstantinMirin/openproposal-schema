@@ -58,3 +58,37 @@ test("a lock's tag must still name its commit wherever a clone is reachable", as
   assert.match(checkSnapshot(lock("v1")).problems.join("\n"), /the tag v1 in .* names [0-9a-f]{40}, not the locked [0-9a-f]{7}/);
   assert.match(checkSnapshot(lock("v2")).problems.join("\n"), /the tag v2 in .* names no commit/);
 });
+
+test("a lock's pinned scripts travel in its snapshot, each blob checked against the pin and the clone", async () => {
+  const { execFileSync } = await import("node:child_process");
+  const { mkdirSync, readFileSync } = await import("node:fs");
+  const { checkSnapshot, materializeScripts, writeSnapshot } = await import("../src/fetch.ts");
+  const dir = mkdtempSync(join(tmpdir(), "scripts-"));
+  const clone = join(dir, "clone");
+  mkdirSync(join(clone, "scripts"), { recursive: true });
+  const git = (...args: string[]) => execFileSync("git", ["-C", clone, "-c", "user.name=t", "-c", "user.email=t@example.invalid", ...args], { encoding: "utf8" }).trim();
+  git("init", "-q");
+  writeFileSync(join(clone, "spec.md"), "# One\n");
+  writeFileSync(join(clone, "scripts", "check.py"), "print('ok')\n");
+  git("add", ".");
+  git("commit", "-q", "-m", "one");
+  const commit = git("rev-parse", "HEAD");
+  const blob = git("rev-parse", `${commit}:spec.md`);
+  const script = git("rev-parse", `${commit}:scripts/check.py`);
+  const spec = join(dir, "specs", "x");
+  mkdirSync(join(spec, "spec-input"), { recursive: true });
+  const lock = (pin: string) => {
+    const file = join(spec, "spec-input", "x.lock.yaml");
+    writeFileSync(file, `name: x\nupstream: https://example.invalid/x\ncommit: ${commit}\npath: spec.md\nblob: ${blob}\nir_dir: ir\nrequired: true\nscripts:\n  scripts/check.py: ${pin}\nsources:\n  - git: ${clone}\n  - snapshot: spec-input/snapshots/x\n`);
+    return loadLock(file);
+  };
+  assert.equal(writeSnapshot(lock(script)).files, 2);
+  assert.equal(readFileSync(join(spec, "spec-input", "snapshots", "x", "scripts", "check.py"), "utf8"), "print('ok')\n");
+  assert.deepEqual(checkSnapshot(lock(script)).problems, []);
+  assert.equal((await materializeScripts(lock(script))).files.get("scripts/check.py")?.toString("utf8"), "print('ok')\n");
+  assert.match(checkSnapshot(lock("b".repeat(40))).problems.join("\n"), /scripts\/check\.py has blob [0-9a-f]{40}, not the locked b{40}/);
+  assert.throws(() => writeSnapshot(lock("b".repeat(40))), /scripts\/check\.py has blob/);
+  writeFileSync(join(spec, "spec-input", "snapshots", "x", "scripts", "check.py"), "print('changed')\n");
+  assert.match(checkSnapshot(lock(script)).problems.join("\n"), /snapshots\/x\/scripts\/check\.py has blob/);
+  assert.throws(() => loadLock(write(`${BASE}scripts:\n  tools/check.py: ${SHA}\n`)), /isn't a file directly under scripts\//);
+});

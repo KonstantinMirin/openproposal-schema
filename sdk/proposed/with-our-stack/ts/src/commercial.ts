@@ -4,7 +4,7 @@
 import { z } from "zod";
 import * as rt from "./runtime.js";
 import { TransactionMechanism } from "./execution.js";
-import { Amount, CalendarUnit, ClockWindow, ClockWindowNarrowing, CurrencyCode, Digest, DocumentRef, Duration, Fraction, GeoCode, GeoCodeNarrowing, Instant, Interval, Measurer, NamespacedTerm, Narrowing, Party, PlainInteger, PlainIntegerNarrowing, PlainNumber, PlainString, Range, RegistrableDomain, SeatRef, Selectable, TaxonomyCodes } from "./kernel.js";
+import { Amount, CalendarUnit, ClockWindow, ClockWindowNarrowing, CurrencyCode, Digest, DocumentRef, Duration, Fraction, GeoCode, GeoCodeNarrowing, Instant, Interval, Measurer, NamespacedTerm, Narrowing, Party, PlainNumber, PlainString, Range, RegistrableDomain, SafeInteger, SafeIntegerNarrowing, SeatRef, Selectable, TaxonomyCodes } from "./kernel.js";
 import { ExclusionList, ExclusionType } from "./targeting.js";
 
 /** The `AssentEntryRole` vocabulary: `commitment`, `acceptance`, `withdrawal`, `decline`. */
@@ -253,33 +253,6 @@ export const BuyerWritesGeoBounds: z.ZodType<BuyerWritesGeoBounds> = z.strictObj
   value: GeoCodeNarrowing.optional(),
 });
 
-/** The `BuyerWritesSettableRange` object of the `commercial` module. */
-export interface BuyerWritesSettableRange {
-  /** The buyer's value, between the bounds inclusive. */
-  value?: PlainInteger;
-}
-export const BuyerWritesSettableRange: z.ZodType<BuyerWritesSettableRange> = z.strictObject({
-  value: PlainInteger.optional(),
-});
-
-/** The `BuyerWritesFrequencyCap` object of the `commercial` module. */
-export interface BuyerWritesFrequencyCap {
-  /** The line item's `frequency_cap.count`, projected to `value`. */
-  count?: BuyerWritesSettableRange;
-}
-export const BuyerWritesFrequencyCap: z.ZodType<BuyerWritesFrequencyCap> = z.strictObject({
-  count: BuyerWritesSettableRange.optional(),
-});
-
-/** The `BuyerWritesDeviceBounds` object of the `commercial` module. */
-export interface BuyerWritesDeviceBounds {
-  /** The buyer's value. */
-  value?: Narrowing<PlainInteger>;
-}
-export const BuyerWritesDeviceBounds: z.ZodType<BuyerWritesDeviceBounds> = z.strictObject({
-  value: PlainIntegerNarrowing.optional(),
-});
-
 /** The `Availability` object of the `commercial` module. */
 export interface Availability {
   /** `forecast` | `reservable`. `forecast`: the seller's estimate of the quantity. `reservable`: the quantity the seller says it can reserve for `window`. MUST be `forecast` when the line item's `delivery_type` (§ 5.9) is `non_guaranteed` */
@@ -315,33 +288,6 @@ export const CommitmentAmount: z.ZodType<CommitmentAmount> = z.strictObject({
   amount: PlainNumber,
   basis: CommitmentAmountBasis,
 });
-
-/** The `AssentEntry` object of the `commercial` module. */
-export interface AssentEntry {
-  /** When the party wrote the entry, by its own statement. No rule reads order from it */
-  at: Instant;
-  /** Why the seller declined. Core terms: `availability` | `exclusivity` | `terms`, the grounds of § 4.3.2. Absent on any other entry. A receiver that doesn't know a term still reads the entry as a `decline` */
-  ground?: AssentEntryGround;
-  /** Buyer-generated, unique per `commit`, opaque, and scoped to one buyer and seller pair. The seller MUST NOT interpret it (§ 5.6.1) */
-  idempotency_key?: PlainString;
-  /** The line items the entry names. MUST be non-empty */
-  line_item_ids: Array<PlainString>;
-  /** Of the binding record for the line items in `line_item_ids[]` (§ 4.1.1) */
-  record_digest: Digest;
-  /** `commitment` | `acceptance` | `withdrawal` | `decline`. It says what the entry does, and it implies the party */
-  role: AssentEntryRole;
-  /** The `version` of the record the digest was computed over. `version` is outside the binding record, so the entry binds it */
-  version: PlainInteger;
-}
-export const AssentEntry: z.ZodType<AssentEntry> = z.strictObject({
-  at: Instant,
-  ground: AssentEntryGround.optional(),
-  idempotency_key: PlainString.optional(),
-  line_item_ids: z.array(PlainString),
-  record_digest: Digest,
-  role: AssentEntryRole,
-  version: PlainInteger,
-}).check(rt.condition("role", "commitment", ["idempotency_key"]), rt.condition("role", "decline", ["ground"]));
 
 /** The `BuyerWritesSelectable` object of the `commercial` module. */
 export interface BuyerWritesSelectable {
@@ -418,18 +364,6 @@ export const CancellationOption: z.ZodType<CancellationOption> = z.strictObject(
   notice_reference: CancellationOptionNoticeReference.optional(),
 });
 
-/** The `CommitResult` object of the `commercial` module. */
-export interface CommitResult {
-  /** The figures that `decline` states, keyed by `line_item_id`. They are not part of the entry */
-  availability?: Partial<Record<PlainString, Availability>>;
-  /** The buyer's `commitment` entry, then each matching `acceptance`, `decline`, or `withdrawal` entry written after it in `assent[]` */
-  entries: Array<AssentEntry>;
-}
-export const CommitResult: z.ZodType<CommitResult> = z.strictObject({
-  availability: rt.map(PlainString, Availability).optional(),
-  entries: z.array(AssentEntry),
-});
-
 /** The `PreemptionReason` vocabulary: `exclusivity`, or a namespaced term (`NamespacedTerm`), since the vocabulary is open. */
 export type PreemptionReason = "exclusivity" | NamespacedTerm;
 export const PreemptionReason: z.ZodType<PreemptionReason> = z.union([z.enum(["exclusivity"]), NamespacedTerm]);
@@ -504,25 +438,61 @@ export const ProofOfPerformanceEvidences = {
   AUDIT_REPORT: "audit_report",
 } as const;
 
-/** The `ImpressionMultiplier` object of the `commercial` module. */
-export interface ImpressionMultiplier {
-  /** The source's named data release the multipliers come from. A new release is a new `dataset` */
-  dataset: PlainString;
-  /** `gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them */
-  impression_type: ImpressionMultiplierImpressionType;
-  /** `declared` | `restated`. `declared`: the value `dataset` gives that screen, or sync group, and hour when the play runs. Under a deal mechanism (§ 5.9), the bid request carries it as OpenRTB 2.6 `imp.qty.multiplier`. `restated`: that value after any reissue of `dataset` by its source before the count is final (§ 5.7.1) */
-  settles_on: ImpressionMultiplierSettlesOn;
-  /** Who supplies the multiplier. A value from AdCOM 1.0 List: DOOH Multiplier Measurement Source Types other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries */
-  source_type: PlainInteger;
-  /** The domain of the vendor or exchange that supplies the multipliers, as OpenRTB 2.6 `imp.qty.vendor` names a vendor */
-  vendor?: RegistrableDomain;
+/** The `AssentEntry` object of the `commercial` module. */
+export interface AssentEntry {
+  /** When the party wrote the entry, by its own statement. No rule reads order from it */
+  at: Instant;
+  /** Why the seller declined. Core terms: `availability` | `exclusivity` | `terms`, the grounds of § 4.3.2. Absent on any other entry. A receiver that doesn't know a term still reads the entry as a `decline` */
+  ground?: AssentEntryGround;
+  /** Buyer-generated, unique per `commit`, opaque, and scoped to one buyer and seller pair. The seller MUST NOT interpret it (§ 5.6.1) */
+  idempotency_key?: PlainString;
+  /** The line items the entry names. MUST be non-empty */
+  line_item_ids: Array<PlainString>;
+  /** Of the binding record for the line items in `line_item_ids[]` (§ 4.1.1) */
+  record_digest: Digest;
+  /** `commitment` | `acceptance` | `withdrawal` | `decline`. It says what the entry does, and it implies the party */
+  role: AssentEntryRole;
+  /** The `version` of the record the digest was computed over. `version` is outside the binding record, so the entry binds it */
+  version: SafeInteger;
 }
-export const ImpressionMultiplier: z.ZodType<ImpressionMultiplier> = z.strictObject({
-  dataset: PlainString,
-  impression_type: ImpressionMultiplierImpressionType,
-  settles_on: ImpressionMultiplierSettlesOn,
-  source_type: PlainInteger,
-  vendor: RegistrableDomain.optional(),
+export const AssentEntry: z.ZodType<AssentEntry> = z.strictObject({
+  at: Instant,
+  ground: AssentEntryGround.optional(),
+  idempotency_key: PlainString.optional(),
+  line_item_ids: z.array(PlainString),
+  record_digest: Digest,
+  role: AssentEntryRole,
+  version: SafeInteger,
+}).check(rt.condition("role", "commitment", ["idempotency_key"]), rt.condition("role", "decline", ["ground"]));
+
+/** The `BuyerWritesSettableRange` object of the `commercial` module. */
+export interface BuyerWritesSettableRange {
+  /** The buyer's value, between the bounds inclusive. */
+  value?: SafeInteger;
+}
+export const BuyerWritesSettableRange: z.ZodType<BuyerWritesSettableRange> = z.strictObject({
+  value: SafeInteger.optional(),
+});
+
+/** The `BuyerWritesFrequencyCap` object of the `commercial` module. */
+export interface BuyerWritesFrequencyCap {
+  /** The line item's `frequency_cap.count`, projected to `value`. */
+  count?: BuyerWritesSettableRange;
+}
+export const BuyerWritesFrequencyCap: z.ZodType<BuyerWritesFrequencyCap> = z.strictObject({
+  count: BuyerWritesSettableRange.optional(),
+});
+
+/** The `CommitResult` object of the `commercial` module. */
+export interface CommitResult {
+  /** The figures that `decline` states, keyed by `line_item_id`. They are not part of the entry */
+  availability?: Partial<Record<PlainString, Availability>>;
+  /** The buyer's `commitment` entry, then each matching `acceptance`, `decline`, or `withdrawal` entry written after it in `assent[]` */
+  entries: Array<AssentEntry>;
+}
+export const CommitResult: z.ZodType<CommitResult> = z.strictObject({
+  availability: rt.map(PlainString, Availability).optional(),
+  entries: z.array(AssentEntry),
 });
 
 /** The `Commitment` object of the `commercial` module. */
@@ -534,7 +504,7 @@ export interface Commitment {
   /** `spend` | `units` */
   basis: CommitmentAmountBasis;
   /** The committed units, as § 5.6.5 derives them, whether or not this key is written. A written value is a copy, outside the record (§ 4.1.1); where it differs, the § 5.6.5 result applies */
-  derived_units?: PlainInteger;
+  derived_units?: SafeInteger;
   /** The buyer's campaign. Distinct from `offer_window` */
   flight: Interval;
   /** The entry the buyer commits under */
@@ -544,9 +514,42 @@ export const Commitment: z.ZodType<Commitment> = z.strictObject({
   advertisers: z.array(Party),
   amount: PlainNumber,
   basis: CommitmentAmountBasis,
-  derived_units: PlainInteger.optional(),
+  derived_units: SafeInteger.optional(),
   flight: Interval,
   pricing_id: PlainString.optional(),
+});
+
+/** The `ImpressionMultiplier` object of the `commercial` module. */
+export interface ImpressionMultiplier {
+  /** The source's named data release the multipliers come from. A new release is a new `dataset` */
+  dataset: PlainString;
+  /** The demographic whose value settles when `dataset` gives a value per demographic. The same kind of term as `cost_parameters.demographic` (§ 5.6.5) */
+  demographic?: CostParametersDemographic;
+  /** `gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them */
+  impression_type: ImpressionMultiplierImpressionType;
+  /** `declared` | `restated`. `declared`: the value `dataset` gives that screen, or sync group, and hour when the play runs. Under a deal mechanism (§ 5.9), the bid request carries it as OpenRTB 2.6 `imp.qty.multiplier`. `restated`: that value after any reissue of `dataset` by its source before the count is final (§ 5.7.1) */
+  settles_on: ImpressionMultiplierSettlesOn;
+  /** Who supplies the multiplier. A value from AdCOM 1.0 List: DOOH Multiplier Measurement Source Types other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries */
+  source_type: SafeInteger;
+  /** The domain of the vendor or exchange that supplies the multipliers, as OpenRTB 2.6 `imp.qty.vendor` names a vendor */
+  vendor?: RegistrableDomain;
+}
+export const ImpressionMultiplier: z.ZodType<ImpressionMultiplier> = z.strictObject({
+  dataset: PlainString,
+  demographic: CostParametersDemographic.optional(),
+  impression_type: ImpressionMultiplierImpressionType,
+  settles_on: ImpressionMultiplierSettlesOn,
+  source_type: SafeInteger,
+  vendor: RegistrableDomain.optional(),
+});
+
+/** The `BuyerWritesDeviceBounds` object of the `commercial` module. */
+export interface BuyerWritesDeviceBounds {
+  /** The buyer's value. */
+  value?: Narrowing<SafeInteger>;
+}
+export const BuyerWritesDeviceBounds: z.ZodType<BuyerWritesDeviceBounds> = z.strictObject({
+  value: SafeIntegerNarrowing.optional(),
 });
 
 /** The `BuyerWritesBuyerRequirements` object of the `commercial` module. */
@@ -582,7 +585,7 @@ export interface CostParameters {
   /** The fraction of the creative played that makes a view. Absent when `view_s` is present */
   view_fraction?: Fraction;
   /** Seconds played that make a view. Absent when `view_fraction` is present */
-  view_s?: PlainInteger;
+  view_s?: SafeInteger;
   /** The viewability standard that counts a unit. Core term: `mrc`, the MRC guidelines that `viewable_rate` cites (§ 5.7.1) */
   viewability_standard?: CostParametersViewabilityStandard;
 }
@@ -594,7 +597,7 @@ export const CostParameters: z.ZodType<CostParameters> = z.strictObject({
   rate_unit: CostParametersRateUnit.optional(),
   rating_source: Measurer.optional(),
   view_fraction: Fraction.optional(),
-  view_s: PlainInteger.optional(),
+  view_s: SafeInteger.optional(),
   viewability_standard: CostParametersViewabilityStandard.optional(),
 });
 
@@ -617,14 +620,14 @@ export interface DeliveryCounting {
   /** What a display on fewer than `min_screens_per_play` screens counts. Core terms: `none` (no play) | `pro_rata` (screens played ÷ `min_screens_per_play`) */
   partial_play_credit?: DeliveryCountingPartialPlayCredit;
   /** How far short of its full duration a play may end and still count */
-  play_tolerance_ms: PlainInteger;
+  play_tolerance_ms: SafeInteger;
   /** Who logs the plays and what the buyer receives */
   proof_of_performance: ProofOfPerformance;
 }
 export const DeliveryCounting: z.ZodType<DeliveryCounting> = z.strictObject({
   impression_multiplier: ImpressionMultiplier.optional(),
   partial_play_credit: DeliveryCountingPartialPlayCredit.optional(),
-  play_tolerance_ms: PlainInteger,
+  play_tolerance_ms: SafeInteger,
   proof_of_performance: ProofOfPerformance,
 });
 
@@ -848,7 +851,7 @@ export interface Hold {
   /** What the hold reserves, as the seller states it on a grant or a re-offer. It can be less than `requested_terms` asks */
   held_availability?: Availability;
   /** Seller-set, 1 for first in line, in the order granted. A later hold moves up only when the one ahead expires, is released or converts. Holds on the same inventory reserve it in that order, so a later hold reserves only what the holds granted ahead of it leave (§ 5.6.1) */
-  position?: PlainInteger;
+  position?: SafeInteger;
   /** Seller-set. The seller's id for the reservation, so a buyer can reconcile a hold against the seller's systems */
   reference?: PlainString;
   /** The composition the buyer asks to hold, which is not a `commit`. A field it doesn't name reads as § 3.1 and § 3.2 put in effect */
@@ -858,21 +861,21 @@ export interface Hold {
   /** The grant time plus `hold_terms.duration`, or the § 4.3.4 cap if that comes first. With no `duration`, the seller sets it within the cap. It MAY remain on `expired` and `released` */
   valid_until?: Instant;
   /** The `version` the hold is on (§ 4.1.3) */
-  version: PlainInteger;
+  version: SafeInteger;
 }
 export const Hold: z.ZodType<Hold> = z.strictObject({
   held_availability: Availability.optional(),
-  position: PlainInteger.optional(),
+  position: SafeInteger.optional(),
   reference: PlainString.optional(),
   requested_terms: LineItemWrites.optional(),
   status: HoldStatus,
   valid_until: Instant.optional(),
-  version: PlainInteger,
+  version: SafeInteger,
 }).check(rt.condition("status", "held", ["valid_until"]));
 
-/** The copy `Range<T=PlainInteger>`. */
-export type UnitBoundsRange = Range<PlainInteger>;
-export const UnitBoundsRange: z.ZodType<UnitBoundsRange> = Range(PlainInteger);
+/** The copy `Range<T=SafeInteger>`. */
+export type UnitBoundsRange = Range<SafeInteger>;
+export const UnitBoundsRange: z.ZodType<UnitBoundsRange> = Range(SafeInteger);
 
 /** The `PricingEntry` object of the `commercial` module. */
 export interface PricingEntry {
@@ -891,7 +894,7 @@ export interface PricingEntry {
   /** A hint: the lowest `list_rate` the seller says it will consider. It grants nothing. Not a term, not the downstream auction floor, and never sent downstream */
   min_rate?: Amount;
   /** How `agreed_rate` clears, as Deals API 1.0 `terms.pricetype`: Dynamic (0), the auction type of each bid request; First Price (1); Second Price Plus (2); Fixed Price (3); or an exchange-specific value, 500 and up */
-  price_type?: PlainInteger;
+  price_type?: SafeInteger;
   /** How long the entry holds (§ 4.3.2). Distinct from the proposal's `offer_window.end` */
   price_valid_until?: Instant;
   /** Names the entry within the line item. A revision MUST NOT reuse it for a different `cost_method`, `cost_parameters`, `currency`, or `transaction_mechanisms[]` */
@@ -901,7 +904,7 @@ export interface PricingEntry {
   /** The `transaction_mechanism` options this entry prices. Absent: every offered option */
   transaction_mechanisms?: Array<TransactionMechanism>;
   /** Bounds on the units committed under this entry, counted in its unit (§ 5.6.5): `commitment.amount` when `basis` is `units`, otherwise `derived_units`. A buyer MAY request another. Absent on a `FLAT` entry */
-  unit_bounds?: Range<PlainInteger>;
+  unit_bounds?: Range<SafeInteger>;
   /** A short label for one unit, such as `engagement` */
   unit_label?: PlainString;
 }
@@ -913,7 +916,7 @@ export const PricingEntry: z.ZodType<PricingEntry> = z.strictObject({
   currency: CurrencyCode,
   list_rate: Amount,
   min_rate: Amount.optional(),
-  price_type: PlainInteger.optional(),
+  price_type: SafeInteger.optional(),
   price_valid_until: Instant.optional(),
   pricing_id: PlainString,
   rate_per: PricingEntryRatePer.optional(),

@@ -602,8 +602,9 @@ export function buildSdkModel(model: ModelDoc, short: string): { sdk: SdkModel; 
         }
         continue;
       }
-      if (!locationOf(t)) continue;
-      const schema = local.schemas.get(t.name);
+      // A type the schema writes inline keeps its name in the SDKs, which the model generates them from (type rules § 10).
+      if (!locationOf(t) && !t.inline) continue;
+      const schema = local.schemas.get(t.name) ?? local.inline.get(t.name);
       if (!schema) throw new Error(`${where}: the emitter gives no schema`);
       emitted.push(t.name);
       const common = { name: t.name, module: t.module, doc: docOf(t) };

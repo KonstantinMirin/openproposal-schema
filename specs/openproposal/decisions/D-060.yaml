@@ -137,6 +137,10 @@ covers:
     digest: ae43a5c3f5ade9914aaa18fc5e59aec9ee10bea1c71c4435fae9b1997bc6113a
     quote: REQUIRED when the line item counts impressions
     locks: [with-our-stack]
+  - ir: sentence:5.6.4:a001cab1
+    digest: 434f541571d47df721ddb349c0c783e49355ffeb0922ce46010510754e5a94a1
+    quote: Every impression count on the line item (`pricing[]`, `commitment`, `availability`, `committed_metrics[]`) counts these.
+    locks: [with-our-stack]
   - ir: rule:5.6.4:b6f5be4c
     digest: a8da9f49baf1a471cef2b65811934b6ab98701aa669fa7de550d7a07c97acf39
     quote: REQUIRED when `source_type` is not Publisher Provided (`2`)
@@ -366,8 +370,8 @@ covers:
     quote: "`sov_share` | Fraction | seller-set | Absent under `loop_time`. The promised share, greater than 0"
     locks: [with-our-stack]
   - ir: field:5.9:retention
-    digest: d6da48e3ba2ad2ebe71cde6d131a3f183b1c4731c74ec54ab7ceb15b18d5e88e
-    quote: "`retention` | Range[Duration] | seller-set | From release or air. The ad stays in every copy of the content the seller distributes for at least `min` and is removed by `max`. No `max`: indefinitely. When `placement.feed` is present, only copies in that feed count toward delivery"
+    digest: 3e9712ff57aa7e91db5c73fb72e61fc7410635c243b103bf5d83e779eb5d66de
+    quote: "`retention` | Range[Duration] | requestable | From release or air. The ad stays in every copy of the content the seller distributes for at least `min` and is removed by `max`. No `max`: indefinitely. When `placement.feed` is present, only copies in that feed count toward delivery"
     locks: [with-our-stack]
   - ir: key:5.6.5:CostParameters.rate_unit
     digest: 74df1a978c5ed85de51d86acf9461a72ece8335b55bedd6ded4f0d9358329098
@@ -415,7 +419,7 @@ covers:
     locks: [with-our-stack]
 options:
   - id: row-rules
-    summary: "Each is a rule of the row's object, with vectors, and the check reads the condition as the text states it: on the value, on what the object's container holds, or, for a request, on what the receiver does. Where the text names a reading, the rule takes it: a deal mechanism is one the § 5.9 table marks Yes, a line item counts impressions where an entry's cost method's unit is an impression (`CPM` or `CPMV`), a term requires keys where its § 5.6.5 row names `cost_parameters`, a version is frozen once the proposal leaves `draft` or `assent[]` holds an entry, the committed entry is the one the line item's `commitment.pricing_id` names, or its only entry, and a line item with no `commitment` has none, and more than one seller audience can be in effect where there are two options and `max_select` allows two."
+    summary: "Each is a rule of the row's object, with vectors, and the check reads the condition as the text states it: on the value, on what the object's container holds, or, for a request, on what the receiver does. Where the text names a reading, the rule takes it: a deal mechanism is one the § 5.9 table marks Yes, a line item counts impressions where any of its counts is in impressions, as § 5.6.4 defines it: a `pricing[]` entry whose cost method's unit is impressions or viewable impressions (`CPM` or `CPMV`), and so a `commitment` under it, an `availability` whose `unit` is one of those, or a `committed_metrics[]` tuple whose `metric` is `impressions`, a term requires keys where its § 5.6.5 row names `cost_parameters`, a version is frozen once the proposal leaves `draft` or `assent[]` holds an entry, the committed entry is the one the line item's `commitment.pricing_id` names, or its only entry, and a line item with no `commitment` has none, and more than one seller audience can be in effect where there are two options and `max_select` allows two."
   - id: schema-only
     summary: "Leave them to prose."
 chosen: row-rules
@@ -426,8 +430,10 @@ rationale: >-
   its own statement, so each is a rule of the row's object, and its vectors
   show the condition met and not met. The readings follow the text's own
   definitions: § 5.9 defines a deal mechanism as one that lands in a Deals API
-  `Deal`, which its table marks; § 5.6.5's table gives each cost method's unit
-  and its `cost_parameters`; and § 4.1 says a version is frozen at the
+  `Deal`, which its table marks; § 5.6.4 says a line item counts impressions
+  when any of its counts, `pricing[]`, `commitment`, `availability`, or
+  `committed_metrics[]`, is in impressions; § 5.6.5's table gives each cost
+  method's unit and its `cost_parameters`; and § 4.1 says a version is frozen at the
   earliest of the proposal's `status` leaving `draft`, an entry naming it, or
   a counterparty receiving it, of which a payload shows the first two.
 feedback: >-

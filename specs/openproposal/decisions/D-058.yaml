@@ -195,9 +195,21 @@ covers:
             - { days: [tuesday], start: "00:00", before: "01:00" }
       time_zone: "America/New_York"
     locks: [with-our-stack]
+  - ir: code:2.8.1:1
+    digest: 54811d0ad1eb14e49caedfae055a3750a867891c2ca3b89744de51480d922f61
+    quote: Signature-Agent member  ->  host  ->  https://<host>/.well-known/http-message-signatures-directory
+    locks: [with-our-stack]
+  - ir: field:5.9:retention
+    digest: 3e9712ff57aa7e91db5c73fb72e61fc7410635c243b103bf5d83e779eb5d66de
+    quote: "`retention` | Range[Duration] | requestable | From release or air. The ad stays in every copy of the content the seller distributes for at least `min` and is removed by `max`. No `max`: indefinitely. When `placement.feed` is present, only copies in that feed count toward delivery"
+    locks: [with-our-stack]
+  - ir: appendix-b:requestable
+    digest: 8c21e7bad59baf36e2f642ec2d53beb7f646992e1373b49059605252d7668ffb
+    quote: "`requestable` | 6 | The buyer MAY ask for a value outside the declared space. An ask changes the value only through a seller `grant` or `counter` (§ 4.3.1). A change on the seller's own initiative follows § 4.1.3."
+    locks: [with-our-stack]
 options:
   - id: restate-or-illustrate
-    summary: "A list or a table that writes the terms of a list the text defines elsewhere restates it, which that list's schema expresses: the core error codes, `cost_method`'s terms, the metrics, and the `transaction_mechanism` tables. A list of the values a transition moves between, a code block that shows one field or a formula, a `unit` column's terms, a list of the keys of an `Object` another definition sets, and a field's core terms for options typed `VocabularyTerm` are informative. `RequestedValue.unit_bounds` repeats the requestable field's form, a `Range[Integer]`, named after `RequestedValue`."
+    summary: "A list or a table that writes the terms of a list the text defines elsewhere restates it, which that list's schema expresses: the core error codes, `cost_method`'s terms, the metrics, and the `transaction_mechanism` tables. A list of the values a transition moves between, a code block that shows one field or a formula, a `unit` column's terms, a list of the keys of an `Object` another definition sets, and a field's core terms for options typed `VocabularyTerm` are informative. `RequestedValue.unit_bounds` repeats the requestable field's form, a `Range[Integer]`, named after `RequestedValue`. Appendix B's \"What the distribution says\" restates the counts of the field rows' markers, so its figures are what the rows give, and a figure the paragraph writes otherwise would be a round-trip difference."
   - id: vocabularies
     summary: "Each list is a vocabulary of its own."
 chosen: restate-or-illustrate
@@ -211,6 +223,9 @@ rationale: >-
   a column, not a key on the entry; `asset` and `voice` are keys of a
   `FormatSpec`'s `spec`, an `Object` another definition sets; and
   `shortfall_remedy` holds `Selectable[VocabularyTerm]`, whose options the
-  text types as terms.
+  text types as terms. Appendix B's paragraph counts the markers its table
+  and the field rows write: with § 5.9's `retention` `requestable`, 27 fields
+  the buyer touches, 6 `requestable`, 71 remaining, and 6 round trips, the
+  figures the rows give.
 feedback: >-
   None needed.

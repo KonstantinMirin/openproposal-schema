@@ -90,12 +90,13 @@ export function layoutsOf(documents: readonly DocumentOwner[]): readonly Layout[
       }),
     ),
     // The stack's tables that name no field, key, or value: how a standard takes the agreed line item's values, the layers of
-    // § 1.2, the Web Bot Auth profile's choices, the § 4.3.1 interactions, and the § 4.3.4 instants.
+    // § 1.2, the Web Bot Auth profile's signature rules and failure statuses, the § 4.3.1 interactions, and the § 4.3.4 instants.
     ...[
       ["Deals API 1.0", "OpenRTB 2.6", "From the agreed line item"],
       ["OpenDirect 2.1", "From the agreed line item"],
       ["Layer", "Question", "Answered by", "Owner", "In the proposal object"],
-      ["Rule", "Profile choice"],
+      ["Rule", "Requests", "Responses"],
+      ["Status", "Meaning", "Basis"],
       ["Interaction", "Actor", "Effect; history `action`"],
       ["Instant", "Ends", "Effect when passed"],
     ].map(

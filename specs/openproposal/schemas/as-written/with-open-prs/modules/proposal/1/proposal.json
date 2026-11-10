@@ -1,9 +1,5 @@
 {
   "$defs": {
-    "Assent": {
-      "description": "The buyer's and the seller's assent records, with their timestamps, for the binding version; the signature scheme is WS1. The specification states no members, so the object accepts any.",
-      "type": "object"
-    },
     "LinkedExecution": {
       "description": "`none`: default, subsettable; `all`: every published line item must be committed together",
       "enum": [
@@ -37,7 +33,7 @@
         "fields_changed": {
           "description": "The fields the step changed, each named by its path as the specification's tables write it, such as `pricing[].gross_rate`, and compared by exact equality.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+            "type": "string"
           },
           "type": "array"
         },
@@ -69,16 +65,12 @@
     "Specifications": {
       "anyOf": [
         {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+          "type": "string"
         },
         {
-          "$ref": "#/$defs/SpecificationsDetail"
+          "type": "object"
         }
       ]
-    },
-    "SpecificationsDetail": {
-      "description": "Structured detail at media-kit depth. The specification states no members, so the object accepts any.",
-      "type": "object"
     }
   },
   "$id": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/proposal/1/proposal.json",

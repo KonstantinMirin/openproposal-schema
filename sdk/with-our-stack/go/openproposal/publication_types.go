@@ -5,9 +5,9 @@ package openproposal
 // HoldLimits: The `HoldLimits` object of the `publication` module.
 type HoldLimits struct {
 	// PerAdvertiser: Holds whose `status` is `held` for one advertiser, counted by the `commitment.advertisers[]` in each hold's `requested_terms`. A hold that names several advertisers counts once for each
-	PerAdvertiser *PlainInteger `json:"per_advertiser,omitempty"`
+	PerAdvertiser *SafeInteger `json:"per_advertiser,omitempty"`
 	// PerBuyer: Holds whose `status` is `held` on proposals issued to one `buyer.domain`
-	PerBuyer *PlainInteger `json:"per_buyer,omitempty"`
+	PerBuyer *SafeInteger `json:"per_buyer,omitempty"`
 }
 
 // ValidateValue implements Value.
@@ -18,10 +18,10 @@ func (HoldLimits) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkClosed(m, at, errs, "per_advertiser", "per_buyer")
 	if x, ok := m["per_advertiser"]; ok {
-		validateAs[PlainInteger](x, member(at, "per_advertiser"), errs)
+		validateAs[SafeInteger](x, member(at, "per_advertiser"), errs)
 	}
 	if x, ok := m["per_buyer"]; ok {
-		validateAs[PlainInteger](x, member(at, "per_buyer"), errs)
+		validateAs[SafeInteger](x, member(at, "per_buyer"), errs)
 	}
 }
 
@@ -42,7 +42,7 @@ type ManifestEntry struct {
 	// Seller: The proposal's `seller`, projected to `domain` and `legal_name`.
 	Seller ProposalSummaryParty `json:"seller"`
 	// Version: Monotonically increasing revision number, starting at 1, held by the seller. Each version is a snapshot of the proposal's offered terms (§ 4.1.3). A version is frozen at the earliest of: the proposal's `status` leaving `draft`; a `negotiation_history[]` or `assent[]` entry naming it; a counterparty receiving it in any representation (§ 2.1). The offered terms of a frozen version MUST NOT change; a change to them creates version `n+1`. The values § 4.1.3 lists as not offered terms change without a new version
-	Version PlainInteger `json:"version"`
+	Version SafeInteger `json:"version"`
 }
 
 // ValidateValue implements Value.
@@ -75,7 +75,7 @@ func (ManifestEntry) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[ProposalSummaryParty](x, member(at, "seller"), errs)
 	}
 	if x, ok := m["version"]; ok {
-		validateAs[PlainInteger](x, member(at, "version"), errs)
+		validateAs[SafeInteger](x, member(at, "version"), errs)
 	}
 }
 

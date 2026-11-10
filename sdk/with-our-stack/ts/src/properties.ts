@@ -3,19 +3,7 @@
 /** The OpenProposal `properties` module's types. */
 import { z } from "zod";
 import * as rt from "./runtime.js";
-import { App, ClockWindow, Domain, IanaZone, PlainInteger, PlainNumber, PlainString, TaxonomyCodes } from "./kernel.js";
-
-/** The `Loop` object of the `properties` module. */
-export interface Loop {
-  /** Loop length, in seconds */
-  length_s: PlainInteger;
-  /** Slot length, in seconds */
-  slot_s: PlainInteger;
-}
-export const Loop: z.ZodType<Loop> = z.strictObject({
-  length_s: PlainInteger,
-  slot_s: PlainInteger,
-});
+import { App, ClockWindow, Domain, IanaZone, OpenObject, PlainNumber, PlainString, SafeInteger, TaxonomyCodes } from "./kernel.js";
 
 /** The `PropertyOptionAllocation` vocabulary: `all`, `seller_allocated`. */
 export type PropertyOptionAllocation = "all" | "seller_allocated";
@@ -60,6 +48,18 @@ export const PropertyOptionSellerRelationships = {
   RESELLER: "reseller",
 } as const;
 
+/** The `Loop` object of the `properties` module. */
+export interface Loop {
+  /** Loop length, in seconds */
+  length_s: SafeInteger;
+  /** Slot length, in seconds */
+  slot_s: SafeInteger;
+}
+export const Loop: z.ZodType<Loop> = z.strictObject({
+  length_s: SafeInteger,
+  slot_s: SafeInteger,
+});
+
 /** The `SellerAccount` object of the `properties` module. */
 export interface SellerAccount {
   /** As ads.txt field 1, Domain name of the advertising system */
@@ -75,14 +75,14 @@ export const SellerAccount: z.ZodType<SellerAccount> = z.strictObject({
 /** The `SyncGroup` object of the `properties` module. */
 export interface SyncGroup {
   /** The fewest of the group's screens that must show a display for it to count as one play (§ 5.6.4) */
-  min_screens_per_play: PlainInteger;
+  min_screens_per_play: SafeInteger;
   /** The `screen_id` of each screen in the group */
   screen_ids: Array<PlainString>;
   /** The group's id */
   sync_group_id: PlainString;
 }
 export const SyncGroup: z.ZodType<SyncGroup> = z.strictObject({
-  min_screens_per_play: PlainInteger,
+  min_screens_per_play: SafeInteger,
   screen_ids: z.array(PlainString),
   sync_group_id: PlainString,
 });
@@ -131,7 +131,7 @@ export interface PropertyOption {
   /** As OpenRTB 2.6 `site.inventorypartnerdomain` and `app.inventorypartnerdomain` */
   inventory_partner_domain?: Domain;
   /** With `seller_allocated`, the fewest screens the seller allocates to the line item */
-  min_screens?: PlainInteger;
+  min_screens?: SafeInteger;
   /** The property's name, for people */
   name?: PlainString;
   /** The property's screens (§ 5.2.8) */
@@ -141,9 +141,13 @@ export interface PropertyOption {
   /** `owner` | `manager` | `inventory_partner` | `reseller`, checked as § 5.2.6 states */
   seller_relationship: PropertyOptionSellerRelationship;
   /** The slots per loop the line item buys on each screen of the property that has a `loop` */
-  slots_per_loop?: PlainInteger;
+  slots_per_loop?: SafeInteger;
   /** Screens that show the same ad at the same moment, sold as one (§ 5.2.8) */
   sync_groups?: Array<SyncGroup>;
+  /** The TV channel or station the property carries, as an AdCOM 1.0 `Channel` object in AdCOM's keys and meanings. It SHOULD carry `domain`. Properties whose `tv_channel.domain` is the same carry the same channel, so a buyer can tell when two sellers offer it. Each seller assigns its own `id`, so `id` matches only within one seller */
+  tv_channel?: OpenObject;
+  /** The network that owns the property's channel, as an AdCOM 1.0 `Network` object in AdCOM's keys and meanings, matched by `domain` the same way */
+  tv_network?: OpenObject;
   /** `taxonomy` is a value of AdCOM 1.0 List: DOOH Venue Taxonomies. `ids[]` holds exactly one id. It covers only itself, not its descendants. The values OpenRTB 2.6 `dooh.venuetypetax` and `dooh.venuetype` carry */
   venue_type?: TaxonomyCodes;
 }
@@ -155,12 +159,14 @@ export const PropertyOption: z.ZodType<PropertyOption> = z.strictObject({
   domains: z.array(Domain).optional(),
   id: PlainString,
   inventory_partner_domain: Domain.optional(),
-  min_screens: PlainInteger.optional(),
+  min_screens: SafeInteger.optional(),
   name: PlainString.optional(),
   screens: z.array(Screen).optional(),
   seller_accounts: z.array(SellerAccount).optional(),
   seller_relationship: PropertyOptionSellerRelationship,
-  slots_per_loop: PlainInteger.optional(),
+  slots_per_loop: SafeInteger.optional(),
   sync_groups: z.array(SyncGroup).optional(),
+  tv_channel: OpenObject.optional(),
+  tv_network: OpenObject.optional(),
   venue_type: TaxonomyCodes.optional(),
 }).check(rt.condition("child_audience", "mixed", ["child_treatment"]));

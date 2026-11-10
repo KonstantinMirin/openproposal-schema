@@ -58,8 +58,8 @@
       "additionalProperties": false,
       "properties": {
         "cdealid": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId",
-          "description": "Unique identifier for the deal in the Curators namespace."
+          "description": "Unique identifier for the deal in the Curators namespace.",
+          "type": "string"
         },
         "curator": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/Domain",
@@ -164,14 +164,14 @@
         "appbundles": {
           "description": "An array containing one or more bundle/package name(s) of the app. An empty list implies the deal may run across many unspecified bundles/package(s)",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+            "type": "string"
           },
           "type": "array"
         },
         "cat": {
           "description": "Array of IAB Tech Lab content categories included in the deal. The taxonomy to be used is defined by the cattax field.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+            "type": "string"
           },
           "type": "array"
         },
@@ -200,7 +200,7 @@
         "sellerids": {
           "description": "The identifier associated with the seller or reseller account within the advertising system. If used, the values in this attribute must contain the same value used in transactions (i.e. OpenRTB bid requests) in the field specified by the SSP/exchange. An empty list implies the deal may runs across all sellers. Typically, in OpenRTB, this is `publisher.id`. For OpenDirect it is typically the publisher's organization ID. Should be limited to 64 characters in length.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+            "type": "string"
           },
           "type": "array"
         },
@@ -293,7 +293,7 @@
         "countries": {
           "description": "An array of country codes in which the deal is available, where country code is a string using ISO-3166-3. If this is empty or missing, the deal is assumed to apply to all countries.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+            "type": "string"
           },
           "type": "array"
         },

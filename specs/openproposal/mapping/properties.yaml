@@ -122,6 +122,31 @@ entries:
     locks: [ with-our-stack ]
     source: { rule: required-cell }
     as: { role: rule, object: PropertyOption }
+  - ir: key:5.2.4:PropertyOption.tv_channel
+    digest: 7b51885e02d8b5f63308b87a181fab2152a2b8252822181d5cfe4d9c1259f22d
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: PropertyOption, type: { kind: named, name: OpenObject }, presence: optional }
+  - ir: rule:5.2.4:ae26d4ac-2
+    digest: 87c482912e3d6e3181ce34ede7b9ea5b7573707c53bac7b02bc760b0bcd1c399
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: PropertyOption }
+  - ir: rule:5.2.4:c122ccdd
+    digest: bb4c8a176a20b7ccb46fbb8d5199bce8886b697591b5e91b0aa3158b1bbf20ef
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: seller }
+  - ir: key:5.2.4:PropertyOption.tv_network
+    digest: eaea36a37917cb4c1f35b1064f0a19c14d7261fa999a87079ec275bac86a4c1e
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: PropertyOption, type: { kind: named, name: OpenObject }, presence: optional }
+  - ir: rule:5.2.4:ae26d4ac-3
+    digest: 0f48ec99d1c1b796fc368b62af6d5d70d04b18f3a43aa36e73bec71c10e9c752
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: PropertyOption }
   - ir: key:5.2.4:PropertyOption.seller_relationship
     digest: fe9a100af8f0a9d8fc155171e6cc650b7088db5c5f21c19da97671f19ec3e022
     locks: [ with-our-stack ]
@@ -146,8 +171,8 @@ entries:
     locks: [ with-our-stack ]
     source: { rule: typed-row }
     as: { role: property, object: PropertyOption, type: { kind: named, name: Domain }, presence: optional }
-  - ir: rule:5.2.4:ae26d4ac-2
-    digest: 1c6880291470a5d45bd8f724e573f398169fd73d322d92e69eb093e13f60b186
+  - ir: rule:5.2.4:ae26d4ac-4
+    digest: b1f893c4f81804e60b264d91c7e3d5db85743a3e408d2876c88dd13c9aa97b2e
     locks: [ with-our-stack ]
     source: { rule: required-cell }
     as: { role: schema, in: PropertyOption }
@@ -227,8 +252,8 @@ entries:
     locks: [ with-our-stack ]
     source: { rule: row-vocabulary-values }
     as: { role: schema, in: PropertyOptionAllocation }
-  - ir: rule:5.2.4:ae26d4ac-3
-    digest: 38e3578ac5d47d4133f5017c89fe2ff692b380b3fa2d32d9728487a795ae6b8f
+  - ir: rule:5.2.4:ae26d4ac-5
+    digest: 570556e1c7262fa79b958b602e63511504f7ce779e6e720572a87a6d7aa00aea
     locks: [ with-our-stack ]
     source: { rule: required-cell }
     as: { role: schema, in: PropertyOption }
@@ -236,9 +261,9 @@ entries:
     digest: 93e3f3343327f296ec32c7983d4db27c4aa5f3b6484d318e07d79ab8bc400e68
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: PropertyOption, type: { kind: named, name: PlainInteger }, presence: optional }
-  - ir: rule:5.2.4:ae26d4ac-4
-    digest: 09e6351f3c3f4e6bbc816c7e9a41c81acdf712605c75a4e0ef8b0464511ce0cf
+    as: { role: property, object: PropertyOption, type: { kind: named, name: SafeInteger }, presence: optional }
+  - ir: rule:5.2.4:ae26d4ac-6
+    digest: b9419d2f3620a43507f7dde4d46fccb59d01cad66c22972c0c5740750693f549
     locks: [ with-our-stack ]
     source: { rule: required-cell }
     as: { role: schema, in: PropertyOption }
@@ -260,9 +285,9 @@ entries:
     digest: c1ef2cfcaa1c5e3e422ce9322a06b154608963070934b356b76b68501e461fd4
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: PropertyOption, type: { kind: named, name: PlainInteger }, presence: optional }
-  - ir: rule:5.2.4:ae26d4ac-5
-    digest: 333b7b2f070ac6f261bcfcc08852dde14795f4922b25ba0e59801f568d442f33
+    as: { role: property, object: PropertyOption, type: { kind: named, name: SafeInteger }, presence: optional }
+  - ir: rule:5.2.4:ae26d4ac-7
+    digest: 1179e5360887bafedb803b6cbdf8c0c6b0b92113f292bbff0114f029daadc4e4
     locks: [ with-our-stack ]
     source: { rule: required-cell }
     as: { role: schema, in: PropertyOption }
@@ -275,8 +300,8 @@ entries:
       object: PropertyOption
       type: { kind: apply, constructor: List, arguments: { T: { kind: named, name: SyncGroup } } }
       presence: optional
-  - ir: rule:5.2.4:ae26d4ac-6
-    digest: aaaeae753249361b57528bea6ad4860552628644441c3baa097b454007660dc0
+  - ir: rule:5.2.4:ae26d4ac-8
+    digest: be30e1e4a8ef8ebae7bb9387c8f2228332135d47a54d6393c51a1cc70c28b084
     locks: [ with-our-stack ]
     source: { rule: required-cell }
     as: { role: schema, in: PropertyOption }
@@ -458,7 +483,7 @@ entries:
     digest: 03f786d87354b6f43ec9148b4ad8f3aefd822a11fe3b550ad9c9ab9880d4be70
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: Loop, type: { kind: named, name: PlainInteger }, presence: required }
+    as: { role: property, object: Loop, type: { kind: named, name: SafeInteger }, presence: required }
   - ir: rule:5.2.8:373dbf11-2
     digest: 829875641eda6bcbf697a3f93575c12d0e5cda33274e7c3f1cc8ae67449199ac
     locks: [ with-our-stack ]
@@ -468,7 +493,7 @@ entries:
     digest: 7f545a560618e7a8978658d20632e28d186b174586a8429f571536a57f3b10ff
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: Loop, type: { kind: named, name: PlainInteger }, presence: required }
+    as: { role: property, object: Loop, type: { kind: named, name: SafeInteger }, presence: required }
   - ir: rule:5.2.8:373dbf11-3
     digest: b35e36502049d7615aeef7b75eb01602a4646ad89f6853a1f731399e71c18faa
     locks: [ with-our-stack ]
@@ -507,7 +532,7 @@ entries:
     digest: 34b819fe3becdcaafce433f66f1e7b47dab3de59bc35683dff262a57d771831b
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: SyncGroup, type: { kind: named, name: PlainInteger }, presence: required }
+    as: { role: property, object: SyncGroup, type: { kind: named, name: SafeInteger }, presence: required }
   - ir: rule:5.2.8:373dbf11-6
     digest: 36637ddfeacfa93133b681e32261b88bb17a02756bcebbb29a61e672838da63d
     locks: [ with-our-stack ]

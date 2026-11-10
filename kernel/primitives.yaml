@@ -666,8 +666,8 @@ primitives:
       invalid: [7, true, null]
     showcase: ["examplepub-q4-sports", "examplepub-q4-news"]
 
-  - name: PlainInteger
-    description: A whole number the text types as Integer and gives no other range, within the integers every JSON implementation reads exactly, from −(2^53 − 1) to 2^53 − 1; the field that holds it says what it counts.
+  - name: SafeInteger
+    description: A whole number that every JSON implementation reads exactly, from −(2^53 − 1) to 2^53 − 1, for a row the text types as Integer and gives no other range; the field that holds it says what it counts.
     type: integer
     concept: plain-integer
     constraints:

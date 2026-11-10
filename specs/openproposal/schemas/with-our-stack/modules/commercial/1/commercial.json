@@ -39,13 +39,13 @@
           "description": "Why the seller declined. Core terms: `availability` | `exclusivity` | `terms`, the grounds of § 4.3.2. Absent on any other entry. A receiver that doesn't know a term still reads the entry as a `decline`"
         },
         "idempotency_key": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "Buyer-generated, unique per `commit`, opaque, and scoped to one buyer and seller pair. The seller MUST NOT interpret it (§ 5.6.1)"
+          "description": "Buyer-generated, unique per `commit`, opaque, and scoped to one buyer and seller pair. The seller MUST NOT interpret it (§ 5.6.1)",
+          "type": "string"
         },
         "line_item_ids": {
           "description": "The line items the entry names. MUST be non-empty",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         },
@@ -58,7 +58,7 @@
           "description": "`commitment` | `acceptance` | `withdrawal` | `decline`. It says what the entry does, and it implies the party"
         },
         "version": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The `version` of the record the digest was computed over. `version` is outside the binding record, so the entry binds it"
         }
       },
@@ -116,8 +116,8 @@
           "description": "The bucket `quantity` counts per, within `window`. Absent: `quantity` is the total over `window`"
         },
         "quantity": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainNumber",
-          "description": "How many. It can be fractional where the unit is, such as `rating_points` per `day`"
+          "description": "How many. It can be fractional where the unit is, such as `rating_points` per `day`",
+          "type": "number"
         },
         "unit": {
           "$ref": "#/$defs/AvailabilityUnit",
@@ -169,120 +169,6 @@
         }
       ]
     },
-    "BuyerWritesAudienceSelectable": {
-      "additionalProperties": false,
-      "properties": {
-        "combine": {
-          "$ref": "#/$defs/BuyerWritesSelectable",
-          "description": "The line item's `audiences.combine`, projected to `selected[]`."
-        },
-        "excluded": {
-          "description": "The buyer's write: option ids of options whose `excludable` is `true`, disjoint from the seller audiences in effect. `max_select` does not count them",
-          "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
-          "type": "array"
-        },
-        "selected": {
-          "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
-          "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
-          "type": "array"
-        }
-      },
-      "type": "object"
-    },
-    "BuyerWritesBuyerRequirements": {
-      "additionalProperties": false,
-      "properties": {
-        "seat_owner": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Party",
-          "description": "The legal entity that owns the seats. Absent: the `buyer`"
-        },
-        "seats": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/SeatRef",
-          "description": "The buyer's seats on the deal, as the Deals API 1.0 `wseat`"
-        }
-      },
-      "type": "object"
-    },
-    "BuyerWritesDeviceBounds": {
-      "additionalProperties": false,
-      "properties": {
-        "value": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainIntegerNarrowing",
-          "description": "The buyer's value."
-        }
-      },
-      "type": "object"
-    },
-    "BuyerWritesFrequencyCap": {
-      "additionalProperties": false,
-      "properties": {
-        "count": {
-          "$ref": "#/$defs/BuyerWritesSettableRange",
-          "description": "The line item's `frequency_cap.count`, projected to `value`."
-        }
-      },
-      "type": "object"
-    },
-    "BuyerWritesGeoBounds": {
-      "additionalProperties": false,
-      "properties": {
-        "value": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/GeoCodeNarrowing",
-          "description": "The buyer's value."
-        }
-      },
-      "type": "object"
-    },
-    "BuyerWritesSelectable": {
-      "additionalProperties": false,
-      "properties": {
-        "selected": {
-          "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
-          "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
-          "type": "array"
-        }
-      },
-      "type": "object"
-    },
-    "BuyerWritesSettable": {
-      "additionalProperties": false,
-      "properties": {
-        "value": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ClockWindowNarrowing",
-          "description": "The buyer's value."
-        }
-      },
-      "type": "object"
-    },
-    "BuyerWritesSettableRange": {
-      "additionalProperties": false,
-      "properties": {
-        "value": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
-          "description": "The buyer's value, between the bounds inclusive."
-        }
-      },
-      "type": "object"
-    },
-    "BuyerWritesShortfallRemedy": {
-      "additionalProperties": false,
-      "properties": {
-        "selected": {
-          "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
-          "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
-          "type": "array"
-        }
-      },
-      "type": "object"
-    },
     "CancellationNotice": {
       "additionalProperties": false,
       "properties": {
@@ -295,8 +181,8 @@
           "description": "When the seller received notice"
         },
         "option_id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "The `id` of the option in effect that the notice exercises"
+          "description": "The `id` of the option in effect that the notice exercises",
+          "type": "string"
         },
         "requested_effective_at": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/Instant",
@@ -329,8 +215,8 @@
           "type": "array"
         },
         "id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "Option id (§ 3.1)"
+          "description": "Option id (§ 3.1)",
+          "type": "string"
         },
         "max_share": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/Fraction",
@@ -382,26 +268,23 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/Delta"
           },
           "description": "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
           "type": "object"
         },
         "included": {
           "description": "The options in the base rate, by option id.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         },
         "max_select": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The most options that may be in effect."
         },
         "selected": {
           "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         }
@@ -409,30 +292,6 @@
       "required": [
         "available",
         "included"
-      ],
-      "type": "object"
-    },
-    "Commit": {
-      "additionalProperties": false,
-      "properties": {
-        "entry": {
-          "$ref": "#/$defs/AssentEntry",
-          "description": "The buyer's entry (§ 4.1.2), with `role: commitment`"
-        },
-        "writes": {
-          "additionalProperties": {
-            "$ref": "#/$defs/LineItemWrites"
-          },
-          "description": "The buyer's writes (§ 3.4), keyed by each `line_item_id` that `entry.line_item_ids[]` names",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
-          "type": "object"
-        }
-      },
-      "required": [
-        "entry",
-        "writes"
       ],
       "type": "object"
     },
@@ -444,9 +303,6 @@
             "$ref": "#/$defs/Availability"
           },
           "description": "The figures that `decline` states, keyed by `line_item_id`. They are not part of the entry",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
           "type": "object"
         },
         "entries": {
@@ -473,15 +329,15 @@
           "type": "array"
         },
         "amount": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainNumber",
-          "description": "The figure committed: an `Amount` when `basis` is `spend`, otherwise a whole number of the entry's units (§ 5.6.5)"
+          "description": "The figure committed: an `Amount` when `basis` is `spend`, otherwise a whole number of the entry's units (§ 5.6.5)",
+          "type": "number"
         },
         "basis": {
-          "$ref": "#/$defs/CommitmentAmountBasis",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/CommitmentAmountBasis",
           "description": "`spend` | `units`"
         },
         "derived_units": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The committed units, as § 5.6.5 derives them, whether or not this key is written. A written value is a copy, outside the record (§ 4.1.1); where it differs, the § 5.6.5 result applies"
         },
         "flight": {
@@ -489,8 +345,8 @@
           "description": "The buyer's campaign. Distinct from `offer_window`"
         },
         "pricing_id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "The entry the buyer commits under"
+          "description": "The entry the buyer commits under",
+          "type": "string"
         }
       },
       "required": [
@@ -505,11 +361,11 @@
       "additionalProperties": false,
       "properties": {
         "amount": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainNumber",
-          "description": "The figure committed: an `Amount` when `basis` is `spend`, otherwise a whole number of the entry's units (§ 5.6.5)"
+          "description": "The figure committed: an `Amount` when `basis` is `spend`, otherwise a whole number of the entry's units (§ 5.6.5)",
+          "type": "number"
         },
         "basis": {
-          "$ref": "#/$defs/CommitmentAmountBasis",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/CommitmentAmountBasis",
           "description": "`spend` | `units`"
         }
       },
@@ -518,13 +374,6 @@
         "basis"
       ],
       "type": "object"
-    },
-    "CommitmentAmountBasis": {
-      "enum": [
-        "spend",
-        "units"
-      ],
-      "type": "string"
     },
     "CommitmentBounds": {
       "additionalProperties": false,
@@ -576,7 +425,7 @@
           "description": "The fraction of the creative played that makes a view. Absent when `view_s` is present"
         },
         "view_s": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "Seconds played that make a view. Absent when `view_fraction` is present"
         },
         "viewability_standard": {
@@ -645,7 +494,7 @@
           "description": "What a display on fewer than `min_screens_per_play` screens counts. Core terms: `none` (no play) | `pro_rata` (screens played ÷ `min_screens_per_play`)"
         },
         "play_tolerance_ms": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "How far short of its full duration a play may end and still count"
         },
         "proof_of_performance": {
@@ -698,8 +547,8 @@
           "type": "array"
         },
         "id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "Option id (§ 3.1)"
+          "description": "Option id (§ 3.1)",
+          "type": "string"
         },
         "scope": {
           "$ref": "#/$defs/ExclusivityOptionScope",
@@ -768,26 +617,23 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/Delta"
           },
           "description": "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
           "type": "object"
         },
         "included": {
           "description": "The options in the base rate, by option id.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         },
         "max_select": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The most options that may be in effect."
         },
         "selected": {
           "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         }
@@ -847,59 +693,6 @@
       ],
       "type": "string"
     },
-    "Hold": {
-      "additionalProperties": false,
-      "if": {
-        "properties": {
-          "status": {
-            "const": "held"
-          }
-        },
-        "required": [
-          "status"
-        ]
-      },
-      "properties": {
-        "held_availability": {
-          "$ref": "#/$defs/Availability",
-          "description": "What the hold reserves, as the seller states it on a grant or a re-offer. It can be less than `requested_terms` asks"
-        },
-        "position": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
-          "description": "Seller-set, 1 for first in line, in the order granted. A later hold moves up only when the one ahead expires, is released or converts. Holds on the same inventory reserve it in that order, so a later hold reserves only what the holds granted ahead of it leave (§ 5.6.1)"
-        },
-        "reference": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "Seller-set. The seller's id for the reservation, so a buyer can reconcile a hold against the seller's systems"
-        },
-        "requested_terms": {
-          "$ref": "#/$defs/LineItemWrites",
-          "description": "The composition the buyer asks to hold, which is not a `commit`. A field it doesn't name reads as § 3.1 and § 3.2 put in effect"
-        },
-        "status": {
-          "$ref": "#/$defs/HoldStatus",
-          "description": "Moved by the transitions below"
-        },
-        "valid_until": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Instant",
-          "description": "The grant time plus `hold_terms.duration`, or the § 4.3.4 cap if that comes first. With no `duration`, the seller sets it within the cap. It MAY remain on `expired` and `released`"
-        },
-        "version": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
-          "description": "The `version` the hold is on (§ 4.1.3)"
-        }
-      },
-      "required": [
-        "status",
-        "version"
-      ],
-      "then": {
-        "required": [
-          "valid_until"
-        ]
-      },
-      "type": "object"
-    },
     "HoldStatus": {
       "enum": [
         "requested",
@@ -932,8 +725,12 @@
       "additionalProperties": false,
       "properties": {
         "dataset": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "The source's named data release the multipliers come from. A new release is a new `dataset`"
+          "description": "The source's named data release the multipliers come from. A new release is a new `dataset`",
+          "type": "string"
+        },
+        "demographic": {
+          "$ref": "#/$defs/CostParametersDemographic",
+          "description": "The demographic whose value settles when `dataset` gives a value per demographic. The same kind of term as `cost_parameters.demographic` (§ 5.6.5)"
         },
         "impression_type": {
           "$ref": "#/$defs/ImpressionMultiplierImpressionType",
@@ -944,7 +741,7 @@
           "description": "`declared` | `restated`. `declared`: the value `dataset` gives that screen, or sync group, and hour when the play runs. Under a deal mechanism (§ 5.9), the bid request carries it as OpenRTB 2.6 `imp.qty.multiplier`. `restated`: that value after any reissue of `dataset` by its source before the count is final (§ 5.7.1)"
         },
         "source_type": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "Who supplies the multiplier. A value from AdCOM 1.0 List: DOOH Multiplier Measurement Source Types other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries"
         },
         "vendor": {
@@ -989,113 +786,6 @@
         }
       ]
     },
-    "LineItemWrites": {
-      "additionalProperties": false,
-      "properties": {
-        "activation_route": {
-          "$ref": "#/$defs/BuyerWritesSelectable",
-          "description": "The line item's `activation_route`, projected to `selected[]`."
-        },
-        "audiences": {
-          "$ref": "#/$defs/BuyerWritesAudienceSelectable",
-          "description": "The line item's `audiences`, projected to `selected[]`, `excluded[]`, and `combine.selected[]`."
-        },
-        "break_position": {
-          "$ref": "#/$defs/BuyerWritesSelectable",
-          "description": "The line item's `break_position`, projected to `selected[]`."
-        },
-        "buyer_requirements": {
-          "$ref": "#/$defs/BuyerWritesBuyerRequirements",
-          "description": "The line item's `buyer_requirements`, projected to `seats` and `seat_owner`."
-        },
-        "cancellation_policy": {
-          "$ref": "#/$defs/BuyerWritesSelectable",
-          "description": "The line item's `cancellation_policy`, projected to `selected[]`."
-        },
-        "commitment": {
-          "$ref": "#/$defs/Commitment",
-          "description": "The line item's `commitment` (§ 5.6.1)"
-        },
-        "controlling_measurement": {
-          "$ref": "#/$defs/BuyerWritesSelectable",
-          "description": "The line item's `controlling_measurement`, projected to `selected[]`."
-        },
-        "daypart": {
-          "$ref": "#/$defs/BuyerWritesSettable",
-          "description": "The line item's `daypart`, projected to `value`."
-        },
-        "device": {
-          "$ref": "#/$defs/BuyerWritesDeviceBounds",
-          "description": "The line item's `device`, projected to `value`."
-        },
-        "environments": {
-          "$ref": "#/$defs/BuyerWritesSelectable",
-          "description": "The line item's `environments`, projected to `selected[]`."
-        },
-        "exclusions": {
-          "additionalProperties": {
-            "$ref": "../../targeting/1/targeting.json#/$defs/ExclusionList"
-          },
-          "description": "The buyer's block lists, keyed by exclusion type. See below",
-          "propertyNames": {
-            "$ref": "../../targeting/1/targeting.json#/$defs/ExclusionType"
-          },
-          "type": "object"
-        },
-        "exclusivity": {
-          "$ref": "#/$defs/BuyerWritesSelectable",
-          "description": "The line item's `exclusivity`, projected to `selected[]`."
-        },
-        "formats": {
-          "$ref": "#/$defs/BuyerWritesSelectable",
-          "description": "The line item's `formats`, projected to `selected[]`."
-        },
-        "frequency_cap": {
-          "$ref": "#/$defs/BuyerWritesFrequencyCap",
-          "description": "The line item's `frequency_cap`, projected to `count.value`."
-        },
-        "geo": {
-          "$ref": "#/$defs/BuyerWritesGeoBounds",
-          "description": "The line item's `geo`, projected to `value`."
-        },
-        "markets": {
-          "$ref": "#/$defs/BuyerWritesSelectable",
-          "description": "The line item's `markets`, projected to `selected[]`."
-        },
-        "measurement_source": {
-          "$ref": "#/$defs/BuyerWritesSelectable",
-          "description": "The line item's `measurement_source`, projected to `selected[]`."
-        },
-        "production": {
-          "$ref": "#/$defs/BuyerWritesSelectable",
-          "description": "The line item's `production`, projected to `selected[]`."
-        },
-        "programs": {
-          "$ref": "#/$defs/BuyerWritesSelectable",
-          "description": "The line item's `programs`, projected to `selected[]`."
-        },
-        "properties": {
-          "$ref": "#/$defs/BuyerWritesSelectable",
-          "description": "The line item's `properties`, projected to `selected[]`."
-        },
-        "reporting": {
-          "$ref": "#/$defs/BuyerWritesSelectable",
-          "description": "The line item's `reporting`, projected to `selected[]`."
-        },
-        "shortfall_remedy": {
-          "$ref": "#/$defs/BuyerWritesShortfallRemedy",
-          "description": "The line item's `shortfall_remedy`, projected to `selected[]`."
-        },
-        "transaction_mechanism": {
-          "$ref": "#/$defs/BuyerWritesSelectable",
-          "description": "The line item's `transaction_mechanism`, projected to `selected[]`."
-        }
-      },
-      "required": [
-        "commitment"
-      ],
-      "type": "object"
-    },
     "Preemption": {
       "additionalProperties": false,
       "properties": {
@@ -1108,7 +798,7 @@
           "description": "What can preempt this line item. Core term: `exclusivity`, an exclusivity term the seller accepts later that holds, under its `separation` and `window`, where and when this line item delivers"
         },
         "remedy": {
-          "$ref": "#/$defs/PreemptionRemedy",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/PreemptionRemedy",
           "description": "What the buyer gets for the delivery a preemption takes, on any `delivery_type`. Core terms: `makegood` | `credit` | `none`, where `none` gives nothing for that delivery only. Absent: `shortfall_remedy` (§ 5.7) settles any shortfall the preemption causes"
         }
       },
@@ -1122,21 +812,6 @@
         {
           "enum": [
             "exclusivity"
-          ],
-          "type": "string"
-        },
-        {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
-        }
-      ]
-    },
-    "PreemptionRemedy": {
-      "anyOf": [
-        {
-          "enum": [
-            "makegood",
-            "credit",
-            "none"
           ],
           "type": "string"
         },
@@ -1177,7 +852,7 @@
           "description": "A hint: the lowest `list_rate` the seller says it will consider. It grants nothing. Not a term, not the downstream auction floor, and never sent downstream"
         },
         "price_type": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "How `agreed_rate` clears, as Deals API 1.0 `terms.pricetype`: Dynamic (0), the auction type of each bid request; First Price (1); Second Price Plus (2); Fixed Price (3); or an exchange-specific value, 500 and up"
         },
         "price_valid_until": {
@@ -1185,8 +860,8 @@
           "description": "How long the entry holds (§ 4.3.2). Distinct from the proposal's `offer_window.end`"
         },
         "pricing_id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "Names the entry within the line item. A revision MUST NOT reuse it for a different `cost_method`, `cost_parameters`, `currency`, or `transaction_mechanisms[]`"
+          "description": "Names the entry within the line item. A revision MUST NOT reuse it for a different `cost_method`, `cost_parameters`, `currency`, or `transaction_mechanisms[]`",
+          "type": "string"
         },
         "rate_per": {
           "$ref": "#/$defs/PricingEntryRatePer",
@@ -1195,7 +870,7 @@
         "transaction_mechanisms": {
           "description": "The `transaction_mechanism` options this entry prices. Absent: every offered option",
           "items": {
-            "$ref": "../../execution/1/execution.json#/$defs/TransactionMechanism"
+            "$ref": "../../../kernel/1/kernel.json#/$defs/TransactionMechanism"
           },
           "type": "array"
         },
@@ -1204,8 +879,8 @@
           "description": "Bounds on the units committed under this entry, counted in its unit (§ 5.6.5): `commitment.amount` when `basis` is `units`, otherwise `derived_units`. A buyer MAY request another. Absent on a `FLAT` entry"
         },
         "unit_label": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "A short label for one unit, such as `engagement`"
+          "description": "A short label for one unit, such as `engagement`",
+          "type": "string"
         }
       },
       "required": [
@@ -1309,10 +984,10 @@
       "minProperties": 1,
       "properties": {
         "max": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger"
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger"
         },
         "min": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger"
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger"
         }
       },
       "type": "object"

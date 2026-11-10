@@ -4,18 +4,16 @@
 # of our PRs is a commit range on top of the one before it, and the first starts from
 # the with-open-prs integration tip, 292bb51, so every head that lock merges is an
 # ancestor of `commit`. `merge_order` lists those 14 heads, then our 17 in stack order.
-# #137's live head, acecc8e, adds one CHANGELOG line on top of e47cbf5; the stack carries
-# e47cbf5, so that is the head listed here. The specification's text is the same at both.
 # The stack exists in a fork, so the lock carries a snapshot of the specification and
-# examples/ at `commit`, which `npm run fetch -- --lock
+# examples/ at `commit`, and the scripts it pins, which `npm run fetch -- --lock
 # specs/openproposal/spec-input/with-our-stack.lock.yaml --snapshot` writes from the clone;
 # CI runs every gate from it.
 name: with-our-stack
 upstream: https://github.com/IABTechLab/OpenProposal
 base: 44dfaaf618736219426c311ec997b6d37e94b950
-commit: a4adff3efb85564d84a4439b27f554123feefd41
+commit: 43f4c723c3250091572fa31a3ab2f355f5d712df
 path: spec/openproposal-3.0.md
-blob: 179980bae43c78855432408cd6c6609109963d22
+blob: 7ed55dbc2a60d112f1dc9fc342ee6b598d050e2b
 ir_dir: ir/with-our-stack
 required: false
 # The example files at `commit`, by path, with their git blob SHAs.
@@ -33,11 +31,11 @@ examples:
   examples/proposal-issued.yaml: 2f2ba4fb085757cfefc1319399e848d81c249aaa
   examples/proposal-package.yaml: 69e2c1c52227cfd63ae1cd21906d2cb3a5754bb1
   examples/proposal.yaml: fd37b713ec4afece07a84fcaa59cbdc932a6e982
-# The day on which our 17 heads below were their PRs' live heads, checked with
-# `gh pr view N -R IABTechLab/OpenProposal --json headRefOid`. The first 14 are the
+# The day on which the heads below were their PRs' live heads. The first 14 are the
 # with-open-prs lock's heads, live on 2026-10-26; by 2026-11-07, #17, #18, #70, and #73
-# had moved on, and the stack still carries the heads listed here.
-heads_on: "2026-11-07"
+# had moved on, and the stack still carries the heads listed here. Our 17 are the heads
+# of the stack's branches on 2026-11-10, each its PR's live head that day.
+heads_on: "2026-11-10"
 merge_order:
   - { pr: 17, head: dc0e37c8890b1ad6f197fd4a9418b7b231fab454 }
   - { pr: 18, head: ff53dc5a7d436ac42995f9842394369901e9eb70 }
@@ -53,25 +51,29 @@ merge_order:
   - { pr: 119, head: 0125d5549c4cc1790bd3ab847e8d5826b66de82d }
   - { pr: 120, head: 81de4d827440cc42d8e027d5f88843e8da109bdd }
   - { pr: 123, head: 9783ec87d102ccb60c106f4b6782650aa1f0a249 }
-  - { pr: 137, head: e47cbf566fd6e4d5c0a36c1bedda630775513a76 }
-  - { pr: 138, head: a4b458480533df0ac2f4b16e9b446d80e51e1d6e }
-  - { pr: 139, head: 0b204045a85b40c03ba4c4c9d5f2d69b56f33352 }
-  - { pr: 140, head: ba259e89c054e5daa02f8795df819ddf49a1c1d1 }
-  - { pr: 141, head: f2591e192c0c93f2fa98f6a31e00118142082ac3 }
-  - { pr: 142, head: e9ac2cee774fecf756d5a26306bccb13a2525de8 }
-  - { pr: 143, head: ed74d0cf83f009900ba022856e7a45fa1fbfba53 }
-  - { pr: 144, head: 915f709844cfa9816bf599d479d58da718cc8f23 }
-  - { pr: 145, head: fc9afb6a6b0ca990552c3b7f083370840a212d66 }
-  - { pr: 146, head: d3bd5a734e16c29b8b93f933e413450b4b597c70 }
-  - { pr: 147, head: 51348bffe2ce6acfd59db82920a0ee7ac5ea7d5c }
-  - { pr: 148, head: 89f0c3d34c3414e2c2968756009006c9848e5731 }
-  - { pr: 149, head: 08ce130f6a33b2545d0e769d5b2bc884f35d10e7 }
-  - { pr: 150, head: f8fd2bd4a2e5d6c9dc9ccb7c5a6a64330ad36f75 }
-  - { pr: 151, head: 436e0c8a9477d9909b565bcfdbcd04b3939efe77 }
-  - { pr: 152, head: c862abe1473b1317cfdc877a2c03d87a0b8665b1 }
-  - { pr: 154, head: a4adff3efb85564d84a4439b27f554123feefd41 }
+  - { pr: 137, head: c85b053baafc2105155f9b4a6aad8018eabb7c42 }
+  - { pr: 138, head: 7a3958f8060d4c295c916f472c1dcd89c841ea55 }
+  - { pr: 139, head: 5317f7f681d36840ef6bb1bb082efcc7b9354cb3 }
+  - { pr: 140, head: 13cced5d40caf3dc81b8fa1f155f521e8d45deea }
+  - { pr: 141, head: d2a16c45f8417c46f361fdeb6c33e985d170db76 }
+  - { pr: 142, head: de195314768ad003f006b6196c2f3a42ed24822d }
+  - { pr: 143, head: e5ec5a21b2fd7cc294e85d6255344ecd28a01235 }
+  - { pr: 144, head: e329670b094f8a7df913abb7938cc1764f5d0354 }
+  - { pr: 145, head: 47945c18a0b59534a05dc97b135ce27395aab754 }
+  - { pr: 146, head: de45d1b6627cb327f5226e824b1bdd86e2de0e55 }
+  - { pr: 147, head: e2bc6583a96298e468bac893753ef56f345c01a4 }
+  - { pr: 148, head: 139c5342d5d7e40b79d1d16afe2d936d52f74988 }
+  - { pr: 149, head: 771f348281dc4900420877fd3d3edd0c14449ded }
+  - { pr: 150, head: 0524d38f93b3db3ee1615b42fb43b2397df13d46 }
+  - { pr: 151, head: fac0c2a35f3afcbf6060e5e7a371550b90c32866 }
+  - { pr: 152, head: 27d2a0364d2cfc8c092b3ed48336b7c5d3cf1ba2 }
+  - { pr: 154, head: 43f4c723c3250091572fa31a3ab2f355f5d712df }
 # The git tree SHA of examples/ at `commit`, which pins the directory's listing.
 examples_tree: 4b76c8cdf8c090b9495238cd088b5453d20e381f
+# The stack's own checker at `commit`, by blob, which the desk tests run on the snapshot
+# with their payloads added to examples/ (desk-tests/iab-au-2026-11/).
+scripts:
+  scripts/check_examples.py: 8fed78099311bdc7b10379ec20239cb6488712c2
 sources:
   - git: ../../vendor/OpenProposal-stack
   - snapshot: spec-input/snapshots/with-our-stack

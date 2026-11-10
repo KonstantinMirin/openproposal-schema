@@ -4,11 +4,11 @@
       "additionalProperties": false,
       "properties": {
         "per_advertiser": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "Holds whose `status` is `held` for one advertiser, counted by the `commitment.advertisers[]` in each hold's `requested_terms`. A hold that names several advertisers counts once for each"
         },
         "per_buyer": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "Holds whose `status` is `held` on proposals issued to one `buyer.domain`"
         }
       },

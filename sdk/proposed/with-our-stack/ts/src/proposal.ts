@@ -6,7 +6,7 @@ import * as rt from "./runtime.js";
 import { AssentEntry, CancellationNotice, CommitmentAmountBasis, CommitmentBounds } from "./commercial.js";
 import { MaterialsDue } from "./creative.js";
 import { CommittedMetric } from "./guarantees.js";
-import { Amount, ApprovalStatus, Domain, FieldPointer, Instant, Interval, OpenObject, Party, PlainInteger, PlainNumber, PlainString, ProposalStatus, Range, Side, VersionRef } from "./kernel.js";
+import { Amount, ApprovalStatus, Domain, FieldPointer, Instant, Interval, OpenObject, Party, PlainNumber, PlainString, ProposalStatus, Range, SafeInteger, Side, VersionRef } from "./kernel.js";
 import { LineItem } from "./line-item.js";
 
 /** The `HistoryEntryAction` vocabulary: `published`, `requested`, `granted`, `countered`, `declined`, `withdrawn`. */
@@ -48,9 +48,9 @@ export const ProposalTypes = {
   CUSTOM: "custom",
 } as const;
 
-/** The copy `Range<T=PlainInteger>`. */
-export type RequestedUnitBoundsRange = Range<PlainInteger>;
-export const RequestedUnitBoundsRange: z.ZodType<RequestedUnitBoundsRange> = Range(PlainInteger);
+/** The copy `Range<T=SafeInteger>`. */
+export type RequestedUnitBoundsRange = Range<SafeInteger>;
+export const RequestedUnitBoundsRange: z.ZodType<RequestedUnitBoundsRange> = Range(SafeInteger);
 
 /** The `RequestedValue` object of the `proposal` module. */
 export interface RequestedValue {
@@ -63,7 +63,7 @@ export interface RequestedValue {
   /** The line item's `materials_due` */
   materials_due?: MaterialsDue;
   /** A `pricing[].unit_bounds` */
-  unit_bounds?: Range<PlainInteger>;
+  unit_bounds?: Range<SafeInteger>;
 }
 export const RequestedValue: z.ZodType<RequestedValue> = z.strictObject({
   commitment_bounds: CommitmentBounds.optional(),
@@ -99,14 +99,14 @@ export interface HistoryEntry {
   /** The fields the act changed or asked about. MAY be empty */
   paths: Array<HistoryPath>;
   /** The version the act created or refers to (§ 4.1.3) */
-  version: PlainInteger;
+  version: SafeInteger;
 }
 export const HistoryEntry: z.ZodType<HistoryEntry> = z.strictObject({
   action: HistoryEntryAction,
   actor: Side,
   at: Instant,
   paths: z.array(HistoryPath),
-  version: PlainInteger,
+  version: SafeInteger,
 });
 
 /** The `Package` object of the `proposal` module. */
@@ -220,7 +220,7 @@ export interface Proposal {
   /** `standard` | `custom` */
   type: ProposalType;
   /** Monotonically increasing revision number, starting at 1, held by the seller. Each version is a snapshot of the proposal's offered terms (§ 4.1.3). A version is frozen at the earliest of: the proposal's `status` leaving `draft`; a `negotiation_history[]` or `assent[]` entry naming it; a counterparty receiving it in any representation (§ 2.1). The offered terms of a frozen version MUST NOT change; a change to them creates version `n+1`. The values § 4.1.3 lists as not offered terms change without a new version */
-  version: PlainInteger;
+  version: SafeInteger;
 }
 export const Proposal: z.ZodType<Proposal> = z.strictObject({
   assent: z.array(AssentEntry).optional(),
@@ -244,5 +244,5 @@ export const Proposal: z.ZodType<Proposal> = z.strictObject({
   spec_version: PlainString,
   status: ProposalStatus,
   type: ProposalType,
-  version: PlainInteger,
+  version: SafeInteger,
 }).check(rt.condition("type", "custom", ["brief_id"]));

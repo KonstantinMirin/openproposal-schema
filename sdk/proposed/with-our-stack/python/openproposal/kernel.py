@@ -238,7 +238,7 @@ class Narrowing(rt.Closed, Generic[T]):
 
     - `T`: The type of one entry."""
 
-    __copies__: ClassVar[tuple[tuple[str, str], ...]] = (("ClockWindowNarrowing", "Narrowing[ClockWindow]"), ("GeoCodeNarrowing", "Narrowing[GeoCode]"), ("PlainIntegerNarrowing", "Narrowing[PlainInteger]"))
+    __copies__: ClassVar[tuple[tuple[str, str], ...]] = (("ClockWindowNarrowing", "Narrowing[ClockWindow]"), ("GeoCodeNarrowing", "Narrowing[GeoCode]"), ("SafeIntegerNarrowing", "Narrowing[SafeInteger]"))
 
     exclude: Optional[list[T]] = None
     """The entries excluded from those included."""
@@ -252,14 +252,6 @@ GeoCodeNarrowing = Narrowing[GeoCode]
 
 class OpenObject(rt.Open):
     """The `OpenObject` object of the `kernel` module. It is open, so it keeps the members it doesn't name. An object whose keys another definition sets, such as an owner's extension or an object another standard defines, which the field that holds it names."""
-
-
-PlainInteger = TypeAliasType("PlainInteger", Annotated[int, BeforeValidator(rt.integral), Strict(), Field(ge=-9007199254740991, le=9007199254740991)])
-"""A whole number the text types as Integer and gives no other range, within the integers every JSON implementation reads exactly, from −(2^53 − 1) to 2^53 − 1; the field that holds it says what it counts."""
-
-
-PlainIntegerNarrowing = Narrowing[PlainInteger]
-"""The copy `Narrowing<T=PlainInteger>`."""
 
 
 PlainNumber = TypeAliasType("PlainNumber", Annotated[float, Strict()])
@@ -277,21 +269,6 @@ class AppId(rt.Closed):
     """Store ID. As OpenRTB 2.6 `app.bundle`"""
     store: AppIdStore
     """The app store that issued `bundle`. Core terms: `apple_app_store` | `google_play` | `roku_channel_store` | `amazon_appstore` | `samsung_apps_tv`. A `bundle` is unique only within its store. No OpenRTB equivalent"""
-
-
-class ErrorObject(rt.Closed):
-    """The `ErrorObject` object of the `kernel` module."""
-
-    code: ErrorObjectCode
-    """A core code (below) or an extension code"""
-    detail: PlainString
-    """Human-readable. A receiver SHOULD NOT parse it"""
-    pointer: Optional[FieldPointer] = None
-    """Into the object this specification defines that the request carries, to the value that caused the error"""
-    retry: ErrorObjectRetry
-    """`same` | `refetch` | `none`. `same`: the same request can succeed later. `refetch`: a new attempt, composed on the current `version`, can succeed. `none`: only a changed request can succeed. On a `commit`, `same` keeps the `idempotency_key` and such an error is not a stored result (§ 5.6.1), and `refetch` and `none` take a new `idempotency_key`"""
-    version: Optional[PlainInteger] = None
-    """The proposal's `version` when the error was decided"""
 
 
 ProposalStatus = TypeAliasType("ProposalStatus", Literal["draft", "published", "under_review", "agreed", "withdrawn", "expired"])
@@ -316,7 +293,7 @@ class Range(rt.Closed, Generic[T]):
 
     - `T`: The type of each bound, a number, a timestamp, or a duration."""
 
-    __copies__: ClassVar[tuple[tuple[str, str], ...]] = (("RequestedUnitBoundsRange", "Range[PlainInteger]"), ("RetentionRange", "Range[Duration]"), ("SpendRange", "Range[Amount]"), ("UnitBoundsRange", "Range[PlainInteger]"))
+    __copies__: ClassVar[tuple[tuple[str, str], ...]] = (("RequestedUnitBoundsRange", "Range[SafeInteger]"), ("RetentionRange", "Range[Duration]"), ("SpendRange", "Range[Amount]"), ("UnitBoundsRange", "Range[SafeInteger]"))
 
     __shape__: ClassVar[rt.Shape] = rt.Shape(min_properties=1)
 
@@ -337,6 +314,29 @@ class Party(rt.Closed):
     """The party's legal name. A `registry_id` entry that applies can attest it; the value alone attests nothing"""
     registry_id: Optional[PlainString] = None
     """An IAB Tech Lab Agent Registry reference for the entity controlling `domain`"""
+
+
+SafeInteger = TypeAliasType("SafeInteger", Annotated[int, BeforeValidator(rt.integral), Strict(), Field(ge=-9007199254740991, le=9007199254740991)])
+"""A whole number that every JSON implementation reads exactly, from −(2^53 − 1) to 2^53 − 1, for a row the text types as Integer and gives no other range; the field that holds it says what it counts."""
+
+
+class ErrorObject(rt.Closed):
+    """The `ErrorObject` object of the `kernel` module."""
+
+    code: ErrorObjectCode
+    """A core code (below) or an extension code"""
+    detail: PlainString
+    """Human-readable. A receiver SHOULD NOT parse it"""
+    pointer: Optional[FieldPointer] = None
+    """Into the object this specification defines that the request carries, to the value that caused the error"""
+    retry: ErrorObjectRetry
+    """`same` | `refetch` | `none`. `same`: the same request can succeed later. `refetch`: a new attempt, composed on the current `version`, can succeed. `none`: only a changed request can succeed. On a `commit`, `same` keeps the `idempotency_key` and such an error is not a stored result (§ 5.6.1), and `refetch` and `none` take a new `idempotency_key`"""
+    version: Optional[SafeInteger] = None
+    """The proposal's `version` when the error was decided"""
+
+
+SafeIntegerNarrowing = Narrowing[SafeInteger]
+"""The copy `Narrowing<T=SafeInteger>`."""
 
 
 class SeatRef(rt.Closed):
@@ -360,7 +360,7 @@ class Selectable(rt.Closed, Generic[T]):
     """The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta."""
     included: list[PlainString]
     """The options in the base rate, by option id."""
-    max_select: Optional[PlainInteger] = None
+    max_select: Optional[SafeInteger] = None
     """The most options that may be in effect."""
     selected: Optional[list[PlainString]] = None
     """The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`."""
@@ -371,7 +371,7 @@ class Settable(rt.Closed, Generic[T]):
 
     - `T`: The type of one entry the buyer narrows within, such as a geo code."""
 
-    __copies__: ClassVar[tuple[tuple[str, str], ...]] = (("DaypartBounds", "Settable[ClockWindow]"), ("DeviceBounds", "Settable[PlainInteger]"), ("GeoBounds", "Settable[GeoCode]"))
+    __copies__: ClassVar[tuple[tuple[str, str], ...]] = (("DaypartBounds", "Settable[ClockWindow]"), ("DeviceBounds", "Settable[SafeInteger]"), ("GeoBounds", "Settable[GeoCode]"))
 
     allowed: list[T]
     """The entries the buyer narrows within."""
@@ -386,7 +386,7 @@ class SettableRange(rt.Closed, Generic[T]):
 
     - `T`: The type of each bound and of the value, a number or a point in time."""
 
-    __copies__: ClassVar[tuple[tuple[str, str], ...]] = (("CountSettableRange", "SettableRange[PlainInteger]"),)
+    __copies__: ClassVar[tuple[tuple[str, str], ...]] = (("CountSettableRange", "SettableRange[SafeInteger]"),)
 
     default: T
     """In effect when `value` is absent, between the bounds."""
@@ -420,7 +420,7 @@ class TaxonomyCodes(rt.Closed):
 
     ids: list[PlainString]
     """Ids in that taxonomy"""
-    taxonomy: PlainInteger
+    taxonomy: SafeInteger
     """A value from the list the field names"""
 
 
@@ -489,5 +489,5 @@ class VersionRef(rt.Closed):
     """The proposal"""
     seller_domain: Optional[RegistrableDomain] = None
     """The proposal's `seller.domain`"""
-    version: PlainInteger
+    version: SafeInteger
     """The proposal's `version`"""

@@ -4,18 +4,18 @@
       "array_suffix_mismatch": 1,
       "duplicate_field_disagrees": 1,
       "expression_value_unknown": 4,
-      "must_without_field": 35,
+      "must_without_field": 39,
       "name_reused_with_different_values": 1,
-      "unresolved_identifier": 222,
+      "unresolved_identifier": 236,
       "value_set_duplicate": 2,
       "value_set_subset": 6
     },
     "by_verdict": {
       "accepted": 1,
-      "open": 271
+      "open": 289
     },
-    "open": 271,
-    "total": 272
+    "open": 289,
+    "total": 290
   },
   "findings": [
     {
@@ -42,13 +42,13 @@
       "kind": "duplicate_field_disagrees",
       "locs": [
         {
-          "line": 863,
+          "line": 1034,
           "row": 9,
           "section": "4.1",
           "table": "table:4.1:1"
         },
         {
-          "line": 1418,
+          "line": 1589,
           "row": 2,
           "section": "5.1",
           "table": "table:5.1:1"
@@ -72,13 +72,13 @@
       "kind": "name_reused_with_different_values",
       "locs": [
         {
-          "line": 1807,
+          "line": 1980,
           "row": 2,
           "section": "5.3",
           "table": "table:5.3:6"
         },
         {
-          "line": 2176,
+          "line": 2353,
           "row": 1,
           "section": "5.6",
           "table": "table:5.6:2"
@@ -103,13 +103,13 @@
       "kind": "value_set_duplicate",
       "locs": [
         {
-          "line": 2574,
+          "line": 2754,
           "row": 3,
           "section": "5.6.7",
           "table": "table:5.6.7:2"
         },
         {
-          "line": 2588,
+          "line": 2768,
           "row": 4,
           "section": "5.7",
           "table": "table:5.7:1"
@@ -134,11 +134,11 @@
       "kind": "value_set_duplicate",
       "locs": [
         {
-          "line": 1312,
+          "line": 1483,
           "section": "4.3.2"
         },
         {
-          "line": 1317,
+          "line": 1488,
           "section": "4.3.2"
         }
       ],
@@ -174,7 +174,7 @@
       "kind": "value_set_subset",
       "locs": [
         {
-          "line": 2456,
+          "line": 2635,
           "row": 9,
           "section": "5.6.5",
           "table": "table:5.6.5:2"
@@ -219,7 +219,7 @@
       "kind": "value_set_subset",
       "locs": [
         {
-          "line": 2434,
+          "line": 2613,
           "row": 9,
           "section": "5.6.5",
           "table": "table:5.6.5:1"
@@ -259,7 +259,7 @@
       "kind": "value_set_subset",
       "locs": [
         {
-          "line": 2323,
+          "line": 2500,
           "section": "5.6.2"
         }
       ],
@@ -292,7 +292,7 @@
       "kind": "value_set_subset",
       "locs": [
         {
-          "line": 2572,
+          "line": 2752,
           "row": 1,
           "section": "5.6.7",
           "table": "table:5.6.7:2"
@@ -331,7 +331,7 @@
       "kind": "value_set_subset",
       "locs": [
         {
-          "line": 2339,
+          "line": 2516,
           "section": "5.6.2"
         }
       ],
@@ -379,7 +379,7 @@
       "kind": "value_set_subset",
       "locs": [
         {
-          "line": 1310,
+          "line": 1481,
           "section": "4.3.2"
         }
       ],
@@ -389,6 +389,44 @@
         "def:2.2:ProposalStatus#form/values:1",
         "block:4.3.2:11/values:1",
         "block:4.3.2:13/values:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Accept-Encoding",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 769,
+          "section": "2.8.3"
+        }
+      ],
+      "message": "`Accept-Encoding` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.8.3:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Accept-Signature",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 837,
+          "section": "2.8.6"
+        }
+      ],
+      "message": "`Accept-Signature` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.8.6:1"
       ]
     },
     {
@@ -444,7 +482,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1528,
+          "line": 1699,
           "section": "5.2.2"
         }
       ],
@@ -463,21 +501,21 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1439,
+          "line": 1610,
           "row": 2,
           "section": "5.1.1",
           "table": "table:5.1.1:1"
         },
         {
-          "line": 1495,
+          "line": 1666,
           "section": "5.2.2"
         },
         {
-          "line": 1529,
+          "line": 1700,
           "section": "5.2.2"
         },
         {
-          "line": 1563,
+          "line": 1734,
           "section": "5.2.3"
         }
       ],
@@ -499,7 +537,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1637,
+          "line": 1810,
           "row": 1,
           "section": "5.2.6",
           "table": "table:5.2.6:2"
@@ -579,27 +617,27 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 808,
+          "line": 979,
           "section": "3.3"
         },
         {
-          "line": 818,
+          "line": 989,
           "section": "3.4"
         },
         {
-          "line": 822,
+          "line": 993,
           "section": "3.4"
         },
         {
-          "line": 836,
+          "line": 1007,
           "section": "3.4"
         },
         {
-          "line": 977,
+          "line": 1148,
           "section": "4.1.1"
         },
         {
-          "line": 1137,
+          "line": 1308,
           "section": "4.1.3"
         }
       ],
@@ -640,6 +678,25 @@
         "occurrences": 1
       },
       "disposition": null,
+      "id": "unresolved_identifier:Cache-Control",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 786,
+          "section": "2.8.3"
+        }
+      ],
+      "message": "`Cache-Control` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.8.3:5"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
       "id": "unresolved_identifier:ChangeRequestLifecycle",
       "kind": "unresolved_identifier",
       "locs": [
@@ -656,14 +713,20 @@
     {
       "details": {
         "defined_in_prose": [],
-        "occurrences": 1
+        "occurrences": 2
       },
       "disposition": null,
       "id": "unresolved_identifier:Channel",
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1705,
+          "line": 1761,
+          "row": 5,
+          "section": "5.2.4",
+          "table": "table:5.2.4:1"
+        },
+        {
+          "line": 1878,
           "row": 2,
           "section": "5.2.9",
           "table": "table:5.2.9:1"
@@ -671,6 +734,7 @@
       ],
       "message": "`Channel` resolves to no table row, key, or table-declared value.",
       "subjects": [
+        "key:5.2.4:PropertyOption.tv_channel#meaning",
         "key:5.2.9:ProgramOption.content#meaning"
       ]
     },
@@ -684,7 +748,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2069,
+          "line": 2246,
           "section": "5.5"
         }
       ],
@@ -703,7 +767,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1764,
+          "line": 1937,
           "section": "5.3"
         }
       ],
@@ -722,7 +786,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1705,
+          "line": 1878,
           "row": 2,
           "section": "5.2.9",
           "table": "table:5.2.9:1"
@@ -736,27 +800,56 @@
     {
       "details": {
         "defined_in_prose": [],
-        "occurrences": 2
+        "occurrences": 4
       },
       "disposition": null,
       "id": "unresolved_identifier:Content-Digest",
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 677,
-          "row": 6,
-          "section": "2.8",
-          "table": "table:2.8:1"
+          "line": 726,
+          "row": 4,
+          "section": "2.8.2",
+          "table": "table:2.8.2:1"
         },
         {
-          "line": 1098,
+          "line": 771,
+          "section": "2.8.3"
+        },
+        {
+          "line": 807,
+          "section": "2.8.4"
+        },
+        {
+          "line": 1269,
           "section": "4.1.2"
         }
       ],
       "message": "`Content-Digest` resolves to no table row, key, or table-declared value.",
       "subjects": [
-        "concept:2.8:6#profile-choice",
+        "concept:2.8.2:4#requests",
+        "block:2.8.3:3",
+        "block:2.8.4:6",
         "block:4.1.2:15"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Content-Encoding",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 770,
+          "section": "2.8.3"
+        }
+      ],
+      "message": "`Content-Encoding` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.8.3:3"
       ]
     },
     {
@@ -769,7 +862,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1906,
+          "line": 2079,
           "section": "5.4"
         }
       ],
@@ -788,7 +881,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2141,
+          "line": 2318,
           "section": "5.6"
         }
       ],
@@ -807,7 +900,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1637,
+          "line": 1810,
           "row": 1,
           "section": "5.2.6",
           "table": "table:5.2.6:2"
@@ -828,7 +921,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2072,
+          "line": 2249,
           "section": "5.5"
         }
       ],
@@ -893,7 +986,7 @@
           "section": "1.1"
         },
         {
-          "line": 2788,
+          "line": 2968,
           "section": "5.9"
         }
       ],
@@ -1012,7 +1105,7 @@
           "table": "table:1.1:2"
         },
         {
-          "line": 2868,
+          "line": 3048,
           "row": 4,
           "section": "5.10",
           "table": "table:5.10:2"
@@ -1046,7 +1139,7 @@
           "table": "table:2.2:5"
         },
         {
-          "line": 2714,
+          "line": 2894,
           "row": 4,
           "section": "5.8",
           "table": "table:5.8:1"
@@ -1069,7 +1162,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2807,
+          "line": 2987,
           "section": "5.9"
         }
       ],
@@ -1088,13 +1181,13 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1443,
+          "line": 1614,
           "row": 6,
           "section": "5.1.1",
           "table": "table:5.1.1:1"
         },
         {
-          "line": 1493,
+          "line": 1664,
           "section": "5.2.2"
         }
       ],
@@ -1114,7 +1207,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1441,
+          "line": 1612,
           "row": 4,
           "section": "5.1.1",
           "table": "table:5.1.1:1"
@@ -1135,13 +1228,13 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1438,
+          "line": 1609,
           "row": 1,
           "section": "5.1.1",
           "table": "table:5.1.1:1"
         },
         {
-          "line": 1485,
+          "line": 1656,
           "row": 5,
           "section": "5.2.1",
           "table": "table:5.2.1:1"
@@ -1163,7 +1256,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1672,
+          "line": 1845,
           "row": 4,
           "section": "5.2.8",
           "table": "table:5.2.8:1"
@@ -1188,7 +1281,7 @@
           "section": "2.3"
         },
         {
-          "line": 3087,
+          "line": 3267,
           "section": "8"
         }
       ],
@@ -1208,15 +1301,13 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 673,
-          "row": 2,
-          "section": "2.8",
-          "table": "table:2.8:1"
+          "line": 749,
+          "section": "2.8.3"
         }
       ],
       "message": "`Ed25519` resolves to no table row, key, or table-declared value.",
       "subjects": [
-        "concept:2.8:2#profile-choice"
+        "block:2.8.3:1"
       ]
     },
     {
@@ -1237,7 +1328,7 @@
           "section": "2.6"
         },
         {
-          "line": 984,
+          "line": 1155,
           "section": "4.1.1"
         }
       ],
@@ -1257,7 +1348,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1474,
+          "line": 1645,
           "section": "5.2.1"
         }
       ],
@@ -1276,7 +1367,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2005,
+          "line": 2182,
           "section": "5.5"
         }
       ],
@@ -1295,7 +1386,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1995,
+          "line": 2172,
           "section": "5.5"
         }
       ],
@@ -1335,7 +1426,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1823,
+          "line": 1996,
           "section": "5.4"
         }
       ],
@@ -1377,19 +1468,19 @@
           "section": "1.1"
         },
         {
-          "line": 1966,
+          "line": 2143,
           "row": 1,
           "section": "5.5",
           "table": "table:5.5:1"
         },
         {
-          "line": 1967,
+          "line": 2144,
           "row": 2,
           "section": "5.5",
           "table": "table:5.5:1"
         },
         {
-          "line": 2036,
+          "line": 2213,
           "section": "5.5"
         }
       ],
@@ -1411,13 +1502,37 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2318,
+          "line": 2495,
           "section": "5.6.2"
         }
       ],
       "message": "`HoldStatus` resolves to no table row, key, or table-declared value.",
       "subjects": [
         "block:5.6.2:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Host",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 762,
+          "section": "2.8.3"
+        },
+        {
+          "line": 808,
+          "section": "2.8.4"
+        }
+      ],
+      "message": "`Host` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.8.3:2",
+        "block:2.8.4:6"
       ]
     },
     {
@@ -1430,7 +1545,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1639,
+          "line": 1812,
           "row": 3,
           "section": "5.2.6",
           "table": "table:5.2.6:2"
@@ -1451,7 +1566,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1496,
+          "line": 1667,
           "section": "5.2.2"
         }
       ],
@@ -1516,7 +1631,7 @@
           "section": "2.3"
         },
         {
-          "line": 3087,
+          "line": 3267,
           "section": "8"
         }
       ],
@@ -1556,7 +1671,7 @@
           "section": "1.1"
         },
         {
-          "line": 1906,
+          "line": 2079,
           "section": "5.4"
         }
       ],
@@ -1646,7 +1761,7 @@
           "table": "table:1.1:3"
         },
         {
-          "line": 2090,
+          "line": 2267,
           "section": "5.5"
         }
       ],
@@ -1689,7 +1804,7 @@
           "section": "1.1"
         },
         {
-          "line": 3053,
+          "line": 3233,
           "section": "8"
         }
       ],
@@ -1761,7 +1876,7 @@
           "section": "2.6"
         },
         {
-          "line": 2421,
+          "line": 2600,
           "section": "5.6.5"
         }
       ],
@@ -1843,7 +1958,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1638,
+          "line": 1811,
           "row": 2,
           "section": "5.2.6",
           "table": "table:5.2.6:2"
@@ -1864,7 +1979,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1445,
+          "line": 1616,
           "section": "5.1.1"
         }
       ],
@@ -1883,7 +1998,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1753,
+          "line": 1926,
           "row": 4,
           "section": "5.3",
           "table": "table:5.3:2"
@@ -1892,6 +2007,27 @@
       "message": "`Modeled` resolves to no table row, key, or table-declared value.",
       "subjects": [
         "key:5.3:AudienceOption.data_label#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Network",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 1762,
+          "row": 6,
+          "section": "5.2.4",
+          "table": "table:5.2.4:1"
+        }
+      ],
+      "message": "`Network` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "key:5.2.4:PropertyOption.tv_network#meaning"
       ]
     },
     {
@@ -1923,15 +2059,13 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 673,
-          "row": 2,
-          "section": "2.8",
-          "table": "table:2.8:1"
+          "line": 749,
+          "section": "2.8.3"
         }
       ],
       "message": "`OKP` resolves to no table row, key, or table-declared value.",
       "subjects": [
-        "concept:2.8:2#profile-choice"
+        "block:2.8.3:1"
       ]
     },
     {
@@ -1963,13 +2097,13 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1637,
+          "line": 1810,
           "row": 1,
           "section": "5.2.6",
           "table": "table:5.2.6:2"
         },
         {
-          "line": 1637,
+          "line": 1810,
           "row": 1,
           "section": "5.2.6",
           "table": "table:5.2.6:2"
@@ -2180,13 +2314,13 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2501,
+          "line": 2681,
           "row": 2,
           "section": "5.6.6",
           "table": "table:5.6.6:1"
         },
         {
-          "line": 2511,
+          "line": 2691,
           "row": 1,
           "section": "5.6.6",
           "table": "table:5.6.6:2"
@@ -2214,7 +2348,7 @@
           "table": "table:2.2:1"
         },
         {
-          "line": 2501,
+          "line": 2681,
           "row": 2,
           "section": "5.6.6",
           "table": "table:5.6.6:1"
@@ -2236,7 +2370,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2888,
+          "line": 3068,
           "row": 5,
           "section": "5.10",
           "table": "table:5.10:4"
@@ -2278,7 +2412,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2637,
+          "line": 2817,
           "row": 5,
           "section": "5.7.1",
           "table": "table:5.7.1:4"
@@ -2299,7 +2433,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1637,
+          "line": 1810,
           "row": 1,
           "section": "5.2.6",
           "table": "table:5.2.6:2"
@@ -2328,7 +2462,7 @@
           "section": "1.1"
         },
         {
-          "line": 3054,
+          "line": 3234,
           "section": "8"
         }
       ],
@@ -2386,7 +2520,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1640,
+          "line": 1813,
           "row": 4,
           "section": "5.2.6",
           "table": "table:5.2.6:2"
@@ -2400,22 +2534,134 @@
     {
       "details": {
         "defined_in_prose": [],
-        "occurrences": 1
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Retry-After",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 835,
+          "row": 4,
+          "section": "2.8.6",
+          "table": "table:2.8.6:1"
+        },
+        {
+          "line": 839,
+          "section": "2.8.6"
+        }
+      ],
+      "message": "`Retry-After` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8.6:4#meaning",
+        "block:2.8.6:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 2
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Signature",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 795,
+          "section": "2.8.4"
+        },
+        {
+          "line": 798,
+          "section": "2.8.4"
+        }
+      ],
+      "message": "`Signature` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.8.4:2"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 6
       },
       "disposition": null,
       "id": "unresolved_identifier:Signature-Agent",
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 672,
-          "row": 1,
-          "section": "2.8",
-          "table": "table:2.8:1"
+          "line": 696,
+          "section": "2.8.1"
+        },
+        {
+          "line": 724,
+          "row": 2,
+          "section": "2.8.2",
+          "table": "table:2.8.2:1"
+        },
+        {
+          "line": 740,
+          "section": "2.8.2"
+        },
+        {
+          "line": 795,
+          "section": "2.8.4"
+        },
+        {
+          "line": 799,
+          "section": "2.8.4"
+        },
+        {
+          "line": 800,
+          "section": "2.8.4"
         }
       ],
       "message": "`Signature-Agent` resolves to no table row, key, or table-declared value.",
       "subjects": [
-        "concept:2.8:1#profile-choice"
+        "block:2.8.1:2",
+        "concept:2.8.2:2#requests",
+        "block:2.8.2:2",
+        "block:2.8.4:2",
+        "block:2.8.4:3"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 5
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:Signature-Input",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 724,
+          "row": 2,
+          "section": "2.8.2",
+          "table": "table:2.8.2:1"
+        },
+        {
+          "line": 792,
+          "section": "2.8.4"
+        },
+        {
+          "line": 793,
+          "section": "2.8.4"
+        },
+        {
+          "line": 795,
+          "section": "2.8.4"
+        },
+        {
+          "line": 797,
+          "section": "2.8.4"
+        }
+      ],
+      "message": "`Signature-Input` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8.2:2#requests",
+        "block:2.8.4:1",
+        "block:2.8.4:2"
       ]
     },
     {
@@ -2428,19 +2674,19 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1481,
+          "line": 1652,
           "row": 1,
           "section": "5.2.1",
           "table": "table:5.2.1:1"
         },
         {
-          "line": 1482,
+          "line": 1653,
           "row": 2,
           "section": "5.2.1",
           "table": "table:5.2.1:1"
         },
         {
-          "line": 1484,
+          "line": 1655,
           "row": 4,
           "section": "5.2.1",
           "table": "table:5.2.1:1"
@@ -2463,7 +2709,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2694,
+          "line": 2874,
           "section": "5.7.1"
         }
       ],
@@ -2486,11 +2732,11 @@
           "section": "2.6"
         },
         {
-          "line": 981,
+          "line": 1152,
           "section": "4.1.1"
         },
         {
-          "line": 2003,
+          "line": 2180,
           "row": 4,
           "section": "5.5",
           "table": "table:5.5:2"
@@ -2521,7 +2767,7 @@
           "section": "2.6"
         },
         {
-          "line": 727,
+          "line": 898,
           "section": "3.1"
         }
       ],
@@ -2542,7 +2788,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2786,
+          "line": 2966,
           "section": "5.9"
         }
       ],
@@ -2618,7 +2864,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2141,
+          "line": 2318,
           "section": "5.6"
         }
       ],
@@ -2643,7 +2889,7 @@
           "table": "table:2.2:1"
         },
         {
-          "line": 2889,
+          "line": 3069,
           "row": 6,
           "section": "5.10",
           "table": "table:5.10:4"
@@ -2665,7 +2911,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1709,
+          "line": 1882,
           "section": "5.2.9"
         }
       ],
@@ -2703,17 +2949,17 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1442,
+          "line": 1613,
           "row": 5,
           "section": "5.1.1",
           "table": "table:5.1.1:1"
         },
         {
-          "line": 1494,
+          "line": 1665,
           "section": "5.2.2"
         },
         {
-          "line": 1562,
+          "line": 1733,
           "section": "5.2.3"
         }
       ],
@@ -2734,7 +2980,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1528,
+          "line": 1699,
           "section": "5.2.2"
         }
       ],
@@ -2980,17 +3226,17 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1286,
+          "line": 1457,
           "row": 8,
           "section": "4.3.1",
           "table": "table:4.3.1:1"
         },
         {
-          "line": 1309,
+          "line": 1480,
           "section": "4.3.2"
         },
         {
-          "line": 1344,
+          "line": 1515,
           "section": "4.3.2"
         }
       ],
@@ -3013,7 +3259,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2432,
+          "line": 2611,
           "row": 7,
           "section": "5.6.5",
           "table": "table:5.6.5:1"
@@ -3055,7 +3301,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1798,
+          "line": 1971,
           "row": 2,
           "section": "5.3",
           "table": "table:5.3:5"
@@ -3064,6 +3310,25 @@
       "message": "`advertiser_crm` resolves to no table row, key, or table-declared value.",
       "subjects": [
         "key:5.3:BuyerList.source#meaning"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:alg",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 759,
+          "section": "2.8.3"
+        }
+      ],
+      "message": "`alg` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.8.3:2"
       ]
     },
     {
@@ -3097,7 +3362,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1768,
+          "line": 1941,
           "section": "5.3"
         }
       ],
@@ -3116,7 +3381,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1609,
+          "line": 1782,
           "row": 2,
           "section": "5.2.5",
           "table": "table:5.2.5:1"
@@ -3137,7 +3402,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1726,
+          "line": 1899,
           "section": "5.2.9"
         }
       ],
@@ -3156,7 +3421,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1616,
+          "line": 1789,
           "row": 2,
           "section": "5.2.5",
           "table": "table:5.2.5:2"
@@ -3177,8 +3442,8 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1591,
-          "row": 6,
+          "line": 1764,
+          "row": 8,
           "section": "5.2.4",
           "table": "table:5.2.4:1"
         }
@@ -3198,7 +3463,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1615,
+          "line": 1788,
           "row": 1,
           "section": "5.2.5",
           "table": "table:5.2.5:2"
@@ -3219,7 +3484,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1839,
+          "line": 2012,
           "section": "5.4"
         }
       ],
@@ -3238,7 +3503,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1753,
+          "line": 1926,
           "row": 4,
           "section": "5.3",
           "table": "table:5.3:2"
@@ -3259,7 +3524,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1752,
+          "line": 1925,
           "row": 3,
           "section": "5.3",
           "table": "table:5.3:2"
@@ -3291,6 +3556,25 @@
     },
     {
       "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:buyer.example",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 690,
+          "section": "2.8.1"
+        }
+      ],
+      "message": "`buyer.example` resolves to no table row, key, or table-declared value; no table defines `example`.",
+      "subjects": [
+        "block:2.8.1:1"
+      ]
+    },
+    {
+      "details": {
         "defined_in_prose": [
           "block:5.6.5:2/values:1"
         ],
@@ -3301,7 +3585,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2428,
+          "line": 2607,
           "row": 3,
           "section": "5.6.5",
           "table": "table:5.6.5:1"
@@ -3315,7 +3599,7 @@
     {
       "details": {
         "defined_in_prose": [],
-        "occurrences": 46
+        "occurrences": 47
       },
       "disposition": null,
       "id": "unresolved_identifier:commit",
@@ -3340,191 +3624,195 @@
           "table": "table:2.4:2"
         },
         {
-          "line": 991,
+          "line": 825,
+          "section": "2.8.5"
+        },
+        {
+          "line": 1162,
           "section": "4.1.1"
         },
         {
-          "line": 992,
+          "line": 1163,
           "section": "4.1.1"
         },
         {
-          "line": 1030,
+          "line": 1201,
           "section": "4.1.1"
         },
         {
-          "line": 1048,
+          "line": 1219,
           "row": 6,
           "section": "4.1.2",
           "table": "table:4.1.2:1"
         },
         {
-          "line": 1065,
+          "line": 1236,
           "section": "4.1.2"
         },
         {
-          "line": 1175,
+          "line": 1346,
           "section": "4.1.3"
         },
         {
-          "line": 1197,
+          "line": 1368,
           "row": 4,
           "section": "4.1.4",
           "table": "table:4.1.4:1"
         },
         {
-          "line": 1210,
+          "line": 1381,
           "section": "4.1.4"
         },
         {
-          "line": 1211,
+          "line": 1382,
           "section": "4.1.4"
         },
         {
-          "line": 1213,
+          "line": 1384,
           "section": "4.1.4"
         },
         {
-          "line": 1267,
+          "line": 1438,
           "section": "4.3"
         },
         {
-          "line": 1269,
+          "line": 1440,
           "section": "4.3"
         },
         {
-          "line": 1271,
+          "line": 1442,
           "section": "4.3"
         },
         {
-          "line": 1284,
+          "line": 1455,
           "row": 6,
           "section": "4.3.1",
           "table": "table:4.3.1:1"
         },
         {
-          "line": 1285,
+          "line": 1456,
           "row": 7,
           "section": "4.3.1",
           "table": "table:4.3.1:1"
         },
         {
-          "line": 1286,
+          "line": 1457,
           "row": 8,
           "section": "4.3.1",
           "table": "table:4.3.1:1"
         },
         {
-          "line": 1287,
+          "line": 1458,
           "row": 9,
           "section": "4.3.1",
           "table": "table:4.3.1:1"
         },
         {
-          "line": 1309,
+          "line": 1480,
           "section": "4.3.2"
         },
         {
-          "line": 1327,
+          "line": 1498,
           "section": "4.3.2"
         },
         {
-          "line": 1333,
+          "line": 1504,
           "section": "4.3.2"
         },
         {
-          "line": 1343,
+          "line": 1514,
           "section": "4.3.2"
         },
         {
-          "line": 1364,
+          "line": 1535,
           "row": 2,
           "section": "4.3.4",
           "table": "table:4.3.4:1"
         },
         {
-          "line": 2191,
+          "line": 2368,
           "section": "5.6.1"
         },
         {
-          "line": 2203,
+          "line": 2380,
           "section": "5.6.1"
         },
         {
-          "line": 2228,
+          "line": 2405,
           "section": "5.6.1"
         },
         {
-          "line": 2246,
+          "line": 2423,
           "section": "5.6.1"
         },
         {
-          "line": 2258,
+          "line": 2435,
           "section": "5.6.1"
         },
         {
-          "line": 2261,
+          "line": 2438,
           "section": "5.6.1"
         },
         {
-          "line": 2263,
+          "line": 2440,
           "section": "5.6.1"
         },
         {
-          "line": 2265,
+          "line": 2442,
           "section": "5.6.1"
         },
         {
-          "line": 2265,
+          "line": 2442,
           "section": "5.6.1"
         },
         {
-          "line": 2269,
+          "line": 2446,
           "section": "5.6.1"
         },
         {
-          "line": 2274,
+          "line": 2451,
           "section": "5.6.1"
         },
         {
-          "line": 2277,
+          "line": 2454,
           "section": "5.6.1"
         },
         {
-          "line": 2281,
+          "line": 2458,
           "section": "5.6.1"
         },
         {
-          "line": 2284,
+          "line": 2461,
           "section": "5.6.1"
         },
         {
-          "line": 2288,
+          "line": 2465,
           "section": "5.6.1"
         },
         {
-          "line": 2312,
+          "line": 2489,
           "row": 3,
           "section": "5.6.2",
           "table": "table:5.6.2:2"
         },
         {
-          "line": 2334,
+          "line": 2511,
           "section": "5.6.2"
         },
         {
-          "line": 2335,
+          "line": 2512,
           "section": "5.6.2"
         },
         {
-          "line": 2911,
+          "line": 3091,
           "section": "6.1"
         },
         {
-          "line": 2970,
+          "line": 3150,
           "section": "6.9"
         },
         {
-          "line": 2978,
+          "line": 3158,
           "section": "6.10"
         }
       ],
@@ -3532,6 +3820,7 @@
       "subjects": [
         "key:2.4:ErrorObject.retry#meaning",
         "def:2.4:code.not_committable#returned-when",
+        "block:2.8.5:1",
         "block:4.1.1:6",
         "block:4.1.1:11",
         "key:4.1.2:AssentEntry.idempotency_key#meaning",
@@ -3574,7 +3863,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2616,
+          "line": 2796,
           "row": 2,
           "section": "5.7.1",
           "table": "table:5.7.1:2"
@@ -3597,7 +3886,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2429,
+          "line": 2608,
           "row": 4,
           "section": "5.6.5",
           "table": "table:5.6.5:1"
@@ -3611,22 +3900,32 @@
     {
       "details": {
         "defined_in_prose": [],
-        "occurrences": 1
+        "occurrences": 3
       },
       "disposition": null,
       "id": "unresolved_identifier:content-digest",
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 677,
-          "row": 6,
-          "section": "2.8",
-          "table": "table:2.8:1"
+          "line": 726,
+          "row": 4,
+          "section": "2.8.2",
+          "table": "table:2.8.2:1"
+        },
+        {
+          "line": 757,
+          "section": "2.8.3"
+        },
+        {
+          "line": 826,
+          "section": "2.8.5"
         }
       ],
       "message": "`content-digest` resolves to no table row, key, or table-declared value.",
       "subjects": [
-        "concept:2.8:6#profile-choice"
+        "concept:2.8.2:4#requests",
+        "block:2.8.3:2",
+        "block:2.8.5:1"
       ]
     },
     {
@@ -3639,15 +3938,15 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 677,
-          "row": 6,
-          "section": "2.8",
-          "table": "table:2.8:1"
+          "line": 726,
+          "row": 4,
+          "section": "2.8.2",
+          "table": "table:2.8.2:1"
         }
       ],
       "message": "`content-type` resolves to no table row, key, or table-declared value.",
       "subjects": [
-        "concept:2.8:6#profile-choice"
+        "concept:2.8.2:4#requests"
       ]
     },
     {
@@ -3660,7 +3959,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1727,
+          "line": 1900,
           "section": "5.2.9"
         }
       ],
@@ -3681,11 +3980,11 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2339,
+          "line": 2516,
           "section": "5.6.2"
         },
         {
-          "line": 2340,
+          "line": 2517,
           "section": "5.6.2"
         }
       ],
@@ -3704,33 +4003,33 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 697,
+          "line": 868,
           "row": 6,
           "section": "3",
           "table": "table:3:1"
         },
         {
-          "line": 975,
+          "line": 1146,
           "section": "4.1.1"
         },
         {
-          "line": 1283,
+          "line": 1454,
           "row": 5,
           "section": "4.3.1",
           "table": "table:4.3.1:1"
         },
         {
-          "line": 1283,
+          "line": 1454,
           "row": 5,
           "section": "4.3.1",
           "table": "table:4.3.1:1"
         },
         {
-          "line": 1307,
+          "line": 1478,
           "section": "4.3.2"
         },
         {
-          "line": 1323,
+          "line": 1494,
           "section": "4.3.2"
         }
       ],
@@ -3766,28 +4065,37 @@
     {
       "details": {
         "defined_in_prose": [],
-        "occurrences": 2
+        "occurrences": 4
       },
       "disposition": null,
       "id": "unresolved_identifier:created",
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 674,
-          "row": 3,
-          "section": "2.8",
-          "table": "table:2.8:1"
+          "line": 727,
+          "row": 5,
+          "section": "2.8.2",
+          "table": "table:2.8.2:1"
         },
         {
-          "line": 674,
-          "row": 3,
-          "section": "2.8",
-          "table": "table:2.8:1"
+          "line": 727,
+          "row": 5,
+          "section": "2.8.2",
+          "table": "table:2.8.2:1"
+        },
+        {
+          "line": 757,
+          "section": "2.8.3"
+        },
+        {
+          "line": 765,
+          "section": "2.8.3"
         }
       ],
       "message": "`created` resolves to no table row, key, or table-declared value.",
       "subjects": [
-        "concept:2.8:3#profile-choice"
+        "concept:2.8.2:5#requests",
+        "block:2.8.3:2"
       ]
     },
     {
@@ -3800,7 +4108,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1907,
+          "line": 2080,
           "section": "5.4"
         }
       ],
@@ -3819,15 +4127,13 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 673,
-          "row": 2,
-          "section": "2.8",
-          "table": "table:2.8:1"
+          "line": 749,
+          "section": "2.8.3"
         }
       ],
       "message": "`crv` resolves to no table row, key, or table-declared value.",
       "subjects": [
-        "concept:2.8:2#profile-choice"
+        "block:2.8.3:1"
       ]
     },
     {
@@ -3840,7 +4146,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1752,
+          "line": 1925,
           "row": 3,
           "section": "5.3",
           "table": "table:5.3:2"
@@ -3882,7 +4188,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1968,
+          "line": 2145,
           "row": 3,
           "section": "5.5",
           "table": "table:5.5:1"
@@ -3903,7 +4209,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1669,
+          "line": 1842,
           "row": 1,
           "section": "5.2.8",
           "table": "table:5.2.8:1"
@@ -3924,7 +4230,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1669,
+          "line": 1842,
           "row": 1,
           "section": "5.2.8",
           "table": "table:5.2.8:1"
@@ -3945,7 +4251,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2104,
+          "line": 2281,
           "section": "5.5"
         }
       ],
@@ -3964,8 +4270,8 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1595,
-          "row": 10,
+          "line": 1768,
+          "row": 12,
           "section": "5.2.4",
           "table": "table:5.2.4:1"
         }
@@ -3985,8 +4291,8 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1595,
-          "row": 10,
+          "line": 1768,
+          "row": 12,
           "section": "5.2.4",
           "table": "table:5.2.4:1"
         }
@@ -4025,7 +4331,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2114,
+          "line": 2291,
           "row": 5,
           "section": "5.6",
           "table": "table:5.6:1"
@@ -4039,7 +4345,7 @@
     {
       "details": {
         "defined_in_prose": [],
-        "occurrences": 3
+        "occurrences": 4
       },
       "disposition": null,
       "id": "unresolved_identifier:errors[]",
@@ -4056,34 +4362,53 @@
         {
           "line": 483,
           "section": "2.4"
+        },
+        {
+          "line": 841,
+          "section": "2.8.6"
         }
       ],
       "message": "`errors[]` resolves to no table row, key, or table-declared value.",
       "subjects": [
         "block:1.2:1",
         "block:1.2:3",
-        "block:2.4:1"
+        "block:2.4:1",
+        "block:2.8.6:1"
       ]
     },
     {
       "details": {
         "defined_in_prose": [],
-        "occurrences": 1
+        "occurrences": 4
       },
       "disposition": null,
       "id": "unresolved_identifier:expires",
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 674,
-          "row": 3,
-          "section": "2.8",
-          "table": "table:2.8:1"
+          "line": 727,
+          "row": 5,
+          "section": "2.8.2",
+          "table": "table:2.8.2:1"
+        },
+        {
+          "line": 757,
+          "section": "2.8.3"
+        },
+        {
+          "line": 766,
+          "section": "2.8.3"
+        },
+        {
+          "line": 775,
+          "section": "2.8.3"
         }
       ],
       "message": "`expires` resolves to no table row, key, or table-declared value.",
       "subjects": [
-        "concept:2.8:3#profile-choice"
+        "concept:2.8.2:5#requests",
+        "block:2.8.3:2",
+        "block:2.8.3:4"
       ]
     },
     {
@@ -4096,7 +4421,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1705,
+          "line": 1878,
           "row": 2,
           "section": "5.2.9",
           "table": "table:5.2.9:1"
@@ -4117,27 +4442,27 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 697,
+          "line": 868,
           "row": 6,
           "section": "3",
           "table": "table:3:1"
         },
         {
-          "line": 975,
+          "line": 1146,
           "section": "4.1.1"
         },
         {
-          "line": 1282,
+          "line": 1453,
           "row": 4,
           "section": "4.3.1",
           "table": "table:4.3.1:1"
         },
         {
-          "line": 1306,
+          "line": 1477,
           "section": "4.3.2"
         },
         {
-          "line": 1323,
+          "line": 1494,
           "section": "4.3.2"
         }
       ],
@@ -4162,21 +4487,21 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2669,
+          "line": 2849,
           "section": "5.7.1"
         },
         {
-          "line": 2794,
+          "line": 2974,
           "row": 2,
           "section": "5.9",
           "table": "table:5.9:3"
         },
         {
-          "line": 2811,
+          "line": 2991,
           "section": "5.9"
         },
         {
-          "line": 2820,
+          "line": 3000,
           "section": "5.9"
         }
       ],
@@ -4213,65 +4538,65 @@
           "table": "table:2.3:3"
         },
         {
-          "line": 1311,
+          "line": 1482,
           "section": "4.3.2"
         },
         {
-          "line": 1313,
+          "line": 1484,
           "section": "4.3.2"
         },
         {
-          "line": 1342,
+          "line": 1513,
           "section": "4.3.2"
         },
         {
-          "line": 1343,
+          "line": 1514,
           "section": "4.3.2"
         },
         {
-          "line": 2296,
+          "line": 2473,
           "section": "5.6.2"
         },
         {
-          "line": 2316,
+          "line": 2493,
           "row": 7,
           "section": "5.6.2",
           "table": "table:5.6.2:2"
         },
         {
-          "line": 2326,
+          "line": 2503,
           "section": "5.6.2"
         },
         {
-          "line": 2331,
+          "line": 2508,
           "section": "5.6.2"
         },
         {
-          "line": 2331,
+          "line": 2508,
           "section": "5.6.2"
         },
         {
-          "line": 2334,
+          "line": 2511,
           "section": "5.6.2"
         },
         {
-          "line": 2335,
+          "line": 2512,
           "section": "5.6.2"
         },
         {
-          "line": 2337,
+          "line": 2514,
           "section": "5.6.2"
         },
         {
-          "line": 2342,
+          "line": 2519,
           "section": "5.6.2"
         },
         {
-          "line": 2345,
+          "line": 2522,
           "section": "5.6.2"
         },
         {
-          "line": 2346,
+          "line": 2523,
           "section": "5.6.2"
         }
       ],
@@ -4295,7 +4620,7 @@
     {
       "details": {
         "defined_in_prose": [],
-        "occurrences": 1
+        "occurrences": 2
       },
       "disposition": null,
       "id": "unresolved_identifier:http",
@@ -4306,17 +4631,22 @@
           "row": 21,
           "section": "2.2",
           "table": "table:2.2:1"
+        },
+        {
+          "line": 705,
+          "section": "2.8.1"
         }
       ],
       "message": "`http` resolves to no table row, key, or table-declared value.",
       "subjects": [
-        "def:2.2:Url#form"
+        "def:2.2:Url#form",
+        "block:2.8.1:3"
       ]
     },
     {
       "details": {
         "defined_in_prose": [],
-        "occurrences": 5
+        "occurrences": 4
       },
       "disposition": null,
       "id": "unresolved_identifier:https",
@@ -4341,12 +4671,6 @@
         {
           "line": 645,
           "section": "2.7"
-        },
-        {
-          "line": 672,
-          "row": 1,
-          "section": "2.8",
-          "table": "table:2.8:1"
         }
       ],
       "message": "`https` resolves to no table row, key, or table-declared value.",
@@ -4354,8 +4678,7 @@
         "block:1.2:6",
         "def:2.2:Url#form",
         "def:2.2:HttpsUrl#form",
-        "block:2.7:3",
-        "concept:2.8:1#profile-choice"
+        "block:2.7:3"
       ]
     },
     {
@@ -4370,7 +4693,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1848,
+          "line": 2021,
           "section": "5.4"
         }
       ],
@@ -4413,7 +4736,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1575,
+          "line": 1746,
           "section": "5.2.3"
         }
       ],
@@ -4432,7 +4755,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1457,
+          "line": 1628,
           "section": "5.1.1"
         }
       ],
@@ -4451,8 +4774,8 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2406,
-          "row": 5,
+          "line": 2585,
+          "row": 6,
           "section": "5.6.4",
           "table": "table:5.6.4:3"
         }
@@ -4472,7 +4795,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2403,
+          "line": 2581,
           "row": 2,
           "section": "5.6.4",
           "table": "table:5.6.4:3"
@@ -4493,7 +4816,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2404,
+          "line": 2582,
           "row": 3,
           "section": "5.6.4",
           "table": "table:5.6.4:3"
@@ -4514,7 +4837,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1457,
+          "line": 1628,
           "section": "5.1.1"
         }
       ],
@@ -4533,7 +4856,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1574,
+          "line": 1745,
           "section": "5.2.3"
         }
       ],
@@ -4545,22 +4868,32 @@
     {
       "details": {
         "defined_in_prose": [],
-        "occurrences": 1
+        "occurrences": 3
       },
       "disposition": null,
       "id": "unresolved_identifier:keyid",
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 674,
-          "row": 3,
-          "section": "2.8",
-          "table": "table:2.8:1"
+          "line": 727,
+          "row": 5,
+          "section": "2.8.2",
+          "table": "table:2.8.2:1"
+        },
+        {
+          "line": 758,
+          "section": "2.8.3"
+        },
+        {
+          "line": 806,
+          "section": "2.8.4"
         }
       ],
       "message": "`keyid` resolves to no table row, key, or table-declared value.",
       "subjects": [
-        "concept:2.8:3#profile-choice"
+        "concept:2.8.2:5#requests",
+        "block:2.8.3:2",
+        "block:2.8.4:5"
       ]
     },
     {
@@ -4569,19 +4902,55 @@
         "occurrences": 1
       },
       "disposition": null,
+      "id": "unresolved_identifier:keys.json",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 851,
+          "section": "2.8.7"
+        }
+      ],
+      "message": "`keys.json` resolves to no table row, key, or table-declared value; no table defines `keys`.",
+      "subjects": [
+        "block:2.8.7:1"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 5
+      },
+      "disposition": null,
       "id": "unresolved_identifier:kid",
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 673,
-          "row": 2,
-          "section": "2.8",
-          "table": "table:2.8:1"
+          "line": 715,
+          "section": "2.8.1"
+        },
+        {
+          "line": 715,
+          "section": "2.8.1"
+        },
+        {
+          "line": 749,
+          "section": "2.8.3"
+        },
+        {
+          "line": 777,
+          "section": "2.8.3"
+        },
+        {
+          "line": 805,
+          "section": "2.8.4"
         }
       ],
       "message": "`kid` resolves to no table row, key, or table-declared value.",
       "subjects": [
-        "concept:2.8:2#profile-choice"
+        "block:2.8.1:4",
+        "block:2.8.3:1",
+        "block:2.8.3:4",
+        "block:2.8.4:5"
       ]
     },
     {
@@ -4594,15 +4963,13 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 673,
-          "row": 2,
-          "section": "2.8",
-          "table": "table:2.8:1"
+          "line": 749,
+          "section": "2.8.3"
         }
       ],
       "message": "`kty` resolves to no table row, key, or table-declared value.",
       "subjects": [
-        "concept:2.8:2#profile-choice"
+        "block:2.8.3:1"
       ]
     },
     {
@@ -4615,13 +4982,13 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1705,
+          "line": 1878,
           "row": 2,
           "section": "5.2.9",
           "table": "table:5.2.9:1"
         },
         {
-          "line": 1727,
+          "line": 1900,
           "section": "5.2.9"
         }
       ],
@@ -4641,13 +5008,32 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1727,
+          "line": 1900,
           "section": "5.2.9"
         }
       ],
       "message": "`livestream` resolves to no table row, key, or table-declared value.",
       "subjects": [
         "block:5.2.9:4"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 1
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:max-age",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 786,
+          "section": "2.8.3"
+        }
+      ],
+      "message": "`max-age` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "block:2.8.3:5"
       ]
     },
     {
@@ -4663,7 +5049,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 3065,
+          "line": 3245,
           "section": "8"
         }
       ],
@@ -4682,7 +5068,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1154,
+          "line": 1325,
           "section": "4.1.3"
         }
       ],
@@ -4701,13 +5087,13 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1705,
+          "line": 1878,
           "row": 2,
           "section": "5.2.9",
           "table": "table:5.2.9:1"
         },
         {
-          "line": 1720,
+          "line": 1893,
           "section": "5.2.9"
         }
       ],
@@ -4729,25 +5115,25 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2181,
+          "line": 2358,
           "row": 6,
           "section": "5.6",
           "table": "table:5.6:2"
         },
         {
-          "line": 2795,
+          "line": 2975,
           "row": 3,
           "section": "5.9",
           "table": "table:5.9:3"
         },
         {
-          "line": 2796,
+          "line": 2976,
           "row": 4,
           "section": "5.9",
           "table": "table:5.9:3"
         },
         {
-          "line": 2817,
+          "line": 2997,
           "section": "5.9"
         }
       ],
@@ -4762,22 +5148,66 @@
     {
       "details": {
         "defined_in_prose": [],
-        "occurrences": 1
+        "occurrences": 9
       },
       "disposition": null,
       "id": "unresolved_identifier:nonce",
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 674,
+          "line": 727,
+          "row": 5,
+          "section": "2.8.2",
+          "table": "table:2.8.2:1"
+        },
+        {
+          "line": 727,
+          "row": 5,
+          "section": "2.8.2",
+          "table": "table:2.8.2:1"
+        },
+        {
+          "line": 740,
+          "section": "2.8.2"
+        },
+        {
+          "line": 810,
+          "section": "2.8.4"
+        },
+        {
+          "line": 820,
+          "section": "2.8.5"
+        },
+        {
+          "line": 821,
+          "section": "2.8.5"
+        },
+        {
+          "line": 823,
+          "section": "2.8.5"
+        },
+        {
+          "line": 834,
           "row": 3,
-          "section": "2.8",
-          "table": "table:2.8:1"
+          "section": "2.8.6",
+          "table": "table:2.8.6:1"
+        },
+        {
+          "line": 835,
+          "row": 4,
+          "section": "2.8.6",
+          "table": "table:2.8.6:1"
         }
       ],
       "message": "`nonce` resolves to no table row, key, or table-declared value.",
       "subjects": [
-        "concept:2.8:3#profile-choice"
+        "concept:2.8.2:5#requests",
+        "concept:2.8.2:5#responses",
+        "block:2.8.2:2",
+        "block:2.8.4:7",
+        "block:2.8.5:1",
+        "concept:2.8.6:3#meaning",
+        "concept:2.8.6:4#meaning"
       ]
     },
     {
@@ -4796,7 +5226,7 @@
           "table": "table:1.1:2"
         },
         {
-          "line": 2775,
+          "line": 2955,
           "row": 6,
           "section": "5.9",
           "table": "table:5.9:1"
@@ -4818,7 +5248,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1753,
+          "line": 1926,
           "row": 4,
           "section": "5.3",
           "table": "table:5.3:2"
@@ -4839,7 +5269,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1529,
+          "line": 1700,
           "section": "5.2.2"
         }
       ],
@@ -4860,7 +5290,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2433,
+          "line": 2612,
           "row": 8,
           "section": "5.6.5",
           "table": "table:5.6.5:1"
@@ -4881,7 +5311,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1669,
+          "line": 1842,
           "row": 1,
           "section": "5.2.8",
           "table": "table:5.2.8:1"
@@ -4902,37 +5332,37 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1252,
+          "line": 1423,
           "section": "4.3"
         },
         {
-          "line": 1260,
+          "line": 1431,
           "section": "4.3"
         },
         {
-          "line": 1279,
+          "line": 1450,
           "row": 1,
           "section": "4.3.1",
           "table": "table:4.3.1:1"
         },
         {
-          "line": 1297,
+          "line": 1468,
           "section": "4.3.2"
         },
         {
-          "line": 1298,
+          "line": 1469,
           "section": "4.3.2"
         },
         {
-          "line": 1301,
+          "line": 1472,
           "section": "4.3.2"
         },
         {
-          "line": 1304,
+          "line": 1475,
           "section": "4.3.2"
         },
         {
-          "line": 1364,
+          "line": 1535,
           "row": 2,
           "section": "4.3.4",
           "table": "table:4.3.4:1"
@@ -4979,13 +5409,13 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1705,
+          "line": 1878,
           "row": 2,
           "section": "5.2.9",
           "table": "table:5.2.9:1"
         },
         {
-          "line": 1727,
+          "line": 1900,
           "section": "5.2.9"
         }
       ],
@@ -5007,13 +5437,13 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2177,
+          "line": 2354,
           "row": 2,
           "section": "5.6",
           "table": "table:5.6:2"
         },
         {
-          "line": 2431,
+          "line": 2610,
           "row": 6,
           "section": "5.6.5",
           "table": "table:5.6.5:1"
@@ -5035,7 +5465,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2451,
+          "line": 2630,
           "row": 4,
           "section": "5.6.5",
           "table": "table:5.6.5:2"
@@ -5056,7 +5486,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1705,
+          "line": 1878,
           "row": 2,
           "section": "5.2.9",
           "table": "table:5.2.9:1"
@@ -5099,13 +5529,13 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2316,
+          "line": 2493,
           "row": 7,
           "section": "5.6.2",
           "table": "table:5.6.2:2"
         },
         {
-          "line": 2337,
+          "line": 2514,
           "section": "5.6.2"
         }
       ],
@@ -5125,53 +5555,53 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 888,
+          "line": 1059,
           "row": 3,
           "section": "4.1",
           "table": "table:4.1:3"
         },
         {
-          "line": 1267,
+          "line": 1438,
           "section": "4.3"
         },
         {
-          "line": 1272,
+          "line": 1443,
           "section": "4.3"
         },
         {
-          "line": 1273,
+          "line": 1444,
           "section": "4.3"
         },
         {
-          "line": 1281,
+          "line": 1452,
           "row": 3,
           "section": "4.3.1",
           "table": "table:4.3.1:1"
         },
         {
-          "line": 1282,
+          "line": 1453,
           "row": 4,
           "section": "4.3.1",
           "table": "table:4.3.1:1"
         },
         {
-          "line": 1283,
+          "line": 1454,
           "row": 5,
           "section": "4.3.1",
           "table": "table:4.3.1:1"
         },
         {
-          "line": 1284,
+          "line": 1455,
           "row": 6,
           "section": "4.3.1",
           "table": "table:4.3.1:1"
         },
         {
-          "line": 1323,
+          "line": 1494,
           "section": "4.3.2"
         },
         {
-          "line": 1344,
+          "line": 1515,
           "section": "4.3.2"
         }
       ],
@@ -5197,7 +5627,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1752,
+          "line": 1925,
           "row": 3,
           "section": "5.3",
           "table": "table:5.3:2"
@@ -5218,7 +5648,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1645,
+          "line": 1818,
           "section": "5.2.6"
         }
       ],
@@ -5263,7 +5693,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1705,
+          "line": 1878,
           "row": 2,
           "section": "5.2.9",
           "table": "table:5.2.9:1"
@@ -5277,22 +5707,27 @@
     {
       "details": {
         "defined_in_prose": [],
-        "occurrences": 1
+        "occurrences": 2
       },
       "disposition": null,
       "id": "unresolved_identifier:sha-256",
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 677,
-          "row": 6,
-          "section": "2.8",
-          "table": "table:2.8:1"
+          "line": 726,
+          "row": 4,
+          "section": "2.8.2",
+          "table": "table:2.8.2:1"
+        },
+        {
+          "line": 771,
+          "section": "2.8.3"
         }
       ],
       "message": "`sha-256` resolves to no table row, key, or table-declared value.",
       "subjects": [
-        "concept:2.8:6#profile-choice"
+        "concept:2.8.2:4#requests",
+        "block:2.8.3:3"
       ]
     },
     {
@@ -5328,23 +5763,23 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2771,
+          "line": 2951,
           "row": 2,
           "section": "5.9",
           "table": "table:5.9:1"
         },
         {
-          "line": 2794,
+          "line": 2974,
           "row": 2,
           "section": "5.9",
           "table": "table:5.9:3"
         },
         {
-          "line": 2813,
+          "line": 2993,
           "section": "5.9"
         },
         {
-          "line": 2821,
+          "line": 3001,
           "section": "5.9"
         }
       ],
@@ -5366,7 +5801,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2695,
+          "line": 2875,
           "section": "5.7.1"
         }
       ],
@@ -5385,7 +5820,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2453,
+          "line": 2632,
           "row": 6,
           "section": "5.6.5",
           "table": "table:5.6.5:2"
@@ -5406,7 +5841,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1726,
+          "line": 1899,
           "section": "5.2.9"
         }
       ],
@@ -5425,8 +5860,8 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1591,
-          "row": 6,
+          "line": 1764,
+          "row": 8,
           "section": "5.2.4",
           "table": "table:5.2.4:1"
         }
@@ -5455,31 +5890,31 @@
           "table": "table:2.2:1"
         },
         {
-          "line": 1216,
+          "line": 1387,
           "section": "4.1.4"
         },
         {
-          "line": 1310,
+          "line": 1481,
           "section": "4.3.2"
         },
         {
-          "line": 1315,
+          "line": 1486,
           "section": "4.3.2"
         },
         {
-          "line": 1333,
+          "line": 1504,
           "section": "4.3.2"
         },
         {
-          "line": 1334,
+          "line": 1505,
           "section": "4.3.2"
         },
         {
-          "line": 1352,
+          "line": 1523,
           "section": "4.3.3"
         },
         {
-          "line": 1363,
+          "line": 1534,
           "row": 1,
           "section": "4.3.4",
           "table": "table:4.3.4:1"
@@ -5506,7 +5941,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1752,
+          "line": 1925,
           "row": 3,
           "section": "5.3",
           "table": "table:5.3:2"
@@ -5653,7 +6088,7 @@
           "table": "table:1.1:2"
         },
         {
-          "line": 2122,
+          "line": 2299,
           "row": 13,
           "section": "5.6",
           "table": "table:5.6:1"
@@ -5736,7 +6171,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1705,
+          "line": 1878,
           "row": 2,
           "section": "5.2.9",
           "table": "table:5.2.9:1"
@@ -5757,7 +6192,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2451,
+          "line": 2630,
           "row": 4,
           "section": "5.6.5",
           "table": "table:5.6.5:2"
@@ -5778,13 +6213,13 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1950,
+          "line": 2127,
           "section": "5.4.1"
         }
       ],
       "message": "`verificationNotExecuted` resolves to no table row, key, or table-declared value.",
       "subjects": [
-        "block:5.4.1:6"
+        "block:5.4.1:7"
       ]
     },
     {
@@ -5799,7 +6234,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2427,
+          "line": 2606,
           "row": 2,
           "section": "5.6.5",
           "table": "table:5.6.5:1"
@@ -5832,7 +6267,7 @@
           "table": "table:2.2:1"
         },
         {
-          "line": 2850,
+          "line": 3030,
           "section": "5.9"
         }
       ],
@@ -5855,7 +6290,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 2430,
+          "line": 2609,
           "row": 5,
           "section": "5.6.5",
           "table": "table:5.6.5:1"
@@ -5876,17 +6311,50 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1844,
+          "line": 2017,
           "section": "5.4"
         },
         {
-          "line": 1847,
+          "line": 2020,
           "section": "5.4"
         }
       ],
       "message": "`voice` resolves to no table row, key, or table-declared value.",
       "subjects": [
         "block:5.4:5"
+      ]
+    },
+    {
+      "details": {
+        "defined_in_prose": [],
+        "occurrences": 3
+      },
+      "disposition": null,
+      "id": "unresolved_identifier:web-bot-auth",
+      "kind": "unresolved_identifier",
+      "locs": [
+        {
+          "line": 724,
+          "row": 2,
+          "section": "2.8.2",
+          "table": "table:2.8.2:1"
+        },
+        {
+          "line": 725,
+          "row": 3,
+          "section": "2.8.2",
+          "table": "table:2.8.2:1"
+        },
+        {
+          "line": 800,
+          "section": "2.8.4"
+        }
+      ],
+      "message": "`web-bot-auth` resolves to no table row, key, or table-declared value.",
+      "subjects": [
+        "concept:2.8.2:2#requests",
+        "concept:2.8.2:3#responses",
+        "block:2.8.4:3"
       ]
     },
     {
@@ -5899,7 +6367,7 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1379,
+          "line": 1550,
           "row": 1,
           "section": "4.4",
           "table": "table:4.4:1"
@@ -5920,21 +6388,21 @@
       "kind": "unresolved_identifier",
       "locs": [
         {
-          "line": 1287,
+          "line": 1458,
           "row": 9,
           "section": "4.3.1",
           "table": "table:4.3.1:1"
         },
         {
-          "line": 1307,
+          "line": 1478,
           "section": "4.3.2"
         },
         {
-          "line": 1356,
+          "line": 1527,
           "section": "4.3.3"
         },
         {
-          "line": 1364,
+          "line": 1535,
           "row": 2,
           "section": "4.3.4",
           "table": "table:4.3.4:1"
@@ -5964,7 +6432,7 @@
           "table": "table:1.1:2"
         },
         {
-          "line": 2804,
+          "line": 2984,
           "row": 3,
           "section": "5.9",
           "table": "table:5.9:4"
@@ -5987,8 +6455,8 @@
       "kind": "array_suffix_mismatch",
       "locs": [
         {
-          "line": 1594,
-          "row": 9,
+          "line": 1767,
+          "row": 11,
           "section": "5.2.4",
           "table": "table:5.2.4:1"
         }
@@ -6007,7 +6475,7 @@
       "kind": "expression_value_unknown",
       "locs": [
         {
-          "line": 1153,
+          "line": 1324,
           "section": "4.1.3"
         }
       ],
@@ -6025,11 +6493,11 @@
       "kind": "expression_value_unknown",
       "locs": [
         {
-          "line": 1133,
+          "line": 1304,
           "section": "4.1.3"
         },
         {
-          "line": 1870,
+          "line": 2043,
           "section": "5.4"
         }
       ],
@@ -6048,7 +6516,7 @@
       "kind": "expression_value_unknown",
       "locs": [
         {
-          "line": 2357,
+          "line": 2534,
           "section": "5.6.3"
         }
       ],
@@ -6066,19 +6534,19 @@
       "kind": "expression_value_unknown",
       "locs": [
         {
-          "line": 1761,
+          "line": 1934,
           "row": 1,
           "section": "5.3",
           "table": "table:5.3:3"
         },
         {
-          "line": 2587,
+          "line": 2767,
           "row": 3,
           "section": "5.7",
           "table": "table:5.7:1"
         },
         {
-          "line": 2770,
+          "line": 2950,
           "row": 1,
           "section": "5.9",
           "table": "table:5.9:1"
@@ -6188,6 +6656,46 @@
     },
     {
       "details": {
+        "identifiers": [
+          "nonce"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2.8.5:d717d522",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 820,
+          "section": "2.8.5"
+        }
+      ],
+      "message": "A MUST statement in § 2.8.5 names no field or key: \"A verifier MUST reject a `nonce` it has already seen from the same origin within the signature's lifetime, with `429`.\"",
+      "subjects": [
+        "rule:2.8.5:d717d522"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": [
+          "keys.json"
+        ]
+      },
+      "disposition": null,
+      "id": "must_without_field:rule:2.8.7:bb44896e",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 851,
+          "section": "2.8.7"
+        }
+      ],
+      "message": "A MUST NOT statement in § 2.8.7 names no field or key: \"The private keys in its `keys.json` are public test keys: section 6.8 says they \"MUST NOT be used in production\", and a verifier SHOULD reject them.\"",
+      "subjects": [
+        "rule:2.8.7:bb44896e"
+      ]
+    },
+    {
+      "details": {
         "identifiers": []
       },
       "disposition": null,
@@ -6217,7 +6725,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 710,
+          "line": 881,
           "section": "3"
         }
       ],
@@ -6235,7 +6743,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 722,
+          "line": 893,
           "section": "3"
         }
       ],
@@ -6253,7 +6761,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 1018,
+          "line": 1189,
           "section": "4.1.1"
         }
       ],
@@ -6273,7 +6781,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 1016,
+          "line": 1187,
           "section": "4.1.1"
         }
       ],
@@ -6294,7 +6802,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 1213,
+          "line": 1384,
           "section": "4.1.4"
         }
       ],
@@ -6312,7 +6820,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 1214,
+          "line": 1385,
           "section": "4.1.4"
         }
       ],
@@ -6330,7 +6838,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 904,
+          "line": 1075,
           "section": "4.1"
         }
       ],
@@ -6348,7 +6856,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 1331,
+          "line": 1502,
           "section": "4.3.2"
         }
       ],
@@ -6366,7 +6874,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 1536,
+          "line": 1707,
           "section": "5.2.2"
         }
       ],
@@ -6387,7 +6895,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 1572,
+          "line": 1743,
           "section": "5.2.3"
         }
       ],
@@ -6405,7 +6913,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 1643,
+          "line": 1816,
           "section": "5.2.6"
         }
       ],
@@ -6425,7 +6933,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 1692,
+          "line": 1865,
           "section": "5.2.8"
         }
       ],
@@ -6443,7 +6951,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 1724,
+          "line": 1897,
           "section": "5.2.9"
         }
       ],
@@ -6461,7 +6969,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 1950,
+          "line": 2127,
           "section": "5.4.1"
         }
       ],
@@ -6479,7 +6987,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 1937,
+          "line": 2110,
           "section": "5.4.1"
         }
       ],
@@ -6493,11 +7001,29 @@
         "identifiers": []
       },
       "disposition": null,
+      "id": "must_without_field:rule:5.4.1:725c4a7c",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 2123,
+          "section": "5.4.1"
+        }
+      ],
+      "message": "A MUST statement in § 5.4.1 names no field or key: \"If the service cannot provide such a session, the creative MUST be inspected outside the stitched stream.\"",
+      "subjects": [
+        "rule:5.4.1:725c4a7c"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
       "id": "must_without_field:rule:5.4.1:7adf48a7",
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 1925,
+          "line": 2098,
           "section": "5.4.1"
         }
       ],
@@ -6511,11 +7037,29 @@
         "identifiers": []
       },
       "disposition": null,
+      "id": "must_without_field:rule:5.4.1:9a1bf7bd",
+      "kind": "must_without_field",
+      "locs": [
+        {
+          "line": 2122,
+          "section": "5.4.1"
+        }
+      ],
+      "message": "A MUST statement in § 5.4.1 names no field or key: \"A preview served through server-side ad insertion MUST use a session in which the insertion service sends no production notifications.\"",
+      "subjects": [
+        "rule:5.4.1:9a1bf7bd"
+      ]
+    },
+    {
+      "details": {
+        "identifiers": []
+      },
+      "disposition": null,
       "id": "must_without_field:rule:5.4.1:f25ad098",
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 1942,
+          "line": 2115,
           "section": "5.4.1"
         }
       ],
@@ -6535,7 +7079,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 1949,
+          "line": 2126,
           "section": "5.4.1"
         }
       ],
@@ -6555,7 +7099,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 2027,
+          "line": 2204,
           "section": "5.5"
         }
       ],
@@ -6575,7 +7119,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 2025,
+          "line": 2202,
           "section": "5.5"
         }
       ],
@@ -6593,7 +7137,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 2032,
+          "line": 2209,
           "section": "5.5"
         }
       ],
@@ -6613,7 +7157,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 2264,
+          "line": 2441,
           "section": "5.6.1"
         }
       ],
@@ -6634,7 +7178,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 2345,
+          "line": 2522,
           "section": "5.6.2"
         }
       ],
@@ -6654,7 +7198,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 2410,
+          "line": 2589,
           "section": "5.6.4"
         }
       ],
@@ -6672,7 +7216,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 2414,
+          "line": 2593,
           "section": "5.6.4"
         }
       ],
@@ -6690,7 +7234,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 2491,
+          "line": 2671,
           "section": "5.6.5"
         }
       ],
@@ -6710,7 +7254,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 2679,
+          "line": 2859,
           "section": "5.7.1"
         }
       ],
@@ -6728,7 +7272,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 2680,
+          "line": 2860,
           "section": "5.7.1"
         }
       ],
@@ -6746,7 +7290,7 @@
       "kind": "must_without_field",
       "locs": [
         {
-          "line": 2760,
+          "line": 2940,
           "section": "5.8"
         }
       ],
@@ -6757,8 +7301,8 @@
     }
   ],
   "input": {
-    "blob": "179980bae43c78855432408cd6c6609109963d22",
-    "commit": "a4adff3efb85564d84a4439b27f554123feefd41",
+    "blob": "7ed55dbc2a60d112f1dc9fc342ee6b598d050e2b",
+    "commit": "43f4c723c3250091572fa31a3ab2f355f5d712df",
     "name": "with-our-stack"
   },
   "ir_version": 1

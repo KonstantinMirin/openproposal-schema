@@ -16,7 +16,7 @@ from .eligibility import RequiredCredential
 from .execution import MechanismOption
 from .guarantees import CommittedMetric
 from .inventory import Environment, LineItemEpisodes
-from .kernel import Amount, AppIdStore, CurrencyCode, Domain, GeoCode, IntegerFlag, Interval, OpenObject, PlainInteger, PlainString, Range, RegistrableDomain, Selectable, Settable, TaxonomyCodes
+from .kernel import Amount, AppIdStore, CurrencyCode, Domain, GeoCode, IntegerFlag, Interval, OpenObject, PlainString, Range, RegistrableDomain, SafeInteger, Selectable, Settable, TaxonomyCodes
 from .line_item import MediaChannel
 from .properties import PropertyOptionChildAudience, PropertyOptionSellerRelationship
 from .proposal import MinCommitment
@@ -26,37 +26,6 @@ class LineItemSummaryEnvironmentsSelection(rt.Closed):
     """The `LineItemSummaryEnvironmentsSelection` object of the `representation` module."""
 
     available: list[Environment]
-
-
-class LineItemSummaryImpressionMultiplier(rt.Closed):
-    """The `LineItemSummaryImpressionMultiplier` object of the `representation` module."""
-
-    impression_type: ImpressionMultiplierImpressionType
-    """`gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them"""
-    source_type: PlainInteger
-    """Who supplies the multiplier. A value from AdCOM 1.0 List: DOOH Multiplier Measurement Source Types other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries"""
-
-
-class LineItemSummaryDeliveryCounting(rt.Closed):
-    """The `LineItemSummaryDeliveryCounting` object of the `representation` module."""
-
-    impression_multiplier: Optional[LineItemSummaryImpressionMultiplier] = None
-    """The line item's `delivery_counting.impression_multiplier`, projected to `impression_type` and `source_type`."""
-
-
-class LineItemSummaryPlacement(rt.Closed):
-    """The `LineItemSummaryPlacement` object of the `representation` module."""
-
-    feed: Optional[PlainInteger] = None
-    """A value from List: Feed Types, such as Podcast (3)"""
-    instl: Optional[IntegerFlag] = None
-    """The ad is interstitial or full screen"""
-    plcmt: Optional[PlainInteger] = None
-    """A value from List: Plcmt Subtypes - Video, such as Instream (1). Its presence states that the line item is video, so a `ctv` line item that sells video carries it"""
-    reward: Optional[IntegerFlag] = None
-    """The user receives a reward for viewing the ad"""
-    skip: Optional[IntegerFlag] = None
-    """Video or audio. The placement lets the user skip the ad"""
 
 
 class LineItemSummaryApp(rt.Closed):
@@ -82,24 +51,6 @@ class LineItemSummaryAudienceSelectable(rt.Closed):
 
     available: list[LineItemSummaryAudienceOption]
     """The line item's `audiences.available[]`, each entry projected to `id` and `name`."""
-
-
-class LineItemSummaryBreakPositionOption(rt.Closed):
-    """The `LineItemSummaryBreakPositionOption` object of the `representation` module."""
-
-    delay: Optional[PlainInteger] = None
-    """A value from List: Start Delay Modes, such as Pre-Roll (0)"""
-    id: PlainString
-    """Option id (§ 3.1)"""
-    slotinpod: Optional[PlainInteger] = None
-    """A value from List: Slot Position in Pod"""
-
-
-class LineItemSummaryBreakPositionSelection(rt.Closed):
-    """The `LineItemSummaryBreakPositionSelection` object of the `representation` module."""
-
-    available: list[LineItemSummaryBreakPositionOption]
-    """The line item's `break_position.available[]`, each entry projected to `id`, `delay`, and `slotinpod`."""
 
 
 class LineItemSummaryFormatsSelection(rt.Closed):
@@ -139,6 +90,55 @@ class ProposalSummaryParty(rt.Closed):
     """The party's domain"""
     legal_name: Optional[PlainString] = None
     """The party's legal name. A `registry_id` entry that applies can attest it; the value alone attests nothing"""
+
+
+class LineItemSummaryBreakPositionOption(rt.Closed):
+    """The `LineItemSummaryBreakPositionOption` object of the `representation` module."""
+
+    delay: Optional[SafeInteger] = None
+    """A value from List: Start Delay Modes, such as Pre-Roll (0)"""
+    id: PlainString
+    """Option id (§ 3.1)"""
+    slotinpod: Optional[SafeInteger] = None
+    """A value from List: Slot Position in Pod"""
+
+
+class LineItemSummaryBreakPositionSelection(rt.Closed):
+    """The `LineItemSummaryBreakPositionSelection` object of the `representation` module."""
+
+    available: list[LineItemSummaryBreakPositionOption]
+    """The line item's `break_position.available[]`, each entry projected to `id`, `delay`, and `slotinpod`."""
+
+
+class LineItemSummaryImpressionMultiplier(rt.Closed):
+    """The `LineItemSummaryImpressionMultiplier` object of the `representation` module."""
+
+    impression_type: ImpressionMultiplierImpressionType
+    """`gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them"""
+    source_type: SafeInteger
+    """Who supplies the multiplier. A value from AdCOM 1.0 List: DOOH Multiplier Measurement Source Types other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries"""
+
+
+class LineItemSummaryDeliveryCounting(rt.Closed):
+    """The `LineItemSummaryDeliveryCounting` object of the `representation` module."""
+
+    impression_multiplier: Optional[LineItemSummaryImpressionMultiplier] = None
+    """The line item's `delivery_counting.impression_multiplier`, projected to `impression_type` and `source_type`."""
+
+
+class LineItemSummaryPlacement(rt.Closed):
+    """The `LineItemSummaryPlacement` object of the `representation` module."""
+
+    feed: Optional[SafeInteger] = None
+    """A value from List: Feed Types, such as Podcast (3)"""
+    instl: Optional[IntegerFlag] = None
+    """The ad is interstitial or full screen"""
+    plcmt: Optional[SafeInteger] = None
+    """A value from List: Plcmt Subtypes - Video, such as Instream (1). Its presence states that the line item is video, so a `ctv` line item that sells video carries it"""
+    reward: Optional[IntegerFlag] = None
+    """The user receives a reward for viewing the ad"""
+    skip: Optional[IntegerFlag] = None
+    """Video or audio. The placement lets the user skip the ad"""
 
 
 class LineItemSummaryPropertyOption(rt.Closed):
@@ -182,11 +182,11 @@ class LineItemSummaryPricingEntry(rt.Closed):
     """The currency of the entry's rates (below)"""
     list_rate: Amount
     """The rate before options. A buyer MAY request another value, and a granted value is the `list_rate` of the next `version`"""
-    price_type: Optional[PlainInteger] = None
+    price_type: Optional[SafeInteger] = None
     """How `agreed_rate` clears, as Deals API 1.0 `terms.pricetype`: Dynamic (0), the auction type of each bid request; First Price (1); Second Price Plus (2); Fixed Price (3); or an exchange-specific value, 500 and up"""
     pricing_id: PlainString
     """Names the entry within the line item. A revision MUST NOT reuse it for a different `cost_method`, `cost_parameters`, `currency`, or `transaction_mechanisms[]`"""
-    unit_bounds: Optional[Range[PlainInteger]] = None
+    unit_bounds: Optional[Range[SafeInteger]] = None
     """Bounds on the units committed under this entry, counted in its unit (§ 5.6.5): `commitment.amount` when `basis` is `units`, otherwise `derived_units`. A buyer MAY request another. Absent on a `FLAT` entry"""
 
 
@@ -263,5 +263,5 @@ class ProposalSummary(rt.Closed):
     """Identifies the proposal. Unique within `seller.domain`"""
     seller: ProposalSummaryParty
     """The proposal's `seller`, projected to `domain` and `legal_name`."""
-    version: PlainInteger
+    version: SafeInteger
     """Monotonically increasing revision number, starting at 1, held by the seller. Each version is a snapshot of the proposal's offered terms (§ 4.1.3). A version is frozen at the earliest of: the proposal's `status` leaving `draft`; a `negotiation_history[]` or `assent[]` entry naming it; a counterparty receiving it in any representation (§ 2.1). The offered terms of a frozen version MUST NOT change; a change to them creates version `n+1`. The values § 4.1.3 lists as not offered terms change without a new version"""

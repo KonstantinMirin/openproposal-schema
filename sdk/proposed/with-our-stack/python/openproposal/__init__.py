@@ -13,7 +13,7 @@ from pydantic import TypeAdapter
 
 from . import _runtime as rt
 from ._runtime import Mode, dump, dump_json, is_format
-from .kernel import Amount, App, AppId, AppIdStore, AppIdStores, ApprovalStatus, ApprovalStatuses, CalendarUnit, CalendarUnits, ClockWindow, ClockWindowNarrowing, CurrencyCode, DayName, DayNames, Delta, Digest, DocumentRef, Domain, Duration, EntryRef, ErrorObject, ErrorObjectCode, ErrorObjectCodes, ErrorObjectRetries, ErrorObjectRetry, FieldPointer, FormatId, Fraction, FractionDelta, GeoCode, GeoCodeNarrowing, HttpsUrl, IanaZone, Instant, IntegerFlag, IntegerFlags, Interval, LineItemStatus, LineItemStatuses, Measurer, NamespacedTerm, Narrowing, OpenObject, Party, PlainInteger, PlainIntegerNarrowing, PlainNumber, PlainString, ProposalStatus, ProposalStatuses, Range, RegistrableDomain, SeatRef, Selectable, Settable, SettableRange, Side, Sides, TaxonomyCodes, TimeOfDay, TimeUnit, TimeUnits, TimeZone, Url, VersionRef
+from .kernel import Amount, App, AppId, AppIdStore, AppIdStores, ApprovalStatus, ApprovalStatuses, CalendarUnit, CalendarUnits, ClockWindow, ClockWindowNarrowing, CurrencyCode, DayName, DayNames, Delta, Digest, DocumentRef, Domain, Duration, EntryRef, ErrorObject, ErrorObjectCode, ErrorObjectCodes, ErrorObjectRetries, ErrorObjectRetry, FieldPointer, FormatId, Fraction, FractionDelta, GeoCode, GeoCodeNarrowing, HttpsUrl, IanaZone, Instant, IntegerFlag, IntegerFlags, Interval, LineItemStatus, LineItemStatuses, Measurer, NamespacedTerm, Narrowing, OpenObject, Party, PlainNumber, PlainString, ProposalStatus, ProposalStatuses, Range, RegistrableDomain, SafeInteger, SafeIntegerNarrowing, SeatRef, Selectable, Settable, SettableRange, Side, Sides, TaxonomyCodes, TimeOfDay, TimeUnit, TimeUnits, TimeZone, Url, VersionRef
 from .audience import ActivationRouteSelection, AddressableScale, AddressableScaleUnit, AddressableScaleUnits, AudienceOption, AudienceOptionSensitiveCategories, AudienceOptionSensitiveCategory, AudienceSelectable, BuyerList, BuyerListMatchMethod, BuyerListMatchMethods, BuyerSupplied, CombineOperator, CombineOperators, CombineSelection, LineItemActivationRoute, LineItemActivationRoutes
 from .commercial import AssentEntry, AssentEntryGround, AssentEntryGrounds, AssentEntryRole, AssentEntryRoles, Availability, AvailabilityCertainties, AvailabilityCertainty, AvailabilityUnit, AvailabilityUnits, BuyerWrites, BuyerWritesAudienceSelectable, BuyerWritesBuyerRequirements, BuyerWritesDeviceBounds, BuyerWritesFrequencyCap, BuyerWritesGeoBounds, BuyerWritesSelectable, BuyerWritesSettable, BuyerWritesSettableRange, BuyerWritesShortfallRemedy, CancellationNotice, CancellationOption, CancellationOptionNoticeReference, CancellationOptionNoticeReferences, CancellationPolicySelection, Commit, CommitResult, Commitment, CommitmentAmount, CommitmentAmountBases, CommitmentAmountBasis, CommitmentBounds, CostParameters, CostParametersActionType, CostParametersDemographic, CostParametersRateUnit, CostParametersRateUnits, CostParametersViewabilityStandard, CostParametersViewabilityStandards, DatedShare, DeliveryCounting, DeliveryCountingPartialPlayCredit, DeliveryCountingPartialPlayCredits, ExclusivityOption, ExclusivityOptionScope, ExclusivityOptionScopes, ExclusivityOptionSeparation, ExclusivityOptionSeparations, ExclusivitySelection, Fee, FeeCalculation, FeeCalculations, Hold, HoldStatus, HoldStatuses, HoldTerms, ImpressionMultiplier, ImpressionMultiplierImpressionType, ImpressionMultiplierImpressionTypes, ImpressionMultiplierSettlesOn, ImpressionMultiplierSettlesOns, LineItemRenewalRight, LineItemRenewalRights, LineItemWrites, Preemption, PreemptionReason, PreemptionReasons, PreemptionRemedies, PreemptionRemedy, PricingEntry, PricingEntryCostMethod, PricingEntryCostMethods, PricingEntryRatePer, PricingEntryRatePers, ProofOfPerformance, ProofOfPerformanceEvidence, ProofOfPerformanceEvidences, SpendRange, UnitBoundsRange
 from .creative import Asset, AssetProvenance, AssetProvenanceDisclosureMethod, AssetProvenanceDisclosureMethods, CreativeDelivery, CreativeDeliveryMethod, CreativeDeliveryMethods, CreativeDeliveryOtherProtocol, CreativeDeliveryOtherProtocols, FormatSpec, FormatsSelection, MaterialsDue, ProductionOption, ProductionSelection
@@ -30,10 +30,10 @@ from .settlement import Agreement, AgreementAgreementType, AgreementAgreementTyp
 from .targeting import AcceptedExclusions, CountSettableRange, DaypartBounds, DeviceBounds, ExclusionEntry, ExclusionList, ExclusionTerms, ExclusionTermsEnforcement, ExclusionTermsEnforcements, ExclusionType, ExclusionTypes, FrequencyCap, FrequencyCapPer, FrequencyCapPers, GeoBounds, MarketsSelection
 from .registry import ExtensionRegistry
 
-SPEC_COMMIT: Final = "a4adff3efb85564d84a4439b27f554123feefd41"
+SPEC_COMMIT: Final = "43f4c723c3250091572fa31a3ab2f355f5d712df"
 """The commit of the OpenProposal specification repository that the types are generated from."""
 
-SPEC_BLOB: Final = "179980bae43c78855432408cd6c6609109963d22"
+SPEC_BLOB: Final = "7ed55dbc2a60d112f1dc9fc342ee6b598d050e2b"
 """The Git blob SHA of the specification file at that commit."""
 
 LOCK: Final = "with-our-stack"
@@ -42,7 +42,7 @@ LOCK: Final = "with-our-stack"
 VARIANT: Final = "proposed"
 """The build: `as-written`, the specification as its text and examples write it, or `proposed`, with the changes we propose."""
 
-SCHEMA_RELEASE: Final = "275fa9cf43a889a83b18f211f48624258006dae36b83f0a25d5bb8a814accfab"
+SCHEMA_RELEASE: Final = "a26a8d65910901ddbeca934d7cc03997dbfee41e1493be8825cc855f408b5c71"
 """The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it."""
 
 TYPES: dict[str, Any] = {
@@ -221,8 +221,6 @@ TYPES: dict[str, Any] = {
     "PackageSummary": PackageSummary,
     "Party": Party,
     "Placement": Placement,
-    "PlainInteger": PlainInteger,
-    "PlainIntegerNarrowing": PlainIntegerNarrowing,
     "PlainNumber": PlainNumber,
     "PlainString": PlainString,
     "Preemption": Preemption,
@@ -263,6 +261,8 @@ TYPES: dict[str, Any] = {
     "RequiredCredential": RequiredCredential,
     "RequiredCredentialCredentialType": RequiredCredentialCredentialType,
     "RetentionRange": RetentionRange,
+    "SafeInteger": SafeInteger,
+    "SafeIntegerNarrowing": SafeIntegerNarrowing,
     "Screen": Screen,
     "SeatRef": SeatRef,
     "SellerAccount": SellerAccount,
@@ -545,8 +545,6 @@ __all__ = [
     "PackageSummary",
     "Party",
     "Placement",
-    "PlainInteger",
-    "PlainIntegerNarrowing",
     "PlainNumber",
     "PlainString",
     "Preemption",
@@ -607,6 +605,8 @@ __all__ = [
     "SCHEMA_RELEASE",
     "SPEC_BLOB",
     "SPEC_COMMIT",
+    "SafeInteger",
+    "SafeIntegerNarrowing",
     "Screen",
     "SeatRef",
     "Selectable",

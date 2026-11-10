@@ -43,8 +43,8 @@
       "additionalProperties": false,
       "properties": {
         "buyerseatid": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId",
-          "description": "Seat ID in the buying system that the response refers to"
+          "description": "Seat ID in the buying system that the response refers to",
+          "type": "string"
         },
         "ext": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/Ext",

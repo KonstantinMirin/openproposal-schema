@@ -101,6 +101,8 @@ export const schemasConventions = defineGate<{ files: EmittedFile[]; model: Mode
     { name: "a primitive's codes with one title twice", lock: "with-open-prs", mutate: (i) => ({ ...i, files: withFile(i.files, KERNEL_FILE, (s) => withDef(s, "IntegerFlag", (d) => ({ ...d, oneOf: [{ const: 0, title: "No" }, { const: 1, title: "No" }] }))) }), expect: 'the primitive "IntegerFlag" is no titled codes' },
     // A default beside a $ref is a value of the type it names.
     { name: "a default its type rejects", mutate: (i) => ({ ...i, files: withFile(i.files, "modules/commercial/1/commercial.json", (s) => withDef(s, "PricingEntry", (d) => ({ ...d, properties: { ...(d.properties as Record<string, Record<string, unknown>>), currency: { ...(d.properties as Record<string, Record<string, unknown>>).currency, default: "usd" } } }))) }), expect: 'the default "usd" is no value of the type its $ref names' },
+    // A document's file is a reference to its definition in the composition, so no document references another (type rules § 3).
+    { name: "a document's root that references another document", mutate: (i) => ({ ...i, files: withFile(i.files, "documents/1/proposal.json", (s) => ({ ...s, $ref: "line-item.json" })) }), expect: "a document references only the composition" },
     { name: "two extension branches", spec: "adcom", mutate: (i) => ({ ...i, files: withFile(i.files, LISTS_FILE, (s) => withDef(s, "ApiFramework", (d) => ({ ...d, oneOf: [...(d.oneOf as unknown[]), { type: "integer", minimum: 900, title: "More" }] }))) }), expect: "a branch other than a code's is no titled integer extension, or there are several" },
   ],
 });

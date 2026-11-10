@@ -4,8 +4,11 @@
  * module declarations, which hold across locks, and returns its problems;
  * empty means the convention holds.
  *
- * - layers: no type references a type of a higher layer, and the type graph
- *   has no cycle (§ 3);
+ * - layers: no type references a type of a higher layer, the type graph has
+ *   no cycle, and no reference runs sideways: inside the kernel, a primitive
+ *   references at most a primitive that stands alone and a composite only
+ *   primitives; a module references only the kernel and itself; only the top
+ *   layer's composition references the top layer (§ 3, src/placement.ts);
  * - modules: a module's types reference only the kernel and the modules its
  *   mapping file lists in `depends`, every listed module is referenced on
  *   some lock, and the declared graph is a DAG (§ 3);
@@ -28,6 +31,7 @@ import type { NamedStructure } from "./duplication.ts";
 import type { Kernel } from "./kernel.ts";
 import { inScope, type DecisionRecord, type MappingFile, type TypeRef } from "./mapping.ts";
 import { KERNEL_MODULE } from "./mapping-rules.ts";
+import { placementProblems } from "./placement.ts";
 import type { ModelDoc, ModelType } from "./model.ts";
 
 const isMap = (v: unknown): v is Record<string, unknown> => v !== null && typeof v === "object" && !Array.isArray(v);
@@ -68,7 +72,7 @@ export function cycles(nodes: string[], edges: (n: string) => string[]): string[
   return out.sort((a, b) => (a[0]! < b[0]! ? -1 : 1));
 }
 
-/** Type rules § 3: a type references only types of its own layer or below, every reference resolves, and no reference chain returns to its start. */
+/** Type rules § 3: a type references only types of its own layer or below, every reference resolves, no reference chain returns to its start, and no reference runs sideways within the kernel or between modules, or up to the composition. */
 export function layerProblems(model: ModelDoc): string[] {
   const types = index(model);
   const problems: string[] = [];
@@ -82,6 +86,7 @@ export function layerProblems(model: ModelDoc): string[] {
   for (const c of cycles([...types.keys()], (n) => types.get(n)?.references ?? [])) {
     problems.push(`the types ${c.map((n) => `"${n}"`).join(", ")} reference each other in a cycle (type rules § 3)`);
   }
+  problems.push(...placementProblems(model.types));
   return problems;
 }
 

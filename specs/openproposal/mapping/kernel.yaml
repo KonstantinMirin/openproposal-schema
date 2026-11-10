@@ -406,7 +406,7 @@ entries:
     digest: ba0312da840ff7fdd6178f88b915801a6f77e3b101b2010668bd413544114b48
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: VersionRef, type: { kind: named, name: PlainInteger }, presence: required }
+    as: { role: property, object: VersionRef, type: { kind: named, name: SafeInteger }, presence: required }
   - ir: rule:2.2:373dbf11-4
     digest: a8f82ed98fd189ad2a7ff03128b789da4d51d57a9055bc407704ee1863caf654
     locks: [ with-our-stack ]
@@ -520,7 +520,7 @@ entries:
     digest: 08b4c3a14093b12b45241e0006344bdb90dfa33f9555fe9d9f7fdcef7c070349
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: TaxonomyCodes, type: { kind: named, name: PlainInteger }, presence: required }
+    as: { role: property, object: TaxonomyCodes, type: { kind: named, name: SafeInteger }, presence: required }
   - ir: rule:2.2:373dbf11-7
     digest: c2c7d5723c2c24b1bdd15e01a9a18d1ec7b562580ccec3f71aa9611476c6bbaa
     locks: [ with-our-stack ]
@@ -649,7 +649,7 @@ entries:
     digest: 407dee4d73ecc52331ba20ae22175edcb429a3a6b9d79a0856b5d828e48980b4
     locks: [ with-our-stack ]
     source: { rule: typed-row }
-    as: { role: property, object: ErrorObject, type: { kind: named, name: PlainInteger }, presence: conditional }
+    as: { role: property, object: ErrorObject, type: { kind: named, name: SafeInteger }, presence: conditional }
   - ir: rule:2.4:3b0456cb
     digest: a62c2e41efb1e1379726c47c217e9704b8d29d61c9a1bfac33f33a5c7b284a36
     locks: [ with-our-stack ]

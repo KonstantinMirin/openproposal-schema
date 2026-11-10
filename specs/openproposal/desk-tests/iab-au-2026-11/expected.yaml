@@ -1,0 +1,190 @@
+# The verdict each IAB Australia desk-test line item must get on the
+# with-our-stack lock (README.md says where the files come from). Two engines
+# judge every file: the lock's schemas and rules, as the examples gate checks
+# an example, and the stack's own checker, scripts/check_examples.py at the
+# lock's commit, run on the lock's specification and examples with these
+# files added to examples/. A file with a finding is rejected at its `path`,
+# and only there, by both; every other file listed under `examples` passes
+# both. The desk-tests gate in `npm run ci` fails on any other verdict, on an
+# undecided check not recorded here, and on a recorded one that is decided
+# now. After a lock move, review each verdict that changed before you change
+# this file.
+format: 1
+lock: with-our-stack
+document: LineItem
+checker: scripts/check_examples.py
+examples:
+  - dooh-v2-a0-direct-12wk-end-1h-later.yaml
+  - dooh-v2-a0-direct-12wk.yaml
+  - dooh-v2-a1-direct-burst1.yaml
+  - dooh-v2-a2-direct-burst2.yaml
+  - dooh-v2-a3-direct-burst3.yaml
+  - dooh-v2-b-pg.yaml
+  - dooh-v2-c-both.yaml
+  - dooh-v2-p10-screen-policy.yaml
+  - dooh-v2-p11-c-no-multiplier.yaml
+  - dooh-v2-p12-offset-instant.yaml
+  - dooh-v2-p6-hold-by-route.yaml
+  - dooh-v2-p7-exclusivity-by-route.yaml
+  - dooh-v2-p8-phases.yaml
+  - dooh-v2-p9-demographic.yaml
+  - dooh-v2-p9b-demographic-domain.yaml
+  - loopshare-s01-p7a-q01-domain-plays.yaml
+  - loopshare-s01-p7b-q01-bad-term-control.yaml
+  - loopshare-s01-q01-a-pg-guaranteed.yaml
+  - loopshare-s01-q01-b-pg-share-and-impressions.yaml
+  - loopshare-s01-q01-c-plays-metric.yaml
+  - loopshare-s01-q02-a-play-commitment.yaml
+  - loopshare-s01-q03-a-operable-windows-commit.yaml
+  - loopshare-s01-q03-b-daypart-outside-hours.yaml
+findings:
+  - example: dooh-v2-p6-hold-by-route.yaml
+    path: /hold_terms/transaction_mechanisms
+    kind: undefined_key
+    reason: >-
+      `HoldTerms` has no `transaction_mechanisms`: a hold that differs by
+      route is two line items (§ 3.1, #143).
+  - example: dooh-v2-p7-exclusivity-by-route.yaml
+    path: /exclusivity/available/0/transaction_mechanisms
+    kind: undefined_key
+    reason: >-
+      `ExclusivityOption` has no `transaction_mechanisms`: exclusivity that
+      differs by route is two line items (§ 3.1, #143).
+  - example: dooh-v2-p8-phases.yaml
+    path: /commitment/phases
+    kind: undefined_key
+    reason: >-
+      `Commitment` has no `phases`: phased commitments are #114, which the
+      stack doesn't carry; a burst is its own line item.
+  - example: dooh-v2-p9-demographic.yaml
+    path: /delivery_counting/impression_multiplier/demographic
+    kind: invalid
+    reason: >-
+      A bare dataset code, `A001`: `demographic` takes the terms of
+      `cost_parameters.demographic`, whose row lists no core terms, so a term
+      is domain-qualified (§ 5.6.4).
+  - example: dooh-v2-p10-screen-policy.yaml
+    path: /properties/available/0/screens/0/creative_policy
+    kind: undefined_key
+    reason: >-
+      A `Screen` has no `creative_policy` (§ 5.2.8): a screen with a policy of its
+      own is its own line item.
+  - example: dooh-v2-p11-c-no-multiplier.yaml
+    path: /delivery_counting
+    kind: rule
+    rule: rule:5.6.4:e58650b7
+    reason: >-
+      The line item counts impressions with no `impression_multiplier`, which
+      is REQUIRED when it does (§ 5.6.4); no schema states the condition, so
+      the rule's check rejects it.
+  - example: dooh-v2-p12-offset-instant.yaml
+    path: /commitment/flight/start
+    kind: invalid
+    reason: >-
+      A flight start with a `+10:00` offset: an `Instant` is written in UTC
+      with `Z` (§ 2.2).
+  - example: loopshare-s01-p7b-q01-bad-term-control.yaml
+    path: /committed_metrics/1/metric
+    kind: invalid
+    reason: >-
+      The set's negative control: an extension term with a space in it is no
+      `VocabularyTerm` (§ 2.2).
+  - example: loopshare-s01-q01-c-plays-metric.yaml
+    path: /committed_metrics/1/metric
+    kind: invalid
+    reason: >-
+      A bare `plays` is neither a core metric term nor an extension term;
+      p7a's domain-qualified `outdoor-owner.example:plays` passes (§ 2.2).
+undecided:
+  - example: dooh-v2-a0-direct-12wk-end-1h-later.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: dooh-v2-a0-direct-12wk.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: dooh-v2-a1-direct-burst1.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: dooh-v2-a2-direct-burst2.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: dooh-v2-a3-direct-burst3.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: dooh-v2-b-pg.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: dooh-v2-c-both.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: dooh-v2-p10-screen-policy.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: dooh-v2-p11-c-no-multiplier.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: dooh-v2-p12-offset-instant.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: dooh-v2-p6-hold-by-route.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: dooh-v2-p7-exclusivity-by-route.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: dooh-v2-p8-phases.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: dooh-v2-p9-demographic.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: dooh-v2-p9b-demographic-domain.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: loopshare-s01-p7a-q01-domain-plays.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: loopshare-s01-p7b-q01-bad-term-control.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: loopshare-s01-q01-a-pg-guaranteed.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: loopshare-s01-q01-b-pg-share-and-impressions.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: loopshare-s01-q01-c-plays-metric.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: loopshare-s01-q02-a-play-commitment.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: loopshare-s01-q03-a-operable-windows-commit.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: loopshare-s01-q03-b-daypart-outside-hours.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.

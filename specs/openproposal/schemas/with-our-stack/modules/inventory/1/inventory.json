@@ -4,27 +4,27 @@
       "additionalProperties": false,
       "properties": {
         "delay": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "A value from List: Start Delay Modes, such as Pre-Roll (0)"
         },
         "id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "Option id (§ 3.1)"
+          "description": "Option id (§ 3.1)",
+          "type": "string"
         },
         "maxseq": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "Ceiling: the most ads a served pod holds"
         },
         "poddur": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "Ceiling: the most seconds of dynamic ad time a served pod holds"
         },
         "podseq": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "A value from List: Pod Sequence"
         },
         "slotinpod": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "A value from List: Slot Position in Pod"
         }
       },
@@ -48,26 +48,23 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/Delta"
           },
           "description": "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
           "type": "object"
         },
         "included": {
           "description": "The options in the base rate, by option id.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         },
         "max_select": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The most options that may be in effect."
         },
         "selected": {
           "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         }
@@ -103,26 +100,23 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/Delta"
           },
           "description": "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
           "type": "object"
         },
         "included": {
           "description": "The options in the base rate, by option id.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         },
         "max_select": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The most options that may be in effect."
         },
         "selected": {
           "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         }
@@ -192,12 +186,12 @@
         "api": {
           "description": "Values from List: API Frameworks that every impression supports, such as MRAID 3.0 (6), OMID 1.0 (7) and SIMID 1.1 (9)",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger"
+            "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger"
           },
           "type": "array"
         },
         "feed": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "A value from List: Feed Types, such as Podcast (3)"
         },
         "instl": {
@@ -207,12 +201,12 @@
         "playmethod": {
           "description": "Video or audio. Values from List: Playback Methods in use, such as Initiates without any specific user interaction with Sound On (1), Initiates without any specific user interaction Sound Off by Default (2), Initiates on Click with Sound On (3) and Continuous Playback (7)",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger"
+            "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger"
           },
           "type": "array"
         },
         "plcmt": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "A value from List: Plcmt Subtypes - Video, such as Instream (1). Its presence states that the line item is video, so a `ctv` line item that sells video carries it"
         },
         "refresh": {
@@ -228,11 +222,11 @@
           "description": "Video or audio. The placement lets the user skip the ad"
         },
         "skipafter": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "When `skip` is `1`: seconds the ad plays before the placement enables skipping"
         },
         "ssai": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "Whether server-side ad insertion is in use and what it does to asset and tracker retrieval, in the values of AdCOM 1.0 `Placement.ssai`, such as all server-side (3)"
         }
       },
@@ -242,12 +236,12 @@
       "additionalProperties": false,
       "properties": {
         "content": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/OpenObject",
-          "description": "An AdCOM 1.0 `Content` object, in AdCOM's keys and meanings, `series`, `title`, `network`, `channel`, `genres`, `rating`, `live`, and `realtime` included. Its `channel` is the AdCOM `Channel` object, the TV channel or station the content is on"
+          "description": "An AdCOM 1.0 `Content` object, in AdCOM's keys and meanings, `series`, `title`, `network`, `channel`, `genres`, `rating`, `live`, and `realtime` included. Its `channel` is the AdCOM `Channel` object, the TV channel or station the content is on",
+          "type": "object"
         },
         "id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "Option id (§ 3.1). It is not compared with delivered content"
+          "description": "Option id (§ 3.1). It is not compared with delivered content",
+          "type": "string"
         },
         "schedule": {
           "$ref": "#/$defs/EventSchedule",
@@ -274,71 +268,23 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/Delta"
           },
           "description": "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
           "type": "object"
         },
         "included": {
           "description": "The options in the base rate, by option id.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         },
         "max_select": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The most options that may be in effect."
         },
         "selected": {
           "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
-          "type": "array"
-        }
-      },
-      "required": [
-        "available",
-        "included"
-      ],
-      "type": "object"
-    },
-    "PropertiesSelection": {
-      "additionalProperties": false,
-      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, `selected[]` the buyer's choice, which replaces it, and `deltas` the price of each option outside `included[]`, each by option id.",
-      "properties": {
-        "available": {
-          "items": {
-            "$ref": "../../properties/1/properties.json#/$defs/PropertyOption"
-          },
-          "type": "array"
-        },
-        "deltas": {
-          "additionalProperties": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/Delta"
-          },
-          "description": "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
-          "type": "object"
-        },
-        "included": {
-          "description": "The options in the base rate, by option id.",
-          "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
-          "type": "array"
-        },
-        "max_select": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
-          "description": "The most options that may be in effect."
-        },
-        "selected": {
-          "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
-          "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         }
@@ -353,7 +299,7 @@
       "additionalProperties": false,
       "properties": {
         "min_interval_s": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "Minimum seconds a creative renders before the slot refreshes"
         }
       },

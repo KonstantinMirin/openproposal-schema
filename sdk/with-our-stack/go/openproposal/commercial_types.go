@@ -470,60 +470,6 @@ func (BuyerWritesGeoBounds) ValidateValue(v any, at string, errs *Errors) {
 	}
 }
 
-// BuyerWritesSettableRange: The `BuyerWritesSettableRange` object of the `commercial` module.
-type BuyerWritesSettableRange struct {
-	// Value: The buyer's value, between the bounds inclusive.
-	Value *PlainInteger `json:"value,omitempty"`
-}
-
-// ValidateValue implements Value.
-func (BuyerWritesSettableRange) ValidateValue(v any, at string, errs *Errors) {
-	m, ok := objectValue(v, at, errs)
-	if !ok {
-		return
-	}
-	checkClosed(m, at, errs, "value")
-	if x, ok := m["value"]; ok {
-		validateAs[PlainInteger](x, member(at, "value"), errs)
-	}
-}
-
-// BuyerWritesFrequencyCap: The `BuyerWritesFrequencyCap` object of the `commercial` module.
-type BuyerWritesFrequencyCap struct {
-	// Count: The line item's `frequency_cap.count`, projected to `value`.
-	Count *BuyerWritesSettableRange `json:"count,omitempty"`
-}
-
-// ValidateValue implements Value.
-func (BuyerWritesFrequencyCap) ValidateValue(v any, at string, errs *Errors) {
-	m, ok := objectValue(v, at, errs)
-	if !ok {
-		return
-	}
-	checkClosed(m, at, errs, "count")
-	if x, ok := m["count"]; ok {
-		validateAs[BuyerWritesSettableRange](x, member(at, "count"), errs)
-	}
-}
-
-// BuyerWritesDeviceBounds: The `BuyerWritesDeviceBounds` object of the `commercial` module.
-type BuyerWritesDeviceBounds struct {
-	// Value: The buyer's value.
-	Value *Narrowing[PlainInteger] `json:"value,omitempty"`
-}
-
-// ValidateValue implements Value.
-func (BuyerWritesDeviceBounds) ValidateValue(v any, at string, errs *Errors) {
-	m, ok := objectValue(v, at, errs)
-	if !ok {
-		return
-	}
-	checkClosed(m, at, errs, "value")
-	if x, ok := m["value"]; ok {
-		validateAs[Narrowing[PlainInteger]](x, member(at, "value"), errs)
-	}
-}
-
 // Availability: The `Availability` object of the `commercial` module.
 type Availability struct {
 	// Certainty: `forecast` | `reservable`. `forecast`: the seller's estimate of the quantity. `reservable`: the quantity the seller says it can reserve for `window`. MUST be `forecast` when the line item's `delivery_type` (§ 5.9) is `non_guaranteed`
@@ -589,61 +535,6 @@ func (CommitmentAmount) ValidateValue(v any, at string, errs *Errors) {
 	}
 	if x, ok := m["basis"]; ok {
 		validateAs[CommitmentAmountBasis](x, member(at, "basis"), errs)
-	}
-}
-
-// AssentEntry: The `AssentEntry` object of the `commercial` module.
-type AssentEntry struct {
-	// At: When the party wrote the entry, by its own statement. No rule reads order from it
-	At Instant `json:"at"`
-	// Ground: Why the seller declined. Core terms: `availability` | `exclusivity` | `terms`, the grounds of § 4.3.2. Absent on any other entry. A receiver that doesn't know a term still reads the entry as a `decline`
-	Ground *AssentEntryGround `json:"ground,omitempty"`
-	// IdempotencyKey: Buyer-generated, unique per `commit`, opaque, and scoped to one buyer and seller pair. The seller MUST NOT interpret it (§ 5.6.1)
-	IdempotencyKey *PlainString `json:"idempotency_key,omitempty"`
-	// LineItemIds: The line items the entry names. MUST be non-empty
-	LineItemIds List[PlainString] `json:"line_item_ids"`
-	// RecordDigest: Of the binding record for the line items in `line_item_ids[]` (§ 4.1.1)
-	RecordDigest Digest `json:"record_digest"`
-	// Role: `commitment` | `acceptance` | `withdrawal` | `decline`. It says what the entry does, and it implies the party
-	Role AssentEntryRole `json:"role"`
-	// Version: The `version` of the record the digest was computed over. `version` is outside the binding record, so the entry binds it
-	Version PlainInteger `json:"version"`
-}
-
-// ValidateValue implements Value.
-func (AssentEntry) ValidateValue(v any, at string, errs *Errors) {
-	m, ok := objectValue(v, at, errs)
-	if !ok {
-		return
-	}
-	checkRequired(m, at, errs, "at", "line_item_ids", "record_digest", "role", "version")
-	checkClosed(m, at, errs, "at", "ground", "idempotency_key", "line_item_ids", "record_digest", "role", "version")
-	if x, ok := m["at"]; ok {
-		validateAs[Instant](x, member(at, "at"), errs)
-	}
-	if x, ok := m["ground"]; ok {
-		validateAs[AssentEntryGround](x, member(at, "ground"), errs)
-	}
-	if x, ok := m["idempotency_key"]; ok {
-		validateAs[PlainString](x, member(at, "idempotency_key"), errs)
-	}
-	if x, ok := m["line_item_ids"]; ok {
-		validateAs[List[PlainString]](x, member(at, "line_item_ids"), errs)
-	}
-	if x, ok := m["record_digest"]; ok {
-		validateAs[Digest](x, member(at, "record_digest"), errs)
-	}
-	if x, ok := m["role"]; ok {
-		validateAs[AssentEntryRole](x, member(at, "role"), errs)
-	}
-	if x, ok := m["version"]; ok {
-		validateAs[PlainInteger](x, member(at, "version"), errs)
-	}
-	if x, ok := m["role"]; ok && jsonEqual(x, "commitment") {
-		checkRequiredWhen(m, at, errs, "role", "idempotency_key")
-	}
-	if x, ok := m["role"]; ok && jsonEqual(x, "decline") {
-		checkRequiredWhen(m, at, errs, "role", "ground")
 	}
 }
 
@@ -786,30 +677,6 @@ func (CancellationOption) ValidateValue(v any, at string, errs *Errors) {
 	}
 	if x, ok := m["notice_reference"]; ok {
 		validateAs[CancellationOptionNoticeReference](x, member(at, "notice_reference"), errs)
-	}
-}
-
-// CommitResult: The `CommitResult` object of the `commercial` module.
-type CommitResult struct {
-	// Availability: The figures that `decline` states, keyed by `line_item_id`. They are not part of the entry
-	Availability Map[PlainString, Availability] `json:"availability,omitzero"`
-	// Entries: The buyer's `commitment` entry, then each matching `acceptance`, `decline`, or `withdrawal` entry written after it in `assent[]`
-	Entries List[AssentEntry] `json:"entries"`
-}
-
-// ValidateValue implements Value.
-func (CommitResult) ValidateValue(v any, at string, errs *Errors) {
-	m, ok := objectValue(v, at, errs)
-	if !ok {
-		return
-	}
-	checkRequired(m, at, errs, "entries")
-	checkClosed(m, at, errs, "availability", "entries")
-	if x, ok := m["availability"]; ok {
-		validateAs[Map[PlainString, Availability]](x, member(at, "availability"), errs)
-	}
-	if x, ok := m["entries"]; ok {
-		validateAs[List[AssentEntry]](x, member(at, "entries"), errs)
 	}
 }
 
@@ -959,42 +826,118 @@ func (ProofOfPerformanceEvidence) ValidateValue(v any, at string, errs *Errors) 
 	validateAnyOf(v, at, errs, func(v any, at string, errs *Errors) { checkEnum(v, at, errs, termsProofOfPerformanceEvidence...) }, validateAs[NamespacedTerm])
 }
 
-// ImpressionMultiplier: The `ImpressionMultiplier` object of the `commercial` module.
-type ImpressionMultiplier struct {
-	// Dataset: The source's named data release the multipliers come from. A new release is a new `dataset`
-	Dataset PlainString `json:"dataset"`
-	// ImpressionType: `gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them
-	ImpressionType ImpressionMultiplierImpressionType `json:"impression_type"`
-	// SettlesOn: `declared` | `restated`. `declared`: the value `dataset` gives that screen, or sync group, and hour when the play runs. Under a deal mechanism (§ 5.9), the bid request carries it as OpenRTB 2.6 `imp.qty.multiplier`. `restated`: that value after any reissue of `dataset` by its source before the count is final (§ 5.7.1)
-	SettlesOn ImpressionMultiplierSettlesOn `json:"settles_on"`
-	// SourceType: Who supplies the multiplier. A value from AdCOM 1.0 List: DOOH Multiplier Measurement Source Types other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries
-	SourceType PlainInteger `json:"source_type"`
-	// Vendor: The domain of the vendor or exchange that supplies the multipliers, as OpenRTB 2.6 `imp.qty.vendor` names a vendor
-	Vendor *RegistrableDomain `json:"vendor,omitempty"`
+// AssentEntry: The `AssentEntry` object of the `commercial` module.
+type AssentEntry struct {
+	// At: When the party wrote the entry, by its own statement. No rule reads order from it
+	At Instant `json:"at"`
+	// Ground: Why the seller declined. Core terms: `availability` | `exclusivity` | `terms`, the grounds of § 4.3.2. Absent on any other entry. A receiver that doesn't know a term still reads the entry as a `decline`
+	Ground *AssentEntryGround `json:"ground,omitempty"`
+	// IdempotencyKey: Buyer-generated, unique per `commit`, opaque, and scoped to one buyer and seller pair. The seller MUST NOT interpret it (§ 5.6.1)
+	IdempotencyKey *PlainString `json:"idempotency_key,omitempty"`
+	// LineItemIds: The line items the entry names. MUST be non-empty
+	LineItemIds List[PlainString] `json:"line_item_ids"`
+	// RecordDigest: Of the binding record for the line items in `line_item_ids[]` (§ 4.1.1)
+	RecordDigest Digest `json:"record_digest"`
+	// Role: `commitment` | `acceptance` | `withdrawal` | `decline`. It says what the entry does, and it implies the party
+	Role AssentEntryRole `json:"role"`
+	// Version: The `version` of the record the digest was computed over. `version` is outside the binding record, so the entry binds it
+	Version SafeInteger `json:"version"`
 }
 
 // ValidateValue implements Value.
-func (ImpressionMultiplier) ValidateValue(v any, at string, errs *Errors) {
+func (AssentEntry) ValidateValue(v any, at string, errs *Errors) {
 	m, ok := objectValue(v, at, errs)
 	if !ok {
 		return
 	}
-	checkRequired(m, at, errs, "dataset", "impression_type", "settles_on", "source_type")
-	checkClosed(m, at, errs, "dataset", "impression_type", "settles_on", "source_type", "vendor")
-	if x, ok := m["dataset"]; ok {
-		validateAs[PlainString](x, member(at, "dataset"), errs)
+	checkRequired(m, at, errs, "at", "line_item_ids", "record_digest", "role", "version")
+	checkClosed(m, at, errs, "at", "ground", "idempotency_key", "line_item_ids", "record_digest", "role", "version")
+	if x, ok := m["at"]; ok {
+		validateAs[Instant](x, member(at, "at"), errs)
 	}
-	if x, ok := m["impression_type"]; ok {
-		validateAs[ImpressionMultiplierImpressionType](x, member(at, "impression_type"), errs)
+	if x, ok := m["ground"]; ok {
+		validateAs[AssentEntryGround](x, member(at, "ground"), errs)
 	}
-	if x, ok := m["settles_on"]; ok {
-		validateAs[ImpressionMultiplierSettlesOn](x, member(at, "settles_on"), errs)
+	if x, ok := m["idempotency_key"]; ok {
+		validateAs[PlainString](x, member(at, "idempotency_key"), errs)
 	}
-	if x, ok := m["source_type"]; ok {
-		validateAs[PlainInteger](x, member(at, "source_type"), errs)
+	if x, ok := m["line_item_ids"]; ok {
+		validateAs[List[PlainString]](x, member(at, "line_item_ids"), errs)
 	}
-	if x, ok := m["vendor"]; ok {
-		validateAs[RegistrableDomain](x, member(at, "vendor"), errs)
+	if x, ok := m["record_digest"]; ok {
+		validateAs[Digest](x, member(at, "record_digest"), errs)
+	}
+	if x, ok := m["role"]; ok {
+		validateAs[AssentEntryRole](x, member(at, "role"), errs)
+	}
+	if x, ok := m["version"]; ok {
+		validateAs[SafeInteger](x, member(at, "version"), errs)
+	}
+	if x, ok := m["role"]; ok && jsonEqual(x, "commitment") {
+		checkRequiredWhen(m, at, errs, "role", "idempotency_key")
+	}
+	if x, ok := m["role"]; ok && jsonEqual(x, "decline") {
+		checkRequiredWhen(m, at, errs, "role", "ground")
+	}
+}
+
+// BuyerWritesSettableRange: The `BuyerWritesSettableRange` object of the `commercial` module.
+type BuyerWritesSettableRange struct {
+	// Value: The buyer's value, between the bounds inclusive.
+	Value *SafeInteger `json:"value,omitempty"`
+}
+
+// ValidateValue implements Value.
+func (BuyerWritesSettableRange) ValidateValue(v any, at string, errs *Errors) {
+	m, ok := objectValue(v, at, errs)
+	if !ok {
+		return
+	}
+	checkClosed(m, at, errs, "value")
+	if x, ok := m["value"]; ok {
+		validateAs[SafeInteger](x, member(at, "value"), errs)
+	}
+}
+
+// BuyerWritesFrequencyCap: The `BuyerWritesFrequencyCap` object of the `commercial` module.
+type BuyerWritesFrequencyCap struct {
+	// Count: The line item's `frequency_cap.count`, projected to `value`.
+	Count *BuyerWritesSettableRange `json:"count,omitempty"`
+}
+
+// ValidateValue implements Value.
+func (BuyerWritesFrequencyCap) ValidateValue(v any, at string, errs *Errors) {
+	m, ok := objectValue(v, at, errs)
+	if !ok {
+		return
+	}
+	checkClosed(m, at, errs, "count")
+	if x, ok := m["count"]; ok {
+		validateAs[BuyerWritesSettableRange](x, member(at, "count"), errs)
+	}
+}
+
+// CommitResult: The `CommitResult` object of the `commercial` module.
+type CommitResult struct {
+	// Availability: The figures that `decline` states, keyed by `line_item_id`. They are not part of the entry
+	Availability Map[PlainString, Availability] `json:"availability,omitzero"`
+	// Entries: The buyer's `commitment` entry, then each matching `acceptance`, `decline`, or `withdrawal` entry written after it in `assent[]`
+	Entries List[AssentEntry] `json:"entries"`
+}
+
+// ValidateValue implements Value.
+func (CommitResult) ValidateValue(v any, at string, errs *Errors) {
+	m, ok := objectValue(v, at, errs)
+	if !ok {
+		return
+	}
+	checkRequired(m, at, errs, "entries")
+	checkClosed(m, at, errs, "availability", "entries")
+	if x, ok := m["availability"]; ok {
+		validateAs[Map[PlainString, Availability]](x, member(at, "availability"), errs)
+	}
+	if x, ok := m["entries"]; ok {
+		validateAs[List[AssentEntry]](x, member(at, "entries"), errs)
 	}
 }
 
@@ -1007,7 +950,7 @@ type Commitment struct {
 	// Basis: `spend` | `units`
 	Basis CommitmentAmountBasis `json:"basis"`
 	// DerivedUnits: The committed units, as § 5.6.5 derives them, whether or not this key is written. A written value is a copy, outside the record (§ 4.1.1); where it differs, the § 5.6.5 result applies
-	DerivedUnits *PlainInteger `json:"derived_units,omitempty"`
+	DerivedUnits *SafeInteger `json:"derived_units,omitempty"`
 	// Flight: The buyer's campaign. Distinct from `offer_window`
 	Flight Interval `json:"flight"`
 	// PricingId: The entry the buyer commits under
@@ -1032,13 +975,75 @@ func (Commitment) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[CommitmentAmountBasis](x, member(at, "basis"), errs)
 	}
 	if x, ok := m["derived_units"]; ok {
-		validateAs[PlainInteger](x, member(at, "derived_units"), errs)
+		validateAs[SafeInteger](x, member(at, "derived_units"), errs)
 	}
 	if x, ok := m["flight"]; ok {
 		validateAs[Interval](x, member(at, "flight"), errs)
 	}
 	if x, ok := m["pricing_id"]; ok {
 		validateAs[PlainString](x, member(at, "pricing_id"), errs)
+	}
+}
+
+// ImpressionMultiplier: The `ImpressionMultiplier` object of the `commercial` module.
+type ImpressionMultiplier struct {
+	// Dataset: The source's named data release the multipliers come from. A new release is a new `dataset`
+	Dataset PlainString `json:"dataset"`
+	// Demographic: The demographic whose value settles when `dataset` gives a value per demographic. The same kind of term as `cost_parameters.demographic` (§ 5.6.5)
+	Demographic *CostParametersDemographic `json:"demographic,omitempty"`
+	// ImpressionType: `gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them
+	ImpressionType ImpressionMultiplierImpressionType `json:"impression_type"`
+	// SettlesOn: `declared` | `restated`. `declared`: the value `dataset` gives that screen, or sync group, and hour when the play runs. Under a deal mechanism (§ 5.9), the bid request carries it as OpenRTB 2.6 `imp.qty.multiplier`. `restated`: that value after any reissue of `dataset` by its source before the count is final (§ 5.7.1)
+	SettlesOn ImpressionMultiplierSettlesOn `json:"settles_on"`
+	// SourceType: Who supplies the multiplier. A value from AdCOM 1.0 List: DOOH Multiplier Measurement Source Types other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries
+	SourceType SafeInteger `json:"source_type"`
+	// Vendor: The domain of the vendor or exchange that supplies the multipliers, as OpenRTB 2.6 `imp.qty.vendor` names a vendor
+	Vendor *RegistrableDomain `json:"vendor,omitempty"`
+}
+
+// ValidateValue implements Value.
+func (ImpressionMultiplier) ValidateValue(v any, at string, errs *Errors) {
+	m, ok := objectValue(v, at, errs)
+	if !ok {
+		return
+	}
+	checkRequired(m, at, errs, "dataset", "impression_type", "settles_on", "source_type")
+	checkClosed(m, at, errs, "dataset", "demographic", "impression_type", "settles_on", "source_type", "vendor")
+	if x, ok := m["dataset"]; ok {
+		validateAs[PlainString](x, member(at, "dataset"), errs)
+	}
+	if x, ok := m["demographic"]; ok {
+		validateAs[CostParametersDemographic](x, member(at, "demographic"), errs)
+	}
+	if x, ok := m["impression_type"]; ok {
+		validateAs[ImpressionMultiplierImpressionType](x, member(at, "impression_type"), errs)
+	}
+	if x, ok := m["settles_on"]; ok {
+		validateAs[ImpressionMultiplierSettlesOn](x, member(at, "settles_on"), errs)
+	}
+	if x, ok := m["source_type"]; ok {
+		validateAs[SafeInteger](x, member(at, "source_type"), errs)
+	}
+	if x, ok := m["vendor"]; ok {
+		validateAs[RegistrableDomain](x, member(at, "vendor"), errs)
+	}
+}
+
+// BuyerWritesDeviceBounds: The `BuyerWritesDeviceBounds` object of the `commercial` module.
+type BuyerWritesDeviceBounds struct {
+	// Value: The buyer's value.
+	Value *Narrowing[SafeInteger] `json:"value,omitempty"`
+}
+
+// ValidateValue implements Value.
+func (BuyerWritesDeviceBounds) ValidateValue(v any, at string, errs *Errors) {
+	m, ok := objectValue(v, at, errs)
+	if !ok {
+		return
+	}
+	checkClosed(m, at, errs, "value")
+	if x, ok := m["value"]; ok {
+		validateAs[Narrowing[SafeInteger]](x, member(at, "value"), errs)
 	}
 }
 
@@ -1085,7 +1090,7 @@ type CostParameters struct {
 	// ViewFraction: The fraction of the creative played that makes a view. Absent when `view_s` is present
 	ViewFraction *Fraction `json:"view_fraction,omitempty"`
 	// ViewS: Seconds played that make a view. Absent when `view_fraction` is present
-	ViewS *PlainInteger `json:"view_s,omitempty"`
+	ViewS *SafeInteger `json:"view_s,omitempty"`
 	// ViewabilityStandard: The viewability standard that counts a unit. Core term: `mrc`, the MRC guidelines that `viewable_rate` cites (§ 5.7.1)
 	ViewabilityStandard *CostParametersViewabilityStandard `json:"viewability_standard,omitempty"`
 }
@@ -1119,7 +1124,7 @@ func (CostParameters) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[Fraction](x, member(at, "view_fraction"), errs)
 	}
 	if x, ok := m["view_s"]; ok {
-		validateAs[PlainInteger](x, member(at, "view_s"), errs)
+		validateAs[SafeInteger](x, member(at, "view_s"), errs)
 	}
 	if x, ok := m["viewability_standard"]; ok {
 		validateAs[CostParametersViewabilityStandard](x, member(at, "viewability_standard"), errs)
@@ -1157,7 +1162,7 @@ type DeliveryCounting struct {
 	// PartialPlayCredit: What a display on fewer than `min_screens_per_play` screens counts. Core terms: `none` (no play) | `pro_rata` (screens played ÷ `min_screens_per_play`)
 	PartialPlayCredit *DeliveryCountingPartialPlayCredit `json:"partial_play_credit,omitempty"`
 	// PlayToleranceMs: How far short of its full duration a play may end and still count
-	PlayToleranceMs PlainInteger `json:"play_tolerance_ms"`
+	PlayToleranceMs SafeInteger `json:"play_tolerance_ms"`
 	// ProofOfPerformance: Who logs the plays and what the buyer receives
 	ProofOfPerformance ProofOfPerformance `json:"proof_of_performance"`
 }
@@ -1177,7 +1182,7 @@ func (DeliveryCounting) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[DeliveryCountingPartialPlayCredit](x, member(at, "partial_play_credit"), errs)
 	}
 	if x, ok := m["play_tolerance_ms"]; ok {
-		validateAs[PlainInteger](x, member(at, "play_tolerance_ms"), errs)
+		validateAs[SafeInteger](x, member(at, "play_tolerance_ms"), errs)
 	}
 	if x, ok := m["proof_of_performance"]; ok {
 		validateAs[ProofOfPerformance](x, member(at, "proof_of_performance"), errs)
@@ -1564,7 +1569,7 @@ type Hold struct {
 	// HeldAvailability: What the hold reserves, as the seller states it on a grant or a re-offer. It can be less than `requested_terms` asks
 	HeldAvailability *Availability `json:"held_availability,omitempty"`
 	// Position: Seller-set, 1 for first in line, in the order granted. A later hold moves up only when the one ahead expires, is released or converts. Holds on the same inventory reserve it in that order, so a later hold reserves only what the holds granted ahead of it leave (§ 5.6.1)
-	Position *PlainInteger `json:"position,omitempty"`
+	Position *SafeInteger `json:"position,omitempty"`
 	// Reference: Seller-set. The seller's id for the reservation, so a buyer can reconcile a hold against the seller's systems
 	Reference *PlainString `json:"reference,omitempty"`
 	// RequestedTerms: The composition the buyer asks to hold, which is not a `commit`. A field it doesn't name reads as § 3.1 and § 3.2 put in effect
@@ -1574,7 +1579,7 @@ type Hold struct {
 	// ValidUntil: The grant time plus `hold_terms.duration`, or the § 4.3.4 cap if that comes first. With no `duration`, the seller sets it within the cap. It MAY remain on `expired` and `released`
 	ValidUntil *Instant `json:"valid_until,omitempty"`
 	// Version: The `version` the hold is on (§ 4.1.3)
-	Version PlainInteger `json:"version"`
+	Version SafeInteger `json:"version"`
 }
 
 // ValidateValue implements Value.
@@ -1589,7 +1594,7 @@ func (Hold) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[Availability](x, member(at, "held_availability"), errs)
 	}
 	if x, ok := m["position"]; ok {
-		validateAs[PlainInteger](x, member(at, "position"), errs)
+		validateAs[SafeInteger](x, member(at, "position"), errs)
 	}
 	if x, ok := m["reference"]; ok {
 		validateAs[PlainString](x, member(at, "reference"), errs)
@@ -1604,15 +1609,15 @@ func (Hold) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[Instant](x, member(at, "valid_until"), errs)
 	}
 	if x, ok := m["version"]; ok {
-		validateAs[PlainInteger](x, member(at, "version"), errs)
+		validateAs[SafeInteger](x, member(at, "version"), errs)
 	}
 	if x, ok := m["status"]; ok && jsonEqual(x, "held") {
 		checkRequiredWhen(m, at, errs, "status", "valid_until")
 	}
 }
 
-// UnitBoundsRange: The copy `Range<T=PlainInteger>`.
-type UnitBoundsRange = Range[PlainInteger]
+// UnitBoundsRange: The copy `Range<T=SafeInteger>`.
+type UnitBoundsRange = Range[SafeInteger]
 
 // PricingEntry: The `PricingEntry` object of the `commercial` module.
 type PricingEntry struct {
@@ -1631,7 +1636,7 @@ type PricingEntry struct {
 	// MinRate: A hint: the lowest `list_rate` the seller says it will consider. It grants nothing. Not a term, not the downstream auction floor, and never sent downstream
 	MinRate *Amount `json:"min_rate,omitempty"`
 	// PriceType: How `agreed_rate` clears, as Deals API 1.0 `terms.pricetype`: Dynamic (0), the auction type of each bid request; First Price (1); Second Price Plus (2); Fixed Price (3); or an exchange-specific value, 500 and up
-	PriceType *PlainInteger `json:"price_type,omitempty"`
+	PriceType *SafeInteger `json:"price_type,omitempty"`
 	// PriceValidUntil: How long the entry holds (§ 4.3.2). Distinct from the proposal's `offer_window.end`
 	PriceValidUntil *Instant `json:"price_valid_until,omitempty"`
 	// PricingId: Names the entry within the line item. A revision MUST NOT reuse it for a different `cost_method`, `cost_parameters`, `currency`, or `transaction_mechanisms[]`
@@ -1641,7 +1646,7 @@ type PricingEntry struct {
 	// TransactionMechanisms: The `transaction_mechanism` options this entry prices. Absent: every offered option
 	TransactionMechanisms List[TransactionMechanism] `json:"transaction_mechanisms,omitzero"`
 	// UnitBounds: Bounds on the units committed under this entry, counted in its unit (§ 5.6.5): `commitment.amount` when `basis` is `units`, otherwise `derived_units`. A buyer MAY request another. Absent on a `FLAT` entry
-	UnitBounds *Range[PlainInteger] `json:"unit_bounds,omitempty"`
+	UnitBounds *Range[SafeInteger] `json:"unit_bounds,omitempty"`
 	// UnitLabel: A short label for one unit, such as `engagement`
 	UnitLabel *PlainString `json:"unit_label,omitempty"`
 }
@@ -1676,7 +1681,7 @@ func (PricingEntry) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[Amount](x, member(at, "min_rate"), errs)
 	}
 	if x, ok := m["price_type"]; ok {
-		validateAs[PlainInteger](x, member(at, "price_type"), errs)
+		validateAs[SafeInteger](x, member(at, "price_type"), errs)
 	}
 	if x, ok := m["price_valid_until"]; ok {
 		validateAs[Instant](x, member(at, "price_valid_until"), errs)
@@ -1691,7 +1696,7 @@ func (PricingEntry) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[List[TransactionMechanism]](x, member(at, "transaction_mechanisms"), errs)
 	}
 	if x, ok := m["unit_bounds"]; ok {
-		validateAs[Range[PlainInteger]](x, member(at, "unit_bounds"), errs)
+		validateAs[Range[SafeInteger]](x, member(at, "unit_bounds"), errs)
 	}
 	if x, ok := m["unit_label"]; ok {
 		validateAs[PlainString](x, member(at, "unit_label"), errs)

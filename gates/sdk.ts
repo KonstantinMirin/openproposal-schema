@@ -45,22 +45,26 @@ export const sdkGenerate = defineGate<{ model: ModelDoc; dir: string; schemaDir:
   ],
 });
 
-export const sdkNames = defineGate<{ schemaNames: string[]; emitted: string[]; templates: string[] }>({
+export const sdkNames = defineGate<{ schemaNames: string[]; inline: string[]; emitted: string[]; templates: string[] }>({
   id: "sdk-names",
-  title: "SDK names: each named type the schema emits is one declaration of the same name in each SDK, and no template takes a type's name",
+  title: "SDK names: each named type the schema defines or writes inline is one declaration of the same name in each SDK, and no template takes a type's name",
   check: (i) => {
-    const same = JSON.stringify([...i.schemaNames].sort()) === JSON.stringify([...i.emitted].sort());
-    const taken = i.templates.filter((n) => i.schemaNames.includes(n));
+    // A type the schema writes inline (type rules § 4) keeps its name in the SDKs, which the model generates them from.
+    const named = [...new Set([...i.schemaNames, ...i.inline])].sort();
+    const dup = i.schemaNames.filter((n, k) => i.schemaNames.indexOf(n) !== k || i.inline.includes(n));
+    const same = JSON.stringify(named) === JSON.stringify([...i.emitted].sort()) && dup.length === 0;
+    const taken = i.templates.filter((n) => named.includes(n));
     return {
       problems:
         same && taken.length === 0
           ? []
-          : [`the schema emits ${i.schemaNames.filter((n) => !i.emitted.includes(n)).join(", ") || "nothing"} the SDKs lack, the SDKs declare ${i.emitted.filter((n) => !i.schemaNames.includes(n)).join(", ") || "nothing"} the schema lacks${taken.length > 0 ? `, and the templates ${taken.join(", ")} take type names` : ""}`],
-      note: `${i.schemaNames.length} names`,
+          : [`the schema emits ${named.filter((n) => !i.emitted.includes(n)).join(", ") || "nothing"} the SDKs lack, the SDKs declare ${i.emitted.filter((n) => !named.includes(n)).join(", ") || "nothing"} the schema lacks${dup.length > 0 ? `, the schema defines ${[...new Set(dup)].join(", ")} twice or both defines and inlines it` : ""}${taken.length > 0 ? `, and the templates ${taken.join(", ")} take type names` : ""}`],
+      note: `${named.length} names, ${i.inline.length} of them written inline`,
     };
   },
   fixtures: [
     { name: "an SDK type the schema lacks", mutate: (i) => ({ ...i, emitted: [...i.emitted, "Extra"] }), expect: "the SDKs declare Extra the schema lacks" },
+    { name: "a type the schema both defines and inlines", mutate: (i) => ({ ...i, inline: [...i.inline, i.schemaNames[0]!] }), expect: "both defines and inlines it" },
     { name: "a template named like a type", mutate: (i) => ({ ...i, templates: [...i.templates, i.schemaNames[0]!] }), expect: "take type names" },
   ],
 });

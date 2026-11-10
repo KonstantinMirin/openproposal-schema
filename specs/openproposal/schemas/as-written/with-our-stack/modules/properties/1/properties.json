@@ -4,17 +4,59 @@
       "additionalProperties": false,
       "properties": {
         "length_s": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "Loop length, in seconds"
         },
         "slot_s": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "Slot length, in seconds"
         }
       },
       "required": [
         "length_s",
         "slot_s"
+      ],
+      "type": "object"
+    },
+    "PropertiesSelection": {
+      "additionalProperties": false,
+      "description": "A field the buyer sets by choosing options from the set the seller declares. `included[]` names the options in the base rate, `selected[]` the buyer's choice, which replaces it, and `deltas` the price of each option outside `included[]`, each by option id.",
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "#/$defs/PropertyOption"
+          },
+          "type": "array"
+        },
+        "deltas": {
+          "additionalProperties": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/Delta"
+          },
+          "description": "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta.",
+          "type": "object"
+        },
+        "included": {
+          "description": "The options in the base rate, by option id.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "max_select": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
+          "description": "The most options that may be in effect."
+        },
+        "selected": {
+          "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "available",
+        "included"
       ],
       "type": "object"
     },
@@ -58,20 +100,20 @@
           "type": "array"
         },
         "id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "Option id (§ 3.1)"
+          "description": "Option id (§ 3.1)",
+          "type": "string"
         },
         "inventory_partner_domain": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/Domain",
           "description": "As OpenRTB 2.6 `site.inventorypartnerdomain` and `app.inventorypartnerdomain`"
         },
         "min_screens": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "With `seller_allocated`, the fewest screens the seller allocates to the line item"
         },
         "name": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "The property's name, for people"
+          "description": "The property's name, for people",
+          "type": "string"
         },
         "screens": {
           "description": "The property's screens (§ 5.2.8)",
@@ -92,7 +134,7 @@
           "description": "`owner` | `manager` | `inventory_partner` | `reseller`, checked as § 5.2.6 states"
         },
         "slots_per_loop": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The slots per loop the line item buys on each screen of the property that has a `loop`"
         },
         "sync_groups": {
@@ -101,6 +143,14 @@
             "$ref": "#/$defs/SyncGroup"
           },
           "type": "array"
+        },
+        "tv_channel": {
+          "description": "The TV channel or station the property carries, as an AdCOM 1.0 `Channel` object in AdCOM's keys and meanings. It SHOULD carry `domain`. Properties whose `tv_channel.domain` is the same carry the same channel, so a buyer can tell when two sellers offer it. Each seller assigns its own `id`, so `id` matches only within one seller",
+          "type": "object"
+        },
+        "tv_network": {
+          "description": "The network that owns the property's channel, as an AdCOM 1.0 `Network` object in AdCOM's keys and meanings, matched by `domain` the same way",
+          "type": "object"
         },
         "venue_type": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/TaxonomyCodes",
@@ -154,12 +204,12 @@
       "additionalProperties": false,
       "properties": {
         "lat": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainNumber",
-          "description": "Latitude, as OpenRTB 2.6 `geo.lat`. Absent when `movable` is true"
+          "description": "Latitude, as OpenRTB 2.6 `geo.lat`. Absent when `movable` is true",
+          "type": "number"
         },
         "lon": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainNumber",
-          "description": "Longitude, as OpenRTB 2.6 `geo.lon`. Absent when `movable` is true"
+          "description": "Longitude, as OpenRTB 2.6 `geo.lon`. Absent when `movable` is true",
+          "type": "number"
         },
         "loop": {
           "$ref": "#/$defs/Loop",
@@ -177,8 +227,8 @@
           "type": "array"
         },
         "screen_id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "The seller's id for the screen, as its proof-of-play log carries it. When the bid request's `device.ifa_type` is `ppid`, as the OpenRTB 2.6 implementation guide (§ 7.9.2.5) uses it, `device.ifa` carries the same id"
+          "description": "The seller's id for the screen, as its proof-of-play log carries it. When the bid request's `device.ifa_type` is `ppid`, as the OpenRTB 2.6 implementation guide (§ 7.9.2.5) uses it, `device.ifa` carries the same id",
+          "type": "string"
         },
         "time_zone": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/IanaZone",
@@ -198,8 +248,8 @@
           "description": "As ads.txt field 1, Domain name of the advertising system"
         },
         "sid": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "As ads.txt field 2, Publisher's Account ID"
+          "description": "As ads.txt field 2, Publisher's Account ID",
+          "type": "string"
         }
       },
       "required": [
@@ -212,19 +262,19 @@
       "additionalProperties": false,
       "properties": {
         "min_screens_per_play": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The fewest of the group's screens that must show a display for it to count as one play (§ 5.6.4)"
         },
         "screen_ids": {
           "description": "The `screen_id` of each screen in the group",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         },
         "sync_group_id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "The group's id"
+          "description": "The group's id",
+          "type": "string"
         }
       },
       "required": [

@@ -1085,7 +1085,8 @@ export function checkLineLinks(doc: FeedbackDoc, details: string, spec: string):
       sectionAt[i] = current;
       return;
     }
-    const m = /^#{1,6}\s+(\d+(?:\.\d+)*)\.?\s/.exec(l);
+    // A numbered heading, or an appendix's, as "## Appendix B — Fields by marker", whose findings the report links as § B.
+    const m = /^#{1,6}\s+(\d+(?:\.\d+)*)\.?\s/.exec(l) ?? /^#{1,2}\s+Appendix\s+([A-Z])\b/.exec(l);
     if (m) current = m[1]!;
     else if (/^#{1,6}\s/.test(l) && /^#{1,2}\s/.test(l)) current = "";
     sectionAt[i] = current;

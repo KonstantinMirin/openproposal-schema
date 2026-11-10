@@ -1,0 +1,12 @@
+# A known-bad desk-tests file for the desk-tests-load gate: a finding with no reason.
+format: 1
+lock: with-our-stack
+document: LineItem
+checker: scripts/check_examples.py
+examples:
+  - dooh-v2-p8-phases.yaml
+findings:
+  - example: dooh-v2-p8-phases.yaml
+    path: /commitment/phases
+    kind: undefined_key
+undecided: []

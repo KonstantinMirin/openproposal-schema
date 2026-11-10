@@ -30,6 +30,33 @@ const DEAL = new Set(["programmatic_guaranteed", "preferred_deal", "private_auct
 const KEYED = new Set(["CPMV", "CPV", "CPP", "CPA", "TIME"]);
 /** The § 5.6.5 cost methods whose unit is an impression. */
 const IMPRESSIONS = new Set(["CPM", "CPMV"]);
+/** The § 5.6.5 `unit` terms that count impressions. */
+const IMPRESSION_UNITS = new Set(["impressions", "viewable_impressions"]);
+/**
+ * Whether the line item counts impressions (§ 5.6.4): any of its counts,
+ * `pricing[]`, `commitment`, `availability`, and `committed_metrics[]`, is in
+ * impressions. An entry counts in its cost method's unit, and `commitment` in
+ * its entry's, one of `pricing[]`; `availability` counts in its `unit`; and a
+ * `committed_metrics[]` tuple in impressions where its `metric` is
+ * `impressions`. The line item whole, as the examples gate gives its holders,
+ * settles it; a vector's context settles it where it shows a count in
+ * impressions, or every count. Null otherwise.
+ */
+const countsImpressions = (c: Record<string, unknown>): boolean | null => {
+  const li = ctxOf(c, "LineItem");
+  const tests: [string, (x: unknown) => boolean][] = [
+    ["pricing", (p) => list(p).some((e) => isMap(e) && IMPRESSIONS.has(String(e.cost_method)))],
+    ["availability", (a) => isMap(a) && IMPRESSION_UNITS.has(String(a.unit))],
+    ["committed_metrics", (m) => list(m).some((x) => isMap(x) && x.metric === "impressions")],
+  ];
+  let unknown = false;
+  for (const [k, holds] of tests) {
+    const shown = isMap(li) || `LineItem.${k}` in c;
+    if (!shown) unknown = true;
+    else if (holds(isMap(li) ? li[k] : ctxOf(c, `LineItem.${k}`))) return true;
+  }
+  return unknown ? null : false;
+};
 const offersDeal = (mechanism: unknown) => (isMap(mechanism) ? list(mechanism.available) : []).some((o) => isMap(o) && DEAL.has(String(o.id)));
 
 export const STACK_CHECKS: Record<string, Check> = {
@@ -88,7 +115,7 @@ export const STACK_CHECKS: Record<string, Check> = {
   "rule:5.6.1:7b200076": requires("pricing_id", (_v, c) => known(ctxOf(c, "LineItem.pricing"), (p) => list(p).length > 1)),
   "rule:5.6.1:94be9998": requires("availability", (v) => list(v.entries).some((e) => isMap(e) && e.role === "decline" && e.ground === "availability")),
   "rule:5.6.4:615bf228": requires("partial_play_credit", (_v, c) => known(ctxOf(c, "LineItem.properties"), (p) => (isMap(p) ? list(p.available) : []).some((o) => isMap(o) && nonEmpty(o.sync_groups)))),
-  "rule:5.6.4:e58650b7": requires("impression_multiplier", (_v, c) => known(ctxOf(c, "LineItem.pricing"), (p) => list(p).some((e) => isMap(e) && IMPRESSIONS.has(String(e.cost_method))))),
+  "rule:5.6.4:e58650b7": requires("impression_multiplier", (_v, c) => countsImpressions(c)),
   "rule:5.6.4:b6f5be4c": requires("vendor", (v) => v.source_type !== undefined && v.source_type !== 2),
   // § 5.6.5: the keys a cost method's row names, by the entry's `cost_method`.
   "rule:5.6.5:119b216f": requires("rate_unit", (_v, c) => known(ctxOf(c, "PricingEntry.cost_method"), (m) => m === "TIME")),

@@ -1,7 +1,7 @@
 {
   "ir": {
-    "sections": 79,
-    "tables": 117,
+    "sections": 86,
+    "tables": 118,
     "tables_by_layout": {
       "appendix-a-required": 1,
       "appendix-b": 1,
@@ -15,7 +15,8 @@
       "table-interaction-actor-effect-history-action": 1,
       "table-layer-question-answered-by-owner-in-the-proposal-object": 1,
       "table-opendirect-2-1-from-the-agreed-line-item": 1,
-      "table-rule-profile-choice": 1,
+      "table-rule-requests-responses": 1,
+      "table-status-meaning-basis": 1,
       "type-form-rules": 1,
       "value-code-one-unit-rate-per-code": 1,
       "value-condition": 1,
@@ -28,12 +29,12 @@
       "value-the-governing-file-declares": 1,
       "value-who-hosts-the-creative-what-reaches-the-seller": 1
     },
-    "table_rows": 665,
+    "table_rows": 671,
     "table_rows_by_layout": {
       "appendix-a-required": 98,
       "appendix-b": 11,
       "field-required": 98,
-      "key-type-required-meaning": 287,
+      "key-type-required-meaning": 290,
       "key-type-required-meaning-mapping": 16,
       "key-type-required-meaning-mutability": 21,
       "marker-meaning": 11,
@@ -42,7 +43,8 @@
       "table-interaction-actor-effect-history-action": 10,
       "table-layer-question-answered-by-owner-in-the-proposal-object": 3,
       "table-opendirect-2-1-from-the-agreed-line-item": 7,
-      "table-rule-profile-choice": 7,
+      "table-rule-requests-responses": 6,
+      "table-status-meaning-basis": 4,
       "type-form-rules": 24,
       "value-code-one-unit-rate-per-code": 10,
       "value-condition": 6,
@@ -64,9 +66,9 @@
       "lifecycle": 2,
       "mixed": 5,
       "recorded": 4,
-      "requestable": 5,
+      "requestable": 6,
       "selectable": 16,
-      "seller-set": 46,
+      "seller-set": 45,
       "settable": 4,
       "supplied": 1
     },
@@ -74,15 +76,15 @@
       "line_item": 76,
       "proposal": 22
     },
-    "keys": 324,
+    "keys": 327,
     "keys_by_layout": {
-      "key-type-required-meaning": 287,
+      "key-type-required-meaning": 290,
       "key-type-required-meaning-mapping": 16,
       "key-type-required-meaning-mutability": 21
     },
     "definitions": 79,
     "markers": 11,
-    "concepts": 44,
+    "concepts": 47,
     "value_lists": 73,
     "value_lists_by_origin": {
       "prose": 17,
@@ -90,50 +92,50 @@
     },
     "inline_objects": 0,
     "inline_objects_by_origin": {},
-    "statements": 602,
-    "statements_body": 601,
+    "statements": 612,
+    "statements_body": 611,
     "statements_by_level": {
-      "MAY": 41,
-      "MUST": 73,
-      "MUST NOT": 49,
-      "OPTIONAL": 204,
-      "RECOMMENDED": 2,
-      "REQUIRED": 226,
-      "SHOULD": 3,
-      "SHOULD NOT": 3
-    },
-    "statements_with_keyword": {
       "MAY": 42,
-      "MUST": 79,
-      "MUST NOT": 49,
-      "OPTIONAL": 205,
+      "MUST": 76,
+      "MUST NOT": 50,
+      "OPTIONAL": 207,
       "RECOMMENDED": 2,
       "REQUIRED": 226,
       "SHOULD": 5,
       "SHOULD NOT": 3
     },
-    "sentences": 601,
-    "code_spans": 2359,
+    "statements_with_keyword": {
+      "MAY": 43,
+      "MUST": 82,
+      "MUST NOT": 50,
+      "OPTIONAL": 208,
+      "RECOMMENDED": 2,
+      "REQUIRED": 226,
+      "SHOULD": 8,
+      "SHOULD NOT": 3
+    },
+    "sentences": 650,
+    "code_spans": 2460,
     "identifier_lists": 0,
-    "code_blocks": 11,
+    "code_blocks": 12,
     "appendix_a_rows": 98,
     "appendix_b_rows": 11
   },
   "findings": {
-    "total": 272,
-    "open": 271,
+    "total": 290,
+    "open": 289,
     "by_kind": {
       "duplicate_field_disagrees": 1,
       "name_reused_with_different_values": 1,
       "value_set_duplicate": 2,
       "value_set_subset": 6,
-      "unresolved_identifier": 222,
+      "unresolved_identifier": 236,
       "array_suffix_mismatch": 1,
       "expression_value_unknown": 4,
-      "must_without_field": 35
+      "must_without_field": 39
     },
     "by_verdict": {
-      "open": 271,
+      "open": 289,
       "accepted": 1
     }
   }

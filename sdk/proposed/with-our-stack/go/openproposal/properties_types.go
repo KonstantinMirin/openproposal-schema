@@ -2,30 +2,6 @@
 
 package openproposal
 
-// Loop: The `Loop` object of the `properties` module.
-type Loop struct {
-	// LengthS: Loop length, in seconds
-	LengthS PlainInteger `json:"length_s"`
-	// SlotS: Slot length, in seconds
-	SlotS PlainInteger `json:"slot_s"`
-}
-
-// ValidateValue implements Value.
-func (Loop) ValidateValue(v any, at string, errs *Errors) {
-	m, ok := objectValue(v, at, errs)
-	if !ok {
-		return
-	}
-	checkRequired(m, at, errs, "length_s", "slot_s")
-	checkClosed(m, at, errs, "length_s", "slot_s")
-	if x, ok := m["length_s"]; ok {
-		validateAs[PlainInteger](x, member(at, "length_s"), errs)
-	}
-	if x, ok := m["slot_s"]; ok {
-		validateAs[PlainInteger](x, member(at, "slot_s"), errs)
-	}
-}
-
 // PropertyOptionAllocation: The `PropertyOptionAllocation` vocabulary: `all`, `seller_allocated`.
 type PropertyOptionAllocation string
 
@@ -99,6 +75,30 @@ func (PropertyOptionSellerRelationship) ValidateValue(v any, at string, errs *Er
 	checkEnum(v, at, errs, termsPropertyOptionSellerRelationship...)
 }
 
+// Loop: The `Loop` object of the `properties` module.
+type Loop struct {
+	// LengthS: Loop length, in seconds
+	LengthS SafeInteger `json:"length_s"`
+	// SlotS: Slot length, in seconds
+	SlotS SafeInteger `json:"slot_s"`
+}
+
+// ValidateValue implements Value.
+func (Loop) ValidateValue(v any, at string, errs *Errors) {
+	m, ok := objectValue(v, at, errs)
+	if !ok {
+		return
+	}
+	checkRequired(m, at, errs, "length_s", "slot_s")
+	checkClosed(m, at, errs, "length_s", "slot_s")
+	if x, ok := m["length_s"]; ok {
+		validateAs[SafeInteger](x, member(at, "length_s"), errs)
+	}
+	if x, ok := m["slot_s"]; ok {
+		validateAs[SafeInteger](x, member(at, "slot_s"), errs)
+	}
+}
+
 // SellerAccount: The `SellerAccount` object of the `properties` module.
 type SellerAccount struct {
 	// Asi: As ads.txt field 1, Domain name of the advertising system
@@ -126,7 +126,7 @@ func (SellerAccount) ValidateValue(v any, at string, errs *Errors) {
 // SyncGroup: The `SyncGroup` object of the `properties` module.
 type SyncGroup struct {
 	// MinScreensPerPlay: The fewest of the group's screens that must show a display for it to count as one play (§ 5.6.4)
-	MinScreensPerPlay PlainInteger `json:"min_screens_per_play"`
+	MinScreensPerPlay SafeInteger `json:"min_screens_per_play"`
 	// ScreenIds: The `screen_id` of each screen in the group
 	ScreenIds List[PlainString] `json:"screen_ids"`
 	// SyncGroupId: The group's id
@@ -142,7 +142,7 @@ func (SyncGroup) ValidateValue(v any, at string, errs *Errors) {
 	checkRequired(m, at, errs, "min_screens_per_play", "screen_ids", "sync_group_id")
 	checkClosed(m, at, errs, "min_screens_per_play", "screen_ids", "sync_group_id")
 	if x, ok := m["min_screens_per_play"]; ok {
-		validateAs[PlainInteger](x, member(at, "min_screens_per_play"), errs)
+		validateAs[SafeInteger](x, member(at, "min_screens_per_play"), errs)
 	}
 	if x, ok := m["screen_ids"]; ok {
 		validateAs[List[PlainString]](x, member(at, "screen_ids"), errs)
@@ -218,7 +218,7 @@ type PropertyOption struct {
 	// InventoryPartnerDomain: As OpenRTB 2.6 `site.inventorypartnerdomain` and `app.inventorypartnerdomain`
 	InventoryPartnerDomain *Domain `json:"inventory_partner_domain,omitempty"`
 	// MinScreens: With `seller_allocated`, the fewest screens the seller allocates to the line item
-	MinScreens *PlainInteger `json:"min_screens,omitempty"`
+	MinScreens *SafeInteger `json:"min_screens,omitempty"`
 	// Name: The property's name, for people
 	Name *PlainString `json:"name,omitempty"`
 	// Screens: The property's screens (§ 5.2.8)
@@ -228,9 +228,13 @@ type PropertyOption struct {
 	// SellerRelationship: `owner` | `manager` | `inventory_partner` | `reseller`, checked as § 5.2.6 states
 	SellerRelationship PropertyOptionSellerRelationship `json:"seller_relationship"`
 	// SlotsPerLoop: The slots per loop the line item buys on each screen of the property that has a `loop`
-	SlotsPerLoop *PlainInteger `json:"slots_per_loop,omitempty"`
+	SlotsPerLoop *SafeInteger `json:"slots_per_loop,omitempty"`
 	// SyncGroups: Screens that show the same ad at the same moment, sold as one (§ 5.2.8)
 	SyncGroups List[SyncGroup] `json:"sync_groups,omitzero"`
+	// TvChannel: The TV channel or station the property carries, as an AdCOM 1.0 `Channel` object in AdCOM's keys and meanings. It SHOULD carry `domain`. Properties whose `tv_channel.domain` is the same carry the same channel, so a buyer can tell when two sellers offer it. Each seller assigns its own `id`, so `id` matches only within one seller
+	TvChannel *OpenObject `json:"tv_channel,omitempty"`
+	// TvNetwork: The network that owns the property's channel, as an AdCOM 1.0 `Network` object in AdCOM's keys and meanings, matched by `domain` the same way
+	TvNetwork *OpenObject `json:"tv_network,omitempty"`
 	// VenueType: `taxonomy` is a value of AdCOM 1.0 List: DOOH Venue Taxonomies. `ids[]` holds exactly one id. It covers only itself, not its descendants. The values OpenRTB 2.6 `dooh.venuetypetax` and `dooh.venuetype` carry
 	VenueType *TaxonomyCodes `json:"venue_type,omitempty"`
 }
@@ -242,7 +246,7 @@ func (PropertyOption) ValidateValue(v any, at string, errs *Errors) {
 		return
 	}
 	checkRequired(m, at, errs, "child_audience", "id", "seller_relationship")
-	checkClosed(m, at, errs, "allocation", "apps", "child_audience", "child_treatment", "domains", "id", "inventory_partner_domain", "min_screens", "name", "screens", "seller_accounts", "seller_relationship", "slots_per_loop", "sync_groups", "venue_type")
+	checkClosed(m, at, errs, "allocation", "apps", "child_audience", "child_treatment", "domains", "id", "inventory_partner_domain", "min_screens", "name", "screens", "seller_accounts", "seller_relationship", "slots_per_loop", "sync_groups", "tv_channel", "tv_network", "venue_type")
 	if x, ok := m["allocation"]; ok {
 		validateAs[PropertyOptionAllocation](x, member(at, "allocation"), errs)
 	}
@@ -265,7 +269,7 @@ func (PropertyOption) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[Domain](x, member(at, "inventory_partner_domain"), errs)
 	}
 	if x, ok := m["min_screens"]; ok {
-		validateAs[PlainInteger](x, member(at, "min_screens"), errs)
+		validateAs[SafeInteger](x, member(at, "min_screens"), errs)
 	}
 	if x, ok := m["name"]; ok {
 		validateAs[PlainString](x, member(at, "name"), errs)
@@ -280,10 +284,16 @@ func (PropertyOption) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[PropertyOptionSellerRelationship](x, member(at, "seller_relationship"), errs)
 	}
 	if x, ok := m["slots_per_loop"]; ok {
-		validateAs[PlainInteger](x, member(at, "slots_per_loop"), errs)
+		validateAs[SafeInteger](x, member(at, "slots_per_loop"), errs)
 	}
 	if x, ok := m["sync_groups"]; ok {
 		validateAs[List[SyncGroup]](x, member(at, "sync_groups"), errs)
+	}
+	if x, ok := m["tv_channel"]; ok {
+		validateAs[OpenObject](x, member(at, "tv_channel"), errs)
+	}
+	if x, ok := m["tv_network"]; ok {
+		validateAs[OpenObject](x, member(at, "tv_network"), errs)
 	}
 	if x, ok := m["venue_type"]; ok {
 		validateAs[TaxonomyCodes](x, member(at, "venue_type"), errs)

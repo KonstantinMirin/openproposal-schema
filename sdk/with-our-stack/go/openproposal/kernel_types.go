@@ -624,32 +624,6 @@ func (o OpenObject) MarshalJSON() ([]byte, error) {
 	return marshalOpen(plain(o), o.Extra)
 }
 
-// PlainInteger: A whole number the text types as Integer and gives no other range, within the integers every JSON implementation reads exactly, from −(2^53 − 1) to 2^53 − 1; the field that holds it says what it counts.
-type PlainInteger int64
-
-// ValidateValue implements Value.
-func (PlainInteger) ValidateValue(v any, at string, errs *Errors) {
-	r, ok := integerValue(v, at, errs)
-	if !ok {
-		return
-	}
-	checkMinimum(r, "-9007199254740991", false, at, errs)
-	checkMaximum(r, "9007199254740991", false, at, errs)
-}
-
-// UnmarshalJSON decodes an integer written in any JSON spelling, such as 1.0 or 1e3.
-func (n *PlainInteger) UnmarshalJSON(data []byte) error {
-	i, err := decodeInteger(data)
-	if err != nil {
-		return err
-	}
-	*n = PlainInteger(i)
-	return nil
-}
-
-// PlainIntegerNarrowing: The copy `Narrowing<T=PlainInteger>`.
-type PlainIntegerNarrowing = Narrowing[PlainInteger]
-
 // PlainNumber: A number the text types as Number and gives no other range; the field that holds it says what it measures.
 type PlainNumber float64
 
@@ -687,45 +661,6 @@ func (AppId) ValidateValue(v any, at string, errs *Errors) {
 	}
 	if x, ok := m["store"]; ok {
 		validateAs[AppIdStore](x, member(at, "store"), errs)
-	}
-}
-
-// ErrorObject: The `ErrorObject` object of the `kernel` module.
-type ErrorObject struct {
-	// Code: A core code (below) or an extension code
-	Code ErrorObjectCode `json:"code"`
-	// Detail: Human-readable. A receiver SHOULD NOT parse it
-	Detail PlainString `json:"detail"`
-	// Pointer: Into the object this specification defines that the request carries, to the value that caused the error
-	Pointer *FieldPointer `json:"pointer,omitempty"`
-	// Retry: `same` | `refetch` | `none`. `same`: the same request can succeed later. `refetch`: a new attempt, composed on the current `version`, can succeed. `none`: only a changed request can succeed. On a `commit`, `same` keeps the `idempotency_key` and such an error is not a stored result (§ 5.6.1), and `refetch` and `none` take a new `idempotency_key`
-	Retry ErrorObjectRetry `json:"retry"`
-	// Version: The proposal's `version` when the error was decided
-	Version *PlainInteger `json:"version,omitempty"`
-}
-
-// ValidateValue implements Value.
-func (ErrorObject) ValidateValue(v any, at string, errs *Errors) {
-	m, ok := objectValue(v, at, errs)
-	if !ok {
-		return
-	}
-	checkRequired(m, at, errs, "code", "detail", "retry")
-	checkClosed(m, at, errs, "code", "detail", "pointer", "retry", "version")
-	if x, ok := m["code"]; ok {
-		validateAs[ErrorObjectCode](x, member(at, "code"), errs)
-	}
-	if x, ok := m["detail"]; ok {
-		validateAs[PlainString](x, member(at, "detail"), errs)
-	}
-	if x, ok := m["pointer"]; ok {
-		validateAs[FieldPointer](x, member(at, "pointer"), errs)
-	}
-	if x, ok := m["retry"]; ok {
-		validateAs[ErrorObjectRetry](x, member(at, "retry"), errs)
-	}
-	if x, ok := m["version"]; ok {
-		validateAs[PlainInteger](x, member(at, "version"), errs)
 	}
 }
 
@@ -827,6 +762,71 @@ func (Party) ValidateValue(v any, at string, errs *Errors) {
 	}
 }
 
+// SafeInteger: A whole number that every JSON implementation reads exactly, from −(2^53 − 1) to 2^53 − 1, for a row the text types as Integer and gives no other range; the field that holds it says what it counts.
+type SafeInteger int64
+
+// ValidateValue implements Value.
+func (SafeInteger) ValidateValue(v any, at string, errs *Errors) {
+	r, ok := integerValue(v, at, errs)
+	if !ok {
+		return
+	}
+	checkMinimum(r, "-9007199254740991", false, at, errs)
+	checkMaximum(r, "9007199254740991", false, at, errs)
+}
+
+// UnmarshalJSON decodes an integer written in any JSON spelling, such as 1.0 or 1e3.
+func (n *SafeInteger) UnmarshalJSON(data []byte) error {
+	i, err := decodeInteger(data)
+	if err != nil {
+		return err
+	}
+	*n = SafeInteger(i)
+	return nil
+}
+
+// ErrorObject: The `ErrorObject` object of the `kernel` module.
+type ErrorObject struct {
+	// Code: A core code (below) or an extension code
+	Code ErrorObjectCode `json:"code"`
+	// Detail: Human-readable. A receiver SHOULD NOT parse it
+	Detail PlainString `json:"detail"`
+	// Pointer: Into the object this specification defines that the request carries, to the value that caused the error
+	Pointer *FieldPointer `json:"pointer,omitempty"`
+	// Retry: `same` | `refetch` | `none`. `same`: the same request can succeed later. `refetch`: a new attempt, composed on the current `version`, can succeed. `none`: only a changed request can succeed. On a `commit`, `same` keeps the `idempotency_key` and such an error is not a stored result (§ 5.6.1), and `refetch` and `none` take a new `idempotency_key`
+	Retry ErrorObjectRetry `json:"retry"`
+	// Version: The proposal's `version` when the error was decided
+	Version *SafeInteger `json:"version,omitempty"`
+}
+
+// ValidateValue implements Value.
+func (ErrorObject) ValidateValue(v any, at string, errs *Errors) {
+	m, ok := objectValue(v, at, errs)
+	if !ok {
+		return
+	}
+	checkRequired(m, at, errs, "code", "detail", "retry")
+	checkClosed(m, at, errs, "code", "detail", "pointer", "retry", "version")
+	if x, ok := m["code"]; ok {
+		validateAs[ErrorObjectCode](x, member(at, "code"), errs)
+	}
+	if x, ok := m["detail"]; ok {
+		validateAs[PlainString](x, member(at, "detail"), errs)
+	}
+	if x, ok := m["pointer"]; ok {
+		validateAs[FieldPointer](x, member(at, "pointer"), errs)
+	}
+	if x, ok := m["retry"]; ok {
+		validateAs[ErrorObjectRetry](x, member(at, "retry"), errs)
+	}
+	if x, ok := m["version"]; ok {
+		validateAs[SafeInteger](x, member(at, "version"), errs)
+	}
+}
+
+// SafeIntegerNarrowing: The copy `Narrowing<T=SafeInteger>`.
+type SafeIntegerNarrowing = Narrowing[SafeInteger]
+
 // SeatRef: The `SeatRef` object of the `kernel` module.
 type SeatRef struct {
 	// Dsp: The DSP's primary domain
@@ -862,7 +862,7 @@ type Selectable[T Value] struct {
 	// Included: The options in the base rate, by option id.
 	Included List[PlainString] `json:"included"`
 	// MaxSelect: The most options that may be in effect.
-	MaxSelect *PlainInteger `json:"max_select,omitempty"`
+	MaxSelect *SafeInteger `json:"max_select,omitempty"`
 	// Selected: The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.
 	Selected List[PlainString] `json:"selected,omitzero"`
 }
@@ -885,7 +885,7 @@ func (Selectable[T]) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[List[PlainString]](x, member(at, "included"), errs)
 	}
 	if x, ok := m["max_select"]; ok {
-		validateAs[PlainInteger](x, member(at, "max_select"), errs)
+		validateAs[SafeInteger](x, member(at, "max_select"), errs)
 	}
 	if x, ok := m["selected"]; ok {
 		validateAs[List[PlainString]](x, member(at, "selected"), errs)
@@ -1022,7 +1022,7 @@ type TaxonomyCodes struct {
 	// Ids: Ids in that taxonomy
 	Ids List[PlainString] `json:"ids"`
 	// Taxonomy: A value from the list the field names
-	Taxonomy PlainInteger `json:"taxonomy"`
+	Taxonomy SafeInteger `json:"taxonomy"`
 }
 
 // ValidateValue implements Value.
@@ -1037,7 +1037,7 @@ func (TaxonomyCodes) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[List[PlainString]](x, member(at, "ids"), errs)
 	}
 	if x, ok := m["taxonomy"]; ok {
-		validateAs[PlainInteger](x, member(at, "taxonomy"), errs)
+		validateAs[SafeInteger](x, member(at, "taxonomy"), errs)
 	}
 }
 
@@ -1184,7 +1184,7 @@ type VersionRef struct {
 	// SellerDomain: The proposal's `seller.domain`
 	SellerDomain *RegistrableDomain `json:"seller_domain,omitempty"`
 	// Version: The proposal's `version`
-	Version PlainInteger `json:"version"`
+	Version SafeInteger `json:"version"`
 }
 
 // ValidateValue implements Value.
@@ -1205,6 +1205,6 @@ func (VersionRef) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[RegistrableDomain](x, member(at, "seller_domain"), errs)
 	}
 	if x, ok := m["version"]; ok {
-		validateAs[PlainInteger](x, member(at, "version"), errs)
+		validateAs[SafeInteger](x, member(at, "version"), errs)
 	}
 }

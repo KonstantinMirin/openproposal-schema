@@ -186,7 +186,7 @@ test("a rule that turns on what an example leaves out is undecided, not a failur
 test("a part of a document is validated field by field, and a field the document lacks is an undefined key", () => {
   const r = check([{ id: "code:5.5:9", part: true, value: { geo: { allowed: ["US-NY"] }, nonsense: 1 } }]);
   assert.deepEqual(at(r.failures), ["undefined_key /nonsense"]);
-  assert.deepEqual(r.cases.map((c) => c.ref.replace(/^.*#/, "#")), ["#/properties/geo"]);
+  assert.deepEqual(r.cases.map((c) => c.ref.replace(/^.*#/, "#")), ["#/$defs/LineItem/properties/geo"], "the field's schema in the line item's definition in the composition");
 });
 
 test("an example that doesn't load is a failure of the whole example", () => {

@@ -35,8 +35,8 @@
       "description": "A cancellation right the seller offers, priced in `pricing` beside the others. The specification states no members, so the option accepts any beside the `id` that names it.",
       "properties": {
         "id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier",
-          "description": "The identity the seller mints for the option, which `included[]` and the `pricing` keys name it by."
+          "description": "The identity the seller mints for the option, which `included[]` and the `pricing` keys name it by.",
+          "type": "string"
         }
       },
       "required": [
@@ -57,7 +57,7 @@
         "included": {
           "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the identity the seller mints for it.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
+            "type": "string"
           },
           "type": "array"
         },
@@ -69,9 +69,6 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
           },
           "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the identity the seller mints for it.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
-          },
           "type": "object"
         }
       },
@@ -138,8 +135,8 @@
           "description": "The buyer's campaign start. Distinct from `valid_from`"
         },
         "idempotency_key": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier",
-          "description": "Buyer-generated, unique per commitment attempt"
+          "description": "Buyer-generated, unique per commitment attempt",
+          "type": "string"
         }
       },
       "required": [
@@ -196,16 +193,12 @@
         }
       ]
     },
-    "CreativePolicy": {
-      "description": "The content and category restrictions on creative. The specification states no members, so the object accepts any.",
-      "type": "object"
-    },
     "ExclusivityOption": {
       "description": "An exclusivity term the seller offers, priced in `pricing` beside the others. The specification states no members, so the option accepts any beside the `id` that names it.",
       "properties": {
         "id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier",
-          "description": "The identity the seller mints for the option, which `included[]` and the `pricing` keys name it by."
+          "description": "The identity the seller mints for the option, which `included[]` and the `pricing` keys name it by.",
+          "type": "string"
         }
       },
       "required": [
@@ -226,7 +219,7 @@
         "included": {
           "description": "The options in the base rate, each named as `available[]` holds it: a string option by its value, and an object option by its `id`, the identity the seller mints for it.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
+            "type": "string"
           },
           "type": "array"
         },
@@ -238,9 +231,6 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/PriceDelta"
           },
           "description": "The change in price of each option beyond those included, keyed by the option's name: a string option's value, or an object option's `id`, the identity the seller mints for it.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/Identifier"
-          },
           "type": "object"
         }
       },

@@ -53,6 +53,10 @@ covers:
     digest: 28f394d87003c6ac615d1126a28769db077572b544dfde8a08a57ec31a6a4f7b
     quote: "`demographic` | REQUIRED when `cost_method` is `CPP` | The rated demographic, such as `ratings.example:adults_25_54`. Its definition states whether co-viewers and impressions of unknown age count, or says `unknown`. This version lists no core terms"
     locks: [with-our-stack]
+  - ir: key:5.6.4:ImpressionMultiplier.demographic
+    digest: 131967025f960f6bfeaa0f32e5482f8b05a4231955c8d50ac3b7d05e93bb4cf6
+    quote: "`demographic` | OPTIONAL | The demographic whose value settles when `dataset` gives a value per demographic. The same kind of term as `cost_parameters.demographic` (§ 5.6.5)"
+    locks: [with-our-stack]
   - ir: key:5.6.5:CostParameters.action_type
     digest: 83db4387a45bdbb90bb5b272125d57893b95f7b98aaa79113f504c819c8e577e
     quote: "`action_type` | REQUIRED when `cost_method` is `CPA` | The kind of action counted, such as `shop.example:purchase`. This version lists no core terms"
@@ -79,7 +83,7 @@ covers:
     locks: [with-our-stack]
 options:
   - id: text-grammar
-    summary: "A term is ASCII letters, digits, `_`, and `-`, and an extension term is `<domain>:<term>`. A row's own list or the value table its key heads is a vocabulary named after the row's object and key, open for a `VocabularyTerm` and closed for an `Enum` or an `Integer`. `MediaChannel`, `ExclusionType`, and `Environment` keep the names the text gives them; `Environment` is closed, as it isn't a `VocabularyTerm`. A `VocabularyTerm` row that lists no core terms is an open list of its own, named the same way, whose terms their definers give. The options of `shortfall_remedy`, which its row says are `makegood`, `credit`, and `none`, are the list `Preemption.remedy` writes with the same terms, which § 2.6 says is written once."
+    summary: "A term is ASCII letters, digits, `_`, and `-`, and an extension term is `<domain>:<term>`. A row's own list or the value table its key heads is a vocabulary named after the row's object and key, open for a `VocabularyTerm` and closed for an `Enum` or an `Integer`. `MediaChannel`, `ExclusionType`, and `Environment` keep the names the text gives them; `Environment` is closed, as it isn't a `VocabularyTerm`. A `VocabularyTerm` row that lists no core terms is an open list of its own, named the same way, whose terms their definers give. A row whose terms are the same kind of term as another row's takes that row's list, as `ImpressionMultiplier.demographic` takes `cost_parameters.demographic`'s. The options of `shortfall_remedy`, which its row says are `makegood`, `credit`, and `none`, are the list `Preemption.remedy` writes with the same terms, which § 2.6 says is written once."
   - id: kernel-grammar
     summary: "The kernel's term grammar, with no `-`."
 chosen: text-grammar
@@ -91,7 +95,11 @@ rationale: >-
   name takes the name of the row that writes it, its object's and its key's,
   so `AssentEntry.role` is `AssentEntryRole`. `MediaChannel` and
   `ExclusionType` are `VocabularyTerm`s by their own sentences, and
-  `Environment` is a value of its table.
+  `Environment` is a value of its table. A row that says its terms are "the
+  same kind of term as" another row's names that row's list, which § 2.6 says
+  is written once, so `ImpressionMultiplier.demographic` takes the terms
+  `cost_parameters.demographic` takes: an extension term, since that list has
+  no core terms.
 feedback: >-
   None needed.
 sets_aside:

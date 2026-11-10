@@ -77,12 +77,6 @@
         "platform": "roku"
       }
     },
-    "Approval": {
-      "kind": "object",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/creative/1/creative.json#/$defs/Approval",
-      "minimal": {},
-      "full": {}
-    },
     "AppsEntry": {
       "kind": "object",
       "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/inventory/1/inventory.json#/$defs/AppsEntry",
@@ -96,12 +90,6 @@
         "platform": "roku",
         "storeurl": "https://channelstore.roku.com/details/000000/weather-app"
       }
-    },
-    "Assent": {
-      "kind": "object",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/proposal/1/proposal.json#/$defs/Assent",
-      "minimal": {},
-      "full": {}
     },
     "AssetsEntry": {
       "kind": "object",
@@ -371,12 +359,6 @@
         "value": 0.7
       }
     },
-    "ContentDetail": {
-      "kind": "object",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/inventory/1/inventory.json#/$defs/ContentDetail",
-      "minimal": {},
-      "full": {}
-    },
     "CostMethod": {
       "kind": "vocabulary",
       "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/commercial/1/commercial.json#/$defs/CostMethod",
@@ -405,12 +387,6 @@
       "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/creative/1/creative.json#/$defs/CreativeDeliveryMethod",
       "minimal": "buyer_hosted",
       "full": "buyer_hosted"
-    },
-    "CreativePolicy": {
-      "kind": "object",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/commercial/1/commercial.json#/$defs/CreativePolicy",
-      "minimal": {},
-      "full": {}
     },
     "CredentialScheme": {
       "kind": "vocabulary",
@@ -630,12 +606,6 @@
         "max_select": 2
       }
     },
-    "ExternalId": {
-      "kind": "primitive",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/kernel/1/kernel.json#/$defs/ExternalId",
-      "minimal": "EP-104233",
-      "full": "EP-104233"
-    },
     "ExternalReferenceRole": {
       "kind": "vocabulary",
       "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/settlement/1/settlement.json#/$defs/ExternalReferenceRole",
@@ -796,12 +766,6 @@
         "state": "none"
       }
     },
-    "Identifier": {
-      "kind": "primitive",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/kernel/1/kernel.json#/$defs/Identifier",
-      "minimal": "examplepub-q4-2026-display",
-      "full": "examplepub-q4-2026-display"
-    },
     "IntegerFlag": {
       "kind": "primitive",
       "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/kernel/1/kernel.json#/$defs/IntegerFlag",
@@ -810,7 +774,7 @@
     },
     "LineItem": {
       "kind": "document",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/line-item.json",
+      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/composition.json#/$defs/LineItem",
       "minimal": {},
       "full": {
         "activation_route": {
@@ -1377,7 +1341,7 @@
     },
     "LineItemSummary": {
       "kind": "profile",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/line-item-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/composition.json#/$defs/LineItemSummary",
       "minimal": {
         "addressable_scale": 3200000,
         "channel": "display",
@@ -1481,7 +1445,7 @@
     },
     "LineItemSummaryEnvironmentsSelection": {
       "kind": "object",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryEnvironmentsSelection",
+      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryEnvironmentsSelection",
       "minimal": {
         "available": []
       },
@@ -1493,7 +1457,7 @@
     },
     "LineItemSummaryFormatsSelection": {
       "kind": "object",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryFormatsSelection",
+      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryFormatsSelection",
       "minimal": {
         "included": []
       },
@@ -1505,7 +1469,7 @@
     },
     "LineItemSummaryPlacement": {
       "kind": "object",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPlacement",
+      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPlacement",
       "minimal": {},
       "full": {
         "instl": 1,
@@ -1516,7 +1480,7 @@
     },
     "LineItemSummaryPricingEntry": {
       "kind": "object",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPricingEntry",
+      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPricingEntry",
       "minimal": {
         "cost_method": "CPM",
         "currency": "USD",
@@ -1530,7 +1494,7 @@
     },
     "LineItemSummaryPropertiesOption": {
       "kind": "object",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesOption",
+      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPropertiesOption",
       "minimal": {},
       "full": {
         "name": "Puzzle game pack"
@@ -1538,7 +1502,7 @@
     },
     "LineItemSummaryPropertiesOptionOrCatalogRef": {
       "kind": "copy",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesOptionOrCatalogRef",
+      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPropertiesOptionOrCatalogRef",
       "minimal": {},
       "full": {
         "name": "Puzzle game pack"
@@ -1546,7 +1510,7 @@
     },
     "LineItemSummaryPropertiesSelection": {
       "kind": "object",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/representation/1/representation.json#/$defs/LineItemSummaryPropertiesSelection",
+      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/composition.json#/$defs/LineItemSummaryPropertiesSelection",
       "minimal": {
         "available": []
       },
@@ -1575,7 +1539,7 @@
     },
     "Manifest": {
       "kind": "document",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/manifest.json",
+      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/composition.json#/$defs/Manifest",
       "minimal": {},
       "full": {
         "generated_at": "2026-10-01T06:00:00Z",
@@ -1656,7 +1620,7 @@
         {
           "path": "/pricing",
           "holds": "minimal",
-          "reason": "constructor:Selectable:options-named: /pricing/examplepub-q4-2026-display: the `pricing` key \"examplepub-q4-2026-display\" names no option of `available[]`"
+          "reason": "constructor:Selectable:options-named: /pricing/examplepub-us-q4-2026-omni: the `pricing` key \"examplepub-us-q4-2026-omni\" names no option of `available[]`"
         }
       ]
     },
@@ -1750,12 +1714,6 @@
       "minimal": 1,
       "full": 1
     },
-    "PriceAdjustment": {
-      "kind": "primitive",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/kernel/1/kernel.json#/$defs/PriceAdjustment",
-      "minimal": 2.5,
-      "full": 2.5
-    },
     "PriceDelta": {
       "kind": "part",
       "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/kernel/1/kernel.json#/$defs/PriceDelta",
@@ -1832,7 +1790,7 @@
         {
           "path": "/pricing",
           "holds": "minimal",
-          "reason": "constructor:Selectable:options-named: /pricing/examplepub-q4-2026-display: the `pricing` key \"examplepub-q4-2026-display\" names no option of `available[]`"
+          "reason": "constructor:Selectable:options-named: /pricing/examplepub-us-q4-2026-omni: the `pricing` key \"examplepub-us-q4-2026-omni\" names no option of `available[]`"
         }
       ]
     },
@@ -1949,7 +1907,7 @@
     },
     "Proposal": {
       "kind": "document",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/proposal.json",
+      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/composition.json#/$defs/Proposal",
       "minimal": {
         "description": "Cross-channel Example Publisher US package spanning display, in-stream video and CTV. Business and financial audience skew, weekday-heavy delivery.\n"
       },
@@ -2011,7 +1969,7 @@
     },
     "ProposalSummary": {
       "kind": "profile",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/proposal-summary.json",
+      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/composition.json#/$defs/ProposalSummary",
       "minimal": {
         "description": "Cross-channel Example Publisher US package spanning display, in-stream video and CTV. Business and financial audience skew, weekday-heavy delivery.\n",
         "linked_execution": "none",
@@ -2037,7 +1995,7 @@
     },
     "ProposalsEntry": {
       "kind": "object",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/publication/1/publication.json#/$defs/ProposalsEntry",
+      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/documents/1/composition.json#/$defs/ProposalsEntry",
       "minimal": {
         "description": "Cross-channel Example Publisher US package spanning display, in-stream video and CTV. Business and financial audience skew, weekday-heavy delivery.",
         "linked_execution": "none",
@@ -2119,7 +2077,7 @@
         {
           "path": "/pricing",
           "holds": "minimal",
-          "reason": "constructor:Selectable:options-named: /pricing/examplepub-q4-2026-display: the `pricing` key \"examplepub-q4-2026-display\" names no option of `available[]`"
+          "reason": "constructor:Selectable:options-named: /pricing/examplepub-us-q4-2026-omni: the `pricing` key \"examplepub-us-q4-2026-omni\" names no option of `available[]`"
         }
       ]
     },
@@ -2197,29 +2155,11 @@
       "minimal": "Weekday reach among business news readers in the US.",
       "full": "Weekday reach among business news readers in the US."
     },
-    "SpecificationsDetail": {
-      "kind": "object",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/proposal/1/proposal.json#/$defs/SpecificationsDetail",
-      "minimal": {},
-      "full": {}
-    },
-    "Specs": {
-      "kind": "object",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/creative/1/creative.json#/$defs/Specs",
-      "minimal": {},
-      "full": {}
-    },
     "StorePlatform": {
       "kind": "vocabulary",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/inventory/1/inventory.json#/$defs/StorePlatform",
+      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/kernel/1/kernel.json#/$defs/StorePlatform",
       "minimal": "roku",
       "full": "roku"
-    },
-    "SuppressionList": {
-      "kind": "object",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/audience/1/audience.json#/$defs/SuppressionList",
-      "minimal": {},
-      "full": {}
     },
     "TermsRef": {
       "kind": "object",
@@ -2230,18 +2170,6 @@
         "url": "https://examplepub.example/legal/io-terms-2026.pdf",
         "version": "2026.1"
       }
-    },
-    "Text": {
-      "kind": "primitive",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/kernel/1/kernel.json#/$defs/Text",
-      "minimal": "Weekday reach among business news readers in the US.",
-      "full": "Weekday reach among business news readers in the US."
-    },
-    "ThirdPartyTags": {
-      "kind": "object",
-      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-open-prs/modules/creative/1/creative.json#/$defs/ThirdPartyTags",
-      "minimal": {},
-      "full": {}
     },
     "TimeOfDay": {
       "kind": "primitive",

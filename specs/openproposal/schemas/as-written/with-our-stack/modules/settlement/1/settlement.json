@@ -4,8 +4,8 @@
       "additionalProperties": false,
       "properties": {
         "agreement_id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "The agreement's id"
+          "description": "The agreement's id",
+          "type": "string"
         },
         "agreement_type": {
           "$ref": "#/$defs/AgreementAgreementType",
@@ -77,8 +77,8 @@
           "description": "Who invoices. Absent: the `seller`"
         },
         "payment_terms": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "The payment terms, such as `net 30`"
+          "description": "The payment terms, such as `net 30`",
+          "type": "string"
         },
         "time_zone": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/IanaZone",
@@ -110,20 +110,20 @@
       "additionalProperties": false,
       "properties": {
         "id": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "The id"
+          "description": "The id",
+          "type": "string"
         },
         "namespace": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "The namespace of the id in that system"
+          "description": "The namespace of the id in that system",
+          "type": "string"
         },
         "reference_type": {
           "$ref": "#/$defs/ExternalReferenceReferenceType",
           "description": "What the id names. Core terms: `order` | `line` | `agreement` | `deal`. `order`: the order that books the line item, such as an OpenDirect Order or an IO. `line`: the line in that order, such as an OpenDirect Line. `agreement`: a buyer-held agreement id. `deal`: the deal ID that bid requests carry, with `system` set to `deal_origin`. It is the Deals API `id` and the OpenRTB 2.6 `Deal.id`, whether `deal_origin` assigned it or accepted it from the seller. An ID that bid requests don't carry, such as the origin's internal record ID, is not a `deal` entry. A receiver that doesn't know the term ignores the entry"
         },
         "system": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString",
-          "description": "The system that holds the id"
+          "description": "The system that holds the id",
+          "type": "string"
         }
       },
       "required": [

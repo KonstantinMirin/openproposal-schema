@@ -21,86 +21,6 @@ func (LineItemSummaryEnvironmentsSelection) ValidateValue(v any, at string, errs
 	}
 }
 
-// LineItemSummaryImpressionMultiplier: The `LineItemSummaryImpressionMultiplier` object of the `representation` module.
-type LineItemSummaryImpressionMultiplier struct {
-	// ImpressionType: `gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them
-	ImpressionType ImpressionMultiplierImpressionType `json:"impression_type"`
-	// SourceType: Who supplies the multiplier. A value from AdCOM 1.0 List: DOOH Multiplier Measurement Source Types other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries
-	SourceType PlainInteger `json:"source_type"`
-}
-
-// ValidateValue implements Value.
-func (LineItemSummaryImpressionMultiplier) ValidateValue(v any, at string, errs *Errors) {
-	m, ok := objectValue(v, at, errs)
-	if !ok {
-		return
-	}
-	checkRequired(m, at, errs, "impression_type", "source_type")
-	checkClosed(m, at, errs, "impression_type", "source_type")
-	if x, ok := m["impression_type"]; ok {
-		validateAs[ImpressionMultiplierImpressionType](x, member(at, "impression_type"), errs)
-	}
-	if x, ok := m["source_type"]; ok {
-		validateAs[PlainInteger](x, member(at, "source_type"), errs)
-	}
-}
-
-// LineItemSummaryDeliveryCounting: The `LineItemSummaryDeliveryCounting` object of the `representation` module.
-type LineItemSummaryDeliveryCounting struct {
-	// ImpressionMultiplier: The line item's `delivery_counting.impression_multiplier`, projected to `impression_type` and `source_type`.
-	ImpressionMultiplier *LineItemSummaryImpressionMultiplier `json:"impression_multiplier,omitempty"`
-}
-
-// ValidateValue implements Value.
-func (LineItemSummaryDeliveryCounting) ValidateValue(v any, at string, errs *Errors) {
-	m, ok := objectValue(v, at, errs)
-	if !ok {
-		return
-	}
-	checkClosed(m, at, errs, "impression_multiplier")
-	if x, ok := m["impression_multiplier"]; ok {
-		validateAs[LineItemSummaryImpressionMultiplier](x, member(at, "impression_multiplier"), errs)
-	}
-}
-
-// LineItemSummaryPlacement: The `LineItemSummaryPlacement` object of the `representation` module.
-type LineItemSummaryPlacement struct {
-	// Feed: A value from List: Feed Types, such as Podcast (3)
-	Feed *PlainInteger `json:"feed,omitempty"`
-	// Instl: The ad is interstitial or full screen
-	Instl *IntegerFlag `json:"instl,omitempty"`
-	// Plcmt: A value from List: Plcmt Subtypes - Video, such as Instream (1). Its presence states that the line item is video, so a `ctv` line item that sells video carries it
-	Plcmt *PlainInteger `json:"plcmt,omitempty"`
-	// Reward: The user receives a reward for viewing the ad
-	Reward *IntegerFlag `json:"reward,omitempty"`
-	// Skip: Video or audio. The placement lets the user skip the ad
-	Skip *IntegerFlag `json:"skip,omitempty"`
-}
-
-// ValidateValue implements Value.
-func (LineItemSummaryPlacement) ValidateValue(v any, at string, errs *Errors) {
-	m, ok := objectValue(v, at, errs)
-	if !ok {
-		return
-	}
-	checkClosed(m, at, errs, "feed", "instl", "plcmt", "reward", "skip")
-	if x, ok := m["feed"]; ok {
-		validateAs[PlainInteger](x, member(at, "feed"), errs)
-	}
-	if x, ok := m["instl"]; ok {
-		validateAs[IntegerFlag](x, member(at, "instl"), errs)
-	}
-	if x, ok := m["plcmt"]; ok {
-		validateAs[PlainInteger](x, member(at, "plcmt"), errs)
-	}
-	if x, ok := m["reward"]; ok {
-		validateAs[IntegerFlag](x, member(at, "reward"), errs)
-	}
-	if x, ok := m["skip"]; ok {
-		validateAs[IntegerFlag](x, member(at, "skip"), errs)
-	}
-}
-
 // LineItemSummaryApp: The `LineItemSummaryApp` object of the `representation` module.
 type LineItemSummaryApp struct {
 	// Bundle: Store ID. As OpenRTB 2.6 `app.bundle`
@@ -165,54 +85,6 @@ func (LineItemSummaryAudienceSelectable) ValidateValue(v any, at string, errs *E
 	checkClosed(m, at, errs, "available")
 	if x, ok := m["available"]; ok {
 		validateAs[List[LineItemSummaryAudienceOption]](x, member(at, "available"), errs)
-	}
-}
-
-// LineItemSummaryBreakPositionOption: The `LineItemSummaryBreakPositionOption` object of the `representation` module.
-type LineItemSummaryBreakPositionOption struct {
-	// Delay: A value from List: Start Delay Modes, such as Pre-Roll (0)
-	Delay *PlainInteger `json:"delay,omitempty"`
-	// Id: Option id (§ 3.1)
-	Id PlainString `json:"id"`
-	// Slotinpod: A value from List: Slot Position in Pod
-	Slotinpod *PlainInteger `json:"slotinpod,omitempty"`
-}
-
-// ValidateValue implements Value.
-func (LineItemSummaryBreakPositionOption) ValidateValue(v any, at string, errs *Errors) {
-	m, ok := objectValue(v, at, errs)
-	if !ok {
-		return
-	}
-	checkRequired(m, at, errs, "id")
-	checkClosed(m, at, errs, "delay", "id", "slotinpod")
-	if x, ok := m["delay"]; ok {
-		validateAs[PlainInteger](x, member(at, "delay"), errs)
-	}
-	if x, ok := m["id"]; ok {
-		validateAs[PlainString](x, member(at, "id"), errs)
-	}
-	if x, ok := m["slotinpod"]; ok {
-		validateAs[PlainInteger](x, member(at, "slotinpod"), errs)
-	}
-}
-
-// LineItemSummaryBreakPositionSelection: The `LineItemSummaryBreakPositionSelection` object of the `representation` module.
-type LineItemSummaryBreakPositionSelection struct {
-	// Available: The line item's `break_position.available[]`, each entry projected to `id`, `delay`, and `slotinpod`.
-	Available List[LineItemSummaryBreakPositionOption] `json:"available"`
-}
-
-// ValidateValue implements Value.
-func (LineItemSummaryBreakPositionSelection) ValidateValue(v any, at string, errs *Errors) {
-	m, ok := objectValue(v, at, errs)
-	if !ok {
-		return
-	}
-	checkRequired(m, at, errs, "available")
-	checkClosed(m, at, errs, "available")
-	if x, ok := m["available"]; ok {
-		validateAs[List[LineItemSummaryBreakPositionOption]](x, member(at, "available"), errs)
 	}
 }
 
@@ -320,6 +192,134 @@ func (ProposalSummaryParty) ValidateValue(v any, at string, errs *Errors) {
 	}
 }
 
+// LineItemSummaryBreakPositionOption: The `LineItemSummaryBreakPositionOption` object of the `representation` module.
+type LineItemSummaryBreakPositionOption struct {
+	// Delay: A value from List: Start Delay Modes, such as Pre-Roll (0)
+	Delay *SafeInteger `json:"delay,omitempty"`
+	// Id: Option id (§ 3.1)
+	Id PlainString `json:"id"`
+	// Slotinpod: A value from List: Slot Position in Pod
+	Slotinpod *SafeInteger `json:"slotinpod,omitempty"`
+}
+
+// ValidateValue implements Value.
+func (LineItemSummaryBreakPositionOption) ValidateValue(v any, at string, errs *Errors) {
+	m, ok := objectValue(v, at, errs)
+	if !ok {
+		return
+	}
+	checkRequired(m, at, errs, "id")
+	checkClosed(m, at, errs, "delay", "id", "slotinpod")
+	if x, ok := m["delay"]; ok {
+		validateAs[SafeInteger](x, member(at, "delay"), errs)
+	}
+	if x, ok := m["id"]; ok {
+		validateAs[PlainString](x, member(at, "id"), errs)
+	}
+	if x, ok := m["slotinpod"]; ok {
+		validateAs[SafeInteger](x, member(at, "slotinpod"), errs)
+	}
+}
+
+// LineItemSummaryBreakPositionSelection: The `LineItemSummaryBreakPositionSelection` object of the `representation` module.
+type LineItemSummaryBreakPositionSelection struct {
+	// Available: The line item's `break_position.available[]`, each entry projected to `id`, `delay`, and `slotinpod`.
+	Available List[LineItemSummaryBreakPositionOption] `json:"available"`
+}
+
+// ValidateValue implements Value.
+func (LineItemSummaryBreakPositionSelection) ValidateValue(v any, at string, errs *Errors) {
+	m, ok := objectValue(v, at, errs)
+	if !ok {
+		return
+	}
+	checkRequired(m, at, errs, "available")
+	checkClosed(m, at, errs, "available")
+	if x, ok := m["available"]; ok {
+		validateAs[List[LineItemSummaryBreakPositionOption]](x, member(at, "available"), errs)
+	}
+}
+
+// LineItemSummaryImpressionMultiplier: The `LineItemSummaryImpressionMultiplier` object of the `representation` module.
+type LineItemSummaryImpressionMultiplier struct {
+	// ImpressionType: `gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them
+	ImpressionType ImpressionMultiplierImpressionType `json:"impression_type"`
+	// SourceType: Who supplies the multiplier. A value from AdCOM 1.0 List: DOOH Multiplier Measurement Source Types other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries
+	SourceType SafeInteger `json:"source_type"`
+}
+
+// ValidateValue implements Value.
+func (LineItemSummaryImpressionMultiplier) ValidateValue(v any, at string, errs *Errors) {
+	m, ok := objectValue(v, at, errs)
+	if !ok {
+		return
+	}
+	checkRequired(m, at, errs, "impression_type", "source_type")
+	checkClosed(m, at, errs, "impression_type", "source_type")
+	if x, ok := m["impression_type"]; ok {
+		validateAs[ImpressionMultiplierImpressionType](x, member(at, "impression_type"), errs)
+	}
+	if x, ok := m["source_type"]; ok {
+		validateAs[SafeInteger](x, member(at, "source_type"), errs)
+	}
+}
+
+// LineItemSummaryDeliveryCounting: The `LineItemSummaryDeliveryCounting` object of the `representation` module.
+type LineItemSummaryDeliveryCounting struct {
+	// ImpressionMultiplier: The line item's `delivery_counting.impression_multiplier`, projected to `impression_type` and `source_type`.
+	ImpressionMultiplier *LineItemSummaryImpressionMultiplier `json:"impression_multiplier,omitempty"`
+}
+
+// ValidateValue implements Value.
+func (LineItemSummaryDeliveryCounting) ValidateValue(v any, at string, errs *Errors) {
+	m, ok := objectValue(v, at, errs)
+	if !ok {
+		return
+	}
+	checkClosed(m, at, errs, "impression_multiplier")
+	if x, ok := m["impression_multiplier"]; ok {
+		validateAs[LineItemSummaryImpressionMultiplier](x, member(at, "impression_multiplier"), errs)
+	}
+}
+
+// LineItemSummaryPlacement: The `LineItemSummaryPlacement` object of the `representation` module.
+type LineItemSummaryPlacement struct {
+	// Feed: A value from List: Feed Types, such as Podcast (3)
+	Feed *SafeInteger `json:"feed,omitempty"`
+	// Instl: The ad is interstitial or full screen
+	Instl *IntegerFlag `json:"instl,omitempty"`
+	// Plcmt: A value from List: Plcmt Subtypes - Video, such as Instream (1). Its presence states that the line item is video, so a `ctv` line item that sells video carries it
+	Plcmt *SafeInteger `json:"plcmt,omitempty"`
+	// Reward: The user receives a reward for viewing the ad
+	Reward *IntegerFlag `json:"reward,omitempty"`
+	// Skip: Video or audio. The placement lets the user skip the ad
+	Skip *IntegerFlag `json:"skip,omitempty"`
+}
+
+// ValidateValue implements Value.
+func (LineItemSummaryPlacement) ValidateValue(v any, at string, errs *Errors) {
+	m, ok := objectValue(v, at, errs)
+	if !ok {
+		return
+	}
+	checkClosed(m, at, errs, "feed", "instl", "plcmt", "reward", "skip")
+	if x, ok := m["feed"]; ok {
+		validateAs[SafeInteger](x, member(at, "feed"), errs)
+	}
+	if x, ok := m["instl"]; ok {
+		validateAs[IntegerFlag](x, member(at, "instl"), errs)
+	}
+	if x, ok := m["plcmt"]; ok {
+		validateAs[SafeInteger](x, member(at, "plcmt"), errs)
+	}
+	if x, ok := m["reward"]; ok {
+		validateAs[IntegerFlag](x, member(at, "reward"), errs)
+	}
+	if x, ok := m["skip"]; ok {
+		validateAs[IntegerFlag](x, member(at, "skip"), errs)
+	}
+}
+
 // LineItemSummaryPropertyOption: The `LineItemSummaryPropertyOption` object of the `representation` module.
 type LineItemSummaryPropertyOption struct {
 	// Apps: The line item's `properties.available.apps[]`, each entry projected to `store` and `bundle`.
@@ -416,11 +416,11 @@ type LineItemSummaryPricingEntry struct {
 	// ListRate: The rate before options. A buyer MAY request another value, and a granted value is the `list_rate` of the next `version`
 	ListRate Amount `json:"list_rate"`
 	// PriceType: How `agreed_rate` clears, as Deals API 1.0 `terms.pricetype`: Dynamic (0), the auction type of each bid request; First Price (1); Second Price Plus (2); Fixed Price (3); or an exchange-specific value, 500 and up
-	PriceType *PlainInteger `json:"price_type,omitempty"`
+	PriceType *SafeInteger `json:"price_type,omitempty"`
 	// PricingId: Names the entry within the line item. A revision MUST NOT reuse it for a different `cost_method`, `cost_parameters`, `currency`, or `transaction_mechanisms[]`
 	PricingId PlainString `json:"pricing_id"`
 	// UnitBounds: Bounds on the units committed under this entry, counted in its unit (§ 5.6.5): `commitment.amount` when `basis` is `units`, otherwise `derived_units`. A buyer MAY request another. Absent on a `FLAT` entry
-	UnitBounds *Range[PlainInteger] `json:"unit_bounds,omitempty"`
+	UnitBounds *Range[SafeInteger] `json:"unit_bounds,omitempty"`
 }
 
 // ValidateValue implements Value.
@@ -441,13 +441,13 @@ func (LineItemSummaryPricingEntry) ValidateValue(v any, at string, errs *Errors)
 		validateAs[Amount](x, member(at, "list_rate"), errs)
 	}
 	if x, ok := m["price_type"]; ok {
-		validateAs[PlainInteger](x, member(at, "price_type"), errs)
+		validateAs[SafeInteger](x, member(at, "price_type"), errs)
 	}
 	if x, ok := m["pricing_id"]; ok {
 		validateAs[PlainString](x, member(at, "pricing_id"), errs)
 	}
 	if x, ok := m["unit_bounds"]; ok {
-		validateAs[Range[PlainInteger]](x, member(at, "unit_bounds"), errs)
+		validateAs[Range[SafeInteger]](x, member(at, "unit_bounds"), errs)
 	}
 }
 
@@ -614,7 +614,7 @@ type ProposalSummary struct {
 	// Seller: The proposal's `seller`, projected to `domain` and `legal_name`.
 	Seller ProposalSummaryParty `json:"seller"`
 	// Version: Monotonically increasing revision number, starting at 1, held by the seller. Each version is a snapshot of the proposal's offered terms (§ 4.1.3). A version is frozen at the earliest of: the proposal's `status` leaving `draft`; a `negotiation_history[]` or `assent[]` entry naming it; a counterparty receiving it in any representation (§ 2.1). The offered terms of a frozen version MUST NOT change; a change to them creates version `n+1`. The values § 4.1.3 lists as not offered terms change without a new version
-	Version PlainInteger `json:"version"`
+	Version SafeInteger `json:"version"`
 }
 
 // ValidateValue implements Value.
@@ -644,6 +644,6 @@ func (ProposalSummary) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[ProposalSummaryParty](x, member(at, "seller"), errs)
 	}
 	if x, ok := m["version"]; ok {
-		validateAs[PlainInteger](x, member(at, "version"), errs)
+		validateAs[SafeInteger](x, member(at, "version"), errs)
 	}
 }

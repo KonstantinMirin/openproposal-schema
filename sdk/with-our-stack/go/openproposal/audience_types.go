@@ -121,7 +121,7 @@ func (LineItemActivationRoute) ValidateValue(v any, at string, errs *Errors) {
 // AddressableScale: The `AddressableScale` object of the `audience` module.
 type AddressableScale struct {
 	// Quantity: How many
-	Quantity PlainInteger `json:"quantity"`
+	Quantity SafeInteger `json:"quantity"`
 	// Unit: What `quantity` counts. Core terms: the `frequency_cap.per` terms (§ 5.5), and `person`. A receiver that doesn't know a term reads the figure as unstated
 	Unit AddressableScaleUnit `json:"unit"`
 	// Window: The dates `quantity` covers
@@ -137,7 +137,7 @@ func (AddressableScale) ValidateValue(v any, at string, errs *Errors) {
 	checkRequired(m, at, errs, "quantity", "unit", "window")
 	checkClosed(m, at, errs, "quantity", "unit", "window")
 	if x, ok := m["quantity"]; ok {
-		validateAs[PlainInteger](x, member(at, "quantity"), errs)
+		validateAs[SafeInteger](x, member(at, "quantity"), errs)
 	}
 	if x, ok := m["unit"]; ok {
 		validateAs[AddressableScaleUnit](x, member(at, "unit"), errs)
@@ -160,7 +160,7 @@ type AudienceOption struct {
 	// SensitiveCategories: The categories the option's membership is derived from or reveals. Core terms: `racial_or_ethnic_origin` | `political_opinions` | `religious_or_philosophical_beliefs` | `trade_union_membership` | `genetic` | `biometric` | `health` | `sex_life_or_sexual_orientation` | `precise_geolocation` | `minors` (under 18). An empty array declares none
 	SensitiveCategories List[AudienceOptionSensitiveCategory] `json:"sensitive_categories"`
 	// Taxonomy: The integer from the OpenRTB segment taxonomies list for the IDs that name this option: `4` (IAB Tech Lab Audience Taxonomy 1.1) for the label's `taxonomy_id_list`, or the seller's registered vendor value (500 and up) for the label's `audience_id`. When the seller signals the segment in an OpenRTB 2.6 request, these are the `data.ext.segtax` and `segment.id` values
-	Taxonomy PlainInteger `json:"taxonomy"`
+	Taxonomy SafeInteger `json:"taxonomy"`
 }
 
 // ValidateValue implements Value.
@@ -187,7 +187,7 @@ func (AudienceOption) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[List[AudienceOptionSensitiveCategory]](x, member(at, "sensitive_categories"), errs)
 	}
 	if x, ok := m["taxonomy"]; ok {
-		validateAs[PlainInteger](x, member(at, "taxonomy"), errs)
+		validateAs[SafeInteger](x, member(at, "taxonomy"), errs)
 	}
 }
 
@@ -198,7 +198,7 @@ type BuyerList struct {
 	// MatchMethod: How its members match users. Core terms: `hashed_email` | `device_id`. A receiver that doesn't know a term reads the method as unstated
 	MatchMethod *BuyerListMatchMethod `json:"match_method,omitempty"`
 	// Size: How many members it holds
-	Size *PlainInteger `json:"size,omitempty"`
+	Size *SafeInteger `json:"size,omitempty"`
 	// Source: Where the list comes from, such as `advertiser_crm`
 	Source *PlainString `json:"source,omitempty"`
 }
@@ -218,7 +218,7 @@ func (BuyerList) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[BuyerListMatchMethod](x, member(at, "match_method"), errs)
 	}
 	if x, ok := m["size"]; ok {
-		validateAs[PlainInteger](x, member(at, "size"), errs)
+		validateAs[SafeInteger](x, member(at, "size"), errs)
 	}
 	if x, ok := m["source"]; ok {
 		validateAs[PlainString](x, member(at, "source"), errs)
@@ -282,7 +282,7 @@ type AudienceSelectable struct {
 	// Included: The options in the base rate, by option id.
 	Included List[PlainString] `json:"included"`
 	// MaxSelect: The most options that may be in effect.
-	MaxSelect *PlainInteger `json:"max_select,omitempty"`
+	MaxSelect *SafeInteger `json:"max_select,omitempty"`
 	// Selected: The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.
 	Selected List[PlainString] `json:"selected,omitzero"`
 }
@@ -311,7 +311,7 @@ func (AudienceSelectable) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[List[PlainString]](x, member(at, "included"), errs)
 	}
 	if x, ok := m["max_select"]; ok {
-		validateAs[PlainInteger](x, member(at, "max_select"), errs)
+		validateAs[SafeInteger](x, member(at, "max_select"), errs)
 	}
 	if x, ok := m["selected"]; ok {
 		validateAs[List[PlainString]](x, member(at, "selected"), errs)

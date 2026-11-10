@@ -276,14 +276,14 @@ test("the version follows from the last frozen release: minor for additive, patc
   const patch = buildRelease({ model: prose, files: emit(prose), rules: RULES, previous });
   assert.equal(patch.doc.release, "1.0.1");
   assert.deepEqual(only(patch.doc.changes, "annotation"), ["LineItem.serving_mode: description"]);
-  assert.deepEqual(Object.entries(patch.doc.files).filter(([, e]) => e.version === "1.0.1").map(([p]) => p), ["documents/1/line-item.json"]);
+  assert.deepEqual(Object.entries(patch.doc.files).filter(([, e]) => e.version === "1.0.1").map(([p]) => p), ["documents/1/composition.json"], "the line item's definition, which its root file references, moves");
 
   const removed = changed((t) => {
     delete props(t.get("LineItem")).min_spend;
   });
   const breaking = buildRelease({ model: removed, files: emit(removed), rules: RULES, previous });
   assert.match(breaking.problems[0]!, /^breaking change within major 1, against 1\.0\.0: LineItem min_spend: removed-property/);
-  assert.match(breaking.problems.join("\n"), /documents\/1\/line-item\.json: narrowed-schema: .*"min_spend" is removed/);
+  assert.match(breaking.problems.join("\n"), /documents\/1\/composition\.json LineItem: narrowed-schema: .*"min_spend" is removed/);
 });
 
 test("a schema file change the model doesn't show is classed from the files: narrowing is breaking, widening bumps the minor", () => {
@@ -320,7 +320,7 @@ test("the file differ follows references across files, so a type that widens to 
   const toCatalogRef = changed((t) => {
     props(t.get("LineItem")).serving_platform!.type = { kind: "named", name: "CatalogRef" };
   });
-  assert.deepEqual(only(diffFiles(tree(FILES), tree(emit(toCatalogRef))), "breaking"), ["documents/1/line-item.json: narrowed-schema"], "Text to CatalogRef narrows in the files too");
+  assert.deepEqual(only(diffFiles(tree(FILES), tree(emit(toCatalogRef))), "breaking"), ["documents/1/composition.json.LineItem: narrowed-schema"], "Text to CatalogRef narrows in the files too");
   assert.deepEqual(only(diffFiles(tree(emit(toCatalogRef)), tree(FILES)), "breaking"), [], "CatalogRef to Text widens");
   // A union that gains a branch, and a property typed by one of its branches that becomes the union.
   const union = MAIN.types.find((t) => t.kind === "union" && t.any_of.some((r) => r.kind === "named"))!;

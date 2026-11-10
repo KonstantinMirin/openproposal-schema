@@ -704,15 +704,65 @@
     {
       "change": "narrowed-schema",
       "class": "breaking",
-      "detail": "documents/1/line-item-summary.json: newly requires \"environments\", \"has_requires\"",
-      "type": "documents/1/line-item-summary.json",
+      "detail": "documents/1/composition.json#/$defs/LineItem/properties/geo: no branch of the new union accepts every value of the old schema; documents/1/composition.json#/$defs/LineItem: dependentRequired added; documents/1/composition.json#/$defs/LineItem: dependentSchemas added; documents/1/composition.json#/$defs/LineItem: if added; documents/1/composition.json#/$defs/LineItem: then added",
+      "member": "LineItem",
+      "type": "documents/1/composition.json",
       "view": "files"
     },
     {
       "change": "narrowed-schema",
       "class": "breaking",
-      "detail": "documents/1/line-item.json/properties/geo: no branch of the new union accepts every value of the old schema; documents/1/line-item.json: dependentRequired added; documents/1/line-item.json: dependentSchemas added; documents/1/line-item.json: if added; documents/1/line-item.json: then added",
-      "type": "documents/1/line-item.json",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummary: newly requires \"environments\", \"has_requires\"",
+      "member": "LineItemSummary",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryEnvironmentsSelection is added",
+      "member": "LineItemSummaryEnvironmentsSelection",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/LineItemSummaryPlacement is added",
+      "member": "LineItemSummaryPlacement",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/Manifest is added",
+      "member": "Manifest",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "widened-schema",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/Proposal accepts every value it accepted",
+      "member": "Proposal",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "narrowed-schema",
+      "class": "breaking",
+      "detail": "documents/1/composition.json#/$defs/ProposalSummary: newly requires \"linked_execution\"",
+      "member": "ProposalSummary",
+      "type": "documents/1/composition.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "documents/1/composition.json#/$defs/ProposalsEntry is added",
+      "member": "ProposalsEntry",
+      "type": "documents/1/composition.json",
       "view": "files"
     },
     {
@@ -720,20 +770,6 @@
       "class": "additive",
       "detail": "documents/1/manifest.json is added",
       "type": "documents/1/manifest.json",
-      "view": "files"
-    },
-    {
-      "change": "narrowed-schema",
-      "class": "breaking",
-      "detail": "documents/1/proposal-summary.json: newly requires \"linked_execution\"",
-      "type": "documents/1/proposal-summary.json",
-      "view": "files"
-    },
-    {
-      "change": "widened-schema",
-      "class": "additive",
-      "detail": "documents/1/proposal.json accepts every value it accepted",
-      "type": "documents/1/proposal.json",
       "view": "files"
     },
     {
@@ -749,6 +785,14 @@
       "class": "additive",
       "detail": "kernel/1/kernel.json#/$defs/IntegerFlag is added",
       "member": "IntegerFlag",
+      "type": "kernel/1/kernel.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
+      "detail": "kernel/1/kernel.json#/$defs/StorePlatform is added",
+      "member": "StorePlatform",
       "type": "kernel/1/kernel.json",
       "view": "files"
     },
@@ -867,40 +911,9 @@
     {
       "change": "added-definition",
       "class": "additive",
-      "detail": "modules/inventory/1/inventory.json#/$defs/StorePlatform is added",
-      "member": "StorePlatform",
-      "type": "modules/inventory/1/inventory.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
       "detail": "modules/proposal/1/proposal.json#/$defs/LinkedExecution is added",
       "member": "LinkedExecution",
       "type": "modules/proposal/1/proposal.json",
-      "view": "files"
-    },
-    {
-      "change": "added-file",
-      "class": "additive",
-      "detail": "modules/publication/1/publication.json is added",
-      "type": "modules/publication/1/publication.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryEnvironmentsSelection is added",
-      "member": "LineItemSummaryEnvironmentsSelection",
-      "type": "modules/representation/1/representation.json",
-      "view": "files"
-    },
-    {
-      "change": "added-definition",
-      "class": "additive",
-      "detail": "modules/representation/1/representation.json#/$defs/LineItemSummaryPlacement is added",
-      "member": "LineItemSummaryPlacement",
-      "type": "modules/representation/1/representation.json",
       "view": "files"
     },
     {
@@ -3460,7 +3473,7 @@
       "findings.spec_open": 73,
       "properties": 251,
       "rules": 25,
-      "schema_files": 19,
+      "schema_files": 18,
       "statements.example": 11,
       "statements.obligation": 40,
       "statements.rule": 14,

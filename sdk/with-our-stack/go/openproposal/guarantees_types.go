@@ -195,7 +195,7 @@ type ShortfallRemedy struct {
 	// Included: The options in the base rate, by option id.
 	Included List[PlainString] `json:"included"`
 	// MaxSelect: The most options that may be in effect.
-	MaxSelect *PlainInteger `json:"max_select,omitempty"`
+	MaxSelect *SafeInteger `json:"max_select,omitempty"`
 	// RemedyTerms: The seller's terms for a remedy
 	RemedyTerms *RemedyTerms `json:"remedy_terms,omitempty"`
 	// Selected: The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.
@@ -220,7 +220,7 @@ func (ShortfallRemedy) ValidateValue(v any, at string, errs *Errors) {
 		validateAs[List[PlainString]](x, member(at, "included"), errs)
 	}
 	if x, ok := m["max_select"]; ok {
-		validateAs[PlainInteger](x, member(at, "max_select"), errs)
+		validateAs[SafeInteger](x, member(at, "max_select"), errs)
 	}
 	if x, ok := m["remedy_terms"]; ok {
 		validateAs[RemedyTerms](x, member(at, "remedy_terms"), errs)

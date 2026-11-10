@@ -21,9 +21,10 @@
  * paths below are relative to it, apart from `sdk/`, `kernel/`, `tools/`,
  * and `gates/`, which sit at the repository's root.
  *
- * 2. For each lock: its snapshot holds the locked specification and every
- *    file under `examples/` at the commit, each blob and the directory's
- *    tree SHA as the lock pins them, and a reachable clone agrees, so CI
+ * 2. For each lock: its snapshot holds the locked specification, every
+ *    file under `examples/` at the commit, and the scripts the lock pins,
+ *    each blob and the directory's tree SHA as the lock pins them, and a
+ *    reachable clone agrees, so CI
  *    runs every gate on every lock without the clone. Then materialize the
  *    spec (blob SHA verified), extract it in this process, schema-valid and
  *    with the exception registry current, run the extractor twice in
@@ -215,7 +216,13 @@
  *     covers an element its location rests on, and every recorded finding
  *     still occurs. The reference oracle reaches Ajv's verdict on every
  *     example. An optional lock with no reachable source is skipped. Across
- *     the locks, every finding names known locks.
+ *     the locks, every finding names known locks. Each desk-test set's
+ *     `desk-tests/<set>/expected.yaml` validates, and on the lock it names
+ *     every payload gets its recorded verdict, at its recorded location and
+ *     nowhere else, from the lock's schemas and rule checks and from the
+ *     lock's own checker, a script the lock pins and its snapshot keeps, run
+ *     on the lock's specification and examples with the payloads added; the
+ *     undecided checks are the recorded ones (src/desk-tests.ts).
  * 15a. Variants (src/variant.ts): each variant file under `variants/`
  *     validates against its schema; every departure has exactly one switch,
  *     with an option its record lists and doesn't choose; every replaced type
@@ -356,6 +363,7 @@ import type { FindingsDoc } from "../src/pipeline.ts";
 import { FINDING_KINDS } from "../src/lint.ts";
 import { DIFFERENCES_FILE, type DifferencesFile, loadDifferences } from "../src/render.ts";
 import { checkExamples, FINDINGS_FILE, type FindingsFile, loadFindings, lockExamples } from "../src/examples.ts";
+import { deskTestFiles, loadDeskPayloads, loadDeskTests, runDeskChecker, type CheckerRun, type DeskTests } from "../src/desk-tests.ts";
 import { buildRelease, FROZEN_MODEL, FROZEN_RULES, FROZEN_SCHEMAS, loadFrozen, RELEASE_FILE, RELEASE_SCHEMA, RELEASES_DIR, renderRelease, type Frozen, type OracleCheck, type ReleaseDoc } from "../src/release.ts";
 import { canonicalJson } from "../src/canonical.ts";
 import { CORPUS_FILE, corpusDirOf, generateCorpus, renderCorpus, type CorpusDoc } from "../src/corpus.ts";
@@ -403,6 +411,10 @@ import { loadVariant, type Variant } from "../src/variant.ts";
 import { variantReportFiles } from "../src/variant-report.ts";
 
 const isPlainMap = (v: unknown): v is Record<string, unknown> => v !== null && typeof v === "object" && !Array.isArray(v);
+/** The names a schema tree defines: each file's `$defs`; a document's root file defines nothing, since it references its definition in the composition. */
+const schemaNamesOf = (files: readonly { schema: Record<string, unknown> }[]): string[] => files.flatMap((f) => (isPlainMap(f.schema.$defs) ? Object.keys(f.schema.$defs) : [])).sort();
+/** The types the schema writes inline, which the SDKs still declare (type rules § 4). */
+const inlineNamesOf = (model: ModelDoc): string[] => model.types.filter((t) => t.inline).map((t) => t.name).sort();
 
 /**
  * The folder of the spec the gates check now, `specs/<spec>/`: its locks,
@@ -859,8 +871,8 @@ async function checkSdkGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[],
     const emitted = emitSdk(doc, dir, schemaDirOf(lock.ir_dir), NAMES, specSchemaNames());
     for (const f of emitted.files) expected.add(posix.join(dir, f.path));
     const schemas = emitSchemas(doc, schemaDirOf(lock.ir_dir), specSchemaNames());
-    const schemaNames = schemas.files.flatMap((f) => (isPlainMap(f.schema.$defs) ? Object.keys(f.schema.$defs) : [String(f.schema.title)])).sort();
-    await gate(S.sdkNames, { schemaNames, emitted: emitted.sdk.emitted, templates: [...emitted.sdk.templates.keys()] }, lock);
+    const schemaNames = schemaNamesOf(schemas.files);
+    await gate(S.sdkNames, { schemaNames, inline: inlineNamesOf(doc), emitted: emitted.sdk.emitted, templates: [...emitted.sdk.templates.keys()] }, lock);
     const want = new Map(emitted.files.map((f) => [f.path, Buffer.from(f.text)]));
     await gate(S.sdkDeterministic, { label: "SDK types", want, runs: twoTreeRuns(lock, "sdk", "src/cli/sdk.ts", SDK_ROOTS), from: "emitters" }, lock);
     if (!(await gate(S.sdkCommitted, { dir, want, committed: tree(ROOT, dir, SDK_ROOTS), regenerate: "npm run sdk" }, lock))) continue;
@@ -932,6 +944,10 @@ async function checkExampleGates(models: Map<SpecLock, ModelDoc>, locks: SpecLoc
   if (!(await gate(C.findingsLoad, { file: join(SPEC, FINDINGS_FILE) }))) return;
   const recorded: FindingsFile = loadFindings(join(SPEC, FINDINGS_FILE));
   await gate(C.findingsLocks, { recorded, locks: locks.map((l) => l.name) });
+  // The desk-test sets, each run on the lock it names, after that lock's examples.
+  const sets: DeskTests[] = [];
+  for (const file of deskTestFiles(SPEC)) if (await gate(C.deskTestsLoad, { file })) sets.push(loadDeskTests(file));
+  for (const set of sets) if (![...models.keys()].some((l) => l.name === set.lock)) skipped(C.deskTests, `${relative(ROOT, set.file)} names lock "${set.lock}", which didn't resolve`);
   if (!loaded) {
     skipped(C.examplesValidate, "the decision records didn't load");
     return;
@@ -951,6 +967,15 @@ async function checkExampleGates(models: Map<SpecLock, ModelDoc>, locks: SpecLoc
     const input = { model, files: emitted.files, schemaDir, examples: got.examples, values: got.values, codes: specCodes(), ruleChecks: ruleChecks(), recorded, lock: lock.name, decisions: loaded.decisions };
     await gate(C.examplesValidate, input, lock);
     await gate(C.examplesOracle, { files: emitted.files, cases: checkExamples(input).cases }, lock);
+    for (const set of sets.filter((s) => s.lock === lock.name)) {
+      let checker: CheckerRun;
+      try {
+        checker = await runDeskChecker(lock, set, join(ROOT, "build", "ci", lock.name, "desk-tests", posix.basename(set.dir)));
+      } catch (e) {
+        checker = { label: `${set.checker} at ${lock.commit.slice(0, 7)}`, failures: [], problems: [(e as Error).message.split("\n")[0]!] };
+      }
+      await gate(C.deskTests, { set, model, files: emitted.files, schemaDir, payloads: loadDeskPayloads(set.dir), codes: specCodes(), ruleChecks: ruleChecks(), checker }, lock);
+    }
   }
 }
 
@@ -1321,8 +1346,8 @@ async function checkVariantOutputGates(variants: VariantBuilds[], vectors: Vecto
       const sdkDir = sdkDirOf(lock.ir_dir, b.variant);
       if (!(await gate(S.sdkGenerate, { model: b.model, dir: sdkDir, schemaDir, names: NAMES, schemaNames: specSchemaNames() }, at))) continue;
       const sdk = emitSdk(b.model, sdkDir, schemaDir, NAMES, specSchemaNames());
-      const schemaNames = emitted.files.flatMap((f) => (isPlainMap(f.schema.$defs) ? Object.keys(f.schema.$defs) : [String(f.schema.title)])).sort();
-      await gate(S.sdkNames, { schemaNames, emitted: sdk.sdk.emitted, templates: [...sdk.sdk.templates.keys()] }, at);
+      const schemaNames = schemaNamesOf(emitted.files);
+      await gate(S.sdkNames, { schemaNames, inline: inlineNamesOf(b.model), emitted: sdk.sdk.emitted, templates: [...sdk.sdk.templates.keys()] }, at);
       const sdkWant = new Map(sdk.files.map((f) => [f.path, Buffer.from(f.text)]));
       await gate(S.sdkDeterministic, { label: "SDK types", want: sdkWant, runs: twoTreeRuns(lock, `sdk${tag}`, "src/cli/sdk.ts", SDK_ROOTS, extra), from: "emitters" }, at);
       if (!(await gate(S.sdkCommitted, { dir: sdkDir, want: sdkWant, committed: tree(ROOT, sdkDir, SDK_ROOTS), regenerate: "npm run sdk" }, at))) continue;

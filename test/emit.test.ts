@@ -61,20 +61,46 @@ test("each lock's model emits with no problem, follows the output conventions, a
   }
 });
 
-test("every named type but a constructor and a model attribute's vocabulary is emitted once, at the file its layer and module give it", () => {
+test("every named type but a constructor, a model attribute's vocabulary, and a type that restates a JSON type is defined once, at the file its tier gives it", () => {
   const { files } = emitSchemas(MAIN, MAIN_DIR, OP_SCHEMA);
-  const emitted = files.flatMap((f) => (f.schema.$defs ? Object.keys(f.schema.$defs as object) : [String(f.schema.title)]));
+  const emitted = files.flatMap((f) => (f.schema.$defs ? Object.keys(f.schema.$defs as object) : []));
   assert.equal(new Set(emitted).size, emitted.length, "each type once");
-  const published = MAIN.types.filter((t) => t.kind !== "constructor" && !(t.kind === "vocabulary" && t.attribute !== undefined));
+  const inline = MAIN.types.filter((t) => t.inline).map((t) => t.name).sort();
+  assert.deepEqual(inline, ["Approval", "Assent", "ContentDetail", "CreativePolicy", "ExternalId", "PriceAdjustment", "SpecificationsDetail", "Specs", "SuppressionList", "Text", "ThirdPartyTags"], "a type of `type` alone, or an open object with no member, is written at each use");
+  const published = MAIN.types.filter((t) => t.kind !== "constructor" && !(t.kind === "vocabulary" && t.attribute !== undefined) && !t.inline);
   assert.deepEqual(emitted.sort(), published.map((t) => t.name).sort());
-  assert.ok(defOf(files, "kernel/1/kernel.json", "Amount"));
+  assert.ok(defOf(files, "kernel/1/kernel.json", "Amount"), "a primitive with a constraint is the kernel's");
   assert.ok(defOf(files, "kernel/1/kernel.json", "PriceDelta"), "a part is the kernel's");
   assert.ok(!emitted.includes("Marker"), "the marker vocabulary stays in the model (type rules § 2)");
   assert.ok(defOf(files, "modules/creative/1/creative.json", "FormatsSelection"), "a copy is its module's");
-  assert.equal(fileOf(files, "documents/1/line-item.json").title, "LineItem");
-  assert.equal(fileOf(files, "documents/1/line-item-summary.json").title, "LineItemSummary");
+  assert.ok(defOf(files, "documents/1/composition.json", "LineItem"), "a document is defined in the composition");
+  assert.deepEqual(fileOf(files, "documents/1/line-item.json"), { $schema: DIALECT, $id: `${OP_SCHEMA.base}schemas/documents/1/line-item.json`, title: "LineItem", description: "The OpenProposal `LineItem` document.", $ref: "composition.json#/$defs/LineItem" }, "a document's root is a reference to its definition");
+  assert.equal(fileOf(files, "documents/1/line-item-summary.json").$ref, "composition.json#/$defs/LineItemSummary");
   for (const name of ["Selectable", "List", "CatalogRefOr"]) assert.ok(!emitted.includes(name), `the template ${name} isn't emitted`);
   assert.equal(kebab("LineItemSummary"), "line-item-summary");
+});
+
+test("a type that restates a JSON type is that type at each use, with the use's description", () => {
+  const { files } = emitSchemas(MAIN, MAIN_DIR, OP_SCHEMA);
+  const proposal = defOf(files, "documents/1/composition.json", "Proposal").properties as Record<string, Record<string, unknown>>;
+  assert.deepEqual(proposal.seller_id, { type: "string", description: "IAB Tech Lab registry reference" });
+  for (const f of files) assert.ok(!/\$defs\/(ExternalId|Text|PriceAdjustment|CreativePolicy)"/.test(f.text), `${f.path} references a type that restates a JSON type`);
+});
+
+test("no reference runs sideways: modules reference only the kernel and themselves, and documents only the composition", () => {
+  for (const [lock, model, dir] of LOCKS) {
+    const { files } = emitSchemas(model, dir, OP_SCHEMA);
+    for (const f of files) {
+      const refs = [...f.text.matchAll(/"\$ref":"([^"#]*)#?[^"]*"/g)].map((m) => m[1]!).filter((r) => r !== "" && !r.startsWith("https://"));
+      const unit = (p: string) => (p.startsWith("modules/") ? p.split("/")[1] : p);
+      for (const r of refs) {
+        const target = join(f.path, "..", r).split("\\").join("/");
+        if (f.path.startsWith("modules/")) assert.ok(target.startsWith("kernel/") || unit(target) === unit(f.path), `${lock}: ${f.path} references ${target}`);
+        if (f.path.startsWith("kernel/")) assert.ok(target.startsWith("kernel/"), `${lock}: ${f.path} references ${target}`);
+        if (f.path.startsWith("documents/") && f.path !== "documents/1/composition.json") assert.equal(target, "documents/1/composition.json", `${lock}: ${f.path}`);
+      }
+    }
+  }
 });
 
 test("each file is one resource with its $id at its path, and references between files are relative", () => {
@@ -82,11 +108,11 @@ test("each file is one resource with its $id at its path, and references between
   const doc = fileOf(files, "documents/1/proposal.json");
   assert.equal(doc.$schema, DIALECT);
   assert.equal(doc.$id, `${OP_SCHEMA.base}schemas/with-open-prs/documents/1/proposal.json`);
-  const props = doc.properties as Record<string, Record<string, unknown>>;
+  const props = defOf(files, "documents/1/composition.json", "Proposal").properties as Record<string, Record<string, unknown>>;
   assert.deepEqual(props.proposal_id, { $ref: "../../kernel/1/kernel.json#/$defs/Uuid", description: "Unique identity for the proposal object" });
   assert.equal((props.status as { $ref: string }).$ref, "../../modules/proposal/1/proposal.json#/$defs/ProposalStatus");
-  const manifest = fileOf(files, "documents/1/manifest.json").properties as Record<string, { items: unknown }>;
-  assert.deepEqual(manifest.proposals!.items, { $ref: "../../modules/publication/1/publication.json#/$defs/ProposalsEntry" });
+  const manifest = defOf(files, "documents/1/composition.json", "Manifest").properties as Record<string, { items: unknown }>;
+  assert.deepEqual(manifest.proposals!.items, { $ref: "#/$defs/ProposalsEntry" }, "a reference within the composition stays local");
   const commercial = defOf(files, "modules/commercial/1/commercial.json", "Commitment").properties as Record<string, { $ref: string }>;
   assert.equal(commercial.basis!.$ref, "#/$defs/CommitmentBasis", "a reference within a file stays local");
 });
@@ -101,9 +127,9 @@ test("an object is closed unless the mapping marks it open, requires what the sp
   assert.deepEqual(c.then, { required: ["currency"] });
   assert.deepEqual(c.else, { if: { properties: { basis: { const: "units" } }, required: ["basis"] }, then: { properties: { amount: { $ref: "../../../kernel/1/kernel.json#/$defs/Count" } } } }, "a units commitment's amount is a count, chained in else");
   assert.deepEqual(conditions, { expressed: ["Commitment.currency", "Proposal.brief_ref"], left: [] });
-  const open = defOf(files, "modules/proposal/1/proposal.json", "Assent");
-  assert.deepEqual(Object.keys(open).sort(), ["description", "type"], "an open object whose structure is unstated, with what its row says of it");
-  assert.match(String(open.description), /assent records.*WS1.*states no members/);
+  const open = (defOf(files, "documents/1/composition.json", "Proposal").properties as Record<string, Record<string, unknown>>).assent!;
+  assert.deepEqual(Object.keys(open).sort(), ["description", "type"], "an open object whose structure is unstated is written in place, with its row's description");
+  assert.equal(open.type, "object");
 
   const v = validatorFor(files, MAIN_DIR, "modules/commercial/1/commercial.json", "#/$defs/Commitment");
   const base = { amount: 1000, flight_start: "2026-11-01T00:00:00-04:00", flight_end: "2026-11-30T00:00:00-05:00", idempotency_key: "7c9e6679-7425-40de-944b-e07fc1f90ae7" };
@@ -124,7 +150,7 @@ test("a condition that names no sibling and value is left to the rules", () => {
 
 test("a member required with a sibling or a sibling's member is a dependency, beside the object's own if / then", () => {
   const { files } = emitSchemas(PRS, PRS_DIR, OP_SCHEMA);
-  const li = fileOf(files, "documents/1/line-item.json");
+  const li = defOf(files, "documents/1/composition.json", "LineItem");
   assert.deepEqual(li.dependentRequired, { daypart: ["time_zone"] });
   assert.deepEqual(li.dependentSchemas, { frequency_cap: { if: { properties: { frequency_cap: { type: "object", required: ["period"] } } }, then: { required: ["time_zone"] } } });
   assert.ok(li.if !== undefined, "the terms condition stays the object's own if / then");
@@ -137,7 +163,7 @@ test("a member required with a sibling or a sibling's member is a dependency, be
   assert.equal(v({ ...base, frequency_cap: { max: { max: 3 } } }), true, "a cap with no period needs no clock");
   assert.equal(v({ ...base, daypart: { allowed: [] } }), false, "a daypart needs the clock");
   assert.equal(v({ ...base, daypart: { allowed: [] }, time_zone: "America/New_York" }), true);
-  assert.deepEqual(emitSchemas(MAIN, MAIN_DIR, OP_SCHEMA).files.find((f) => f.path === "documents/1/line-item.json")!.schema.dependentSchemas, undefined, "main has no time zone");
+  assert.deepEqual(defOf(emitSchemas(MAIN, MAIN_DIR, OP_SCHEMA).files, "documents/1/composition.json", "LineItem").dependentSchemas, undefined, "main has no time zone");
 });
 
 test("a daypart window starts at any time of day but 24:00, which only ends one", () => {
@@ -187,8 +213,8 @@ test("a vocabulary is an enum, and an open one is anyOf its core enum and Namesp
 
 test("an object that includes a profile carries the profile's fields itself, with no allOf", () => {
   const { files } = emitSchemas(PRS, PRS_DIR, OP_SCHEMA);
-  const entry = defOf(files, "modules/publication/1/publication.json", "ProposalsEntry");
-  const summary = fileOf(files, "documents/1/proposal-summary.json");
+  const entry = defOf(files, "documents/1/composition.json", "ProposalsEntry");
+  const summary = defOf(files, "documents/1/composition.json", "ProposalSummary");
   const fields = Object.keys(entry.properties as object);
   for (const k of Object.keys(summary.properties as object)) assert.ok(fields.includes(k), `ProposalsEntry carries ${k}`);
   assert.ok(fields.includes("full_url") && fields.includes("version"));

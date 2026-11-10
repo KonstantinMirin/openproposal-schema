@@ -29,7 +29,7 @@
     },
     "BuyerSeat": {
       "kind": "document",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/buyer-seat.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/BuyerSeat",
       "minimal": {
         "id": "ssp-deal-2026-q4-0193",
         "version": "1.0"
@@ -118,7 +118,7 @@
     },
     "Deal": {
       "kind": "document",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/deal.json",
+      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/documents/1/composition.json#/$defs/Deal",
       "minimal": {
         "id": "ssp-deal-2026-q4-0193",
         "origin": "examplessp.example",
@@ -228,12 +228,6 @@
       "minimal": {},
       "full": {}
     },
-    "ExternalId": {
-      "kind": "primitive",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/kernel/1/kernel.json#/$defs/ExternalId",
-      "minimal": "EP-104233",
-      "full": "EP-104233"
-    },
     "IncludedInventory": {
       "kind": "vocabulary",
       "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/modules/deal/1/deal.json#/$defs/IncludedInventory",
@@ -319,12 +313,6 @@
         "totalcost": 50000,
         "units": 4000000
       }
-    },
-    "Text": {
-      "kind": "primitive",
-      "schema": "https://adtechspec.noetis.dev/dealsapi/schemas/tag-1.0-202602/kernel/1/kernel.json#/$defs/Text",
-      "minimal": "Weekday reach among business news readers in the US.",
-      "full": "Weekday reach among business news readers in the US."
     },
     "UtcTimestamp": {
       "kind": "primitive",

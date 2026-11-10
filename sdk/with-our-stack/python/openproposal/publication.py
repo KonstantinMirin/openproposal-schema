@@ -10,15 +10,15 @@ from pydantic import AfterValidator, BeforeValidator, Field, Strict
 from typing_extensions import TypeAliasType
 
 from . import _runtime as rt
-from .kernel import Instant, Interval, PlainInteger, PlainString, Url
+from .kernel import Instant, Interval, PlainString, SafeInteger, Url
 from .representation import LineItemSummary, PackageSummary, ProposalSummaryParty
 
 class HoldLimits(rt.Closed):
     """The `HoldLimits` object of the `publication` module."""
 
-    per_advertiser: Optional[PlainInteger] = None
+    per_advertiser: Optional[SafeInteger] = None
     """Holds whose `status` is `held` for one advertiser, counted by the `commitment.advertisers[]` in each hold's `requested_terms`. A hold that names several advertisers counts once for each"""
-    per_buyer: Optional[PlainInteger] = None
+    per_buyer: Optional[SafeInteger] = None
     """Holds whose `status` is `held` on proposals issued to one `buyer.domain`"""
 
 
@@ -39,7 +39,7 @@ class ManifestEntry(rt.Closed):
     """Identifies the proposal. Unique within `seller.domain`"""
     seller: ProposalSummaryParty
     """The proposal's `seller`, projected to `domain` and `legal_name`."""
-    version: PlainInteger
+    version: SafeInteger
     """Monotonically increasing revision number, starting at 1, held by the seller. Each version is a snapshot of the proposal's offered terms (§ 4.1.3). A version is frozen at the earliest of: the proposal's `status` leaving `draft`; a `negotiation_history[]` or `assent[]` entry naming it; a counterparty receiving it in any representation (§ 2.1). The offered terms of a frozen version MUST NOT change; a change to them creates version `n+1`. The values § 4.1.3 lists as not offered terms change without a new version"""
 
 

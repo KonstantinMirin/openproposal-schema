@@ -63,13 +63,13 @@
           "description": "The identity the seller mints for the option, which `included[]` and the `pricing` keys name it by."
         },
         "name": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/Text"
+          "type": "string"
         },
         "provenance": {
           "$ref": "#/$defs/Provenance"
         },
         "taxonomy_ref": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+          "type": "string"
         }
       },
       "required": [
@@ -133,7 +133,7 @@
         },
         "segments": {
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/ExternalId"
+            "type": "string"
           },
           "type": "array"
         },
@@ -144,7 +144,7 @@
           "type": "boolean"
         },
         "suppression_list": {
-          "$ref": "#/$defs/SuppressionList"
+          "type": "object"
         }
       },
       "type": "object"
@@ -152,10 +152,6 @@
     "Provenance": {
       "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm",
       "description": "No core terms are listed yet, so every term is namespaced."
-    },
-    "SuppressionList": {
-      "description": "The buyer's suppression list. The specification states no members, so the object accepts any.",
-      "type": "object"
     }
   },
   "$id": "https://openproposal.noetis.dev/schemas/with-open-prs/modules/audience/1/audience.json",

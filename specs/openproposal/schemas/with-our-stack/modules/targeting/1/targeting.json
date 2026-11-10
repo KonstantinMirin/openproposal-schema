@@ -26,24 +26,48 @@
       ],
       "type": "object"
     },
+    "ClockWindowNarrowing": {
+      "additionalProperties": false,
+      "description": "Entries the buyer narrows to, `include[]`, less those it excludes, `exclude[]`. Exclusion wins.",
+      "properties": {
+        "exclude": {
+          "description": "The entries excluded from those included.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ClockWindow"
+          },
+          "type": "array"
+        },
+        "include": {
+          "description": "The entries included.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/ClockWindow"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "include"
+      ],
+      "type": "object"
+    },
     "CountSettableRange": {
       "additionalProperties": false,
       "description": "The range form of a settable field. The buyer writes `value` between `min` and `max` inclusive, and `default` is in effect when `value` is absent.",
       "properties": {
         "default": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "In effect when `value` is absent, between the bounds."
         },
         "max": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The upper bound."
         },
         "min": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The lower bound."
         },
         "value": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The buyer's value, between the bounds inclusive."
         }
       },
@@ -64,11 +88,11 @@
           "type": "array"
         },
         "default": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ClockWindowNarrowing",
+          "$ref": "#/$defs/ClockWindowNarrowing",
           "description": "In effect when `value` is absent."
         },
         "value": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/ClockWindowNarrowing",
+          "$ref": "#/$defs/ClockWindowNarrowing",
           "description": "The buyer's value."
         }
       },
@@ -85,16 +109,16 @@
         "allowed": {
           "description": "The entries the buyer narrows within.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger"
+            "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger"
           },
           "type": "array"
         },
         "default": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainIntegerNarrowing",
+          "$ref": "#/$defs/SafeIntegerNarrowing",
           "description": "In effect when `value` is absent."
         },
         "value": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainIntegerNarrowing",
+          "$ref": "#/$defs/SafeIntegerNarrowing",
           "description": "The buyer's value."
         }
       },
@@ -107,7 +131,7 @@
     "ExclusionEntry": {
       "anyOf": [
         {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+          "type": "string"
         },
         {
           "$ref": "../../../kernel/1/kernel.json#/$defs/AppId"
@@ -138,7 +162,7 @@
           "description": "`pre_serve` | `best_effort`"
         },
         "max_entries": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The most entries of this type the seller accepts"
         }
       },
@@ -221,17 +245,41 @@
           "type": "array"
         },
         "default": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/GeoCodeNarrowing",
+          "$ref": "#/$defs/GeoCodeNarrowing",
           "description": "In effect when `value` is absent."
         },
         "value": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/GeoCodeNarrowing",
+          "$ref": "#/$defs/GeoCodeNarrowing",
           "description": "The buyer's value."
         }
       },
       "required": [
         "allowed",
         "default"
+      ],
+      "type": "object"
+    },
+    "GeoCodeNarrowing": {
+      "additionalProperties": false,
+      "description": "Entries the buyer narrows to, `include[]`, less those it excludes, `exclude[]`. Exclusion wins.",
+      "properties": {
+        "exclude": {
+          "description": "The entries excluded from those included.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/GeoCode"
+          },
+          "type": "array"
+        },
+        "include": {
+          "description": "The entries included.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/GeoCode"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "include"
       ],
       "type": "object"
     },
@@ -250,26 +298,23 @@
             "$ref": "../../../kernel/1/kernel.json#/$defs/Delta"
           },
           "description": "The price of an option outside `included[]`, keyed by option id. An option with no entry has no delta.",
-          "propertyNames": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
-          },
           "type": "object"
         },
         "included": {
           "description": "The options in the base rate, by option id.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         },
         "max_select": {
-          "$ref": "../../../kernel/1/kernel.json#/$defs/PlainInteger",
+          "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger",
           "description": "The most options that may be in effect."
         },
         "selected": {
           "description": "The buyer's choice, by option id. It is the complete set in effect and replaces `included[]`.",
           "items": {
-            "$ref": "../../../kernel/1/kernel.json#/$defs/PlainString"
+            "type": "string"
           },
           "type": "array"
         }
@@ -277,6 +322,30 @@
       "required": [
         "available",
         "included"
+      ],
+      "type": "object"
+    },
+    "SafeIntegerNarrowing": {
+      "additionalProperties": false,
+      "description": "Entries the buyer narrows to, `include[]`, less those it excludes, `exclude[]`. Exclusion wins.",
+      "properties": {
+        "exclude": {
+          "description": "The entries excluded from those included.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger"
+          },
+          "type": "array"
+        },
+        "include": {
+          "description": "The entries included.",
+          "items": {
+            "$ref": "../../../kernel/1/kernel.json#/$defs/SafeInteger"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "include"
       ],
       "type": "object"
     }

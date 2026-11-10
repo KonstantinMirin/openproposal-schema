@@ -113,7 +113,8 @@ test("a value comes from the specification's examples where the property's schem
 
 test("the specification's values are read in its order, by section, and each only where its property's schema accepts it", () => {
   const v = new Validators(PRS.files);
-  const lineItem = schemaIdOf(PRS.model.types.find((t) => t.name === "LineItem")!, PRS.schemaDir, OP_SCHEMA.base)!;
+  // The line item's definition in the composition; its root file is a reference to it (type rules § 3).
+  const lineItem = schemaIdOf(PRS.model.types.find((t) => t.name === "LineItem")!, PRS.schemaDir, OP_SCHEMA.base)!.replace(/#$/, "");
   const ok = (value: unknown) => ({ ok: true as const, value });
   const spec: SpecExamples = {
     // Listed out of order: a § 6.10 file first, then a § 6.2 file and a § 5.5 code block.
@@ -129,9 +130,9 @@ test("the specification's values are read in its order, by section, and each onl
     ]),
   };
   const found = specValues(PRS.model, v, PRS.schemaDir, spec);
-  assert.deepEqual(found.at.get(`${lineItem}#/properties/time_zone`), ["America/Chicago", "Asia/Tokyo", "Europe/London"]);
-  assert.equal(found.at.get(`${lineItem}#/properties/line_item_id`), undefined);
-  assert.equal(found.at.get(`${lineItem}#/properties/min_spend`), undefined);
+  assert.deepEqual(found.at.get(`${lineItem}/properties/time_zone`), ["America/Chicago", "Asia/Tokyo", "Europe/London"]);
+  assert.equal(found.at.get(`${lineItem}/properties/line_item_id`), undefined);
+  assert.equal(found.at.get(`${lineItem}/properties/min_spend`), undefined);
   const r = generateTypeExamples({ model: PRS.model, files: PRS.files, kernel: KERNEL, schemaDir: PRS.schemaDir, codes: CODES, ruleChecks: RULE_CHECKS, spec, fields: FIELDS });
   assert.deepEqual(r.problems, []);
   assert.equal((r.doc.types.LineItem!.full as Record<string, unknown>).time_zone, "America/Chicago");
