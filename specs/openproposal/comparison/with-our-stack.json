@@ -1835,6 +1835,13 @@
     {
       "change": "added-type",
       "class": "additive",
+      "detail": "the vocabulary ImpressionMultiplierAccreditation is added",
+      "type": "ImpressionMultiplierAccreditation",
+      "view": "model"
+    },
+    {
+      "change": "added-type",
+      "class": "additive",
       "detail": "the vocabulary ImpressionMultiplierImpressionType is added",
       "type": "ImpressionMultiplierImpressionType",
       "view": "model"
@@ -3026,6 +3033,14 @@
       "class": "additive",
       "detail": "LineItemSummary.delivery_counting is added, optional",
       "member": "delivery_counting",
+      "type": "LineItemSummary",
+      "view": "model"
+    },
+    {
+      "change": "added-path",
+      "class": "additive",
+      "detail": "LineItemSummary also lists the path delivery_counting.impression_multiplier.accreditation",
+      "member": "delivery_counting.impression_multiplier.accreditation",
       "type": "LineItemSummary",
       "view": "model"
     },
@@ -7140,6 +7155,14 @@
     {
       "change": "added-definition",
       "class": "additive",
+      "detail": "modules/commercial/1/commercial.json#/$defs/ImpressionMultiplierAccreditation is added",
+      "member": "ImpressionMultiplierAccreditation",
+      "type": "modules/commercial/1/commercial.json",
+      "view": "files"
+    },
+    {
+      "change": "added-definition",
+      "class": "additive",
       "detail": "modules/commercial/1/commercial.json#/$defs/ImpressionMultiplierImpressionType is added",
       "member": "ImpressionMultiplierImpressionType",
       "type": "modules/commercial/1/commercial.json",
@@ -8143,6 +8166,11 @@
         "id": "D-062",
         "question": "§ 2.2 says a range's `min` is no greater than its `max`, and § 5.9 types `retention` as a range of durations. When is one duration no greater than another, given that `P1M` and `P30D` can be the same length or not?",
         "status": "proposed"
+      },
+      {
+        "id": "D-063",
+        "question": "§ 5.6.5 gives `action_type` the core terms of another standard: ECAPI 1.0's `event_type` values other than `custom`. Which terms does the vocabulary hold, and what does its schema accept?",
+        "status": "proposed"
       }
     ],
     "removed": [
@@ -8634,7 +8662,7 @@
       {
         "id": "code:2.1:1",
         "kind": "code_block",
-        "text": "line_item_id\nchannel\nenvironments.available[]\nepisodes\nprograms.available[].id\nprograms.available[].content.series\nprograms.available[].content.title\nplacement.reward\nplacement.instl\nplacement.plcmt\nplacement.skip\nplacement.feed\nbreak_position.available[].id\nbreak_position.available[].delay\nbreak_position.available[].slotinpod\nproperties.available[].id\nproperties.available[].name\nproperties.available[].domains[]\nproperties.available[].apps[].store\nproperties.available[].apps[].bundle\nproperties.available[].child_audience\nproperties.available[].seller_relationship\nproperties.available[].venue_type\naudiences.available[].id\naudiences.available[].name\nformats.included[]\ngeo\nmarkets\npricing[].pricing_id\npricing[].cost_method\npricing[].list_rate\npricing[].currency\npricing[].price_type\npricing[].unit_bounds\ncommitment_bounds\naddressable_scale\ncommitted_metrics[]\ndelivery_counting.impression_multiplier.impression_type\ndelivery_counting.impression_multiplier.source_type\nrequired_credentials[]\nbuyer_requirements.allowed_dsps[]\ntransaction_mechanism.available[]"
+        "text": "line_item_id\nchannel\nenvironments.available[]\nepisodes\nprograms.available[].id\nprograms.available[].content.series\nprograms.available[].content.title\nplacement.reward\nplacement.instl\nplacement.plcmt\nplacement.skip\nplacement.feed\nbreak_position.available[].id\nbreak_position.available[].delay\nbreak_position.available[].slotinpod\nproperties.available[].id\nproperties.available[].name\nproperties.available[].domains[]\nproperties.available[].apps[].store\nproperties.available[].apps[].bundle\nproperties.available[].child_audience\nproperties.available[].seller_relationship\nproperties.available[].venue_type\naudiences.available[].id\naudiences.available[].name\nformats.included[]\ngeo\nmarkets\npricing[].pricing_id\npricing[].cost_method\npricing[].list_rate\npricing[].currency\npricing[].price_type\npricing[].unit_bounds\ncommitment_bounds\naddressable_scale\ncommitted_metrics[]\ndelivery_counting.impression_multiplier.impression_type\ndelivery_counting.impression_multiplier.source_type\ndelivery_counting.impression_multiplier.accreditation\nrequired_credentials[]\nbuyer_requirements.allowed_dsps[]\ntransaction_mechanism.available[]"
       },
       {
         "id": "code:2.1:2",
@@ -8689,25 +8717,40 @@
       {
         "id": "concept:1.1:10",
         "kind": "concept",
-        "text": "`terms.pricetype` | `Deal.at`, the same value, omitted for Dynamic (0) | That entry's `price_type`, always sent"
+        "text": "`terms.countries` | The countries of `geo` or `markets` in effect, in alpha-3 (below), without a country excluded whole. Unset when the line item declares neither"
       },
       {
         "id": "concept:1.1:11",
         "kind": "concept",
-        "text": "`terms.guar` | `Deal.guar` | `1` when the mechanism in effect is `programmatic_guaranteed`, `0` otherwise"
+        "text": "`terms.dealfloor` | `Deal.bidfloor` | `agreed_rate` of the committed `pricing[]` entry"
       },
       {
         "id": "concept:1.1:12",
         "kind": "concept",
-        "text": "`terms.units` | `commitment.amount` when `basis` is `units`, otherwise `derived_units` (§ 5.6.5)"
+        "text": "`terms.cur` | `Deal.bidfloorcur` | That entry's `currency`, always sent"
       },
       {
         "id": "concept:1.1:13",
         "kind": "concept",
-        "text": "`terms.totalcost` | The seller total (§ 5.6.5)"
+        "text": "`terms.pricetype` | `Deal.at`, the same value, omitted for Dynamic (0) | That entry's `price_type`, always sent"
       },
       {
         "id": "concept:1.1:14",
+        "kind": "concept",
+        "text": "`terms.guar` | `Deal.guar` | `1` when the mechanism in effect is `programmatic_guaranteed`, `0` otherwise"
+      },
+      {
+        "id": "concept:1.1:15",
+        "kind": "concept",
+        "text": "`terms.units` | `commitment.amount` when `basis` is `units`, otherwise `derived_units` (§ 5.6.5)"
+      },
+      {
+        "id": "concept:1.1:16",
+        "kind": "concept",
+        "text": "`terms.totalcost` | The seller total (§ 5.6.5)"
+      },
+      {
+        "id": "concept:1.1:17",
         "kind": "concept",
         "text": "`ext.baseline` | The agreed baseline `VersionRef` (§ 2.2), with `seller_domain`, so a DSP can join the deal to its record. OPTIONAL. The Deals API 1.0 doesn't define this key"
       },
@@ -8754,22 +8797,22 @@
       {
         "id": "concept:1.1:6",
         "kind": "concept",
-        "text": "`terms.startdate`, `terms.enddate` | `commitment.flight.start`, `commitment.flight.end`"
+        "text": "`pubcount` | On a `dooh` line item, `1` when the properties in effect belong to one inventory owner and `2` when they belong to more. `domains[]` names each owner (§ 5.2.4). Otherwise unset"
       },
       {
         "id": "concept:1.1:7",
         "kind": "concept",
-        "text": "`terms.countries` | The countries of `geo` or `markets` in effect, in alpha-3 (below), without a country excluded whole. Unset when the line item declares neither"
+        "text": "`dinventory` | On a `dooh` line item, `1` when at least one property is in effect and each property in effect lists its `screens[]`. Otherwise unset"
       },
       {
         "id": "concept:1.1:8",
         "kind": "concept",
-        "text": "`terms.dealfloor` | `Deal.bidfloor` | `agreed_rate` of the committed `pricing[]` entry"
+        "text": "`inventory.inclinventory` | `[3]` when `dinventory` is `1`. Otherwise unset"
       },
       {
         "id": "concept:1.1:9",
         "kind": "concept",
-        "text": "`terms.cur` | `Deal.bidfloorcur` | That entry's `currency`, always sent"
+        "text": "`terms.startdate`, `terms.enddate` | `commitment.flight.start`, `commitment.flight.end`"
       },
       {
         "id": "concept:1.2:1",
@@ -10389,7 +10432,7 @@
       {
         "id": "key:5.2.8:Loop.length_s",
         "kind": "key",
-        "text": "`length_s` | REQUIRED | Loop length, in seconds"
+        "text": "`length_s` | REQUIRED | Loop length, in seconds, counting every item the loop plays, paid or not"
       },
       {
         "id": "key:5.2.8:Loop.slot_s",
@@ -10952,6 +10995,16 @@
         "text": "`proof_of_performance` | REQUIRED | Who logs the plays and what the buyer receives"
       },
       {
+        "id": "key:5.6.4:ImpressionMultiplier.accreditation",
+        "kind": "key",
+        "text": "`accreditation` | OPTIONAL | The standing of the multiplier's source in the market. Core terms: `industry_currency` (the market's joint industry currency, such as Geopath in the US or Route in the UK) | `publisher_reported` (the publisher's own figure). A receiver that doesn't know a term reads the multiplier without it"
+      },
+      {
+        "id": "key:5.6.4:ImpressionMultiplier.accreditation#meaning/values:1",
+        "kind": "value_list",
+        "text": "`industry_currency` (the market's joint industry currency, such as Geopath in the US or Route in the UK) | `publisher_reported` (the publisher's own figure)"
+      },
+      {
         "id": "key:5.6.4:ImpressionMultiplier.dataset",
         "kind": "key",
         "text": "`dataset` | REQUIRED | The source's named data release the multipliers come from. A new release is a new `dataset`"
@@ -11014,12 +11067,17 @@
       {
         "id": "key:5.6.5:CostParameters.action_type",
         "kind": "key",
-        "text": "`action_type` | REQUIRED when `cost_method` is `CPA` | The kind of action counted, such as `shop.example:purchase`. This version lists no core terms"
+        "text": "`action_type` | REQUIRED when `cost_method` is `CPA` | The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit`"
       },
       {
         "id": "key:5.6.5:CostParameters.attribution_window",
         "kind": "key",
         "text": "`attribution_window` | REQUIRED when `cost_method` is `CPA` | How long after exposure an action counts"
+      },
+      {
+        "id": "key:5.6.5:CostParameters.calendar_zone",
+        "kind": "key",
+        "text": "`calendar_zone` | OPTIONAL | Absent unless `rate_unit` is `day`. The zone whose calendar days the rate buys: each calendar day in that zone that the flight touches is one unit"
       },
       {
         "id": "key:5.6.5:CostParameters.demographic",
@@ -11029,7 +11087,7 @@
       {
         "id": "key:5.6.5:CostParameters.rate_unit",
         "kind": "key",
-        "text": "`rate_unit` | REQUIRED when `cost_method` is `TIME` | `hour` | `day` | `week`. The unit the rate buys, counted in elapsed units"
+        "text": "`rate_unit` | REQUIRED when `cost_method` is `TIME` | `hour` | `day` | `week`. The unit the rate buys, counted in elapsed units unless `calendar_zone` is present"
       },
       {
         "id": "key:5.6.5:CostParameters.rate_unit#meaning/values:1",
@@ -11279,7 +11337,7 @@
       {
         "id": "key:5.7.1:ControllingMeasurementOption.counted_by",
         "kind": "key",
-        "text": "`counted_by` | REQUIRED | Who counts. When `channel` is `dooh` and the line item counts impressions, `counted_by` MUST be the source of the line item's `delivery_counting.impression_multiplier`. When the `pricing[]` entry the buyer commits under has `cost_method` `CPP`, `counted_by` MUST be its `cost_parameters.rating_source`"
+        "text": "`counted_by` | REQUIRED | Who counts. When the `pricing[]` entry the buyer commits under has `cost_method` `CPP`, `counted_by` MUST be its `cost_parameters.rating_source`. When it has `cost_method` `CPA`, `counted_by` MUST be its `cost_parameters.action_source`. Otherwise, when `channel` is `dooh` and the line item counts impressions, `counted_by` MUST be the source of the line item's `delivery_counting.impression_multiplier`"
       },
       {
         "id": "key:5.7.1:ControllingMeasurementOption.discrepancy_threshold",
@@ -13697,6 +13755,11 @@
         "text": "OPTIONAL"
       },
       {
+        "id": "rule:5.6.4:ae26d4ac-2",
+        "kind": "statement",
+        "text": "OPTIONAL"
+      },
+      {
         "id": "rule:5.6.4:b6f5be4c",
         "kind": "statement",
         "text": "REQUIRED when `source_type` is not Publisher Provided (`2`)"
@@ -13770,6 +13833,11 @@
         "id": "rule:5.6.5:acca3c1c-2",
         "kind": "statement",
         "text": "REQUIRED when `cost_method` is `CPP`"
+      },
+      {
+        "id": "rule:5.6.5:ae26d4ac",
+        "kind": "statement",
+        "text": "OPTIONAL"
       },
       {
         "id": "rule:5.6.5:bdabfe4f",
@@ -14127,6 +14195,11 @@
         "text": "Two entries MUST NOT share `cost_method`, `cost_parameters`, `currency`, and a mechanism."
       },
       {
+        "id": "rule:5.7.1:0894f8c4",
+        "kind": "statement",
+        "text": "When the `pricing[]` entry the buyer commits under has `cost_method` `CPP`, `counted_by` MUST be its `cost_parameters.rating_source`."
+      },
+      {
         "id": "rule:5.7.1:0a8e3bf2",
         "kind": "statement",
         "text": "When `none` is in effect, it MUST be the only option."
@@ -14197,6 +14270,11 @@
         "text": "It means no remedy for any shortfall, and committed levels become targets, which an agent MUST NOT present as guaranteed."
       },
       {
+        "id": "rule:5.7.1:99d3e14a",
+        "kind": "statement",
+        "text": "When it has `cost_method` `CPA`, `counted_by` MUST be its `cost_parameters.action_source`."
+      },
+      {
         "id": "rule:5.7.1:ae26d4ac",
         "kind": "statement",
         "text": "OPTIONAL"
@@ -14257,14 +14335,9 @@
         "text": "OPTIONAL"
       },
       {
-        "id": "rule:5.7.1:f7832319",
+        "id": "rule:5.7.1:d9939d8b",
         "kind": "statement",
-        "text": "When `channel` is `dooh` and the line item counts impressions, `counted_by` MUST be the source of the line item's `delivery_counting.impression_multiplier`."
-      },
-      {
-        "id": "rule:5.7.1:f96c27c0",
-        "kind": "statement",
-        "text": "When the `pricing[]` entry the buyer commits under has `cost_method` `CPP`, `counted_by` MUST be its `cost_parameters.rating_source`"
+        "text": "Otherwise, when `channel` is `dooh` and the line item counts impressions, `counted_by` MUST be the source of the line item's `delivery_counting.impression_multiplier`"
       },
       {
         "id": "rule:5.7:13d06c59",
@@ -16867,6 +16940,11 @@
         "text": "Its core terms are `CPM` | `CPMV` | `CPC` | `CPCV` | `CPV` | `CPP` | `CPA` | `PLAY` | `TIME` | `FLAT`."
       },
       {
+        "id": "sentence:5.6.5:10182d60",
+        "kind": "sentence",
+        "text": "When `calendar_zone` is present, `derived_units` is instead the number of calendar days in that zone from the day of `commitment.flight.start` through the day of `commitment.flight.end`."
+      },
+      {
         "id": "sentence:5.6.5:295aae28",
         "kind": "sentence",
         "text": "The `unit` terms are `impressions` | `viewable_impressions` | `clicks` | `completed_views` | `views` | `rating_points` | `actions` | `plays` | `hours` | `days` | `weeks`."
@@ -16875,6 +16953,11 @@
         "id": "sentence:5.6.5:4804c1fd",
         "kind": "sentence",
         "text": "`derived_units` = (`amount` − those charges) ÷ `agreed_rate` × rate per, rounded down to a whole unit, where rate per comes from the table for a core term and from `rate_per` for an extension term."
+      },
+      {
+        "id": "sentence:5.6.5:52af2643",
+        "kind": "sentence",
+        "text": "With `calendar_zone`, a `TIME` entry counts one delivered unit for each of those calendar days on which the line item runs."
       },
       {
         "id": "sentence:5.6.5:60f46987",
@@ -21064,6 +21147,12 @@
           "verdict": "open"
         },
         {
+          "id": "unresolved_identifier:dinventory",
+          "kind": "unresolved_identifier",
+          "message": "`dinventory` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
           "id": "unresolved_identifier:dooh.venuetype",
           "kind": "unresolved_identifier",
           "message": "`dooh.venuetype` resolves to no table row, key, or table-declared value; no table defines `venuetype`.",
@@ -21091,6 +21180,12 @@
           "id": "unresolved_identifier:errors[]",
           "kind": "unresolved_identifier",
           "message": "`errors[]` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:event_type",
+          "kind": "unresolved_identifier",
+          "message": "`event_type` resolves to no table row, key, or table-declared value.",
           "verdict": "open"
         },
         {
@@ -21190,6 +21285,18 @@
           "verdict": "open"
         },
         {
+          "id": "unresolved_identifier:install",
+          "kind": "unresolved_identifier",
+          "message": "`install` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:inventory.inclinventory",
+          "kind": "unresolved_identifier",
+          "message": "`inventory.inclinventory` resolves to no table row, key, or table-declared value; no table defines `inclinventory`.",
+          "verdict": "open"
+        },
+        {
           "id": "unresolved_identifier:keyid",
           "kind": "unresolved_identifier",
           "message": "`keyid` resolves to no table row, key, or table-declared value.",
@@ -21286,9 +21393,21 @@
           "verdict": "open"
         },
         {
+          "id": "unresolved_identifier:pubcount",
+          "kind": "unresolved_identifier",
+          "message": "`pubcount` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
           "id": "unresolved_identifier:publish",
           "kind": "unresolved_identifier",
           "message": "`publish` resolves to no table row, key, or table-declared value.",
+          "verdict": "open"
+        },
+        {
+          "id": "unresolved_identifier:purchase",
+          "kind": "unresolved_identifier",
+          "message": "`purchase` resolves to no table row, key, or table-declared value.",
           "verdict": "open"
         },
         {
@@ -21877,33 +21996,33 @@
   },
   "format": 1,
   "lock": {
-    "blob": "7ed55dbc2a60d112f1dc9fc342ee6b598d050e2b",
-    "commit": "43f4c723c3250091572fa31a3ab2f355f5d712df",
+    "blob": "a7e8b5bff4d2a9e9fc68800eece37556099552f5",
+    "commit": "4f7ffffb31849b13cec5e2e38441abbad8a5ff42",
     "counts": {
-      "decisions": 18,
+      "decisions": 19,
       "elements.appendix_a": 98,
       "elements.appendix_b": 11,
       "elements.code_block": 12,
-      "elements.concept": 47,
+      "elements.concept": 50,
       "elements.definition": 79,
       "elements.field": 98,
-      "elements.key": 327,
+      "elements.key": 329,
       "elements.marker": 11,
-      "elements.sentence": 650,
-      "elements.statement": 612,
-      "elements.value_list": 73,
+      "elements.sentence": 652,
+      "elements.statement": 615,
+      "elements.value_list": 74,
       "findings.conditions": 51,
       "findings.examples": 0,
       "findings.round_trip": 0,
-      "findings.spec": 290,
-      "findings.spec_open": 289,
-      "properties": 520,
+      "findings.spec": 296,
+      "findings.spec_open": 295,
+      "properties": 523,
       "rules": 67,
       "schema_files": 21,
       "statements.example": 12,
-      "statements.obligation": 182,
+      "statements.obligation": 183,
       "statements.rule": 53,
-      "statements.schema": 499,
+      "statements.schema": 502,
       "types.constructor": 7,
       "types.copy": 26,
       "types.document": 3,
@@ -21912,9 +22031,9 @@
       "types.primitive": 24,
       "types.profile": 3,
       "types.union": 3,
-      "types.vocabulary": 69
+      "types.vocabulary": 70
     },
-    "ir_sha256": "3f115f762e5e25bf0fef347d9750fd760097223a20df541df45b8b515a1ddbe5",
+    "ir_sha256": "9c970a9d996ef7b8fc74a3fe71c892d71a1f3a9bbbe0db3a8c4d894422f731a7",
     "lock": "with-our-stack"
   },
   "statements": {
@@ -22428,6 +22547,11 @@
         "ir": "key:5.6.4:DeliveryCounting.partial_play_credit#meaning/values:1",
         "placed": "schema DeliveryCountingPartialPlayCredit",
         "text": "`none` (no play) | `pro_rata`"
+      },
+      {
+        "ir": "key:5.6.4:ImpressionMultiplier.accreditation#meaning/values:1",
+        "placed": "schema ImpressionMultiplierAccreditation",
+        "text": "`industry_currency` (the market's joint industry currency, such as Geopath in the US or Route in the UK) | `publisher_reported` (the publisher's own figure)"
       },
       {
         "ir": "key:5.6.4:ImpressionMultiplier.impression_type#meaning/values:1",
@@ -25220,6 +25344,12 @@
         "text": "OPTIONAL"
       },
       {
+        "ir": "rule:5.6.4:ae26d4ac-2",
+        "level": "OPTIONAL",
+        "placed": "schema ImpressionMultiplier",
+        "text": "OPTIONAL"
+      },
+      {
         "ir": "rule:5.6.4:b6f5be4c",
         "level": "REQUIRED",
         "placed": "rule ImpressionMultiplier",
@@ -25308,6 +25438,12 @@
         "level": "REQUIRED",
         "placed": "rule CostParameters",
         "text": "REQUIRED when `cost_method` is `CPP`"
+      },
+      {
+        "ir": "rule:5.6.5:ae26d4ac",
+        "level": "OPTIONAL",
+        "placed": "schema CostParameters",
+        "text": "OPTIONAL"
       },
       {
         "ir": "rule:5.6.5:bdabfe4f",
@@ -25736,6 +25872,12 @@
         "text": "Two entries MUST NOT share `cost_method`, `cost_parameters`, `currency`, and a mechanism."
       },
       {
+        "ir": "rule:5.7.1:0894f8c4",
+        "level": "MUST",
+        "placed": "obligation implementation",
+        "text": "When the `pricing[]` entry the buyer commits under has `cost_method` `CPP`, `counted_by` MUST be its `cost_parameters.rating_source`."
+      },
+      {
         "ir": "rule:5.7.1:0a8e3bf2",
         "level": "MUST",
         "placed": "obligation implementation",
@@ -25820,6 +25962,12 @@
         "text": "It means no remedy for any shortfall, and committed levels become targets, which an agent MUST NOT present as guaranteed."
       },
       {
+        "ir": "rule:5.7.1:99d3e14a",
+        "level": "MUST",
+        "placed": "obligation implementation",
+        "text": "When it has `cost_method` `CPA`, `counted_by` MUST be its `cost_parameters.action_source`."
+      },
+      {
         "ir": "rule:5.7.1:ae26d4ac",
         "level": "OPTIONAL",
         "placed": "schema MeasurementOption",
@@ -25892,16 +26040,10 @@
         "text": "OPTIONAL"
       },
       {
-        "ir": "rule:5.7.1:f7832319",
+        "ir": "rule:5.7.1:d9939d8b",
         "level": "MUST",
         "placed": "obligation implementation",
-        "text": "When `channel` is `dooh` and the line item counts impressions, `counted_by` MUST be the source of the line item's `delivery_counting.impression_multiplier`."
-      },
-      {
-        "ir": "rule:5.7.1:f96c27c0",
-        "level": "MUST",
-        "placed": "obligation implementation",
-        "text": "When the `pricing[]` entry the buyer commits under has `cost_method` `CPP`, `counted_by` MUST be its `cost_parameters.rating_source`"
+        "text": "Otherwise, when `channel` is `dooh` and the line item counts impressions, `counted_by` MUST be the source of the line item's `delivery_counting.impression_multiplier`"
       },
       {
         "ir": "rule:5.7:13d06c59",

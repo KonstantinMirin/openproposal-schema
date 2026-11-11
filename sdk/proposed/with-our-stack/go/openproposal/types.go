@@ -151,6 +151,7 @@ func init() {
 	Types["HttpsUrl"] = TypeOf[HttpsUrl]()
 	Types["IanaZone"] = TypeOf[IanaZone]()
 	Types["ImpressionMultiplier"] = TypeOf[ImpressionMultiplier]()
+	Types["ImpressionMultiplierAccreditation"] = TypeOf[ImpressionMultiplierAccreditation]()
 	Types["ImpressionMultiplierImpressionType"] = TypeOf[ImpressionMultiplierImpressionType]()
 	Types["ImpressionMultiplierSettlesOn"] = TypeOf[ImpressionMultiplierSettlesOn]()
 	Types["Instant"] = TypeOf[Instant]()

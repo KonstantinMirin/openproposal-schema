@@ -402,11 +402,15 @@
         },
         "action_type": {
           "$ref": "#/$defs/CostParametersActionType",
-          "description": "The kind of action counted, such as `shop.example:purchase`. This version lists no core terms"
+          "description": "The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit`"
         },
         "attribution_window": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/Duration",
           "description": "How long after exposure an action counts"
+        },
+        "calendar_zone": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/IanaZone",
+          "description": "Absent unless `rate_unit` is `day`. The zone whose calendar days the rate buys: each calendar day in that zone that the flight touches is one unit"
         },
         "demographic": {
           "$ref": "#/$defs/CostParametersDemographic",
@@ -414,7 +418,7 @@
         },
         "rate_unit": {
           "$ref": "#/$defs/CostParametersRateUnit",
-          "description": "`hour` | `day` | `week`. The unit the rate buys, counted in elapsed units"
+          "description": "`hour` | `day` | `week`. The unit the rate buys, counted in elapsed units unless `calendar_zone` is present"
         },
         "rating_source": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/Measurer",
@@ -436,8 +440,61 @@
       "type": "object"
     },
     "CostParametersActionType": {
-      "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm",
-      "description": "No core terms are listed yet, so every term is namespaced."
+      "anyOf": [
+        {
+          "enum": [
+            "purchase",
+            "page_view",
+            "ad_impression",
+            "add_to_wishlist",
+            "add_to_cart",
+            "viewed_cart",
+            "viewed_item",
+            "begin_checkout",
+            "add_payment_info",
+            "remove_from_cart",
+            "refund",
+            "generate_lead",
+            "qualify_lead",
+            "close_convert_lead",
+            "disqualify_lead",
+            "close_unconvert_lead",
+            "sign_up",
+            "search",
+            "unlock_achievement",
+            "install",
+            "customize_product",
+            "contact",
+            "donate",
+            "find_location",
+            "schedule",
+            "start_trial",
+            "subscribe",
+            "add_shipping_info",
+            "share",
+            "select_content",
+            "select_item",
+            "select_promotion",
+            "view_item_list",
+            "view_promotion",
+            "view_search_results",
+            "spend_virtual_currency",
+            "earn_virtual_currency",
+            "working_lead",
+            "login",
+            "join_group",
+            "level_up",
+            "post_score",
+            "tutorial_begin",
+            "tutorial_complete"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ],
+      "description": "The codes of IAB Tech Lab ECAPI 1.0 event_type (https://github.com/InteractiveAdvertisingBureau/ecapi/blob/4b43b0334c2aa41b13e302f2fa3ffc03012b3648/ecapi_1.0.md#eventtypes), other than `custom`"
     },
     "CostParametersDemographic": {
       "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm",
@@ -724,6 +781,10 @@
     "ImpressionMultiplier": {
       "additionalProperties": false,
       "properties": {
+        "accreditation": {
+          "$ref": "#/$defs/ImpressionMultiplierAccreditation",
+          "description": "The standing of the multiplier's source in the market. Core terms: `industry_currency` (the market's joint industry currency, such as Geopath in the US or Route in the UK) | `publisher_reported` (the publisher's own figure). A receiver that doesn't know a term reads the multiplier without it"
+        },
         "dataset": {
           "description": "The source's named data release the multipliers come from. A new release is a new `dataset`",
           "type": "string"
@@ -756,6 +817,20 @@
         "source_type"
       ],
       "type": "object"
+    },
+    "ImpressionMultiplierAccreditation": {
+      "anyOf": [
+        {
+          "enum": [
+            "industry_currency",
+            "publisher_reported"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/NamespacedTerm"
+        }
+      ]
     },
     "ImpressionMultiplierImpressionType": {
       "enum": [

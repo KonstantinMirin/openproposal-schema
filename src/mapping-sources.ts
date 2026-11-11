@@ -239,7 +239,16 @@ function listProblems(where: string, decl: Declaration, sources: Element[], evid
     else if (used.has(String(c.code))) out.push(`${where}: terms "${used.get(String(c.code))}" and "${t}" stand for one code of ${shown}, ${JSON.stringify(c.code)}`);
     else used.set(String(c.code), t);
   }
-  for (const c of list.codes) if (!used.has(String(c.code))) out.push(`${where}: the code ${JSON.stringify(c.code)} of ${shown} has no term; a vocabulary that cites a list holds each of its codes`);
+  // A code the vocabulary leaves out is one of the list's, has no term, and is named by an element the vocabulary rests on, as "other than `custom`".
+  const left = new Set<string>();
+  for (const x of ref.except ?? []) {
+    const c = list.codes.find((k) => String(k.code) === x);
+    if (c === undefined) out.push(`${where}: leaves out "${x}", which is no code of ${shown}`);
+    else if (used.has(String(c.code))) out.push(`${where}: leaves out "${x}", which its term "${used.get(String(c.code))}" stands for`);
+    else if (!sources.some((e) => writesTerm(e, x))) out.push(`${where}: leaves out "${x}" of ${shown}, which none of the elements it rests on names; cover the element that leaves it out`);
+    else left.add(String(c.code));
+  }
+  for (const c of list.codes) if (!used.has(String(c.code)) && !left.has(String(c.code))) out.push(`${where}: the code ${JSON.stringify(c.code)} of ${shown} has no term; a vocabulary that cites a list holds each of its codes but those an element it rests on leaves out`);
   if (!sources.some((e) => citeText(e).includes(list.name)) && !evidence.includes(list.url)) {
     out.push(`${where}: no element it rests on names ${shown}, and no decision it cites gives ${list.url} as evidence; cover the element that cites the list, or give the list as the decision's evidence`);
   }

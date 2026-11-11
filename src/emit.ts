@@ -385,7 +385,7 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
         // A vocabulary that cites another standard's code list names the list, at its pinned commit.
         const notes = [
           ...(t.description ? [t.description.replace(/\.$/, "")] : []),
-          ...(t.list ? [`The codes of ${t.list.standard} ${t.list.name} (${t.list.url})`] : []),
+          ...(t.list ? [`The codes of ${t.list.standard} ${t.list.name} (${t.list.url})${t.list.except ? `, other than ${t.list.except.map((x) => `\`${x}\``).join(", ")}` : ""}`] : []),
           ...t.terms.filter((x) => x.annotation !== undefined).map((x) => `\`${x.value}\`: ${x.annotation}`),
           ...((t.vendor ?? t.list?.vendor) ? [`from ${(t.vendor ?? t.list?.vendor)!.from} up: ${(t.vendor ?? t.list?.vendor)!.label}`] : []),
         ];

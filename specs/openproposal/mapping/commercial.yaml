@@ -238,6 +238,13 @@ types:
     source: { rule: row-vocabulary }
     open: false
     terms: [ gross, viewable, lts, audience ]
+  - name: ImpressionMultiplierAccreditation
+    kind: vocabulary
+    ir: key:5.6.4:ImpressionMultiplier.accreditation#meaning/values:1
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary }
+    open: true
+    terms: [ industry_currency, publisher_reported ]
   - name: ImpressionMultiplierSettlesOn
     kind: vocabulary
     ir: key:5.6.4:ImpressionMultiplier.settles_on#meaning/values:1
@@ -274,8 +281,54 @@ types:
     kind: vocabulary
     ir: key:5.6.5:CostParameters.action_type
     locks: [ with-our-stack ]
-    source: { decision: D-053 }
+    source: { decisions: [ D-053, D-063 ] }
     open: true
+    terms:
+      - purchase
+      - page_view
+      - ad_impression
+      - add_to_wishlist
+      - add_to_cart
+      - viewed_cart
+      - viewed_item
+      - begin_checkout
+      - add_payment_info
+      - remove_from_cart
+      - refund
+      - generate_lead
+      - qualify_lead
+      - close_convert_lead
+      - disqualify_lead
+      - close_unconvert_lead
+      - sign_up
+      - search
+      - unlock_achievement
+      - install
+      - customize_product
+      - contact
+      - donate
+      - find_location
+      - schedule
+      - start_trial
+      - subscribe
+      - add_shipping_info
+      - share
+      - select_content
+      - select_item
+      - select_promotion
+      - view_item_list
+      - view_promotion
+      - view_search_results
+      - spend_virtual_currency
+      - earn_virtual_currency
+      - working_lead
+      - login
+      - join_group
+      - level_up
+      - post_score
+      - tutorial_begin
+      - tutorial_complete
+    list: { name: event_type, except: [ custom ] }
   - name: CostParametersRateUnit
     kind: vocabulary
     ir: key:5.6.5:CostParameters.rate_unit#meaning/values:1
@@ -2297,6 +2350,25 @@ entries:
     locks: [ with-our-stack ]
     source: { rule: required-cell }
     as: { role: rule, object: ImpressionMultiplier }
+  - ir: key:5.6.4:ImpressionMultiplier.accreditation
+    digest: 550ae66d3a1bab501697e9224004fc29b7c5027efc1cb01c1b16667f33a4087b
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as:
+      role: property
+      object: ImpressionMultiplier
+      type: { kind: named, name: ImpressionMultiplierAccreditation }
+      presence: optional
+  - ir: key:5.6.4:ImpressionMultiplier.accreditation#meaning/values:1
+    digest: 49fdae12ca383916161b7fb40e16876bef8961b3dc845c8df24bd4c6e230e09f
+    locks: [ with-our-stack ]
+    source: { rule: row-vocabulary-values }
+    as: { role: schema, in: ImpressionMultiplierAccreditation }
+  - ir: rule:5.6.4:ae26d4ac
+    digest: 7c4d3a321c93c62171e8c45809ae8759fec1dbb2b3e530ff25c6238c9bda4b51
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: ImpressionMultiplier }
   - ir: key:5.6.4:ImpressionMultiplier.dataset
     digest: 20b1f4d87fcb6f3554302bd6d736333f855fd6acd5b1e355d89af281208312a7
     locks: [ with-our-stack ]
@@ -2316,8 +2388,8 @@ entries:
       object: ImpressionMultiplier
       type: { kind: named, name: CostParametersDemographic }
       presence: optional
-  - ir: rule:5.6.4:ae26d4ac
-    digest: 12aa44374513974215c65cbd56204075cce1e6b2866762d762dbfd1cf70aae8b
+  - ir: rule:5.6.4:ae26d4ac-2
+    digest: a3976e0900a28e15bc037ae00db9805a0108392be609c90c2ae3c6abdac0a3f2
     locks: [ with-our-stack ]
     source: { rule: required-cell }
     as: { role: schema, in: ImpressionMultiplier }
@@ -2524,9 +2596,9 @@ entries:
     source: { rule: required-cell }
     as: { role: rule, object: CostParameters }
   - ir: key:5.6.5:CostParameters.action_type
-    digest: 83db4387a45bdbb90bb5b272125d57893b95f7b98aaa79113f504c819c8e577e
+    digest: 75c3b56630cfd4b7fb7c7c1c05760e014b95ca3c4559a337128a8d4c646c8301
     locks: [ with-our-stack ]
-    source: { decision: D-053 }
+    source: { decisions: [ D-053, D-063 ] }
     as:
       role: property
       object: CostParameters
@@ -2558,7 +2630,7 @@ entries:
     source: { rule: required-cell }
     as: { role: rule, object: CostParameters }
   - ir: key:5.6.5:CostParameters.rate_unit
-    digest: 74df1a978c5ed85de51d86acf9461a72ece8335b55bedd6ded4f0d9358329098
+    digest: 99a71ad7db93d2036ebdf72c80cc155ddbdc869d593e8057d71461fab5c456a8
     locks: [ with-our-stack ]
     source: { rule: typed-row }
     as:
@@ -2576,6 +2648,16 @@ entries:
     locks: [ with-our-stack ]
     source: { rule: required-cell }
     as: { role: rule, object: CostParameters }
+  - ir: key:5.6.5:CostParameters.calendar_zone
+    digest: b6d90c09d99b6080e60a57cf6492a7866e6c06b2eec5144b04635e088939b70c
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: CostParameters, type: { kind: named, name: IanaZone }, presence: optional }
+  - ir: rule:5.6.5:ae26d4ac
+    digest: 059fd14e4ecbd8bfc4769fc96414e1dc339fed1cb49f8f50172039529be2f725
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: CostParameters }
   - ir: rule:5.6.5:12747a05
     digest: f6550f03252caa1697090da00a028f67d42ee5724f24376e5c3db2c1f9b9ebfc
     locks: [ with-our-stack ]
@@ -2641,6 +2723,11 @@ entries:
     locks: [ with-our-stack ]
     source: { rule: prose-sentence }
     as: { role: informative }
+  - ir: sentence:5.6.5:10182d60
+    digest: 93247afb9a94d39f375350a0c014c489a4795ff8c6d971b21d216161de521820
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
   - ir: sentence:5.6.5:8a25cede
     digest: 9282be941b2bc058deb96412e3d257eb728c677ce137d8ddc0dfe0e85d21eee3
     locks: [ with-our-stack ]
@@ -2648,6 +2735,11 @@ entries:
     as: { role: informative }
   - ir: sentence:5.6.5:b1d5965b
     digest: 47eb0db515c9d052678a0f04ed5d8dcb0e48fc56a08331d76a61a478d118b303
+    locks: [ with-our-stack ]
+    source: { rule: prose-sentence }
+    as: { role: informative }
+  - ir: sentence:5.6.5:52af2643
+    digest: 5c9d8d8f5007adc0b1b8843e7e1ea3fc946be51da1440e43eec549623b287577
     locks: [ with-our-stack ]
     source: { rule: prose-sentence }
     as: { role: informative }

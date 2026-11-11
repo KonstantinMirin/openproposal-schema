@@ -1,0 +1,45 @@
+format: 1
+id: D-063
+status: proposed
+kind: gap
+author: agent
+question: "§ 5.6.5 gives `action_type` the core terms of another standard: ECAPI 1.0's `event_type` values other than `custom`. Which terms does the vocabulary hold, and what does its schema accept?"
+covers:
+  - ir: key:5.6.5:CostParameters.action_type
+    digest: 75c3b56630cfd4b7fb7c7c1c05760e014b95ca3c4559a337128a8d4c646c8301
+    quote: "`action_type` | REQUIRED when `cost_method` is `CPA` | The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit`"
+    locks: [with-our-stack]
+  - ir: sentence:2.6:99abd19a
+    digest: e787c897332e965334ed2bcb2f9797a379bcef7b5326c2ef4898733f46cd4648
+    quote: A `VocabularyTerm` field says so and lists its core terms, or points to other lists, whole or in part, and adds any others; every other list is closed, and in a row it opens the Meaning cell.
+    locks: [with-our-stack]
+options:
+  - id: ecapi-list
+    summary: "The vocabulary takes ECAPI 1.0's `event_type` list as ECAPI writes it at the commit the row's link pins: the 27 standard events, `custom`, and the 17 additional events, all under the list's `eventtypes` anchor. Its core terms are the 44 codes other than `custom`, and it is open, so any other action is a namespaced term. The schema accepts `purchase`, `install`, or `add_to_cart`, and `shop.example:store_visit`, and refuses `custom` and an unknown bare term."
+  - id: standard-events-only
+    summary: "Only the 27 standard events other than `custom`, leaving ECAPI's additional events, such as `login`, to extension terms."
+  - id: open-any-term
+    summary: "Don't enumerate the core terms: accept any bare term or namespaced term, as the stack's own checker does, since it reads no core terms from a linked list."
+  - id: written-terms
+    summary: "Only the terms the row writes, `purchase` and `install`, as the core terms."
+chosen: ecapi-list
+rationale: >-
+  § 2.6 lets a `VocabularyTerm` field point to another list in part and add
+  others, and the row does exactly that: its core terms are ECAPI 1.0's
+  `event_type` values other than `custom`, and every other action is an
+  extension term. ECAPI's anchor `eventtypes` heads both of its event tables,
+  and its § "event_type(s) Enumeration" calls the additional events types
+  "deemed worthy of standardization", so both tables are `event_type`
+  values. The codes are ECAPI's text at the commit the row's link pins, not
+  a copy of the row's two examples. Leaving out `custom` is the row's own
+  exclusion, and the open vocabulary is § 2.6's: an extension term is
+  `<domain>:<term>`. Taking only
+  the standard events would drop values the row includes; accepting any bare
+  term would pass `custom`, which the row leaves out; and the two written
+  terms would refuse `add_to_cart`, which the row makes a core term.
+evidence:
+  - https://github.com/InteractiveAdvertisingBureau/ecapi/blob/4b43b0334c2aa41b13e302f2fa3ffc03012b3648/ecapi_1.0.md#eventtypes
+feedback: >-
+  The row could say whether ECAPI's Additional Events are core terms too, as
+  the anchor it links to suggests, and the stack's checker could read the
+  linked list's codes, since it now accepts any bare term for `action_type`.

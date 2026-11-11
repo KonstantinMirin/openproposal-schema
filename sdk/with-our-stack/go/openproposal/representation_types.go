@@ -242,6 +242,8 @@ func (LineItemSummaryBreakPositionSelection) ValidateValue(v any, at string, err
 
 // LineItemSummaryImpressionMultiplier: The `LineItemSummaryImpressionMultiplier` object of the `representation` module.
 type LineItemSummaryImpressionMultiplier struct {
+	// Accreditation: The standing of the multiplier's source in the market. Core terms: `industry_currency` (the market's joint industry currency, such as Geopath in the US or Route in the UK) | `publisher_reported` (the publisher's own figure). A receiver that doesn't know a term reads the multiplier without it
+	Accreditation *ImpressionMultiplierAccreditation `json:"accreditation,omitempty"`
 	// ImpressionType: `gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them
 	ImpressionType ImpressionMultiplierImpressionType `json:"impression_type"`
 	// SourceType: Who supplies the multiplier. A value from AdCOM 1.0 List: DOOH Multiplier Measurement Source Types other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries
@@ -255,7 +257,10 @@ func (LineItemSummaryImpressionMultiplier) ValidateValue(v any, at string, errs 
 		return
 	}
 	checkRequired(m, at, errs, "impression_type", "source_type")
-	checkClosed(m, at, errs, "impression_type", "source_type")
+	checkClosed(m, at, errs, "accreditation", "impression_type", "source_type")
+	if x, ok := m["accreditation"]; ok {
+		validateAs[ImpressionMultiplierAccreditation](x, member(at, "accreditation"), errs)
+	}
 	if x, ok := m["impression_type"]; ok {
 		validateAs[ImpressionMultiplierImpressionType](x, member(at, "impression_type"), errs)
 	}
@@ -266,7 +271,7 @@ func (LineItemSummaryImpressionMultiplier) ValidateValue(v any, at string, errs 
 
 // LineItemSummaryDeliveryCounting: The `LineItemSummaryDeliveryCounting` object of the `representation` module.
 type LineItemSummaryDeliveryCounting struct {
-	// ImpressionMultiplier: The line item's `delivery_counting.impression_multiplier`, projected to `impression_type` and `source_type`.
+	// ImpressionMultiplier: The line item's `delivery_counting.impression_multiplier`, projected to `impression_type`, `source_type`, and `accreditation`.
 	ImpressionMultiplier *LineItemSummaryImpressionMultiplier `json:"impression_multiplier,omitempty"`
 }
 
@@ -467,7 +472,7 @@ type LineItemSummary struct {
 	CommitmentBounds *CommitmentBounds `json:"commitment_bounds,omitempty"`
 	// CommittedMetrics: `CommittedMetric` tuples (§ 5.7.1). Seller declares its offered `level`. A buyer MAY request a stricter `level`, one further in `direction`. A request MUST NOT change a tuple's `direction`
 	CommittedMetrics List[CommittedMetric] `json:"committed_metrics,omitzero"`
-	// DeliveryCounting: The line item's `delivery_counting`, projected to `impression_multiplier.impression_type` and `impression_multiplier.source_type`.
+	// DeliveryCounting: The line item's `delivery_counting`, projected to `impression_multiplier.impression_type`, `impression_multiplier.source_type`, and `impression_multiplier.accreditation`.
 	DeliveryCounting *LineItemSummaryDeliveryCounting `json:"delivery_counting,omitempty"`
 	// Environments: The line item's `environments`, projected to `available[]`.
 	Environments *LineItemSummaryEnvironmentsSelection `json:"environments,omitempty"`

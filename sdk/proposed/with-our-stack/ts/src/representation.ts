@@ -3,7 +3,7 @@
 /** The OpenProposal `representation` module's types. */
 import { z } from "zod";
 import { AddressableScale } from "./audience.js";
-import { CommitmentBounds, ImpressionMultiplierImpressionType, PricingEntryCostMethod, UnitBoundsRange } from "./commercial.js";
+import { CommitmentBounds, ImpressionMultiplierAccreditation, ImpressionMultiplierImpressionType, PricingEntryCostMethod, UnitBoundsRange } from "./commercial.js";
 import { RequiredCredential } from "./eligibility.js";
 import { MechanismOption } from "./execution.js";
 import { CommittedMetric } from "./guarantees.js";
@@ -132,19 +132,22 @@ export const LineItemSummaryBreakPositionSelection: z.ZodType<LineItemSummaryBre
 
 /** The `LineItemSummaryImpressionMultiplier` object of the `representation` module. */
 export interface LineItemSummaryImpressionMultiplier {
+  /** The standing of the multiplier's source in the market. Core terms: `industry_currency` (the market's joint industry currency, such as Geopath in the US or Route in the UK) | `publisher_reported` (the publisher's own figure). A receiver that doesn't know a term reads the multiplier without it */
+  accreditation?: ImpressionMultiplierAccreditation;
   /** `gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them */
   impression_type: ImpressionMultiplierImpressionType;
   /** Who supplies the multiplier. A value from AdCOM 1.0 List: DOOH Multiplier Measurement Source Types other than Unknown (`0`), such as Publisher Provided (`2`). The value OpenRTB 2.6 `imp.qty.sourcetype` carries */
   source_type: SafeInteger;
 }
 export const LineItemSummaryImpressionMultiplier: z.ZodType<LineItemSummaryImpressionMultiplier> = z.strictObject({
+  accreditation: ImpressionMultiplierAccreditation.optional(),
   impression_type: ImpressionMultiplierImpressionType,
   source_type: SafeInteger,
 });
 
 /** The `LineItemSummaryDeliveryCounting` object of the `representation` module. */
 export interface LineItemSummaryDeliveryCounting {
-  /** The line item's `delivery_counting.impression_multiplier`, projected to `impression_type` and `source_type`. */
+  /** The line item's `delivery_counting.impression_multiplier`, projected to `impression_type`, `source_type`, and `accreditation`. */
   impression_multiplier?: LineItemSummaryImpressionMultiplier;
 }
 export const LineItemSummaryDeliveryCounting: z.ZodType<LineItemSummaryDeliveryCounting> = z.strictObject({
@@ -256,7 +259,7 @@ export interface LineItemSummary {
   commitment_bounds?: CommitmentBounds;
   /** `CommittedMetric` tuples (§ 5.7.1). Seller declares its offered `level`. A buyer MAY request a stricter `level`, one further in `direction`. A request MUST NOT change a tuple's `direction` */
   committed_metrics?: Array<CommittedMetric>;
-  /** The line item's `delivery_counting`, projected to `impression_multiplier.impression_type` and `impression_multiplier.source_type`. */
+  /** The line item's `delivery_counting`, projected to `impression_multiplier.impression_type`, `impression_multiplier.source_type`, and `impression_multiplier.accreditation`. */
   delivery_counting?: LineItemSummaryDeliveryCounting;
   /** The line item's `environments`, projected to `available[]`. */
   environments?: LineItemSummaryEnvironmentsSelection;

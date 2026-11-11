@@ -287,4 +287,15 @@ test("a vocabulary that cites a code list holds one term for each of its codes, 
   const noEvidence = DECISIONS.map((d) => (d.id === "D-044" ? { ...d, evidence: [] } : d));
   assert.match(checkSources(LOCKS[0]![1], "main", MAPPINGS, noEvidence, KERNEL.lists).sources.join("\n"), /no element it rests on names OpenDirect 2\.1 Line\.frequencyinterval/);
   assert.deepEqual(checkSources(PRS, "with-open-prs", MAPPINGS, noEvidence, KERNEL.lists).sources, [], "with the open PRs, the § 5.5 sentence names it");
+  // On the stack, `action_type` takes ECAPI 1.0's `event_type` codes but `custom`, which its row leaves out (D-063).
+  const action = (edit: (d: NonNullable<MappingFile["types"]>[number]) => void) => edited("commercial", (m) => edit(declOf(m, "CostParametersActionType")));
+  const ecapi = "IAB Tech Lab ECAPI 1\\.0 event_type";
+  assert.doesNotMatch(problems(MAPPINGS, "with-our-stack"), /CostParametersActionType/);
+  assert.match(problems(action((d) => (d.list = { name: "event_type" })), "with-our-stack"), new RegExp(`the code "custom" of ${ecapi} has no term`));
+  assert.match(problems(action((d) => (d.list = { name: "event_type", except: ["custom", "refund"] })), "with-our-stack"), /leaves out "refund", which its term "refund" stands for/);
+  assert.match(problems(action((d) => (d.list = { name: "event_type", except: ["custom", "store_visit"] })), "with-our-stack"), new RegExp(`leaves out "store_visit", which is no code of ${ecapi}`));
+  assert.match(
+    problems(action((d) => ((d.terms = d.terms!.filter((t) => t !== "login")), (d.list = { name: "event_type", except: ["custom", "login"] }))), "with-our-stack"),
+    new RegExp(`leaves out "login" of ${ecapi}, which none of the elements it rests on names`),
+  );
 });

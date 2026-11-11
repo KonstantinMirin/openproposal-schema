@@ -8,7 +8,7 @@
 import type { z } from "zod";
 import { Amount, App, AppId, AppIdStore, ApprovalStatus, BareTerm, CalendarDate, CalendarUnit, ClockWindow, ClockWindowNarrowing, CurrencyCode, DayName, Delta, Digest, DocumentRef, Domain, Duration, EntryRef, ErrorObject, ErrorObjectCode, ErrorObjectRetry, FieldPointer, FormatId, Fraction, FractionDelta, GeoCode, GeoCodeNarrowing, HttpsUrl, IanaZone, Identifier, Instant, IntegerFlag, Interval, LineItemStatus, Measurer, NamespacedTerm, Narrowing, OpenObject, Party, PlainNumber, PlainString, ProposalStatus, Range, RegistrableDomain, SafeInteger, SafeIntegerNarrowing, SeatRef, Selectable, Settable, SettableRange, Side, TaxonomyCodes, TimeOfDay, TimeUnit, TimeZone, Url, VersionRef } from "./kernel.js";
 import { ActivationRouteSelection, AddressableScale, AddressableScaleUnit, AudienceOption, AudienceOptionSensitiveCategory, AudienceSelectable, BuyerList, BuyerListMatchMethod, BuyerSupplied, CombineOperator, CombineSelection, LineItemActivationRoute } from "./audience.js";
-import { AssentEntry, AssentEntryGround, AssentEntryRole, Availability, AvailabilityCertainty, AvailabilityUnit, BuyerWrites, BuyerWritesAudienceSelectable, BuyerWritesBuyerRequirements, BuyerWritesDeviceBounds, BuyerWritesFrequencyCap, BuyerWritesGeoBounds, BuyerWritesSelectable, BuyerWritesSettable, BuyerWritesSettableRange, BuyerWritesShortfallRemedy, CancellationNotice, CancellationOption, CancellationOptionNoticeReference, CancellationPolicySelection, Commit, CommitResult, Commitment, CommitmentAmount, CommitmentAmountBasis, CommitmentBounds, CostParameters, CostParametersActionType, CostParametersDemographic, CostParametersRateUnit, CostParametersViewabilityStandard, DatedShare, DeliveryCounting, DeliveryCountingPartialPlayCredit, ExclusivityOption, ExclusivityOptionScope, ExclusivityOptionSeparation, ExclusivitySelection, Fee, FeeCalculation, Hold, HoldStatus, HoldTerms, ImpressionMultiplier, ImpressionMultiplierImpressionType, ImpressionMultiplierSettlesOn, LineItemRenewalRight, LineItemWrites, Preemption, PreemptionReason, PreemptionRemedy, PricingEntry, PricingEntryCostMethod, PricingEntryRatePer, ProofOfPerformance, ProofOfPerformanceEvidence, SpendRange, UnitBoundsRange } from "./commercial.js";
+import { AssentEntry, AssentEntryGround, AssentEntryRole, Availability, AvailabilityCertainty, AvailabilityUnit, BuyerWrites, BuyerWritesAudienceSelectable, BuyerWritesBuyerRequirements, BuyerWritesDeviceBounds, BuyerWritesFrequencyCap, BuyerWritesGeoBounds, BuyerWritesSelectable, BuyerWritesSettable, BuyerWritesSettableRange, BuyerWritesShortfallRemedy, CancellationNotice, CancellationOption, CancellationOptionNoticeReference, CancellationPolicySelection, Commit, CommitResult, Commitment, CommitmentAmount, CommitmentAmountBasis, CommitmentBounds, CostParameters, CostParametersActionType, CostParametersDemographic, CostParametersRateUnit, CostParametersViewabilityStandard, DatedShare, DeliveryCounting, DeliveryCountingPartialPlayCredit, ExclusivityOption, ExclusivityOptionScope, ExclusivityOptionSeparation, ExclusivitySelection, Fee, FeeCalculation, Hold, HoldStatus, HoldTerms, ImpressionMultiplier, ImpressionMultiplierAccreditation, ImpressionMultiplierImpressionType, ImpressionMultiplierSettlesOn, LineItemRenewalRight, LineItemWrites, Preemption, PreemptionReason, PreemptionRemedy, PricingEntry, PricingEntryCostMethod, PricingEntryRatePer, ProofOfPerformance, ProofOfPerformanceEvidence, SpendRange, UnitBoundsRange } from "./commercial.js";
 import { Asset, AssetProvenance, AssetProvenanceDisclosureMethod, CreativeDelivery, CreativeDeliveryMethod, CreativeDeliveryOtherProtocol, FormatSpec, FormatsSelection, MaterialsDue, ProductionOption, ProductionSelection } from "./creative.js";
 import { LineItemVisibility, RequiredCredential, RequiredCredentialCredentialType } from "./eligibility.js";
 import { BuyerRequirements, DeliveryType, LineItemServingMode, LineItemSovBasis, MechanismOption, RetentionRange, TransactionMechanism, TransactionMechanismSelection } from "./execution.js";
@@ -41,10 +41,10 @@ export * from "./registry.js";
 export { isFormat, type Format } from "./runtime.js";
 
 /** The commit of the OpenProposal specification repository that the types are generated from. */
-export const SPEC_COMMIT = "43f4c723c3250091572fa31a3ab2f355f5d712df";
+export const SPEC_COMMIT = "4f7ffffb31849b13cec5e2e38441abbad8a5ff42";
 
 /** The Git blob SHA of the specification file at that commit. */
-export const SPEC_BLOB = "7ed55dbc2a60d112f1dc9fc342ee6b598d050e2b";
+export const SPEC_BLOB = "a7e8b5bff4d2a9e9fc68800eece37556099552f5";
 
 /** The lock that pins the commit: `main`, or `with-open-prs`, which is `main` with the pull requests that were open on the day of the lock merged in. */
 export const LOCK = "with-our-stack";
@@ -53,7 +53,7 @@ export const LOCK = "with-our-stack";
 export const VARIANT = "as-written";
 
 /** The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it. */
-export const SCHEMA_RELEASE = "93aec0290996e48f230a1502b6146946663189e996ae02871ceae160bec58e44";
+export const SCHEMA_RELEASE = "e43006b561caec9f7965c015ac0517964c788f0bf8c1e7e373ac6f42c098d776";
 
 /** A constructor's schema function, applied to its arguments' schemas. */
 export type Template = (...args: z.ZodType[]) => z.ZodType;
@@ -190,6 +190,7 @@ export const TYPES: Readonly<Record<string, z.ZodType>> = {
   IanaZone: IanaZone,
   Identifier: Identifier,
   ImpressionMultiplier: ImpressionMultiplier,
+  ImpressionMultiplierAccreditation: ImpressionMultiplierAccreditation,
   ImpressionMultiplierImpressionType: ImpressionMultiplierImpressionType,
   ImpressionMultiplierSettlesOn: ImpressionMultiplierSettlesOn,
   Instant: Instant,

@@ -6,7 +6,7 @@ author: agent
 question: "Which of the stack's RFC 2119 statements outside the tables does a schema check, and which bind a party?"
 covers:
   - ir: rule:1.1:d539a004
-    digest: 2ffd43033b56acdf914ddd6ba08939c998e7f7d2f9babc326fa89d5114d46744
+    digest: 14227d7685d7dcdabd0793e10572b2067955836ba5f93b8fca9ce0d76df3f408
     quote: OPTIONAL.
     locks: [with-our-stack]
   - ir: rule:2:ddbf85da
@@ -649,13 +649,17 @@ covers:
     digest: 884efa85c4476ee29c35e44f1a224350101c375f12366ebf4e1905ae80d6fcf4
     quote: "`included[]` MUST name exactly one option"
     locks: [with-our-stack]
-  - ir: rule:5.7.1:f7832319
-    digest: 142f347b9ee1055a0534b4db287be9a6bdf9e17705f301bc1219e2fa0a9cb1ae
-    quote: When `channel` is `dooh` and the line item counts impressions, `counted_by` MUST be the source of the line item's `delivery_counting.impression_multiplier`.
+  - ir: rule:5.7.1:0894f8c4
+    digest: 77b420d234cc4556addacdc7162942bb937828309358bc9e268fd3c77d6ab3b1
+    quote: When the `pricing[]` entry the buyer commits under has `cost_method` `CPP`, `counted_by` MUST be its `cost_parameters.rating_source`.
     locks: [with-our-stack]
-  - ir: rule:5.7.1:f96c27c0
-    digest: d4c74c6bfc79e86db66ce38d65fa21a82a0b3ce961857d0ac80442f069a221dc
-    quote: When the `pricing[]` entry the buyer commits under has `cost_method` `CPP`, `counted_by` MUST be its `cost_parameters.rating_source`
+  - ir: rule:5.7.1:99d3e14a
+    digest: 4460442144f60a3d5277b0e38a1837d68e511ec5436e3eea46636f2f104314f3
+    quote: When it has `cost_method` `CPA`, `counted_by` MUST be its `cost_parameters.action_source`.
+    locks: [with-our-stack]
+  - ir: rule:5.7.1:d9939d8b
+    digest: 43183329b1994ca4030c14cff27b1b5ca451dc81b3cecf4d804bfa35cf2f60a3
+    quote: Otherwise, when `channel` is `dooh` and the line item counts impressions, `counted_by` MUST be the source of the line item's `delivery_counting.impression_multiplier`
     locks: [with-our-stack]
   - ir: rule:5.7.1:0a8e3bf2
     digest: dfe7473da76bce6f000f82bd876248f1986fd1440f276a7bf17d68acfc3f512b

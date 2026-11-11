@@ -130,7 +130,7 @@ export const ShortfallRemedy: z.ZodType<ShortfallRemedy> = z.strictObject({
 
 /** The `ControllingMeasurementOption` object of the `guarantees` module. */
 export interface ControllingMeasurementOption {
-  /** Who counts. When `channel` is `dooh` and the line item counts impressions, `counted_by` MUST be the source of the line item's `delivery_counting.impression_multiplier`. When the `pricing[]` entry the buyer commits under has `cost_method` `CPP`, `counted_by` MUST be its `cost_parameters.rating_source` */
+  /** Who counts. When the `pricing[]` entry the buyer commits under has `cost_method` `CPP`, `counted_by` MUST be its `cost_parameters.rating_source`. When it has `cost_method` `CPA`, `counted_by` MUST be its `cost_parameters.action_source`. Otherwise, when `channel` is `dooh` and the line item counts impressions, `counted_by` MUST be the source of the line item's `delivery_counting.impression_multiplier` */
   counted_by: Measurer;
   /** A fraction of the controlling count. When the other measurement, a party's own count of the same units, exceeds the controlling count by more than this over an invoice period, reconciliation opens */
   discrepancy_threshold?: Fraction;

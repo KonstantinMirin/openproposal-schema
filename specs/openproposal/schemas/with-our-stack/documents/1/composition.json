@@ -893,7 +893,7 @@
         },
         "delivery_counting": {
           "$ref": "#/$defs/LineItemSummaryDeliveryCounting",
-          "description": "The line item's `delivery_counting`, projected to `impression_multiplier.impression_type` and `impression_multiplier.source_type`."
+          "description": "The line item's `delivery_counting`, projected to `impression_multiplier.impression_type`, `impression_multiplier.source_type`, and `impression_multiplier.accreditation`."
         },
         "environments": {
           "$ref": "#/$defs/LineItemSummaryEnvironmentsSelection",
@@ -1064,7 +1064,7 @@
       "properties": {
         "impression_multiplier": {
           "$ref": "#/$defs/LineItemSummaryImpressionMultiplier",
-          "description": "The line item's `delivery_counting.impression_multiplier`, projected to `impression_type` and `source_type`."
+          "description": "The line item's `delivery_counting.impression_multiplier`, projected to `impression_type`, `source_type`, and `accreditation`."
         }
       },
       "type": "object"
@@ -1103,6 +1103,10 @@
     "LineItemSummaryImpressionMultiplier": {
       "additionalProperties": false,
       "properties": {
+        "accreditation": {
+          "$ref": "../../modules/commercial/1/commercial.json#/$defs/ImpressionMultiplierAccreditation",
+          "description": "The standing of the multiplier's source in the market. Core terms: `industry_currency` (the market's joint industry currency, such as Geopath in the US or Route in the UK) | `publisher_reported` (the publisher's own figure). A receiver that doesn't know a term reads the multiplier without it"
+        },
         "impression_type": {
           "$ref": "../../modules/commercial/1/commercial.json#/$defs/ImpressionMultiplierImpressionType",
           "description": "`gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them"

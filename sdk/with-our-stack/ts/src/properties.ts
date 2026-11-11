@@ -50,7 +50,7 @@ export const PropertyOptionSellerRelationships = {
 
 /** The `Loop` object of the `properties` module. */
 export interface Loop {
-  /** Loop length, in seconds */
+  /** Loop length, in seconds, counting every item the loop plays, paid or not */
   length_s: SafeInteger;
   /** Slot length, in seconds */
   slot_s: SafeInteger;

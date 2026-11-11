@@ -77,7 +77,7 @@ func (PropertyOptionSellerRelationship) ValidateValue(v any, at string, errs *Er
 
 // Loop: The `Loop` object of the `properties` module.
 type Loop struct {
-	// LengthS: Loop length, in seconds
+	// LengthS: Loop length, in seconds, counting every item the loop plays, paid or not
 	LengthS SafeInteger `json:"length_s"`
 	// SlotS: Slot length, in seconds
 	SlotS SafeInteger `json:"slot_s"`

@@ -25,6 +25,55 @@ lists:
       - { code: Week }
       - { code: Hour }
       - { code: LineDuration }
+  - name: event_type
+    standard: IAB Tech Lab ECAPI 1.0
+    url: https://github.com/InteractiveAdvertisingBureau/ecapi/blob/4b43b0334c2aa41b13e302f2fa3ffc03012b3648/ecapi_1.0.md#eventtypes
+    codes:
+      - { code: purchase }
+      - { code: page_view }
+      - { code: ad_impression }
+      - { code: add_to_wishlist }
+      - { code: add_to_cart }
+      - { code: viewed_cart }
+      - { code: viewed_item }
+      - { code: begin_checkout }
+      - { code: add_payment_info }
+      - { code: remove_from_cart }
+      - { code: refund }
+      - { code: generate_lead }
+      - { code: qualify_lead }
+      - { code: close_convert_lead }
+      - { code: disqualify_lead }
+      - { code: close_unconvert_lead }
+      - { code: sign_up }
+      - { code: search }
+      - { code: unlock_achievement }
+      - { code: install }
+      - { code: customize_product }
+      - { code: contact }
+      - { code: donate }
+      - { code: find_location }
+      - { code: schedule }
+      - { code: start_trial }
+      - { code: subscribe }
+      - { code: custom }
+      - { code: add_shipping_info }
+      - { code: share }
+      - { code: select_content }
+      - { code: select_item }
+      - { code: select_promotion }
+      - { code: view_item_list }
+      - { code: view_promotion }
+      - { code: view_search_results }
+      - { code: spend_virtual_currency }
+      - { code: earn_virtual_currency }
+      - { code: working_lead }
+      - { code: login }
+      - { code: join_group }
+      - { code: level_up }
+      - { code: post_score }
+      - { code: tutorial_begin }
+      - { code: tutorial_complete }
   - name: ISO 4217
     standard: "ISO 4217, Codes for the representation of currencies: List One, the current currency and funds codes, as SIX publishes it for the ISO 4217 Maintenance Agency"
     version: "2026-09-17"

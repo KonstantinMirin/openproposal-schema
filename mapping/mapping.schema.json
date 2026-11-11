@@ -168,7 +168,7 @@
           "minLength": 12
         },
         "list": {
-          "description": "The code list of another standard, in `kernel/lists.yaml`, whose codes the vocabulary's terms are, one term for each code (type rules § 6). A term is its code, a decimal term an integer code, unless `codes` maps it to the code it stands for.",
+          "description": "The code list of another standard, in `kernel/lists.yaml`, whose codes the vocabulary's terms are, one term for each code but those `except` names (type rules § 6). A term is its code, a decimal term an integer code, unless `codes` maps it to the code it stands for.",
           "type": "object",
           "additionalProperties": false,
           "required": ["name"],
@@ -180,6 +180,13 @@
               "minProperties": 1,
               "propertyNames": { "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$" },
               "additionalProperties": { "type": "string", "pattern": "^[A-Za-z0-9]+$" }
+            },
+            "except": {
+              "description": "The codes of the list that the vocabulary leaves out, each named as left out by an element the vocabulary rests on, as `action_type` takes ECAPI 1.0's `event_type` values other than `custom` (the stack's § 5.6.5).",
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "type": "string", "minLength": 1 }
             }
           }
         },

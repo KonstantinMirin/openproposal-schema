@@ -10,7 +10,7 @@ covers:
     quote: "`LineItemSummary` lists these paths of a line item (§ 5):"
     locks: [with-our-stack]
   - ir: code:2.1:1
-    digest: 56d53f6d5f8d25e268a274877d9eba3e55fba751ed00e4b558004e697b1b24d2
+    digest: a60df1260430c44c11afd1ea911b6fa33403c406ca0dfa5034440a8af7871eea
     quote: |-
       line_item_id
       channel
@@ -51,6 +51,7 @@ covers:
       committed_metrics[]
       delivery_counting.impression_multiplier.impression_type
       delivery_counting.impression_multiplier.source_type
+      delivery_counting.impression_multiplier.accreditation
       required_credentials[]
       buyer_requirements.allowed_dsps[]
       transaction_mechanism.available[]

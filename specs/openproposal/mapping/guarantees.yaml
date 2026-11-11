@@ -485,7 +485,7 @@ entries:
     source: { rule: required-cell }
     as: { role: schema, in: ControllingMeasurementOption }
   - ir: key:5.7.1:ControllingMeasurementOption.counted_by
-    digest: 2b12447b7233776e4f4d5d0a0803b038f4cf8a7d7f2a9f4ff4ceac7e2f60573b
+    digest: c4ab66331bbc87b7e12b669fecec43ada2ac53af659dabf6e692dcef983f47cd
     locks: [ with-our-stack ]
     source: { rule: typed-row }
     as:
@@ -493,18 +493,23 @@ entries:
       object: ControllingMeasurementOption
       type: { kind: named, name: Measurer }
       presence: required
+  - ir: rule:5.7.1:0894f8c4
+    digest: 77b420d234cc4556addacdc7162942bb937828309358bc9e268fd3c77d6ab3b1
+    locks: [ with-our-stack ]
+    source: { decision: D-057 }
+    as: { role: obligation, party: implementation }
   - ir: rule:5.7.1:373dbf11-7
     digest: d69d0812de328223e6f2b65200a1c72896c02541e75908f2e937db000ae71fe6
     locks: [ with-our-stack ]
     source: { rule: required-cell }
     as: { role: schema, in: ControllingMeasurementOption }
-  - ir: rule:5.7.1:f7832319
-    digest: 142f347b9ee1055a0534b4db287be9a6bdf9e17705f301bc1219e2fa0a9cb1ae
+  - ir: rule:5.7.1:99d3e14a
+    digest: 4460442144f60a3d5277b0e38a1837d68e511ec5436e3eea46636f2f104314f3
     locks: [ with-our-stack ]
     source: { decision: D-057 }
     as: { role: obligation, party: implementation }
-  - ir: rule:5.7.1:f96c27c0
-    digest: d4c74c6bfc79e86db66ce38d65fa21a82a0b3ce961857d0ac80442f069a221dc
+  - ir: rule:5.7.1:d9939d8b
+    digest: 43183329b1994ca4030c14cff27b1b5ca451dc81b3cecf4d804bfa35cf2f60a3
     locks: [ with-our-stack ]
     source: { decision: D-057 }
     as: { role: obligation, party: implementation }

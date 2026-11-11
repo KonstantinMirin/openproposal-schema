@@ -11,7 +11,7 @@ from typing_extensions import TypeAliasType
 
 from . import _runtime as rt
 from .execution import TransactionMechanism
-from .kernel import Amount, CalendarUnit, ClockWindow, ClockWindowNarrowing, CurrencyCode, Digest, DocumentRef, Duration, Fraction, GeoCode, GeoCodeNarrowing, Instant, Interval, Measurer, NamespacedTerm, Narrowing, Party, PlainNumber, PlainString, Range, RegistrableDomain, SafeInteger, SafeIntegerNarrowing, SeatRef, Selectable, TaxonomyCodes
+from .kernel import Amount, CalendarUnit, ClockWindow, ClockWindowNarrowing, CurrencyCode, Digest, DocumentRef, Duration, Fraction, GeoCode, GeoCodeNarrowing, IanaZone, Instant, Interval, Measurer, NamespacedTerm, Narrowing, Party, PlainNumber, PlainString, Range, RegistrableDomain, SafeInteger, SafeIntegerNarrowing, SeatRef, Selectable, TaxonomyCodes
 from .targeting import ExclusionList, ExclusionType
 
 AssentEntryRole = TypeAliasType("AssentEntryRole", Literal["commitment", "acceptance", "withdrawal", "decline"])
@@ -226,8 +226,59 @@ class CancellationOptionNoticeReferences:
     INSTALL_DATE: Final = "install_date"
 
 
-CostParametersActionType = TypeAliasType("CostParametersActionType", NamespacedTerm)
-"""The `CostParametersActionType` vocabulary: no core terms are listed yet, so every term is namespaced (`NamespacedTerm`)."""
+CostParametersActionType = TypeAliasType("CostParametersActionType", Union[Literal["purchase", "page_view", "ad_impression", "add_to_wishlist", "add_to_cart", "viewed_cart", "viewed_item", "begin_checkout", "add_payment_info", "remove_from_cart", "refund", "generate_lead", "qualify_lead", "close_convert_lead", "disqualify_lead", "close_unconvert_lead", "sign_up", "search", "unlock_achievement", "install", "customize_product", "contact", "donate", "find_location", "schedule", "start_trial", "subscribe", "add_shipping_info", "share", "select_content", "select_item", "select_promotion", "view_item_list", "view_promotion", "view_search_results", "spend_virtual_currency", "earn_virtual_currency", "working_lead", "login", "join_group", "level_up", "post_score", "tutorial_begin", "tutorial_complete"], NamespacedTerm])
+"""The `CostParametersActionType` vocabulary: `purchase`, `page_view`, `ad_impression`, `add_to_wishlist`, `add_to_cart`, `viewed_cart`, `viewed_item`, `begin_checkout`, `add_payment_info`, `remove_from_cart`, `refund`, `generate_lead`, `qualify_lead`, `close_convert_lead`, `disqualify_lead`, `close_unconvert_lead`, `sign_up`, `search`, `unlock_achievement`, `install`, `customize_product`, `contact`, `donate`, `find_location`, `schedule`, `start_trial`, `subscribe`, `add_shipping_info`, `share`, `select_content`, `select_item`, `select_promotion`, `view_item_list`, `view_promotion`, `view_search_results`, `spend_virtual_currency`, `earn_virtual_currency`, `working_lead`, `login`, `join_group`, `level_up`, `post_score`, `tutorial_begin`, `tutorial_complete`, or a namespaced term (`NamespacedTerm`), since the vocabulary is open."""
+
+
+class CostParametersActionTypes:
+    """The core terms of `CostParametersActionType`, as constants. The vocabulary is open, so a field of it also takes a namespaced term (`NamespacedTerm`) as a plain value."""
+
+    __slots__ = ()
+
+    PURCHASE: Final = "purchase"
+    PAGE_VIEW: Final = "page_view"
+    AD_IMPRESSION: Final = "ad_impression"
+    ADD_TO_WISHLIST: Final = "add_to_wishlist"
+    ADD_TO_CART: Final = "add_to_cart"
+    VIEWED_CART: Final = "viewed_cart"
+    VIEWED_ITEM: Final = "viewed_item"
+    BEGIN_CHECKOUT: Final = "begin_checkout"
+    ADD_PAYMENT_INFO: Final = "add_payment_info"
+    REMOVE_FROM_CART: Final = "remove_from_cart"
+    REFUND: Final = "refund"
+    GENERATE_LEAD: Final = "generate_lead"
+    QUALIFY_LEAD: Final = "qualify_lead"
+    CLOSE_CONVERT_LEAD: Final = "close_convert_lead"
+    DISQUALIFY_LEAD: Final = "disqualify_lead"
+    CLOSE_UNCONVERT_LEAD: Final = "close_unconvert_lead"
+    SIGN_UP: Final = "sign_up"
+    SEARCH: Final = "search"
+    UNLOCK_ACHIEVEMENT: Final = "unlock_achievement"
+    INSTALL: Final = "install"
+    CUSTOMIZE_PRODUCT: Final = "customize_product"
+    CONTACT: Final = "contact"
+    DONATE: Final = "donate"
+    FIND_LOCATION: Final = "find_location"
+    SCHEDULE: Final = "schedule"
+    START_TRIAL: Final = "start_trial"
+    SUBSCRIBE: Final = "subscribe"
+    ADD_SHIPPING_INFO: Final = "add_shipping_info"
+    SHARE: Final = "share"
+    SELECT_CONTENT: Final = "select_content"
+    SELECT_ITEM: Final = "select_item"
+    SELECT_PROMOTION: Final = "select_promotion"
+    VIEW_ITEM_LIST: Final = "view_item_list"
+    VIEW_PROMOTION: Final = "view_promotion"
+    VIEW_SEARCH_RESULTS: Final = "view_search_results"
+    SPEND_VIRTUAL_CURRENCY: Final = "spend_virtual_currency"
+    EARN_VIRTUAL_CURRENCY: Final = "earn_virtual_currency"
+    WORKING_LEAD: Final = "working_lead"
+    LOGIN: Final = "login"
+    JOIN_GROUP: Final = "join_group"
+    LEVEL_UP: Final = "level_up"
+    POST_SCORE: Final = "post_score"
+    TUTORIAL_BEGIN: Final = "tutorial_begin"
+    TUTORIAL_COMPLETE: Final = "tutorial_complete"
 
 
 CostParametersDemographic = TypeAliasType("CostParametersDemographic", NamespacedTerm)
@@ -276,6 +327,19 @@ class ExclusivityOptionSeparations:
     LOOP: Final = "loop"
     LOCATION: Final = "location"
     PAID_ZONE: Final = "paid_zone"
+
+
+ImpressionMultiplierAccreditation = TypeAliasType("ImpressionMultiplierAccreditation", Union[Literal["industry_currency", "publisher_reported"], NamespacedTerm])
+"""The `ImpressionMultiplierAccreditation` vocabulary: `industry_currency`, `publisher_reported`, or a namespaced term (`NamespacedTerm`), since the vocabulary is open."""
+
+
+class ImpressionMultiplierAccreditations:
+    """The core terms of `ImpressionMultiplierAccreditation`, as constants. The vocabulary is open, so a field of it also takes a namespaced term (`NamespacedTerm`) as a plain value."""
+
+    __slots__ = ()
+
+    INDUSTRY_CURRENCY: Final = "industry_currency"
+    PUBLISHER_REPORTED: Final = "publisher_reported"
 
 
 LineItemRenewalRight = TypeAliasType("LineItemRenewalRight", Union[Literal["first_refusal"], NamespacedTerm])
@@ -527,6 +591,8 @@ class Commitment(rt.Closed):
 class ImpressionMultiplier(rt.Closed):
     """The `ImpressionMultiplier` object of the `commercial` module."""
 
+    accreditation: Optional[ImpressionMultiplierAccreditation] = None
+    """The standing of the multiplier's source in the market. Core terms: `industry_currency` (the market's joint industry currency, such as Geopath in the US or Route in the UK) | `publisher_reported` (the publisher's own figure). A receiver that doesn't know a term reads the multiplier without it"""
     dataset: PlainString
     """The source's named data release the multipliers come from. A new release is a new `dataset`"""
     demographic: Optional[CostParametersDemographic] = None
@@ -567,13 +633,15 @@ class CostParameters(rt.Closed):
     action_source: Optional[Measurer] = None
     """Who reports the action"""
     action_type: Optional[CostParametersActionType] = None
-    """The kind of action counted, such as `shop.example:purchase`. This version lists no core terms"""
+    """The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit`"""
     attribution_window: Optional[Duration] = None
     """How long after exposure an action counts"""
+    calendar_zone: Optional[IanaZone] = None
+    """Absent unless `rate_unit` is `day`. The zone whose calendar days the rate buys: each calendar day in that zone that the flight touches is one unit"""
     demographic: Optional[CostParametersDemographic] = None
     """The rated demographic, such as `ratings.example:adults_25_54`. Its definition states whether co-viewers and impressions of unknown age count, or says `unknown`. This version lists no core terms"""
     rate_unit: Optional[CostParametersRateUnit] = None
-    """`hour` | `day` | `week`. The unit the rate buys, counted in elapsed units"""
+    """`hour` | `day` | `week`. The unit the rate buys, counted in elapsed units unless `calendar_zone` is present"""
     rating_source: Optional[Measurer] = None
     """Who supplies the ratings"""
     view_fraction: Optional[Fraction] = None

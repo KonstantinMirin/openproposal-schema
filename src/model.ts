@@ -103,7 +103,7 @@ export type ModelType = Base &
         open: boolean;
         terms: ModelTerm[];
         /** The code list of another standard whose codes the terms are (type rules § 6), with the codes it reserves for vendors. */
-        list?: { name: string; standard: string; url: string; vendor?: { from: number; label: string }; registry?: RegistryRef };
+        list?: { name: string; standard: string; url: string; except?: string[]; vendor?: { from: number; label: string }; registry?: RegistryRef };
         /** For the specification's own code list: the codes it reserves for vendors, from `from` up, with their row's label. */
         vendor?: { from: number; label: string };
         /** The kernel primitive an open vocabulary's extension terms are, where a decision gives one other than a vendor's code or a namespaced term. */
@@ -393,7 +393,11 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
           // A registry's code keeps the name its registry's schema gives it.
           return { value, ...(annotation !== undefined ? { annotation } : {}), ...(list?.registry && c?.title !== undefined ? { title: c.title } : {}), sources };
         });
-        if (list && (decl.open ?? false) !== (list.vendor !== undefined)) problems.push(`${where}: is ${decl.open ? "open" : "closed"}, but ${list.standard} ${list.name} ${list.vendor ? "reserves codes for vendors" : "reserves no codes for vendors"}; a vocabulary that cites a list is open exactly when the list reserves vendor codes (type rules § 6)`);
+        // A `VocabularyTerm` row that points to a list of words adds extension terms to it (the stack's § 2.6), as `action_type` adds namespaced terms to ECAPI's `event_type`.
+        const row = decl.ir ? elements.get(String(decl.ir).split("#")[0]!) : undefined;
+        const typed = row?.kind === "key" ? row.element.type_expr : row?.kind === "field" && row.element.required !== undefined ? row.element.type.parsed : undefined;
+        const termRow = typed?.kind === "named" && typed.name === "VocabularyTerm" && list !== undefined && list.vendor === undefined && list.codes.every((c) => typeof c.code === "string");
+        if (list && (decl.open ?? false) !== (list.vendor !== undefined || termRow)) problems.push(`${where}: is ${decl.open ? "open" : "closed"}, but ${list.standard} ${list.name} ${list.vendor ? "reserves codes for vendors" : termRow ? "is the core terms of a `VocabularyTerm` row" : "reserves no codes for vendors"}; a vocabulary that cites a list is open exactly when the list reserves vendor codes, or when a \`VocabularyTerm\` row takes its words as core terms (type rules § 6)`);
         const vendorCode = kernel.primitives.find((p) => p.name === VENDOR_CODE);
         if (list?.vendor && vendorCode?.constraints.minimum !== list.vendor.from) problems.push(`${where}: ${list.standard} ${list.name} reserves vendor codes from ${list.vendor.from}, but ${VENDOR_CODE} starts at ${vendorCode?.constraints.minimum ?? "no minimum"}`);
         // The specification's own list: its vendor range, or the extension a decision gives, makes it open, and nothing else does.
@@ -405,7 +409,7 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
         const rowHost = !list && !decl.description && terms.length > 0 && terms.every((x) => INTEGER.test(x.value)) && decl.ir ? elements.get(String(decl.ir).split("#")[0]!) : undefined;
         const rowOwner = rowHost?.kind === "field" ? `${pascalField(rowHost.element.owner)}.${rowHost.element.names[0]!.path}` : rowHost?.kind === "key" ? rowHost.element.id.split(":").slice(2).join(":") : undefined;
         const rowDescription = rowOwner ? `The values of \`${rowOwner}\` its row lists` : undefined;
-        define({ ...b, kind: "vocabulary", open: decl.open ?? false, terms, ...(rowDescription ? { description: rowDescription } : {}), ...(list ? { list: { name: list.name, standard: list.standard, url: list.url, ...(list.vendor ? { vendor: list.vendor } : {}), ...(list.registry ? { registry: list.registry } : {}) } } : {}), ...(decl.vendor ? { vendor: decl.vendor } : {}), ...(decl.extension ? { extension: decl.extension } : {}), ...(decl.labeled ? { labeled: true as const } : {}), ...(decl.description ? { description: decl.description } : {}) }, where);
+        define({ ...b, kind: "vocabulary", open: decl.open ?? false, terms, ...(rowDescription ? { description: rowDescription } : {}), ...(list ? { list: { name: list.name, standard: list.standard, url: list.url, ...(decl.list!.except ? { except: decl.list!.except } : {}), ...(list.vendor ? { vendor: list.vendor } : {}), ...(list.registry ? { registry: list.registry } : {}) } } : {}), ...(decl.vendor ? { vendor: decl.vendor } : {}), ...(decl.extension ? { extension: decl.extension } : {}), ...(decl.labeled ? { labeled: true as const } : {}), ...(decl.description ? { description: decl.description } : {}) }, where);
         break;
       }
       case "union":

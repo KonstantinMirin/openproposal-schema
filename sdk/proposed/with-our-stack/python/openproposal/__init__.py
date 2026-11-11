@@ -15,7 +15,7 @@ from . import _runtime as rt
 from ._runtime import Mode, dump, dump_json, is_format
 from .kernel import Amount, App, AppId, AppIdStore, AppIdStores, ApprovalStatus, ApprovalStatuses, CalendarUnit, CalendarUnits, ClockWindow, ClockWindowNarrowing, CurrencyCode, DayName, DayNames, Delta, Digest, DocumentRef, Domain, Duration, EntryRef, ErrorObject, ErrorObjectCode, ErrorObjectCodes, ErrorObjectRetries, ErrorObjectRetry, FieldPointer, FormatId, Fraction, FractionDelta, GeoCode, GeoCodeNarrowing, HttpsUrl, IanaZone, Instant, IntegerFlag, IntegerFlags, Interval, LineItemStatus, LineItemStatuses, Measurer, NamespacedTerm, Narrowing, OpenObject, Party, PlainNumber, PlainString, ProposalStatus, ProposalStatuses, Range, RegistrableDomain, SafeInteger, SafeIntegerNarrowing, SeatRef, Selectable, Settable, SettableRange, Side, Sides, TaxonomyCodes, TimeOfDay, TimeUnit, TimeUnits, TimeZone, Url, VersionRef
 from .audience import ActivationRouteSelection, AddressableScale, AddressableScaleUnit, AddressableScaleUnits, AudienceOption, AudienceOptionSensitiveCategories, AudienceOptionSensitiveCategory, AudienceSelectable, BuyerList, BuyerListMatchMethod, BuyerListMatchMethods, BuyerSupplied, CombineOperator, CombineOperators, CombineSelection, LineItemActivationRoute, LineItemActivationRoutes
-from .commercial import AssentEntry, AssentEntryGround, AssentEntryGrounds, AssentEntryRole, AssentEntryRoles, Availability, AvailabilityCertainties, AvailabilityCertainty, AvailabilityUnit, AvailabilityUnits, BuyerWrites, BuyerWritesAudienceSelectable, BuyerWritesBuyerRequirements, BuyerWritesDeviceBounds, BuyerWritesFrequencyCap, BuyerWritesGeoBounds, BuyerWritesSelectable, BuyerWritesSettable, BuyerWritesSettableRange, BuyerWritesShortfallRemedy, CancellationNotice, CancellationOption, CancellationOptionNoticeReference, CancellationOptionNoticeReferences, CancellationPolicySelection, Commit, CommitResult, Commitment, CommitmentAmount, CommitmentAmountBases, CommitmentAmountBasis, CommitmentBounds, CostParameters, CostParametersActionType, CostParametersDemographic, CostParametersRateUnit, CostParametersRateUnits, CostParametersViewabilityStandard, CostParametersViewabilityStandards, DatedShare, DeliveryCounting, DeliveryCountingPartialPlayCredit, DeliveryCountingPartialPlayCredits, ExclusivityOption, ExclusivityOptionScope, ExclusivityOptionScopes, ExclusivityOptionSeparation, ExclusivityOptionSeparations, ExclusivitySelection, Fee, FeeCalculation, FeeCalculations, Hold, HoldStatus, HoldStatuses, HoldTerms, ImpressionMultiplier, ImpressionMultiplierImpressionType, ImpressionMultiplierImpressionTypes, ImpressionMultiplierSettlesOn, ImpressionMultiplierSettlesOns, LineItemRenewalRight, LineItemRenewalRights, LineItemWrites, Preemption, PreemptionReason, PreemptionReasons, PreemptionRemedies, PreemptionRemedy, PricingEntry, PricingEntryCostMethod, PricingEntryCostMethods, PricingEntryRatePer, PricingEntryRatePers, ProofOfPerformance, ProofOfPerformanceEvidence, ProofOfPerformanceEvidences, SpendRange, UnitBoundsRange
+from .commercial import AssentEntry, AssentEntryGround, AssentEntryGrounds, AssentEntryRole, AssentEntryRoles, Availability, AvailabilityCertainties, AvailabilityCertainty, AvailabilityUnit, AvailabilityUnits, BuyerWrites, BuyerWritesAudienceSelectable, BuyerWritesBuyerRequirements, BuyerWritesDeviceBounds, BuyerWritesFrequencyCap, BuyerWritesGeoBounds, BuyerWritesSelectable, BuyerWritesSettable, BuyerWritesSettableRange, BuyerWritesShortfallRemedy, CancellationNotice, CancellationOption, CancellationOptionNoticeReference, CancellationOptionNoticeReferences, CancellationPolicySelection, Commit, CommitResult, Commitment, CommitmentAmount, CommitmentAmountBases, CommitmentAmountBasis, CommitmentBounds, CostParameters, CostParametersActionType, CostParametersActionTypes, CostParametersDemographic, CostParametersRateUnit, CostParametersRateUnits, CostParametersViewabilityStandard, CostParametersViewabilityStandards, DatedShare, DeliveryCounting, DeliveryCountingPartialPlayCredit, DeliveryCountingPartialPlayCredits, ExclusivityOption, ExclusivityOptionScope, ExclusivityOptionScopes, ExclusivityOptionSeparation, ExclusivityOptionSeparations, ExclusivitySelection, Fee, FeeCalculation, FeeCalculations, Hold, HoldStatus, HoldStatuses, HoldTerms, ImpressionMultiplier, ImpressionMultiplierAccreditation, ImpressionMultiplierAccreditations, ImpressionMultiplierImpressionType, ImpressionMultiplierImpressionTypes, ImpressionMultiplierSettlesOn, ImpressionMultiplierSettlesOns, LineItemRenewalRight, LineItemRenewalRights, LineItemWrites, Preemption, PreemptionReason, PreemptionReasons, PreemptionRemedies, PreemptionRemedy, PricingEntry, PricingEntryCostMethod, PricingEntryCostMethods, PricingEntryRatePer, PricingEntryRatePers, ProofOfPerformance, ProofOfPerformanceEvidence, ProofOfPerformanceEvidences, SpendRange, UnitBoundsRange
 from .creative import Asset, AssetProvenance, AssetProvenanceDisclosureMethod, AssetProvenanceDisclosureMethods, CreativeDelivery, CreativeDeliveryMethod, CreativeDeliveryMethods, CreativeDeliveryOtherProtocol, CreativeDeliveryOtherProtocols, FormatSpec, FormatsSelection, MaterialsDue, ProductionOption, ProductionSelection
 from .eligibility import LineItemVisibilities, LineItemVisibility, RequiredCredential, RequiredCredentialCredentialType, RequiredCredentialCredentialTypes
 from .execution import BuyerRequirements, DeliveryType, DeliveryTypes, LineItemServingMode, LineItemServingModes, LineItemSovBases, LineItemSovBasis, MechanismOption, RetentionRange, TransactionMechanism, TransactionMechanismSelection, TransactionMechanisms
@@ -30,10 +30,10 @@ from .settlement import Agreement, AgreementAgreementType, AgreementAgreementTyp
 from .targeting import AcceptedExclusions, CountSettableRange, DaypartBounds, DeviceBounds, ExclusionEntry, ExclusionList, ExclusionTerms, ExclusionTermsEnforcement, ExclusionTermsEnforcements, ExclusionType, ExclusionTypes, FrequencyCap, FrequencyCapPer, FrequencyCapPers, GeoBounds, MarketsSelection
 from .registry import ExtensionRegistry
 
-SPEC_COMMIT: Final = "43f4c723c3250091572fa31a3ab2f355f5d712df"
+SPEC_COMMIT: Final = "4f7ffffb31849b13cec5e2e38441abbad8a5ff42"
 """The commit of the OpenProposal specification repository that the types are generated from."""
 
-SPEC_BLOB: Final = "7ed55dbc2a60d112f1dc9fc342ee6b598d050e2b"
+SPEC_BLOB: Final = "a7e8b5bff4d2a9e9fc68800eece37556099552f5"
 """The Git blob SHA of the specification file at that commit."""
 
 LOCK: Final = "with-our-stack"
@@ -42,7 +42,7 @@ LOCK: Final = "with-our-stack"
 VARIANT: Final = "proposed"
 """The build: `as-written`, the specification as its text and examples write it, or `proposed`, with the changes we propose."""
 
-SCHEMA_RELEASE: Final = "a26a8d65910901ddbeca934d7cc03997dbfee41e1493be8825cc855f408b5c71"
+SCHEMA_RELEASE: Final = "58b0cf19b6be77769c625a26ec582623963e201ec6476575068fe3d217e49c88"
 """The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it."""
 
 TYPES: dict[str, Any] = {
@@ -173,6 +173,7 @@ TYPES: dict[str, Any] = {
     "HttpsUrl": HttpsUrl,
     "IanaZone": IanaZone,
     "ImpressionMultiplier": ImpressionMultiplier,
+    "ImpressionMultiplierAccreditation": ImpressionMultiplierAccreditation,
     "ImpressionMultiplierImpressionType": ImpressionMultiplierImpressionType,
     "ImpressionMultiplierSettlesOn": ImpressionMultiplierSettlesOn,
     "Instant": Instant,
@@ -400,6 +401,7 @@ __all__ = [
     "ControllingMeasurementSelection",
     "CostParameters",
     "CostParametersActionType",
+    "CostParametersActionTypes",
     "CostParametersDemographic",
     "CostParametersRateUnit",
     "CostParametersRateUnits",
@@ -483,6 +485,8 @@ __all__ = [
     "HttpsUrl",
     "IanaZone",
     "ImpressionMultiplier",
+    "ImpressionMultiplierAccreditation",
+    "ImpressionMultiplierAccreditations",
     "ImpressionMultiplierImpressionType",
     "ImpressionMultiplierImpressionTypes",
     "ImpressionMultiplierSettlesOn",

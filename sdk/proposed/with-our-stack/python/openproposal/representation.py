@@ -11,7 +11,7 @@ from typing_extensions import TypeAliasType
 
 from . import _runtime as rt
 from .audience import AddressableScale
-from .commercial import CommitmentBounds, ImpressionMultiplierImpressionType, PricingEntryCostMethod, UnitBoundsRange
+from .commercial import CommitmentBounds, ImpressionMultiplierAccreditation, ImpressionMultiplierImpressionType, PricingEntryCostMethod, UnitBoundsRange
 from .eligibility import RequiredCredential
 from .execution import MechanismOption
 from .guarantees import CommittedMetric
@@ -113,6 +113,8 @@ class LineItemSummaryBreakPositionSelection(rt.Closed):
 class LineItemSummaryImpressionMultiplier(rt.Closed):
     """The `LineItemSummaryImpressionMultiplier` object of the `representation` module."""
 
+    accreditation: Optional[ImpressionMultiplierAccreditation] = None
+    """The standing of the multiplier's source in the market. Core terms: `industry_currency` (the market's joint industry currency, such as Geopath in the US or Route in the UK) | `publisher_reported` (the publisher's own figure). A receiver that doesn't know a term reads the multiplier without it"""
     impression_type: ImpressionMultiplierImpressionType
     """`gross` | `viewable` | `lts` | `audience`: Gross, Viewable (OTS), Likelihood-to-See, or Audience impressions, as the MRC Out-of-Home Measurement Standards (Phase 1 & 2 Combined, December 2025) define them"""
     source_type: SafeInteger
@@ -123,7 +125,7 @@ class LineItemSummaryDeliveryCounting(rt.Closed):
     """The `LineItemSummaryDeliveryCounting` object of the `representation` module."""
 
     impression_multiplier: Optional[LineItemSummaryImpressionMultiplier] = None
-    """The line item's `delivery_counting.impression_multiplier`, projected to `impression_type` and `source_type`."""
+    """The line item's `delivery_counting.impression_multiplier`, projected to `impression_type`, `source_type`, and `accreditation`."""
 
 
 class LineItemSummaryPlacement(rt.Closed):
@@ -208,7 +210,7 @@ class LineItemSummary(rt.Closed):
     committed_metrics: Optional[list[CommittedMetric]] = None
     """`CommittedMetric` tuples (§ 5.7.1). Seller declares its offered `level`. A buyer MAY request a stricter `level`, one further in `direction`. A request MUST NOT change a tuple's `direction`"""
     delivery_counting: Optional[LineItemSummaryDeliveryCounting] = None
-    """The line item's `delivery_counting`, projected to `impression_multiplier.impression_type` and `impression_multiplier.source_type`."""
+    """The line item's `delivery_counting`, projected to `impression_multiplier.impression_type`, `impression_multiplier.source_type`, and `impression_multiplier.accreditation`."""
     environments: Optional[LineItemSummaryEnvironmentsSelection] = None
     """The line item's `environments`, projected to `available[]`."""
     episodes: Optional[LineItemEpisodes] = None

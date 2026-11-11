@@ -352,14 +352,146 @@ func (CancellationOptionNoticeReference) ValidateValue(v any, at string, errs *E
 	}, validateAs[NamespacedTerm])
 }
 
-// CostParametersActionType: The `CostParametersActionType` vocabulary: no core terms are listed yet, so every term is namespaced (`NamespacedTerm`).
+// CostParametersActionType: The `CostParametersActionType` vocabulary: `purchase`, `page_view`, `ad_impression`, `add_to_wishlist`, `add_to_cart`, `viewed_cart`, `viewed_item`, `begin_checkout`, `add_payment_info`, `remove_from_cart`, `refund`, `generate_lead`, `qualify_lead`, `close_convert_lead`, `disqualify_lead`, `close_unconvert_lead`, `sign_up`, `search`, `unlock_achievement`, `install`, `customize_product`, `contact`, `donate`, `find_location`, `schedule`, `start_trial`, `subscribe`, `add_shipping_info`, `share`, `select_content`, `select_item`, `select_promotion`, `view_item_list`, `view_promotion`, `view_search_results`, `spend_virtual_currency`, `earn_virtual_currency`, `working_lead`, `login`, `join_group`, `level_up`, `post_score`, `tutorial_begin`, `tutorial_complete`, or a namespaced term (`NamespacedTerm`), since the vocabulary is open.
 type CostParametersActionType string
 
-var termsCostParametersActionType = []any{}
+// CostParametersActionTypePurchase is the term "purchase".
+const CostParametersActionTypePurchase CostParametersActionType = "purchase"
+
+// CostParametersActionTypePageView is the term "page_view".
+const CostParametersActionTypePageView CostParametersActionType = "page_view"
+
+// CostParametersActionTypeAdImpression is the term "ad_impression".
+const CostParametersActionTypeAdImpression CostParametersActionType = "ad_impression"
+
+// CostParametersActionTypeAddToWishlist is the term "add_to_wishlist".
+const CostParametersActionTypeAddToWishlist CostParametersActionType = "add_to_wishlist"
+
+// CostParametersActionTypeAddToCart is the term "add_to_cart".
+const CostParametersActionTypeAddToCart CostParametersActionType = "add_to_cart"
+
+// CostParametersActionTypeViewedCart is the term "viewed_cart".
+const CostParametersActionTypeViewedCart CostParametersActionType = "viewed_cart"
+
+// CostParametersActionTypeViewedItem is the term "viewed_item".
+const CostParametersActionTypeViewedItem CostParametersActionType = "viewed_item"
+
+// CostParametersActionTypeBeginCheckout is the term "begin_checkout".
+const CostParametersActionTypeBeginCheckout CostParametersActionType = "begin_checkout"
+
+// CostParametersActionTypeAddPaymentInfo is the term "add_payment_info".
+const CostParametersActionTypeAddPaymentInfo CostParametersActionType = "add_payment_info"
+
+// CostParametersActionTypeRemoveFromCart is the term "remove_from_cart".
+const CostParametersActionTypeRemoveFromCart CostParametersActionType = "remove_from_cart"
+
+// CostParametersActionTypeRefund is the term "refund".
+const CostParametersActionTypeRefund CostParametersActionType = "refund"
+
+// CostParametersActionTypeGenerateLead is the term "generate_lead".
+const CostParametersActionTypeGenerateLead CostParametersActionType = "generate_lead"
+
+// CostParametersActionTypeQualifyLead is the term "qualify_lead".
+const CostParametersActionTypeQualifyLead CostParametersActionType = "qualify_lead"
+
+// CostParametersActionTypeCloseConvertLead is the term "close_convert_lead".
+const CostParametersActionTypeCloseConvertLead CostParametersActionType = "close_convert_lead"
+
+// CostParametersActionTypeDisqualifyLead is the term "disqualify_lead".
+const CostParametersActionTypeDisqualifyLead CostParametersActionType = "disqualify_lead"
+
+// CostParametersActionTypeCloseUnconvertLead is the term "close_unconvert_lead".
+const CostParametersActionTypeCloseUnconvertLead CostParametersActionType = "close_unconvert_lead"
+
+// CostParametersActionTypeSignUp is the term "sign_up".
+const CostParametersActionTypeSignUp CostParametersActionType = "sign_up"
+
+// CostParametersActionTypeSearch is the term "search".
+const CostParametersActionTypeSearch CostParametersActionType = "search"
+
+// CostParametersActionTypeUnlockAchievement is the term "unlock_achievement".
+const CostParametersActionTypeUnlockAchievement CostParametersActionType = "unlock_achievement"
+
+// CostParametersActionTypeInstall is the term "install".
+const CostParametersActionTypeInstall CostParametersActionType = "install"
+
+// CostParametersActionTypeCustomizeProduct is the term "customize_product".
+const CostParametersActionTypeCustomizeProduct CostParametersActionType = "customize_product"
+
+// CostParametersActionTypeContact is the term "contact".
+const CostParametersActionTypeContact CostParametersActionType = "contact"
+
+// CostParametersActionTypeDonate is the term "donate".
+const CostParametersActionTypeDonate CostParametersActionType = "donate"
+
+// CostParametersActionTypeFindLocation is the term "find_location".
+const CostParametersActionTypeFindLocation CostParametersActionType = "find_location"
+
+// CostParametersActionTypeSchedule is the term "schedule".
+const CostParametersActionTypeSchedule CostParametersActionType = "schedule"
+
+// CostParametersActionTypeStartTrial is the term "start_trial".
+const CostParametersActionTypeStartTrial CostParametersActionType = "start_trial"
+
+// CostParametersActionTypeSubscribe is the term "subscribe".
+const CostParametersActionTypeSubscribe CostParametersActionType = "subscribe"
+
+// CostParametersActionTypeAddShippingInfo is the term "add_shipping_info".
+const CostParametersActionTypeAddShippingInfo CostParametersActionType = "add_shipping_info"
+
+// CostParametersActionTypeShare is the term "share".
+const CostParametersActionTypeShare CostParametersActionType = "share"
+
+// CostParametersActionTypeSelectContent is the term "select_content".
+const CostParametersActionTypeSelectContent CostParametersActionType = "select_content"
+
+// CostParametersActionTypeSelectItem is the term "select_item".
+const CostParametersActionTypeSelectItem CostParametersActionType = "select_item"
+
+// CostParametersActionTypeSelectPromotion is the term "select_promotion".
+const CostParametersActionTypeSelectPromotion CostParametersActionType = "select_promotion"
+
+// CostParametersActionTypeViewItemList is the term "view_item_list".
+const CostParametersActionTypeViewItemList CostParametersActionType = "view_item_list"
+
+// CostParametersActionTypeViewPromotion is the term "view_promotion".
+const CostParametersActionTypeViewPromotion CostParametersActionType = "view_promotion"
+
+// CostParametersActionTypeViewSearchResults is the term "view_search_results".
+const CostParametersActionTypeViewSearchResults CostParametersActionType = "view_search_results"
+
+// CostParametersActionTypeSpendVirtualCurrency is the term "spend_virtual_currency".
+const CostParametersActionTypeSpendVirtualCurrency CostParametersActionType = "spend_virtual_currency"
+
+// CostParametersActionTypeEarnVirtualCurrency is the term "earn_virtual_currency".
+const CostParametersActionTypeEarnVirtualCurrency CostParametersActionType = "earn_virtual_currency"
+
+// CostParametersActionTypeWorkingLead is the term "working_lead".
+const CostParametersActionTypeWorkingLead CostParametersActionType = "working_lead"
+
+// CostParametersActionTypeLogin is the term "login".
+const CostParametersActionTypeLogin CostParametersActionType = "login"
+
+// CostParametersActionTypeJoinGroup is the term "join_group".
+const CostParametersActionTypeJoinGroup CostParametersActionType = "join_group"
+
+// CostParametersActionTypeLevelUp is the term "level_up".
+const CostParametersActionTypeLevelUp CostParametersActionType = "level_up"
+
+// CostParametersActionTypePostScore is the term "post_score".
+const CostParametersActionTypePostScore CostParametersActionType = "post_score"
+
+// CostParametersActionTypeTutorialBegin is the term "tutorial_begin".
+const CostParametersActionTypeTutorialBegin CostParametersActionType = "tutorial_begin"
+
+// CostParametersActionTypeTutorialComplete is the term "tutorial_complete".
+const CostParametersActionTypeTutorialComplete CostParametersActionType = "tutorial_complete"
+
+var termsCostParametersActionType = []any{"purchase", "page_view", "ad_impression", "add_to_wishlist", "add_to_cart", "viewed_cart", "viewed_item", "begin_checkout", "add_payment_info", "remove_from_cart", "refund", "generate_lead", "qualify_lead", "close_convert_lead", "disqualify_lead", "close_unconvert_lead", "sign_up", "search", "unlock_achievement", "install", "customize_product", "contact", "donate", "find_location", "schedule", "start_trial", "subscribe", "add_shipping_info", "share", "select_content", "select_item", "select_promotion", "view_item_list", "view_promotion", "view_search_results", "spend_virtual_currency", "earn_virtual_currency", "working_lead", "login", "join_group", "level_up", "post_score", "tutorial_begin", "tutorial_complete"}
 
 // ValidateValue implements Value.
 func (CostParametersActionType) ValidateValue(v any, at string, errs *Errors) {
-	validateAs[NamespacedTerm](v, at, errs)
+	validateAnyOf(v, at, errs, func(v any, at string, errs *Errors) { checkEnum(v, at, errs, termsCostParametersActionType...) }, validateAs[NamespacedTerm])
 }
 
 // CostParametersDemographic: The `CostParametersDemographic` vocabulary: no core terms are listed yet, so every term is namespaced (`NamespacedTerm`).
@@ -437,6 +569,24 @@ var termsExclusivityOptionSeparation = []any{"inventory", "page", "pod", "stream
 // ValidateValue implements Value.
 func (ExclusivityOptionSeparation) ValidateValue(v any, at string, errs *Errors) {
 	validateAnyOf(v, at, errs, func(v any, at string, errs *Errors) { checkEnum(v, at, errs, termsExclusivityOptionSeparation...) }, validateAs[NamespacedTerm])
+}
+
+// ImpressionMultiplierAccreditation: The `ImpressionMultiplierAccreditation` vocabulary: `industry_currency`, `publisher_reported`, or a namespaced term (`NamespacedTerm`), since the vocabulary is open.
+type ImpressionMultiplierAccreditation string
+
+// ImpressionMultiplierAccreditationIndustryCurrency is the term "industry_currency".
+const ImpressionMultiplierAccreditationIndustryCurrency ImpressionMultiplierAccreditation = "industry_currency"
+
+// ImpressionMultiplierAccreditationPublisherReported is the term "publisher_reported".
+const ImpressionMultiplierAccreditationPublisherReported ImpressionMultiplierAccreditation = "publisher_reported"
+
+var termsImpressionMultiplierAccreditation = []any{"industry_currency", "publisher_reported"}
+
+// ValidateValue implements Value.
+func (ImpressionMultiplierAccreditation) ValidateValue(v any, at string, errs *Errors) {
+	validateAnyOf(v, at, errs, func(v any, at string, errs *Errors) {
+		checkEnum(v, at, errs, termsImpressionMultiplierAccreditation...)
+	}, validateAs[NamespacedTerm])
 }
 
 // LineItemRenewalRight: The `LineItemRenewalRight` vocabulary: `first_refusal`, or a namespaced term (`NamespacedTerm`), since the vocabulary is open.
@@ -987,6 +1137,8 @@ func (Commitment) ValidateValue(v any, at string, errs *Errors) {
 
 // ImpressionMultiplier: The `ImpressionMultiplier` object of the `commercial` module.
 type ImpressionMultiplier struct {
+	// Accreditation: The standing of the multiplier's source in the market. Core terms: `industry_currency` (the market's joint industry currency, such as Geopath in the US or Route in the UK) | `publisher_reported` (the publisher's own figure). A receiver that doesn't know a term reads the multiplier without it
+	Accreditation *ImpressionMultiplierAccreditation `json:"accreditation,omitempty"`
 	// Dataset: The source's named data release the multipliers come from. A new release is a new `dataset`
 	Dataset PlainString `json:"dataset"`
 	// Demographic: The demographic whose value settles when `dataset` gives a value per demographic. The same kind of term as `cost_parameters.demographic` (§ 5.6.5)
@@ -1008,7 +1160,10 @@ func (ImpressionMultiplier) ValidateValue(v any, at string, errs *Errors) {
 		return
 	}
 	checkRequired(m, at, errs, "dataset", "impression_type", "settles_on", "source_type")
-	checkClosed(m, at, errs, "dataset", "demographic", "impression_type", "settles_on", "source_type", "vendor")
+	checkClosed(m, at, errs, "accreditation", "dataset", "demographic", "impression_type", "settles_on", "source_type", "vendor")
+	if x, ok := m["accreditation"]; ok {
+		validateAs[ImpressionMultiplierAccreditation](x, member(at, "accreditation"), errs)
+	}
 	if x, ok := m["dataset"]; ok {
 		validateAs[PlainString](x, member(at, "dataset"), errs)
 	}
@@ -1077,13 +1232,15 @@ type CancellationPolicySelection = Selectable[CancellationOption]
 type CostParameters struct {
 	// ActionSource: Who reports the action
 	ActionSource *Measurer `json:"action_source,omitempty"`
-	// ActionType: The kind of action counted, such as `shop.example:purchase`. This version lists no core terms
+	// ActionType: The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit`
 	ActionType *CostParametersActionType `json:"action_type,omitempty"`
 	// AttributionWindow: How long after exposure an action counts
 	AttributionWindow *Duration `json:"attribution_window,omitempty"`
+	// CalendarZone: Absent unless `rate_unit` is `day`. The zone whose calendar days the rate buys: each calendar day in that zone that the flight touches is one unit
+	CalendarZone *IanaZone `json:"calendar_zone,omitempty"`
 	// Demographic: The rated demographic, such as `ratings.example:adults_25_54`. Its definition states whether co-viewers and impressions of unknown age count, or says `unknown`. This version lists no core terms
 	Demographic *CostParametersDemographic `json:"demographic,omitempty"`
-	// RateUnit: `hour` | `day` | `week`. The unit the rate buys, counted in elapsed units
+	// RateUnit: `hour` | `day` | `week`. The unit the rate buys, counted in elapsed units unless `calendar_zone` is present
 	RateUnit *CostParametersRateUnit `json:"rate_unit,omitempty"`
 	// RatingSource: Who supplies the ratings
 	RatingSource *Measurer `json:"rating_source,omitempty"`
@@ -1101,7 +1258,7 @@ func (CostParameters) ValidateValue(v any, at string, errs *Errors) {
 	if !ok {
 		return
 	}
-	checkClosed(m, at, errs, "action_source", "action_type", "attribution_window", "demographic", "rate_unit", "rating_source", "view_fraction", "view_s", "viewability_standard")
+	checkClosed(m, at, errs, "action_source", "action_type", "attribution_window", "calendar_zone", "demographic", "rate_unit", "rating_source", "view_fraction", "view_s", "viewability_standard")
 	if x, ok := m["action_source"]; ok {
 		validateAs[Measurer](x, member(at, "action_source"), errs)
 	}
@@ -1110,6 +1267,9 @@ func (CostParameters) ValidateValue(v any, at string, errs *Errors) {
 	}
 	if x, ok := m["attribution_window"]; ok {
 		validateAs[Duration](x, member(at, "attribution_window"), errs)
+	}
+	if x, ok := m["calendar_zone"]; ok {
+		validateAs[IanaZone](x, member(at, "calendar_zone"), errs)
 	}
 	if x, ok := m["demographic"]; ok {
 		validateAs[CostParametersDemographic](x, member(at, "demographic"), errs)

@@ -374,16 +374,16 @@ covers:
     quote: "`retention` | Range[Duration] | requestable | From release or air. The ad stays in every copy of the content the seller distributes for at least `min` and is removed by `max`. No `max`: indefinitely. When `placement.feed` is present, only copies in that feed count toward delivery"
     locks: [with-our-stack]
   - ir: key:5.6.5:CostParameters.rate_unit
-    digest: 74df1a978c5ed85de51d86acf9461a72ece8335b55bedd6ded4f0d9358329098
-    quote: "`rate_unit` | REQUIRED when `cost_method` is `TIME` | `hour` | `day` | `week`. The unit the rate buys, counted in elapsed units"
+    digest: 99a71ad7db93d2036ebdf72c80cc155ddbdc869d593e8057d71461fab5c456a8
+    quote: "`rate_unit` | REQUIRED when `cost_method` is `TIME` | `hour` | `day` | `week`. The unit the rate buys, counted in elapsed units unless `calendar_zone` is present"
     locks: [with-our-stack]
   - ir: key:5.6.5:CostParameters.viewability_standard
     digest: d213f91f3a635104e410c38f8b7a3a30e570fc1ba329d6b54df2766a43926bcc
     quote: "`viewability_standard` | REQUIRED when `cost_method` is `CPMV` | The viewability standard that counts a unit. Core term: `mrc`, the MRC guidelines that `viewable_rate` cites (§ 5.7.1)"
     locks: [with-our-stack]
   - ir: key:5.6.5:CostParameters.action_type
-    digest: 83db4387a45bdbb90bb5b272125d57893b95f7b98aaa79113f504c819c8e577e
-    quote: "`action_type` | REQUIRED when `cost_method` is `CPA` | The kind of action counted, such as `shop.example:purchase`. This version lists no core terms"
+    digest: 75c3b56630cfd4b7fb7c7c1c05760e014b95ca3c4559a337128a8d4c646c8301
+    quote: "`action_type` | REQUIRED when `cost_method` is `CPA` | The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit`"
     locks: [with-our-stack]
   - ir: key:5.6.5:CostParameters.attribution_window
     digest: cb7249308e30fff79b598498150bd1391340a20c003fed80551ac4c7bffdf3f7

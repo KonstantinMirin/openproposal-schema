@@ -1,7 +1,7 @@
 {
   "format": 1,
   "lock": "with-our-stack",
-  "commit": "43f4c723c3250091572fa31a3ab2f355f5d712df",
+  "commit": "4f7ffffb31849b13cec5e2e38441abbad8a5ff42",
   "types": {
     "AcceptedExclusions": {
       "kind": "object",
@@ -1731,8 +1731,9 @@
       "minimal": {},
       "full": {
         "action_source": "seller",
-        "action_type": "examplepub.example:podcast-host-read",
+        "action_type": "purchase",
         "attribution_window": "P14D",
+        "calendar_zone": "America/New_York",
         "demographic": "examplepub.example:podcast-host-read",
         "rate_unit": "hour",
         "rating_source": "seller",
@@ -1774,8 +1775,8 @@
     "CostParametersActionType": {
       "kind": "vocabulary",
       "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/modules/commercial/1/commercial.json#/$defs/CostParametersActionType",
-      "minimal": "examplepub.example:podcast-host-read",
-      "full": "examplepub.example:podcast-host-read"
+      "minimal": "purchase",
+      "full": "purchase"
     },
     "CostParametersDemographic": {
       "kind": "vocabulary",
@@ -1946,6 +1947,7 @@
       },
       "full": {
         "impression_multiplier": {
+          "accreditation": "industry_currency",
           "dataset": "2026-R2",
           "demographic": "examplepub.example:podcast-host-read",
           "impression_type": "viewable",
@@ -2831,6 +2833,7 @@
       "kind": "object",
       "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/modules/commercial/1/commercial.json#/$defs/ImpressionMultiplier",
       "minimal": {
+        "accreditation": "industry_currency",
         "dataset": "examplepub-q4-sports",
         "demographic": "examplepub.example:podcast-host-read",
         "impression_type": "gross",
@@ -2839,6 +2842,7 @@
         "vendor": "audience-vendor.example"
       },
       "full": {
+        "accreditation": "industry_currency",
         "dataset": "2026-R2",
         "demographic": "examplepub.example:podcast-host-read",
         "impression_type": "viewable",
@@ -2846,6 +2850,12 @@
         "source_type": 1,
         "vendor": "audience-vendor.example"
       }
+    },
+    "ImpressionMultiplierAccreditation": {
+      "kind": "vocabulary",
+      "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/modules/commercial/1/commercial.json#/$defs/ImpressionMultiplierAccreditation",
+      "minimal": "industry_currency",
+      "full": "industry_currency"
     },
     "ImpressionMultiplierImpressionType": {
       "kind": "vocabulary",
@@ -3344,6 +3354,7 @@
         "deal_origin": "ssp-a.example",
         "delivery_counting": {
           "impression_multiplier": {
+            "accreditation": "industry_currency",
             "dataset": "2026-R2",
             "demographic": "examplepub.example:podcast-host-read",
             "impression_type": "viewable",
@@ -3830,8 +3841,9 @@
             "cost_method": "CPM",
             "cost_parameters": {
               "action_source": "seller",
-              "action_type": "examplepub.example:podcast-host-read",
+              "action_type": "purchase",
               "attribution_window": "P14D",
+              "calendar_zone": "America/New_York",
               "demographic": "examplepub.example:podcast-host-read",
               "rate_unit": "hour",
               "rating_source": "seller",
@@ -4285,6 +4297,7 @@
         ],
         "delivery_counting": {
           "impression_multiplier": {
+            "accreditation": "industry_currency",
             "impression_type": "viewable",
             "source_type": 1
           }
@@ -4501,6 +4514,7 @@
       "minimal": {},
       "full": {
         "impression_multiplier": {
+          "accreditation": "industry_currency",
           "impression_type": "viewable",
           "source_type": 1
         }
@@ -4540,6 +4554,7 @@
         "source_type": 1
       },
       "full": {
+        "accreditation": "industry_currency",
         "impression_type": "viewable",
         "source_type": 1
       }
@@ -4968,6 +4983,7 @@
             ],
             "delivery_counting": {
               "impression_multiplier": {
+                "accreditation": "industry_currency",
                 "impression_type": "viewable",
                 "source_type": 1
               }
@@ -5158,6 +5174,7 @@
                 ],
                 "delivery_counting": {
                   "impression_multiplier": {
+                    "accreditation": "industry_currency",
                     "impression_type": "viewable",
                     "source_type": 1
                   }
@@ -5342,6 +5359,7 @@
                 ],
                 "delivery_counting": {
                   "impression_multiplier": {
+                    "accreditation": "industry_currency",
                     "impression_type": "viewable",
                     "source_type": 1
                   }
@@ -6073,6 +6091,7 @@
             "deal_origin": "ssp-a.example",
             "delivery_counting": {
               "impression_multiplier": {
+                "accreditation": "industry_currency",
                 "dataset": "2026-R2",
                 "demographic": "examplepub.example:podcast-host-read",
                 "impression_type": "viewable",
@@ -6559,8 +6578,9 @@
                 "cost_method": "CPM",
                 "cost_parameters": {
                   "action_source": "seller",
-                  "action_type": "examplepub.example:podcast-host-read",
+                  "action_type": "purchase",
                   "attribution_window": "P14D",
+                  "calendar_zone": "America/New_York",
                   "demographic": "examplepub.example:podcast-host-read",
                   "rate_unit": "hour",
                   "rating_source": "seller",
@@ -7277,6 +7297,7 @@
             "deal_origin": "ssp-a.example",
             "delivery_counting": {
               "impression_multiplier": {
+                "accreditation": "industry_currency",
                 "dataset": "2026-R2",
                 "demographic": "examplepub.example:podcast-host-read",
                 "impression_type": "viewable",
@@ -7763,8 +7784,9 @@
                 "cost_method": "CPM",
                 "cost_parameters": {
                   "action_source": "seller",
-                  "action_type": "examplepub.example:podcast-host-read",
+                  "action_type": "purchase",
                   "attribution_window": "P14D",
+                  "calendar_zone": "America/New_York",
                   "demographic": "examplepub.example:podcast-host-read",
                   "rate_unit": "hour",
                   "rating_source": "seller",
@@ -8270,6 +8292,7 @@
             ],
             "delivery_counting": {
               "impression_multiplier": {
+                "accreditation": "industry_currency",
                 "impression_type": "viewable",
                 "source_type": 1
               }
@@ -8454,6 +8477,7 @@
             ],
             "delivery_counting": {
               "impression_multiplier": {
+                "accreditation": "industry_currency",
                 "impression_type": "viewable",
                 "source_type": 1
               }
@@ -8686,8 +8710,9 @@
         "cost_method": "CPM",
         "cost_parameters": {
           "action_source": "seller",
-          "action_type": "examplepub.example:podcast-host-read",
+          "action_type": "purchase",
           "attribution_window": "P14D",
+          "calendar_zone": "America/New_York",
           "demographic": "examplepub.example:podcast-host-read",
           "rate_unit": "hour",
           "rating_source": "seller",
@@ -9662,6 +9687,7 @@
             "deal_origin": "ssp-a.example",
             "delivery_counting": {
               "impression_multiplier": {
+                "accreditation": "industry_currency",
                 "dataset": "2026-R2",
                 "demographic": "examplepub.example:podcast-host-read",
                 "impression_type": "viewable",
@@ -10148,8 +10174,9 @@
                 "cost_method": "CPM",
                 "cost_parameters": {
                   "action_source": "seller",
-                  "action_type": "examplepub.example:podcast-host-read",
+                  "action_type": "purchase",
                   "attribution_window": "P14D",
+                  "calendar_zone": "America/New_York",
                   "demographic": "examplepub.example:podcast-host-read",
                   "rate_unit": "hour",
                   "rating_source": "seller",
@@ -10917,6 +10944,7 @@
                 "deal_origin": "ssp-a.example",
                 "delivery_counting": {
                   "impression_multiplier": {
+                    "accreditation": "industry_currency",
                     "dataset": "2026-R2",
                     "demographic": "examplepub.example:podcast-host-read",
                     "impression_type": "viewable",
@@ -11403,8 +11431,9 @@
                     "cost_method": "CPM",
                     "cost_parameters": {
                       "action_source": "seller",
-                      "action_type": "examplepub.example:podcast-host-read",
+                      "action_type": "purchase",
                       "attribution_window": "P14D",
+                      "calendar_zone": "America/New_York",
                       "demographic": "examplepub.example:podcast-host-read",
                       "rate_unit": "hour",
                       "rating_source": "seller",
@@ -12121,6 +12150,7 @@
                 "deal_origin": "ssp-a.example",
                 "delivery_counting": {
                   "impression_multiplier": {
+                    "accreditation": "industry_currency",
                     "dataset": "2026-R2",
                     "demographic": "examplepub.example:podcast-host-read",
                     "impression_type": "viewable",
@@ -12607,8 +12637,9 @@
                     "cost_method": "CPM",
                     "cost_parameters": {
                       "action_source": "seller",
-                      "action_type": "examplepub.example:podcast-host-read",
+                      "action_type": "purchase",
                       "attribution_window": "P14D",
+                      "calendar_zone": "America/New_York",
                       "demographic": "examplepub.example:podcast-host-read",
                       "rate_unit": "hour",
                       "rating_source": "seller",
@@ -13226,6 +13257,7 @@
                 ],
                 "delivery_counting": {
                   "impression_multiplier": {
+                    "accreditation": "industry_currency",
                     "impression_type": "viewable",
                     "source_type": 1
                   }
@@ -13416,6 +13448,7 @@
                     ],
                     "delivery_counting": {
                       "impression_multiplier": {
+                        "accreditation": "industry_currency",
                         "impression_type": "viewable",
                         "source_type": 1
                       }
@@ -13600,6 +13633,7 @@
                     ],
                     "delivery_counting": {
                       "impression_multiplier": {
+                        "accreditation": "industry_currency",
                         "impression_type": "viewable",
                         "source_type": 1
                       }
@@ -13824,6 +13858,7 @@
             ],
             "delivery_counting": {
               "impression_multiplier": {
+                "accreditation": "industry_currency",
                 "impression_type": "viewable",
                 "source_type": 1
               }
@@ -14014,6 +14049,7 @@
                 ],
                 "delivery_counting": {
                   "impression_multiplier": {
+                    "accreditation": "industry_currency",
                     "impression_type": "viewable",
                     "source_type": 1
                   }
@@ -14198,6 +14234,7 @@
                 ],
                 "delivery_counting": {
                   "impression_multiplier": {
+                    "accreditation": "industry_currency",
                     "impression_type": "viewable",
                     "source_type": 1
                   }

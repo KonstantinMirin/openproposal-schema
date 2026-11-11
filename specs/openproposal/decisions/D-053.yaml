@@ -58,8 +58,8 @@ covers:
     quote: "`demographic` | OPTIONAL | The demographic whose value settles when `dataset` gives a value per demographic. The same kind of term as `cost_parameters.demographic` (§ 5.6.5)"
     locks: [with-our-stack]
   - ir: key:5.6.5:CostParameters.action_type
-    digest: 83db4387a45bdbb90bb5b272125d57893b95f7b98aaa79113f504c819c8e577e
-    quote: "`action_type` | REQUIRED when `cost_method` is `CPA` | The kind of action counted, such as `shop.example:purchase`. This version lists no core terms"
+    digest: 75c3b56630cfd4b7fb7c7c1c05760e014b95ca3c4559a337128a8d4c646c8301
+    quote: "`action_type` | REQUIRED when `cost_method` is `CPA` | The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit`"
     locks: [with-our-stack]
   - ir: key:5.6.7:Preemption.reason
     digest: bc0a93257bec658de7e469bedfa0cdfadf4f3d74ddcce31acea4b16a165adcf5
@@ -104,4 +104,3 @@ feedback: >-
   None needed.
 sets_aside:
   - { type: CostParametersDemographic, field: "pricing[].cost_parameters.demographic", ir: "key:5.6.5:CostParameters.demographic", locks: [ with-our-stack ] }
-  - { type: CostParametersActionType, field: "pricing[].cost_parameters.action_type", ir: "key:5.6.5:CostParameters.action_type", locks: [ with-our-stack ] }

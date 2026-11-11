@@ -4,7 +4,7 @@
 import { z } from "zod";
 import * as rt from "./runtime.js";
 import { TransactionMechanism } from "./execution.js";
-import { Amount, CalendarUnit, ClockWindow, ClockWindowNarrowing, CurrencyCode, Digest, DocumentRef, Duration, Fraction, GeoCode, GeoCodeNarrowing, Instant, Interval, Measurer, NamespacedTerm, Narrowing, Party, PlainNumber, PlainString, Range, RegistrableDomain, SafeInteger, SafeIntegerNarrowing, SeatRef, Selectable, TaxonomyCodes } from "./kernel.js";
+import { Amount, CalendarUnit, ClockWindow, ClockWindowNarrowing, CurrencyCode, Digest, DocumentRef, Duration, Fraction, GeoCode, GeoCodeNarrowing, IanaZone, Instant, Interval, Measurer, NamespacedTerm, Narrowing, Party, PlainNumber, PlainString, Range, RegistrableDomain, SafeInteger, SafeIntegerNarrowing, SeatRef, Selectable, TaxonomyCodes } from "./kernel.js";
 import { ExclusionList, ExclusionType } from "./targeting.js";
 
 /** The `AssentEntryRole` vocabulary: `commitment`, `acceptance`, `withdrawal`, `decline`. */
@@ -192,9 +192,57 @@ export const CancellationOptionNoticeReferences = {
   INSTALL_DATE: "install_date",
 } as const;
 
-/** The `CostParametersActionType` vocabulary: no core terms are listed yet, so every term is namespaced (`NamespacedTerm`). */
-export type CostParametersActionType = NamespacedTerm;
-export const CostParametersActionType: z.ZodType<CostParametersActionType> = NamespacedTerm;
+/** The `CostParametersActionType` vocabulary: `purchase`, `page_view`, `ad_impression`, `add_to_wishlist`, `add_to_cart`, `viewed_cart`, `viewed_item`, `begin_checkout`, `add_payment_info`, `remove_from_cart`, `refund`, `generate_lead`, `qualify_lead`, `close_convert_lead`, `disqualify_lead`, `close_unconvert_lead`, `sign_up`, `search`, `unlock_achievement`, `install`, `customize_product`, `contact`, `donate`, `find_location`, `schedule`, `start_trial`, `subscribe`, `add_shipping_info`, `share`, `select_content`, `select_item`, `select_promotion`, `view_item_list`, `view_promotion`, `view_search_results`, `spend_virtual_currency`, `earn_virtual_currency`, `working_lead`, `login`, `join_group`, `level_up`, `post_score`, `tutorial_begin`, `tutorial_complete`, or a namespaced term (`NamespacedTerm`), since the vocabulary is open. */
+export type CostParametersActionType = "purchase" | "page_view" | "ad_impression" | "add_to_wishlist" | "add_to_cart" | "viewed_cart" | "viewed_item" | "begin_checkout" | "add_payment_info" | "remove_from_cart" | "refund" | "generate_lead" | "qualify_lead" | "close_convert_lead" | "disqualify_lead" | "close_unconvert_lead" | "sign_up" | "search" | "unlock_achievement" | "install" | "customize_product" | "contact" | "donate" | "find_location" | "schedule" | "start_trial" | "subscribe" | "add_shipping_info" | "share" | "select_content" | "select_item" | "select_promotion" | "view_item_list" | "view_promotion" | "view_search_results" | "spend_virtual_currency" | "earn_virtual_currency" | "working_lead" | "login" | "join_group" | "level_up" | "post_score" | "tutorial_begin" | "tutorial_complete" | NamespacedTerm;
+export const CostParametersActionType: z.ZodType<CostParametersActionType> = z.union([z.enum(["purchase", "page_view", "ad_impression", "add_to_wishlist", "add_to_cart", "viewed_cart", "viewed_item", "begin_checkout", "add_payment_info", "remove_from_cart", "refund", "generate_lead", "qualify_lead", "close_convert_lead", "disqualify_lead", "close_unconvert_lead", "sign_up", "search", "unlock_achievement", "install", "customize_product", "contact", "donate", "find_location", "schedule", "start_trial", "subscribe", "add_shipping_info", "share", "select_content", "select_item", "select_promotion", "view_item_list", "view_promotion", "view_search_results", "spend_virtual_currency", "earn_virtual_currency", "working_lead", "login", "join_group", "level_up", "post_score", "tutorial_begin", "tutorial_complete"]), NamespacedTerm]);
+
+/** The core terms of `CostParametersActionType`, as constants. The vocabulary is open, so a field of it also takes a namespaced term (`NamespacedTerm`) as a plain value. */
+export const CostParametersActionTypes = {
+  PURCHASE: "purchase",
+  PAGE_VIEW: "page_view",
+  AD_IMPRESSION: "ad_impression",
+  ADD_TO_WISHLIST: "add_to_wishlist",
+  ADD_TO_CART: "add_to_cart",
+  VIEWED_CART: "viewed_cart",
+  VIEWED_ITEM: "viewed_item",
+  BEGIN_CHECKOUT: "begin_checkout",
+  ADD_PAYMENT_INFO: "add_payment_info",
+  REMOVE_FROM_CART: "remove_from_cart",
+  REFUND: "refund",
+  GENERATE_LEAD: "generate_lead",
+  QUALIFY_LEAD: "qualify_lead",
+  CLOSE_CONVERT_LEAD: "close_convert_lead",
+  DISQUALIFY_LEAD: "disqualify_lead",
+  CLOSE_UNCONVERT_LEAD: "close_unconvert_lead",
+  SIGN_UP: "sign_up",
+  SEARCH: "search",
+  UNLOCK_ACHIEVEMENT: "unlock_achievement",
+  INSTALL: "install",
+  CUSTOMIZE_PRODUCT: "customize_product",
+  CONTACT: "contact",
+  DONATE: "donate",
+  FIND_LOCATION: "find_location",
+  SCHEDULE: "schedule",
+  START_TRIAL: "start_trial",
+  SUBSCRIBE: "subscribe",
+  ADD_SHIPPING_INFO: "add_shipping_info",
+  SHARE: "share",
+  SELECT_CONTENT: "select_content",
+  SELECT_ITEM: "select_item",
+  SELECT_PROMOTION: "select_promotion",
+  VIEW_ITEM_LIST: "view_item_list",
+  VIEW_PROMOTION: "view_promotion",
+  VIEW_SEARCH_RESULTS: "view_search_results",
+  SPEND_VIRTUAL_CURRENCY: "spend_virtual_currency",
+  EARN_VIRTUAL_CURRENCY: "earn_virtual_currency",
+  WORKING_LEAD: "working_lead",
+  LOGIN: "login",
+  JOIN_GROUP: "join_group",
+  LEVEL_UP: "level_up",
+  POST_SCORE: "post_score",
+  TUTORIAL_BEGIN: "tutorial_begin",
+  TUTORIAL_COMPLETE: "tutorial_complete",
+} as const;
 
 /** The `CostParametersDemographic` vocabulary: no core terms are listed yet, so every term is namespaced (`NamespacedTerm`). */
 export type CostParametersDemographic = NamespacedTerm;
@@ -233,6 +281,16 @@ export const ExclusivityOptionSeparations = {
   LOOP: "loop",
   LOCATION: "location",
   PAID_ZONE: "paid_zone",
+} as const;
+
+/** The `ImpressionMultiplierAccreditation` vocabulary: `industry_currency`, `publisher_reported`, or a namespaced term (`NamespacedTerm`), since the vocabulary is open. */
+export type ImpressionMultiplierAccreditation = "industry_currency" | "publisher_reported" | NamespacedTerm;
+export const ImpressionMultiplierAccreditation: z.ZodType<ImpressionMultiplierAccreditation> = z.union([z.enum(["industry_currency", "publisher_reported"]), NamespacedTerm]);
+
+/** The core terms of `ImpressionMultiplierAccreditation`, as constants. The vocabulary is open, so a field of it also takes a namespaced term (`NamespacedTerm`) as a plain value. */
+export const ImpressionMultiplierAccreditations = {
+  INDUSTRY_CURRENCY: "industry_currency",
+  PUBLISHER_REPORTED: "publisher_reported",
 } as const;
 
 /** The `LineItemRenewalRight` vocabulary: `first_refusal`, or a namespaced term (`NamespacedTerm`), since the vocabulary is open. */
@@ -521,6 +579,8 @@ export const Commitment: z.ZodType<Commitment> = z.strictObject({
 
 /** The `ImpressionMultiplier` object of the `commercial` module. */
 export interface ImpressionMultiplier {
+  /** The standing of the multiplier's source in the market. Core terms: `industry_currency` (the market's joint industry currency, such as Geopath in the US or Route in the UK) | `publisher_reported` (the publisher's own figure). A receiver that doesn't know a term reads the multiplier without it */
+  accreditation?: ImpressionMultiplierAccreditation;
   /** The source's named data release the multipliers come from. A new release is a new `dataset` */
   dataset: PlainString;
   /** The demographic whose value settles when `dataset` gives a value per demographic. The same kind of term as `cost_parameters.demographic` (§ 5.6.5) */
@@ -535,6 +595,7 @@ export interface ImpressionMultiplier {
   vendor?: RegistrableDomain;
 }
 export const ImpressionMultiplier: z.ZodType<ImpressionMultiplier> = z.strictObject({
+  accreditation: ImpressionMultiplierAccreditation.optional(),
   dataset: PlainString,
   demographic: CostParametersDemographic.optional(),
   impression_type: ImpressionMultiplierImpressionType,
@@ -572,13 +633,15 @@ export const CancellationPolicySelection: z.ZodType<CancellationPolicySelection>
 export interface CostParameters {
   /** Who reports the action */
   action_source?: Measurer;
-  /** The kind of action counted, such as `shop.example:purchase`. This version lists no core terms */
+  /** The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit` */
   action_type?: CostParametersActionType;
   /** How long after exposure an action counts */
   attribution_window?: Duration;
+  /** Absent unless `rate_unit` is `day`. The zone whose calendar days the rate buys: each calendar day in that zone that the flight touches is one unit */
+  calendar_zone?: IanaZone;
   /** The rated demographic, such as `ratings.example:adults_25_54`. Its definition states whether co-viewers and impressions of unknown age count, or says `unknown`. This version lists no core terms */
   demographic?: CostParametersDemographic;
-  /** `hour` | `day` | `week`. The unit the rate buys, counted in elapsed units */
+  /** `hour` | `day` | `week`. The unit the rate buys, counted in elapsed units unless `calendar_zone` is present */
   rate_unit?: CostParametersRateUnit;
   /** Who supplies the ratings */
   rating_source?: Measurer;
@@ -593,6 +656,7 @@ export const CostParameters: z.ZodType<CostParameters> = z.strictObject({
   action_source: Measurer.optional(),
   action_type: CostParametersActionType.optional(),
   attribution_window: Duration.optional(),
+  calendar_zone: IanaZone.optional(),
   demographic: CostParametersDemographic.optional(),
   rate_unit: CostParametersRateUnit.optional(),
   rating_source: Measurer.optional(),

@@ -62,8 +62,8 @@ export interface Declaration {
   /** The types whose keys the object holds beside its own rows, as the stack's "`App` holds the keys of `AppId`". */
   holds?: TypeRef[];
   terms?: string[];
-  /** The code list of another standard whose codes the vocabulary's terms are, with each term's code where the two differ. */
-  list?: { name: string; codes?: Record<string, string> };
+  /** The code list of another standard whose codes the vocabulary's terms are, with each term's code where the two differ, and the codes it leaves out. */
+  list?: { name: string; codes?: Record<string, string>; except?: string[] };
   /** What a vocabulary's terms mean where no row says. */
   description?: string;
   /** For a vocabulary of the specification's own codes: the codes it reserves for vendors, from `from` up, and their row's label. */
