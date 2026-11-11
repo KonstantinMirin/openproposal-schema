@@ -295,8 +295,12 @@ exemptions:
       that holds a sibling to a value while the member is present, so the
       stack's `CostParameters` with a `calendar_zone` and an hourly
       `rate_unit`, or with no `rate_unit`, passes, where `calendar_zone` is
-      absent unless `rate_unit` is `day`.
+      absent unless `rate_unit` is `day`; and a `Screen` with a `lat` or a
+      `lon` and `movable` true passes, where each is absent when `movable`
+      is `true`.
     locks: [with-our-stack]
     cases:
       - { label: "corpus CostParameters#/dependentSchemas/calendar_zone/properties/rate_unit/const mutant", kind: verdict }
       - { label: "corpus CostParameters#/dependentSchemas/calendar_zone/required/rate_unit mutant", kind: verdict }
+      - { label: "corpus Screen#/dependentSchemas/lat/properties/movable/const mutant", kind: verdict }
+      - { label: "corpus Screen#/dependentSchemas/lon/properties/movable/const mutant", kind: verdict }

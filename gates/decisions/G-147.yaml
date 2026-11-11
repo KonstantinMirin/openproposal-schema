@@ -1,0 +1,45 @@
+format: 1
+id: G-147
+date: 2026-11-11
+question: What changes in the gates when the with-our-stack lock moves to the stack's head at `7488716`, where `Screen.lat` and `Screen.lon` read "Absent when `movable` is `true`", and the emitter states an "Absent when" a boolean sibling holds a value?
+decision: >-
+  The lock reads op30-packages at `7488716`, where #142 to #152 and #154
+  moved. Its specification differs from `63733ed` in two rows of § 5.2.8:
+  `Screen.lat` and `Screen.lon` now read "Absent when `movable` is `true`",
+  a value in a code span, where they read "is true". The fidelity oracle
+  reads both in the form G-146 added: either member present while `movable`
+  is `true` is invalid, and present while it is `false` is valid. The
+  emitter states "Absent when" a boolean sibling holds a value as a
+  dependency of the member on the other boolean, `dependentSchemas: { lat:
+  { properties: { movable: { const: false } } } }`, with no `required`, so a
+  screen with no `movable` keeps its coordinates. The corpus builds a
+  baseline and an isolating mutant for each `const`, the type examples set
+  `movable` to `false` where `lat` or `lon` is present, and the SDKs check
+  it: the TypeScript runtime gains `absentWhen` beside `absentUnless`, the
+  Python runtime's `absent` entries name which word they hold, and Go
+  writes it in the type's validation. One reviewed vector of
+  `rule:5.2.4:ea387bb0`, a screen with coordinates and `movable` true, now
+  has `movable` false, since the row makes the screen invalid. The plain
+  generator drops the dependency (PG-23), and the fidelity gate gains a
+  fixture that drops it, which the gate fails.
+rationale: >-
+  No check is weaker: the emitter states two more constraints, the oracle
+  reads 3 of the stack's 8 "Absent unless" and "Absent when" sentences, and
+  5 stay unread with a condition in prose. Neither `main` nor the open PRs
+  write an absence in a row, so their IR, models, schemas, rules, corpus,
+  type examples, SDKs, comparison, and feedback are byte-identical. The
+  golden snapshot counts the two new code spans. The fingerprints change
+  because the emitter, the corpus, the type examples, the SDK emitters, the
+  fidelity fixtures, the plain-generator exemptions, and the golden
+  snapshot reach these gates.
+accepts:
+  - { gate: comparison, fingerprint: 0d1ff3a46f9a6fb163c40a51000455e69d98fa6ba7f43a859d8725ff0bf09b19 }
+  - { gate: corpus-generates, fingerprint: 55336a6c3b766030c3eb3e28e3ee77cc297b0c89609f7625fd7d91dc4f5cee70 }
+  - { gate: fidelity, fingerprint: bcb64d59897213945816198d7babe3b604cdc79b76b07ea345dfb63334b5d352 }
+  - { gate: field-examples, fingerprint: 033d707901a21556ade6f437d24fe453f081faf00b037df7b4f6c52d869ddbb6 }
+  - { gate: npm-test, fingerprint: bb20abaff29271046ee46bab55c353ef486a9e7ee2b51b04ffc92043829b72c0 }
+  - { gate: plain-exemptions-file, fingerprint: 2ca039af713478adffb38dc52d4ccb284ceb16f50793a33d96ad72466995a431 }
+  - { gate: plain-parity, fingerprint: 36633401ea0f137709f0e892d3715d511ef853697a2cfce5e0548e12140aadfc }
+  - { gate: schemas-emit, fingerprint: 6ec476045cb359478e80324bdac13e9882445ae4b0b3368af883cd9b13199eba }
+  - { gate: sdk-generate, fingerprint: c9017149b47828de51d97a975b0e535fcf9d6b79272e4b539d748b927e3986a7 }
+  - { gate: type-examples-generate, fingerprint: 71aa16c08945ac722003dca2c278c9a7915f17cfeb4eab80ab0ebf1620a49377 }

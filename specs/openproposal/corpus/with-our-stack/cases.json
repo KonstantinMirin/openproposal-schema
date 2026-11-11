@@ -16146,15 +16146,53 @@
       "type": "Screen"
     },
     {
+      "at": "/dependentSchemas/lat/properties/movable",
+      "baseline": {
+        "lat": 0,
+        "movable": false,
+        "screen_id": "examplepub-q4-sports"
+      },
+      "id": "Screen#/dependentSchemas/lat/properties/movable/const",
+      "keyword": "const",
+      "mutant": {
+        "lat": 0,
+        "movable": true,
+        "screen_id": "examplepub-q4-sports"
+      },
+      "path": "/movable",
+      "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/properties/1/properties.json#/$defs/Screen",
+      "type": "Screen"
+    },
+    {
+      "at": "/dependentSchemas/lon/properties/movable",
+      "baseline": {
+        "lon": 0,
+        "movable": false,
+        "screen_id": "examplepub-q4-sports"
+      },
+      "id": "Screen#/dependentSchemas/lon/properties/movable/const",
+      "keyword": "const",
+      "mutant": {
+        "lon": 0,
+        "movable": true,
+        "screen_id": "examplepub-q4-sports"
+      },
+      "path": "/movable",
+      "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/properties/1/properties.json#/$defs/Screen",
+      "type": "Screen"
+    },
+    {
       "at": "/properties/lat",
       "baseline": {
         "lat": 0,
+        "movable": false,
         "screen_id": "examplepub-q4-sports"
       },
       "id": "Screen#/properties/lat/type",
       "keyword": "type",
       "mutant": {
         "lat": "",
+        "movable": false,
         "screen_id": "examplepub-q4-sports"
       },
       "path": "/lat",
@@ -16165,12 +16203,14 @@
       "at": "/properties/lon",
       "baseline": {
         "lon": 0,
+        "movable": false,
         "screen_id": "examplepub-q4-sports"
       },
       "id": "Screen#/properties/lon/type",
       "keyword": "type",
       "mutant": {
         "lon": "",
+        "movable": false,
         "screen_id": "examplepub-q4-sports"
       },
       "path": "/lon",
@@ -17763,8 +17803,8 @@
     }
   ],
   "input": {
-    "blob": "5c0b9f2398dd9bfb8f24dcc9655c0681a30f090f",
-    "commit": "63733eda99482bac6c5dbf1c0c2bff8cb043a650",
+    "blob": "5edab7f30197a2cb30ce6e87021adeeb81ff8c5e",
+    "commit": "38f5cfa245d49ce30dbb9a1f91fd2f1b8158ea47",
     "lock": "with-our-stack"
   },
   "oracle": {
@@ -20275,7 +20315,7 @@
                   "length_s": 60,
                   "slot_s": 10
                 },
-                "movable": true,
+                "movable": false,
                 "operating_hours": [
                   {
                     "before": "22:00",

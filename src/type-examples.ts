@@ -63,7 +63,7 @@
 import { posix } from "node:path";
 import { canonicalJson } from "./canonical.ts";
 import { baselines, partSeeds, Validators } from "./corpus.ts";
-import { absentUnless, baseOf, type EmittedFile, inlinedFrom, inlinedKeys, schemaIdOf } from "./emit.ts";
+import { absenceOf, allowedOf, baseOf, type EmittedFile, inlinedFrom, inlinedKeys, schemaIdOf } from "./emit.ts";
 import { instanceChecker, type InstanceCheck, type Loaded, type ModelExample } from "./examples.ts";
 import { fieldKey, fieldLocations, type FieldExample } from "./field-examples.ts";
 import type { Kernel } from "./kernel.ts";
@@ -427,10 +427,11 @@ export function generateTypeExamples(input: TypeExamplesInput): { doc: TypeExamp
       const key = isMap(node.propertyNames) ? fullNode(node.propertyNames, file, `${at}/propertyNames`, stack, n) : keyType !== undefined && showcases.has(keyType) ? showcaseOf(keyType, `${at}/additionalProperties`, n) : "key";
       out[String(key)] = fullNode(node.additionalProperties, file, `${at}/additionalProperties`, stack, n);
     }
-    // A member absent unless a sibling holds a value, as `calendar_zone` is unless `rate_unit` is `day`, has the sibling hold it.
+    // A member absent unless, or when, a sibling holds a value, as `calendar_zone` is unless `rate_unit` is `day` and `Screen.lat`
+    // when `movable` is `true`, has the sibling hold the value a valid value gives it.
     for (const m of Object.keys(isMap(node.dependentSchemas) ? node.dependentSchemas : {}).sort()) {
-      const only = absentUnless(node, m);
-      if (only !== null && m in out && !(seed && only.sibling in seed)) out[only.sibling] = only.value;
+      const only = absenceOf(node, m);
+      if (only !== null && m in out && !(seed && only.sibling in seed)) out[only.sibling] = allowedOf(only);
     }
     // The condition that holds, along the chain of `else`, narrows the members its `then` types; a member's value the specification gives
     // is the member's, where the `then` accepts it.

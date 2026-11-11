@@ -99,10 +99,12 @@ class SyncGroup(rt.Closed):
 class Screen(rt.Closed):
     """The `Screen` object of the `properties` module."""
 
+    __shape__: ClassVar[rt.Shape] = rt.Shape(absent=(("lat", "movable", True, True), ("lon", "movable", True, True)))
+
     lat: Optional[PlainNumber] = None
-    """Latitude, as OpenRTB 2.6 `geo.lat`. Absent when `movable` is true"""
+    """Latitude, as OpenRTB 2.6 `geo.lat`. Absent when `movable` is `true`"""
     lon: Optional[PlainNumber] = None
-    """Longitude, as OpenRTB 2.6 `geo.lon`. Absent when `movable` is true"""
+    """Longitude, as OpenRTB 2.6 `geo.lon`. Absent when `movable` is `true`"""
     loop: Optional[Loop] = None
     """Absent when the screen schedules ads without a loop"""
     movable: Optional[rt.Boolean] = None

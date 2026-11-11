@@ -630,7 +630,7 @@ CancellationPolicySelection = Selectable[CancellationOption]
 class CostParameters(rt.Closed):
     """The `CostParameters` object of the `commercial` module."""
 
-    __shape__: ClassVar[rt.Shape] = rt.Shape(absent=(("calendar_zone", "rate_unit", "day"),))
+    __shape__: ClassVar[rt.Shape] = rt.Shape(absent=(("calendar_zone", "rate_unit", "day", False),))
 
     action_source: Optional[Measurer] = None
     """Who reports the action"""

@@ -23,7 +23,7 @@
 import { Instantiator } from "./constructors.ts";
 import { canonicalJson } from "./canonical.ts";
 import { isTitledCodes } from "./conventions.ts";
-import { absentUnless, fieldOfSources, localSchemas, locationOf, nestedIf, templatesOf } from "./emit.ts";
+import { absenceOf, fieldOfSources, localSchemas, locationOf, nestedIf, templatesOf } from "./emit.ts";
 import type { TypeRef } from "./mapping.ts";
 import { KERNEL_MODULE } from "./mapping-rules.ts";
 import { extensionOf, VENDOR_CODE, type ModelDoc, type ModelProperty, type ModelType } from "./model.ts";
@@ -74,9 +74,11 @@ export interface Shape {
   rejects: { sibling: string; value: string | number | boolean }[];
   /**
    * `dependentSchemas: { <member>: { properties: { <sibling>: { const } }, required: [<sibling>] } }`: the member is absent
-   * unless the sibling equals the value, as a cost's `calendar_zone` is unless its `rate_unit` is `day`.
+   * unless the sibling equals the value, as a cost's `calendar_zone` is unless its `rate_unit` is `day` (`when` false); or
+   * `dependentSchemas: { <member>: { properties: { <sibling>: { const: !value } } } }`, with a boolean sibling: the member is
+   * absent when the sibling equals the value, as a screen's `lat` is when its `movable` is `true` (`when` true).
    */
-  absent: { member: string; sibling: string; value: string | number | boolean }[];
+  absent: { member: string; sibling: string; value: string | number | boolean; when: boolean }[];
   /**
    * `if` the sibling equals the value, `then` the names are required and each
    * typed member is a value of its type too, as a commitment's `amount` is a
@@ -86,7 +88,7 @@ export interface Shape {
   conditions: { sibling: string; value: string | number | boolean; require: string[]; types: { name: string; expr: Expr }[] }[];
 }
 
-/** Whether a type or template of the SDK leaves a member absent unless a sibling equals a value, which only then needs its check in the runtime. */
+/** Whether a type or template of the SDK leaves a member absent unless, or when, a sibling equals a value, which only then needs its check in the runtime. */
 export const usesAbsent = (sdk: Pick<SdkModel, "types" | "templates">): boolean =>
   [...sdk.types.values()].some((t) => t.kind === "object" && t.shape.absent.length > 0) || [...sdk.templates.values()].some((t) => t.body.kind === "object" && t.body.shape.absent.length > 0);
 
@@ -428,7 +430,7 @@ export function buildSdkModel(model: ModelDoc, short: string): { sdk: SdkModel; 
       if (!isMap(s.dependentSchemas)) throw new Error(`${where}: "dependentSchemas" isn't an object`);
       for (const [member, d] of Object.entries(s.dependentSchemas).sort(([a], [b]) => byString(a, b))) {
         if (!(member in props)) throw new Error(`${where}: "dependentSchemas" names "${member}", which is no property`);
-        const only = absentUnless(s, member);
+        const only = absenceOf(s, member);
         if (only !== null) {
           if (!(only.sibling in props)) throw new Error(`${where}: "dependentSchemas/${member}" names "${only.sibling}", which is no property`);
           shape.absent.push({ member, ...only });

@@ -10462,12 +10462,12 @@
       {
         "id": "key:5.2.8:Screen.lat",
         "kind": "key",
-        "text": "`lat` | OPTIONAL | Latitude, as OpenRTB 2.6 `geo.lat`. Absent when `movable` is true"
+        "text": "`lat` | OPTIONAL | Latitude, as OpenRTB 2.6 `geo.lat`. Absent when `movable` is `true`"
       },
       {
         "id": "key:5.2.8:Screen.lon",
         "kind": "key",
-        "text": "`lon` | OPTIONAL | Longitude, as OpenRTB 2.6 `geo.lon`. Absent when `movable` is true"
+        "text": "`lon` | OPTIONAL | Longitude, as OpenRTB 2.6 `geo.lon`. Absent when `movable` is `true`"
       },
       {
         "id": "key:5.2.8:Screen.loop",
@@ -16480,9 +16480,19 @@
         "text": "The presence of a URL in VAST `<ClickThrough>` does not establish that requesting it is safe for inspection."
       },
       {
+        "id": "sentence:5.4:27843614",
+        "kind": "sentence",
+        "text": "The report names the asset's `asset_id`, the `Digest` of the bytes the receiver reviewed, the `spec` key the asset conflicts with, and what was observed."
+      },
+      {
         "id": "sentence:5.4:2fd61eda",
         "kind": "sentence",
         "text": "Core terms: `audio_file` | `video_file` | `image_file` | `markup` | `script`."
+      },
+      {
+        "id": "sentence:5.4:4ea9cf16",
+        "kind": "sentence",
+        "text": "A receiver that finds a seller-built asset synthetic under a spec whose `voice` is `human_only`, from the record or from its own check of the asset, reports that mismatch instead of treating the asset as conforming."
       },
       {
         "id": "sentence:5.4:616bf86c",
@@ -16498,6 +16508,11 @@
         "id": "sentence:5.4:75612a3e",
         "kind": "sentence",
         "text": "`FormatId` is a String: `<channel>/<name>`, where `<channel>` is the line item's `channel`, with no `/` or `@` inside a part."
+      },
+      {
+        "id": "sentence:5.4:8ccfd66f",
+        "kind": "sentence",
+        "text": "It is the receiver's own record and never changes the asset's `provenance`."
       },
       {
         "id": "sentence:5.4:a4fd0b15",
@@ -22021,8 +22036,8 @@
   },
   "format": 1,
   "lock": {
-    "blob": "5c0b9f2398dd9bfb8f24dcc9655c0681a30f090f",
-    "commit": "63733eda99482bac6c5dbf1c0c2bff8cb043a650",
+    "blob": "5edab7f30197a2cb30ce6e87021adeeb81ff8c5e",
+    "commit": "38f5cfa245d49ce30dbb9a1f91fd2f1b8158ea47",
     "counts": {
       "decisions": 19,
       "elements.appendix_a": 98,
@@ -22033,7 +22048,7 @@
       "elements.field": 98,
       "elements.key": 330,
       "elements.marker": 11,
-      "elements.sentence": 652,
+      "elements.sentence": 655,
       "elements.statement": 616,
       "elements.value_list": 74,
       "findings.conditions": 51,
@@ -22058,7 +22073,7 @@
       "types.union": 3,
       "types.vocabulary": 70
     },
-    "ir_sha256": "f4c0367ea619d58647a82bda8f756a5ef54ac0202bb0a54ad214bbc48f9ff4a2",
+    "ir_sha256": "09965a4c933bec35349592bf3ce89b39b38a609507ce4fed52c7754910470fbd",
     "lock": "with-our-stack"
   },
   "statements": {

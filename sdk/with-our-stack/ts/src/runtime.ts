@@ -101,6 +101,12 @@ export const absentUnless = (member: string, sibling: string, value: string | nu
   if (member in v && v[sibling] !== value) fail(payload, `holds "${member}", which is absent unless "${sibling}" is ${JSON.stringify(value)}`);
 };
 
+/** A check that an object that holds `member` doesn't have its `sibling` equal to `value`, as a screen's `lat` is absent when its `movable` is `true`. */
+export const absentWhen = (member: string, sibling: string, value: string | number | boolean) => (payload: Payload) => {
+  const v = payload.value as Record<string, unknown>;
+  if (member in v && v[sibling] === value) fail(payload, `holds "${member}", which is absent when "${sibling}" is ${JSON.stringify(value)}`);
+};
+
 /** A check that an object whose `sibling` equals `value` holds each of `require`, and that each member `types` names is a value of its type. */
 export const condition = (sibling: string, value: string | number | boolean, require: string[], types: Record<string, z.ZodType> = {}) => (payload: Payload) => {
   const v = payload.value as Record<string, unknown>;

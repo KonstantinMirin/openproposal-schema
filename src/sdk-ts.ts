@@ -76,7 +76,7 @@ function objectParts(shape: Shape, indent: string): { body: string; schema: stri
   for (const d of shape.within) checks.push(`rt.requiresWithin(${literal(d.member)}, ${JSON.stringify(d.inner)}, ${JSON.stringify(d.names)})`);
   for (const b of shape.bounds) checks.push(`rt.bounds(${literal(b.member)}, ${b.minItems}, ${b.unique})`);
   for (const r of shape.rejects) checks.push(`rt.rejects(${literal(r.sibling)}, ${JSON.stringify(r.value)})`);
-  for (const a of shape.absent) checks.push(`rt.absentUnless(${literal(a.member)}, ${literal(a.sibling)}, ${JSON.stringify(a.value)})`);
+  for (const a of shape.absent) checks.push(`rt.${a.when ? "absentWhen" : "absentUnless"}(${literal(a.member)}, ${literal(a.sibling)}, ${JSON.stringify(a.value)})`);
   for (const c of shape.conditions) {
     const types = c.types.length > 0 ? `, { ${c.types.map((x) => `${key(x.name)}: ${schemaOf(x.expr)}`).join(", ")} }` : "";
     checks.push(`rt.condition(${literal(c.sibling)}, ${JSON.stringify(c.value)}, ${JSON.stringify(c.require)}${types})`);
@@ -159,13 +159,19 @@ function templateDeclaration(t: SdkTemplate): string {
   return `${head}export interface ${t.name}<${tparams}> ${body}\n${fnHead}export function ${t.name}<${tparams}>(${args}): z.ZodType<${t.name}<${targs}>> {\n  return ${indented};\n}\n`;
 }
 
-/** The runtime's check of a member absent unless a sibling equals a value, which a runtime holds only where a type states one, so a build with none keeps its runtime as it was. */
+/** The runtime's checks of a member absent unless, or when, a sibling equals a value, which a runtime holds only where a type states one, so a build with none keeps its runtime as it was. */
 const ABSENT_UNLESS = [
   "",
   "/** A check that an object that holds `member` has its `sibling` equal to `value`, as a cost's `calendar_zone` is absent unless its `rate_unit` is `day`. */",
   "export const absentUnless = (member: string, sibling: string, value: string | number | boolean) => (payload: Payload) => {",
   "  const v = payload.value as Record<string, unknown>;",
   '  if (member in v && v[sibling] !== value) fail(payload, `holds "${member}", which is absent unless "${sibling}" is ${JSON.stringify(value)}`);',
+  "};",
+  "",
+  "/** A check that an object that holds `member` doesn't have its `sibling` equal to `value`, as a screen's `lat` is absent when its `movable` is `true`. */",
+  "export const absentWhen = (member: string, sibling: string, value: string | number | boolean) => (payload: Payload) => {",
+  "  const v = payload.value as Record<string, unknown>;",
+  '  if (member in v && v[sibling] === value) fail(payload, `holds "${member}", which is absent when "${sibling}" is ${JSON.stringify(value)}`);',
   "};",
   "",
 ].join("\n");

@@ -89,9 +89,9 @@ export const SyncGroup: z.ZodType<SyncGroup> = z.strictObject({
 
 /** The `Screen` object of the `properties` module. */
 export interface Screen {
-  /** Latitude, as OpenRTB 2.6 `geo.lat`. Absent when `movable` is true */
+  /** Latitude, as OpenRTB 2.6 `geo.lat`. Absent when `movable` is `true` */
   lat?: PlainNumber;
-  /** Longitude, as OpenRTB 2.6 `geo.lon`. Absent when `movable` is true */
+  /** Longitude, as OpenRTB 2.6 `geo.lon`. Absent when `movable` is `true` */
   lon?: PlainNumber;
   /** Absent when the screen schedules ads without a loop */
   loop?: Loop;
@@ -112,7 +112,7 @@ export const Screen: z.ZodType<Screen> = z.strictObject({
   operating_hours: z.array(ClockWindow).optional(),
   screen_id: PlainString,
   time_zone: IanaZone.optional(),
-});
+}).check(rt.absentWhen("lat", "movable", true), rt.absentWhen("lon", "movable", true));
 
 /** The `PropertyOption` object of the `properties` module. */
 export interface PropertyOption {

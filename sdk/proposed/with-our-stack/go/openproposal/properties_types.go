@@ -154,9 +154,9 @@ func (SyncGroup) ValidateValue(v any, at string, errs *Errors) {
 
 // Screen: The `Screen` object of the `properties` module.
 type Screen struct {
-	// Lat: Latitude, as OpenRTB 2.6 `geo.lat`. Absent when `movable` is true
+	// Lat: Latitude, as OpenRTB 2.6 `geo.lat`. Absent when `movable` is `true`
 	Lat *PlainNumber `json:"lat,omitempty"`
-	// Lon: Longitude, as OpenRTB 2.6 `geo.lon`. Absent when `movable` is true
+	// Lon: Longitude, as OpenRTB 2.6 `geo.lon`. Absent when `movable` is `true`
 	Lon *PlainNumber `json:"lon,omitempty"`
 	// Loop: Absent when the screen schedules ads without a loop
 	Loop *Loop `json:"loop,omitempty"`
@@ -178,6 +178,16 @@ func (Screen) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkRequired(m, at, errs, "screen_id")
 	checkClosed(m, at, errs, "lat", "lon", "loop", "movable", "operating_hours", "screen_id", "time_zone")
+	if _, ok := m["lat"]; ok {
+		if x, ok := m["movable"]; ok && jsonEqual(x, true) {
+			errs.add(at, "holds %s, which is absent when %s is %s", "\"lat\"", "\"movable\"", "true")
+		}
+	}
+	if _, ok := m["lon"]; ok {
+		if x, ok := m["movable"]; ok && jsonEqual(x, true) {
+			errs.add(at, "holds %s, which is absent when %s is %s", "\"lon\"", "\"movable\"", "true")
+		}
+	}
 	if x, ok := m["lat"]; ok {
 		validateAs[PlainNumber](x, member(at, "lat"), errs)
 	}

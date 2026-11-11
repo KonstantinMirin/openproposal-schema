@@ -24,7 +24,7 @@ rules:
     sources: ["key:5.2.4:PropertyOption.screens[]"]
     valid:
       - {"value": {"allocation": "seller_allocated", "apps": [], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner", "domains": ["tune-stream.example", "business-daily.example"]}, "context": {"LineItem.channel": "dooh"}}
-      - {"value": {"allocation": "all", "apps": [], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner", "domains": ["tune-stream.example", "business-daily.example"], "screens": [{"lat": 40.7128, "lon": -74.006, "loop": {"length_s": 60, "slot_s": 10}, "movable": true, "operating_hours": [{"days": ["monday", "tuesday"], "start": "06:00", "before": "22:00"}], "screen_id": "np-001", "time_zone": "America/New_York"}]}, "context": {"LineItem.channel": "dooh"}}
+      - {"value": {"allocation": "all", "apps": [], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner", "domains": ["tune-stream.example", "business-daily.example"], "screens": [{"lat": 40.7128, "lon": -74.006, "loop": {"length_s": 60, "slot_s": 10}, "movable": false, "operating_hours": [{"days": ["monday", "tuesday"], "start": "06:00", "before": "22:00"}], "screen_id": "np-001", "time_zone": "America/New_York"}]}, "context": {"LineItem.channel": "dooh"}}
     invalid:
       - {"value": {"allocation": "all", "apps": [], "child_audience": "directed", "id": "examplepub-q4-sports", "seller_relationship": "owner", "domains": ["tune-stream.example", "business-daily.example"]}, "context": {"LineItem.channel": "dooh"}}
 

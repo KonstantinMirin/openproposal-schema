@@ -26,49 +26,49 @@ key:5.3:BuyerList.match_method#meaning/values:1	line 1978	hashed_email | device_
 key:5.3:AddressableScale.unit#meaning/values:1	line 1985	person
 block:5.4:4/values:1	line 2018	audio_file | video_file | image_file | markup | script
 block:5.4:5/values:1	line 2023	human_only | synthetic_permitted
-key:5.4:AssetProvenance.disclosure_methods[]#meaning/values:1	line 2060	c2pa_manifest | watermark | audible_notice | visible_label
-key:5.4:CreativeDelivery.method#meaning/values:1	line 2067	buyer_hosted | seller_hosted | api | platform_managed
-key:5.4:CreativeDelivery.other_protocols[]#meaning/values:1	line 2069	javascript_tag
-block:5.5:3/values:1	line 2177	domains | apps | categories | keywords
-key:5.5:ExclusionTerms.enforcement#meaning/values:1	line 2203	pre_serve | best_effort
-block:5.5:15/values:1	line 2254	monday | tuesday | wednesday | thursday | friday | saturday | sunday
-key:5.5:FrequencyCap.per#meaning/values:1	line 2282	device | household | listener | screen
-field:5.6:pricing[].rate_per#description/values:1	line 2295	1 | 1000
-field:5.6:renewal_right#description/values:1	line 2313	first_refusal
-key:5.6:Availability.unit#meaning/values:1	line 2358	slots_per_loop (as the § 5.2.4 key) | unit_periods (one unit for one period, such as a board for a 4-week cycle)
-key:5.6:Availability.certainty#meaning/values:1	line 2363	forecast | reservable
-key:5.6.1:CommitmentAmount.basis#meaning/values:1	line 2398	spend | units
-block:5.6.2:4/values:1	line 2500	requested | held | declined | expired | released | converted
-block:5.6.2:6/values:1	line 2505	declined | expired | released
-block:5.6.2:12/values:1	line 2521	requested | held
-key:5.6.4:DeliveryCounting.partial_play_credit#meaning/values:1	line 2571	none (no play) | pro_rata
-key:5.6.4:ProofOfPerformance.evidence[]#meaning/values:1	line 2579	play_log | photo | audit_report
-key:5.6.4:ImpressionMultiplier.impression_type#meaning/values:1	line 2585	gross | viewable | lts | audience
-key:5.6.4:ImpressionMultiplier.accreditation#meaning/values:1	line 2588	industry_currency (the market's joint industry currency, such as Geopath in the US or Route in the UK) | publisher_reported (the publisher's own figure)
-key:5.6.4:ImpressionMultiplier.settles_on#meaning/values:1	line 2591	declared | restated
-block:5.6.5:1/values:1	line 2604	CPM | CPMV | CPC | CPCV | CPV | CPP | CPA | PLAY | TIME | FLAT
-def:5.6.5:cost_method.TIME#unit/values:1	line 2619	hours | days | weeks
-block:5.6.5:2/values:1	line 2623	impressions | viewable_impressions | clicks | completed_views | views | rating_points | actions | plays | hours | days | weeks
-key:5.6.5:CostParameters.viewability_standard#meaning/values:1	line 2633	mrc
-key:5.6.5:CostParameters.rate_unit#meaning/values:1	line 2641	hour | day | week
-key:5.6.6:CancellationOption.notice_reference#meaning/values:1	line 2694	flight (default) | install_date
-key:5.6.6:Fee.calculation#meaning/values:1	line 2702	none | cancelled | commitment | fixed
-key:5.6.7:ExclusivityOption.scope#meaning/values:1	line 2742	category | sole
-key:5.6.7:ExclusivityOption.separation#meaning/values:1	line 2745	inventory (all of this line item) | page (each page) | pod (each ad pod) | stream (each content stream an ad server fills) | episode (each podcast episode) | loop (each DOOH screen's loop) | location (each venue or site of this line item's properties, static or digital) | paid_zone (the part of each venue or site of this line item's properties past its paid entry, such as inside a station's fare gates)
-key:5.6.7:Preemption.reason#meaning/values:1	line 2762	exclusivity
-key:5.6.7:Preemption.remedy#meaning/values:1	line 2764	makegood | credit | none
-field:5.7:shortfall_remedy#description/values:1	line 2778	makegood | credit | none
-key:5.7.1:CommittedMetric.direction#meaning/values:1	line 2797	at_least | at_most
-block:5.7.1:3/values:1	line 2800	viewable_rate | completion_rate | ivt_rate | impressions
-key:5.7.1:ReportingOption.report_type#meaning/values:1	line 2834	log_level (one record per event) | aggregate (totals over a period or a dimension)
-key:5.7.1:ReportingOption.delivery_method#meaning/values:1	line 2836	api | s3
-key:5.7.1:RemedyTerms.makegood_type#meaning/values:1	line 2851	same_unit (more delivery on the inventory bought) | comparable_unit (delivery on other inventory) | added_time (more running time)
-field:5.8:visibility#description/values:1	line 2901	public | registry_gated | named
-key:5.8:RequiredCredential.credential_type#meaning/values:1	line 2946	iab_registry
-field:5.9:sov_basis#description/values:1	line 2961	impressions | loop_time
-field:5.9:serving_mode#description/values:1	line 2963	dai | scheduled | embedded
-block:5.9:2/values:1	line 2976	direct_io | programmatic_guaranteed | preferred_deal | private_auction
-block:5.9:4/values:1	line 2997	guaranteed | share_of_voice | non_guaranteed
-key:5.10:ExternalReference.reference_type#meaning/values:1	line 3058	order | line | agreement | deal
-key:5.10:Agreement.agreement_type#meaning/values:1	line 3066	upfront | annual | master_services
-key:5.10:Billing.invoice_period#meaning/values:1	line 3077	month (default) | cycle
+key:5.4:AssetProvenance.disclosure_methods[]#meaning/values:1	line 2067	c2pa_manifest | watermark | audible_notice | visible_label
+key:5.4:CreativeDelivery.method#meaning/values:1	line 2074	buyer_hosted | seller_hosted | api | platform_managed
+key:5.4:CreativeDelivery.other_protocols[]#meaning/values:1	line 2076	javascript_tag
+block:5.5:3/values:1	line 2184	domains | apps | categories | keywords
+key:5.5:ExclusionTerms.enforcement#meaning/values:1	line 2210	pre_serve | best_effort
+block:5.5:15/values:1	line 2261	monday | tuesday | wednesday | thursday | friday | saturday | sunday
+key:5.5:FrequencyCap.per#meaning/values:1	line 2289	device | household | listener | screen
+field:5.6:pricing[].rate_per#description/values:1	line 2302	1 | 1000
+field:5.6:renewal_right#description/values:1	line 2320	first_refusal
+key:5.6:Availability.unit#meaning/values:1	line 2365	slots_per_loop (as the § 5.2.4 key) | unit_periods (one unit for one period, such as a board for a 4-week cycle)
+key:5.6:Availability.certainty#meaning/values:1	line 2370	forecast | reservable
+key:5.6.1:CommitmentAmount.basis#meaning/values:1	line 2405	spend | units
+block:5.6.2:4/values:1	line 2507	requested | held | declined | expired | released | converted
+block:5.6.2:6/values:1	line 2512	declined | expired | released
+block:5.6.2:12/values:1	line 2528	requested | held
+key:5.6.4:DeliveryCounting.partial_play_credit#meaning/values:1	line 2578	none (no play) | pro_rata
+key:5.6.4:ProofOfPerformance.evidence[]#meaning/values:1	line 2586	play_log | photo | audit_report
+key:5.6.4:ImpressionMultiplier.impression_type#meaning/values:1	line 2592	gross | viewable | lts | audience
+key:5.6.4:ImpressionMultiplier.accreditation#meaning/values:1	line 2595	industry_currency (the market's joint industry currency, such as Geopath in the US or Route in the UK) | publisher_reported (the publisher's own figure)
+key:5.6.4:ImpressionMultiplier.settles_on#meaning/values:1	line 2598	declared | restated
+block:5.6.5:1/values:1	line 2611	CPM | CPMV | CPC | CPCV | CPV | CPP | CPA | PLAY | TIME | FLAT
+def:5.6.5:cost_method.TIME#unit/values:1	line 2626	hours | days | weeks
+block:5.6.5:2/values:1	line 2630	impressions | viewable_impressions | clicks | completed_views | views | rating_points | actions | plays | hours | days | weeks
+key:5.6.5:CostParameters.viewability_standard#meaning/values:1	line 2640	mrc
+key:5.6.5:CostParameters.rate_unit#meaning/values:1	line 2648	hour | day | week
+key:5.6.6:CancellationOption.notice_reference#meaning/values:1	line 2701	flight (default) | install_date
+key:5.6.6:Fee.calculation#meaning/values:1	line 2709	none | cancelled | commitment | fixed
+key:5.6.7:ExclusivityOption.scope#meaning/values:1	line 2749	category | sole
+key:5.6.7:ExclusivityOption.separation#meaning/values:1	line 2752	inventory (all of this line item) | page (each page) | pod (each ad pod) | stream (each content stream an ad server fills) | episode (each podcast episode) | loop (each DOOH screen's loop) | location (each venue or site of this line item's properties, static or digital) | paid_zone (the part of each venue or site of this line item's properties past its paid entry, such as inside a station's fare gates)
+key:5.6.7:Preemption.reason#meaning/values:1	line 2769	exclusivity
+key:5.6.7:Preemption.remedy#meaning/values:1	line 2771	makegood | credit | none
+field:5.7:shortfall_remedy#description/values:1	line 2785	makegood | credit | none
+key:5.7.1:CommittedMetric.direction#meaning/values:1	line 2804	at_least | at_most
+block:5.7.1:3/values:1	line 2807	viewable_rate | completion_rate | ivt_rate | impressions
+key:5.7.1:ReportingOption.report_type#meaning/values:1	line 2841	log_level (one record per event) | aggregate (totals over a period or a dimension)
+key:5.7.1:ReportingOption.delivery_method#meaning/values:1	line 2843	api | s3
+key:5.7.1:RemedyTerms.makegood_type#meaning/values:1	line 2858	same_unit (more delivery on the inventory bought) | comparable_unit (delivery on other inventory) | added_time (more running time)
+field:5.8:visibility#description/values:1	line 2908	public | registry_gated | named
+key:5.8:RequiredCredential.credential_type#meaning/values:1	line 2953	iab_registry
+field:5.9:sov_basis#description/values:1	line 2968	impressions | loop_time
+field:5.9:serving_mode#description/values:1	line 2970	dai | scheduled | embedded
+block:5.9:2/values:1	line 2983	direct_io | programmatic_guaranteed | preferred_deal | private_auction
+block:5.9:4/values:1	line 3004	guaranteed | share_of_voice | non_guaranteed
+key:5.10:ExternalReference.reference_type#meaning/values:1	line 3065	order | line | agreement | deal
+key:5.10:Agreement.agreement_type#meaning/values:1	line 3073	upfront | annual | master_services
+key:5.10:Billing.invoice_period#meaning/values:1	line 3084	month (default) | cycle

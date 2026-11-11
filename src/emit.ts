@@ -36,8 +36,9 @@
  * becomes `if` / `then` (§ 8); any other condition is a rule, left to the
  * rules output and listed in `conditions.left`. A member its row's Meaning
  * makes "Absent unless" a sibling holds one of its values, as
- * `calendar_zone` is unless `rate_unit` is `day`, becomes a dependency of
- * the member on that value (`dependentSchemas`). Mutability markers never
+ * `calendar_zone` is unless `rate_unit` is `day`, or "Absent when" a boolean
+ * sibling holds one, as `Screen.lat` is when `movable` is `true`, becomes a
+ * dependency of the member on that value (`dependentSchemas`). Mutability markers never
  * appear, neither on a property nor as a vocabulary (§ 2).
  */
 import { posix } from "node:path";
@@ -214,22 +215,41 @@ export function nestedIf(node: Record<string, unknown>, member: string): string[
   return m.required.map(String);
 }
 
-/** An absence the schema can state: "Absent unless" a sibling equals one value, written as a REQUIRED when clause's condition is. */
-const ABSENT_UNLESS = [/^Absent unless `([a-z][a-z0-9_]*) = ([^`\s]+)`$/, /^Absent unless `([a-z][a-z0-9_]*)` is `([^`]+)`$/];
+/**
+ * An absence the schema can state, "Absent unless" or "Absent when" a sibling equals one value, written as a REQUIRED when
+ * clause's condition is: the word, the sibling, and the value.
+ */
+const ABSENT = [/^Absent (unless|when) `([a-z][a-z0-9_]*) = ([^`\s]+)`$/, /^Absent (unless|when) `([a-z][a-z0-9_]*)` is `([^`]+)`$/];
 
 /**
- * The sibling and value a dependency on a member states, as the emitter
- * writes "Absent unless `a` is `b`": `dependentSchemas: { m: { properties: { a: { const: b } }, required: [a] } }`,
- * so the member is present only while `a` is `b`. Null for any other dependency.
+ * A member's absence a dependency states: "Absent unless `a` is `b`" (`when` false), or "Absent when `a` is `b`" (`when`
+ * true), where `a` is a sibling and `b` one of its values.
  */
-export function absentUnless(node: Record<string, unknown>, member: string): { sibling: string; value: string | number | boolean } | null {
+export interface Absence {
+  sibling: string;
+  value: string | number | boolean;
+  when: boolean;
+}
+
+/** The value the sibling holds while the member is present, as a valid value gives it: `b` for "Absent unless", the other boolean for "Absent when". */
+export const allowedOf = (a: Absence): string | number | boolean => (a.when ? !a.value : a.value);
+
+/**
+ * The absence a dependency on a member states, as the emitter writes it.
+ * "Absent unless `a` is `b`" is `dependentSchemas: { m: { properties: { a: { const: b } }, required: [a] } }`, so the member
+ * is present only while `a` is `b`; "Absent when `a` is `b`", where `a` is a boolean, is `dependentSchemas: { m: { properties:
+ * { a: { const: !b } } } }`, so the member is present only while `a` is absent or the other boolean. Null for any other dependency.
+ */
+export function absenceOf(node: Record<string, unknown>, member: string): Absence | null {
   const d = isMap(node.dependentSchemas) ? node.dependentSchemas[member] : undefined;
-  if (!isMap(d) || Object.keys(d).sort().join(",") !== "properties,required" || !isMap(d.properties) || !Array.isArray(d.required)) return null;
+  if (!isMap(d) || !isMap(d.properties)) return null;
   const names = Object.keys(d.properties);
   const c = names.length === 1 ? d.properties[names[0]!] : undefined;
-  if (!isMap(c) || Object.keys(c).join(",") !== "const" || !["string", "number", "boolean"].includes(typeof c.const)) return null;
-  if (d.required.length !== 1 || d.required[0] !== names[0] || names[0] === member) return null;
-  return { sibling: names[0]!, value: c.const as string | number | boolean };
+  if (!isMap(c) || Object.keys(c).join(",") !== "const" || !["string", "number", "boolean"].includes(typeof c.const) || names[0] === member) return null;
+  const keys = Object.keys(d).sort().join(",");
+  if (keys === "properties" && typeof c.const === "boolean") return { sibling: names[0]!, value: !c.const, when: true };
+  if (keys !== "properties,required" || !Array.isArray(d.required) || d.required.length !== 1 || d.required[0] !== names[0]) return null;
+  return { sibling: names[0]!, value: c.const as string | number | boolean, when: false };
 }
 
 /** The schema of each named type the schema emits, with every `$ref` still local (`#/$defs/<name>`), the conditions, and the problems. */
@@ -292,8 +312,8 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
     if (!(t.kind === "object" && t.open)) schema.additionalProperties = false;
     const dependent: Record<string, string[]> = structuredClone(t.dependent_required ?? {});
     const nested: Record<string, { member: string; require: string[] }> = {};
-    /** The members absent unless a sibling equals a value, each with the sibling and the value. */
-    const absent: Record<string, { sibling: string; value: unknown }> = {};
+    /** The members absent unless, or when, a sibling equals a value, each with the sibling, the value, and which word. */
+    const absent: Record<string, { sibling: string; value: unknown; when: boolean }> = {};
 
     // The conditions: each conditional property's, and each type case. They all read one sibling, each value at most once, so
     // they chain as if / then / else, one `if` per value, which needs no `allOf` (type rules § 8).
@@ -341,16 +361,19 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
         }
       }
       // "Absent unless `a` is `b`", a sentence of the row's Meaning (§ 2.6): while the member is present, its sibling `a` is `b`.
+      // "Absent when `a` is `b`", where `a` is a boolean: while the member is present, `a` is absent or the other boolean.
       // Any other absence the schema doesn't state; the fidelity gate reads each one it can.
       for (const sentence of p.absent?.split("; ") ?? []) {
-        const match = ABSENT_UNLESS.map((re) => re.exec(sentence)).find((m) => m !== null);
-        if (!match || !props[match[1]!] || match[1] === k) continue;
-        const v = conditionValue(props[match[1]!]!, match[2]!);
+        const match = ABSENT.map((re) => re.exec(sentence)).find((m) => m !== null);
+        if (!match || !props[match[2]!] || match[2] === k) continue;
+        const when = match[1] === "when";
+        const v = conditionValue(props[match[2]!]!, match[3]!);
         if ("problem" in v) problems.push(`${where}: property "${k}": "${sentence}": ${v.problem}`);
+        else if (when && "value" in v && typeof v.value !== "boolean") conditions.left.push(`${t.name}.${k}: "${sentence}": "Absent when" a sibling that isn't the boolean holds a value`);
         else if ("value" in v) {
-          if (absent[k] !== undefined) problems.push(`${where}: property "${k}" is absent unless two siblings hold values, which one dependency can't state`);
+          if (absent[k] !== undefined) problems.push(`${where}: property "${k}" is absent under two siblings' values, which one dependency can't state`);
           else {
-            absent[k] = { sibling: match[1]!, value: v.value };
+            absent[k] = { sibling: match[2]!, value: v.value, when };
             conditions.expressed.push(`${t.name}.${k}`);
           }
         }
@@ -366,7 +389,9 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
     if (Object.keys(dependent).length > 0) {
       schema.dependentRequired = Object.fromEntries(Object.keys(dependent).sort().map((m) => [m, [...dependent[m]!].sort()]));
     }
-    for (const m of Object.keys(absent)) if (m in nested) problems.push(`${where}: property "${m}" is both absent unless a sibling holds a value and a member others are required with, which one dependency can't state`);
+    for (const m of Object.keys(absent)) if (m in nested) problems.push(`${where}: property "${m}" is both absent under a sibling's value and a member others are required with, which one dependency can't state`);
+    const absence = (a: { sibling: string; value: unknown; when: boolean }) =>
+      a.when ? { properties: { [a.sibling]: { const: !a.value } } } : { properties: { [a.sibling]: { const: a.value } }, required: [a.sibling] };
     if (Object.keys(nested).length + Object.keys(absent).length > 0) {
       schema.dependentSchemas = Object.fromEntries(
         [...new Set([...Object.keys(nested), ...Object.keys(absent)])]
@@ -374,7 +399,7 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
           .map((m) => [
             m,
             m in absent
-              ? { properties: { [absent[m]!.sibling]: { const: absent[m]!.value } }, required: [absent[m]!.sibling] }
+              ? absence(absent[m]!)
               : { if: { properties: { [m]: { type: "object", required: [nested[m]!.member] } } }, then: { required: [...nested[m]!.require].sort() } },
           ]),
       );

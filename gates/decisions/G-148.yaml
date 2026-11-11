@@ -1,0 +1,24 @@
+format: 1
+id: G-148
+date: 2026-11-11
+question: What changes in the gates when the with-our-stack lock moves to the stack's head at `38f5cfa`, where § 5.4 gains a paragraph on a receiver's report of a synthetic asset under a `human_only` spec?
+decision: >-
+  The lock reads op30-packages at `38f5cfa`, where #152 and #154 moved. Its
+  specification adds one paragraph to § 5.4, after the `voice` rule: a
+  receiver that finds a seller-built asset synthetic under a spec whose
+  `voice` is `human_only` reports the mismatch, the report names the
+  asset's `asset_id`, the `Digest` of the bytes it reviewed, the `spec` key,
+  and what was observed, and it never changes the asset's `provenance`. The
+  three sentences carry no RFC 2119 keyword, so the rule `prose-sentence`
+  maps each as informative, as it maps § 5.6.5's sentence on rounding
+  `TIME`'s derived units; D-057 reads only the statements a keyword marks.
+  No type, member, or rule changes, so the schemas, rules, corpus, type
+  examples, and SDKs differ only in the lock's commit and blob. The golden
+  snapshot of the stack's extraction counts the three sentences and six
+  code spans, and every line number after the paragraph moves by seven.
+rationale: >-
+  No check is weaker: only the golden snapshot, which the test suite reads,
+  changes, and it changes because the locked text did. The main and
+  open-PR outputs and models are byte-identical.
+accepts:
+  - { gate: npm-test, fingerprint: 64470f6e7b903f22dfdd1f00739ca5bf3e23240b3e36e25da842d9a3b81f1d42 }

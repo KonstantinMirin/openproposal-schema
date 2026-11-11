@@ -147,7 +147,7 @@ class Shape:
         within: tuple[tuple[str, tuple[str, ...], tuple[str, ...]], ...] = (),
         bounds: tuple[tuple[str, int, bool], ...] = (),
         rejects: tuple[tuple[str, Any], ...] = (),
-        absent: tuple[tuple[str, str, Any], ...] = (),
+        absent: tuple[tuple[str, str, Any, bool], ...] = (),
     ) -> None:
         self.min_properties = min_properties
         self.max_properties = max_properties
@@ -189,8 +189,13 @@ class Shape:
         for sibling, value in self.rejects:
             if sibling in data and _json_equal(data[sibling], value):
                 raise ValueError(f'"{sibling}" is {value!r}, which it cannot be')
-        for member, sibling, value in self.absent:
-            if member in data and not (sibling in data and _json_equal(data[sibling], value)):
+        for member, sibling, value, when in self.absent:
+            if member not in data:
+                continue
+            holds = sibling in data and _json_equal(data[sibling], value)
+            if when and holds:
+                raise ValueError(f'holds "{member}", which is absent when "{sibling}" is {value!r}')
+            if not when and not holds:
                 raise ValueError(f'holds "{member}", which is absent unless "{sibling}" is {value!r}')
         for sibling, value, require, types in self.conditions:
             if sibling in data and _json_equal(data[sibling], value):

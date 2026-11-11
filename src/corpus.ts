@@ -48,7 +48,7 @@ import { join, posix } from "node:path";
 import { Ajv2020 } from "ajv/dist/2020.js";
 import { installFormats } from "./formats.ts";
 import { canonicalJson } from "./canonical.ts";
-import { absentUnless, baseOf, type EmittedFile, inlinedFrom, inlinedKeys, nestedIf, schemaIdOf } from "./emit.ts";
+import { absenceOf, allowedOf, baseOf, type EmittedFile, inlinedFrom, inlinedKeys, nestedIf, schemaIdOf } from "./emit.ts";
 import type { InstanceOracle } from "./examples.ts";
 import type { Kernel } from "./kernel.ts";
 import type { TypeRef } from "./mapping.ts";
@@ -467,8 +467,9 @@ export function baselines(model: ModelDoc, v: Validators, kernel: Kernel, schema
       let dependency: string | null = null;
       if (head === "dependentSchemas" && next !== undefined) {
         keys.add(next);
-        // A member absent unless a sibling holds a value: the member is present, and the sibling holds the value (below).
-        const only = absentUnless(node, next);
+        // A member absent unless, or when, a sibling holds a value: the member is present, and the sibling holds the value a
+        // valid value gives it (below).
+        const only = absenceOf(node, next);
         const toSibling = only !== null && rest.length === 2 && rest[0] === "properties" && rest[1] === only.sibling;
         if (rest.length === 1 && rest[0] === "then" && nestedIf(node, next) !== null) dependency = next;
         else if (rest.length > 0 && !toSibling) throw new Error(`a constraint nested in "dependentSchemas" at ${pointerOf(force)}`);
@@ -500,11 +501,11 @@ export function baselines(model: ModelDoc, v: Validators, kernel: Kernel, schema
         else throw new Error(`the member "${k}" has no schema`);
       }
       if (dependency !== null) out[dependency] = holding(props[dependency], file, out[dependency], nestedIf(node, dependency)!, stack);
-      // A member present that is absent unless a sibling holds a value brings the sibling with that value, unless a pin or a
-      // condition fixes the sibling, as a vector that tests the absence does.
+      // A member present that is absent unless, or when, a sibling holds a value brings the sibling with the value a valid
+      // value gives it, unless a pin or a condition fixes the sibling, as a vector that tests the absence does.
       for (const m of Object.keys(isMap(node.dependentSchemas) ? node.dependentSchemas : {}).sort(byString)) {
-        const only = absentUnless(node, m);
-        if (only !== null && m in out && !(only.sibling in fixed)) out[only.sibling] = only.value;
+        const only = absenceOf(node, m);
+        if (only !== null && m in out && !(only.sibling in fixed)) out[only.sibling] = allowedOf(only);
       }
       if (head === "additionalProperties") {
         const values = node.additionalProperties;

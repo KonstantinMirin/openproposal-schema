@@ -71,6 +71,7 @@ const PLCMT = "key:5.2.2:placement.plcmt#conditional@line_item.placement.plcmt";
 const PLCMT_RULE = "rule:5.2:f3d3f9e8";
 
 const COMMERCIAL = "modules/commercial/1/commercial.json";
+const PROPERTIES = "modules/properties/1/properties.json";
 const ADCOM_LISTS = "modules/lists/1/lists.json";
 const DEAL = "modules/deal/1/deal.json";
 /** A Deals API object's schema with one property's node changed. */
@@ -281,6 +282,13 @@ export const fidelity = defineGate<FidelityInput & { expected: ExpectedFile; nam
       lock: "with-our-stack",
       mutate: (i) => ({ ...i, files: withDef(i.files, COMMERCIAL, "CostParameters", (s) => ({ ...s, dependentSchemas: { calendar_zone: { properties: { rate_unit: { const: "week" } }, required: ["rate_unit"] } } })) }),
       expect: '"calendar_zone" present while rate_unit = "day" is valid, but the schema rejects it',
+    },
+    // The stack's `Screen.lat` is "Absent when `movable` is `true`": a schema that drops the dependency disagrees.
+    {
+      name: "lat free of movable, so a movable screen gives a fixed location",
+      lock: "with-our-stack",
+      mutate: (i) => ({ ...i, files: withDef(i.files, PROPERTIES, "Screen", ({ dependentSchemas: _d, ...s }) => s) }),
+      expect: '"lat" present while movable = true is invalid, but the schema accepts it',
     },
     { name: "gross_rate typed as a count", mutate: (i) => remodel(i, (types) => void (property(types, "PricingEntry", "gross_rate").type = { kind: "named", name: "Count" })), expect: '"gross_rate" as 0.5, which is Number, is valid, but the schema rejects it' },
     { name: "valid_from typed as text", mutate: (i) => remodel(i, (types) => void (property(types, "Proposal", "valid_from").type = { kind: "named", name: "Text" })), expect: '"valid_from" as "not-a-time", which isn\'t Timestamp, is invalid, but the schema accepts it' },

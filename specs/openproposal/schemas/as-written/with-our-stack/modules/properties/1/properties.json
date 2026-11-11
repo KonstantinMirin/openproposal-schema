@@ -202,13 +202,29 @@
     },
     "Screen": {
       "additionalProperties": false,
+      "dependentSchemas": {
+        "lat": {
+          "properties": {
+            "movable": {
+              "const": false
+            }
+          }
+        },
+        "lon": {
+          "properties": {
+            "movable": {
+              "const": false
+            }
+          }
+        }
+      },
       "properties": {
         "lat": {
-          "description": "Latitude, as OpenRTB 2.6 `geo.lat`. Absent when `movable` is true",
+          "description": "Latitude, as OpenRTB 2.6 `geo.lat`. Absent when `movable` is `true`",
           "type": "number"
         },
         "lon": {
-          "description": "Longitude, as OpenRTB 2.6 `geo.lon`. Absent when `movable` is true",
+          "description": "Longitude, as OpenRTB 2.6 `geo.lon`. Absent when `movable` is `true`",
           "type": "number"
         },
         "loop": {
