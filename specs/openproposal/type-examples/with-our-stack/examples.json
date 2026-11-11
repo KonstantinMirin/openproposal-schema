@@ -1,7 +1,7 @@
 {
   "format": 1,
   "lock": "with-our-stack",
-  "commit": "4f7ffffb31849b13cec5e2e38441abbad8a5ff42",
+  "commit": "63733eda99482bac6c5dbf1c0c2bff8cb043a650",
   "types": {
     "AcceptedExclusions": {
       "kind": "object",
@@ -1723,7 +1723,7 @@
         "attribution_window": "P14D",
         "calendar_zone": "America/New_York",
         "demographic": "examplepub.example:podcast-host-read",
-        "rate_unit": "hour",
+        "rate_unit": "day",
         "rating_source": "seller",
         "view_fraction": 0.7,
         "view_s": 3,
@@ -2505,6 +2505,10 @@
                 "at": "2026-10-01T23:59:59Z",
                 "before_start": "P1D"
               },
+              "retention": {
+                "min": "P14D",
+                "max": "P14D"
+              },
               "unit_bounds": {
                 "min": 3,
                 "max": 3
@@ -2556,6 +2560,10 @@
           "materials_due": {
             "at": "2026-10-01T23:59:59Z",
             "before_start": "P1D"
+          },
+          "retention": {
+            "min": "P14D",
+            "max": "P14D"
           },
           "unit_bounds": {
             "min": 3,
@@ -3833,7 +3841,7 @@
               "attribution_window": "P14D",
               "calendar_zone": "America/New_York",
               "demographic": "examplepub.example:podcast-host-read",
-              "rate_unit": "hour",
+              "rate_unit": "day",
               "rating_source": "seller",
               "view_fraction": 0.7,
               "view_s": 3,
@@ -6570,7 +6578,7 @@
                   "attribution_window": "P14D",
                   "calendar_zone": "America/New_York",
                   "demographic": "examplepub.example:podcast-host-read",
-                  "rate_unit": "hour",
+                  "rate_unit": "day",
                   "rating_source": "seller",
                   "view_fraction": 0.7,
                   "view_s": 3,
@@ -7776,7 +7784,7 @@
                   "attribution_window": "P14D",
                   "calendar_zone": "America/New_York",
                   "demographic": "examplepub.example:podcast-host-read",
-                  "rate_unit": "hour",
+                  "rate_unit": "day",
                   "rating_source": "seller",
                   "view_fraction": 0.7,
                   "view_s": 3,
@@ -8702,7 +8710,7 @@
           "attribution_window": "P14D",
           "calendar_zone": "America/New_York",
           "demographic": "examplepub.example:podcast-host-read",
-          "rate_unit": "hour",
+          "rate_unit": "day",
           "rating_source": "seller",
           "view_fraction": 0.7,
           "view_s": 3,
@@ -10166,7 +10174,7 @@
                   "attribution_window": "P14D",
                   "calendar_zone": "America/New_York",
                   "demographic": "examplepub.example:podcast-host-read",
-                  "rate_unit": "hour",
+                  "rate_unit": "day",
                   "rating_source": "seller",
                   "view_fraction": 0.7,
                   "view_s": 3,
@@ -10470,6 +10478,10 @@
                   "materials_due": {
                     "at": "2026-10-01T23:59:59Z",
                     "before_start": "P1D"
+                  },
+                  "retention": {
+                    "min": "P14D",
+                    "max": "P14D"
                   },
                   "unit_bounds": {
                     "min": 3,
@@ -11423,7 +11435,7 @@
                       "attribution_window": "P14D",
                       "calendar_zone": "America/New_York",
                       "demographic": "examplepub.example:podcast-host-read",
-                      "rate_unit": "hour",
+                      "rate_unit": "day",
                       "rating_source": "seller",
                       "view_fraction": 0.7,
                       "view_s": 3,
@@ -12629,7 +12641,7 @@
                       "attribution_window": "P14D",
                       "calendar_zone": "America/New_York",
                       "demographic": "examplepub.example:podcast-host-read",
-                      "rate_unit": "hour",
+                      "rate_unit": "day",
                       "rating_source": "seller",
                       "view_fraction": 0.7,
                       "view_s": 3,
@@ -14495,6 +14507,17 @@
         "max_select": 3
       }
     },
+    "RequestedRetentionRange": {
+      "kind": "copy",
+      "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/proposal/1/proposal.json#/$defs/RequestedRetentionRange",
+      "minimal": {
+        "max": "P14D"
+      },
+      "full": {
+        "min": "P14D",
+        "max": "P14D"
+      }
+    },
     "RequestedUnitBoundsRange": {
       "kind": "copy",
       "schema": "https://openproposal.noetis.dev/schemas/with-our-stack/modules/proposal/1/proposal.json#/$defs/RequestedUnitBoundsRange",
@@ -14530,6 +14553,10 @@
         "materials_due": {
           "at": "2026-10-01T23:59:59Z",
           "before_start": "P1D"
+        },
+        "retention": {
+          "min": "P14D",
+          "max": "P14D"
         },
         "unit_bounds": {
           "min": 3,

@@ -23,17 +23,17 @@ from .guarantees import CommittedMetric, CommittedMetricDirection, CommittedMetr
 from .inventory import BreakPositionOption, BreakPositionSelection, Environment, Environments, EnvironmentsSelection, EventSchedule, EventScheduleEventstatus, EventScheduleEventstatuses, LineItemEpisodes, LineItemEpisodeses, Placement, ProgramOption, ProgramsSelection, PropertiesSelection, Refresh
 from .line_item import AvailabilityRead, LineItem, MediaChannel, MediaChannels
 from .properties import Loop, PropertyOption, PropertyOptionAllocation, PropertyOptionAllocations, PropertyOptionChildAudience, PropertyOptionChildAudiences, PropertyOptionChildTreatment, PropertyOptionChildTreatments, PropertyOptionSellerRelationship, PropertyOptionSellerRelationships, Screen, SellerAccount, SyncGroup
-from .proposal import ChangeRequest, HistoryEntry, HistoryEntryAction, HistoryEntryActions, HistoryPath, MinCommitment, Package, Proposal, ProposalType, ProposalTypes, RequestedUnitBoundsRange, RequestedValue
+from .proposal import ChangeRequest, HistoryEntry, HistoryEntryAction, HistoryEntryActions, HistoryPath, MinCommitment, Package, Proposal, ProposalType, ProposalTypes, RequestedRetentionRange, RequestedUnitBoundsRange, RequestedValue
 from .publication import HoldLimits, ManifestEntry, ProposalManifest
 from .representation import LineItemSummary, LineItemSummaryApp, LineItemSummaryAudienceOption, LineItemSummaryAudienceSelectable, LineItemSummaryBreakPositionOption, LineItemSummaryBreakPositionSelection, LineItemSummaryBuyerRequirements, LineItemSummaryDeliveryCounting, LineItemSummaryEnvironmentsSelection, LineItemSummaryFormatsSelection, LineItemSummaryImpressionMultiplier, LineItemSummaryPlacement, LineItemSummaryPricingEntry, LineItemSummaryProgramOption, LineItemSummaryProgramsSelection, LineItemSummaryPropertiesSelection, LineItemSummaryPropertyOption, LineItemSummaryTransactionMechanismSelection, PackageSummary, ProposalSummary, ProposalSummaryParty
 from .settlement import Agreement, AgreementAgreementType, AgreementAgreementTypes, Billing, BillingInvoicePeriod, BillingInvoicePeriods, ExternalReference, ExternalReferenceReferenceType, ExternalReferenceReferenceTypes
 from .targeting import AcceptedExclusions, CountSettableRange, DaypartBounds, DeviceBounds, ExclusionEntry, ExclusionList, ExclusionTerms, ExclusionTermsEnforcement, ExclusionTermsEnforcements, ExclusionType, ExclusionTypes, FrequencyCap, FrequencyCapPer, FrequencyCapPers, GeoBounds, MarketsSelection
 from .registry import ExtensionRegistry
 
-SPEC_COMMIT: Final = "4f7ffffb31849b13cec5e2e38441abbad8a5ff42"
+SPEC_COMMIT: Final = "63733eda99482bac6c5dbf1c0c2bff8cb043a650"
 """The commit of the OpenProposal specification repository that the types are generated from."""
 
-SPEC_BLOB: Final = "a7e8b5bff4d2a9e9fc68800eece37556099552f5"
+SPEC_BLOB: Final = "5c0b9f2398dd9bfb8f24dcc9655c0681a30f090f"
 """The Git blob SHA of the specification file at that commit."""
 
 LOCK: Final = "with-our-stack"
@@ -42,7 +42,7 @@ LOCK: Final = "with-our-stack"
 VARIANT: Final = "as-written"
 """The build: `as-written`, the specification as its text and examples write it, or `proposed`, with the changes we propose."""
 
-SCHEMA_RELEASE: Final = "e43006b561caec9f7965c015ac0517964c788f0bf8c1e7e373ac6f42c098d776"
+SCHEMA_RELEASE: Final = "6867539aaab4d70007a31bb2862b2a09cdf8cde5ee120e465cdd82e0b6df8403"
 """The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it."""
 
 TYPES: dict[str, Any] = {
@@ -260,6 +260,7 @@ TYPES: dict[str, Any] = {
     "ReportingOptionProvidedMetric": ReportingOptionProvidedMetric,
     "ReportingOptionReportType": ReportingOptionReportType,
     "ReportingSelection": ReportingSelection,
+    "RequestedRetentionRange": RequestedRetentionRange,
     "RequestedUnitBoundsRange": RequestedUnitBoundsRange,
     "RequestedValue": RequestedValue,
     "RequiredCredential": RequiredCredential,
@@ -606,6 +607,7 @@ __all__ = [
     "ReportingOptionReportType",
     "ReportingOptionReportTypes",
     "ReportingSelection",
+    "RequestedRetentionRange",
     "RequestedUnitBoundsRange",
     "RequestedValue",
     "RequiredCredential",

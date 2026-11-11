@@ -382,8 +382,8 @@ covers:
     quote: "`viewability_standard` | REQUIRED when `cost_method` is `CPMV` | The viewability standard that counts a unit. Core term: `mrc`, the MRC guidelines that `viewable_rate` cites (§ 5.7.1)"
     locks: [with-our-stack]
   - ir: key:5.6.5:CostParameters.action_type
-    digest: 75c3b56630cfd4b7fb7c7c1c05760e014b95ca3c4559a337128a8d4c646c8301
-    quote: "`action_type` | REQUIRED when `cost_method` is `CPA` | The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit`"
+    digest: 7f7212da7d23f9e925f14e45f9def1eb5a9856b694929e806ab5b722f8171672
+    quote: "`action_type` | REQUIRED when `cost_method` is `CPA` | The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values, from the Standard Events and Additional Events tables both, other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit`"
     locks: [with-our-stack]
   - ir: key:5.6.5:CostParameters.attribution_window
     digest: cb7249308e30fff79b598498150bd1391340a20c003fed80551ac4c7bffdf3f7

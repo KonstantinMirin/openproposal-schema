@@ -75,6 +75,9 @@ func (ProposalType) ValidateValue(v any, at string, errs *Errors) {
 	checkEnum(v, at, errs, termsProposalType...)
 }
 
+// RequestedRetentionRange: The copy `Range<T=Duration>`.
+type RequestedRetentionRange = Range[Duration]
+
 // RequestedUnitBoundsRange: The copy `Range<T=SafeInteger>`.
 type RequestedUnitBoundsRange = Range[SafeInteger]
 
@@ -88,6 +91,8 @@ type RequestedValue struct {
 	ListRate *Amount `json:"list_rate,omitempty"`
 	// MaterialsDue: The line item's `materials_due`
 	MaterialsDue *MaterialsDue `json:"materials_due,omitempty"`
+	// Retention: The line item's `retention`
+	Retention *Range[Duration] `json:"retention,omitempty"`
 	// UnitBounds: A `pricing[].unit_bounds`
 	UnitBounds *Range[SafeInteger] `json:"unit_bounds,omitempty"`
 }
@@ -98,7 +103,7 @@ func (RequestedValue) ValidateValue(v any, at string, errs *Errors) {
 	if !ok {
 		return
 	}
-	checkClosed(m, at, errs, "commitment_bounds", "committed_metrics", "list_rate", "materials_due", "unit_bounds")
+	checkClosed(m, at, errs, "commitment_bounds", "committed_metrics", "list_rate", "materials_due", "retention", "unit_bounds")
 	if x, ok := m["commitment_bounds"]; ok {
 		validateAs[CommitmentBounds](x, member(at, "commitment_bounds"), errs)
 	}
@@ -110,6 +115,9 @@ func (RequestedValue) ValidateValue(v any, at string, errs *Errors) {
 	}
 	if x, ok := m["materials_due"]; ok {
 		validateAs[MaterialsDue](x, member(at, "materials_due"), errs)
+	}
+	if x, ok := m["retention"]; ok {
+		validateAs[Range[Duration]](x, member(at, "retention"), errs)
 	}
 	if x, ok := m["unit_bounds"]; ok {
 		validateAs[Range[SafeInteger]](x, member(at, "unit_bounds"), errs)

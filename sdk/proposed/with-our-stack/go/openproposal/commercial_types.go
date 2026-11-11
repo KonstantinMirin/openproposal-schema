@@ -1232,7 +1232,7 @@ type CancellationPolicySelection = Selectable[CancellationOption]
 type CostParameters struct {
 	// ActionSource: Who reports the action
 	ActionSource *Measurer `json:"action_source,omitempty"`
-	// ActionType: The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit`
+	// ActionType: The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values, from the Standard Events and Additional Events tables both, other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit`
 	ActionType *CostParametersActionType `json:"action_type,omitempty"`
 	// AttributionWindow: How long after exposure an action counts
 	AttributionWindow *Duration `json:"attribution_window,omitempty"`
@@ -1259,6 +1259,11 @@ func (CostParameters) ValidateValue(v any, at string, errs *Errors) {
 		return
 	}
 	checkClosed(m, at, errs, "action_source", "action_type", "attribution_window", "calendar_zone", "demographic", "rate_unit", "rating_source", "view_fraction", "view_s", "viewability_standard")
+	if _, ok := m["calendar_zone"]; ok {
+		if x, ok := m["rate_unit"]; !ok || !jsonEqual(x, "day") {
+			errs.add(at, "holds %s, which is absent unless %s is %s", "\"calendar_zone\"", "\"rate_unit\"", "\"day\"")
+		}
+	}
 	if x, ok := m["action_source"]; ok {
 		validateAs[Measurer](x, member(at, "action_source"), errs)
 	}

@@ -633,7 +633,7 @@ export const CancellationPolicySelection: z.ZodType<CancellationPolicySelection>
 export interface CostParameters {
   /** Who reports the action */
   action_source?: Measurer;
-  /** The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit` */
+  /** The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values, from the Standard Events and Additional Events tables both, other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit` */
   action_type?: CostParametersActionType;
   /** How long after exposure an action counts */
   attribution_window?: Duration;
@@ -663,7 +663,7 @@ export const CostParameters: z.ZodType<CostParameters> = z.strictObject({
   view_fraction: Fraction.optional(),
   view_s: SafeInteger.optional(),
   viewability_standard: CostParametersViewabilityStandard.optional(),
-});
+}).check(rt.absentUnless("calendar_zone", "rate_unit", "day"));
 
 /** The `ProofOfPerformance` object of the `commercial` module. */
 export interface ProofOfPerformance {

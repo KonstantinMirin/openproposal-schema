@@ -207,6 +207,7 @@ exemptions:
     locks: [with-our-stack]
     cases:
       - { label: "corpus Delta#/minProperties mutant", kind: verdict }
+      - { label: "corpus RequestedRetentionRange#/minProperties mutant", kind: verdict }
       - { label: "corpus RequestedUnitBoundsRange#/minProperties mutant", kind: verdict }
       - { label: "corpus RetentionRange#/minProperties mutant", kind: verdict }
       - { label: "corpus SpendRange#/minProperties mutant", kind: verdict }
@@ -288,3 +289,14 @@ exemptions:
       - { label: "corpus LineItem#/properties/ext/additionalProperties/type baseline", kind: error }
       - { label: "corpus Proposal#/properties/ext/additionalProperties/type baseline", kind: error }
       - { label: "constructor Map vectors[0] as Map<FormatId, SafeInteger> valid 2", kind: error }
+  - id: PG-23
+    reason: >-
+      The generator drops a `dependentSchemas` entry, as in PG-11, here one
+      that holds a sibling to a value while the member is present, so the
+      stack's `CostParameters` with a `calendar_zone` and an hourly
+      `rate_unit`, or with no `rate_unit`, passes, where `calendar_zone` is
+      absent unless `rate_unit` is `day`.
+    locks: [with-our-stack]
+    cases:
+      - { label: "corpus CostParameters#/dependentSchemas/calendar_zone/properties/rate_unit/const mutant", kind: verdict }
+      - { label: "corpus CostParameters#/dependentSchemas/calendar_zone/required/rate_unit mutant", kind: verdict }

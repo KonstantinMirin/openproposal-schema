@@ -395,6 +395,18 @@
     },
     "CostParameters": {
       "additionalProperties": false,
+      "dependentSchemas": {
+        "calendar_zone": {
+          "properties": {
+            "rate_unit": {
+              "const": "day"
+            }
+          },
+          "required": [
+            "rate_unit"
+          ]
+        }
+      },
       "properties": {
         "action_source": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/Measurer",
@@ -402,7 +414,7 @@
         },
         "action_type": {
           "$ref": "#/$defs/CostParametersActionType",
-          "description": "The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit`"
+          "description": "The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values, from the Standard Events and Additional Events tables both, other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit`"
         },
         "attribution_window": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/Duration",

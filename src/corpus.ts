@@ -48,7 +48,7 @@ import { join, posix } from "node:path";
 import { Ajv2020 } from "ajv/dist/2020.js";
 import { installFormats } from "./formats.ts";
 import { canonicalJson } from "./canonical.ts";
-import { baseOf, type EmittedFile, inlinedFrom, inlinedKeys, nestedIf, schemaIdOf } from "./emit.ts";
+import { absentUnless, baseOf, type EmittedFile, inlinedFrom, inlinedKeys, nestedIf, schemaIdOf } from "./emit.ts";
 import type { InstanceOracle } from "./examples.ts";
 import type { Kernel } from "./kernel.ts";
 import type { TypeRef } from "./mapping.ts";
@@ -467,8 +467,11 @@ export function baselines(model: ModelDoc, v: Validators, kernel: Kernel, schema
       let dependency: string | null = null;
       if (head === "dependentSchemas" && next !== undefined) {
         keys.add(next);
+        // A member absent unless a sibling holds a value: the member is present, and the sibling holds the value (below).
+        const only = absentUnless(node, next);
+        const toSibling = only !== null && rest.length === 2 && rest[0] === "properties" && rest[1] === only.sibling;
         if (rest.length === 1 && rest[0] === "then" && nestedIf(node, next) !== null) dependency = next;
-        else if (rest.length > 0) throw new Error(`a constraint nested in "dependentSchemas" at ${pointerOf(force)}`);
+        else if (rest.length > 0 && !toSibling) throw new Error(`a constraint nested in "dependentSchemas" at ${pointerOf(force)}`);
       }
       // A constraint in a condition's `then`, at the end of a chain of `else`: the condition holds, and a typed member is present.
       const narrowed: Record<string, Schema> = {};
@@ -497,6 +500,12 @@ export function baselines(model: ModelDoc, v: Validators, kernel: Kernel, schema
         else throw new Error(`the member "${k}" has no schema`);
       }
       if (dependency !== null) out[dependency] = holding(props[dependency], file, out[dependency], nestedIf(node, dependency)!, stack);
+      // A member present that is absent unless a sibling holds a value brings the sibling with that value, unless a pin or a
+      // condition fixes the sibling, as a vector that tests the absence does.
+      for (const m of Object.keys(isMap(node.dependentSchemas) ? node.dependentSchemas : {}).sort(byString)) {
+        const only = absentUnless(node, m);
+        if (only !== null && m in out && !(only.sibling in fixed)) out[only.sibling] = only.value;
+      }
       if (head === "additionalProperties") {
         const values = node.additionalProperties;
         if (!isMap(values)) throw new Error(`no additionalProperties schema at ${pointerOf(force)}`);
@@ -649,6 +658,31 @@ export function generateCorpus(input: CorpusInput): { doc: CorpusDoc; problems: 
     return { path, object };
   };
 
+  /** The values a member's own schema lists, at a path of members from an object's schema, following each `$ref`: its `enum`, `const`, or each `anyOf` branch's. */
+  const valuesAt = (root: Schema, file: string, path: string[]): unknown[] => {
+    let at = { node: root, file };
+    const deref = (x: { node: Schema; file: string }) => {
+      for (let i = 0; typeof x.node.$ref === "string" && i < 32; i++) {
+        const id = new URL(x.node.$ref, x.file).href;
+        x = { node: v.node(id).node, file: id.split("#")[0]! };
+      }
+      return x;
+    };
+    for (const name of path) {
+      const props = deref(at).node.properties;
+      const next = isMap(props) ? props[name] : undefined;
+      if (!isMap(next)) return [];
+      at = { node: next, file: deref(at).file };
+    }
+    const listed = (x: { node: Schema; file: string }): unknown[] => {
+      const d = deref(x);
+      if (Array.isArray(d.node.enum)) return d.node.enum;
+      if ("const" in d.node) return [d.node.const];
+      return Array.isArray(d.node.anyOf) ? d.node.anyOf.flatMap((b) => (isMap(b) ? listed({ node: b, file: d.file }) : [])) : [];
+    };
+    return listed(at);
+  };
+
   /** The values a mutant may put at the constraint's location, in the order they are tried. */
   const candidates = (f: Found, node: Schema, value: unknown, object: Schema | null, file: string, stack: string[]): unknown[] => {
     const s = typeof value === "string" ? value : "";
@@ -770,8 +804,11 @@ export function generateCorpus(input: CorpusInput): { doc: CorpusDoc; problems: 
         return canonicalJson(instance) !== canonicalJson(baseline) && !v.valid(id, instance) && v.relaxedValid(id, f, instance) ? instance : undefined;
       };
       let mutant: unknown;
+      // A sibling's `const` in a dependency, as `rate_unit`'s `day` that `calendar_zone` needs: the other values the sibling's own
+      // schema takes come first, since only they break the dependency alone.
+      const others = f.keyword === "const" && f.at.includes("/dependentSchemas/") ? valuesAt(node, file, where.path).filter((x) => canonicalJson(x) !== canonicalJson(atNode.const)) : [];
       // A primitive's reviewed invalid vectors come first, then the keyword's own list.
-      for (const c of [...(t.kind === "primitive" ? (rejected.get(t.name) ?? []) : []), ...candidates(f, atNode, here, where.object, file, [id])]) {
+      for (const c of [...(t.kind === "primitive" ? (rejected.get(t.name) ?? []) : []), ...others, ...candidates(f, atNode, here, where.object, file, [id])]) {
         mutant = isolates(c);
         if (mutant !== undefined) break;
       }

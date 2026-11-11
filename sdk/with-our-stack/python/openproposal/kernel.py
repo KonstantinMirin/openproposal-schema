@@ -305,7 +305,7 @@ class Range(rt.Closed, Generic[T]):
 
     - `T`: The type of each bound, a number, a timestamp, or a duration."""
 
-    __copies__: ClassVar[tuple[tuple[str, str], ...]] = (("RequestedUnitBoundsRange", "Range[SafeInteger]"), ("RetentionRange", "Range[Duration]"), ("SpendRange", "Range[Amount]"), ("UnitBoundsRange", "Range[SafeInteger]"))
+    __copies__: ClassVar[tuple[tuple[str, str], ...]] = (("RequestedRetentionRange", "Range[Duration]"), ("RequestedUnitBoundsRange", "Range[SafeInteger]"), ("RetentionRange", "Range[Duration]"), ("SpendRange", "Range[Amount]"), ("UnitBoundsRange", "Range[SafeInteger]"))
 
     __shape__: ClassVar[rt.Shape] = rt.Shape(min_properties=1)
 

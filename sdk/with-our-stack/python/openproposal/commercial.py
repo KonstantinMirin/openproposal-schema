@@ -630,10 +630,12 @@ CancellationPolicySelection = Selectable[CancellationOption]
 class CostParameters(rt.Closed):
     """The `CostParameters` object of the `commercial` module."""
 
+    __shape__: ClassVar[rt.Shape] = rt.Shape(absent=(("calendar_zone", "rate_unit", "day"),))
+
     action_source: Optional[Measurer] = None
     """Who reports the action"""
     action_type: Optional[CostParametersActionType] = None
-    """The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit`"""
+    """The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values, from the Standard Events and Additional Events tables both, other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit`"""
     attribution_window: Optional[Duration] = None
     """How long after exposure an action counts"""
     calendar_zone: Optional[IanaZone] = None

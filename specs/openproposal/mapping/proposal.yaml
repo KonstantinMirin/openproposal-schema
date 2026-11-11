@@ -607,6 +607,24 @@ entries:
     locks: [ with-our-stack ]
     source: { rule: required-cell }
     as: { role: schema, in: RequestedValue }
+  - ir: key:4.1:RequestedValue.retention
+    digest: d894cdd00a918d11313b2c9060083489d895d1c9dc48a3ee705cd56c6b5d3a9b
+    locks: [ with-our-stack ]
+    source: { decision: D-058 }
+    as:
+      role: property
+      object: RequestedValue
+      type:
+        kind: apply
+        constructor: Range
+        arguments: { T: { kind: named, name: Duration } }
+        name: RequestedRetentionRange
+      presence: optional
+  - ir: rule:4.1:ae26d4ac-11
+    digest: 5e13534c928bf258be8a6c4f85071aa4e604079c0c709fa39e6ea76da9c600c7
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: RequestedValue }
   - ir: rule:4.1:fae6ebab
     digest: 6029b960f5e992bfd132ecadad927d812706780f56e4c5922571174dec942040
     locks: [ with-open-prs ]

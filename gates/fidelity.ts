@@ -268,6 +268,20 @@ export const fidelity = defineGate<FidelityInput & { expected: ExpectedFile; nam
         }),
       expect: '"available" listing "300x250", the example "display/300x250" without its namespace, is invalid, but the schema accepts it',
     },
+    // The stack's `calendar_zone` is "Absent unless `rate_unit` is `day`": a schema that drops the dependency, or holds it to another
+    // unit, disagrees.
+    {
+      name: "calendar_zone free of rate_unit, so an hourly rate counts calendar days",
+      lock: "with-our-stack",
+      mutate: (i) => ({ ...i, files: withDef(i.files, COMMERCIAL, "CostParameters", ({ dependentSchemas: _d, ...s }) => s) }),
+      expect: '"calendar_zone" present while rate_unit = "hour" is invalid, but the schema accepts it',
+    },
+    {
+      name: "calendar_zone held to a weekly rate, not a daily one",
+      lock: "with-our-stack",
+      mutate: (i) => ({ ...i, files: withDef(i.files, COMMERCIAL, "CostParameters", (s) => ({ ...s, dependentSchemas: { calendar_zone: { properties: { rate_unit: { const: "week" } }, required: ["rate_unit"] } } })) }),
+      expect: '"calendar_zone" present while rate_unit = "day" is valid, but the schema rejects it',
+    },
     { name: "gross_rate typed as a count", mutate: (i) => remodel(i, (types) => void (property(types, "PricingEntry", "gross_rate").type = { kind: "named", name: "Count" })), expect: '"gross_rate" as 0.5, which is Number, is valid, but the schema rejects it' },
     { name: "valid_from typed as text", mutate: (i) => remodel(i, (types) => void (property(types, "Proposal", "valid_from").type = { kind: "named", name: "Text" })), expect: '"valid_from" as "not-a-time", which isn\'t Timestamp, is invalid, but the schema accepts it' },
     {

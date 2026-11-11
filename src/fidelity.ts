@@ -24,6 +24,15 @@
  *   each path runs from the member's own object, the member is required
  *   while any of them is present, and may be absent while none is, or while
  *   a path's first member is present without the rest of it.
+ * - `absent`: a sentence of a row's Meaning or Description, "Absent unless
+ *   <condition>" or "Absent when <condition>", in the grammar of
+ *   `conditional`'s, as § 2.6 has a member that must be absent under a
+ *   condition say so: the member present while the absence holds is
+ *   invalid, and present while it doesn't is valid. "Absent unless `a` is
+ *   `b`" holds while `a` is each other value its row lists, and while `a` is
+ *   absent; "Absent when `a` is `b`" while `a` is `b`. A key table a label
+ *   introduces, as the stack's `CostParameters`, places its rows at the type
+ *   the label names, for this form.
  * - `type`: a field row's Type cell, as the JSON type its values have and,
  *   for a timestamp or an offset, a string of its format.
  * - `values`: a value list in a table cell or an inline object; a sentence
@@ -113,13 +122,13 @@ type Schema = Record<string, unknown>;
 const isMap = (v: unknown): v is Schema => v !== null && typeof v === "object" && !Array.isArray(v);
 
 /** The forms the oracle reads. */
-export const FORMS = ["required", "optional", "conditional", "type", "values", "namespaced", "contains", "member", "empty", "example", "default"] as const;
+export const FORMS = ["required", "optional", "conditional", "absent", "type", "values", "namespaced", "contains", "member", "empty", "example", "default"] as const;
 export type Form = (typeof FORMS)[number];
 
 /** Where a constraint sits: a root, then the path to the object that holds the member, then the member. */
 export interface SpecLocation {
   /** A document by its field rows' owner, or the type the model places an identifier list in. */
-  root: { owner: string } | { list: string };
+  root: { owner: string } | { list: string } | { type: string };
   /** The path from the root to the object that holds `member`. */
   path: PathSegment[];
   member: PathSegment;
@@ -131,6 +140,11 @@ export type Expectation =
   | { form: "conditional"; when: { member: string; value: unknown; up: number }; otherwise: unknown[] }
   /** Required with any member a path names, from the member's own object: `[["daypart"], ["frequency_cap", "period"]]`. */
   | { form: "conditional"; with: string[][] }
+  /**
+   * Absent while a member, `up` objects above the member's own, holds one of `holds`, and free to be present while it holds
+   * one of `otherwise`; with `unless`, absent too while that member is absent, as "Absent unless `rate_unit` is `day`" reads.
+   */
+  | { form: "absent"; when: { member: string; up: number }; holds: unknown[]; otherwise: unknown[]; unless: boolean }
   | { form: "type"; type: TypeExpr }
   /** `items`: each value is an item of a list; `entries`: each value is an entry's of a map. */
   /** `vendor`: the first code a named list reserves for vendors, so every integer from it up is listed too. */
@@ -209,7 +223,7 @@ export interface Restated {
 }
 
 export const pathText = (l: SpecLocation): string => {
-  const root = "owner" in l.root ? l.root.owner : l.root.list;
+  const root = "owner" in l.root ? l.root.owner : "list" in l.root ? l.root.list : l.root.type;
   const seg = (s: PathSegment) => `${s.name}${s.array ? "[]" : ""}`;
   return [root, ...l.path.map(seg), seg(l.member)].join(".");
 };
@@ -345,6 +359,12 @@ export function violates(c: SpecConstraint, payload: unknown, readers: Pick<Cons
         const holder = chain[chain.length - 1 - c.when.up];
         return holder !== undefined && canonicalJson(holder[c.when.member]) === canonicalJson(c.when.value) && !(name in o);
       }
+      case "absent": {
+        const holder = chain[chain.length - 1 - c.when.up];
+        if (holder === undefined || !(name in o)) return false;
+        if (!(c.when.member in holder)) return c.unless;
+        return c.holds.some((x) => canonicalJson(x) === canonicalJson(holder[c.when.member]));
+      }
       case "type":
         return name in o && !readers.hasStatedType(o[name], c.type);
       case "values": {
@@ -405,6 +425,10 @@ export function checkFidelity(input: FidelityInput): FidelityResult & { problems
       const t = types.get(name);
       id = t ? schemaIdOf(t, schemaDir, baseOf(files, schemaDir)) : null;
       if (id === null) return `no ${name} document on the lock`;
+    } else if ("type" in root) {
+      const t = types.get(root.type);
+      id = t ? schemaIdOf(t, schemaDir, baseOf(files, schemaDir)) : null;
+      if (id === null) return `no emitted type "${root.type}" on the lock`;
     } else {
       const t = model.types.find((x) => x.sources.includes(root.list));
       id = t ? schemaIdOf(t, schemaDir, baseOf(files, schemaDir)) : null;
@@ -564,8 +588,9 @@ export function checkFidelity(input: FidelityInput): FidelityResult & { problems
         return null;
       }
     };
-    const sibling = c.form === "conditional" && "when" in c && c.when.up === 0;
-    const inner = tryInner(sibling && "when" in c ? { [c.when.member]: c.when.value } : {}, "");
+    const sibling = (c.form === "conditional" && "when" in c && c.when.up === 0) || (c.form === "absent" && c.when.up === 0);
+    const firstValue = c.form === "conditional" && "when" in c ? c.when.value : c.form === "absent" ? (c.otherwise[0] ?? c.holds[0]) : undefined;
+    const inner = tryInner(sibling && "when" in c && firstValue !== undefined ? { [c.when.member]: firstValue } : {}, "");
     if (inner === null) continue;
     const without = (o: Schema) => Object.fromEntries(Object.entries(o).filter(([k]) => k !== name));
     /** A value of the member at `at` that holds the rest of a path, each step built from its own schema, or null where the schema has no such member. */
@@ -653,6 +678,23 @@ export function checkFidelity(input: FidelityInput): FidelityResult & { problems
           if (alt === null) continue;
           expect(true, without(alt), `"${name}" absent while ${c.when.member} = ${JSON.stringify(other)}`, pinsFor(other));
         }
+        break;
+      }
+      case "absent": {
+        // The condition's member sits in the innermost object, or `up` objects above it; each vector holds the member.
+        const at = st.length - 1 - c.when.up;
+        const pinsFor = (x: unknown) => (sibling ? {} : { [at]: { [c.when.member]: x } });
+        const withValue = (x: unknown) => (sibling ? tryInner({ [c.when.member]: x }, ` with ${c.when.member} = ${JSON.stringify(x)}`) : inner);
+        for (const x of c.otherwise) {
+          const o = withValue(x);
+          if (o !== null) expect(true, o, `"${name}" present while ${c.when.member} = ${JSON.stringify(x)}`, pinsFor(x));
+        }
+        for (const x of c.holds) {
+          const o = withValue(x);
+          if (o !== null) expect(false, o, `"${name}" present while ${c.when.member} = ${JSON.stringify(x)}`, pinsFor(x));
+        }
+        // "Absent unless": the member is absent while the condition's member is, too.
+        if (c.unless && sibling) expect(false, Object.fromEntries(Object.entries(inner).filter(([k]) => k !== c.when.member)), `"${name}" present while ${c.when.member} is absent`);
         break;
       }
       case "type": {

@@ -1072,6 +1072,7 @@ form its row states. `pointer` says which `pricing[]` entry.
 | `commitment_bounds` | CommitmentBounds | OPTIONAL | The line item's `commitment_bounds` |
 | `materials_due` | MaterialsDue | OPTIONAL | The line item's `materials_due` |
 | `committed_metrics[]` | Array[CommittedMetric] | OPTIONAL | The line item's `committed_metrics[]` |
+| `retention` | Range[Duration] | OPTIONAL | The line item's `retention` |
 
 `proposal_template_id` MUST NOT be required for a buyer to transact. Buyers never
 resolve it.
@@ -2634,7 +2635,7 @@ open: the term sets its keys.
 | `view_fraction` | Fraction | REQUIRED when `cost_method` is `CPV` and `view_s` is absent | The fraction of the creative played that makes a view. Absent when `view_s` is present |
 | `demographic` | VocabularyTerm | REQUIRED when `cost_method` is `CPP` | The rated demographic, such as `ratings.example:adults_25_54`. Its definition states whether co-viewers and impressions of unknown age count, or says `unknown`. This version lists no core terms |
 | `rating_source` | Measurer | REQUIRED when `cost_method` is `CPP` | Who supplies the ratings |
-| `action_type` | VocabularyTerm | REQUIRED when `cost_method` is `CPA` | The kind of action counted. Core terms in [IAB Tech Lab ECAPI 1.0](https://github.com/InteractiveAdvertisingBureau/ecapi/blob/4b43b0334c2aa41b13e302f2fa3ffc03012b3648/ecapi_1.0.md#eventtypes): its `event_type` values other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit` |
+| `action_type` | VocabularyTerm | REQUIRED when `cost_method` is `CPA` | The kind of action counted. Core terms in [IAB Tech Lab ECAPI 1.0](https://github.com/InteractiveAdvertisingBureau/ecapi/blob/4b43b0334c2aa41b13e302f2fa3ffc03012b3648/ecapi_1.0.md#eventtypes): its `event_type` values, from the Standard Events and Additional Events tables both, other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit` |
 | `attribution_window` | Duration | REQUIRED when `cost_method` is `CPA` | How long after exposure an action counts |
 | `action_source` | Measurer | REQUIRED when `cost_method` is `CPA` | Who reports the action |
 | `rate_unit` | Enum | REQUIRED when `cost_method` is `TIME` | `hour` \| `day` \| `week`. The unit the rate buys, counted in elapsed units unless `calendar_zone` is present |

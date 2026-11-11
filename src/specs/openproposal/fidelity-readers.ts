@@ -8,7 +8,7 @@ import { parse as parseYaml } from "yaml";
 import { canonicalJson } from "../../canonical.ts";
 import { jsonType, pathText, type ConstraintReader, type Form, type Projection, type Reading, type Refused, type Restated, type SpecConstraint, type SpecLocation, type Unread } from "../../fidelity.ts";
 import type { PathSegment } from "../../grammar/path.ts";
-import type { Presence, PresenceClause } from "../../grammar/required.ts";
+import { ABSENCE, sentencesOf, type Presence, type PresenceClause } from "../../grammar/required.ts";
 import type { TypeExpr } from "../../grammar/type-expr.ts";
 import type { Key, SpecIR, ValueList } from "../../ir-types.ts";
 import type { Lists } from "../../lists.ts";
@@ -54,6 +54,14 @@ export function readCondition(text: string): { member: string; value: unknown; u
   if (clean.length !== 1 || members.size !== 1) return null;
   return { member: clean[0]![0], value: literal(clean[0]![1]), undecided: undecided.map(([, v]) => literal(v)) };
 }
+
+/**
+ * A sentence that states an absence under a condition in another form, as
+ * "Absent on every other entry" or "Absent otherwise". "Absent: …",
+ * "Absent means …", and "Absent, or …: …" say what absence means, and state
+ * no condition.
+ */
+const ABSENT_OTHER = /^Absent\b(?!:| means\b|,)/;
 
 /** A value as the specification writes it in a code span: `true` and `false` are booleans, and a decimal integer is a number. */
 export function literal(text: string): unknown {
@@ -121,7 +129,14 @@ export function readConstraints(ir: SpecIR, lists?: Lists, readings: Reading[] =
       if (marker === null) return "a key table no statement attaches to a field";
       return fields.filter((f) => f.marker === marker).flatMap((f) => f.names.map((n) => ({ root: { owner: f.owner } as const, path: n.segments })));
     }
+    if (labelOf(k) !== null) return "a key table introduced by a label, whose rows the oracle places only for an absence (\"Absent unless …\")";
     return "a key table whose parent object the IR doesn't name";
+  };
+
+  /** The type a key table's label names, as the stack's \`CostParameters\` introduces its keys, or null for a table with any other parent. */
+  const labelOf = (k: Key): string | null => {
+    const parent = k.loc.table !== undefined ? tableById.get(k.loc.table)?.parent : undefined;
+    return parent?.via === "label" && parent.field === null && parent.member_of === null && parent.identifier !== null && /^[A-Z][A-Za-z0-9]*$/.test(parent.identifier) ? parent.identifier : null;
   };
 
   /** Where an inline object's members sit: each place its host row has, then the code span it is introduced by, as "`available[]` of { … }". */
@@ -161,10 +176,10 @@ export function readConstraints(ir: SpecIR, lists?: Lists, readings: Reading[] =
    * many objects up it sits, and the values its own cell lists, or null
    * when it lists none.
    */
-  const conditionRow = (root: SpecLocation["root"], path: PathSegment[], member: string): { up: number; values: unknown[] | null } | null => {
+  const conditionRow = (root: SpecLocation["root"], path: PathSegment[], member: string, among = rows): { up: number; values: unknown[] | null } | null => {
     for (let up = 0; up <= path.length; up++) {
       const want = placeKey(root, [...path.slice(0, path.length - up), seg(member)]);
-      const row = rows.find((r) => placeKey(r.root, r.path) === want);
+      const row = among.find((r) => placeKey(r.root, r.path) === want);
       if (!row) continue;
       const list = ir.value_lists.find((v) => row.lists.includes(v.id) && v.origin === "table_cell" && v.subject === null);
       return { up, values: list ? list.items.map((i) => literal(i.value)) : null };
@@ -230,6 +245,55 @@ export function readConstraints(ir: SpecIR, lists?: Lists, readings: Reading[] =
       const path = [...p.path, ...k.key.segments.slice(0, -1)];
       const member = k.key.segments.at(-1)!;
       presence(k.id, `${k.key.path} | ${k.required?.raw ?? ""}`, k.required?.parsed ?? null, p.root, path, member);
+    }
+  }
+
+  // An absence a row's Meaning or Description states, as § 2.6 has a key that must be absent under a condition say so there:
+  // "Absent unless <condition>" or "Absent when <condition>", in the grammar a REQUIRED when cell's condition reads. A key
+  // table a label introduces, as the stack's `CostParameters`, places its rows at the type the label names, for this form.
+  const labelRows = ir.keys.flatMap((k) => {
+    const type = labelOf(k);
+    return type === null ? [] : [{ id: k.id, lists: k.value_lists, root: { type } as SpecLocation["root"], path: k.key.segments }];
+  });
+  const absences: { id: string; text: string; places: { root: SpecLocation["root"]; path: PathSegment[] }[] | string }[] = [
+    ...fields.map((f) => ({ id: f.id, text: f.description.text, places: f.names.map((n) => ({ root: { owner: f.owner } as SpecLocation["root"], path: n.segments })) })),
+    ...ir.keys.map((k) => {
+      const type = labelOf(k);
+      const parents = type !== null ? [{ root: { type } as SpecLocation["root"], path: [] as PathSegment[] }] : keyParents(k);
+      return { id: k.id, text: k.meaning.text, places: typeof parents === "string" ? parents : parents.map((p) => ({ root: p.root, path: [...p.path, ...k.key.segments] })) };
+    }),
+  ];
+  for (const row of absences) {
+    for (const sentence of sentencesOf(row.text)) {
+      const m = ABSENCE.exec(sentence);
+      if (!m) {
+        if (ABSENT_OTHER.test(sentence)) unread.push({ element: row.id, form: "an absence in another form than \"Absent unless\" or \"Absent when\" a member is a value", text: sentence });
+        continue;
+      }
+      const unless = m[1] === "unless";
+      const read = readCondition(m[2]!);
+      if (read === null) {
+        unread.push({ element: row.id, form: "an absence condition in prose, not a member equal to a value", text: sentence });
+        continue;
+      }
+      if (typeof row.places === "string") {
+        unread.push({ element: row.id, form: row.places, text: sentence });
+        continue;
+      }
+      for (const p of row.places) {
+        const path = p.path.slice(0, -1);
+        const member = p.path.at(-1)!;
+        const cond = conditionRow(p.root, path, read.member, [...rows, ...labelRows]);
+        if (cond === null) {
+          unread.push({ element: row.id, form: "an absence condition on a member no row names", text: sentence });
+          continue;
+        }
+        const listed = typeof read.value === "boolean" ? [true, false] : (cond.values ?? []);
+        const others = listed.filter((x) => canonicalJson(x) !== canonicalJson(read.value) && !read.undecided.some((u) => canonicalJson(u) === canonicalJson(x)));
+        if (typeof read.value !== "boolean" && cond.values === null) unread.push({ element: row.id, form: "an absence condition's other side, whose member's row lists no values, so only the value it names is tested", text: sentence });
+        // "Absent unless `a` is `b`": absent while `a` is any other value, or absent itself; "Absent when `a` is `b`": absent while `a` is `b`.
+        add({ element: row.id, text: sentence, at: { root: p.root, path, member }, form: "absent", when: { member: read.member, up: cond.up }, holds: unless ? others : [read.value], otherwise: unless ? [read.value] : others, unless });
+      }
     }
   }
 

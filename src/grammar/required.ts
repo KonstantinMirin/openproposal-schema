@@ -76,3 +76,32 @@ export function parsePresence(raw: string, markers: readonly string[], line?: nu
   });
   return { kind: "clauses", clauses };
 }
+
+/**
+ * A sentence of a Meaning or Description cell that makes the member absent
+ * under a condition, as § 2.6 has a key that must be absent under a
+ * condition say so there: "Absent unless <condition>" or "Absent when
+ * <condition>", with the condition in the grammar of a REQUIRED when
+ * clause's.
+ */
+export const ABSENCE = /^Absent (unless|when) (.+?)\.?$/;
+
+/** A cell's sentences: each ends at a full stop that a space or the cell's end follows, outside a code span. */
+export function sentencesOf(text: string): string[] {
+  const out: string[] = [];
+  let code = false;
+  let start = 0;
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === "`") code = !code;
+    else if (!code && text[i] === "." && (i + 1 === text.length || text[i + 1] === " ")) {
+      out.push(text.slice(start, i + 1).trim());
+      start = i + 1;
+    }
+  }
+  const rest = text.slice(start).trim();
+  if (rest !== "") out.push(rest);
+  return out;
+}
+
+/** The sentences of a cell that state an absence under a condition (`ABSENCE`), each without its full stop. */
+export const absencesOf = (text: string): string[] => sentencesOf(text).filter((x) => ABSENCE.test(x)).map((x) => x.replace(/\.$/, ""));

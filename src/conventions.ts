@@ -258,7 +258,7 @@ export function keywordProblems(model: ModelDoc): string[] {
 /** Type rules § 5: a property never adds a constraint beside its `$ref`, only its description and the default its row states; a slot carries a description at most, and so does every `$ref` in a named type's filled schema. */
 export function besideReferenceProblems(model: ModelDoc): string[] {
   const problems: string[] = [];
-  const PROPERTY = new Set(["type", "presence", "condition", "cases", "marker", "description", "default", "sources", "given"]);
+  const PROPERTY = new Set(["type", "presence", "condition", "absent", "cases", "marker", "description", "default", "sources", "given"]);
   for (const { where, schema } of schemasOf(model)) {
     walkSchemas(schema, (s, pointer) => {
       if (!("$ref" in s)) return;

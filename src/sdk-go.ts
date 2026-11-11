@@ -124,6 +124,11 @@ function objectParts(shape: Shape, ctx: Ctx): { fields: string; validate: string
   for (const d of shape.within) lines.push(`\tcheckRequiredWithin(m, at, errs, ${str(d.member)}, []string{${d.inner.map(str).join(", ")}}, ${d.names.map(str).join(", ")})`);
   for (const b of shape.bounds) lines.push(`\tcheckBounds(m, at, errs, ${str(b.member)}, ${b.minItems}, ${b.unique})`);
   for (const r of shape.rejects) lines.push(`\tif x, ok := m[${str(r.sibling)}]; ok && jsonEqual(x, ${jsonLiteral(r.value)}) {`, `\t\terrs.add(member(at, ${str(r.sibling)}), "is %s, which it cannot be", ${str(JSON.stringify(r.value))})`, "\t}");
+  // A member absent unless a sibling equals a value: present, the sibling must hold the value.
+  for (const a of shape.absent) {
+    lines.push(`\tif _, ok := m[${str(a.member)}]; ok {`, `\t\tif x, ok := m[${str(a.sibling)}]; !ok || !jsonEqual(x, ${jsonLiteral(a.value)}) {`);
+    lines.push(`\t\t\terrs.add(at, "holds %s, which is absent unless %s is %s", ${str(JSON.stringify(a.member))}, ${str(JSON.stringify(a.sibling))}, ${str(JSON.stringify(a.value))})`, "\t\t}", "\t}");
+  }
   for (const p of shape.properties) lines.push(`\tif x, ok := m[${str(p.name)}]; ok {`, `\t\t${check(p.expr, "x", `member(at, ${str(p.name)})`)}`, "\t}");
   for (const c of shape.conditions) {
     lines.push(`\tif x, ok := m[${str(c.sibling)}]; ok && jsonEqual(x, ${jsonLiteral(c.value)}) {`);

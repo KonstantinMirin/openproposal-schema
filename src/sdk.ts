@@ -23,7 +23,7 @@
 import { Instantiator } from "./constructors.ts";
 import { canonicalJson } from "./canonical.ts";
 import { isTitledCodes } from "./conventions.ts";
-import { fieldOfSources, localSchemas, locationOf, nestedIf, templatesOf } from "./emit.ts";
+import { absentUnless, fieldOfSources, localSchemas, locationOf, nestedIf, templatesOf } from "./emit.ts";
 import type { TypeRef } from "./mapping.ts";
 import { KERNEL_MODULE } from "./mapping-rules.ts";
 import { extensionOf, VENDOR_CODE, type ModelDoc, type ModelProperty, type ModelType } from "./model.ts";
@@ -73,6 +73,11 @@ export interface Shape {
   /** `if: { type: "object", properties: { <sibling>: { const } }, required: [<sibling>] }, then: false`: the object is invalid while the sibling equals the value, as a daypart window whose `start` is `24:00`. */
   rejects: { sibling: string; value: string | number | boolean }[];
   /**
+   * `dependentSchemas: { <member>: { properties: { <sibling>: { const } }, required: [<sibling>] } }`: the member is absent
+   * unless the sibling equals the value, as a cost's `calendar_zone` is unless its `rate_unit` is `day`.
+   */
+  absent: { member: string; sibling: string; value: string | number | boolean }[];
+  /**
    * `if` the sibling equals the value, `then` the names are required and each
    * typed member is a value of its type too, as a commitment's `amount` is a
    * `Count` while `basis` is `units`. The conditions read one sibling, each
@@ -80,6 +85,10 @@ export interface Shape {
    */
   conditions: { sibling: string; value: string | number | boolean; require: string[]; types: { name: string; expr: Expr }[] }[];
 }
+
+/** Whether a type or template of the SDK leaves a member absent unless a sibling equals a value, which only then needs its check in the runtime. */
+export const usesAbsent = (sdk: Pick<SdkModel, "types" | "templates">): boolean =>
+  [...sdk.types.values()].some((t) => t.kind === "object" && t.shape.absent.length > 0) || [...sdk.templates.values()].some((t) => t.body.kind === "object" && t.body.shape.absent.length > 0);
 
 /** Every type expression a shape holds: its properties', and its conditions' typed members'. */
 export const shapeExprs = (shape: Shape): Expr[] => [...shape.properties.map((p) => p.expr), ...shape.conditions.flatMap((c) => c.types.map((x) => x.expr))];
@@ -410,6 +419,7 @@ export function buildSdkModel(model: ModelDoc, short: string): { sdk: SdkModel; 
       within: [],
       bounds,
       rejects: [],
+      absent: [],
       conditions: [],
     };
     if (s.minProperties !== undefined) shape.minProperties = Number(s.minProperties);
@@ -418,6 +428,12 @@ export function buildSdkModel(model: ModelDoc, short: string): { sdk: SdkModel; 
       if (!isMap(s.dependentSchemas)) throw new Error(`${where}: "dependentSchemas" isn't an object`);
       for (const [member, d] of Object.entries(s.dependentSchemas).sort(([a], [b]) => byString(a, b))) {
         if (!(member in props)) throw new Error(`${where}: "dependentSchemas" names "${member}", which is no property`);
+        const only = absentUnless(s, member);
+        if (only !== null) {
+          if (!(only.sibling in props)) throw new Error(`${where}: "dependentSchemas/${member}" names "${only.sibling}", which is no property`);
+          shape.absent.push({ member, ...only });
+          continue;
+        }
         const inner = nestedIf(s, member);
         if (inner !== null) {
           const names = ((d as { then: { required: unknown[] } }).then.required).map(String);
@@ -426,7 +442,7 @@ export function buildSdkModel(model: ModelDoc, short: string): { sdk: SdkModel; 
           continue;
         }
         if (!isMap(d) || Object.keys(d).join(",") !== "maxProperties" || !Number.isInteger(d.maxProperties)) {
-          throw new Error(`${where}: "dependentSchemas/${member}" is ${JSON.stringify(d)}; the SDK emitters know only { maxProperties: n } and an if on the member's own members with a then that requires names`);
+          throw new Error(`${where}: "dependentSchemas/${member}" is ${JSON.stringify(d)}; the SDK emitters know only { maxProperties: n }, a sibling's const that the member is absent without, and an if on the member's own members with a then that requires names`);
         }
         shape.dependent.push({ member, maxProperties: Number(d.maxProperties) });
       }

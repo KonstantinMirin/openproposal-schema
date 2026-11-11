@@ -13,7 +13,7 @@ from . import _runtime as rt
 from .commercial import AssentEntry, CancellationNotice, CommitmentAmountBasis, CommitmentBounds
 from .creative import MaterialsDue
 from .guarantees import CommittedMetric
-from .kernel import Amount, ApprovalStatus, Domain, FieldPointer, Instant, Interval, OpenObject, Party, PlainNumber, PlainString, ProposalStatus, Range, SafeInteger, Side, VersionRef
+from .kernel import Amount, ApprovalStatus, Domain, Duration, FieldPointer, Instant, Interval, OpenObject, Party, PlainNumber, PlainString, ProposalStatus, Range, SafeInteger, Side, VersionRef
 from .line_item import LineItem
 
 HistoryEntryAction = TypeAliasType("HistoryEntryAction", Literal["published", "requested", "granted", "countered", "declined", "withdrawn"])
@@ -57,6 +57,10 @@ class ProposalTypes:
     CUSTOM: Final = "custom"
 
 
+RequestedRetentionRange = Range[Duration]
+"""The copy `Range<T=Duration>`."""
+
+
 RequestedUnitBoundsRange = Range[SafeInteger]
 """The copy `Range<T=SafeInteger>`."""
 
@@ -72,6 +76,8 @@ class RequestedValue(rt.Closed):
     """A `pricing[].list_rate`"""
     materials_due: Optional[MaterialsDue] = None
     """The line item's `materials_due`"""
+    retention: Optional[Range[Duration]] = None
+    """The line item's `retention`"""
     unit_bounds: Optional[Range[SafeInteger]] = None
     """A `pricing[].unit_bounds`"""
 

@@ -11,7 +11,7 @@
  * may require members or narrow a member's type.
  */
 import { FORMAT_PATTERNS } from "./sdk-formats.ts";
-import { allConstants, constantsDoc, lockPhrase, provenanceDocs, type Constants, type Expr, type Provenance, type SdkFile, type SdkModel, type SdkTemplate, type SdkType, type Shape } from "./sdk.ts";
+import { allConstants, constantsDoc, lockPhrase, provenanceDocs, usesAbsent, type Constants, type Expr, type Provenance, type SdkFile, type SdkModel, type SdkTemplate, type SdkType, type Shape } from "./sdk.ts";
 import { sdkNames, type SpecNames } from "./profile.ts";
 
 /** The Zod release the generated code is written against, as the package pins it. */
@@ -76,6 +76,7 @@ function objectParts(shape: Shape, indent: string): { body: string; schema: stri
   for (const d of shape.within) checks.push(`rt.requiresWithin(${literal(d.member)}, ${JSON.stringify(d.inner)}, ${JSON.stringify(d.names)})`);
   for (const b of shape.bounds) checks.push(`rt.bounds(${literal(b.member)}, ${b.minItems}, ${b.unique})`);
   for (const r of shape.rejects) checks.push(`rt.rejects(${literal(r.sibling)}, ${JSON.stringify(r.value)})`);
+  for (const a of shape.absent) checks.push(`rt.absentUnless(${literal(a.member)}, ${literal(a.sibling)}, ${JSON.stringify(a.value)})`);
   for (const c of shape.conditions) {
     const types = c.types.length > 0 ? `, { ${c.types.map((x) => `${key(x.name)}: ${schemaOf(x.expr)}`).join(", ")} }` : "";
     checks.push(`rt.condition(${literal(c.sibling)}, ${JSON.stringify(c.value)}, ${JSON.stringify(c.require)}${types})`);
@@ -158,7 +159,18 @@ function templateDeclaration(t: SdkTemplate): string {
   return `${head}export interface ${t.name}<${tparams}> ${body}\n${fnHead}export function ${t.name}<${tparams}>(${args}): z.ZodType<${t.name}<${targs}>> {\n  return ${indented};\n}\n`;
 }
 
-const RUNTIME = (lock: string, short: string) => `${banner(lock, short)}/**
+/** The runtime's check of a member absent unless a sibling equals a value, which a runtime holds only where a type states one, so a build with none keeps its runtime as it was. */
+const ABSENT_UNLESS = [
+  "",
+  "/** A check that an object that holds `member` has its `sibling` equal to `value`, as a cost's `calendar_zone` is absent unless its `rate_unit` is `day`. */",
+  "export const absentUnless = (member: string, sibling: string, value: string | number | boolean) => (payload: Payload) => {",
+  "  const v = payload.value as Record<string, unknown>;",
+  '  if (member in v && v[sibling] !== value) fail(payload, `holds "${member}", which is absent unless "${sibling}" is ${JSON.stringify(value)}`);',
+  "};",
+  "",
+].join("\n");
+
+const RUNTIME = (lock: string, short: string, absent: boolean) => `${banner(lock, short)}/**
  * The checks the generated schemas share, where Zod doesn't state a check
  * the way JSON Schema 2020-12 does.
  */
@@ -250,7 +262,7 @@ export const rejects = (sibling: string, value: string | number | boolean) => (p
   const v = payload.value as Record<string, unknown>;
   if (sibling in v && v[sibling] === value) fail(payload, \`"\${sibling}" is \${JSON.stringify(value)}, which it cannot be\`);
 };
-
+${absent ? ABSENT_UNLESS : ""}
 /** A check that an object whose \`sibling\` equals \`value\` holds each of \`require\`, and that each member \`types\` names is a value of its type. */
 export const condition = (sibling: string, value: string | number | boolean, require: string[], types: Record<string, z.ZodType> = {}) => (payload: Payload) => {
   const v = payload.value as Record<string, unknown>;
@@ -405,7 +417,7 @@ export const TEMPLATES: Readonly<Record<string, Template>> = {
 ${templates}};
 `,
   });
-  files.push({ path: "src/runtime.ts", text: RUNTIME(lock, short) });
+  files.push({ path: "src/runtime.ts", text: RUNTIME(lock, short, usesAbsent(sdk)) });
   files.push({ path: "src/registry.ts", text: REGISTRY(lock, short) });
   files.push({
     path: "package.json",

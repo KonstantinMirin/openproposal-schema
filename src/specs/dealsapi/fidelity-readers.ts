@@ -20,7 +20,7 @@
  * gate checks it. So are the Example Scenarios' rows, which the examples
  * read.
  */
-import { jsonType, type ConstraintReader, type Restated, type SpecConstraint, type SpecLocation, type Unread } from "../../fidelity.ts";
+import { jsonType, pathText, type ConstraintReader, type Restated, type SpecConstraint, type SpecLocation, type Unread } from "../../fidelity.ts";
 import type { PathSegment } from "../../grammar/path.ts";
 import type { TypeExpr } from "../../grammar/type-expr.ts";
 import type { SpecIR } from "../../ir-types.ts";
@@ -44,7 +44,7 @@ export function readConstraints(ir: SpecIR): { constraints: SpecConstraint[]; un
   const constraints: SpecConstraint[] = [];
   const unread: Unread[] = [];
   const add = (c: DistributiveOmit<SpecConstraint, "id">) => {
-    const id = `${c.element}#${c.form}@${[("owner" in c.at.root ? c.at.root.owner : c.at.root.list), ...c.at.path.map((s) => s.name), c.at.member.name].join(".")}`;
+    const id = `${c.element}#${c.form}@${pathText(c.at)}`;
     if (!constraints.some((x) => x.id === id)) constraints.push({ ...c, id } as SpecConstraint);
   };
   const lists = new Map(ir.value_lists.map((v) => [v.id, v]));

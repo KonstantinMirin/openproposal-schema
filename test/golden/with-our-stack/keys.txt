@@ -65,265 +65,266 @@ key:4.1:RequestedValue.unit_bounds	OPTIONAL	line 1071
 key:4.1:RequestedValue.commitment_bounds	OPTIONAL	line 1072
 key:4.1:RequestedValue.materials_due	OPTIONAL	line 1073
 key:4.1:RequestedValue.committed_metrics[]	OPTIONAL	line 1074
-key:4.1.2:AssentEntry.role	REQUIRED	line 1218
-key:4.1.2:AssentEntry.version	REQUIRED	line 1219
-key:4.1.2:AssentEntry.record_digest	REQUIRED	line 1220
-key:4.1.2:AssentEntry.line_item_ids[]	REQUIRED	line 1221
-key:4.1.2:AssentEntry.at	REQUIRED	line 1222
-key:4.1.2:AssentEntry.idempotency_key	REQUIRED when `role` is `commitment`	line 1223
-key:4.1.2:AssentEntry.ground	REQUIRED when `role` is `decline`	line 1224
-key:4.1.4:Package.package_id	REQUIRED	line 1369
-key:4.1.4:Package.line_items[]	REQUIRED	line 1370
-key:4.1.4:Package.add_ons[]	OPTIONAL	line 1371
-key:4.1.4:Package.min_commitments[]	OPTIONAL	line 1372
-key:4.1.4:MinCommitment.line_item_id	REQUIRED	line 1382
-key:4.4:ChangeRequest.id	REQUIRED	line 1560
-key:4.4:ChangeRequest.baseline	REQUIRED	line 1561
-key:4.4:ChangeRequest.actor	REQUIRED	line 1562
-key:4.4:ChangeRequest.at	REQUIRED	line 1563
-key:4.4:ChangeRequest.accountid	OPTIONAL	line 1564
-key:4.4:ChangeRequest.comments	OPTIONAL	line 1565
-key:4.4:ChangeRequest.contacts[]	OPTIONAL	line 1566
-key:4.4:ChangeRequest.orderid	REQUIRED when the line item has an `order` reference (§ 5.10)	line 1567
-key:4.4:ChangeRequest.lineid	OPTIONAL	line 1568
-key:4.4:ChangeRequest.requesterid	OPTIONAL	line 1569
-key:4.4:ChangeRequest.providerdata	OPTIONAL	line 1570
-key:4.4:ChangeRequest.status	OPTIONAL	line 1571
-key:4.4:ChangeRequest.cancellation	OPTIONAL	line 1572
-key:4.4:ChangeRequest.ext	OPTIONAL	line 1573
-key:5.2.2:Placement.reward	OPTIONAL	line 1685
-key:5.2.2:Placement.instl	OPTIONAL	line 1686
-key:5.2.2:Placement.plcmt	REQUIRED when `channel` is `video`	line 1687
-key:5.2.2:Placement.skip	OPTIONAL	line 1688
-key:5.2.2:Placement.skipafter	OPTIONAL	line 1689
-key:5.2.2:Placement.playmethod[]	OPTIONAL	line 1690
-key:5.2.2:Placement.api[]	OPTIONAL	line 1691
-key:5.2.2:Placement.refresh	OPTIONAL	line 1692
-key:5.2.2:Placement.feed	REQUIRED when `channel` is `audio`	line 1693
-key:5.2.2:Placement.ssai	OPTIONAL	line 1694
-key:5.2.2:Refresh.min_interval_s	REQUIRED	line 1700
-key:5.2.3:BreakPositionOption.id	REQUIRED	line 1730
-key:5.2.3:BreakPositionOption.delay	OPTIONAL	line 1731
-key:5.2.3:BreakPositionOption.podseq	OPTIONAL	line 1732
-key:5.2.3:BreakPositionOption.slotinpod	OPTIONAL	line 1733
-key:5.2.3:BreakPositionOption.maxseq	OPTIONAL	line 1734
-key:5.2.3:BreakPositionOption.poddur	OPTIONAL	line 1735
-key:5.2.4:PropertyOption.id	REQUIRED	line 1761
-key:5.2.4:PropertyOption.name	OPTIONAL	line 1762
-key:5.2.4:PropertyOption.domains[]	REQUIRED when `apps[]` is absent	line 1763
-key:5.2.4:PropertyOption.apps[]	REQUIRED when `domains[]` is absent	line 1764
-key:5.2.4:PropertyOption.tv_channel	OPTIONAL	line 1765
-key:5.2.4:PropertyOption.tv_network	OPTIONAL	line 1766
-key:5.2.4:PropertyOption.seller_relationship	REQUIRED	line 1767
-key:5.2.4:PropertyOption.inventory_partner_domain	OPTIONAL	line 1768
-key:5.2.4:PropertyOption.seller_accounts[]	REQUIRED when `seller_relationship` is `reseller`, or the line item offers a deal mechanism (§ 5.9)	line 1769
-key:5.2.4:PropertyOption.child_audience	REQUIRED	line 1770
-key:5.2.4:PropertyOption.child_treatment	REQUIRED when `child_audience` is `mixed`	line 1771
-key:5.2.4:PropertyOption.venue_type	REQUIRED when `channel` is `dooh`	line 1772
-key:5.2.4:PropertyOption.allocation	OPTIONAL	line 1773
-key:5.2.4:PropertyOption.min_screens	OPTIONAL	line 1774
-key:5.2.4:PropertyOption.screens[]	REQUIRED when `channel` is `dooh` and `allocation` is `all`	line 1775
-key:5.2.4:PropertyOption.slots_per_loop	OPTIONAL	line 1776
-key:5.2.4:PropertyOption.sync_groups[]	OPTIONAL	line 1777
-key:5.2.5:AppId.store	REQUIRED	line 1785
-key:5.2.5:AppId.bundle	REQUIRED	line 1786
-key:5.2.5:App.store_url	OPTIONAL	line 1792
-key:5.2.5:App.developer_domain	RECOMMENDED	line 1793
-key:5.2.6:SellerAccount.asi	REQUIRED	line 1803
-key:5.2.6:SellerAccount.sid	REQUIRED	line 1804
-key:5.2.8:Screen.screen_id	REQUIRED	line 1846
-key:5.2.8:Screen.lat	OPTIONAL	line 1847
-key:5.2.8:Screen.lon	OPTIONAL	line 1848
-key:5.2.8:Screen.movable	OPTIONAL	line 1849
-key:5.2.8:Screen.time_zone	OPTIONAL	line 1850
-key:5.2.8:Screen.operating_hours[]	OPTIONAL	line 1851
-key:5.2.8:Screen.loop	OPTIONAL	line 1852
-key:5.2.8:Loop.length_s	REQUIRED	line 1858
-key:5.2.8:Loop.slot_s	REQUIRED	line 1859
-key:5.2.8:SyncGroup.sync_group_id	REQUIRED	line 1865
-key:5.2.8:SyncGroup.screen_ids[]	REQUIRED	line 1866
-key:5.2.8:SyncGroup.min_screens_per_play	REQUIRED	line 1867
-key:5.2.9:ProgramOption.id	REQUIRED	line 1881
-key:5.2.9:ProgramOption.content	OPTIONAL	line 1882
-key:5.2.9:ProgramOption.schedule	OPTIONAL	line 1883
-key:5.2.9:EventSchedule.scheduledstart	REQUIRED	line 1891
-key:5.2.9:EventSchedule.scheduledend	REQUIRED	line 1892
-key:5.2.9:EventSchedule.flexibleend	OPTIONAL	line 1893
-key:5.2.9:EventSchedule.eventstatus	RECOMMENDED	line 1894
-key:5.3:AudienceOption.id	REQUIRED	line 1927
-key:5.3:AudienceOption.name	OPTIONAL	line 1928
-key:5.3:AudienceOption.taxonomy	REQUIRED	line 1929
-key:5.3:AudienceOption.data_label	REQUIRED	line 1930
-key:5.3:AudienceOption.sensitive_categories[]	REQUIRED	line 1931
-key:5.3:AudienceOption.excludable	OPTIONAL	line 1932
-key:5.3:AudienceSelectable.combine	REQUIRED when more than one seller audience can be in effect	line 1938
-key:5.3:AudienceSelectable.excluded[]	OPTIONAL	line 1939
-key:5.3:BuyerSupplied.segments_allowed	OPTIONAL	line 1963
-key:5.3:BuyerSupplied.suppression_allowed	OPTIONAL	line 1964
-key:5.3:BuyerSupplied.expected_match_rate	OPTIONAL	line 1965
-key:5.3:BuyerSupplied.segments[]	OPTIONAL	line 1966
-key:5.3:BuyerSupplied.suppression_list	OPTIONAL	line 1967
-key:5.3:BuyerList.list_id	REQUIRED	line 1974
-key:5.3:BuyerList.source	OPTIONAL	line 1975
-key:5.3:BuyerList.size	OPTIONAL	line 1976
-key:5.3:BuyerList.match_method	OPTIONAL	line 1977
-key:5.3:AddressableScale.quantity	REQUIRED	line 1983
-key:5.3:AddressableScale.unit	REQUIRED	line 1984
-key:5.3:AddressableScale.window	REQUIRED	line 1985
-key:5.4:FormatSpec.spec_ref	OPTIONAL	line 2007
-key:5.4:FormatSpec.spec	REQUIRED	line 2008
-key:5.4:MaterialsDue.at	REQUIRED when `before_start` is absent	line 2031
-key:5.4:MaterialsDue.before_start	REQUIRED when `at` is absent	line 2032
-key:5.4:Asset.asset_id	REQUIRED	line 2038
-key:5.4:Asset.format_id	REQUIRED	line 2039
-key:5.4:Asset.url	REQUIRED when `markup` is absent	line 2040
-key:5.4:Asset.markup	REQUIRED when `url` is absent	line 2041
-key:5.4:Asset.submitted_at	OPTIONAL	line 2042
-key:5.4:Asset.built_by	OPTIONAL	line 2043
-key:5.4:Asset.provenance	OPTIONAL	line 2044
-key:5.4:Asset.approval_status	OPTIONAL	line 2045
-key:5.4:AssetProvenance.synthetic	REQUIRED	line 2055
-key:5.4:AssetProvenance.generator	OPTIONAL	line 2056
-key:5.4:AssetProvenance.model_version	OPTIONAL	line 2057
-key:5.4:AssetProvenance.voice_consent_ref	OPTIONAL	line 2058
-key:5.4:AssetProvenance.disclosure_methods[]	OPTIONAL	line 2059
-key:5.4:AssetProvenance.content_digest	OPTIONAL	line 2060
-key:5.4:CreativeDelivery.method	REQUIRED	line 2066
-key:5.4:CreativeDelivery.protocols[]	OPTIONAL	line 2067
-key:5.4:CreativeDelivery.other_protocols[]	OPTIONAL	line 2068
-key:5.4:CreativeDelivery.secure_required	OPTIONAL	line 2069
-key:5.4:CreativeDelivery.endpoint	OPTIONAL	line 2070
-key:5.4:ProductionOption.id	REQUIRED	line 2090
-key:5.4:ProductionOption.custom_unit	OPTIONAL	line 2091
-key:5.4:ProductionOption.built_by	OPTIONAL	line 2092
-key:5.4:ProductionOption.lead_time	OPTIONAL	line 2093
-key:5.5:AcceptedExclusions.types	REQUIRED	line 2195
-key:5.5:AcceptedExclusions.verification[]	OPTIONAL	line 2196
-key:5.5:ExclusionTerms.enforcement	REQUIRED	line 2202
-key:5.5:ExclusionTerms.max_entries	OPTIONAL	line 2203
-key:5.5:ClockWindow.days[]	REQUIRED	line 2246
-key:5.5:ClockWindow.start	REQUIRED	line 2247
-key:5.5:ClockWindow.before	REQUIRED	line 2248
-key:5.5:FrequencyCap.count	REQUIRED	line 2279
-key:5.5:FrequencyCap.period	REQUIRED	line 2280
-key:5.5:FrequencyCap.per	REQUIRED	line 2281
-key:5.6:Availability.unit	REQUIRED	line 2357
-key:5.6:Availability.quantity	REQUIRED	line 2358
-key:5.6:Availability.computed_at	REQUIRED	line 2359
-key:5.6:Availability.window	REQUIRED	line 2360
-key:5.6:Availability.granularity	OPTIONAL	line 2361
-key:5.6:Availability.certainty	REQUIRED	line 2362
-key:5.6.1:CommitmentAmount.basis	REQUIRED	line 2397
-key:5.6.1:CommitmentAmount.amount	REQUIRED	line 2398
-key:5.6.1:Commitment.pricing_id	REQUIRED when `pricing[]` has more than one entry	line 2404
-key:5.6.1:Commitment.flight	REQUIRED	line 2405
-key:5.6.1:Commitment.advertisers[]	REQUIRED	line 2406
-key:5.6.1:Commitment.derived_units	OPTIONAL	line 2407
-key:5.6.1:CommitmentBounds.spend	OPTIONAL	line 2416
-key:5.6.1:CommitmentBounds.earliest_start	OPTIONAL	line 2417
-key:5.6.1:CommitmentBounds.latest_end	OPTIONAL	line 2418
-key:5.6.1:Commit.entry	REQUIRED	line 2424
-key:5.6.1:Commit.writes	REQUIRED	line 2425
-key:5.6.1:CommitResult.entries[]	REQUIRED	line 2431
-key:5.6.1:CommitResult.availability	REQUIRED when `entries[]` holds a `decline` for lack of availability	line 2432
-key:5.6.2:HoldTerms.available	REQUIRED	line 2484
-key:5.6.2:HoldTerms.duration	OPTIONAL	line 2485
-key:5.6.2:Hold.status	REQUIRED	line 2491
-key:5.6.2:Hold.version	REQUIRED	line 2492
-key:5.6.2:Hold.requested_terms	OPTIONAL	line 2493
-key:5.6.2:Hold.held_availability	OPTIONAL	line 2494
-key:5.6.2:Hold.position	OPTIONAL	line 2495
-key:5.6.2:Hold.reference	OPTIONAL	line 2496
-key:5.6.2:Hold.valid_until	REQUIRED when `status` is `held`	line 2497
-key:5.6.4:DeliveryCounting.play_tolerance_ms	REQUIRED	line 2568
-key:5.6.4:DeliveryCounting.proof_of_performance	REQUIRED	line 2569
-key:5.6.4:DeliveryCounting.partial_play_credit	REQUIRED when a property has `sync_groups[]`	line 2570
-key:5.6.4:DeliveryCounting.impression_multiplier	REQUIRED when the line item counts impressions	line 2571
-key:5.6.4:ProofOfPerformance.logged_by	REQUIRED	line 2577
-key:5.6.4:ProofOfPerformance.evidence[]	REQUIRED	line 2578
-key:5.6.4:ImpressionMultiplier.impression_type	REQUIRED	line 2584
-key:5.6.4:ImpressionMultiplier.source_type	REQUIRED	line 2585
-key:5.6.4:ImpressionMultiplier.vendor	REQUIRED when `source_type` is not Publisher Provided (`2`)	line 2586
-key:5.6.4:ImpressionMultiplier.accreditation	OPTIONAL	line 2587
-key:5.6.4:ImpressionMultiplier.dataset	REQUIRED	line 2588
-key:5.6.4:ImpressionMultiplier.demographic	OPTIONAL	line 2589
-key:5.6.4:ImpressionMultiplier.settles_on	REQUIRED	line 2590
-key:5.6.5:CostParameters.viewability_standard	REQUIRED when `cost_method` is `CPMV`	line 2632
-key:5.6.5:CostParameters.view_s	REQUIRED when `cost_method` is `CPV` and `view_fraction` is absent	line 2633
-key:5.6.5:CostParameters.view_fraction	REQUIRED when `cost_method` is `CPV` and `view_s` is absent	line 2634
-key:5.6.5:CostParameters.demographic	REQUIRED when `cost_method` is `CPP`	line 2635
-key:5.6.5:CostParameters.rating_source	REQUIRED when `cost_method` is `CPP`	line 2636
-key:5.6.5:CostParameters.action_type	REQUIRED when `cost_method` is `CPA`	line 2637
-key:5.6.5:CostParameters.attribution_window	REQUIRED when `cost_method` is `CPA`	line 2638
-key:5.6.5:CostParameters.action_source	REQUIRED when `cost_method` is `CPA`	line 2639
-key:5.6.5:CostParameters.rate_unit	REQUIRED when `cost_method` is `TIME`	line 2640
-key:5.6.5:CostParameters.calendar_zone	OPTIONAL	line 2641
-key:5.6.6:CancellationOption.id	REQUIRED	line 2689
-key:5.6.6:CancellationOption.notice_duration	REQUIRED	line 2690
-key:5.6.6:CancellationOption.max_share	REQUIRED	line 2691
-key:5.6.6:CancellationOption.fees[]	REQUIRED	line 2692
-key:5.6.6:CancellationOption.notice_reference	OPTIONAL	line 2693
-key:5.6.6:CancellationOption.dated_shares[]	OPTIONAL	line 2694
-key:5.6.6:Fee.before_reference	OPTIONAL	line 2700
-key:5.6.6:Fee.calculation	REQUIRED	line 2701
-key:5.6.6:Fee.share	REQUIRED when `calculation` is `cancelled` or `commitment`	line 2702
-key:5.6.6:Fee.amount	REQUIRED when `calculation` is `fixed`	line 2703
-key:5.6.6:DatedShare.window	REQUIRED	line 2710
-key:5.6.6:DatedShare.max_share	REQUIRED	line 2711
-key:5.6.6:CancellationNotice.option_id	REQUIRED	line 2729
-key:5.6.6:CancellationNotice.notice_received_at	REQUIRED	line 2730
-key:5.6.6:CancellationNotice.requested_effective_at	REQUIRED	line 2731
-key:5.6.6:CancellationNotice.cancelled_share	REQUIRED	line 2732
-key:5.6.7:ExclusivityOption.id	REQUIRED	line 2740
-key:5.6.7:ExclusivityOption.scope	REQUIRED	line 2741
-key:5.6.7:ExclusivityOption.categories	REQUIRED when `scope` is `category`	line 2742
-key:5.6.7:ExclusivityOption.competitors[]	OPTIONAL	line 2743
-key:5.6.7:ExclusivityOption.separation	REQUIRED	line 2744
-key:5.6.7:ExclusivityOption.window	OPTIONAL	line 2745
-key:5.6.7:Preemption.reason	REQUIRED	line 2761
-key:5.6.7:Preemption.notice_duration	OPTIONAL	line 2762
-key:5.6.7:Preemption.remedy	OPTIONAL	line 2763
-key:5.7.1:CommittedMetric.metric	REQUIRED	line 2794
-key:5.7.1:CommittedMetric.level	REQUIRED	line 2795
-key:5.7.1:CommittedMetric.direction	REQUIRED	line 2796
-key:5.7.1:MeasurementOption.id	REQUIRED	line 2813
-key:5.7.1:MeasurementOption.measured_by	REQUIRED	line 2814
-key:5.7.1:MeasurementOption.attribution_window	OPTIONAL	line 2815
-key:5.7.1:MeasurementOption.qualifier	OPTIONAL	line 2816
-key:5.7.1:ControllingMeasurementOption.id	REQUIRED	line 2822
-key:5.7.1:ControllingMeasurementOption.counted_by	REQUIRED	line 2823
-key:5.7.1:ControllingMeasurementOption.qualifier	OPTIONAL	line 2824
-key:5.7.1:ControllingMeasurementOption.discrepancy_threshold	OPTIONAL	line 2825
-key:5.7.1:ControllingMeasurementOption.final_after	OPTIONAL	line 2826
-key:5.7.1:ReportingOption.id	REQUIRED	line 2832
-key:5.7.1:ReportingOption.report_type	REQUIRED	line 2833
-key:5.7.1:ReportingOption.cadence	OPTIONAL	line 2834
-key:5.7.1:ReportingOption.delivery_method	OPTIONAL	line 2835
-key:5.7.1:ReportingOption.provided_metrics[]	OPTIONAL	line 2836
-key:5.7.1:ReportingOption.latency	OPTIONAL	line 2837
-key:5.7.1:ShortfallRemedy.remedy_terms	OPTIONAL	line 2843
-key:5.7.1:RemedyTerms.makegood_window	OPTIONAL	line 2849
-key:5.7.1:RemedyTerms.makegood_type	OPTIONAL	line 2850
-key:5.8:RequiredCredential.credential_type	REQUIRED	line 2945
-key:5.8:RequiredCredential.issuer	REQUIRED	line 2946
-key:5.9:MechanismOption.id	REQUIRED	line 2972
-key:5.9:MechanismOption.delivery_type	REQUIRED	line 2973
-key:5.9:BuyerRequirements.seats_expected	OPTIONAL	line 2991
-key:5.9:BuyerRequirements.allowed_dsps[]	OPTIONAL	line 2992
-key:5.9:BuyerRequirements.seats	OPTIONAL	line 2993
-key:5.9:BuyerRequirements.seat_owner	OPTIONAL	line 2994
-key:5.10:ExternalReference.system	REQUIRED	line 3054
-key:5.10:ExternalReference.namespace	OPTIONAL	line 3055
-key:5.10:ExternalReference.id	REQUIRED	line 3056
-key:5.10:ExternalReference.reference_type	REQUIRED	line 3057
-key:5.10:Agreement.agreement_id	REQUIRED	line 3063
-key:5.10:Agreement.parties[]	OPTIONAL	line 3064
-key:5.10:Agreement.agreement_type	OPTIONAL	line 3065
-key:5.10:Agreement.term	OPTIONAL	line 3066
-key:5.10:Agreement.document	OPTIONAL	line 3067
-key:5.10:Billing.delivering_party	OPTIONAL	line 3073
-key:5.10:Billing.invoicing_party	OPTIONAL	line 3074
-key:5.10:Billing.payment_terms	OPTIONAL	line 3075
-key:5.10:Billing.invoice_period	OPTIONAL	line 3076
-key:5.10:Billing.cycle_length	REQUIRED when `invoice_period` is `cycle`	line 3077
-key:5.10:Billing.time_zone	OPTIONAL	line 3078
+key:4.1:RequestedValue.retention	OPTIONAL	line 1075
+key:4.1.2:AssentEntry.role	REQUIRED	line 1219
+key:4.1.2:AssentEntry.version	REQUIRED	line 1220
+key:4.1.2:AssentEntry.record_digest	REQUIRED	line 1221
+key:4.1.2:AssentEntry.line_item_ids[]	REQUIRED	line 1222
+key:4.1.2:AssentEntry.at	REQUIRED	line 1223
+key:4.1.2:AssentEntry.idempotency_key	REQUIRED when `role` is `commitment`	line 1224
+key:4.1.2:AssentEntry.ground	REQUIRED when `role` is `decline`	line 1225
+key:4.1.4:Package.package_id	REQUIRED	line 1370
+key:4.1.4:Package.line_items[]	REQUIRED	line 1371
+key:4.1.4:Package.add_ons[]	OPTIONAL	line 1372
+key:4.1.4:Package.min_commitments[]	OPTIONAL	line 1373
+key:4.1.4:MinCommitment.line_item_id	REQUIRED	line 1383
+key:4.4:ChangeRequest.id	REQUIRED	line 1561
+key:4.4:ChangeRequest.baseline	REQUIRED	line 1562
+key:4.4:ChangeRequest.actor	REQUIRED	line 1563
+key:4.4:ChangeRequest.at	REQUIRED	line 1564
+key:4.4:ChangeRequest.accountid	OPTIONAL	line 1565
+key:4.4:ChangeRequest.comments	OPTIONAL	line 1566
+key:4.4:ChangeRequest.contacts[]	OPTIONAL	line 1567
+key:4.4:ChangeRequest.orderid	REQUIRED when the line item has an `order` reference (§ 5.10)	line 1568
+key:4.4:ChangeRequest.lineid	OPTIONAL	line 1569
+key:4.4:ChangeRequest.requesterid	OPTIONAL	line 1570
+key:4.4:ChangeRequest.providerdata	OPTIONAL	line 1571
+key:4.4:ChangeRequest.status	OPTIONAL	line 1572
+key:4.4:ChangeRequest.cancellation	OPTIONAL	line 1573
+key:4.4:ChangeRequest.ext	OPTIONAL	line 1574
+key:5.2.2:Placement.reward	OPTIONAL	line 1686
+key:5.2.2:Placement.instl	OPTIONAL	line 1687
+key:5.2.2:Placement.plcmt	REQUIRED when `channel` is `video`	line 1688
+key:5.2.2:Placement.skip	OPTIONAL	line 1689
+key:5.2.2:Placement.skipafter	OPTIONAL	line 1690
+key:5.2.2:Placement.playmethod[]	OPTIONAL	line 1691
+key:5.2.2:Placement.api[]	OPTIONAL	line 1692
+key:5.2.2:Placement.refresh	OPTIONAL	line 1693
+key:5.2.2:Placement.feed	REQUIRED when `channel` is `audio`	line 1694
+key:5.2.2:Placement.ssai	OPTIONAL	line 1695
+key:5.2.2:Refresh.min_interval_s	REQUIRED	line 1701
+key:5.2.3:BreakPositionOption.id	REQUIRED	line 1731
+key:5.2.3:BreakPositionOption.delay	OPTIONAL	line 1732
+key:5.2.3:BreakPositionOption.podseq	OPTIONAL	line 1733
+key:5.2.3:BreakPositionOption.slotinpod	OPTIONAL	line 1734
+key:5.2.3:BreakPositionOption.maxseq	OPTIONAL	line 1735
+key:5.2.3:BreakPositionOption.poddur	OPTIONAL	line 1736
+key:5.2.4:PropertyOption.id	REQUIRED	line 1762
+key:5.2.4:PropertyOption.name	OPTIONAL	line 1763
+key:5.2.4:PropertyOption.domains[]	REQUIRED when `apps[]` is absent	line 1764
+key:5.2.4:PropertyOption.apps[]	REQUIRED when `domains[]` is absent	line 1765
+key:5.2.4:PropertyOption.tv_channel	OPTIONAL	line 1766
+key:5.2.4:PropertyOption.tv_network	OPTIONAL	line 1767
+key:5.2.4:PropertyOption.seller_relationship	REQUIRED	line 1768
+key:5.2.4:PropertyOption.inventory_partner_domain	OPTIONAL	line 1769
+key:5.2.4:PropertyOption.seller_accounts[]	REQUIRED when `seller_relationship` is `reseller`, or the line item offers a deal mechanism (§ 5.9)	line 1770
+key:5.2.4:PropertyOption.child_audience	REQUIRED	line 1771
+key:5.2.4:PropertyOption.child_treatment	REQUIRED when `child_audience` is `mixed`	line 1772
+key:5.2.4:PropertyOption.venue_type	REQUIRED when `channel` is `dooh`	line 1773
+key:5.2.4:PropertyOption.allocation	OPTIONAL	line 1774
+key:5.2.4:PropertyOption.min_screens	OPTIONAL	line 1775
+key:5.2.4:PropertyOption.screens[]	REQUIRED when `channel` is `dooh` and `allocation` is `all`	line 1776
+key:5.2.4:PropertyOption.slots_per_loop	OPTIONAL	line 1777
+key:5.2.4:PropertyOption.sync_groups[]	OPTIONAL	line 1778
+key:5.2.5:AppId.store	REQUIRED	line 1786
+key:5.2.5:AppId.bundle	REQUIRED	line 1787
+key:5.2.5:App.store_url	OPTIONAL	line 1793
+key:5.2.5:App.developer_domain	RECOMMENDED	line 1794
+key:5.2.6:SellerAccount.asi	REQUIRED	line 1804
+key:5.2.6:SellerAccount.sid	REQUIRED	line 1805
+key:5.2.8:Screen.screen_id	REQUIRED	line 1847
+key:5.2.8:Screen.lat	OPTIONAL	line 1848
+key:5.2.8:Screen.lon	OPTIONAL	line 1849
+key:5.2.8:Screen.movable	OPTIONAL	line 1850
+key:5.2.8:Screen.time_zone	OPTIONAL	line 1851
+key:5.2.8:Screen.operating_hours[]	OPTIONAL	line 1852
+key:5.2.8:Screen.loop	OPTIONAL	line 1853
+key:5.2.8:Loop.length_s	REQUIRED	line 1859
+key:5.2.8:Loop.slot_s	REQUIRED	line 1860
+key:5.2.8:SyncGroup.sync_group_id	REQUIRED	line 1866
+key:5.2.8:SyncGroup.screen_ids[]	REQUIRED	line 1867
+key:5.2.8:SyncGroup.min_screens_per_play	REQUIRED	line 1868
+key:5.2.9:ProgramOption.id	REQUIRED	line 1882
+key:5.2.9:ProgramOption.content	OPTIONAL	line 1883
+key:5.2.9:ProgramOption.schedule	OPTIONAL	line 1884
+key:5.2.9:EventSchedule.scheduledstart	REQUIRED	line 1892
+key:5.2.9:EventSchedule.scheduledend	REQUIRED	line 1893
+key:5.2.9:EventSchedule.flexibleend	OPTIONAL	line 1894
+key:5.2.9:EventSchedule.eventstatus	RECOMMENDED	line 1895
+key:5.3:AudienceOption.id	REQUIRED	line 1928
+key:5.3:AudienceOption.name	OPTIONAL	line 1929
+key:5.3:AudienceOption.taxonomy	REQUIRED	line 1930
+key:5.3:AudienceOption.data_label	REQUIRED	line 1931
+key:5.3:AudienceOption.sensitive_categories[]	REQUIRED	line 1932
+key:5.3:AudienceOption.excludable	OPTIONAL	line 1933
+key:5.3:AudienceSelectable.combine	REQUIRED when more than one seller audience can be in effect	line 1939
+key:5.3:AudienceSelectable.excluded[]	OPTIONAL	line 1940
+key:5.3:BuyerSupplied.segments_allowed	OPTIONAL	line 1964
+key:5.3:BuyerSupplied.suppression_allowed	OPTIONAL	line 1965
+key:5.3:BuyerSupplied.expected_match_rate	OPTIONAL	line 1966
+key:5.3:BuyerSupplied.segments[]	OPTIONAL	line 1967
+key:5.3:BuyerSupplied.suppression_list	OPTIONAL	line 1968
+key:5.3:BuyerList.list_id	REQUIRED	line 1975
+key:5.3:BuyerList.source	OPTIONAL	line 1976
+key:5.3:BuyerList.size	OPTIONAL	line 1977
+key:5.3:BuyerList.match_method	OPTIONAL	line 1978
+key:5.3:AddressableScale.quantity	REQUIRED	line 1984
+key:5.3:AddressableScale.unit	REQUIRED	line 1985
+key:5.3:AddressableScale.window	REQUIRED	line 1986
+key:5.4:FormatSpec.spec_ref	OPTIONAL	line 2008
+key:5.4:FormatSpec.spec	REQUIRED	line 2009
+key:5.4:MaterialsDue.at	REQUIRED when `before_start` is absent	line 2032
+key:5.4:MaterialsDue.before_start	REQUIRED when `at` is absent	line 2033
+key:5.4:Asset.asset_id	REQUIRED	line 2039
+key:5.4:Asset.format_id	REQUIRED	line 2040
+key:5.4:Asset.url	REQUIRED when `markup` is absent	line 2041
+key:5.4:Asset.markup	REQUIRED when `url` is absent	line 2042
+key:5.4:Asset.submitted_at	OPTIONAL	line 2043
+key:5.4:Asset.built_by	OPTIONAL	line 2044
+key:5.4:Asset.provenance	OPTIONAL	line 2045
+key:5.4:Asset.approval_status	OPTIONAL	line 2046
+key:5.4:AssetProvenance.synthetic	REQUIRED	line 2056
+key:5.4:AssetProvenance.generator	OPTIONAL	line 2057
+key:5.4:AssetProvenance.model_version	OPTIONAL	line 2058
+key:5.4:AssetProvenance.voice_consent_ref	OPTIONAL	line 2059
+key:5.4:AssetProvenance.disclosure_methods[]	OPTIONAL	line 2060
+key:5.4:AssetProvenance.content_digest	OPTIONAL	line 2061
+key:5.4:CreativeDelivery.method	REQUIRED	line 2067
+key:5.4:CreativeDelivery.protocols[]	OPTIONAL	line 2068
+key:5.4:CreativeDelivery.other_protocols[]	OPTIONAL	line 2069
+key:5.4:CreativeDelivery.secure_required	OPTIONAL	line 2070
+key:5.4:CreativeDelivery.endpoint	OPTIONAL	line 2071
+key:5.4:ProductionOption.id	REQUIRED	line 2091
+key:5.4:ProductionOption.custom_unit	OPTIONAL	line 2092
+key:5.4:ProductionOption.built_by	OPTIONAL	line 2093
+key:5.4:ProductionOption.lead_time	OPTIONAL	line 2094
+key:5.5:AcceptedExclusions.types	REQUIRED	line 2196
+key:5.5:AcceptedExclusions.verification[]	OPTIONAL	line 2197
+key:5.5:ExclusionTerms.enforcement	REQUIRED	line 2203
+key:5.5:ExclusionTerms.max_entries	OPTIONAL	line 2204
+key:5.5:ClockWindow.days[]	REQUIRED	line 2247
+key:5.5:ClockWindow.start	REQUIRED	line 2248
+key:5.5:ClockWindow.before	REQUIRED	line 2249
+key:5.5:FrequencyCap.count	REQUIRED	line 2280
+key:5.5:FrequencyCap.period	REQUIRED	line 2281
+key:5.5:FrequencyCap.per	REQUIRED	line 2282
+key:5.6:Availability.unit	REQUIRED	line 2358
+key:5.6:Availability.quantity	REQUIRED	line 2359
+key:5.6:Availability.computed_at	REQUIRED	line 2360
+key:5.6:Availability.window	REQUIRED	line 2361
+key:5.6:Availability.granularity	OPTIONAL	line 2362
+key:5.6:Availability.certainty	REQUIRED	line 2363
+key:5.6.1:CommitmentAmount.basis	REQUIRED	line 2398
+key:5.6.1:CommitmentAmount.amount	REQUIRED	line 2399
+key:5.6.1:Commitment.pricing_id	REQUIRED when `pricing[]` has more than one entry	line 2405
+key:5.6.1:Commitment.flight	REQUIRED	line 2406
+key:5.6.1:Commitment.advertisers[]	REQUIRED	line 2407
+key:5.6.1:Commitment.derived_units	OPTIONAL	line 2408
+key:5.6.1:CommitmentBounds.spend	OPTIONAL	line 2417
+key:5.6.1:CommitmentBounds.earliest_start	OPTIONAL	line 2418
+key:5.6.1:CommitmentBounds.latest_end	OPTIONAL	line 2419
+key:5.6.1:Commit.entry	REQUIRED	line 2425
+key:5.6.1:Commit.writes	REQUIRED	line 2426
+key:5.6.1:CommitResult.entries[]	REQUIRED	line 2432
+key:5.6.1:CommitResult.availability	REQUIRED when `entries[]` holds a `decline` for lack of availability	line 2433
+key:5.6.2:HoldTerms.available	REQUIRED	line 2485
+key:5.6.2:HoldTerms.duration	OPTIONAL	line 2486
+key:5.6.2:Hold.status	REQUIRED	line 2492
+key:5.6.2:Hold.version	REQUIRED	line 2493
+key:5.6.2:Hold.requested_terms	OPTIONAL	line 2494
+key:5.6.2:Hold.held_availability	OPTIONAL	line 2495
+key:5.6.2:Hold.position	OPTIONAL	line 2496
+key:5.6.2:Hold.reference	OPTIONAL	line 2497
+key:5.6.2:Hold.valid_until	REQUIRED when `status` is `held`	line 2498
+key:5.6.4:DeliveryCounting.play_tolerance_ms	REQUIRED	line 2569
+key:5.6.4:DeliveryCounting.proof_of_performance	REQUIRED	line 2570
+key:5.6.4:DeliveryCounting.partial_play_credit	REQUIRED when a property has `sync_groups[]`	line 2571
+key:5.6.4:DeliveryCounting.impression_multiplier	REQUIRED when the line item counts impressions	line 2572
+key:5.6.4:ProofOfPerformance.logged_by	REQUIRED	line 2578
+key:5.6.4:ProofOfPerformance.evidence[]	REQUIRED	line 2579
+key:5.6.4:ImpressionMultiplier.impression_type	REQUIRED	line 2585
+key:5.6.4:ImpressionMultiplier.source_type	REQUIRED	line 2586
+key:5.6.4:ImpressionMultiplier.vendor	REQUIRED when `source_type` is not Publisher Provided (`2`)	line 2587
+key:5.6.4:ImpressionMultiplier.accreditation	OPTIONAL	line 2588
+key:5.6.4:ImpressionMultiplier.dataset	REQUIRED	line 2589
+key:5.6.4:ImpressionMultiplier.demographic	OPTIONAL	line 2590
+key:5.6.4:ImpressionMultiplier.settles_on	REQUIRED	line 2591
+key:5.6.5:CostParameters.viewability_standard	REQUIRED when `cost_method` is `CPMV`	line 2633
+key:5.6.5:CostParameters.view_s	REQUIRED when `cost_method` is `CPV` and `view_fraction` is absent	line 2634
+key:5.6.5:CostParameters.view_fraction	REQUIRED when `cost_method` is `CPV` and `view_s` is absent	line 2635
+key:5.6.5:CostParameters.demographic	REQUIRED when `cost_method` is `CPP`	line 2636
+key:5.6.5:CostParameters.rating_source	REQUIRED when `cost_method` is `CPP`	line 2637
+key:5.6.5:CostParameters.action_type	REQUIRED when `cost_method` is `CPA`	line 2638
+key:5.6.5:CostParameters.attribution_window	REQUIRED when `cost_method` is `CPA`	line 2639
+key:5.6.5:CostParameters.action_source	REQUIRED when `cost_method` is `CPA`	line 2640
+key:5.6.5:CostParameters.rate_unit	REQUIRED when `cost_method` is `TIME`	line 2641
+key:5.6.5:CostParameters.calendar_zone	OPTIONAL	line 2642
+key:5.6.6:CancellationOption.id	REQUIRED	line 2690
+key:5.6.6:CancellationOption.notice_duration	REQUIRED	line 2691
+key:5.6.6:CancellationOption.max_share	REQUIRED	line 2692
+key:5.6.6:CancellationOption.fees[]	REQUIRED	line 2693
+key:5.6.6:CancellationOption.notice_reference	OPTIONAL	line 2694
+key:5.6.6:CancellationOption.dated_shares[]	OPTIONAL	line 2695
+key:5.6.6:Fee.before_reference	OPTIONAL	line 2701
+key:5.6.6:Fee.calculation	REQUIRED	line 2702
+key:5.6.6:Fee.share	REQUIRED when `calculation` is `cancelled` or `commitment`	line 2703
+key:5.6.6:Fee.amount	REQUIRED when `calculation` is `fixed`	line 2704
+key:5.6.6:DatedShare.window	REQUIRED	line 2711
+key:5.6.6:DatedShare.max_share	REQUIRED	line 2712
+key:5.6.6:CancellationNotice.option_id	REQUIRED	line 2730
+key:5.6.6:CancellationNotice.notice_received_at	REQUIRED	line 2731
+key:5.6.6:CancellationNotice.requested_effective_at	REQUIRED	line 2732
+key:5.6.6:CancellationNotice.cancelled_share	REQUIRED	line 2733
+key:5.6.7:ExclusivityOption.id	REQUIRED	line 2741
+key:5.6.7:ExclusivityOption.scope	REQUIRED	line 2742
+key:5.6.7:ExclusivityOption.categories	REQUIRED when `scope` is `category`	line 2743
+key:5.6.7:ExclusivityOption.competitors[]	OPTIONAL	line 2744
+key:5.6.7:ExclusivityOption.separation	REQUIRED	line 2745
+key:5.6.7:ExclusivityOption.window	OPTIONAL	line 2746
+key:5.6.7:Preemption.reason	REQUIRED	line 2762
+key:5.6.7:Preemption.notice_duration	OPTIONAL	line 2763
+key:5.6.7:Preemption.remedy	OPTIONAL	line 2764
+key:5.7.1:CommittedMetric.metric	REQUIRED	line 2795
+key:5.7.1:CommittedMetric.level	REQUIRED	line 2796
+key:5.7.1:CommittedMetric.direction	REQUIRED	line 2797
+key:5.7.1:MeasurementOption.id	REQUIRED	line 2814
+key:5.7.1:MeasurementOption.measured_by	REQUIRED	line 2815
+key:5.7.1:MeasurementOption.attribution_window	OPTIONAL	line 2816
+key:5.7.1:MeasurementOption.qualifier	OPTIONAL	line 2817
+key:5.7.1:ControllingMeasurementOption.id	REQUIRED	line 2823
+key:5.7.1:ControllingMeasurementOption.counted_by	REQUIRED	line 2824
+key:5.7.1:ControllingMeasurementOption.qualifier	OPTIONAL	line 2825
+key:5.7.1:ControllingMeasurementOption.discrepancy_threshold	OPTIONAL	line 2826
+key:5.7.1:ControllingMeasurementOption.final_after	OPTIONAL	line 2827
+key:5.7.1:ReportingOption.id	REQUIRED	line 2833
+key:5.7.1:ReportingOption.report_type	REQUIRED	line 2834
+key:5.7.1:ReportingOption.cadence	OPTIONAL	line 2835
+key:5.7.1:ReportingOption.delivery_method	OPTIONAL	line 2836
+key:5.7.1:ReportingOption.provided_metrics[]	OPTIONAL	line 2837
+key:5.7.1:ReportingOption.latency	OPTIONAL	line 2838
+key:5.7.1:ShortfallRemedy.remedy_terms	OPTIONAL	line 2844
+key:5.7.1:RemedyTerms.makegood_window	OPTIONAL	line 2850
+key:5.7.1:RemedyTerms.makegood_type	OPTIONAL	line 2851
+key:5.8:RequiredCredential.credential_type	REQUIRED	line 2946
+key:5.8:RequiredCredential.issuer	REQUIRED	line 2947
+key:5.9:MechanismOption.id	REQUIRED	line 2973
+key:5.9:MechanismOption.delivery_type	REQUIRED	line 2974
+key:5.9:BuyerRequirements.seats_expected	OPTIONAL	line 2992
+key:5.9:BuyerRequirements.allowed_dsps[]	OPTIONAL	line 2993
+key:5.9:BuyerRequirements.seats	OPTIONAL	line 2994
+key:5.9:BuyerRequirements.seat_owner	OPTIONAL	line 2995
+key:5.10:ExternalReference.system	REQUIRED	line 3055
+key:5.10:ExternalReference.namespace	OPTIONAL	line 3056
+key:5.10:ExternalReference.id	REQUIRED	line 3057
+key:5.10:ExternalReference.reference_type	REQUIRED	line 3058
+key:5.10:Agreement.agreement_id	REQUIRED	line 3064
+key:5.10:Agreement.parties[]	OPTIONAL	line 3065
+key:5.10:Agreement.agreement_type	OPTIONAL	line 3066
+key:5.10:Agreement.term	OPTIONAL	line 3067
+key:5.10:Agreement.document	OPTIONAL	line 3068
+key:5.10:Billing.delivering_party	OPTIONAL	line 3074
+key:5.10:Billing.invoicing_party	OPTIONAL	line 3075
+key:5.10:Billing.payment_terms	OPTIONAL	line 3076
+key:5.10:Billing.invoice_period	OPTIONAL	line 3077
+key:5.10:Billing.cycle_length	REQUIRED when `invoice_period` is `cycle`	line 3078
+key:5.10:Billing.time_zone	OPTIONAL	line 3079

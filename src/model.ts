@@ -18,7 +18,7 @@ import { canonicalJson, sha256 } from "./canonical.ts";
 import { copyName, fieldOf, Instantiator, partSchema, pascalField, renderType, slots, substitute, type Constructor, type Constructors, type Model as Templates } from "./constructors.ts";
 import { inScopeDeclarations, inScopeEntries } from "./coverage.ts";
 import { citeText, indexElements, type Element } from "./elements.ts";
-import type { Presence as StatedPresence } from "./grammar/required.ts";
+import { absencesOf, type Presence as StatedPresence } from "./grammar/required.ts";
 import type { SpecIR } from "./ir-types.ts";
 import { kernelOn, primitiveStructure, type Kernel } from "./kernel.ts";
 import type { RegistryRef } from "./imports.ts";
@@ -41,6 +41,8 @@ export interface ModelProperty {
   presence: Presence;
   /** The condition of a conditional property, as the specification writes it, or as a basis of the domain model reads it (type rules § 3a). */
   condition?: string;
+  /** The sentences of its row's Meaning or Description that make it absent under a condition, as "Absent unless `rate_unit` is `day`" (§ 2.6), without their full stops. */
+  absent?: string;
   /** The property's type while a sibling holds one term, narrowing `type`, as a basis of the domain model reads it (type rules § 3a). */
   cases?: { when: { member: string; value: string }; type: { kind: "named"; name: string } }[];
   /** The row's mutability marker, from a field row's Mutability cell or a key row's Required cell; a rule, never a schema keyword (type rules § 2). */
@@ -493,10 +495,12 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
         const names = e.kind === "field" ? e.element.names.map((n) => lastSegment(n.path)) : [lastSegment(e.element.key.path)];
         const condition = conditionOf(e);
         const description = e.kind === "field" ? e.element.description.text : e.element.meaning.text;
+        const absent = absencesOf(description ?? "");
         const p: ModelProperty = {
           type: as.type,
           presence: as.presence,
           ...(condition && as.presence === "conditional" ? { condition } : {}),
+          ...(absent.length > 0 ? { absent: absent.join("; ") } : {}),
           ...(markerOf(e) ? { marker: markerOf(e) } : {}),
           ...(description ? { description } : {}),
           // The default its row states, as the Deals API's `cur` states "USD".

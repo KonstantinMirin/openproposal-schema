@@ -16,7 +16,7 @@ import { CommittedMetric, CommittedMetricDirection, CommittedMetricMetric, Contr
 import { BreakPositionOption, BreakPositionSelection, Environment, EnvironmentsSelection, EventSchedule, EventScheduleEventstatus, LineItemEpisodes, Placement, ProgramOption, ProgramsSelection, PropertiesSelection, Refresh } from "./inventory.js";
 import { AvailabilityRead, LineItem, MediaChannel } from "./line-item.js";
 import { Loop, PropertyOption, PropertyOptionAllocation, PropertyOptionChildAudience, PropertyOptionChildTreatment, PropertyOptionSellerRelationship, Screen, SellerAccount, SyncGroup } from "./properties.js";
-import { ChangeRequest, HistoryEntry, HistoryEntryAction, HistoryPath, MinCommitment, Package, Proposal, ProposalType, RequestedUnitBoundsRange, RequestedValue } from "./proposal.js";
+import { ChangeRequest, HistoryEntry, HistoryEntryAction, HistoryPath, MinCommitment, Package, Proposal, ProposalType, RequestedRetentionRange, RequestedUnitBoundsRange, RequestedValue } from "./proposal.js";
 import { HoldLimits, ManifestEntry, ProposalManifest } from "./publication.js";
 import { LineItemSummary, LineItemSummaryApp, LineItemSummaryAudienceOption, LineItemSummaryAudienceSelectable, LineItemSummaryBreakPositionOption, LineItemSummaryBreakPositionSelection, LineItemSummaryBuyerRequirements, LineItemSummaryDeliveryCounting, LineItemSummaryEnvironmentsSelection, LineItemSummaryFormatsSelection, LineItemSummaryImpressionMultiplier, LineItemSummaryPlacement, LineItemSummaryPricingEntry, LineItemSummaryProgramOption, LineItemSummaryProgramsSelection, LineItemSummaryPropertiesSelection, LineItemSummaryPropertyOption, LineItemSummaryTransactionMechanismSelection, PackageSummary, ProposalSummary, ProposalSummaryParty } from "./representation.js";
 import { Agreement, AgreementAgreementType, Billing, BillingInvoicePeriod, ExternalReference, ExternalReferenceReferenceType } from "./settlement.js";
@@ -41,10 +41,10 @@ export * from "./registry.js";
 export { isFormat, type Format } from "./runtime.js";
 
 /** The commit of the OpenProposal specification repository that the types are generated from. */
-export const SPEC_COMMIT = "4f7ffffb31849b13cec5e2e38441abbad8a5ff42";
+export const SPEC_COMMIT = "63733eda99482bac6c5dbf1c0c2bff8cb043a650";
 
 /** The Git blob SHA of the specification file at that commit. */
-export const SPEC_BLOB = "a7e8b5bff4d2a9e9fc68800eece37556099552f5";
+export const SPEC_BLOB = "5c0b9f2398dd9bfb8f24dcc9655c0681a30f090f";
 
 /** The lock that pins the commit: `main`, or `with-open-prs`, which is `main` with the pull requests that were open on the day of the lock merged in. */
 export const LOCK = "with-our-stack";
@@ -53,7 +53,7 @@ export const LOCK = "with-our-stack";
 export const VARIANT = "proposed";
 
 /** The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it. */
-export const SCHEMA_RELEASE = "58b0cf19b6be77769c625a26ec582623963e201ec6476575068fe3d217e49c88";
+export const SCHEMA_RELEASE = "b9222260b34309db382280499c9870ff763ced4608e7ec8184d66a5b942a8146";
 
 /** A constructor's schema function, applied to its arguments' schemas. */
 export type Template = (...args: z.ZodType[]) => z.ZodType;
@@ -271,6 +271,7 @@ export const TYPES: Readonly<Record<string, z.ZodType>> = {
   ReportingOptionProvidedMetric: ReportingOptionProvidedMetric,
   ReportingOptionReportType: ReportingOptionReportType,
   ReportingSelection: ReportingSelection,
+  RequestedRetentionRange: RequestedRetentionRange,
   RequestedUnitBoundsRange: RequestedUnitBoundsRange,
   RequestedValue: RequestedValue,
   RequiredCredential: RequiredCredential,

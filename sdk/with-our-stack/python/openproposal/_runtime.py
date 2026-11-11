@@ -147,6 +147,7 @@ class Shape:
         within: tuple[tuple[str, tuple[str, ...], tuple[str, ...]], ...] = (),
         bounds: tuple[tuple[str, int, bool], ...] = (),
         rejects: tuple[tuple[str, Any], ...] = (),
+        absent: tuple[tuple[str, str, Any], ...] = (),
     ) -> None:
         self.min_properties = min_properties
         self.max_properties = max_properties
@@ -156,6 +157,7 @@ class Shape:
         self.within = within
         self.bounds = bounds
         self.rejects = rejects
+        self.absent = absent
 
     def check(self, data: dict[str, Any], ctx: Any = None) -> None:
         n = len(data)
@@ -187,6 +189,9 @@ class Shape:
         for sibling, value in self.rejects:
             if sibling in data and _json_equal(data[sibling], value):
                 raise ValueError(f'"{sibling}" is {value!r}, which it cannot be')
+        for member, sibling, value in self.absent:
+            if member in data and not (sibling in data and _json_equal(data[sibling], value)):
+                raise ValueError(f'holds "{member}", which is absent unless "{sibling}" is {value!r}')
         for sibling, value, require, types in self.conditions:
             if sibling in data and _json_equal(data[sibling], value):
                 for r in require:

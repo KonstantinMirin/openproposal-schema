@@ -1,0 +1,88 @@
+format: 1
+id: G-146
+date: 2026-11-11
+question: What changes in the gates when the with-our-stack lock moves to the stack's head at `63733ed`, and the fidelity oracle and the emitter read a row's "Absent unless" and "Absent when" sentences?
+decision: >-
+  The lock reads op30-packages at `63733ed`, where all 17 of our heads moved.
+  Its text adds `retention` to `RequestedValue` (§ 4.1), a `Range[Duration]`
+  named `RequestedRetentionRange` after its object, as `unit_bounds` is
+  (D-058), and says that `action_type`'s core terms come from ECAPI 1.0's
+  Standard Events and Additional Events tables both, as D-063 read them. The
+  fidelity oracle gains the form `absent`: a sentence of a row's Meaning or
+  Description, "Absent unless <condition>" or "Absent when <condition>", in
+  the condition grammar a REQUIRED when cell reads, as § 2.6 has a key that
+  must be absent under a condition say so there. The member present while
+  the absence holds is invalid, and present while it doesn't is valid; for
+  "Absent unless", the condition's member absent holds it too. A key table a
+  label introduces places its rows at the type the label names for this form
+  only. Any other absence that states a condition is listed as unread. The
+  model keeps each such sentence with its property, and the emitter states
+  "Absent unless" a sibling holds one of its values as a dependency of the
+  member, `dependentSchemas: { calendar_zone: { properties: { rate_unit:
+  { const: day } }, required: [rate_unit] } }`. The corpus builds a baseline
+  and an isolating mutant for both of its keywords, the type examples set
+  `rate_unit` to `day` where `calendar_zone` is present, and the SDKs check
+  it: the TypeScript and Python runtimes gain the check only in a build whose
+  types state one, and Go writes it in the type's validation. The plain
+  generator drops the dependency (PG-23) and `RequestedRetentionRange`'s
+  `minProperties` (PG-17).
+rationale: >-
+  No check is weaker: the oracle reads one more form, the emitter states one
+  more constraint, and the gates' fixtures add two that drop the dependency
+  or hold it to another unit, which the fidelity gate fails. On the stack the
+  oracle reads 1 of the 8 "Absent unless" and "Absent when" sentences,
+  `calendar_zone`'s; 7 name a condition in prose and stay unread, and 7
+  absences in other forms, such as "Absent on every other entry", are listed
+  unread too. Neither `main` nor the open PRs write an absence in a row, so
+  their IR, models, schemas, rules, corpus, type examples, SDKs, comparison,
+  and feedback are byte-identical. The fingerprints change because the
+  model, the emitter, the corpus, the SDK emitters, and the oracle reach
+  most gates.
+accepts:
+  - { gate: comparison, fingerprint: 7d64a762b682eb6b0d2e0b6678907c982d20dd612c0c9c5d4d9e9b08621ea5ef }
+  - { gate: convention-beside-reference, fingerprint: 12688f3e727913410068057d70ea8d583598927e2b7eaf422ab1b25e5d58dcaa }
+  - { gate: convention-inline, fingerprint: 784be97c736312c33afa969e52434b85d51e3417e41acbaeebcb7f70d197973f }
+  - { gate: convention-keywords, fingerprint: 81e46e0561b852b99e54b96cc0c9fc6340850c8faafd2ae9b0eb3478e0712233 }
+  - { gate: convention-layers, fingerprint: e20a9de375ccdef5dc9a170cf3e3595eaf597efe05338a29d35805961a614e1e }
+  - { gate: convention-lists, fingerprint: fba42d4ad8cb3ddc770e24f758deb7f15df3a957410b70d0672a43ace56d9d9f }
+  - { gate: convention-modules, fingerprint: 82780b1a3f971c716333fbf56c95cb1ee717399933d1cea2b2a8d746c54a23cb }
+  - { gate: convention-unions, fingerprint: aa18d1087655968922fbaa4e05472823323872c58cff11307244dcbaa73082be }
+  - { gate: corpus-generates, fingerprint: aaaf1c58fb3696b7188a78a6abef51c966f6beb49fc784ab1fda5e456db432c9 }
+  - { gate: corpus-isolation, fingerprint: ba49c71e9d9d3ba345855109926c2ff4da0be1147d7632f72f7987095c744569 }
+  - { gate: desk-tests, fingerprint: 4f586010f1e7dc94bee971d3b094e3d09247f15f95b04a5b8117c7c8bfe8c27d }
+  - { gate: domains-homonyms, fingerprint: 429c631a092aba16beff96d957701d756da4dd61061a73bb41501398a18c991d }
+  - { gate: domains-properties, fingerprint: b27def3212fe3eafc94c82bf259b073ae928f51d5e8df9ecf3c4809947562ec5 }
+  - { gate: domains-used, fingerprint: 2cdb6b05d10d6b9af6acdd9aba4bf7f4e1d7ddf481ca8a01a04d710c222d2dda }
+  - { gate: duplication-model, fingerprint: f579debff581306e376b9da995d43f87ef4a6066ceda19377c445b88f7c8e70b }
+  - { gate: enum-drift-sources, fingerprint: 7745eaf4e9e07a67629bbf9cbde24d1211078beae7d25e4f5f49c59d4fe3b81d }
+  - { gate: examples-listing, fingerprint: ff6da2f560323bed2a99655ba7beec7a2d1ea764e66aefb52de7890ac9f852fc }
+  - { gate: examples-validate, fingerprint: 471fcd48aa6d3b79430da9b377a17f1ef3905a7b5ed8ddc29093c604e4af06a0 }
+  - { gate: extraction, fingerprint: d081facc8f97d171fa5cae26fd74dc932245ced83e6d9f4e42fd05da76312c2e }
+  - { gate: feedback, fingerprint: 7b4e1a316db004e61f64d4969f7463755a3a44fd26eeaa197cc9fec94c010093 }
+  - { gate: fidelity, fingerprint: 6227196b881dd2bfbf7a142e94664c42002138b667bb70deb0a7b5192fa66963 }
+  - { gate: field-examples, fingerprint: 84f41b442b025ab423d6556401e9ac10dbb39a98a0122e7b9d2689e72ec20d45 }
+  - { gate: frozen-releases, fingerprint: 1e9ad580d7cf06a8ea817e3b88542905d6f4a706dcdcf74702b8991d1048ec3d }
+  - { gate: frozen-reviewed, fingerprint: c87ddf38c49b78ade63e604bb8a6e0087e09cc20d5289c09f41e8f9e53650490 }
+  - { gate: model-resolves, fingerprint: dfa704a587223699fc39805bb2e2c1ce475292404d50bc8d1b548f2bb5754fdd }
+  - { gate: modules-depends, fingerprint: f5037b23e74d4ae6a7babfa5300bfab9352aaa96fdcfc9f3394eac8c603ab5a2 }
+  - { gate: npm-test, fingerprint: 9d3358934c5533d20d513976d9e8a35636affba7a7c1c6610cef5dcb8c8ebcd4 }
+  - { gate: plain-exemptions-file, fingerprint: a671eb75a690395018458e2292837c7abf36da5fbf31d83220fed701e50c7e46 }
+  - { gate: plain-parity, fingerprint: 034bd1e84efd4bc4b258e4dd9eacc79a545a5a3b8e337d073c72d5999203ef3e }
+  - { gate: record-wording, fingerprint: 0fd782db99e805662cb1aef2bfde2bd67e9baed3403bdcbd003f9d7359ae1d04 }
+  - { gate: registry-agreement, fingerprint: 7f37c1f2c06ad251330abfebbbb0b41c6b3f3bdec4772439c6e5d64afdc97904 }
+  - { gate: release-breaking, fingerprint: 6c780717b653872bbbe38453fe712a327ba93c15ec2ebc13fc0b51a3595550f3 }
+  - { gate: release-builds, fingerprint: 1a6ee7f502390dab6889c6ff1c0981c6346f5b6b50712f22c802b7061d2c28d2 }
+  - { gate: release-digests, fingerprint: 41d8093fc3b5bba456c7cf7b1375f0bf5f097064c5341bdf4ad1adf85b58be0d }
+  - { gate: round-trip, fingerprint: 84030cecaef2454f8157bd9e5acf10c50f5c57c5fbc54dae39bc1e1b2d821de5 }
+  - { gate: rule-checks, fingerprint: b178ec690ddd1e27895dac1081d9289ebdafc86c6d9f4578af1b8ff99654e797 }
+  - { gate: rule-vectors, fingerprint: 18b688113947a10976b1718803d1ad11173888624309f461d6c698da40aae596 }
+  - { gate: rules-emit, fingerprint: 90d5708d7fc08a151335718627b360fd23532a794f49fd7b0c8a6cba690e4055 }
+  - { gate: schemas-conventions, fingerprint: dcb2be94be38e75cb3459cc32caeb199915e691125f0f9ad0c0e745b99d4cedb }
+  - { gate: schemas-emit, fingerprint: 48d79b4c877d2186f08c76f3b65baf2a21d68eee476193786082862f38c3d0e8 }
+  - { gate: sdk-generate, fingerprint: ceb93dd780128e61cc32babfe0b8e93f945df00007aa10c1fc871e904fffa009 }
+  - { gate: site-builds, fingerprint: 018e1b8e5ff7da53b434643703c23c968e4effcab659874916ba042c577ccf5b }
+  - { gate: spec-profile, fingerprint: 13856d994e4a897c172f6570677e0511e48defd66adccef9e7c1e4124115b035 }
+  - { gate: type-examples-generate, fingerprint: fa48132571d8f928b9d9490df0dec0d0e6b7d8916cb59cf1ad5ef3e2ac42ca3a }
+  - { gate: type-examples-valid, fingerprint: 335a91a47d76275cb9bb23b91e24347f2dabb209397a5a1f2b24e47c24df52c1 }
+  - { gate: variant-diff, fingerprint: 9242217fcc7a4bdaa42407981d3ad9d0d5f903538c1bf9992df1d3f0e6520df1 }
+  - { gate: variant-examples, fingerprint: 1ecd2a04e13f354733f60437225c1b478114053adcae04b705e161c7c6a1e94a }

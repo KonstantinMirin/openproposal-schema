@@ -6,7 +6,7 @@ import * as rt from "./runtime.js";
 import { AssentEntry, CancellationNotice, CommitmentAmountBasis, CommitmentBounds } from "./commercial.js";
 import { MaterialsDue } from "./creative.js";
 import { CommittedMetric } from "./guarantees.js";
-import { Amount, ApprovalStatus, Domain, FieldPointer, Instant, Interval, OpenObject, Party, PlainNumber, PlainString, ProposalStatus, Range, SafeInteger, Side, VersionRef } from "./kernel.js";
+import { Amount, ApprovalStatus, Domain, Duration, FieldPointer, Instant, Interval, OpenObject, Party, PlainNumber, PlainString, ProposalStatus, Range, SafeInteger, Side, VersionRef } from "./kernel.js";
 import { LineItem } from "./line-item.js";
 
 /** The `HistoryEntryAction` vocabulary: `published`, `requested`, `granted`, `countered`, `declined`, `withdrawn`. */
@@ -48,6 +48,10 @@ export const ProposalTypes = {
   CUSTOM: "custom",
 } as const;
 
+/** The copy `Range<T=Duration>`. */
+export type RequestedRetentionRange = Range<Duration>;
+export const RequestedRetentionRange: z.ZodType<RequestedRetentionRange> = Range(Duration);
+
 /** The copy `Range<T=SafeInteger>`. */
 export type RequestedUnitBoundsRange = Range<SafeInteger>;
 export const RequestedUnitBoundsRange: z.ZodType<RequestedUnitBoundsRange> = Range(SafeInteger);
@@ -62,6 +66,8 @@ export interface RequestedValue {
   list_rate?: Amount;
   /** The line item's `materials_due` */
   materials_due?: MaterialsDue;
+  /** The line item's `retention` */
+  retention?: Range<Duration>;
   /** A `pricing[].unit_bounds` */
   unit_bounds?: Range<SafeInteger>;
 }
@@ -70,6 +76,7 @@ export const RequestedValue: z.ZodType<RequestedValue> = z.strictObject({
   committed_metrics: z.array(CommittedMetric).optional(),
   list_rate: Amount.optional(),
   materials_due: MaterialsDue.optional(),
+  retention: RequestedRetentionRange.optional(),
   unit_bounds: RequestedUnitBoundsRange.optional(),
 });
 

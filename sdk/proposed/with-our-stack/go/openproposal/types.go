@@ -235,6 +235,7 @@ func init() {
 	Types["ReportingOptionProvidedMetric"] = TypeOf[ReportingOptionProvidedMetric]()
 	Types["ReportingOptionReportType"] = TypeOf[ReportingOptionReportType]()
 	Types["ReportingSelection"] = TypeOf[ReportingSelection]()
+	Types["RequestedRetentionRange"] = TypeOf[RequestedRetentionRange]()
 	Types["RequestedUnitBoundsRange"] = TypeOf[RequestedUnitBoundsRange]()
 	Types["RequestedValue"] = TypeOf[RequestedValue]()
 	Types["RequiredCredential"] = TypeOf[RequiredCredential]()

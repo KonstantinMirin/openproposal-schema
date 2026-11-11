@@ -132,6 +132,36 @@ test("a condition whose member's row lists no values is tested where it holds, a
   assert.ok(unread.some((u) => u.element === "field:5.1:code" && u.form.startsWith("a condition's other side")));
 });
 
+test("a row's \"Absent unless\" or \"Absent when\" sentence reads as an absence, in the condition grammar, and any other absence stays unread", () => {
+  const rows = [
+    "| `unit` | Enum | immutable | `hour` \\| `day` \\| `week`. The unit |",
+    "| `zone` | String | immutable | OPTIONAL. Absent unless `unit` is `day`. The zone |",
+    "| `span` | String | immutable | OPTIONAL. A span. Absent when `unit = week` |",
+    "| `note` | String | immutable | OPTIONAL. Absent when the seller writes none |",
+    "| `rate` | String | immutable | OPTIONAL. Absent on every other entry |",
+    "| `kind` | String | immutable | OPTIONAL. Absent: the default kind |",
+  ];
+  const ir = extractText(lineItems(`### 5.1 Identity\n\n${FIELD_HEADER}\n${rows.join("\n")}\n`));
+  const { constraints, unread } = read(ir);
+  const zone = byId(constraints, "field:5.1:zone#absent@line_item.zone");
+  assert.ok(zone && zone.form === "absent");
+  assert.deepEqual({ when: zone.when, holds: zone.holds, otherwise: zone.otherwise, unless: zone.unless }, { when: { member: "unit", up: 0 }, holds: ["hour", "week"], otherwise: ["day"], unless: true });
+  const span = byId(constraints, "field:5.1:span#absent@line_item.span");
+  assert.ok(span && span.form === "absent");
+  assert.deepEqual({ holds: span.holds, otherwise: span.otherwise, unless: span.unless }, { holds: ["week"], otherwise: ["hour", "day"], unless: false });
+  // "Absent unless": present while the condition's member is absent, or another value, is invalid; "Absent when" only at its value.
+  assert.equal(violates(zone, { unit: "hour", zone: "UTC" }), true);
+  assert.equal(violates(zone, { zone: "UTC" }), true);
+  assert.equal(violates(zone, { unit: "day", zone: "UTC" }), false);
+  assert.equal(violates(zone, { unit: "hour" }), false);
+  assert.equal(violates(span, { unit: "week", span: "x" }), true);
+  assert.equal(violates(span, { span: "x" }), false);
+  assert.ok(unread.some((u) => u.element === "field:5.1:note" && u.form === "an absence condition in prose, not a member equal to a value"));
+  assert.ok(unread.some((u) => u.element === "field:5.1:rate" && u.form.startsWith("an absence in another form")));
+  assert.ok(!unread.some((u) => u.element === "field:5.1:kind"), "an absence that says what absence means states no condition");
+  assert.ok(!constraints.some((c) => c.form === "absent" && ["field:5.1:note", "field:5.1:rate", "field:5.1:kind"].includes(c.element)));
+});
+
 test("values outside a value list read: a sentence's values per key, and a named list's codes, closed or left open by 'such as'", () => {
   const { constraints } = read(PRS);
   const enforcement = byId(constraints, "sentence:5.5:262ff404#values@line_item.exclusions_accepted.enforcement");

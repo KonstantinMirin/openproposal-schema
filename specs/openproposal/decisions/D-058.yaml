@@ -123,6 +123,10 @@ covers:
     digest: e650773e444b150799cb1892373b724aeba75f9354454c2f995a8605bd5b770a
     quote: "`unit_bounds` | OPTIONAL | A `pricing[].unit_bounds`"
     locks: [with-our-stack]
+  - ir: key:4.1:RequestedValue.retention
+    digest: d894cdd00a918d11313b2c9060083489d895d1c9dc48a3ee705cd56c6b5d3a9b
+    quote: "`retention` | OPTIONAL | The line item's `retention`"
+    locks: [with-our-stack]
   - ir: def:1.1:transaction_mechanism.programmatic_guaranteed
     digest: d0907a40fbf30f89cbc45fa1867a470cdb4be901a86c4053d80178954176760f
     quote: "`programmatic_guaranteed` | OpenDirect 2.1 · Order + Line, as the reservation; Deals API 1.0 · `Deal` | `order`, `line`, `deal` | The reservation: as for `direct_io`. The deal: as for `preferred_deal`"
@@ -209,7 +213,7 @@ covers:
     locks: [with-our-stack]
 options:
   - id: restate-or-illustrate
-    summary: "A list or a table that writes the terms of a list the text defines elsewhere restates it, which that list's schema expresses: the core error codes, `cost_method`'s terms, the metrics, and the `transaction_mechanism` tables. A list of the values a transition moves between, a code block that shows one field or a formula, a `unit` column's terms, a list of the keys of an `Object` another definition sets, and a field's core terms for options typed `VocabularyTerm` are informative. `RequestedValue.unit_bounds` repeats the requestable field's form, a `Range[Integer]`, named after `RequestedValue`. Appendix B's \"What the distribution says\" restates the counts of the field rows' markers, so its figures are what the rows give, and a figure the paragraph writes otherwise would be a round-trip difference."
+    summary: "A list or a table that writes the terms of a list the text defines elsewhere restates it, which that list's schema expresses: the core error codes, `cost_method`'s terms, the metrics, and the `transaction_mechanism` tables. A list of the values a transition moves between, a code block that shows one field or a formula, a `unit` column's terms, a list of the keys of an `Object` another definition sets, and a field's core terms for options typed `VocabularyTerm` are informative. `RequestedValue.unit_bounds` repeats the requestable field's form, a `Range[Integer]`, and `RequestedValue.retention` the line item's `retention`, a `Range[Duration]`, each named after `RequestedValue`. Appendix B's \"What the distribution says\" restates the counts of the field rows' markers, so its figures are what the rows give, and a figure the paragraph writes otherwise would be a round-trip difference."
   - id: vocabularies
     summary: "Each list is a vocabulary of its own."
 chosen: restate-or-illustrate

@@ -41,6 +41,20 @@
       ],
       "type": "string"
     },
+    "RequestedRetentionRange": {
+      "additionalProperties": false,
+      "description": "A range of values from `min` to `max`, with at least one bound, such as the time an ad stays in the content the seller distributes.",
+      "minProperties": 1,
+      "properties": {
+        "max": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Duration"
+        },
+        "min": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/Duration"
+        }
+      },
+      "type": "object"
+    },
     "RequestedUnitBoundsRange": {
       "additionalProperties": false,
       "description": "A range of values from `min` to `max`, with at least one bound, such as the time an ad stays in the content the seller distributes.",
