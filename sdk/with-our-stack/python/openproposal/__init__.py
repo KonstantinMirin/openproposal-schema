@@ -30,7 +30,7 @@ from .settlement import Agreement, AgreementAgreementType, AgreementAgreementTyp
 from .targeting import AcceptedExclusions, CountSettableRange, DaypartBounds, DeviceBounds, ExclusionEntry, ExclusionList, ExclusionTerms, ExclusionTermsEnforcement, ExclusionTermsEnforcements, ExclusionType, ExclusionTypes, FrequencyCap, FrequencyCapPer, FrequencyCapPers, GeoBounds, MarketsSelection
 from .registry import ExtensionRegistry
 
-SPEC_COMMIT: Final = "fb12249c22068e6a496fd2a30aff4c2c79017003"
+SPEC_COMMIT: Final = "6d5a6f9b66a49b9bca2abbdcca9d861bae76027a"
 """The commit of the OpenProposal specification repository that the types are generated from."""
 
 SPEC_BLOB: Final = "8e91771f0bc1121e7b23a4611e15f400ea511c53"

@@ -2,7 +2,7 @@
 import { basename, join } from "node:path";
 import type { EmittedFile } from "../src/emit.ts";
 import { checkExamples, checkFindings, checkUndecided, lockExamples, loadFindings, oracleAgrees, type ExampleCase, type FindingsFile, type Loaded, type ModelExample } from "../src/examples.ts";
-import { checkDeskTests, loadDeskTests, type CheckerRun, type DeskTestsInput } from "../src/desk-tests.ts";
+import { checkDeskTests, loadDeskTests, REVIEW_MARK, type CheckerRun, type DeskTestsInput } from "../src/desk-tests.ts";
 import type { SpecIR } from "../src/ir-types.ts";
 import type { SpecLock } from "../src/lock.ts";
 import type { DecisionRecord } from "../src/mapping.ts";
@@ -324,6 +324,26 @@ export const deskTests = defineGate<{ sets: DeskTestsInput[] }>({
       name: "a checker run that failed",
       mutate: (i) => onIab(i, (s) => ({ ...s, checker: { ...s.checker, problems: ["scripts/check_examples.py exited 2: Traceback"] } })),
       expect: "exited 2",
+    },
+    {
+      name: "a drafted reason left for review",
+      mutate: (i) => onIab(i, (s) => ({ ...s, set: { ...s.set, findings: s.set.findings.map((f) => (f.example === "dooh-v2-p8-phases.yaml" ? { ...f, reason: REVIEW_MARK } : f)) } })),
+      expect: 'iab-au-2026-11/expected.yaml: dooh-v2-p8-phases.yaml /commitment/phases: the reason is "TODO: review"',
+    },
+    {
+      name: "a drafted SDK gap left for review",
+      mutate: (i) => onIab(i, (s) => ({ ...s, set: { ...s.set, sdk_gaps: s.set.sdk_gaps.map((g) => ({ ...g, reason: REVIEW_MARK })) } })),
+      expect: 'dooh-v2-p11-c-no-multiplier.yaml /delivery_counting (rule:5.6.4:e58650b7): the reason is "TODO: review"',
+    },
+    {
+      name: "a README left for review",
+      mutate: (i) => onIab(i, (s) => ({ ...s, set: { ...s.set, readme: `${s.set.readme ?? ""}\n${REVIEW_MARK}: the permission\n` } })),
+      expect: 'iab-au-2026-11/README.md: holds "TODO: review"',
+    },
+    {
+      name: "a set with no README",
+      mutate: (i) => onIab(i, (s) => ({ ...s, set: { ...s.set, readme: null } })),
+      expect: "iab-au-2026-11/README.md: missing",
     },
     {
       name: "an SDK that accepts a payload the other engines reject",

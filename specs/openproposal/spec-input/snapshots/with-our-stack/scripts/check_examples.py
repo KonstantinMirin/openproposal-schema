@@ -328,7 +328,8 @@ SCALARS = {
     "CurrencyCode": (lambda v: isinstance(v, str) and re.fullmatch(r"[A-Z]{3}", v)),
     "ClockTime": (lambda v: isinstance(v, str) and re.fullmatch(r"(?:[01][0-9]|2[0-3]):[0-5][0-9]|24:00", v)),
     "FormatId": (lambda v: isinstance(v, str) and re.fullmatch(r"[^/@]+/[^/@]+", v)),
-    "Integer": (lambda v: isinstance(v, int) and not isinstance(v, bool)),
+    "Integer": (lambda v: (isinstance(v, int) and not isinstance(v, bool))
+                or (isinstance(v, float) and v.is_integer())),  # JSON's integer: JCS writes 3.0 as 3
     "Number": (lambda v: isinstance(v, (int, float)) and not isinstance(v, bool)),
     "Amount": (lambda v: isinstance(v, (int, float)) and not isinstance(v, bool)),
     "Boolean": (lambda v: isinstance(v, bool)),

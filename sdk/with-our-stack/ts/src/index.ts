@@ -41,7 +41,7 @@ export * from "./registry.js";
 export { isFormat, type Format } from "./runtime.js";
 
 /** The commit of the OpenProposal specification repository that the types are generated from. */
-export const SPEC_COMMIT = "fb12249c22068e6a496fd2a30aff4c2c79017003";
+export const SPEC_COMMIT = "6d5a6f9b66a49b9bca2abbdcca9d861bae76027a";
 
 /** The Git blob SHA of the specification file at that commit. */
 export const SPEC_BLOB = "8e91771f0bc1121e7b23a4611e15f400ea511c53";

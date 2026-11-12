@@ -70,6 +70,8 @@ export interface DeskTests {
   findings: DeskFinding[];
   undecided: DeskUndecided[];
   sdk_gaps: DeskSdkGap[];
+  /** The set's README, as its folder holds it, or null where it holds none. */
+  readme?: string | null;
   /** The expected file's path, and its folder, which holds the payloads. */
   file: string;
   dir: string;
@@ -77,6 +79,10 @@ export interface DeskTests {
 
 export const DESK_TESTS_DIR = "desk-tests";
 export const DESK_TESTS_FILE = "expected.yaml";
+export const DESK_TESTS_README = "README.md";
+
+/** The mark a draft leaves where a reviewer must write: every reason `npm run desk:add` drafts, and the README's attribution. The gate fails on it. */
+export const REVIEW_MARK = "TODO: review";
 const DESK_TESTS_SCHEMA = join("desk-tests", "desk-tests.schema.json");
 
 /** The expected files of a spec's desk-test sets, `desk-tests/<set>/expected.yaml`, sorted. */
@@ -94,14 +100,15 @@ export function loadDeskTests(file: string): DeskTests {
   const doc = readYaml(file);
   const errors = compileSchema(join(REPO_ROOT, DESK_TESTS_SCHEMA))(doc);
   if (errors.length > 0) throw new Error(`${file}: not a valid desk-tests file: ${errors.join("; ")}`);
-  return { ...(doc as Omit<DeskTests, "file" | "dir">), file, dir: dirname(file) };
+  const readme = join(dirname(file), DESK_TESTS_README);
+  return { ...(doc as Omit<DeskTests, "file" | "dir">), readme: existsSync(readme) ? readFileSync(readme, "utf8") : null, file, dir: dirname(file) };
 }
 
 /** The payloads in a set's folder, by file name, loaded as the examples are; the expected file isn't one. */
 export function loadDeskPayloads(dir: string): Map<string, Loaded> {
   const out = new Map<string, Loaded>();
   for (const name of readdirSync(dir).sort()) {
-    if (name === DESK_TESTS_FILE || name === "README.md") continue;
+    if (name === DESK_TESTS_FILE || name === DESK_TESTS_README) continue;
     out.set(name, loadJsonYaml(readFileSync(join(dir, name), "utf8")));
   }
   return out;
@@ -308,6 +315,12 @@ export function checkDeskTests(i: DeskTestsInput): { problems: string[]; verdict
   for (const name of i.payloads.keys()) if (!listed.has(name)) problems.push(`${set.file}: ${name} is in the folder and isn't listed under examples`);
   for (const name of set.examples) if (!i.payloads.has(name)) problems.push(`${set.file}: lists ${name}, which isn't in the folder`);
   for (const f of [...set.findings, ...set.undecided, ...set.sdk_gaps]) if (!listed.has(f.example)) problems.push(`${set.file}: ${f.example} isn't listed under examples`);
+  // A draft's marks: every reason and the README are written by a reviewer, never by the intake.
+  for (const f of [...set.findings, ...set.undecided, ...set.sdk_gaps]) {
+    if (f.reason.includes(REVIEW_MARK)) problems.push(`${expectedFile}: ${f.example} ${f.path === "" ? "/" : f.path}${"rule" in f && f.rule ? ` (${f.rule})` : ""}: the reason is "${REVIEW_MARK}"; write why the payload gets this verdict, with the section or issue that says so`);
+  }
+  if (set.readme === null) problems.push(`${set.file.split("/").slice(-2)[0]}/${DESK_TESTS_README}: missing; a set's README says where its payloads come from`);
+  else if (set.readme !== undefined && set.readme.includes(REVIEW_MARK)) problems.push(`${set.file.split("/").slice(-2)[0]}/${DESK_TESTS_README}: holds "${REVIEW_MARK}"; write what it marks: who wrote the payloads, the permission, and what each tests`);
   const gapAt = (example: string, path: string) => set.sdk_gaps.find((g) => g.example === example && g.path === path);
   for (const g of set.sdk_gaps) {
     if (!set.findings.some((f) => f.example === g.example && f.path === g.path && f.kind === "rule" && f.rule === g.rule))

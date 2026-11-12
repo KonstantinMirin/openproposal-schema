@@ -1,0 +1,39 @@
+format: 1
+id: G-154
+date: 2026-11-12
+question: How does a new desk-test set come in, and how does the desk-tests gate keep a drafted set out of CI until a reviewer has written its reasons?
+decision: >-
+  `npm run desk:add -- <gist-url | path> <set>` adds a set. It reads a
+  gist at its current revision with `gh api gists/<id>`, read-only, or a
+  local folder that stands in for one, copies its `.yaml` and `.json` files
+  into `desk-tests/<set>/`, and judges each with every engine of the gate on
+  the stack lock. It drafts `expected.yaml` from what every engine agrees
+  on: a clean payload, or a payload rejected at the same places in every
+  engine, with the kind the schemas give each place, and a rule's place that
+  every SDK accepts as an SDK gap. Every reason it drafts is `TODO: review`.
+  A payload the engines disagree on stays out of the draft, and the command
+  reports where each engine rejects it. It drafts a `README.md` that names
+  the gist, its owner, and its revision, and quotes the files' own comment
+  lines that call their contents invented, and leaves the attribution and
+  each payload's purpose marked `TODO: review`. It refuses a set that
+  exists, removes a set whose run fails, and commits nothing. The
+  desk-tests gate gains three checks: a reason that holds `TODO: review`
+  fails, a set whose README holds it fails, and a set with no README fails;
+  with the existing check on a payload the expected file doesn't list, a
+  drafted set fails CI until it is reviewed. The expected file's loader
+  reads the set's README beside it.
+rationale: >-
+  No check is weaker: the gate keeps every comparison and adds three, each
+  with a fixture: a drafted finding's reason, a drafted SDK gap's reason, a
+  README left for review, and a set with no README. The only set,
+  IAB Australia's first, has a README and no mark, so its verdicts stand. The
+  test suite runs the command on a temporary folder standing in for a gist,
+  with three of the first set's line items and one with an integral float,
+  `price_type: 3.0`, that the stack's checker rejects at its location and
+  the schemas and SDKs accept, so the draft leaves it out; checks the draft
+  and the README; runs the gate on it; and reads a gist through a stand-in
+  for the API. Its minimum count rises to 555. No generated output changes.
+accepts:
+  - { gate: desk-tests, fingerprint: 97d920941dd63a86bf437b6708ab93388ab318ad3a11f739850bd7de4f707c78 }
+  - { gate: desk-tests-load, fingerprint: 85be09783a63ea5f86a9aa89712902094247ee5a8eee9b744ab6621dc127cc3e }
+  - { gate: npm-test, fingerprint: da042b969d294aded484c06efae993c06e2e7e9e0921da84f6e37772c75d402c }

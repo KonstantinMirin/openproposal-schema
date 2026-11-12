@@ -1,12 +1,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 import { stringify } from "yaml";
 import { constructorEditionsOn, kernelEditionsOn } from "../src/editions.ts";
 import { loadConstructors } from "../src/constructors.ts";
-import { checkDeskTests, deskSdks, deskTestFiles, loadDeskPayloads, loadDeskTests, runDeskChecker, runDeskSdks, type CheckerRun, type DeskTests } from "../src/desk-tests.ts";
+import { checkDeskTests, deskSdks, deskTestFiles, loadDeskPayloads, loadDeskTests, REVIEW_MARK, runDeskChecker, runDeskSdks, type CheckerRun, type DeskTests } from "../src/desk-tests.ts";
+import { deskAdd, draftExpected, draftReadme, gistIdOf, readGist, readSource } from "../src/desk-add.ts";
 import { emitSchemas, schemaDirOf } from "../src/emit.ts";
 import { findingsGo, findingsPython, findingsTypeScript, locationsOf, pointerIn } from "../src/sdk-parity.ts";
 import { checkExamples } from "../src/examples.ts";
@@ -142,4 +143,87 @@ test("a line item whose cost parameters break a dependency and a member's own ty
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test("desk:add copies a folder's payloads, judges them with every engine, and drafts an expected file the gate fails until it is reviewed", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "desk-add-"));
+  try {
+    // A local folder stands in for the gist: three of IAB Australia's line items, one with an integral float in an integer
+    // field, which every engine reads as the integer, as JSON Schema and the stack's checker since 6d5a6f9 do, and a file that is
+    // no payload.
+    const source = join(dir, "gist");
+    mkdirSync(source);
+    for (const n of ["dooh-v2-b-pg.yaml", "dooh-v2-p8-phases.yaml", "dooh-v2-p11-c-no-multiplier.yaml"]) copyFileSync(join(IAB, n), join(source, n));
+    writeFileSync(join(source, "float-code.yaml"), readFileSync(join(IAB, "dooh-v2-b-pg.yaml"), "utf8").replace("price_type: 3,", "price_type: 3.0,"));
+    writeFileSync(join(source, "notes.txt"), "run logs\n");
+    const into = join(dir, "desk-tests");
+    const lock = loadLock(join(SPEC, "spec-input", `${LOCK}.lock.yaml`));
+    const r = await deskAdd({ source: readSource(source), set: "a-new-set", specDir: SPEC, lock, root: ROOT, date: "2026-11-12", work: join(dir, "work"), into });
+    assert.deepEqual(r.payloads, ["dooh-v2-b-pg.yaml", "dooh-v2-p11-c-no-multiplier.yaml", "dooh-v2-p8-phases.yaml", "float-code.yaml"]);
+    assert.deepEqual(r.skipped, ["notes.txt"]);
+    // `price_type: 3.0` is clean in all five engines.
+    assert.deepEqual(r.clean, ["dooh-v2-b-pg.yaml", "float-code.yaml"]);
+    assert.deepEqual(r.rejected, ["dooh-v2-p11-c-no-multiplier.yaml", "dooh-v2-p8-phases.yaml"]);
+    assert.deepEqual(r.disagreements, []);
+    assert.match(r.report, /^- 0 payloads the engines disagree on, left out of expected\.yaml\.$/m);
+
+    // The draft: a verdict where every engine agrees, every reason the review mark.
+    const set = loadDeskTests(join(r.dir, "expected.yaml"));
+    assert.deepEqual(set.examples, ["dooh-v2-b-pg.yaml", "dooh-v2-p11-c-no-multiplier.yaml", "dooh-v2-p8-phases.yaml", "float-code.yaml"]);
+    assert.deepEqual(set.findings.map((f) => [f.example, f.path, f.kind, f.reason]), [
+      ["dooh-v2-p11-c-no-multiplier.yaml", "/delivery_counting", "rule", REVIEW_MARK],
+      ["dooh-v2-p8-phases.yaml", "/commitment/phases", "undefined_key", REVIEW_MARK],
+    ]);
+    assert.deepEqual(set.sdk_gaps.map((g) => [g.example, g.path, g.rule]), [["dooh-v2-p11-c-no-multiplier.yaml", "/delivery_counting", "rule:5.6.4:e58650b7"]]);
+    assert.ok(set.undecided.every((u) => u.reason === REVIEW_MARK) && set.undecided.length === 4);
+    // The README quotes what the files say of themselves, and leaves the attribution to the reviewer.
+    assert.match(set.readme ?? "", /^> THEORETICAL\. Every screen, id, coordinate, domain and figure is invented\.$/m);
+    assert.match(set.readme ?? "", new RegExp(`^${REVIEW_MARK}: say who wrote them`, "m"));
+    assert.ok(!existsSync(join(r.dir, "notes.txt")));
+
+    // The gate fails on the draft: every review mark, and the README's; and on nothing else, since every engine agrees.
+    const payloads = loadDeskPayloads(set.dir);
+    const checker = await runDeskChecker(lock, set, join(dir, "work", "gate-checker"));
+    const sdks = await runDeskSdks(set, payloads, SDKS, join(dir, "work", "gate-sdks"));
+    const problems = checkDeskTests({ set, model: MODEL, files: FILES, schemaDir: SCHEMA_DIR, payloads, codes: codesOf(KERNEL.lists!), ruleChecks: RULE_CHECKS, checker, sdks }).problems;
+    assert.equal(problems.filter((p) => p.includes(`the reason is "${REVIEW_MARK}"`)).length, 2 + 1 + 4, problems.join("\n"));
+    assert.ok(problems.some((p) => p.includes(`README.md: holds "${REVIEW_MARK}"`)));
+    assert.equal(problems.length, 2 + 1 + 4 + 1, problems.join("\n"));
+
+    // A payload the engines disagree on, as the integral float was before 6d5a6f9, where the checker rejected it: the draft
+    // leaves it out, and reports where each engine rejects it.
+    const schemas = checkExamples({ model: MODEL, files: FILES, schemaDir: SCHEMA_DIR, examples: set.examples.map((id) => ({ id, ir: "desk:a-new-set", object: "LineItem", part: false })), values: payloads, codes: codesOf(KERNEL.lists!), ruleChecks: RULE_CHECKS });
+    const older = { ...checker, failures: [...checker.failures, { example: "float-code.yaml", path: "/pricing/0/price_type", message: "is not Integer" }] };
+    const d = draftExpected({ set: { ...set, findings: [], undecided: [], sdk_gaps: [] }, failures: schemas.failures, undecided: schemas.checks.undecided, checker: older, sdks });
+    assert.deepEqual(d.disagreements.map((x) => [x.example, x.engines.map((e) => e.paths.join(" "))]), [["float-code.yaml", ["", "/pricing/0/price_type", "", "", ""]]]);
+    assert.deepEqual(d.expected.examples, ["dooh-v2-b-pg.yaml", "dooh-v2-p11-c-no-multiplier.yaml", "dooh-v2-p8-phases.yaml"]);
+    // A set is added once.
+    await assert.rejects(deskAdd({ source: readSource(source), set: "a-new-set", specDir: SPEC, lock, root: ROOT, date: "2026-11-12", work: join(dir, "work"), into }), /exists; a set is added once/);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("desk:add reads a gist at its current revision through the API, and names its source in the README", () => {
+  assert.equal(gistIdOf("https://gist.github.com/jaanijuk/8ab1ede477027e0db81a1be02f6914b8"), "8ab1ede477027e0db81a1be02f6914b8");
+  assert.equal(gistIdOf("https://gist.github.com/8ab1ede477027e0db81a1be02f6914b8#file-a-yaml"), "8ab1ede477027e0db81a1be02f6914b8");
+  assert.equal(gistIdOf("https://example.com/x"), null);
+  const calls: string[][] = [];
+  const api = {
+    id: "8ab1ede477027e0db81a1be02f6914b8",
+    html_url: "https://gist.github.com/jaanijuk/8ab1ede477027e0db81a1be02f6914b8",
+    description: "desk tests",
+    updated_at: "2026-11-12T00:00:00Z",
+    owner: { login: "jaanijuk" },
+    history: [{ version: "c9435ae0105d25c1daa4a60becd7f9d2c1910549" }, { version: "0".repeat(40) }],
+    files: { "a.yaml": { filename: "a.yaml", content: "# Every figure is invented.\nline_item_id: a\n" }, "README.md": { filename: "README.md", content: "# x\n" } },
+  };
+  const s = readGist("https://gist.github.com/jaanijuk/8ab1ede477027e0db81a1be02f6914b8", (args) => (calls.push(args), JSON.stringify(api)));
+  assert.deepEqual(calls, [["api", "gists/8ab1ede477027e0db81a1be02f6914b8"]]);
+  assert.equal(s.gist?.revision, "c9435ae0105d25c1daa4a60becd7f9d2c1910549");
+  assert.deepEqual([...s.files.keys()], ["a.yaml", "README.md"]);
+  const readme = draftReadme({ set: "s", source: s, payloads: ["a.yaml"], skipped: ["README.md"], date: "2026-11-12", lock: LOCK, verdicts: new Map([["a.yaml", "Clean"]]) });
+  assert.match(readme, /from the gist <https:\/\/gist\.github\.com\/jaanijuk\/8ab1ede477027e0db81a1be02f6914b8> of \[@jaanijuk\]\(https:\/\/github\.com\/jaanijuk\), at revision `c9435ae0105d25c1daa4a60becd7f9d2c1910549`, on 2026-11-12/);
+  assert.match(readme, /^> Every figure is invented\.$/m);
+  assert.throws(() => readGist(api.id, () => JSON.stringify({ ...api, files: { "big.yaml": { filename: "big.yaml", truncated: true } } })), /too large for the API/);
 });

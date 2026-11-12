@@ -3,7 +3,7 @@
 package openproposal
 
 // SpecCommit is the commit of the OpenProposal specification repository that the types are generated from.
-const SpecCommit = "fb12249c22068e6a496fd2a30aff4c2c79017003"
+const SpecCommit = "6d5a6f9b66a49b9bca2abbdcca9d861bae76027a"
 
 // SpecBlob is the Git blob SHA of the specification file at that commit.
 const SpecBlob = "8e91771f0bc1121e7b23a4611e15f400ea511c53"

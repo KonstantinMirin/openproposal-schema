@@ -1,0 +1,26 @@
+format: 1
+id: G-155
+date: 2026-11-12
+question: What changes in the gates when the with-our-stack lock moves to `6d5a6f9`, whose checker reads an integral float in an Integer field as the integer?
+decision: >-
+  The lock reads op30-packages at `6d5a6f9`, after round 26, in which all
+  17 of our heads moved. The specification and the examples are unchanged;
+  the checker, now blob `d2ee03e`, reads a float with no fraction, as
+  `price_type: 3.0`, as an Integer, as JSON Schema and JCS do, where it
+  rejected it. That was the one disagreement the desk-test intake found: the
+  schemas and the three SDKs accepted such a payload and the checker
+  rejected it at the member. The intake's test now holds every engine to the
+  same verdict on it, clean, through the command on a temporary folder, and
+  keeps its check of a disagreement by giving the drafting the checker's
+  old rejection.
+rationale: >-
+  No check is weaker: only the test suite changes, and it asserts more: all
+  five engines accept the integral float, the draft lists the payload, and
+  the gate fails on the draft's review marks alone; the drafting still
+  leaves out a payload the engines disagree on. The outputs on the stack
+  differ only in the lock's commit, and the `main` and `with-open-prs`
+  outputs are byte-identical. The SDK parity gate already sends every
+  integer primitive's and term's vectors written as integral floats to the
+  SDKs, and the desk-tests gate runs the checker on every set.
+accepts:
+  - { gate: npm-test, fingerprint: a3062bcb99d669613684a5216b48937050ce60e3f1fc7a88969541cfdce14712 }
