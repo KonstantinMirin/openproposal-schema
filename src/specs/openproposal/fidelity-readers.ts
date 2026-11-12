@@ -8,7 +8,7 @@ import { parse as parseYaml } from "yaml";
 import { canonicalJson } from "../../canonical.ts";
 import { jsonType, pathText, type ConstraintReader, type Form, type Projection, type Reading, type Refused, type Restated, type SpecConstraint, type SpecLocation, type Unread } from "../../fidelity.ts";
 import type { PathSegment } from "../../grammar/path.ts";
-import { ABSENCE, sentencesOf, type Presence, type PresenceClause } from "../../grammar/required.ts";
+import { ABSENCE, ABSENCE_ON_CORE, sentencesOf, type Presence, type PresenceClause } from "../../grammar/required.ts";
 import type { TypeExpr } from "../../grammar/type-expr.ts";
 import type { Key, SpecIR, ValueList } from "../../ir-types.ts";
 import type { Lists } from "../../lists.ts";
@@ -263,8 +263,51 @@ export function readConstraints(ir: SpecIR, lists?: Lists, readings: Reading[] =
       return { id: k.id, text: k.meaning.text, places: typeof parents === "string" ? parents : parents.map((p) => ({ root: p.root, path: [...p.path, ...k.key.segments] })) };
     }),
   ];
+  /**
+   * The core terms that hold `term`, of a vocabulary a paragraph declares, "`m` is a `VocabularyTerm` (§ 2.2). Its core terms
+   * are `a` | `b` | …", as § 5.6.5 declares `cost_method`'s: the member, and the terms, each list of the IR's that holds `term`.
+   */
+  const coreListsOf = (term: unknown): { member: string; values: unknown[] }[] =>
+    ir.value_lists.flatMap((v) => {
+      if (v.origin !== "prose" || !v.items.some((i) => canonicalJson(literal(i.value)) === canonicalJson(term))) return [];
+      const declared = ir.sentences.filter((x) => x.host === v.host).map((x) => /^`([a-z][a-z0-9_]*)` is a `VocabularyTerm`/.exec(x.text)?.[1]).filter((x) => x !== undefined);
+      return declared.length === 1 ? [{ member: declared[0]!, values: v.items.map((i) => literal(i.value)) }] : [];
+    });
+  /** A field row's places whose Type cell names `type`, as `pricing[].cost_parameters` names `CostParameters`. */
+  const typedPlaces = (type: string) =>
+    fields.flatMap((f) => (f.type.parsed !== null && f.type.parsed.kind === "named" && f.type.parsed.name === type ? f.names.map((n) => ({ root: { owner: f.owner } as SpecLocation["root"], path: n.segments })) : []));
+  /** A namespaced term, which an open vocabulary takes beside its core terms. */
+  const extensionOf = (term: unknown) => `examplepub.example:${String(term).toLowerCase()}`;
+
   for (const row of absences) {
     for (const sentence of sentencesOf(row.text)) {
+      // "Absent on a core term other than `X`": a key of a label's object, absent while the term that sets the object's keys,
+      // the member beside the object whose core terms hold `X`, is any other core term. Each place is a field row typed by the
+      // label's object, and the condition's member sits beside it; `X` and an extension term may carry the key.
+      const on = ABSENCE_ON_CORE.exec(sentence);
+      if (on) {
+        const k = keyById.get(row.id);
+        const label = k ? labelOf(k) : null;
+        const term = literal(on[1]!);
+        const places = label === null ? [] : typedPlaces(label);
+        const lists = coreListsOf(term);
+        let read = 0;
+        for (const p of places) {
+          const path = [...p.path];
+          const member = k!.key.segments.at(-1)!;
+          const at = [...path, ...k!.key.segments.slice(0, -1)];
+          const found = lists.flatMap((l) => {
+            const cond = conditionRow(p.root, at, l.member);
+            return cond === null || cond.up === 0 ? [] : [{ ...l, up: cond.up }];
+          });
+          if (found.length !== 1) continue;
+          const f = found[0]!;
+          add({ element: row.id, text: sentence, at: { root: p.root, path: at, member }, form: "absent", when: { member: f.member, up: f.up }, holds: f.values.filter((x) => canonicalJson(x) !== canonicalJson(term)), otherwise: [term, extensionOf(term)], unless: false });
+          read++;
+        }
+        if (read === 0) unread.push({ element: row.id, form: label === null ? "an absence on a core term in a key table no label introduces" : "an absence on a core term whose vocabulary no member beside the object declares", text: sentence });
+        continue;
+      }
       const m = ABSENCE.exec(sentence);
       if (!m) {
         if (ABSENT_OTHER.test(sentence)) unread.push({ element: row.id, form: "an absence in another form than \"Absent unless\" or \"Absent when\" a member is a value", text: sentence });

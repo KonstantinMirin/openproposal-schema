@@ -160,6 +160,7 @@ class Shape:
         bounds: tuple[tuple[str, int, bool], ...] = (),
         rejects: tuple[tuple[str, Any], ...] = (),
         absent: tuple[tuple[str, str, Any, bool], ...] = (),
+        absent_on: tuple[tuple[str, str, tuple[Any, ...], tuple[str, ...]], ...] = (),
     ) -> None:
         self.min_properties = min_properties
         self.max_properties = max_properties
@@ -170,6 +171,7 @@ class Shape:
         self.bounds = bounds
         self.rejects = rejects
         self.absent = absent
+        self.absent_on = absent_on
 
     def errors(self, data: dict[str, Any], ctx: Any = None) -> list[InitErrorDetails]:
         """Every place where the object breaks what its schema states beside its members' types, each at the location the schema's check reports."""
@@ -214,6 +216,12 @@ class Shape:
                     out.append(_error_at((), f'holds "{member}", which is absent unless "{sibling}" is {value!r}', data))
                 else:
                     out.append(_error_at((sibling,), f'is {data[sibling]!r}, while "{member}" is present, which is absent unless "{sibling}" is {value!r}', data[sibling]))
+        for member, sibling, values, keys in self.absent_on:
+            m = data.get(member)
+            if isinstance(m, dict) and sibling in data and any(_json_equal(data[sibling], x) for x in values):
+                for k in keys:
+                    if k in m:
+                        out.append(_error_at((member, k), f'is present while "{sibling}" is {data[sibling]!r}, where it is absent', m[k]))
         for sibling, value, require, types in self.conditions:
             if sibling in data and _json_equal(data[sibling], value):
                 for r in require:

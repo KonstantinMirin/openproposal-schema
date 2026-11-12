@@ -1831,6 +1831,13 @@ func (PricingEntry) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkRequired(m, at, errs, "cost_method", "currency", "list_rate", "pricing_id")
 	checkClosed(m, at, errs, "agreed_rate", "cost_definition", "cost_method", "cost_parameters", "currency", "list_rate", "min_rate", "price_type", "price_valid_until", "pricing_id", "rate_per", "transaction_mechanisms", "unit_bounds", "unit_label")
+	if o, ok := m["cost_parameters"].(map[string]any); ok {
+		if x, ok := m["cost_method"]; ok && (jsonEqual(x, "CPM") || jsonEqual(x, "CPMV") || jsonEqual(x, "CPC") || jsonEqual(x, "CPCV") || jsonEqual(x, "CPV") || jsonEqual(x, "CPP") || jsonEqual(x, "PLAY") || jsonEqual(x, "TIME") || jsonEqual(x, "FLAT")) {
+			if _, ok := o["action_definition"]; ok {
+				errs.add(member(member(at, "cost_parameters"), "action_definition"), "is present while %s is %v, where it is absent", "\"cost_method\"", x)
+			}
+		}
+	}
 	if x, ok := m["agreed_rate"]; ok {
 		validateAs[Amount](x, member(at, "agreed_rate"), errs)
 	}

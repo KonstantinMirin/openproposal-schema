@@ -1,0 +1,73 @@
+format: 1
+id: G-153
+date: 2026-11-12
+question: How do the oracle, the emitter, the corpus, and the SDKs read a key "Absent on a core term other than `X`", as the stack's `cost_parameters.action_definition` is on a core cost method other than `CPA`?
+decision: >-
+  The grammar reads one more absence sentence, "Absent on a core term other
+  than `X`" or "Absent on any core term other than `X`", and nothing wider.
+  The term is the member beside the object that holds the key whose
+  vocabulary's core terms hold `X`: on the stack, `cost_method` beside a
+  pricing entry's `cost_parameters`. The key is absent while that member is
+  any other core term, and `X` or an extension term may carry it. The
+  fidelity oracle reads the core terms from the IR, the paragraph that
+  declares "`cost_method` is a `VocabularyTerm`" and lists them, and places
+  the key at each field row typed by its label's object, here
+  `pricing[].cost_parameters`, with the condition one object up; the
+  absences it lists unread in another form fall from 8 to 7. The emitter
+  states it on the holder, from the model's vocabulary, as
+  `dependentSchemas: { cost_parameters: { if: { properties: { cost_method:
+  { enum: [the nine other core terms] } }, required: [cost_method] }, then:
+  { properties: { cost_parameters: { type: object, properties: {
+  action_definition: false } } } } } }`, so the key fails at its own
+  location, `/pricing/k/cost_parameters/action_definition`, as the stack's
+  checker reports it; the `type` restates the member's for strict
+  validators, and the corpus lists it as implied. The corpus reads a
+  member's `false` schema as a constraint, with an isolating mutant that
+  names the key on a `CPM` entry, and each SDK checks it through a new
+  `absentOn` shape check, at the key. The type examples leave the key out
+  of a pricing entry whose `cost_method` the text gives as another core
+  term. The plain generator drops the dependency, PG-24.
+rationale: >-
+  No check is weaker: the schemas state one more constraint, the oracle
+  reads one more absence with 11 vectors (9 core terms with the key
+  invalid, `CPA` and an extension term valid), the corpus gains its mutant
+  and the sdk-locations gate its plain and paired cases, and three new
+  fidelity fixtures drop the dependency, add `CPA` to its terms, or keep an
+  extension term from carrying the key, each of which fails. A test reads
+  the constraint from the stack's IR, and the suite's minimum count rises
+  to 553. The `main` and `with-open-prs` outputs
+  and models are byte-identical: no row of theirs states the form, and the
+  runtime check sits in the absence helpers a runtime holds only where a
+  type states an absence. The generated code that changes is the two stack
+  trees': `PricingEntry` in TypeScript, Python, and Go, the TypeScript and
+  Python runtimes' `absentOn` check, and the schema release digest the
+  provenance constants carry. The fingerprints change because the grammar,
+  the emitter, the corpus, the type examples, and the SDK builder reach
+  most gates.
+accepts:
+  - { gate: comparison, fingerprint: 6a762bfe21ca9dc057669e5fa973c857d88167059e9763e89498deab0696ac3e }
+  - { gate: corpus-generates, fingerprint: 3c055a49b017ae829edc7fbe95fb981138c449db7066bd286e1553eaef082103 }
+  - { gate: corpus-isolation, fingerprint: f1b69fa12a6184189730b73b95e3e9510572380fe3a5e9673260950b01d4e1cc }
+  - { gate: desk-tests, fingerprint: 7d2fa1ff9aa00b533f6c73a072af8772801a955e0ee3232850b2266f218d5f6c }
+  - { gate: examples-validate, fingerprint: f1726f3378970717851b523495fe7a79c72db80a8ae7f7b621e6f5ae3b5fe861 }
+  - { gate: extraction, fingerprint: 19ad82163654175ba538fe5cb6f190a1ad7abce994642a654e87799b41519ffa }
+  - { gate: feedback, fingerprint: 0c0170914c02d1e39858ba344180433cf26be4647d7e548baea1093628d3db8b }
+  - { gate: fidelity, fingerprint: 7aec9aa6c2767aae2f3d4717a8f44d9c9158c8977987841fe72ea5bee4b19ec5 }
+  - { gate: field-examples, fingerprint: 821d97feb293bb137f70bde99c1fdedee9151e3d80af9463cff93b0967f6517e }
+  - { gate: model-resolves, fingerprint: 5ea7e502708c9a40853d3b165a0ad2e94e66d9867462e87f514687f7839da5a3 }
+  - { gate: npm-test, fingerprint: d116bbf5a78dfe14758b7164f01d58c232e302d0e1e27ae2a18970ece6a71ec3 }
+  - { gate: plain-exemptions-file, fingerprint: 23ea0ab5add8565cd3e507abaa465c0e6ce38198226a87b659cfa773c3c9e4ac }
+  - { gate: plain-parity, fingerprint: c2503e80362709f01121e8a0e8fdd56901950775ea390095f67215109c3e3442 }
+  - { gate: record-wording, fingerprint: 93b8fc41af5962eac4095a066450c5a569097cfdcd1ff7e55af42a92a282ca00 }
+  - { gate: release-breaking-corpus, fingerprint: 8923e2790d097fcc0a807e026f9e3421ce81060539d76fdd27057f980f5cd45f }
+  - { gate: round-trip, fingerprint: 7d868b45309bb578e42d4ce6a354b499a7418d58d77818b3d9317c41972650c5 }
+  - { gate: rule-checks, fingerprint: d6814a74de025145dffa73545c58fcea604b26bf670b9c10a13ff6106fe45157 }
+  - { gate: schemas-conventions, fingerprint: 8918f670cf14a5841505dbff7e3096b0d932d64cdc3a4139e09ef4b5dd96a392 }
+  - { gate: schemas-emit, fingerprint: b8bbd3c2cf26b070576e88cc06317967deeeaf2ad2659ba698c10f97338214fd }
+  - { gate: sdk-generate, fingerprint: 23b616e5538edf4f9a88df84ba906b55ed5b5a4bbfa812e2ced667fb29644e92 }
+  - { gate: site-builds, fingerprint: 8fea541f642e7f6c13733df01820dac47fd53e78602868dffdab8922b7ac411a }
+  - { gate: spec-profile, fingerprint: 4021a903a4616a337944da1fdc19e80f7f6675cadcb9549ea82708d72c3d41d7 }
+  - { gate: type-examples-generate, fingerprint: bc503043046de334c37f22911375d22ddaaf71bab4dbcee466b64783b241a3b4 }
+  - { gate: type-examples-valid, fingerprint: e2f8e1288b5303960c99c5899ed82def4d6fb5375880e9d87914b532ce361366 }
+  - { gate: variant-diff, fingerprint: 77209ca3b46e98d9a73af53341cf4b3e7a2cc82b8c9499bcc2c52867bb9cdb9a }
+  - { gate: variant-examples, fingerprint: ccc1fc9f91c4251e06efd90ce24aa5810f257872874bf6794ba1732d865bc1de }

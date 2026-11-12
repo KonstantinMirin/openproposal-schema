@@ -77,6 +77,7 @@ function objectParts(shape: Shape, indent: string): { body: string; schema: stri
   for (const b of shape.bounds) checks.push(`rt.bounds(${literal(b.member)}, ${b.minItems}, ${b.unique})`);
   for (const r of shape.rejects) checks.push(`rt.rejects(${literal(r.sibling)}, ${JSON.stringify(r.value)})`);
   for (const a of shape.absent) checks.push(`rt.${a.when ? "absentWhen" : "absentUnless"}(${literal(a.member)}, ${literal(a.sibling)}, ${JSON.stringify(a.value)})`);
+  for (const a of shape.absentOn) checks.push(`rt.absentOn(${literal(a.member)}, ${literal(a.sibling)}, ${JSON.stringify(a.values)}, ${JSON.stringify(a.keys)})`);
   for (const c of shape.conditions) {
     const types = c.types.length > 0 ? `, { ${c.types.map((x) => `${key(x.name)}: ${schemaOf(x.expr)}`).join(", ")} }` : "";
     checks.push(`rt.condition(${literal(c.sibling)}, ${JSON.stringify(c.value)}, ${JSON.stringify(c.require)}${types})`);
@@ -174,6 +175,14 @@ const ABSENT_UNLESS = [
   "export const absentWhen = (member: string, sibling: string, value: string | number | boolean) => (payload: Payload) => {",
   "  const v = payload.value as Record<string, unknown>;",
   '  if (member in v && v[sibling] === value) fail(payload, `is ${JSON.stringify(value)}, while "${member}" is present, which is absent when "${sibling}" is ${JSON.stringify(value)}`, [sibling]);',
+  "};",
+  "",
+  "/** A check that an object whose `sibling` is one of `values` has a `member` object that holds none of `keys`, as a pricing entry's `cost_parameters` holds no `action_definition` on a core cost method other than `CPA`; each key fails at its own place. */",
+  "export const absentOn = (member: string, sibling: string, values: (string | number | boolean)[], keys: string[]) => (payload: Payload) => {",
+  "  const v = payload.value as Record<string, unknown>;",
+  "  const m = v[member];",
+  "  if (!(sibling in v) || !values.includes(v[sibling] as string | number | boolean) || m === null || typeof m !== \"object\" || Array.isArray(m)) return;",
+  '  for (const k of keys) if (k in m) fail(payload, `is present while "${sibling}" is ${JSON.stringify(v[sibling])}, where it is absent`, [member, k]);',
   "};",
   "",
 ].join("\n");

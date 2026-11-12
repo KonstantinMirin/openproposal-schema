@@ -142,6 +142,16 @@ function objectParts(shape: Shape, ctx: Ctx): { fields: string; validate: string
         "\t}",
       );
   }
+  // Keys of a member's object absent while a sibling is one of some values: each present key fails at its own place.
+  for (const a of shape.absentOn) {
+    lines.push(
+      `\tif o, ok := m[${str(a.member)}].(map[string]any); ok {`,
+      `\t\tif x, ok := m[${str(a.sibling)}]; ok && (${a.values.map((v) => `jsonEqual(x, ${jsonLiteral(v)})`).join(" || ")}) {`,
+      ...a.keys.flatMap((k) => [`\t\t\tif _, ok := o[${str(k)}]; ok {`, `\t\t\t\terrs.add(member(member(at, ${str(a.member)}), ${str(k)}), "is present while %s is %v, where it is absent", ${str(JSON.stringify(a.sibling))}, x)`, "\t\t\t}"]),
+      "\t\t}",
+      "\t}",
+    );
+  }
   for (const p of shape.properties) lines.push(`\tif x, ok := m[${str(p.name)}]; ok {`, `\t\t${check(p.expr, "x", `member(at, ${str(p.name)})`)}`, "\t}");
   for (const c of shape.conditions) {
     lines.push(`\tif x, ok := m[${str(c.sibling)}]; ok && jsonEqual(x, ${jsonLiteral(c.value)}) {`);

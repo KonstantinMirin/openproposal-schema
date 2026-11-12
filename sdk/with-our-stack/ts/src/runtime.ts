@@ -114,6 +114,14 @@ export const absentWhen = (member: string, sibling: string, value: string | numb
   if (member in v && v[sibling] === value) fail(payload, `is ${JSON.stringify(value)}, while "${member}" is present, which is absent when "${sibling}" is ${JSON.stringify(value)}`, [sibling]);
 };
 
+/** A check that an object whose `sibling` is one of `values` has a `member` object that holds none of `keys`, as a pricing entry's `cost_parameters` holds no `action_definition` on a core cost method other than `CPA`; each key fails at its own place. */
+export const absentOn = (member: string, sibling: string, values: (string | number | boolean)[], keys: string[]) => (payload: Payload) => {
+  const v = payload.value as Record<string, unknown>;
+  const m = v[member];
+  if (!(sibling in v) || !values.includes(v[sibling] as string | number | boolean) || m === null || typeof m !== "object" || Array.isArray(m)) return;
+  for (const k of keys) if (k in m) fail(payload, `is present while "${sibling}" is ${JSON.stringify(v[sibling])}, where it is absent`, [member, k]);
+};
+
 /** A check that an object whose `sibling` equals `value` holds each of `require`, and that each member `types` names is a value of its type. */
 export const condition = (sibling: string, value: string | number | boolean, require: string[], types: Record<string, z.ZodType> = {}) => (payload: Payload) => {
   const v = payload.value as Record<string, unknown>;

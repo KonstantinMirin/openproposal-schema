@@ -103,5 +103,16 @@ export function sentencesOf(text: string): string[] {
   return out;
 }
 
-/** The sentences of a cell that state an absence under a condition (`ABSENCE`), each without its full stop. */
-export const absencesOf = (text: string): string[] => sentencesOf(text).filter((x) => ABSENCE.test(x)).map((x) => x.replace(/\.$/, ""));
+/**
+ * A sentence that makes a key absent on the core terms of the term that
+ * sets its object's keys, but one: "Absent on a core term other than `X`",
+ * or "Absent on any core term other than `X`", as § 5.6.5 has a
+ * `cost_parameters` key that only `CPA` of the core cost methods carries.
+ * The term is the value of the member, beside the object that holds the
+ * key, whose vocabulary's core terms hold `X`; an extension term may carry
+ * the key.
+ */
+export const ABSENCE_ON_CORE = /^Absent on (?:a|any) core term other than `([^`]+)`\.?$/;
+
+/** The sentences of a cell that state an absence under a condition (`ABSENCE` or `ABSENCE_ON_CORE`), each without its full stop. */
+export const absencesOf = (text: string): string[] => sentencesOf(text).filter((x) => ABSENCE.test(x) || ABSENCE_ON_CORE.test(x)).map((x) => x.replace(/\.$/, ""));

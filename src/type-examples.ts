@@ -63,7 +63,7 @@
 import { posix } from "node:path";
 import { canonicalJson } from "./canonical.ts";
 import { baselines, partSeeds, Validators } from "./corpus.ts";
-import { absenceOf, allowedOf, baseOf, type EmittedFile, inlinedFrom, inlinedKeys, schemaIdOf } from "./emit.ts";
+import { absenceOf, absenceOnCoreOf, allowedOf, baseOf, type EmittedFile, inlinedFrom, inlinedKeys, schemaIdOf } from "./emit.ts";
 import { instanceChecker, type InstanceCheck, type Loaded, type ModelExample } from "./examples.ts";
 import { fieldKey, fieldLocations, type FieldExample } from "./field-examples.ts";
 import type { Kernel } from "./kernel.ts";
@@ -432,6 +432,11 @@ export function generateTypeExamples(input: TypeExamplesInput): { doc: TypeExamp
     for (const m of Object.keys(isMap(node.dependentSchemas) ? node.dependentSchemas : {}).sort()) {
       const only = absenceOf(node, m);
       if (only !== null && m in out && !(seed && only.sibling in seed)) out[only.sibling] = allowedOf(only);
+      // Keys of a member's object absent while a sibling is one of some terms, as `cost_parameters.action_definition` is on a core
+      // cost method other than `CPA`: where the sibling is one of them, the member's object leaves the keys out.
+      const on = absenceOnCoreOf(node, m);
+      const held = out[m];
+      if (on !== null && isMap(held) && on.values.some((x) => same(x, out[on.sibling]))) out[m] = Object.fromEntries(Object.entries(held).filter(([k]) => !on.keys.includes(k)));
     }
     // The condition that holds, along the chain of `else`, narrows the members its `then` types; a member's value the specification gives
     // is the member's, where the `then` accepts it.

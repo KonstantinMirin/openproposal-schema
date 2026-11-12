@@ -3,7 +3,7 @@
 package openproposal
 
 // SpecCommit is the commit of the OpenProposal specification repository that the types are generated from.
-const SpecCommit = "75c6de78f21d435625799aebb254cc34c1d74755"
+const SpecCommit = "fb12249c22068e6a496fd2a30aff4c2c79017003"
 
 // SpecBlob is the Git blob SHA of the specification file at that commit.
 const SpecBlob = "8e91771f0bc1121e7b23a4611e15f400ea511c53"
@@ -15,4 +15,4 @@ const Lock = "with-our-stack"
 const Variant = "as-written"
 
 // SchemaRelease is the schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it.
-const SchemaRelease = "9b88f203d46d854bf8535a9fe51bc8994bc2cf91832399bc8cdc5a6dd72d18aa"
+const SchemaRelease = "58b9ef08e85f3e20de75744877d5dbc6540244212ccdf0e1b5295046662d453c"

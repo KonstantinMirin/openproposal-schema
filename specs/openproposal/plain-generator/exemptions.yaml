@@ -304,3 +304,14 @@ exemptions:
       - { label: "corpus CostParameters#/dependentSchemas/calendar_zone/required/rate_unit mutant", kind: verdict }
       - { label: "corpus Screen#/dependentSchemas/lat/properties/movable/const mutant", kind: verdict }
       - { label: "corpus Screen#/dependentSchemas/lon/properties/movable/const mutant", kind: verdict }
+  - id: PG-24
+    reason: >-
+      The generator drops a `dependentSchemas` entry, as in PG-11 and PG-23,
+      here one whose `then` makes a key of the member's object absent while a
+      sibling is one of some terms, so the stack's `PricingEntry` with a core
+      `cost_method` other than `CPA` and a `cost_parameters` that names
+      `action_definition` passes, where the key is absent on a core term
+      other than `CPA`.
+    locks: [with-our-stack]
+    cases:
+      - { label: "corpus PricingEntry#/dependentSchemas/cost_parameters/then/properties/cost_parameters/properties/action_definition mutant", kind: verdict }

@@ -860,6 +860,8 @@ UnitBoundsRange = Range[SafeInteger]
 class PricingEntry(rt.Closed):
     """The `PricingEntry` object of the `commercial` module."""
 
+    __shape__: ClassVar[rt.Shape] = rt.Shape(absent_on=(("cost_parameters", "cost_method", ("CPM", "CPMV", "CPC", "CPCV", "CPV", "CPP", "PLAY", "TIME", "FLAT"), ("action_definition",)),))
+
     agreed_rate: Optional[Amount] = None
     """The transacted rate (below). Absent on every other entry"""
     cost_definition: Optional[DocumentRef] = None

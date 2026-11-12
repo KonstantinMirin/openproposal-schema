@@ -290,6 +290,36 @@ export const fidelity = defineGate<FidelityInput & { expected: ExpectedFile; nam
       mutate: (i) => ({ ...i, files: withDef(i.files, PROPERTIES, "Screen", ({ dependentSchemas: _d, ...s }) => s) }),
       expect: '"lat" present while movable = true is invalid, but the schema accepts it',
     },
+    // The stack's `action_definition` is "Absent on a core term other than `CPA`": a schema that drops the pricing entry's
+    // dependency, or lets a core term through, or keeps an extension term from carrying the key, disagrees.
+    {
+      name: "action_definition free of cost_method, so a CPM entry names the rules of a billable action",
+      lock: "with-our-stack",
+      mutate: (i) => ({ ...i, files: withDef(i.files, COMMERCIAL, "PricingEntry", ({ dependentSchemas: _d, ...s }) => s) }),
+      expect: '"action_definition" present while cost_method = "CPM" is invalid, but the schema accepts it',
+    },
+    {
+      name: "action_definition held off CPA too",
+      lock: "with-our-stack",
+      mutate: (i) =>
+        ({ ...i, files: withDef(i.files, COMMERCIAL, "PricingEntry", (s) => {
+          const d = structuredClone(s.dependentSchemas) as { cost_parameters: { if: { properties: { cost_method: { enum: string[] } } } } };
+          d.cost_parameters.if.properties.cost_method.enum.push("CPA");
+          return { ...s, dependentSchemas: d };
+        }) }),
+      expect: '"action_definition" present while cost_method = "CPA" is valid, but the schema rejects it',
+    },
+    {
+      name: "action_definition held off every term but CPA, extension terms too",
+      lock: "with-our-stack",
+      mutate: (i) =>
+        ({ ...i, files: withDef(i.files, COMMERCIAL, "PricingEntry", (s) => {
+          const d = structuredClone(s.dependentSchemas) as { cost_parameters: { if: Record<string, unknown> } };
+          d.cost_parameters.if = { properties: { cost_method: { not: { const: "CPA" } } }, required: ["cost_method"] };
+          return { ...s, dependentSchemas: d };
+        }) }),
+      expect: '"action_definition" present while cost_method = "examplepub.example:cpa" is valid, but the schema rejects it',
+    },
     { name: "gross_rate typed as a count", mutate: (i) => remodel(i, (types) => void (property(types, "PricingEntry", "gross_rate").type = { kind: "named", name: "Count" })), expect: '"gross_rate" as 0.5, which is Number, is valid, but the schema rejects it' },
     { name: "valid_from typed as text", mutate: (i) => remodel(i, (types) => void (property(types, "Proposal", "valid_from").type = { kind: "named", name: "Text" })), expect: '"valid_from" as "not-a-time", which isn\'t Timestamp, is invalid, but the schema accepts it' },
     {

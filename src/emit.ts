@@ -47,6 +47,7 @@ import { fieldOf, Instantiator, type Constructor, type Model as Templates } from
 import { isTitledCodes, KEYWORDS, tagOf, walkSchemas } from "./conventions.ts";
 import type { TypeRef } from "./mapping.ts";
 import { KERNEL_MODULE } from "./mapping-rules.ts";
+import { ABSENCE_ON_CORE } from "./grammar/required.ts";
 import type { SectionIds } from "./specs/plugin.ts";
 import { Ajv2020 } from "ajv/dist/2020.js";
 import { installFormats } from "./formats.ts";
@@ -252,6 +253,44 @@ export function absenceOf(node: Record<string, unknown>, member: string): Absenc
   return { sibling: names[0]!, value: c.const as string | number | boolean, when: false };
 }
 
+/**
+ * Keys of the object a member holds that are absent on the core terms of a sibling's vocabulary but one, as § 5.6.5's
+ * `action_definition` is on a core cost method other than `CPA`: the sibling, those other core terms, and the keys.
+ */
+export interface AbsenceOnCore {
+  sibling: string;
+  values: (string | number | boolean)[];
+  keys: string[];
+}
+
+/**
+ * The dependency on the member that states it: while the member is present and the sibling is one of the terms, each key of
+ * the member's object is `false`, so a key present fails at its own location. An extension term, which no `enum` lists, may
+ * carry the keys. The member's `type`, which its own schema states too, is there for strict validators, which read
+ * `properties` only beside a `type`.
+ */
+export const absenceOnCoreSchema = (member: string, a: AbsenceOnCore): Record<string, unknown> => ({
+  if: { properties: { [a.sibling]: { enum: a.values } }, required: [a.sibling] },
+  then: { properties: { [member]: { type: "object", properties: Object.fromEntries([...a.keys].sort().map((k) => [k, false])) } } },
+});
+
+/** The keys a dependency on a member makes absent on a sibling's terms, as `absenceOnCoreSchema` writes it; null for any other dependency. */
+export function absenceOnCoreOf(node: Record<string, unknown>, member: string): AbsenceOnCore | null {
+  const d = isMap(node.dependentSchemas) ? node.dependentSchemas[member] : undefined;
+  if (!isMap(d) || Object.keys(d).sort().join(",") !== "if,then" || !isMap(d.if) || !isMap(d.then)) return null;
+  const props = isMap(d.if.properties) ? d.if.properties : {};
+  const names = Object.keys(props);
+  const c = names.length === 1 ? props[names[0]!] : undefined;
+  if (Object.keys(d.if).sort().join(",") !== "properties,required" || !Array.isArray(d.if.required) || d.if.required.join(",") !== names.join(",")) return null;
+  if (!isMap(c) || Object.keys(c).join(",") !== "enum" || !Array.isArray(c.enum) || names[0] === member) return null;
+  const then = d.then;
+  const held = isMap(then.properties) ? then.properties[member] : undefined;
+  if (Object.keys(then).join(",") !== "properties" || Object.keys(then.properties as object).join(",") !== member || !isMap(held) || Object.keys(held).sort().join(",") !== "properties,type" || held.type !== "object" || !isMap(held.properties)) return null;
+  const keys = Object.keys(held.properties);
+  if (keys.length === 0 || !keys.every((k) => (held.properties as Record<string, unknown>)[k] === false)) return null;
+  return { sibling: names[0]!, values: c.enum as (string | number | boolean)[], keys };
+}
+
 /** The schema of each named type the schema emits, with every `$ref` still local (`#/$defs/<name>`), the conditions, and the problems. */
 export interface LocalSchemas {
   schemas: Map<string, Record<string, unknown>>;
@@ -314,6 +353,8 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
     const nested: Record<string, { member: string; require: string[] }> = {};
     /** The members absent unless, or when, a sibling equals a value, each with the sibling, the value, and which word. */
     const absent: Record<string, { sibling: string; value: unknown; when: boolean }> = {};
+    /** The members whose object's keys are absent on the core terms of a sibling's vocabulary but one, each with the sibling, those terms, and the keys. */
+    const absentOn: Record<string, AbsenceOnCore> = {};
 
     // The conditions: each conditional property's, and each type case. They all read one sibling, each value at most once, so
     // they chain as if / then / else, one `if` per value, which needs no `allOf` (type rules § 8).
@@ -378,6 +419,35 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
           }
         }
       }
+      // "Absent on a core term other than `X`", a sentence of a key row's Meaning in the object `k` holds: the key is absent while
+      // the sibling of `k` whose vocabulary's core terms hold `X`, the term that sets the object's keys, is any other core term.
+      const inner = p.type.kind === "named" ? types.get(p.type.name) : undefined;
+      if (inner?.kind === "object") {
+        for (const [ik, ip] of Object.entries(inner.properties).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
+          for (const sentence of ip.absent?.split("; ") ?? []) {
+            const m = ABSENCE_ON_CORE.exec(sentence);
+            if (!m) continue;
+            const name = `${inner.name}.${ik}`;
+            const vocabularyOf = (x: string) => {
+              const st = props[x]!.type;
+              const v = st.kind === "named" ? types.get(st.name) : undefined;
+              return v?.kind === "vocabulary" && v.terms.some((y) => String(y.value) === m[1]) ? v : undefined;
+            };
+            const siblings = keys.filter((x) => x !== k && vocabularyOf(x) !== undefined);
+            if (siblings.length !== 1) {
+              conditions.left.push(`${name}: "${sentence}": ${siblings.length === 0 ? `no member beside "${k}" in "${t.name}" has the core term "${m[1]}"` : `the members ${siblings.join(", ")} beside "${k}" in "${t.name}" all have the core term "${m[1]}"`}`);
+              continue;
+            }
+            const values = vocabularyOf(siblings[0]!)!.terms.map((y) => y.value).filter((y) => String(y) !== m[1]);
+            const on = absentOn[k];
+            if (on !== undefined && (on.sibling !== siblings[0] || canonicalJson(on.values) !== canonicalJson(values))) problems.push(`${where}: property "${k}" holds keys absent on two siblings' terms, which one dependency can't state`);
+            else {
+              absentOn[k] = { sibling: siblings[0]!, values, keys: [...(on?.keys ?? []), ik] };
+              conditions.expressed.push(name);
+            }
+          }
+        }
+      }
       for (const c of p.cases ?? []) {
         const sibling = props[c.when.member];
         const v = sibling ? conditionValue(sibling, c.when.value) : { problem: `"${c.when.member}" is no property of "${t.name}"` };
@@ -390,17 +460,20 @@ export function localSchemas(model: ModelDoc): LocalSchemas {
       schema.dependentRequired = Object.fromEntries(Object.keys(dependent).sort().map((m) => [m, [...dependent[m]!].sort()]));
     }
     for (const m of Object.keys(absent)) if (m in nested) problems.push(`${where}: property "${m}" is both absent under a sibling's value and a member others are required with, which one dependency can't state`);
+    for (const m of Object.keys(absentOn)) if (m in nested || m in absent) problems.push(`${where}: property "${m}" holds keys absent on a sibling's terms and has another dependency, which one dependency can't state`);
     const absence = (a: { sibling: string; value: unknown; when: boolean }) =>
       a.when ? { properties: { [a.sibling]: { const: !a.value } } } : { properties: { [a.sibling]: { const: a.value } }, required: [a.sibling] };
-    if (Object.keys(nested).length + Object.keys(absent).length > 0) {
+    if (Object.keys(nested).length + Object.keys(absent).length + Object.keys(absentOn).length > 0) {
       schema.dependentSchemas = Object.fromEntries(
-        [...new Set([...Object.keys(nested), ...Object.keys(absent)])]
+        [...new Set([...Object.keys(nested), ...Object.keys(absent), ...Object.keys(absentOn)])]
           .sort()
           .map((m) => [
             m,
-            m in absent
-              ? absence(absent[m]!)
-              : { if: { properties: { [m]: { type: "object", required: [nested[m]!.member] } } }, then: { required: [...nested[m]!.require].sort() } },
+            m in absentOn
+              ? absenceOnCoreSchema(m, absentOn[m]!)
+              : m in absent
+                ? absence(absent[m]!)
+                : { if: { properties: { [m]: { type: "object", required: [nested[m]!.member] } } }, then: { required: [...nested[m]!.require].sort() } },
           ]),
       );
     }
@@ -843,7 +916,7 @@ export function checkEmitted(files: EmittedFile[], model: ModelDoc, dir: string,
       if (Array.isArray(node.required)) {
         // A condition's `if` and `then` require properties of the object they sit in, and so does a dependency's `then`; a
         // dependency's `if` requires members of the member it keys, the object that member's `$ref` names.
-        const dependency = /^(.*)\/dependentSchemas\/([^/]+)\/(?:then|if\/properties\/([^/]+))$/.exec(pointer);
+        const dependency = /^(.*)\/dependentSchemas\/([^/]+)\/(?:then|if|if\/properties\/([^/]+))$/.exec(pointer);
         const holder = dependency ? nodes.get(dependency[1]!) : undefined;
         const keyed = dependency?.[3] !== undefined && isMap(holder?.properties) ? (holder.properties as Record<string, unknown>)[dependency[3]] : undefined;
         const scope = dependency

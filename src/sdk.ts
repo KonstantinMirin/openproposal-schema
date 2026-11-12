@@ -23,7 +23,7 @@
 import { Instantiator } from "./constructors.ts";
 import { canonicalJson } from "./canonical.ts";
 import { isTitledCodes } from "./conventions.ts";
-import { absenceOf, fieldOfSources, localSchemas, locationOf, nestedIf, templatesOf } from "./emit.ts";
+import { absenceOf, absenceOnCoreOf, fieldOfSources, localSchemas, locationOf, nestedIf, templatesOf } from "./emit.ts";
 import type { TypeRef } from "./mapping.ts";
 import { KERNEL_MODULE } from "./mapping-rules.ts";
 import { extensionOf, VENDOR_CODE, type ModelDoc, type ModelProperty, type ModelType } from "./model.ts";
@@ -80,6 +80,13 @@ export interface Shape {
    */
   absent: { member: string; sibling: string; value: string | number | boolean; when: boolean }[];
   /**
+   * `dependentSchemas: { <member>: { if: { properties: { <sibling>: { enum: [<value>, …] } }, required: [<sibling>] }, then: {
+   * properties: { <member>: { type: "object", properties: { <key>: false, … } } } } }`: while the sibling is one of the values,
+   * the member's object holds none of the keys, as a pricing entry's `cost_parameters` holds no `action_definition` on a core
+   * cost method other than `CPA`.
+   */
+  absentOn: { member: string; sibling: string; values: (string | number | boolean)[]; keys: string[] }[];
+  /**
    * `if` the sibling equals the value, `then` the names are required and each
    * typed member is a value of its type too, as a commitment's `amount` is a
    * `Count` while `basis` is `units`. The conditions read one sibling, each
@@ -89,8 +96,10 @@ export interface Shape {
 }
 
 /** Whether a type or template of the SDK leaves a member absent unless, or when, a sibling equals a value, which only then needs its check in the runtime. */
-export const usesAbsent = (sdk: Pick<SdkModel, "types" | "templates">): boolean =>
-  [...sdk.types.values()].some((t) => t.kind === "object" && t.shape.absent.length > 0) || [...sdk.templates.values()].some((t) => t.body.kind === "object" && t.body.shape.absent.length > 0);
+export const usesAbsent = (sdk: Pick<SdkModel, "types" | "templates">): boolean => {
+  const absent = (shape: Shape) => shape.absent.length + shape.absentOn.length > 0;
+  return [...sdk.types.values()].some((t) => t.kind === "object" && absent(t.shape)) || [...sdk.templates.values()].some((t) => t.body.kind === "object" && absent(t.body.shape));
+};
 
 /** Every type expression a shape holds: its properties', and its conditions' typed members'. */
 export const shapeExprs = (shape: Shape): Expr[] => [...shape.properties.map((p) => p.expr), ...shape.conditions.flatMap((c) => c.types.map((x) => x.expr))];
@@ -422,6 +431,7 @@ export function buildSdkModel(model: ModelDoc, short: string): { sdk: SdkModel; 
       bounds,
       rejects: [],
       absent: [],
+      absentOn: [],
       conditions: [],
     };
     if (s.minProperties !== undefined) shape.minProperties = Number(s.minProperties);
@@ -434,6 +444,12 @@ export function buildSdkModel(model: ModelDoc, short: string): { sdk: SdkModel; 
         if (only !== null) {
           if (!(only.sibling in props)) throw new Error(`${where}: "dependentSchemas/${member}" names "${only.sibling}", which is no property`);
           shape.absent.push({ member, ...only });
+          continue;
+        }
+        const on = absenceOnCoreOf(s, member);
+        if (on !== null) {
+          if (!(on.sibling in props)) throw new Error(`${where}: "dependentSchemas/${member}" names "${on.sibling}", which is no property`);
+          shape.absentOn.push({ member, ...on });
           continue;
         }
         const inner = nestedIf(s, member);

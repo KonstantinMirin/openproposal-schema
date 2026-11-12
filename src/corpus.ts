@@ -48,7 +48,7 @@ import { join, posix } from "node:path";
 import { Ajv2020 } from "ajv/dist/2020.js";
 import { installFormats } from "./formats.ts";
 import { canonicalJson } from "./canonical.ts";
-import { absenceOf, allowedOf, baseOf, type EmittedFile, inlinedFrom, inlinedKeys, nestedIf, schemaIdOf } from "./emit.ts";
+import { absenceOf, absenceOnCoreOf, allowedOf, baseOf, type EmittedFile, inlinedFrom, inlinedKeys, nestedIf, schemaIdOf } from "./emit.ts";
 import type { InstanceOracle } from "./examples.ts";
 import type { Kernel } from "./kernel.ts";
 import type { TypeRef } from "./mapping.ts";
@@ -189,6 +189,10 @@ export function constraintsOf(schema: Schema): { found: Found[]; implied: (Found
       } else if (k === "type" && integerCoded(node)) {
         // Every branch of an integer-coded vocabulary is an integer, so its `type` holds whenever its `oneOf` does.
         implied.push({ keyword: k, at, by: "oneOf" });
+      } else if (k === "type" && v === "object" && /\/dependentSchemas\/[^/]+\/then\/properties\/[^/]+$/.test(at)) {
+        // A dependency's `then` that makes keys of its member's object absent restates the member's `type`, which the member's
+        // own schema states, for strict validators; it never decides alone.
+        implied.push({ keyword: k, at, by: "dependentSchemas" });
       } else if (k === "type" && ("enum" in node || "const" in node)) {
         const values = "const" in node ? [node.const] : Array.isArray(node.enum) ? node.enum : [];
         if (values.every((x) => hasType(x, v))) implied.push({ keyword: k, at, by: "const" in node ? "const" : "enum" });
@@ -199,7 +203,11 @@ export function constraintsOf(schema: Schema): { found: Found[]; implied: (Found
         unknown.push(`${at || "/"}: "${k}"`);
       }
       if ((k === "properties" || k === "dependentSchemas") && isMap(v)) {
-        for (const [name, s] of Object.entries(v)) if (isMap(s)) walk(s, `${at}/${k}/${escape(name)}`);
+        for (const [name, s] of Object.entries(v)) {
+          // A member whose schema is `false`, as a dependency's `then` makes a key absent: the member's presence is the constraint.
+          if (k === "properties" && s === false) found.push({ keyword: "false", at: `${at}/${k}/${escape(name)}` });
+          else if (isMap(s)) walk(s, `${at}/${k}/${escape(name)}`);
+        }
       } else if (k === "anyOf" && Array.isArray(v)) {
         v.forEach((s, i) => isMap(s) && walk(s, `${at}/anyOf/${i}`));
       } else if ((k === "items" || k === "propertyNames" || k === "then" || k === "else" || k === "additionalProperties") && isMap(v)) {
@@ -211,7 +219,8 @@ export function constraintsOf(schema: Schema): { found: Found[]; implied: (Found
   return { found, implied, unknown };
 }
 
-const caseId = (type: string, f: Found) => `${type}#${f.at}/${f.keyword}${f.member !== undefined ? `/${escape(f.member)}` : ""}${f.name !== undefined ? `/${escape(f.name)}` : ""}`;
+const caseId = (type: string, f: Found) => (f.keyword === "false" ? `${type}#${f.at}` : caseIdOf(type, f));
+const caseIdOf = (type: string, f: Found) => `${type}#${f.at}/${f.keyword}${f.member !== undefined ? `/${escape(f.member)}` : ""}${f.name !== undefined ? `/${escape(f.name)}` : ""}`;
 
 /** The node a pointer names, from a schema. */
 function nodeAt(schema: Schema, at: string): Schema {
@@ -224,6 +233,12 @@ function nodeAt(schema: Schema, at: string): Schema {
 /** The type's schema with one constraint removed: the keyword, or the one name of a `required`. */
 function relaxedSchema(schema: Schema, f: Found): Schema {
   const copy = structuredClone(schema);
+  if (f.keyword === "false") {
+    // A member's `false` schema: the member may be anything.
+    const ts = tokens(f.at);
+    nodeAt(copy, pointerOf(ts.slice(0, -2))).properties = { ...(nodeAt(copy, pointerOf(ts.slice(0, -2))).properties as Schema), [ts.at(-1)!]: true };
+    return copy;
+  }
   const node = nodeAt(copy, f.at);
   if (f.keyword === "required" && Array.isArray(node.required)) {
     const rest = node.required.filter((n) => n !== f.name);
@@ -471,7 +486,14 @@ export function baselines(model: ModelDoc, v: Validators, kernel: Kernel, schema
         // valid value gives it (below).
         const only = absenceOf(node, next);
         const toSibling = only !== null && rest.length === 2 && rest[0] === "properties" && rest[1] === only.sibling;
-        if (rest.length === 1 && rest[0] === "then" && nestedIf(node, next) !== null) dependency = next;
+        // A key of the member's object absent on a sibling's terms: the member is present and the sibling holds the first of
+        // them, so the `if` holds and the key alone breaks the `then`.
+        const on = absenceOnCoreOf(node, next);
+        const toKey = on !== null && rest.length === 5 && rest[0] === "then" && rest[1] === "properties" && rest[2] === next && rest[3] === "properties" && on.keys.includes(rest[4]!);
+        if (toKey) {
+          fixed[on.sibling] = on.values[0];
+          keys.add(on.sibling);
+        } else if (rest.length === 1 && rest[0] === "then" && nestedIf(node, next) !== null) dependency = next;
         else if (rest.length > 0 && !toSibling) throw new Error(`a constraint nested in "dependentSchemas" at ${pointerOf(force)}`);
       }
       // A constraint in a condition's `then`, at the end of a chain of `else`: the condition holds, and a typed member is present.
@@ -659,22 +681,30 @@ export function generateCorpus(input: CorpusInput): { doc: CorpusDoc; problems: 
     return { path, object };
   };
 
-  /** The values a member's own schema lists, at a path of members from an object's schema, following each `$ref`: its `enum`, `const`, or each `anyOf` branch's. */
-  const valuesAt = (root: Schema, file: string, path: string[]): unknown[] => {
+  /** A schema node with each `$ref` followed, and the file it sits in. */
+  const deref = (x: { node: Schema; file: string }) => {
+    for (let i = 0; typeof x.node.$ref === "string" && i < 32; i++) {
+      const id = new URL(x.node.$ref, x.file).href;
+      x = { node: v.node(id).node, file: id.split("#")[0]! };
+    }
+    return x;
+  };
+  /** A member's own schema, at a path of members from an object's schema, following each `$ref`; null where there is none. */
+  const memberAt = (root: Schema, file: string, path: string[]): { node: Schema; file: string } | null => {
     let at = { node: root, file };
-    const deref = (x: { node: Schema; file: string }) => {
-      for (let i = 0; typeof x.node.$ref === "string" && i < 32; i++) {
-        const id = new URL(x.node.$ref, x.file).href;
-        x = { node: v.node(id).node, file: id.split("#")[0]! };
-      }
-      return x;
-    };
     for (const name of path) {
       const props = deref(at).node.properties;
       const next = isMap(props) ? props[name] : undefined;
-      if (!isMap(next)) return [];
+      if (!isMap(next)) return null;
       at = { node: next, file: deref(at).file };
     }
+    return at;
+  };
+
+  /** The values a member's own schema lists, at a path of members from an object's schema, following each `$ref`: its `enum`, `const`, or each `anyOf` branch's. */
+  const valuesAt = (root: Schema, file: string, path: string[]): unknown[] => {
+    const at = memberAt(root, file, path);
+    if (at === null) return [];
     const listed = (x: { node: Schema; file: string }): unknown[] => {
       const d = deref(x);
       if (Array.isArray(d.node.enum)) return d.node.enum;
@@ -799,7 +829,7 @@ export function generateCorpus(input: CorpusInput): { doc: CorpusDoc; problems: 
         continue;
       }
       const here = getAt(baseline, where.path);
-      const atNode = nodeAt(node, f.at);
+      const atNode = f.keyword === "false" ? {} : nodeAt(node, f.at);
       const isolates = (candidate: unknown) => {
         const instance = setAt(baseline, where.path, () => candidate);
         return canonicalJson(instance) !== canonicalJson(baseline) && !v.valid(id, instance) && v.relaxedValid(id, f, instance) ? instance : undefined;
@@ -808,6 +838,11 @@ export function generateCorpus(input: CorpusInput): { doc: CorpusDoc; problems: 
       // A sibling's `const` in a dependency, as `rate_unit`'s `day` that `calendar_zone` needs: the other values the sibling's own
       // schema takes come first, since only they break the dependency alone.
       const others = f.keyword === "const" && f.at.includes("/dependentSchemas/") ? valuesAt(node, file, where.path).filter((x) => canonicalJson(x) !== canonicalJson(atNode.const)) : [];
+      // A member a `false` schema makes absent: a valid value of the member's own schema, where the object's type gives it.
+      if (f.keyword === "false") {
+        const own = memberAt(node, file, where.path);
+        if (own !== null) others.push(build(own.node, own.file, [], [id]));
+      }
       // A primitive's reviewed invalid vectors come first, then the keyword's own list.
       for (const c of [...(t.kind === "primitive" ? (rejected.get(t.name) ?? []) : []), ...others, ...candidates(f, atNode, here, where.object, file, [id])]) {
         mutant = isolates(c);

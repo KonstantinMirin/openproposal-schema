@@ -162,6 +162,23 @@ test("a row's \"Absent unless\" or \"Absent when\" sentence reads as an absence,
   assert.ok(!constraints.some((c) => c.form === "absent" && ["field:5.1:note", "field:5.1:rate", "field:5.1:kind"].includes(c.element)));
 });
 
+test("a key's \"Absent on a core term other than `X`\" reads as an absence on the term beside its object, with the core terms from the paragraph that declares them", () => {
+  const stack = JSON.parse(readFileSync(join(SPEC, "ir", "with-our-stack", "spec-ir.json"), "utf8")) as SpecIR;
+  const { constraints, unread } = read(stack);
+  const c = byId(constraints, "key:5.6.5:CostParameters.action_definition#absent@line_item.pricing[].cost_parameters.action_definition");
+  assert.ok(c && c.form === "absent");
+  assert.deepEqual(
+    { when: c.when, holds: c.holds, otherwise: c.otherwise, unless: c.unless },
+    { when: { member: "cost_method", up: 1 }, holds: ["CPM", "CPMV", "CPC", "CPCV", "CPV", "CPP", "PLAY", "TIME", "FLAT"], otherwise: ["CPA", "examplepub.example:cpa"], unless: false },
+  );
+  const entry = (cost_method: string) => ({ pricing: [{ cost_method, cost_parameters: { action_definition: { url: "https://brand.example/rules.pdf" } } }] });
+  assert.equal(violates(c, entry("TIME")), true);
+  assert.equal(violates(c, entry("CPA")), false);
+  assert.equal(violates(c, entry("shop.example:store_visit")), false);
+  assert.ok(!unread.some((u) => u.element === "key:5.6.5:CostParameters.action_definition" && u.form.startsWith("an absence")));
+  assert.equal(unread.filter((u) => u.form.startsWith("an absence in another form")).length, 7);
+});
+
 test("values outside a value list read: a sentence's values per key, and a named list's codes, closed or left open by 'such as'", () => {
   const { constraints } = read(PRS);
   const enforcement = byId(constraints, "sentence:5.5:262ff404#values@line_item.exclusions_accepted.enforcement");

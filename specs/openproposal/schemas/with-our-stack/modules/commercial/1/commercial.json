@@ -913,6 +913,40 @@
     },
     "PricingEntry": {
       "additionalProperties": false,
+      "dependentSchemas": {
+        "cost_parameters": {
+          "if": {
+            "properties": {
+              "cost_method": {
+                "enum": [
+                  "CPM",
+                  "CPMV",
+                  "CPC",
+                  "CPCV",
+                  "CPV",
+                  "CPP",
+                  "PLAY",
+                  "TIME",
+                  "FLAT"
+                ]
+              }
+            },
+            "required": [
+              "cost_method"
+            ]
+          },
+          "then": {
+            "properties": {
+              "cost_parameters": {
+                "properties": {
+                  "action_definition": false
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
       "properties": {
         "agreed_rate": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/Amount",

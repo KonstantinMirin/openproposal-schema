@@ -990,4 +990,4 @@ export const PricingEntry: z.ZodType<PricingEntry> = z.strictObject({
   transaction_mechanisms: z.array(TransactionMechanism).optional(),
   unit_bounds: UnitBoundsRange.optional(),
   unit_label: PlainString.optional(),
-});
+}).check(rt.absentOn("cost_parameters", "cost_method", ["CPM","CPMV","CPC","CPCV","CPV","CPP","PLAY","TIME","FLAT"], ["action_definition"]));
