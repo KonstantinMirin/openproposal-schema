@@ -257,74 +257,75 @@ key:5.6.5:CostParameters.rating_source	REQUIRED when `cost_method` is `CPP`	line
 key:5.6.5:CostParameters.action_type	REQUIRED when `cost_method` is `CPA`	line 2645
 key:5.6.5:CostParameters.attribution_window	REQUIRED when `cost_method` is `CPA`	line 2646
 key:5.6.5:CostParameters.action_source	REQUIRED when `cost_method` is `CPA`	line 2647
-key:5.6.5:CostParameters.rate_unit	REQUIRED when `cost_method` is `TIME`	line 2648
-key:5.6.5:CostParameters.calendar_zone	OPTIONAL	line 2649
-key:5.6.6:CancellationOption.id	REQUIRED	line 2697
-key:5.6.6:CancellationOption.notice_duration	REQUIRED	line 2698
-key:5.6.6:CancellationOption.max_share	REQUIRED	line 2699
-key:5.6.6:CancellationOption.fees[]	REQUIRED	line 2700
-key:5.6.6:CancellationOption.notice_reference	OPTIONAL	line 2701
-key:5.6.6:CancellationOption.dated_shares[]	OPTIONAL	line 2702
-key:5.6.6:Fee.before_reference	OPTIONAL	line 2708
-key:5.6.6:Fee.calculation	REQUIRED	line 2709
-key:5.6.6:Fee.share	REQUIRED when `calculation` is `cancelled` or `commitment`	line 2710
-key:5.6.6:Fee.amount	REQUIRED when `calculation` is `fixed`	line 2711
-key:5.6.6:DatedShare.window	REQUIRED	line 2718
-key:5.6.6:DatedShare.max_share	REQUIRED	line 2719
-key:5.6.6:CancellationNotice.option_id	REQUIRED	line 2737
-key:5.6.6:CancellationNotice.notice_received_at	REQUIRED	line 2738
-key:5.6.6:CancellationNotice.requested_effective_at	REQUIRED	line 2739
-key:5.6.6:CancellationNotice.cancelled_share	REQUIRED	line 2740
-key:5.6.7:ExclusivityOption.id	REQUIRED	line 2748
-key:5.6.7:ExclusivityOption.scope	REQUIRED	line 2749
-key:5.6.7:ExclusivityOption.categories	REQUIRED when `scope` is `category`	line 2750
-key:5.6.7:ExclusivityOption.competitors[]	OPTIONAL	line 2751
-key:5.6.7:ExclusivityOption.separation	REQUIRED	line 2752
-key:5.6.7:ExclusivityOption.window	OPTIONAL	line 2753
-key:5.6.7:Preemption.reason	REQUIRED	line 2769
-key:5.6.7:Preemption.notice_duration	OPTIONAL	line 2770
-key:5.6.7:Preemption.remedy	OPTIONAL	line 2771
-key:5.7.1:CommittedMetric.metric	REQUIRED	line 2802
-key:5.7.1:CommittedMetric.level	REQUIRED	line 2803
-key:5.7.1:CommittedMetric.direction	REQUIRED	line 2804
-key:5.7.1:MeasurementOption.id	REQUIRED	line 2821
-key:5.7.1:MeasurementOption.measured_by	REQUIRED	line 2822
-key:5.7.1:MeasurementOption.attribution_window	OPTIONAL	line 2823
-key:5.7.1:MeasurementOption.qualifier	OPTIONAL	line 2824
-key:5.7.1:ControllingMeasurementOption.id	REQUIRED	line 2830
-key:5.7.1:ControllingMeasurementOption.counted_by	REQUIRED	line 2831
-key:5.7.1:ControllingMeasurementOption.qualifier	OPTIONAL	line 2832
-key:5.7.1:ControllingMeasurementOption.discrepancy_threshold	OPTIONAL	line 2833
-key:5.7.1:ControllingMeasurementOption.final_after	OPTIONAL	line 2834
-key:5.7.1:ReportingOption.id	REQUIRED	line 2840
-key:5.7.1:ReportingOption.report_type	REQUIRED	line 2841
-key:5.7.1:ReportingOption.cadence	OPTIONAL	line 2842
-key:5.7.1:ReportingOption.delivery_method	OPTIONAL	line 2843
-key:5.7.1:ReportingOption.provided_metrics[]	OPTIONAL	line 2844
-key:5.7.1:ReportingOption.latency	OPTIONAL	line 2845
-key:5.7.1:ShortfallRemedy.remedy_terms	OPTIONAL	line 2851
-key:5.7.1:RemedyTerms.makegood_window	OPTIONAL	line 2857
-key:5.7.1:RemedyTerms.makegood_type	OPTIONAL	line 2858
-key:5.8:RequiredCredential.credential_type	REQUIRED	line 2953
-key:5.8:RequiredCredential.issuer	REQUIRED	line 2954
-key:5.9:MechanismOption.id	REQUIRED	line 2980
-key:5.9:MechanismOption.delivery_type	REQUIRED	line 2981
-key:5.9:BuyerRequirements.seats_expected	OPTIONAL	line 2999
-key:5.9:BuyerRequirements.allowed_dsps[]	OPTIONAL	line 3000
-key:5.9:BuyerRequirements.seats	OPTIONAL	line 3001
-key:5.9:BuyerRequirements.seat_owner	OPTIONAL	line 3002
-key:5.10:ExternalReference.system	REQUIRED	line 3062
-key:5.10:ExternalReference.namespace	OPTIONAL	line 3063
-key:5.10:ExternalReference.id	REQUIRED	line 3064
-key:5.10:ExternalReference.reference_type	REQUIRED	line 3065
-key:5.10:Agreement.agreement_id	REQUIRED	line 3071
-key:5.10:Agreement.parties[]	OPTIONAL	line 3072
-key:5.10:Agreement.agreement_type	OPTIONAL	line 3073
-key:5.10:Agreement.term	OPTIONAL	line 3074
-key:5.10:Agreement.document	OPTIONAL	line 3075
-key:5.10:Billing.delivering_party	OPTIONAL	line 3081
-key:5.10:Billing.invoicing_party	OPTIONAL	line 3082
-key:5.10:Billing.payment_terms	OPTIONAL	line 3083
-key:5.10:Billing.invoice_period	OPTIONAL	line 3084
-key:5.10:Billing.cycle_length	REQUIRED when `invoice_period` is `cycle`	line 3085
-key:5.10:Billing.time_zone	OPTIONAL	line 3086
+key:5.6.5:CostParameters.action_definition	OPTIONAL	line 2648
+key:5.6.5:CostParameters.rate_unit	REQUIRED when `cost_method` is `TIME`	line 2649
+key:5.6.5:CostParameters.calendar_zone	OPTIONAL	line 2650
+key:5.6.6:CancellationOption.id	REQUIRED	line 2698
+key:5.6.6:CancellationOption.notice_duration	REQUIRED	line 2699
+key:5.6.6:CancellationOption.max_share	REQUIRED	line 2700
+key:5.6.6:CancellationOption.fees[]	REQUIRED	line 2701
+key:5.6.6:CancellationOption.notice_reference	OPTIONAL	line 2702
+key:5.6.6:CancellationOption.dated_shares[]	OPTIONAL	line 2703
+key:5.6.6:Fee.before_reference	OPTIONAL	line 2709
+key:5.6.6:Fee.calculation	REQUIRED	line 2710
+key:5.6.6:Fee.share	REQUIRED when `calculation` is `cancelled` or `commitment`	line 2711
+key:5.6.6:Fee.amount	REQUIRED when `calculation` is `fixed`	line 2712
+key:5.6.6:DatedShare.window	REQUIRED	line 2719
+key:5.6.6:DatedShare.max_share	REQUIRED	line 2720
+key:5.6.6:CancellationNotice.option_id	REQUIRED	line 2738
+key:5.6.6:CancellationNotice.notice_received_at	REQUIRED	line 2739
+key:5.6.6:CancellationNotice.requested_effective_at	REQUIRED	line 2740
+key:5.6.6:CancellationNotice.cancelled_share	REQUIRED	line 2741
+key:5.6.7:ExclusivityOption.id	REQUIRED	line 2749
+key:5.6.7:ExclusivityOption.scope	REQUIRED	line 2750
+key:5.6.7:ExclusivityOption.categories	REQUIRED when `scope` is `category`	line 2751
+key:5.6.7:ExclusivityOption.competitors[]	OPTIONAL	line 2752
+key:5.6.7:ExclusivityOption.separation	REQUIRED	line 2753
+key:5.6.7:ExclusivityOption.window	OPTIONAL	line 2754
+key:5.6.7:Preemption.reason	REQUIRED	line 2770
+key:5.6.7:Preemption.notice_duration	OPTIONAL	line 2771
+key:5.6.7:Preemption.remedy	OPTIONAL	line 2772
+key:5.7.1:CommittedMetric.metric	REQUIRED	line 2803
+key:5.7.1:CommittedMetric.level	REQUIRED	line 2804
+key:5.7.1:CommittedMetric.direction	REQUIRED	line 2805
+key:5.7.1:MeasurementOption.id	REQUIRED	line 2822
+key:5.7.1:MeasurementOption.measured_by	REQUIRED	line 2823
+key:5.7.1:MeasurementOption.attribution_window	OPTIONAL	line 2824
+key:5.7.1:MeasurementOption.qualifier	OPTIONAL	line 2825
+key:5.7.1:ControllingMeasurementOption.id	REQUIRED	line 2831
+key:5.7.1:ControllingMeasurementOption.counted_by	REQUIRED	line 2832
+key:5.7.1:ControllingMeasurementOption.qualifier	OPTIONAL	line 2833
+key:5.7.1:ControllingMeasurementOption.discrepancy_threshold	OPTIONAL	line 2834
+key:5.7.1:ControllingMeasurementOption.final_after	OPTIONAL	line 2835
+key:5.7.1:ReportingOption.id	REQUIRED	line 2841
+key:5.7.1:ReportingOption.report_type	REQUIRED	line 2842
+key:5.7.1:ReportingOption.cadence	OPTIONAL	line 2843
+key:5.7.1:ReportingOption.delivery_method	OPTIONAL	line 2844
+key:5.7.1:ReportingOption.provided_metrics[]	OPTIONAL	line 2845
+key:5.7.1:ReportingOption.latency	OPTIONAL	line 2846
+key:5.7.1:ShortfallRemedy.remedy_terms	OPTIONAL	line 2852
+key:5.7.1:RemedyTerms.makegood_window	OPTIONAL	line 2858
+key:5.7.1:RemedyTerms.makegood_type	OPTIONAL	line 2859
+key:5.8:RequiredCredential.credential_type	REQUIRED	line 2954
+key:5.8:RequiredCredential.issuer	REQUIRED	line 2955
+key:5.9:MechanismOption.id	REQUIRED	line 2981
+key:5.9:MechanismOption.delivery_type	REQUIRED	line 2982
+key:5.9:BuyerRequirements.seats_expected	OPTIONAL	line 3000
+key:5.9:BuyerRequirements.allowed_dsps[]	OPTIONAL	line 3001
+key:5.9:BuyerRequirements.seats	OPTIONAL	line 3002
+key:5.9:BuyerRequirements.seat_owner	OPTIONAL	line 3003
+key:5.10:ExternalReference.system	REQUIRED	line 3063
+key:5.10:ExternalReference.namespace	OPTIONAL	line 3064
+key:5.10:ExternalReference.id	REQUIRED	line 3065
+key:5.10:ExternalReference.reference_type	REQUIRED	line 3066
+key:5.10:Agreement.agreement_id	REQUIRED	line 3072
+key:5.10:Agreement.parties[]	OPTIONAL	line 3073
+key:5.10:Agreement.agreement_type	OPTIONAL	line 3074
+key:5.10:Agreement.term	OPTIONAL	line 3075
+key:5.10:Agreement.document	OPTIONAL	line 3076
+key:5.10:Billing.delivering_party	OPTIONAL	line 3082
+key:5.10:Billing.invoicing_party	OPTIONAL	line 3083
+key:5.10:Billing.payment_terms	OPTIONAL	line 3084
+key:5.10:Billing.invoice_period	OPTIONAL	line 3085
+key:5.10:Billing.cycle_length	REQUIRED when `invoice_period` is `cycle`	line 3086
+key:5.10:Billing.time_zone	OPTIONAL	line 3087

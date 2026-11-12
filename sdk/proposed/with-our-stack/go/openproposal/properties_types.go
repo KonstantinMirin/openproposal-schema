@@ -180,12 +180,12 @@ func (Screen) ValidateValue(v any, at string, errs *Errors) {
 	checkClosed(m, at, errs, "lat", "lon", "loop", "movable", "operating_hours", "screen_id", "time_zone")
 	if _, ok := m["lat"]; ok {
 		if x, ok := m["movable"]; ok && jsonEqual(x, true) {
-			errs.add(at, "holds %s, which is absent when %s is %s", "\"lat\"", "\"movable\"", "true")
+			errs.add(member(at, "movable"), "is %s, which it can't be while %s is present", "true", "\"lat\"")
 		}
 	}
 	if _, ok := m["lon"]; ok {
 		if x, ok := m["movable"]; ok && jsonEqual(x, true) {
-			errs.add(at, "holds %s, which is absent when %s is %s", "\"lon\"", "\"movable\"", "true")
+			errs.add(member(at, "movable"), "is %s, which it can't be while %s is present", "true", "\"lon\"")
 		}
 	}
 	if x, ok := m["lat"]; ok {

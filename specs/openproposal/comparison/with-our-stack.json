@@ -11080,6 +11080,11 @@
         "text": "`logged_by` | REQUIRED | Who keeps the proof-of-play log"
       },
       {
+        "id": "key:5.6.5:CostParameters.action_definition",
+        "kind": "key",
+        "text": "`action_definition` | OPTIONAL | Absent on a core term other than `CPA`. The rules that make an action billable: the evidence that confirms it, which content or context gets credit, and how cancellations, returns, fraud, and duplicate reports change the count. Where the document conflicts with a typed field of the binding record (§ 4.1.1), such as `action_type`, `attribution_window`, or `action_source`, the typed field governs"
+      },
+      {
         "id": "key:5.6.5:CostParameters.action_source",
         "kind": "key",
         "text": "`action_source` | REQUIRED when `cost_method` is `CPA` | Who reports the action"
@@ -13861,6 +13866,11 @@
       },
       {
         "id": "rule:5.6.5:ae26d4ac",
+        "kind": "statement",
+        "text": "OPTIONAL"
+      },
+      {
+        "id": "rule:5.6.5:ae26d4ac-2",
         "kind": "statement",
         "text": "OPTIONAL"
       },
@@ -22036,8 +22046,8 @@
   },
   "format": 1,
   "lock": {
-    "blob": "5edab7f30197a2cb30ce6e87021adeeb81ff8c5e",
-    "commit": "38f5cfa245d49ce30dbb9a1f91fd2f1b8158ea47",
+    "blob": "8e91771f0bc1121e7b23a4611e15f400ea511c53",
+    "commit": "75c6de78f21d435625799aebb254cc34c1d74755",
     "counts": {
       "decisions": 19,
       "elements.appendix_a": 98,
@@ -22046,23 +22056,23 @@
       "elements.concept": 50,
       "elements.definition": 79,
       "elements.field": 98,
-      "elements.key": 330,
+      "elements.key": 331,
       "elements.marker": 11,
       "elements.sentence": 655,
-      "elements.statement": 616,
+      "elements.statement": 617,
       "elements.value_list": 74,
       "findings.conditions": 51,
       "findings.examples": 0,
       "findings.round_trip": 0,
       "findings.spec": 296,
       "findings.spec_open": 295,
-      "properties": 524,
+      "properties": 525,
       "rules": 67,
       "schema_files": 21,
       "statements.example": 12,
       "statements.obligation": 183,
       "statements.rule": 53,
-      "statements.schema": 503,
+      "statements.schema": 504,
       "types.constructor": 7,
       "types.copy": 27,
       "types.document": 3,
@@ -22073,7 +22083,7 @@
       "types.union": 3,
       "types.vocabulary": 70
     },
-    "ir_sha256": "09965a4c933bec35349592bf3ce89b39b38a609507ce4fed52c7754910470fbd",
+    "ir_sha256": "b2356d0eedf1c34805e791a36d556432a41d715aa1b8f401bfc80c6992d1b653",
     "lock": "with-our-stack"
   },
   "statements": {
@@ -25487,6 +25497,12 @@
       },
       {
         "ir": "rule:5.6.5:ae26d4ac",
+        "level": "OPTIONAL",
+        "placed": "schema CostParameters",
+        "text": "OPTIONAL"
+      },
+      {
+        "ir": "rule:5.6.5:ae26d4ac-2",
         "level": "OPTIONAL",
         "placed": "schema CostParameters",
         "text": "OPTIONAL"

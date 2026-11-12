@@ -1,0 +1,31 @@
+format: 1
+id: G-152
+date: 2026-11-12
+question: What changes in the gates when the with-our-stack lock moves to the stack's head at `75c6de7`, where a CPA entry may name `action_definition` and the stack's checker checks `calendar_zone`, `action_definition`, and a movable screen's coordinates where they occur?
+decision: >-
+  The lock reads op30-packages at `75c6de7`, after round 24, in which eight
+  heads moved, #146 to #154. § 5.6.5 gains the `cost_parameters` row
+  `action_definition`, a `DocumentRef`, OPTIONAL, whose Meaning begins
+  "Absent on a core term other than `CPA`". The rule `typed-row` maps it as
+  an optional property of `CostParameters`, and the row's OPTIONAL statement
+  takes the ID `rule:5.6.5:ae26d4ac`, which moves `calendar_zone`'s to
+  `rule:5.6.5:ae26d4ac-2`; both are mapped by rule, so no record changes. The
+  absence isn't read: its condition is on `cost_method`, a member of the
+  pricing entry that holds `cost_parameters`, not a sibling, and it names
+  the open vocabulary's core terms but one, where the "Absent unless" and
+  "Absent when" forms read a sibling equal to a value. The fidelity oracle
+  lists it with the absences in another form, as it lists `ground`'s
+  "Absent on any other entry", and no schema, rule, or SDK states it. The
+  lock pins the checker's new blob, `3ad5cb8`, whose `check_cost_presence`
+  and `check_screen_location` run on every line item; the lock's own
+  examples pass it.
+rationale: >-
+  No check is weaker: only the golden snapshot, which the test suite reads,
+  changes, because the locked text did: one key row, one OPTIONAL statement,
+  and four code spans more. The stack's schemas, rules, corpus, type
+  examples, SDKs, release, comparison, and feedback gain the member and the
+  lock's commit and blob. The desk tests keep all 23 verdicts in the
+  schemas, the checker at `75c6de7`, and the three SDKs. The `main` and
+  `with-open-prs` outputs and models are byte-identical.
+accepts:
+  - { gate: npm-test, fingerprint: b4d8c04429470f73a5950cb7ea2b00d6b5f766adec7bf5ba5e700b26cd9b01f5 }

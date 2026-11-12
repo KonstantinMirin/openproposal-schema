@@ -2,7 +2,7 @@
 
 We now generate the schemas from the specification. It took 21 decisions: 21 where the text leaves a point open, and 0 changes we propose to what the text or its examples settle. Of the 21 open points, 20 ask the specification to state something, and each one says what, so that the next revision needs none of them. The outputs are JSON Schema 2020-12, the rules JSON Schema can't express with their test vectors, and TypeScript, Python, and Go types.
 
-Inputs: `with-our-stack` at `38f5cfa`.
+Inputs: `with-our-stack` at `75c6de7`.
 
 | Open points about | Count | The specification should state |
 | :--- | ---: | :--- |

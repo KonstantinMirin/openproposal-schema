@@ -1,0 +1,56 @@
+format: 1
+id: G-149
+date: 2026-11-12
+question: How does the desk-tests gate hold each generated SDK to the verdict every desk-test payload must get, beside the schemas and rules and the lock's own checker?
+decision: >-
+  The desk-tests gate gains one engine per SDK the lock's schemas generate:
+  the TypeScript, Python, and Go types of the build the schemas are, under
+  `sdk/proposed/<lock>/`, since the as-written tree is another build with
+  schemas of its own. Each runs every payload of a set through the entry
+  point an implementer calls to check a document: the Zod schema the
+  TypeScript package exports under the document's name, `safeParse`, in this
+  process; the Python package's `parse_json(document, text)`, in the strict
+  mode, under the venv, by tools/sdk/findings.py; and Go's
+  `op.Validate[op.<document>]`, by a harness built against the tree's
+  module, as the parity gate builds its own, which now share one builder.
+  Each SDK's path becomes the JSON pointer the expected file uses by
+  following it through the payload while each step is a member or an index
+  there: Pydantic's name of a union's branch ends it at the union, and a
+  missing member's name at its object, where the schemas report them; Go's
+  `op.Error.At` is a pointer already, and Zod's `unrecognized_keys` issue,
+  at the object, gains each key it names. A payload with a finding must
+  fail each SDK at that location and nowhere else, and every other payload
+  must pass each SDK. A rule's finding is the one exception: no SDK type
+  checks a rule, since the types check what the schemas check (type rules
+  § 9), and the parity gate already holds every SDK to accept every rule
+  payload. The expected file records each such finding under `sdk_gaps`,
+  now required, with the reason, as it records an undecided check; each SDK
+  must accept the payload there, an entry that names no rule's finding of
+  the set fails, and a rule's finding that the SDK gaps don't record holds
+  the SDKs to it, so none is skipped in silence. The gate takes every set of
+  a lock in one run, and its fixtures change IAB Australia's set by name, so
+  another set in its own folder, whatever its name, needs no code. On IAB
+  Australia's 23 line items each SDK reaches every recorded verdict: it
+  rejects the 8 files whose finding is a schema's at their locations and
+  accepts the other 15, p11 among them, the set's one SDK gap,
+  `rule:5.6.4:e58650b7`.
+rationale: >-
+  No check is weaker: the gate keeps every comparison it made, adds three
+  engines' verdicts and locations on every payload, and fails a gap that
+  isn't a rule's, so a schema check an SDK misses can't be recorded away.
+  Its fixtures add an SDK that accepts a payload the other engines reject,
+  one that rejects a clean payload, one that rejects a payload elsewhere,
+  one that rejects at a recorded SDK gap, a rule's finding the SDK gaps
+  don't record, a gap recorded for a schema's finding, and an SDK run that
+  failed. The desk-tests-load gate's known-bad file gains an empty
+  `sdk_gaps`, so it still fails only for its finding with no reason. The
+  test suite gains a test of the path normalization and a test that runs
+  every engine on a second set in a temporary folder that sorts before IAB
+  Australia's, and its minimum count rises to 551. The guard changes with
+  the CI script. No generated output changes: the `main` and `with-open-prs`
+  outputs and models are byte-identical.
+accepts:
+  - { gate: desk-tests, fingerprint: e0d594c94ffd305ff566c8f4fffa58b10ef9ea72ad4bf3bd6581ad447db28db9 }
+  - { gate: desk-tests-load, fingerprint: f41afd20845bad8479b67bf946c8968c8f92f8e0daa8f8f603a65b7dc59c4336 }
+  - { gate: guard, fingerprint: 8432f9b4857fe2cf9d2f8609e5a3419ab813747cc13faf6bb040a160f1b6effe }
+  - { gate: npm-test, fingerprint: a5b95bcc9fdb28838b7fd61ef700679e6f4e8ed2f9de695890fc933c7d37bc72 }

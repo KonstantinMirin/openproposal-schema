@@ -499,157 +499,157 @@ sentence:5.6.5:60f46987	line 2629	`unit` is a column here, not a key on the entr
 sentence:5.6.5:295aae28	line 2630	The `unit` terms are `impressions` | `viewable_impressions` | `clicks` | `completed_views` | `views` | `rating_points` | `actions` | `plays` | `hours` | `days` | `weeks`.
 sentence:5.6.5:752f24a9	line 2633	An extension term has no row: its `unit_label`, a free label, names its unit.
 sentence:5.6.5:d44507be	line 2635	`CostParameters` lists the `cost_parameters` keys a core term uses.
-sentence:5.6.5:4804c1fd	line 2659	`derived_units` = (`amount` − those charges) ÷ `agreed_rate` × rate per, rounded down to a whole unit, where rate per comes from the table for a core term and from `rate_per` for an extension term.
-sentence:5.6.5:03d899cb	line 2663	When `commitment.basis` is `units`, `derived_units` is `amount`, and the seller total is `amount` ÷ rate per × `agreed_rate` plus those charges.
-sentence:5.6.5:aa43e614	line 2666	`FLAT` and `TIME` set these figures from the rate and the flight instead, and a rule that reads `commitment.amount` on such an entry reads them: the seller total when `commitment.basis` is `spend`, `derived_units` when it is `units`.
-sentence:5.6.5:d857cda3	line 2670	`FLAT`.
-sentence:5.6.5:c993e906	line 2670	`agreed_rate` is the price of the line item, so the seller total is `agreed_rate` plus those charges.
-sentence:5.6.5:82c7e79e	line 2674	`TIME`.
-sentence:5.6.5:d956510e	line 2674	`derived_units` is the time from `commitment.flight.start` through `commitment.flight.end`, inclusive, in `rate_unit`s rounded to the nearest whole unit, half up, so a clock change inside the flight doesn't change it.
-sentence:5.6.5:10182d60	line 2676	When `calendar_zone` is present, `derived_units` is instead the number of calendar days in that zone from the day of `commitment.flight.start` through the day of `commitment.flight.end`.
-sentence:5.6.5:8a25cede	line 2678	The seller total is `derived_units` × `agreed_rate` plus those charges.
-sentence:5.6.5:b1d5965b	line 2681	Delivery is counted in the entry's unit, and each unit is worth `agreed_rate` ÷ rate per, with rate per as above.
-sentence:5.6.5:52af2643	line 2682	With `calendar_zone`, a `TIME` entry counts one delivered unit for each of those calendar days on which the line item runs.
-sentence:5.6.5:087aa70d	line 2683	A `FLAT` entry has no unit, so its delivery is the days of `commitment.flight` delivered, counted in elapsed days from `commitment.flight.start`.
-sentence:5.6.5:dd8b2621	line 2685	Each day is worth `agreed_rate` ÷ the flight's length in days, and a last part day is worth its fraction of that.
-sentence:5.6.5:95de5970	line 2688	A seller fee is never a `pricing[]` entry.
-sentence:5.6.6:ce641a8d	line 2693	`CancellationOption` keys:
-sentence:5.6.6:30cb5ba9	line 2704	`Fee` keys:
-sentence:5.6.6:fa40089a	line 2713	`DatedShare` keys.
-sentence:5.6.6:b6316b39	line 2713	An entry applies when the effective date falls in its `window`.
-sentence:5.6.6:9ad600cc	line 2714	Notice then counts to `window.start`.
-sentence:5.6.6:f2b3045a	line 2721	The effective date is the later of the date the buyer asks for and notice received plus `notice_duration`.
-sentence:5.6.6:a16b33c6	line 2722	The remaining commitment is `commitment.amount`, without `delta_flat` charges, less delivery (§ 5.6.5) through the effective date; the cancelled amount is the part of it the buyer cancels, up to the `max_share` that applies.
-sentence:5.6.6:c02f4eb3	line 2725	These, and the base of a `commitment` fee, are money (§ 5.6): units and days are valued as § 5.6.5 values delivery.
-sentence:5.6.6:904063ba	line 2726	The buyer owes that delivery, `production` (§ 5.4) work completed by then, and the fee.
-sentence:5.6.6:39c82311	line 2729	An entry's `cancellation` (§ 4.4) records the notice.
-sentence:5.6.6:eaf7a730	line 2730	It changes no term, and the line item's `status` stays `agreed`.
-sentence:5.6.6:1e6b79ab	line 2733	`CancellationNotice` keys:
-sentence:5.6.7:3840b989	line 2744	`ExclusivityOption` keys:
-sentence:5.6.7:d6b2dc54	line 2756	A line item whose `preemption` names `exclusivity` doesn't count against a later exclusivity term on dates at least its `notice_duration` after the seller's notice, or on every date when it has no `notice_duration`: the seller preempts it on those dates instead.
-sentence:5.6.7:992e8f24	line 2761	A line item states `preemption` when a later sale can preempt its delivery, such as the faces in a station that another buyer can dominate.
-sentence:5.6.7:c25caa79	line 2765	`Preemption` keys:
-sentence:5.6.7:1d7dd076	line 2774	Preemption doesn't excuse a shortfall, which `shortfall_remedy` (§ 5.7) settles.
-sentence:5.6.7:a55e8456	line 2775	A `remedy` on `preemption` settles the delivery a preemption takes instead, on any `delivery_type`.
-sentence:5.7.1:3be5910a	line 2790	`measurement_source` measures committed metrics; its `attribution_window` isn't a settlement window.
-sentence:5.7.1:b41f4b95	line 2791	`controlling_measurement` counts the units the invoice uses.
-sentence:5.7.1:ce9728e0	line 2792	Counted delivery, including delivery that still counts after `commitment.flight.end`, falls in an invoice period.
-sentence:5.7.1:6d7c6000	line 2793	The seller sets the period in `billing.invoice_period` (§ 5.10).
-sentence:5.7.1:d1c1989b	line 2794	A `month` is a calendar month in `billing.time_zone`.
-sentence:5.7.1:758abe1e	line 2795	`cycle` periods run back to back from `commitment.flight.start`, each `billing.cycle_length` long.
-sentence:5.7.1:c6d017c6	line 2798	`CommittedMetric` keys:
-sentence:5.7.1:8a42ee73	line 2806	A term defines whether its `level` is a rate or a count, and its definition names its standard.
-sentence:5.7.1:c16f1346	line 2807	Core terms: `viewable_rate` | `completion_rate` | `ivt_rate` | `impressions`.
-sentence:5.7.1:b982fd5f	line 2817	`MeasurementOption` keys:
-sentence:5.7.1:4c0d8bf4	line 2826	`ControllingMeasurementOption` keys:
-sentence:5.7.1:69fed52a	line 2836	`ReportingOption` keys:
-sentence:5.7.1:a5747f87	line 2847	`ShortfallRemedy` holds the keys of `Selectable[VocabularyTerm]` and this one:
-sentence:5.7.1:7a4aebc4	line 2853	`RemedyTerms` keys:
-sentence:5.7.1:5e8f12d3	line 2863	A shortfall is a final value that misses a committed `level` in its `direction`, under any `delivery_type`: a committed `level` is guaranteed in its own right.
-sentence:5.7.1:c903a153	line 2865	Final delivery below `commitment.amount` is a shortfall only where the line item's `delivery_type` (§ 5.9) is `guaranteed`: counted in units when `commitment.basis` is `units`, and, when it is `spend`, valued as § 5.6.5 values delivery, against `commitment.amount` without `delta_flat` charges.
-sentence:5.7.1:9f775fec	line 2868	Every shortfall follows the `shortfall_remedy` rules below.
-sentence:5.7.1:9be5781a	line 2869	When `preemption` states a `remedy` (§ 5.6.7), the delivery a preemption takes, less any delivery the seller adds within `commitment.flight` to replace it, is a shortfall on any `delivery_type`.
-sentence:5.7.1:4dcb6eae	line 2871	That part follows those rules as though its `remedy` were the only option in effect at commit, under the `remedy_terms` of `shortfall_remedy`, and there `none` leaves committed levels guaranteed.
-sentence:5.7.1:b7791864	line 2874	`shortfall_remedy` settles the rest of a shortfall.
-sentence:5.7.1:aadd7eb9	line 2876	`shortfall_remedy`: the options in effect are ordered, first choice first.
-sentence:5.7.1:43489648	line 2880	If none remains, the shortfall settles under `remedy_terms`.
-sentence:5.7.1:e4c66ce6	line 2883	A buyer that commits with `makegood` in effect consents to a makegood within `makegood_window`.
-sentence:5.7.1:0f29149a	line 2886	Under `sov_basis: impressions` (§ 5.9), the promised share is the offered `sov_share`.
-sentence:5.7.1:d8c91fc7	line 2891	OpenDirect 2.1 `Stats` reports delivery to date on a Line, with a spot's `shareoftime`.
-sentence:5.7.1:87eb5e07	line 2894	A line item with no `controlling_measurement` option in effect, or no `final_after` on the option in effect, states no final count either.
-sentence:5.7.1:4b34946c	line 2895	An `embedded` line item with no `final_after` also states no end to the counting in § 5.9, and `terms_refs[]` (§ 5.8) may state one.
-sentence:5.8:021bf6d9	line 2901	`visibility` says who may read a line item.
-sentence:5.8:f47873bb	line 2901	`required_credentials[]`, `eligible_buyers[]`, `eligible_seats[]`, and `buyer_requirements` (§ 5.9) say who may commit to it.
-sentence:5.8:2411dfc1	line 2903	`terms_refs[]` names the binding documents a `commitment` entry accepts (§ 4.1.2).
-sentence:5.8:5f72435b	line 2914	Each `visibility` value names who may read the line item:
-sentence:5.8:86625df0	line 2916	`public`: any requester, with no authentication.
-sentence:5.8:7536291d	line 2917	`registry_gated`: an authenticated requester (§ 1.2) acting for a party the IAB Tech Lab Agent Registry attests.
-sentence:5.8:46af5318	line 2919	`named`: an authenticated requester acting for a party that `eligible_buyers[]` names, or that holds a seat `eligible_seats[]` names.
-sentence:5.8:c219f50b	line 2925	An authenticated requester acting for the party a proposal's `buyer` names may read all of it, whatever `visibility` says.
-sentence:5.8:a4300adf	line 2927	A response carries only the line items the requester may read, and a package only when the requester may read every line item in its `line_items[]`.
-sentence:5.8:3b62d557	line 2929	A request for any other line item, or for a proposal the requester may not read, returns `not_found` (§ 2.4).
-sentence:5.8:dcc71db0	line 2930	A full fetch leaves out only line items (§ 2.1), so a value it returns can name a line item the requester may not read, such as a `negotiation_history[]` path.
-sentence:5.8:e7bfc683	line 2941	`required_credentials[]`: the buyer meets it.
-sentence:5.8:76d0a76a	line 2943	A buyer that fails these rules, or an authority check the seller applies (whether the sender may make this request for `buyer`, or `buyer` for an advertiser it names, § 1.2), gets `not_eligible` (§ 2.4), or `not_found` when the requester may not read what the request names.
-sentence:5.8:2398e570	line 2949	`RequiredCredential` keys:
-sentence:5.8:72703795	line 2960	Neither is expressed through `required_credentials[]`.
-sentence:5.9:d22c8e42	line 2976	`MechanismOption` keys:
-sentence:5.9:b2ad07c2	line 2983	`TransactionMechanism` is `direct_io` | `programmatic_guaranteed` | `preferred_deal` | `private_auction`.
-sentence:5.9:ec193d1b	line 2984	A deal mechanism is one that lands in a Deals API `Deal` (§ 1.1).
-sentence:5.9:78feda70	line 2995	`BuyerRequirements` keys:
-sentence:5.9:c0a264aa	line 3004	`DeliveryType` is `guaranteed` | `share_of_voice` | `non_guaranteed`: what the seller promises to deliver, independent of how the line item transacts and how it is priced.
-sentence:5.9:780639bf	line 3008	`guaranteed`: the seller reserves the committed units for the flight, or, on a `FLAT` entry, which has none, the days of `commitment.flight` (§ 5.6.5).
-sentence:5.9:3e43b1df	line 3010	`share_of_voice`: the seller reserves a fixed share of the inventory, up to all of it, for the flight.
-sentence:5.9:b939f4ba	line 3011	With a `daypart` (§ 5.5), the share is of the daypart's hours only, read in the line item's `time_zone`.
-sentence:5.9:f32957d9	line 3014	`non_guaranteed`: the seller reserves nothing.
-sentence:5.9:ad89958c	line 3016	A domination, every screen and static face in a location or in its paid zone, is `guaranteed` with an included `exclusivity` term of `scope: sole` and the matching `separation`, `location` or `paid_zone` (§ 5.6.7), not `share_of_voice` at 100%.
-sentence:5.9:2027aafb	line 3020	`sov_basis: loop_time` requires `properties.available[].allocation: all` on every DOOH property.
-sentence:5.9:724b38e9	line 3023	Under `loop_time`, the share derives from `properties.available[].slots_per_loop` and each screen's `loop`: `slots_per_loop` × `slot_s` ÷ `length_s`.
-sentence:5.9:9082816a	line 3024	Under `impressions`, `sov_share` states it.
-sentence:5.9:3d045cc4	line 3026	On DOOH, its eligible screens are the line item's screen set, the pool the seller allocates from under `properties.available[].allocation: seller_allocated`.
-sentence:5.9:2993d991	line 3029	Its scope is the line item's flight and `daypart`.
-sentence:5.9:b68f43d2	line 3031	The `serving_mode` core terms mean the same on every channel:
-sentence:5.9:2ec443b2	line 3033	`dai`: an ad server picks the ad for each impression when the content or the ad break is requested, including ad replacement in a station's stream.
-sentence:5.9:a5bc48be	line 3035	`scheduled`: the media owner's scheduler pushes plays to the player.
-sentence:5.9:f227911e	line 3036	`embedded`: the ad is recorded into the content or aired in a live program, so everyone who receives that content receives that ad.
-sentence:5.9:431fd8e8	line 3037	A baked-in podcast read, a live read, and a broadcast spot carried in a simulcast are `embedded`.
-sentence:5.9:6e4adf4e	line 3040	On an `embedded` line item:
-sentence:5.9:0b6dfc17	line 3042	`commitment.flight` bounds release or air dates.
-sentence:5.9:b4c4172d	line 3042	Delivery to that content after `commitment.flight.end` counts toward `commitment` until the `final_after` of the `controlling_measurement` option in effect elapses after that end (§ 5.7.1).
-sentence:5.10:c5332d43	line 3058	`ExternalReference` keys:
-sentence:5.10:5f241d90	line 3067	`Agreement` keys:
-sentence:5.10:b6c393ae	line 3077	`Billing` keys:
-sentence:5.10:4ab70d24	line 3088	A buyer's own code for a supplier goes in `external_references[]`, under an extension `reference_type`.
-sentence:5.10:4644ceda	line 3092	OpenProposal supplies the agreed record and `terms_refs[]` a connector needs.
-sentence:6:b55a7db8	line 3099	Runnable copies of every example below live in `examples/`.
-sentence:6.1:140f66aa	line 3103	See `examples/proposal.yaml`.
-sentence:6.1:f9a8a85e	line 3106	Its `line_items[]` holds the line items of §§ 6.2 to 6.4, 6.7, and 6.11, which are extracts of it.
-sentence:6.1:67afcf02	line 3107	§§ 6.9 and 6.10 show a buyer's composed record (§ 4.1.1) of a line item issued to it (§ 4.3), before its `commit`.
-sentence:6.2:2299377c	line 3112	Shows `selectable` audiences with per-option pricing, `pricing[]` alternatives in two currencies, cancellation options, `settable` bounds, and a `delivery_type` per mechanism.
-sentence:6.2:c19128b7	line 3114	See `examples/line-item-display.yaml`.
-sentence:6.3:4832dfcd	line 3119	Shows priced cancellation options at three `notice_duration` values, `break_position` with priced pre-roll and first-in-pod options (§ 5.2.3), server-side insertion in `placement.ssai` (§ 5.2.2), `format_specs` entries, two pinned to a format registry version and one defined by the seller (§ 5.4), and `keywords` accepted only as `best_effort` (§ 5.5).
-sentence:6.3:24bee9be	line 3123	See `examples/line-item-ctv.yaml`.
-sentence:6.4:e80ba391	line 3130	Shows `placement.feed` on a music stream, a line item priced by market, a cancellation fee that steps with notice before the start, and priced exclusivity terms.
-sentence:6.4:dd9e06dd	line 3132	See `examples/line-item-audio.yaml`.
-sentence:6.5:5a32cf98	line 3139	See `examples/proposal-package.yaml`, and the bonus alone in `examples/line-item-ctv-bonus.yaml`.
-sentence:6.6:832ad0f8	line 3145	The display line item is `registry_gated`, so it is not listed.
-sentence:6.6:70160ee0	line 3146	See `examples/manifest.json`.
-sentence:6.7:844bf24a	line 3151	Shows `placement` on in-app rewarded video, with OMID support that lets a buyer select a third-party `measurement_source`.
-sentence:6.7:d6388541	line 3152	See `examples/line-item-rewarded-video.yaml`.
-sentence:6.8:5878e190	line 3157	Shows a custom proposal after the seller counters a request and accepts a commitment: matching `assent[]` entries over one `record_digest` (§ 4.1.1, § 4.1.2), which covers the `digest` of each document in `terms_refs[]` (§ 5.8), the history that led there (§ 4.3), and `change_requests[]` entries outside the digest, one for each line item, the second a deal with no Order (§ 4.4).
-sentence:6.8:b3804fa3	line 3161	See `examples/proposal-agreed.yaml`.
-sentence:6.9:8ab8eac3	line 3166	Shows a buyer's composed record (§ 4.1.1) of a line item issued to it (§ 4.3), before its `commit`, with its `commitment`: a CPM priced on impressions, with the multiplier's source, data release, and settlement rule in `delivery_counting.impression_multiplier` (§ 5.6.4).
-sentence:6.9:a2e4ce66	line 3169	See `examples/line-item-dooh.yaml`.
-sentence:6.10:1a29db9d	line 3174	A host read recorded into new episodes of a podcast: a buyer's composed record (§ 4.1.1) of a line item issued to it (§ 4.3), before its `commit`, with `retention` and no per-listener targeting.
-sentence:6.10:2d916e96	line 3176	See `examples/line-item-podcast-embedded.yaml`.
-sentence:6.11:88461576	line 3181	A seven-game series sold as `programs`, with the games that may not be played outside the base rate.
-sentence:6.11:71be7fff	line 3182	See `examples/line-item-ctv-live-series.yaml`.
-sentence:6.12:b19afb72	line 3187	One line item is agreed at version 1, with a commitment under one of two `pricing[]` entries.
-sentence:6.12:b3642271	line 3189	Its buyer writes `selected[]` and `value`, and `agreed_rate` follows from the options in effect (§ 5.6).
-sentence:6.12:999105e1	line 3190	The other stays `published` at version 2, with a hold, so the proposal stays `published` (§ 4.3.3).
-sentence:6.12:56c05cb8	line 3191	The `assent[]` entries name version 1, and the digest is over that line item alone (§ 4.1.2).
-sentence:6.12:9a29cc32	line 3192	A `change_requests[]` entry records a notice to cancel part of the agreed line item (§ 5.6.6).
-sentence:6.12:b569c32e	line 3193	See `examples/proposal-issued.yaml`.
-sentence:7:7837e94d	line 3202	`description`, `media_kit_detail`, `best_for[]` and `seasonality_notes` are what a model needs to decide whether to look further.
-sentence:7:9f242c90	line 3208	`channel` is the discriminator.
-sentence:7:cacca623	line 3209	Fields such as `placement`, `programs`, `break_position`, and the DOOH property keys apply only where a channel needs them, and `format_specs` carries what is channel-specific about creative shape.
-sentence:7:47fe67dd	line 3222	Each has its own `proposal_id` per counterparty or destination, and may carry `proposal_template_id` (§ 4.1) to trace it back to its template and `issued_from` to trace it back to a shared proposal.
-sentence:7:63073cc9	line 3226	Buyer-specific terms, such as annual rates and named visibility, live on the issued proposal's line items: `visibility: named`, `eligible_buyers[]` and their own `pricing[]`.
-sentence:7:00dc0082	line 3230	Buyer–seller relationships are expressed as issued proposals (`visibility: named`, `eligible_buyers[]` set to that buyer, with the negotiated `pricing[]`) plus the buyer agent's business rules.
-sentence:7:34eb4f8a	line 3234	`agreement` and `terms_refs[]` (§ 5.10, § 5.8) point at the agreement and terms a line item is executed under; IO generation happens through connectors.
-sentence:8:7629cc2d	line 3250	A `Line.productid` would be one use: an agreed record doesn't say which OpenDirect `Product` it books.
-sentence:8:cb3bf489	line 3252	Once one line item guarantees `viewable_rate` and another `completion_rate`, there is no normalised way for a buying agent to compare or optimise across them. 3.0 doesn't cover it.
-sentence:8:410d8824	line 3256	The format registry has no entries for `audio/*`, `ctv/*` or `dooh/*`.
-sentence:8:23797e56	line 3256	A `format_specs` entry can copy a registry version or be defined by the seller (§ 5.4), so half the declared channels have only seller-defined specs today.
-sentence:8:d62ebb45	line 3258	A `spec_ref` names a registry by domain alone: this draft doesn't say which registry that is or how to fetch an entry.
-sentence:8:53af5c06	line 3261	A package (§ 4.1.4) covers bundle purchases without a `min_line_items` count.
-sentence:8:fc4da301	line 3264	Should `billing.payment_terms` and `billing.invoicing_party` be repeated on every line item, given they are usually identical across a seller's shelf?
-sentence:8:4ab95d5c	line 3266	`environments.available[]` needs validation against real inventory.
-sentence:8:5faba1d9	line 3268	`spec_version` names the release a document follows, and § 2.5 makes a key the receiver's release does not list invalid.
-sentence:8:9b744913	line 3272	Every `Amount` on a line item is on one basis (§ 5.6).
-sentence:8:d9620ead	line 3274	A `commitment.amount` of 80,000.00 at an `agreed_rate` of 24.00 `CPM` buys 3,333,333 impressions if 24.00 is what the seller invoices.
-sentence:8:22549d3d	line 3280	This draft also doesn't state what a `credit` is worth.
-sentence:8:039f4336	line 3284	Must a manifest response carry both `ETag` and `Last-Modified`, or is either enough?
-sentence:8:6e6e8987	line 3287	How does a `change_requests[]` entry state a change other than a cancellation?
-sentence:8:a7594c05	line 3288	`cancellation` states a notice to cancel.
-sentence:8:4d0ad0aa	line 3288	The OpenDirect 2.1 ChangeRequest has no structured statement of any other change, only free-text `comments` (§ 4.4).
+sentence:5.6.5:4804c1fd	line 2660	`derived_units` = (`amount` − those charges) ÷ `agreed_rate` × rate per, rounded down to a whole unit, where rate per comes from the table for a core term and from `rate_per` for an extension term.
+sentence:5.6.5:03d899cb	line 2664	When `commitment.basis` is `units`, `derived_units` is `amount`, and the seller total is `amount` ÷ rate per × `agreed_rate` plus those charges.
+sentence:5.6.5:aa43e614	line 2667	`FLAT` and `TIME` set these figures from the rate and the flight instead, and a rule that reads `commitment.amount` on such an entry reads them: the seller total when `commitment.basis` is `spend`, `derived_units` when it is `units`.
+sentence:5.6.5:d857cda3	line 2671	`FLAT`.
+sentence:5.6.5:c993e906	line 2671	`agreed_rate` is the price of the line item, so the seller total is `agreed_rate` plus those charges.
+sentence:5.6.5:82c7e79e	line 2675	`TIME`.
+sentence:5.6.5:d956510e	line 2675	`derived_units` is the time from `commitment.flight.start` through `commitment.flight.end`, inclusive, in `rate_unit`s rounded to the nearest whole unit, half up, so a clock change inside the flight doesn't change it.
+sentence:5.6.5:10182d60	line 2677	When `calendar_zone` is present, `derived_units` is instead the number of calendar days in that zone from the day of `commitment.flight.start` through the day of `commitment.flight.end`.
+sentence:5.6.5:8a25cede	line 2679	The seller total is `derived_units` × `agreed_rate` plus those charges.
+sentence:5.6.5:b1d5965b	line 2682	Delivery is counted in the entry's unit, and each unit is worth `agreed_rate` ÷ rate per, with rate per as above.
+sentence:5.6.5:52af2643	line 2683	With `calendar_zone`, a `TIME` entry counts one delivered unit for each of those calendar days on which the line item runs.
+sentence:5.6.5:087aa70d	line 2684	A `FLAT` entry has no unit, so its delivery is the days of `commitment.flight` delivered, counted in elapsed days from `commitment.flight.start`.
+sentence:5.6.5:dd8b2621	line 2686	Each day is worth `agreed_rate` ÷ the flight's length in days, and a last part day is worth its fraction of that.
+sentence:5.6.5:95de5970	line 2689	A seller fee is never a `pricing[]` entry.
+sentence:5.6.6:ce641a8d	line 2694	`CancellationOption` keys:
+sentence:5.6.6:30cb5ba9	line 2705	`Fee` keys:
+sentence:5.6.6:fa40089a	line 2714	`DatedShare` keys.
+sentence:5.6.6:b6316b39	line 2714	An entry applies when the effective date falls in its `window`.
+sentence:5.6.6:9ad600cc	line 2715	Notice then counts to `window.start`.
+sentence:5.6.6:f2b3045a	line 2722	The effective date is the later of the date the buyer asks for and notice received plus `notice_duration`.
+sentence:5.6.6:a16b33c6	line 2723	The remaining commitment is `commitment.amount`, without `delta_flat` charges, less delivery (§ 5.6.5) through the effective date; the cancelled amount is the part of it the buyer cancels, up to the `max_share` that applies.
+sentence:5.6.6:c02f4eb3	line 2726	These, and the base of a `commitment` fee, are money (§ 5.6): units and days are valued as § 5.6.5 values delivery.
+sentence:5.6.6:904063ba	line 2727	The buyer owes that delivery, `production` (§ 5.4) work completed by then, and the fee.
+sentence:5.6.6:39c82311	line 2730	An entry's `cancellation` (§ 4.4) records the notice.
+sentence:5.6.6:eaf7a730	line 2731	It changes no term, and the line item's `status` stays `agreed`.
+sentence:5.6.6:1e6b79ab	line 2734	`CancellationNotice` keys:
+sentence:5.6.7:3840b989	line 2745	`ExclusivityOption` keys:
+sentence:5.6.7:d6b2dc54	line 2757	A line item whose `preemption` names `exclusivity` doesn't count against a later exclusivity term on dates at least its `notice_duration` after the seller's notice, or on every date when it has no `notice_duration`: the seller preempts it on those dates instead.
+sentence:5.6.7:992e8f24	line 2762	A line item states `preemption` when a later sale can preempt its delivery, such as the faces in a station that another buyer can dominate.
+sentence:5.6.7:c25caa79	line 2766	`Preemption` keys:
+sentence:5.6.7:1d7dd076	line 2775	Preemption doesn't excuse a shortfall, which `shortfall_remedy` (§ 5.7) settles.
+sentence:5.6.7:a55e8456	line 2776	A `remedy` on `preemption` settles the delivery a preemption takes instead, on any `delivery_type`.
+sentence:5.7.1:3be5910a	line 2791	`measurement_source` measures committed metrics; its `attribution_window` isn't a settlement window.
+sentence:5.7.1:b41f4b95	line 2792	`controlling_measurement` counts the units the invoice uses.
+sentence:5.7.1:ce9728e0	line 2793	Counted delivery, including delivery that still counts after `commitment.flight.end`, falls in an invoice period.
+sentence:5.7.1:6d7c6000	line 2794	The seller sets the period in `billing.invoice_period` (§ 5.10).
+sentence:5.7.1:d1c1989b	line 2795	A `month` is a calendar month in `billing.time_zone`.
+sentence:5.7.1:758abe1e	line 2796	`cycle` periods run back to back from `commitment.flight.start`, each `billing.cycle_length` long.
+sentence:5.7.1:c6d017c6	line 2799	`CommittedMetric` keys:
+sentence:5.7.1:8a42ee73	line 2807	A term defines whether its `level` is a rate or a count, and its definition names its standard.
+sentence:5.7.1:c16f1346	line 2808	Core terms: `viewable_rate` | `completion_rate` | `ivt_rate` | `impressions`.
+sentence:5.7.1:b982fd5f	line 2818	`MeasurementOption` keys:
+sentence:5.7.1:4c0d8bf4	line 2827	`ControllingMeasurementOption` keys:
+sentence:5.7.1:69fed52a	line 2837	`ReportingOption` keys:
+sentence:5.7.1:a5747f87	line 2848	`ShortfallRemedy` holds the keys of `Selectable[VocabularyTerm]` and this one:
+sentence:5.7.1:7a4aebc4	line 2854	`RemedyTerms` keys:
+sentence:5.7.1:5e8f12d3	line 2864	A shortfall is a final value that misses a committed `level` in its `direction`, under any `delivery_type`: a committed `level` is guaranteed in its own right.
+sentence:5.7.1:c903a153	line 2866	Final delivery below `commitment.amount` is a shortfall only where the line item's `delivery_type` (§ 5.9) is `guaranteed`: counted in units when `commitment.basis` is `units`, and, when it is `spend`, valued as § 5.6.5 values delivery, against `commitment.amount` without `delta_flat` charges.
+sentence:5.7.1:9f775fec	line 2869	Every shortfall follows the `shortfall_remedy` rules below.
+sentence:5.7.1:9be5781a	line 2870	When `preemption` states a `remedy` (§ 5.6.7), the delivery a preemption takes, less any delivery the seller adds within `commitment.flight` to replace it, is a shortfall on any `delivery_type`.
+sentence:5.7.1:4dcb6eae	line 2872	That part follows those rules as though its `remedy` were the only option in effect at commit, under the `remedy_terms` of `shortfall_remedy`, and there `none` leaves committed levels guaranteed.
+sentence:5.7.1:b7791864	line 2875	`shortfall_remedy` settles the rest of a shortfall.
+sentence:5.7.1:aadd7eb9	line 2877	`shortfall_remedy`: the options in effect are ordered, first choice first.
+sentence:5.7.1:43489648	line 2881	If none remains, the shortfall settles under `remedy_terms`.
+sentence:5.7.1:e4c66ce6	line 2884	A buyer that commits with `makegood` in effect consents to a makegood within `makegood_window`.
+sentence:5.7.1:0f29149a	line 2887	Under `sov_basis: impressions` (§ 5.9), the promised share is the offered `sov_share`.
+sentence:5.7.1:d8c91fc7	line 2892	OpenDirect 2.1 `Stats` reports delivery to date on a Line, with a spot's `shareoftime`.
+sentence:5.7.1:87eb5e07	line 2895	A line item with no `controlling_measurement` option in effect, or no `final_after` on the option in effect, states no final count either.
+sentence:5.7.1:4b34946c	line 2896	An `embedded` line item with no `final_after` also states no end to the counting in § 5.9, and `terms_refs[]` (§ 5.8) may state one.
+sentence:5.8:021bf6d9	line 2902	`visibility` says who may read a line item.
+sentence:5.8:f47873bb	line 2902	`required_credentials[]`, `eligible_buyers[]`, `eligible_seats[]`, and `buyer_requirements` (§ 5.9) say who may commit to it.
+sentence:5.8:2411dfc1	line 2904	`terms_refs[]` names the binding documents a `commitment` entry accepts (§ 4.1.2).
+sentence:5.8:5f72435b	line 2915	Each `visibility` value names who may read the line item:
+sentence:5.8:86625df0	line 2917	`public`: any requester, with no authentication.
+sentence:5.8:7536291d	line 2918	`registry_gated`: an authenticated requester (§ 1.2) acting for a party the IAB Tech Lab Agent Registry attests.
+sentence:5.8:46af5318	line 2920	`named`: an authenticated requester acting for a party that `eligible_buyers[]` names, or that holds a seat `eligible_seats[]` names.
+sentence:5.8:c219f50b	line 2926	An authenticated requester acting for the party a proposal's `buyer` names may read all of it, whatever `visibility` says.
+sentence:5.8:a4300adf	line 2928	A response carries only the line items the requester may read, and a package only when the requester may read every line item in its `line_items[]`.
+sentence:5.8:3b62d557	line 2930	A request for any other line item, or for a proposal the requester may not read, returns `not_found` (§ 2.4).
+sentence:5.8:dcc71db0	line 2931	A full fetch leaves out only line items (§ 2.1), so a value it returns can name a line item the requester may not read, such as a `negotiation_history[]` path.
+sentence:5.8:e7bfc683	line 2942	`required_credentials[]`: the buyer meets it.
+sentence:5.8:76d0a76a	line 2944	A buyer that fails these rules, or an authority check the seller applies (whether the sender may make this request for `buyer`, or `buyer` for an advertiser it names, § 1.2), gets `not_eligible` (§ 2.4), or `not_found` when the requester may not read what the request names.
+sentence:5.8:2398e570	line 2950	`RequiredCredential` keys:
+sentence:5.8:72703795	line 2961	Neither is expressed through `required_credentials[]`.
+sentence:5.9:d22c8e42	line 2977	`MechanismOption` keys:
+sentence:5.9:b2ad07c2	line 2984	`TransactionMechanism` is `direct_io` | `programmatic_guaranteed` | `preferred_deal` | `private_auction`.
+sentence:5.9:ec193d1b	line 2985	A deal mechanism is one that lands in a Deals API `Deal` (§ 1.1).
+sentence:5.9:78feda70	line 2996	`BuyerRequirements` keys:
+sentence:5.9:c0a264aa	line 3005	`DeliveryType` is `guaranteed` | `share_of_voice` | `non_guaranteed`: what the seller promises to deliver, independent of how the line item transacts and how it is priced.
+sentence:5.9:780639bf	line 3009	`guaranteed`: the seller reserves the committed units for the flight, or, on a `FLAT` entry, which has none, the days of `commitment.flight` (§ 5.6.5).
+sentence:5.9:3e43b1df	line 3011	`share_of_voice`: the seller reserves a fixed share of the inventory, up to all of it, for the flight.
+sentence:5.9:b939f4ba	line 3012	With a `daypart` (§ 5.5), the share is of the daypart's hours only, read in the line item's `time_zone`.
+sentence:5.9:f32957d9	line 3015	`non_guaranteed`: the seller reserves nothing.
+sentence:5.9:ad89958c	line 3017	A domination, every screen and static face in a location or in its paid zone, is `guaranteed` with an included `exclusivity` term of `scope: sole` and the matching `separation`, `location` or `paid_zone` (§ 5.6.7), not `share_of_voice` at 100%.
+sentence:5.9:2027aafb	line 3021	`sov_basis: loop_time` requires `properties.available[].allocation: all` on every DOOH property.
+sentence:5.9:724b38e9	line 3024	Under `loop_time`, the share derives from `properties.available[].slots_per_loop` and each screen's `loop`: `slots_per_loop` × `slot_s` ÷ `length_s`.
+sentence:5.9:9082816a	line 3025	Under `impressions`, `sov_share` states it.
+sentence:5.9:3d045cc4	line 3027	On DOOH, its eligible screens are the line item's screen set, the pool the seller allocates from under `properties.available[].allocation: seller_allocated`.
+sentence:5.9:2993d991	line 3030	Its scope is the line item's flight and `daypart`.
+sentence:5.9:b68f43d2	line 3032	The `serving_mode` core terms mean the same on every channel:
+sentence:5.9:2ec443b2	line 3034	`dai`: an ad server picks the ad for each impression when the content or the ad break is requested, including ad replacement in a station's stream.
+sentence:5.9:a5bc48be	line 3036	`scheduled`: the media owner's scheduler pushes plays to the player.
+sentence:5.9:f227911e	line 3037	`embedded`: the ad is recorded into the content or aired in a live program, so everyone who receives that content receives that ad.
+sentence:5.9:431fd8e8	line 3038	A baked-in podcast read, a live read, and a broadcast spot carried in a simulcast are `embedded`.
+sentence:5.9:6e4adf4e	line 3041	On an `embedded` line item:
+sentence:5.9:0b6dfc17	line 3043	`commitment.flight` bounds release or air dates.
+sentence:5.9:b4c4172d	line 3043	Delivery to that content after `commitment.flight.end` counts toward `commitment` until the `final_after` of the `controlling_measurement` option in effect elapses after that end (§ 5.7.1).
+sentence:5.10:c5332d43	line 3059	`ExternalReference` keys:
+sentence:5.10:5f241d90	line 3068	`Agreement` keys:
+sentence:5.10:b6c393ae	line 3078	`Billing` keys:
+sentence:5.10:4ab70d24	line 3089	A buyer's own code for a supplier goes in `external_references[]`, under an extension `reference_type`.
+sentence:5.10:4644ceda	line 3093	OpenProposal supplies the agreed record and `terms_refs[]` a connector needs.
+sentence:6:b55a7db8	line 3100	Runnable copies of every example below live in `examples/`.
+sentence:6.1:140f66aa	line 3104	See `examples/proposal.yaml`.
+sentence:6.1:f9a8a85e	line 3107	Its `line_items[]` holds the line items of §§ 6.2 to 6.4, 6.7, and 6.11, which are extracts of it.
+sentence:6.1:67afcf02	line 3108	§§ 6.9 and 6.10 show a buyer's composed record (§ 4.1.1) of a line item issued to it (§ 4.3), before its `commit`.
+sentence:6.2:2299377c	line 3113	Shows `selectable` audiences with per-option pricing, `pricing[]` alternatives in two currencies, cancellation options, `settable` bounds, and a `delivery_type` per mechanism.
+sentence:6.2:c19128b7	line 3115	See `examples/line-item-display.yaml`.
+sentence:6.3:4832dfcd	line 3120	Shows priced cancellation options at three `notice_duration` values, `break_position` with priced pre-roll and first-in-pod options (§ 5.2.3), server-side insertion in `placement.ssai` (§ 5.2.2), `format_specs` entries, two pinned to a format registry version and one defined by the seller (§ 5.4), and `keywords` accepted only as `best_effort` (§ 5.5).
+sentence:6.3:24bee9be	line 3124	See `examples/line-item-ctv.yaml`.
+sentence:6.4:e80ba391	line 3131	Shows `placement.feed` on a music stream, a line item priced by market, a cancellation fee that steps with notice before the start, and priced exclusivity terms.
+sentence:6.4:dd9e06dd	line 3133	See `examples/line-item-audio.yaml`.
+sentence:6.5:5a32cf98	line 3140	See `examples/proposal-package.yaml`, and the bonus alone in `examples/line-item-ctv-bonus.yaml`.
+sentence:6.6:832ad0f8	line 3146	The display line item is `registry_gated`, so it is not listed.
+sentence:6.6:70160ee0	line 3147	See `examples/manifest.json`.
+sentence:6.7:844bf24a	line 3152	Shows `placement` on in-app rewarded video, with OMID support that lets a buyer select a third-party `measurement_source`.
+sentence:6.7:d6388541	line 3153	See `examples/line-item-rewarded-video.yaml`.
+sentence:6.8:5878e190	line 3158	Shows a custom proposal after the seller counters a request and accepts a commitment: matching `assent[]` entries over one `record_digest` (§ 4.1.1, § 4.1.2), which covers the `digest` of each document in `terms_refs[]` (§ 5.8), the history that led there (§ 4.3), and `change_requests[]` entries outside the digest, one for each line item, the second a deal with no Order (§ 4.4).
+sentence:6.8:b3804fa3	line 3162	See `examples/proposal-agreed.yaml`.
+sentence:6.9:8ab8eac3	line 3167	Shows a buyer's composed record (§ 4.1.1) of a line item issued to it (§ 4.3), before its `commit`, with its `commitment`: a CPM priced on impressions, with the multiplier's source, data release, and settlement rule in `delivery_counting.impression_multiplier` (§ 5.6.4).
+sentence:6.9:a2e4ce66	line 3170	See `examples/line-item-dooh.yaml`.
+sentence:6.10:1a29db9d	line 3175	A host read recorded into new episodes of a podcast: a buyer's composed record (§ 4.1.1) of a line item issued to it (§ 4.3), before its `commit`, with `retention` and no per-listener targeting.
+sentence:6.10:2d916e96	line 3177	See `examples/line-item-podcast-embedded.yaml`.
+sentence:6.11:88461576	line 3182	A seven-game series sold as `programs`, with the games that may not be played outside the base rate.
+sentence:6.11:71be7fff	line 3183	See `examples/line-item-ctv-live-series.yaml`.
+sentence:6.12:b19afb72	line 3188	One line item is agreed at version 1, with a commitment under one of two `pricing[]` entries.
+sentence:6.12:b3642271	line 3190	Its buyer writes `selected[]` and `value`, and `agreed_rate` follows from the options in effect (§ 5.6).
+sentence:6.12:999105e1	line 3191	The other stays `published` at version 2, with a hold, so the proposal stays `published` (§ 4.3.3).
+sentence:6.12:56c05cb8	line 3192	The `assent[]` entries name version 1, and the digest is over that line item alone (§ 4.1.2).
+sentence:6.12:9a29cc32	line 3193	A `change_requests[]` entry records a notice to cancel part of the agreed line item (§ 5.6.6).
+sentence:6.12:b569c32e	line 3194	See `examples/proposal-issued.yaml`.
+sentence:7:7837e94d	line 3203	`description`, `media_kit_detail`, `best_for[]` and `seasonality_notes` are what a model needs to decide whether to look further.
+sentence:7:9f242c90	line 3209	`channel` is the discriminator.
+sentence:7:cacca623	line 3210	Fields such as `placement`, `programs`, `break_position`, and the DOOH property keys apply only where a channel needs them, and `format_specs` carries what is channel-specific about creative shape.
+sentence:7:47fe67dd	line 3223	Each has its own `proposal_id` per counterparty or destination, and may carry `proposal_template_id` (§ 4.1) to trace it back to its template and `issued_from` to trace it back to a shared proposal.
+sentence:7:63073cc9	line 3227	Buyer-specific terms, such as annual rates and named visibility, live on the issued proposal's line items: `visibility: named`, `eligible_buyers[]` and their own `pricing[]`.
+sentence:7:00dc0082	line 3231	Buyer–seller relationships are expressed as issued proposals (`visibility: named`, `eligible_buyers[]` set to that buyer, with the negotiated `pricing[]`) plus the buyer agent's business rules.
+sentence:7:34eb4f8a	line 3235	`agreement` and `terms_refs[]` (§ 5.10, § 5.8) point at the agreement and terms a line item is executed under; IO generation happens through connectors.
+sentence:8:7629cc2d	line 3251	A `Line.productid` would be one use: an agreed record doesn't say which OpenDirect `Product` it books.
+sentence:8:cb3bf489	line 3253	Once one line item guarantees `viewable_rate` and another `completion_rate`, there is no normalised way for a buying agent to compare or optimise across them. 3.0 doesn't cover it.
+sentence:8:410d8824	line 3257	The format registry has no entries for `audio/*`, `ctv/*` or `dooh/*`.
+sentence:8:23797e56	line 3257	A `format_specs` entry can copy a registry version or be defined by the seller (§ 5.4), so half the declared channels have only seller-defined specs today.
+sentence:8:d62ebb45	line 3259	A `spec_ref` names a registry by domain alone: this draft doesn't say which registry that is or how to fetch an entry.
+sentence:8:53af5c06	line 3262	A package (§ 4.1.4) covers bundle purchases without a `min_line_items` count.
+sentence:8:fc4da301	line 3265	Should `billing.payment_terms` and `billing.invoicing_party` be repeated on every line item, given they are usually identical across a seller's shelf?
+sentence:8:4ab95d5c	line 3267	`environments.available[]` needs validation against real inventory.
+sentence:8:5faba1d9	line 3269	`spec_version` names the release a document follows, and § 2.5 makes a key the receiver's release does not list invalid.
+sentence:8:9b744913	line 3273	Every `Amount` on a line item is on one basis (§ 5.6).
+sentence:8:d9620ead	line 3275	A `commitment.amount` of 80,000.00 at an `agreed_rate` of 24.00 `CPM` buys 3,333,333 impressions if 24.00 is what the seller invoices.
+sentence:8:22549d3d	line 3281	This draft also doesn't state what a `credit` is worth.
+sentence:8:039f4336	line 3285	Must a manifest response carry both `ETag` and `Last-Modified`, or is either enough?
+sentence:8:6e6e8987	line 3288	How does a `change_requests[]` entry state a change other than a cancellation?
+sentence:8:a7594c05	line 3289	`cancellation` states a notice to cancel.
+sentence:8:4d0ad0aa	line 3289	The OpenDirect 2.1 ChangeRequest has no structured statement of any other change, only free-text `comments` (§ 4.4).

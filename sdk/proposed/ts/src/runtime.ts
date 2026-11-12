@@ -46,18 +46,23 @@ export const format = (f: Format) => (s: string) => isFormat(f, s);
 export const codePoints = (s: string) => [...s].length;
 
 type Payload = z.core.ParsePayload<object>;
-const fail = (payload: Payload, message: string) => payload.issues.push({ code: "custom", message, input: payload.value });
+/** Adds an issue at the object a check reads, or at the place `path` names under it, as the schema's check reports it. */
+const fail = (payload: Payload, message: string, path: PropertyKey[] = []) => payload.issues.push({ code: "custom", message, input: payload.value, path });
+
+/** How many members the object holds as received: Zod drops the members a closed object doesn't name, which it reports at the object, and JSON Schema counts them. */
+const memberTotal = (payload: Payload) =>
+  Object.keys(payload.value).length + payload.issues.reduce((n, i) => n + (i.code === "unrecognized_keys" && (i.path === undefined || i.path.length === 0) ? i.keys.length : 0), 0);
 
 /** A check that an object holds at least `min` and at most `max` members. */
 export const memberCount = (min: number | undefined, max: number | undefined) => (payload: Payload) => {
-  const n = Object.keys(payload.value).length;
+  const n = memberTotal(payload);
   if (min !== undefined && n < min) fail(payload, `holds ${n} members, fewer than ${min}`);
   if (max !== undefined && n > max) fail(payload, `holds ${n} members, more than ${max}`);
 };
 
 /** A check that an object that holds `member` holds at most `max` members. */
 export const dependent = (member: string, max: number) => (payload: Payload) => {
-  const n = Object.keys(payload.value).length;
+  const n = memberTotal(payload);
   if (member in payload.value && n > max) fail(payload, `holds "${member}" and ${n - 1} other members; with "${member}" it holds at most ${max}`);
 };
 
@@ -85,8 +90,8 @@ export const bounds = (member: string, minItems: number, unique: boolean) => (pa
   const v = payload.value as Record<string, unknown>;
   const m = v[member];
   if (!Array.isArray(m)) return;
-  if (m.length < minItems) fail(payload, `"${member}" holds ${m.length} items, fewer than ${minItems}`);
-  if (unique && new Set(m.map(canonical)).size !== m.length) fail(payload, `"${member}" holds an item twice`);
+  if (m.length < minItems) fail(payload, `holds ${m.length} items, fewer than ${minItems}`, [member]);
+  if (unique && new Set(m.map(canonical)).size !== m.length) fail(payload, "holds an item twice", [member]);
 };
 
 /** A check that an object's `sibling` isn't `value`, a value the member can't take, as a daypart window's `start` can't be `24:00`. */
@@ -103,7 +108,7 @@ export const condition = (sibling: string, value: string | number | boolean, req
   for (const [m, t] of Object.entries(types)) {
     if (!(m in v)) continue;
     const r = t.safeParse(v[m]);
-    if (!r.success) fail(payload, `"${m}" ${r.error.issues[0]?.message ?? "is invalid"} while "${sibling}" is ${JSON.stringify(value)}`);
+    if (!r.success) for (const i of r.error.issues) fail(payload, `${i.message} while "${sibling}" is ${JSON.stringify(value)}`, [m, ...i.path]);
   }
 };
 

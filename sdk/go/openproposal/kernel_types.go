@@ -570,7 +570,7 @@ func (DaypartWindow) ValidateValue(v any, at string, errs *Errors) {
 	checkClosed(m, at, errs, "days", "end", "start")
 	checkBounds(m, at, errs, "days", 1, true)
 	if x, ok := m["start"]; ok && jsonEqual(x, "24:00") {
-		errs.add(member(at, "start"), "is %s, which it cannot be", "\"24:00\"")
+		errs.add(at, "holds %s %s, which it cannot be", "\"start\"", "\"24:00\"")
 	}
 	if x, ok := m["days"]; ok {
 		validateAs[List[DayName]](x, member(at, "days"), errs)

@@ -2645,6 +2645,7 @@ open: the term sets its keys.
 | `action_type` | VocabularyTerm | REQUIRED when `cost_method` is `CPA` | The kind of action counted. Core terms in [IAB Tech Lab ECAPI 1.0](https://github.com/InteractiveAdvertisingBureau/ecapi/blob/4b43b0334c2aa41b13e302f2fa3ffc03012b3648/ecapi_1.0.md#eventtypes): its `event_type` values, from the Standard Events and Additional Events tables both, other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit` |
 | `attribution_window` | Duration | REQUIRED when `cost_method` is `CPA` | How long after exposure an action counts |
 | `action_source` | Measurer | REQUIRED when `cost_method` is `CPA` | Who reports the action |
+| `action_definition` | DocumentRef | OPTIONAL | Absent on a core term other than `CPA`. The rules that make an action billable: the evidence that confirms it, which content or context gets credit, and how cancellations, returns, fraud, and duplicate reports change the count. Where the document conflicts with a typed field of the binding record (§ 4.1.1), such as `action_type`, `attribution_window`, or `action_source`, the typed field governs |
 | `rate_unit` | Enum | REQUIRED when `cost_method` is `TIME` | `hour` \| `day` \| `week`. The unit the rate buys, counted in elapsed units unless `calendar_zone` is present |
 | `calendar_zone` | IanaZone | OPTIONAL | Absent unless `rate_unit` is `day`. The zone whose calendar days the rate buys: each calendar day in that zone that the flight touches is one unit |
 

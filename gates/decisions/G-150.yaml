@@ -1,0 +1,56 @@
+format: 1
+id: G-150
+date: 2026-11-12
+question: How do the SDKs report each failure where the schema's own check reports it, so a desk-test payload has one location per finding in every engine?
+decision: >-
+  Each SDK reports a failure at the instance location the reference
+  validator reports it at, the `path` the corpus records for the
+  constraint. The emitters change where they didn't: a member absent unless
+  a sibling holds a value fails at the sibling when the sibling holds
+  another value, as the dependency's `const` does, and at the object when
+  the sibling is absent, as its `required` does (TypeScript, Python, and
+  Go); a member absent when a sibling holds a value fails at the sibling
+  (all three); a list's `minItems` and `uniqueItems` fail at the list
+  (TypeScript and Python; Go already did); a member's type under a
+  condition fails at the member, at each place under it the member's own
+  check names (TypeScript and Python; Go already did); and a value a member
+  can't take, the schema's `if` and `then: false`, fails at the object,
+  where the schema's `then: false` fails (Go, which reported the member;
+  TypeScript and Python already did). TypeScript's member counts count the
+  members a closed object doesn't name, which Zod drops and JSON Schema
+  counts, so a member the object doesn't name no longer adds a false
+  `minProperties` failure at the object. The new sdk-locations gate runs,
+  on every tree, the proposed and the as-written builds, every mutant of
+  the build's corpus through each SDK's entry point, `<Type>.safeParse`,
+  `op.parse_json`, and `op.Validate[op.<Type>]`, and fails each mutant
+  that an SDK rejects anywhere but at its constraint's location, or
+  accepts; an `additionalProperties` mutant is located at the member the
+  object doesn't name, as the examples and desk-tests gates locate it. The
+  schemas engine of the examples and desk-tests gates skips Ajv's `if`
+  error, which Ajv adds at the object beside its `then` or `else`
+  subschema's own errors and which the reference validator doesn't report,
+  so a member's type under a condition is one finding at the member.
+rationale: >-
+  No check is weaker: every SDK reaches the verdicts it reached, the parity
+  gate is unchanged, and the new gate adds a location to each of the 404,
+  520, and 1,082 mutants of the three locks' corpora in each language, and
+  to the as-written builds' corpora too. Its fixtures move a dependency's
+  failure to the object, a list's minimum size to the object, a rejected
+  value to the member, and add an object failure beside a conditional
+  member's, and drop a rejection and a verdict, each of which fails it. The
+  `if` error the schemas engine skips always comes with the errors it
+  summarizes, so no verdict changes, and no example finding, comparison,
+  or report changes. The SDK code that changes: every tree's TypeScript
+  `runtime.ts` and Python `_runtime.py`; Go's `DaypartWindow` in the four
+  `main` and `with-open-prs` trees; and Go's `CostParameters` and `Screen`
+  in the two `with-our-stack` trees. Everything else the `main` and
+  `with-open-prs` locks generate is byte-identical.
+accepts:
+  - { gate: comparison, fingerprint: 3f3b2f3850504f4f81e01a35e2ee4c6eb79f3c7e57ad3687ad82684d9202cf12 }
+  - { gate: desk-tests, fingerprint: bc2f3933307b54a134471a0ab41fc5377f178957f18c7459fc55c8157e1cd18d }
+  - { gate: examples-validate, fingerprint: 4ce624e85be0f85d00e7dca083480a276a559b27e4fedc55089acd637492a048 }
+  - { gate: guard, fingerprint: cfe15ef7d58d0ce761b180f8fa8d9f6a5798a790986ee8dee3ba43e6ab3aa251 }
+  - { gate: npm-test, fingerprint: 0834895fb24a101706d832a0f7c6ff4651746820c435fc15394352e14de50e58 }
+  - { gate: sdk-generate, fingerprint: edac04794da54704ec077895039d80880d9f67bd649048ad7811c8bf6e67ceba }
+  - { gate: sdk-locations, fingerprint: 7656e233b81282a5b14030d6f3decdab243927c75b68ce980dc7f84ec62ae6f6 }
+  - { gate: variant-examples, fingerprint: 36e452cc5d2dd416838f38c2e38e4f0f8d6b8d0f3badea484b00ab5eb1bc3dca }

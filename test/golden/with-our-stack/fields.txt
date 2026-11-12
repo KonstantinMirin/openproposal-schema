@@ -75,24 +75,24 @@ field:5.6:renewal_right	VocabularyTerm	seller-set	line 2320	presence={"kind":"cl
 field:5.6:cancellation_policy	Selectable[CancellationOption]	selectable	line 2321	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
 field:5.6:exclusivity	Selectable[ExclusivityOption]	selectable	line 2322	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
 field:5.6:preemption	Preemption	seller-set	line 2323	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
-field:5.7:committed_metrics[]	Array[CommittedMetric]	requestable	line 2782	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
-field:5.7:measurement_source	Selectable[MeasurementOption]	selectable	line 2783	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
-field:5.7:controlling_measurement	Selectable[ControllingMeasurementOption]	selectable	line 2784	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":"when","condition":"`serving_mode` is `embedded` or the line item has `committed_metrics[]`, `commitment_bounds.spend`, or a `pricing[].unit_bounds`"}]}
-field:5.7:shortfall_remedy	ShortfallRemedy	selectable	line 2785	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}	values=1
-field:5.7:reporting	Selectable[ReportingOption]	selectable	line 2786	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
-field:5.8:visibility	Enum	seller-set	line 2908	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":null,"condition":null}]}	values=1
-field:5.8:required_credentials[]	Array[RequiredCredential]	seller-set	line 2909	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
-field:5.8:eligible_buyers[]	Array[RegistrableDomain]	seller-set	line 2910	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
-field:5.8:eligible_seats[]	Array[SeatRef]	seller-set	line 2911	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
-field:5.8:terms_refs[]	Array[DocumentRef]	seller-set	line 2912	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
-field:5.9:transaction_mechanism	Selectable[MechanismOption]	selectable	line 2967	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":null,"condition":null}]}
-field:5.9:sov_basis	Enum	seller-set	line 2968	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":"when","condition":"an option's `delivery_type` is `share_of_voice`"}]}	values=1
-field:5.9:sov_share	Fraction	seller-set	line 2969	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":"when","condition":"`sov_basis` is `impressions`"}]}
-field:5.9:serving_mode	VocabularyTerm	seller-set	line 2970	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}	values=1
-field:5.9:retention	Range[Duration]	requestable	line 2971	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":"when","condition":"`serving_mode` is `embedded`"}]}
-field:5.9:deal_origin	RegistrableDomain	seller-set	line 2972	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":"when","condition":"the line item offers a deal mechanism"}]}
-field:5.9:buyer_requirements	BuyerRequirements	mixed	line 2973	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
-field:5.9:serving_platform	Domain	seller-set	line 2974	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
-field:5.10:external_references[]	Array[ExternalReference]	recorded	line 3054	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
-field:5.10:agreement	Agreement	seller-set	line 3055	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
-field:5.10:billing	Billing	seller-set	line 3056	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
+field:5.7:committed_metrics[]	Array[CommittedMetric]	requestable	line 2783	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
+field:5.7:measurement_source	Selectable[MeasurementOption]	selectable	line 2784	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
+field:5.7:controlling_measurement	Selectable[ControllingMeasurementOption]	selectable	line 2785	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":"when","condition":"`serving_mode` is `embedded` or the line item has `committed_metrics[]`, `commitment_bounds.spend`, or a `pricing[].unit_bounds`"}]}
+field:5.7:shortfall_remedy	ShortfallRemedy	selectable	line 2786	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}	values=1
+field:5.7:reporting	Selectable[ReportingOption]	selectable	line 2787	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
+field:5.8:visibility	Enum	seller-set	line 2909	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":null,"condition":null}]}	values=1
+field:5.8:required_credentials[]	Array[RequiredCredential]	seller-set	line 2910	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
+field:5.8:eligible_buyers[]	Array[RegistrableDomain]	seller-set	line 2911	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
+field:5.8:eligible_seats[]	Array[SeatRef]	seller-set	line 2912	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
+field:5.8:terms_refs[]	Array[DocumentRef]	seller-set	line 2913	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
+field:5.9:transaction_mechanism	Selectable[MechanismOption]	selectable	line 2968	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":null,"condition":null}]}
+field:5.9:sov_basis	Enum	seller-set	line 2969	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":"when","condition":"an option's `delivery_type` is `share_of_voice`"}]}	values=1
+field:5.9:sov_share	Fraction	seller-set	line 2970	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":"when","condition":"`sov_basis` is `impressions`"}]}
+field:5.9:serving_mode	VocabularyTerm	seller-set	line 2971	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}	values=1
+field:5.9:retention	Range[Duration]	requestable	line 2972	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":"when","condition":"`serving_mode` is `embedded`"}]}
+field:5.9:deal_origin	RegistrableDomain	seller-set	line 2973	presence={"kind":"clauses","clauses":[{"level":"REQUIRED","qualifier":"when","condition":"the line item offers a deal mechanism"}]}
+field:5.9:buyer_requirements	BuyerRequirements	mixed	line 2974	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
+field:5.9:serving_platform	Domain	seller-set	line 2975	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
+field:5.10:external_references[]	Array[ExternalReference]	recorded	line 3055	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
+field:5.10:agreement	Agreement	seller-set	line 3056	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}
+field:5.10:billing	Billing	seller-set	line 3057	presence={"kind":"clauses","clauses":[{"level":"OPTIONAL","qualifier":null,"condition":null}]}

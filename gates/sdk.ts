@@ -4,7 +4,7 @@ import { join } from "node:path";
 import type { ModelDoc } from "../src/model.ts";
 import { checkExemptions, checkExemptionsFile, EXEMPTIONS_FILE, generatePlain, plainDivergences, type ExemptionsFile } from "../src/plain-parity.ts";
 import { emitSdk } from "../src/sdk-emit.ts";
-import { compareRun, type SdkCase, type SdkRun } from "../src/sdk-parity.ts";
+import { compareLocations, compareRun, type SdkCase, type SdkFindingsRun, type SdkLocationCase, type SdkRun } from "../src/sdk-parity.ts";
 import { committedTreeCurrent, flipFirst, onlyGenerated, runTool, sameTreeRuns, type CommittedTreeInput, type TrackedInput, type TreeRunsInput } from "./common.ts";
 import { defineGate, ROOT } from "./harness.ts";
 import { withType } from "./model.ts";
@@ -126,6 +126,64 @@ export const sdkParity = defineGate<{ language: string; cases: SdkCase[]; run: S
       expect: "encodes",
     },
     { name: "a verdict missing", mutate: (i) => ({ ...i, run: { ...i.run, verdicts: i.run.verdicts.slice(1) } }), expect: "verdicts for" },
+  ],
+});
+
+export const sdkLocations = defineGate<{ language: string; cases: SdkLocationCase[]; run: SdkFindingsRun }>({
+  id: "sdk-locations",
+  title: (i) => `SDK locations: the ${i.language} types reject every corpus mutant at each place its constraints name, as the reference does, and nowhere else`,
+  code: ["src/sdk-parity.ts#compareLocations", "src/sdk-parity.ts#locationCases"],
+  files: ["tools/sdk/findings.py"],
+  check: (i) => compareLocations(i.language, i.cases, i.run),
+  fixtures: [
+    {
+      name: "a dependency's failure at the object, not at the sibling its const reads",
+      lock: "with-our-stack",
+      mutate: (i) => {
+        const n = i.cases.findIndex((c) => c.label === "corpus CostParameters#/dependentSchemas/calendar_zone/properties/rate_unit/const mutant");
+        return { ...i, run: { ...i.run, findings: i.run.findings.map((f, k) => (k === n ? [{ path: [], message: "holds calendar_zone" }] : f)) } };
+      },
+      expect: "corpus CostParameters#/dependentSchemas/calendar_zone/properties/rate_unit/const mutant: the reference rejects it at /rate_unit, and the SDK rejects it at /",
+    },
+    {
+      name: "a runtime that stops at an object's first failure, before its members' own",
+      lock: "with-our-stack",
+      mutate: (i) => {
+        const n = i.cases.findIndex((c) => c.label === "corpus CostParameters#/dependentSchemas/calendar_zone/properties/rate_unit/const mutant with a member the object doesn't name");
+        return { ...i, run: { ...i.run, findings: i.run.findings.map((f, k) => (k === n ? [{ path: ["rate_unit"], message: "is week" }] : f)) } };
+      },
+      expect: "corpus CostParameters#/dependentSchemas/calendar_zone/properties/rate_unit/const mutant with a member the object doesn't name: the reference rejects it at /rate_unit, /undefined_member, and the SDK rejects it at /rate_unit",
+    },
+    {
+      name: "a list's minimum size failed at the object",
+      mutate: (i) => {
+        const n = i.cases.findIndex((c) => c.label === "corpus DaypartWindow#/properties/days/minItems mutant");
+        return { ...i, run: { ...i.run, findings: i.run.findings.map((f, k) => (k === n ? [{ path: [], message: "days holds 0 items" }] : f)) } };
+      },
+      expect: "corpus DaypartWindow#/properties/days/minItems mutant: the reference rejects it at /days, and the SDK rejects it at /",
+    },
+    {
+      name: "a value a member can't take failed at the member, where the schema's then: false fails the object",
+      mutate: (i) => {
+        const n = i.cases.findIndex((c) => c.label === "corpus DaypartWindow#/then mutant");
+        return { ...i, run: { ...i.run, findings: i.run.findings.map((f, k) => (k === n ? [{ path: ["start"], message: "is 24:00" }] : f)) } };
+      },
+      expect: "corpus DaypartWindow#/then mutant: the reference rejects it at /, and the SDK rejects it at /start",
+    },
+    {
+      name: "a member's type under a condition failed at the object as well",
+      mutate: (i) => {
+        const n = i.cases.findIndex((c) => c.label === "corpus CommittedMetricsEntry#/then/properties/value/$ref mutant");
+        return { ...i, run: { ...i.run, findings: i.run.findings.map((f, k) => (k === n ? [...f, { path: [], message: "must match then" }] : f)) } };
+      },
+      expect: "corpus CommittedMetricsEntry#/then/properties/value/$ref mutant: the reference rejects it at /value, and the SDK rejects it at /value, /",
+    },
+    {
+      name: "a mutant the SDK accepts",
+      mutate: (i) => ({ ...i, run: { ...i.run, findings: i.run.findings.map((f, k) => (k === 0 ? [] : f)) } }),
+      expect: /: the reference rejects it at \S+, and the SDK accepts it$/,
+    },
+    { name: "a verdict missing", mutate: (i) => ({ ...i, run: { ...i.run, findings: i.run.findings.slice(1) } }), expect: "verdicts for" },
   ],
 });
 

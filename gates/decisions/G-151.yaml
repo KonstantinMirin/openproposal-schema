@@ -1,0 +1,35 @@
+format: 1
+id: G-151
+date: 2026-11-12
+question: How does the Python SDK report an object's shape failures beside its members' own, as the schemas and the other SDKs do, and how does the sdk-locations gate hold every SDK to a value that fails at two places?
+decision: >-
+  The Python runtime checked an object's shape, its member counts,
+  dependencies, absences, list bounds, and conditions, in a before-validator
+  that raised on the first failure, so the members' own checks never ran: a
+  `CostParameters` with `rate_unit` `week` and `calendar_zone` `+10:00`
+  failed only at `/rate_unit`, where the schemas, TypeScript, and Go also
+  report `/calendar_zone`. The shape's check now collects every failure, each
+  at the location the schema's check reports, and the model's validator, now
+  a wrap validator, runs the members' own checks too and raises both lists
+  together. A value with no shape failure gets Pydantic's own error, as
+  before; where both fail, each member error keeps its type, message, and
+  location. The template, receive-mode, and null checks are unchanged. The
+  sdk-locations gate gains a paired mutant for each mutant of a check on an
+  object's shape, a dependency, a condition, or a list's bounds, on a closed
+  object that states no member count: the mutant with a member the object
+  doesn't name added, which fails at the shape's place and the member's, and
+  each SDK must report both. A test runs the `calendar_zone` case through the
+  schemas and all three SDKs, alone and inside a pricing entry.
+rationale: >-
+  No check is weaker: every verdict is the same, the gate keeps every case it
+  had and adds 13, 19, and 13 paired mutants on `main`, `with-open-prs`, and
+  the stack, and as many on their as-written builds, which the previous Python
+  runtime fails on every lock; a new fixture drops a paired mutant's second
+  place, which fails the gate. The generated code that changes is every
+  tree's Python `_runtime.py`, six files; nothing else any lock generates
+  changes. The test suite's minimum count rises to 552.
+accepts:
+  - { gate: guard, fingerprint: 9ae24ffc84b811c7e60cffef86fcbc1a386558b6ab63784359ea76a7e6b7b764 }
+  - { gate: npm-test, fingerprint: 824dbe99d21f95571207b5c5a13f9dfae424d6da7858bb7fe78efc671c506086 }
+  - { gate: sdk-generate, fingerprint: 29a614b8870a7e4a409f393a4f28a9722371cf5f205c0e3f12a5bd652c4d59a3 }
+  - { gate: sdk-locations, fingerprint: b4d9735cfaf36274cea6b32c7d0c41ef48c3edbeeb309ef0d8d7f6bef56d24b9 }

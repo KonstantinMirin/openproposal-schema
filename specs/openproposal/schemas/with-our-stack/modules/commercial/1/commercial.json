@@ -408,6 +408,10 @@
         }
       },
       "properties": {
+        "action_definition": {
+          "$ref": "../../../kernel/1/kernel.json#/$defs/DocumentRef",
+          "description": "Absent on a core term other than `CPA`. The rules that make an action billable: the evidence that confirms it, which content or context gets credit, and how cancellations, returns, fraud, and duplicate reports change the count. Where the document conflicts with a typed field of the binding record (§ 4.1.1), such as `action_type`, `attribution_window`, or `action_source`, the typed field governs"
+        },
         "action_source": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/Measurer",
           "description": "Who reports the action"

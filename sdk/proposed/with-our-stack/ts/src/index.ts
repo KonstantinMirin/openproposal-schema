@@ -41,10 +41,10 @@ export * from "./registry.js";
 export { isFormat, type Format } from "./runtime.js";
 
 /** The commit of the OpenProposal specification repository that the types are generated from. */
-export const SPEC_COMMIT = "38f5cfa245d49ce30dbb9a1f91fd2f1b8158ea47";
+export const SPEC_COMMIT = "75c6de78f21d435625799aebb254cc34c1d74755";
 
 /** The Git blob SHA of the specification file at that commit. */
-export const SPEC_BLOB = "5edab7f30197a2cb30ce6e87021adeeb81ff8c5e";
+export const SPEC_BLOB = "8e91771f0bc1121e7b23a4611e15f400ea511c53";
 
 /** The lock that pins the commit: `main`, or `with-open-prs`, which is `main` with the pull requests that were open on the day of the lock merged in. */
 export const LOCK = "with-our-stack";
@@ -53,7 +53,7 @@ export const LOCK = "with-our-stack";
 export const VARIANT = "proposed";
 
 /** The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it. */
-export const SCHEMA_RELEASE = "169969b32b49d176dda31a6c589164a79d40dbc896d4703b22bf19bcd5c5dff3";
+export const SCHEMA_RELEASE = "bd33a4e93b8da1f7ed47eac99ef9d80c263ed26e95699fbcff2398f8dea1e9db";
 
 /** A constructor's schema function, applied to its arguments' schemas. */
 export type Template = (...args: z.ZodType[]) => z.ZodType;

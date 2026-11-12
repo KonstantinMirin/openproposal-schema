@@ -1,14 +1,18 @@
 # The verdict each IAB Australia desk-test line item must get on the
-# with-our-stack lock (README.md says where the files come from). Two engines
+# with-our-stack lock (README.md says where the files come from). Five engines
 # judge every file: the lock's schemas and rules, as the examples gate checks
-# an example, and the stack's own checker, scripts/check_examples.py at the
+# an example; the stack's own checker, scripts/check_examples.py at the
 # lock's commit, run on the lock's specification and examples with these
-# files added to examples/. A file with a finding is rejected at its `path`,
-# and only there, by both; every other file listed under `examples` passes
-# both. The desk-tests gate in `npm run ci` fails on any other verdict, on an
-# undecided check not recorded here, and on a recorded one that is decided
-# now. After a lock move, review each verdict that changed before you change
-# this file.
+# files added to examples/; and the TypeScript, Python, and Go SDKs the
+# lock's schemas generate, under sdk/proposed/with-our-stack/, each through
+# the entry point an implementer calls to check a LineItem. A file with a
+# finding is rejected at its `path`, and only there, by every engine, except
+# that the SDKs accept a file whose finding sdk_gaps records: a rule's, which
+# no SDK type checks. Every other file listed under `examples` passes every
+# engine. The desk-tests gate in `npm run ci` fails on any other verdict, on
+# an undecided check or an SDK gap not recorded here, and on a recorded one
+# that no longer holds. After a lock move, review each verdict that changed
+# before you change this file.
 format: 1
 lock: with-our-stack
 document: LineItem
@@ -188,3 +192,11 @@ undecided:
     path: ""
     rule: rule:5.4:3a677601
     reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+sdk_gaps:
+  - example: dooh-v2-p11-c-no-multiplier.yaml
+    path: /delivery_counting
+    rule: rule:5.6.4:e58650b7
+    reason: >-
+      No schema states that `impression_multiplier` is REQUIRED when the line
+      item counts impressions, so the SDK types, which check what the schemas
+      check, accept the file; only the rule's check rejects it.

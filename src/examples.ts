@@ -344,6 +344,8 @@ export function checkExamples(input: {
       const unions = errors.filter((e) => e.keyword === "anyOf" || e.keyword === "oneOf").map((e) => t.at + e.instancePath);
       const outer = unions.filter((u) => !unions.some((o) => o !== u && within(u, o)));
       for (const e of errors) {
+        // Ajv adds an `if` error beside its `then` or `else` subschema's own, at the object, which only says that they fail; the reference validator reports only theirs.
+        if (e.keyword === "if") continue;
         const at = t.at + e.instancePath;
         const union = outer.find((u) => within(at, u));
         if (union !== undefined) {

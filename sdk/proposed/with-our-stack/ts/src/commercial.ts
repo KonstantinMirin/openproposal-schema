@@ -631,6 +631,8 @@ export const CancellationPolicySelection: z.ZodType<CancellationPolicySelection>
 
 /** The `CostParameters` object of the `commercial` module. */
 export interface CostParameters {
+  /** Absent on a core term other than `CPA`. The rules that make an action billable: the evidence that confirms it, which content or context gets credit, and how cancellations, returns, fraud, and duplicate reports change the count. Where the document conflicts with a typed field of the binding record (§ 4.1.1), such as `action_type`, `attribution_window`, or `action_source`, the typed field governs */
+  action_definition?: DocumentRef;
   /** Who reports the action */
   action_source?: Measurer;
   /** The kind of action counted. Core terms in IAB Tech Lab ECAPI 1.0: its `event_type` values, from the Standard Events and Additional Events tables both, other than `custom`, such as `purchase` or `install`. Any other action is an extension term, such as `shop.example:store_visit` */
@@ -653,6 +655,7 @@ export interface CostParameters {
   viewability_standard?: CostParametersViewabilityStandard;
 }
 export const CostParameters: z.ZodType<CostParameters> = z.strictObject({
+  action_definition: DocumentRef.optional(),
   action_source: Measurer.optional(),
   action_type: CostParametersActionType.optional(),
   attribution_window: Duration.optional(),

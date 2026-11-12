@@ -181,9 +181,13 @@
  *     verdict on every case of the committed corpus and on every primitive
  *     and constructor vector, the constructors' through the generics, and on
  *     each integer vector and term written as an integral float, sent as
- *     JSON text; and encodes each value it accepts back unchanged. Across
- *     the locks, every file git tracks under `sdk/` is one that some lock
- *     generates.
+ *     JSON text; and encodes each value it accepts back unchanged.
+ *     Locations: each SDK, through the entry point an implementer calls,
+ *     rejects every mutant of the corpus at its constraint's location, as
+ *     the reference does, and nowhere else, and each mutant of a check on an
+ *     object's shape, with a member the object doesn't name added, at both
+ *     places. Across the locks, every file git
+ *     tracks under `sdk/` is one that some lock generates.
  *     Plain generator, type rules § 10: datamodel-code-generator, as
  *     tools/plaingen/requirements.txt pins it, writes classes from each
  *     committed schema file of the lock alone, and they reach the reference
@@ -219,9 +223,12 @@
  *     the locks, every finding names known locks. Each desk-test set's
  *     `desk-tests/<set>/expected.yaml` validates, and on the lock it names
  *     every payload gets its recorded verdict, at its recorded location and
- *     nowhere else, from the lock's schemas and rule checks and from the
- *     lock's own checker, a script the lock pins and its snapshot keeps, run
- *     on the lock's specification and examples with the payloads added; the
+ *     nowhere else, from the lock's schemas and rule checks, from the lock's
+ *     own checker, a script the lock pins and its snapshot keeps, run on the
+ *     lock's specification and examples with the payloads added, and from
+ *     each SDK of the build the schemas are, TypeScript, Python, and Go,
+ *     through the entry point an implementer calls; a rule's finding, which
+ *     no SDK type checks, is a recorded SDK gap, which each SDK accepts; the
  *     undecided checks are the recorded ones (src/desk-tests.ts).
  * 15a. Variants (src/variant.ts): each variant file under `variants/`
  *     validates against its schema; every departure has exactly one switch,
@@ -363,7 +370,7 @@ import type { FindingsDoc } from "../src/pipeline.ts";
 import { FINDING_KINDS } from "../src/lint.ts";
 import { DIFFERENCES_FILE, type DifferencesFile, loadDifferences } from "../src/render.ts";
 import { checkExamples, FINDINGS_FILE, type FindingsFile, loadFindings, lockExamples } from "../src/examples.ts";
-import { deskTestFiles, loadDeskPayloads, loadDeskTests, runDeskChecker, type CheckerRun, type DeskTests } from "../src/desk-tests.ts";
+import { deskSdks, deskTestFiles, loadDeskPayloads, loadDeskTests, runDeskChecker, runDeskSdks, type CheckerRun, type DeskTests, type DeskTestsInput } from "../src/desk-tests.ts";
 import { buildRelease, FROZEN_MODEL, FROZEN_RULES, FROZEN_SCHEMAS, loadFrozen, RELEASE_FILE, RELEASE_SCHEMA, RELEASES_DIR, renderRelease, type Frozen, type OracleCheck, type ReleaseDoc } from "../src/release.ts";
 import { canonicalJson } from "../src/canonical.ts";
 import { CORPUS_FILE, corpusDirOf, generateCorpus, renderCorpus, type CorpusDoc } from "../src/corpus.ts";
@@ -372,7 +379,7 @@ import { generateTypeExamples, renderTypeExamples, TYPE_EXAMPLES_DIR, TYPE_EXAMP
 import { loadOracleGaps, pinnedOracle } from "../src/engines.ts";
 import { sdkDirOf } from "../src/sdk.ts";
 import { emitSdk, SDK_ROOTS } from "../src/sdk-emit.ts";
-import { runGo, runPython, runTypeScript, sdkCases, type SdkCase, type SdkRun } from "../src/sdk-parity.ts";
+import { findingsGo, findingsPython, findingsTypeScript, locationCases, runGo, runPython, runTypeScript, sdkCases, type SdkCase, type SdkFindingsRun, type SdkRun } from "../src/sdk-parity.ts";
 import { EXEMPTIONS_FILE, type ExemptionsFile, loadExemptions, pinnedPlainGenerator, plainTarget } from "../src/plain-parity.ts";
 import { trackedGoMods } from "../src/toolchain.ts";
 import { buildLock, COMPARISON_DIR, compareLocks, DEFAULT_LOCK_FILE, renderComparison, renderComparisonMarkdown, type LockBuild } from "../src/compare.ts";
@@ -406,7 +413,7 @@ import { emitProto } from "../src/targets/proto.ts";
 import { readSchemaTree } from "../src/targets/schema-tree.ts";
 import { buildSite, exportTree } from "../src/site/build.ts";
 import { loadSiteConfig } from "../src/site/config.ts";
-import { resolveBuild, variantNames, type Build } from "../src/builds.ts";
+import { PROPOSED, resolveBuild, variantNames, type Build } from "../src/builds.ts";
 import { loadVariant, type Variant } from "../src/variant.ts";
 import { variantReportFiles } from "../src/variant-report.ts";
 
@@ -899,6 +906,7 @@ async function checkSdkGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[],
       }
       await gate(S.sdkParity, { language, cases, run: r }, lock);
     }
+    await checkSdkLocations(lock, dir, JSON.parse(readFileSync(join(SPEC, corpusFile), "utf8")) as CorpusDoc, "");
     if (exemptions) await checkPlainGates(lock, doc, cases, exemptions, absent, checked);
   }
   if (exemptions && checked.size === locks.length) {
@@ -967,15 +975,22 @@ async function checkExampleGates(models: Map<SpecLock, ModelDoc>, locks: SpecLoc
     const input = { model, files: emitted.files, schemaDir, examples: got.examples, values: got.values, codes: specCodes(), ruleChecks: ruleChecks(), recorded, lock: lock.name, decisions: loaded.decisions };
     await gate(C.examplesValidate, input, lock);
     await gate(C.examplesOracle, { files: emitted.files, cases: checkExamples(input).cases }, lock);
+    // Every set on the lock is one run of the gate, so its fixtures change the set they name, whatever other sets the lock has.
+    const deskInputs: DeskTestsInput[] = [];
     for (const set of sets.filter((s) => s.lock === lock.name)) {
+      const work = join(ROOT, "build", "ci", lock.name, "desk-tests", posix.basename(set.dir));
       let checker: CheckerRun;
       try {
-        checker = await runDeskChecker(lock, set, join(ROOT, "build", "ci", lock.name, "desk-tests", posix.basename(set.dir)));
+        checker = await runDeskChecker(lock, set, work);
       } catch (e) {
         checker = { label: `${set.checker} at ${lock.commit.slice(0, 7)}`, failures: [], problems: [(e as Error).message.split("\n")[0]!] };
       }
-      await gate(C.deskTests, { set, model, files: emitted.files, schemaDir, payloads: loadDeskPayloads(set.dir), codes: specCodes(), ruleChecks: ruleChecks(), checker }, lock);
+      const payloads = loadDeskPayloads(set.dir);
+      // The SDKs of the build the lock's schemas are, ours: the as-written tree is another build, with schemas of its own.
+      const sdks = NAMES.sdk ? await runDeskSdks(set, payloads, deskSdks(join(ROOT, sdkDirOf(lock.ir_dir, PROPOSED))), work) : [];
+      deskInputs.push({ set, model, files: emitted.files, schemaDir, payloads, codes: specCodes(), ruleChecks: ruleChecks(), checker, sdks });
     }
+    if (deskInputs.length > 0) await gate(C.deskTests, { sets: deskInputs }, lock);
   }
 }
 
@@ -1372,7 +1387,29 @@ async function checkVariantOutputGates(variants: VariantBuilds[], vectors: Vecto
         }
         await gate(S.sdkParity, { language, cases, run: r }, at);
       }
+      await checkSdkLocations(at, sdkDir, corpus, tag);
     }
+  }
+}
+
+/** Where each SDK of a tree rejects every mutant of the build's corpus: at its constraint's location, as the reference does. */
+async function checkSdkLocations(lock: SpecLock, dir: string, corpus: CorpusDoc, tag: string): Promise<void> {
+  const cases = locationCases(corpus);
+  const items = cases.map((c) => ({ type: c.type, value: c.value }));
+  const legs: [string, () => Promise<SdkFindingsRun> | SdkFindingsRun][] = [
+    ["TypeScript", () => findingsTypeScript(join(ROOT, dir, "ts"), items)],
+    ["Python", () => findingsPython(ROOT, join(ROOT, dir, "python"), items)],
+    ["Go", () => findingsGo(join(ROOT, dir, "go"), join(ROOT, "build", "ci", lock.name, `sdk-go-locations${tag}`), items)],
+  ];
+  for (const [language, leg] of legs) {
+    let r: SdkFindingsRun;
+    try {
+      r = await leg();
+    } catch (e) {
+      record(label(lock, titleOf(S.sdkLocations, { language, cases, run: { engine: "", findings: [] } })), false, (e as Error).message);
+      continue;
+    }
+    await gate(S.sdkLocations, { language, cases, run: r }, lock);
   }
 }
 

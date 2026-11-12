@@ -632,6 +632,8 @@ class CostParameters(rt.Closed):
 
     __shape__: ClassVar[rt.Shape] = rt.Shape(absent=(("calendar_zone", "rate_unit", "day", False),))
 
+    action_definition: Optional[DocumentRef] = None
+    """Absent on a core term other than `CPA`. The rules that make an action billable: the evidence that confirms it, which content or context gets credit, and how cancellations, returns, fraud, and duplicate reports change the count. Where the document conflicts with a typed field of the binding record (§ 4.1.1), such as `action_type`, `attribution_window`, or `action_source`, the typed field governs"""
     action_source: Optional[Measurer] = None
     """Who reports the action"""
     action_type: Optional[CostParametersActionType] = None

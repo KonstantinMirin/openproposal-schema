@@ -2,10 +2,10 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/KonstantinMirin/openproposal-schema/desk-tests/desk-tests.schema.json",
   "title": "Desk-test verdicts",
-  "description": "The verdict each payload of a desk-test set must get on one lock: payloads that someone outside this repository wrote to test the lock's text, kept beside this file in `desk-tests/<set>/`. A payload with a finding is rejected at that location, and only there, both by the schemas and rules and by the lock's own checker; every other payload passes both. The desk-tests gate fails on any other verdict, on an undecided check not recorded here, and on a recorded one that is decided now.",
+  "description": "The verdict each payload of a desk-test set must get on one lock: payloads that someone outside this repository wrote to test the lock's text, kept beside this file in `desk-tests/<set>/`. A payload with a finding is rejected at that location, and only there, by the schemas and rules, by the lock's own checker, and by each SDK the lock's schemas generate, except where an SDK gap records a rule's finding that no SDK type checks; every other payload passes every engine. The desk-tests gate fails on any other verdict, on an undecided check or an SDK gap not recorded here, and on a recorded one that no longer holds.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["format", "lock", "document", "checker", "examples", "findings", "undecided"],
+  "required": ["format", "lock", "document", "checker", "examples", "findings", "undecided", "sdk_gaps"],
   "properties": {
     "format": {
       "description": "Version of this format.",
@@ -42,6 +42,11 @@
       "description": "The rules' checks that a payload's values can't decide, because the verdict turns on what the payload leaves out, as for an example.",
       "type": "array",
       "items": { "$ref": "#/$defs/undecided" }
+    },
+    "sdk_gaps": {
+      "description": "The findings the SDKs don't make: each is a rule's, which no SDK type checks, since the types check what the schemas check (type rules § 9), so each SDK accepts the payload there, as the schema does.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/sdk_gap" }
     }
   },
   "$defs": {
@@ -98,6 +103,24 @@
         "rule": { "$ref": "#/$defs/rule" },
         "reason": {
           "description": "What the verdict turns on that the payload leaves out.",
+          "type": "string",
+          "minLength": 12
+        }
+      }
+    },
+    "sdk_gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["example", "path", "rule", "reason"],
+      "properties": {
+        "example": { "$ref": "#/$defs/example" },
+        "path": {
+          "description": "The JSON pointer of the rule's finding, as `findings` records it.",
+          "$ref": "#/$defs/pointer"
+        },
+        "rule": { "$ref": "#/$defs/rule" },
+        "reason": {
+          "description": "Why no SDK makes the finding: what the rule checks that no schema states.",
           "type": "string",
           "minLength": 12
         }

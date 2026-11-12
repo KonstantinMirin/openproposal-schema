@@ -11,9 +11,9 @@
 name: with-our-stack
 upstream: https://github.com/IABTechLab/OpenProposal
 base: 44dfaaf618736219426c311ec997b6d37e94b950
-commit: 38f5cfa245d49ce30dbb9a1f91fd2f1b8158ea47
+commit: 75c6de78f21d435625799aebb254cc34c1d74755
 path: spec/openproposal-3.0.md
-blob: 5edab7f30197a2cb30ce6e87021adeeb81ff8c5e
+blob: 8e91771f0bc1121e7b23a4611e15f400ea511c53
 ir_dir: ir/with-our-stack
 required: false
 # The example files at `commit`, by path, with their git blob SHAs.
@@ -34,8 +34,8 @@ examples:
 # The day on which the heads below were their PRs' live heads. The first 14 are the
 # with-open-prs lock's heads, live on 2026-10-26; by 2026-11-07, #17, #18, #70, and #73
 # had moved on, and the stack still carries the heads listed here. Our 17 are the heads
-# of the stack's branches on 2026-11-11, each its PR's live head that day.
-heads_on: "2026-11-11"
+# of the stack's branches on 2026-11-12, each its PR's live head that day.
+heads_on: "2026-11-12"
 merge_order:
   - { pr: 17, head: dc0e37c8890b1ad6f197fd4a9418b7b231fab454 }
   - { pr: 18, head: ff53dc5a7d436ac42995f9842394369901e9eb70 }
@@ -60,20 +60,20 @@ merge_order:
   - { pr: 143, head: 6b4d6c6af971ff52f9fde87d2e2043a732536304 }
   - { pr: 144, head: 24b8662a37d568bde675cf995e2d4a795456aeb4 }
   - { pr: 145, head: f134e4b298f5aabc612cda84da0f9e31510553a5 }
-  - { pr: 146, head: d1887c6d35511740aaa2fd9390c56fad888607d0 }
-  - { pr: 147, head: 6e41d8b854a040d77859d7a7c3b0c6768b2ce419 }
-  - { pr: 148, head: 60be0bac1a4a71c823960a105c4e7f7046d19b94 }
-  - { pr: 149, head: 8b4176c25bb7df2c33b831ebc11824f381db0cab }
-  - { pr: 150, head: cb350da98ec357abd1c9fd93060f77d50525bb40 }
-  - { pr: 151, head: f01a59115faa32d50291f56938dd83b8970d6308 }
-  - { pr: 152, head: 48455e2520b8783b94d5d873f3a0a64c855ef01e }
-  - { pr: 154, head: 38f5cfa245d49ce30dbb9a1f91fd2f1b8158ea47 }
+  - { pr: 146, head: 77f3a11790d5cff446e553684e24ae2e4fcccc5a }
+  - { pr: 147, head: 188478c9b0fa548aad9744adbc69f90053602f4f }
+  - { pr: 148, head: 39229c5cafdf542c7496fc781e41f79bf62d4ee9 }
+  - { pr: 149, head: e8f7e96917d1971bf6ca55b4f2c3dd5f58448381 }
+  - { pr: 150, head: 155844da536e8ce108bb6d2f70714be9acc576ad }
+  - { pr: 151, head: 51aacdb70ce89ced42d0a8f57dac01c0e9312bfc }
+  - { pr: 152, head: 27f6bfa7ac8f46be087106e2de7cc70d4be1b5cb }
+  - { pr: 154, head: 75c6de78f21d435625799aebb254cc34c1d74755 }
 # The git tree SHA of examples/ at `commit`, which pins the directory's listing.
 examples_tree: d44395f01494ecae8e273324047ccef664913ab2
 # The stack's own checker at `commit`, by blob, which the desk tests run on the snapshot
 # with their payloads added to examples/ (desk-tests/iab-au-2026-11/).
 scripts:
-  scripts/check_examples.py: 0e3c1eb7bedcd2f25de3abdcc34d380cbe45a72f
+  scripts/check_examples.py: 3ad5cb8e561a09b41977319bacb9085bdbaee833
 sources:
   - git: ../../vendor/OpenProposal-stack
   - snapshot: spec-input/snapshots/with-our-stack

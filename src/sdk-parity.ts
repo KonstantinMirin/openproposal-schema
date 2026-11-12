@@ -28,6 +28,13 @@
  * Each SDK parses each case's JSON text, and for a value it accepts, encodes
  * it back; the encoding must be the same JSON value, so the types hold what
  * they accept.
+ *
+ * The same harnesses also report where each SDK rejects a payload, through
+ * the entry point an implementer calls: `findingsTypeScript`,
+ * `findingsPython`, and `findingsGo`. The SDK-locations gate holds each SDK
+ * to reject every corpus mutant at its constraint's location
+ * (`locationCases`, `compareLocations`), and the desk-tests gate
+ * (src/desk-tests.ts) reads them for each desk-test payload.
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -254,19 +261,17 @@ function goTypeOf(e: Expr): string {
  * package its tree declares, and run.
  */
 export function runGo(sdkGo: string, work: string, cases: SdkCase[]): SdkRun {
-  // The module path is the one the tree's go.mod declares, and the package the one folder of Go files it holds.
-  const module = /^module (\S+)$/m.exec(readFileSync(join(sdkGo, "go.mod"), "utf8"))?.[1];
-  if (module === undefined) throw new Error(`${sdkGo}/go.mod declares no module`);
-  const pkg = packageIn(sdkGo, (d) => readdirSync(d).some((f) => f.endsWith(".go")));
   const keys = [...new Set(cases.map((c) => canonicalJson(c.target)))].sort();
   const index = new Map(keys.map((k, i) => [k, i]));
   const entries = keys.map((k, i) => `\ttypes[${i}] = op.TypeOf[${goTypeOf(JSON.parse(k) as Expr)}]()\n`).join("");
-  rmSync(work, { recursive: true, force: true });
-  mkdirSync(work, { recursive: true });
-  writeFileSync(join(work, "go.mod"), `module verdicts\n\ngo 1.25\n\nrequire ${module} v0.0.0\n\nreplace ${module} => ${sdkGo}\n`);
-  writeFileSync(
-    join(work, "main.go"),
-    `// Command verdicts reports the Go SDK's verdicts on the cases it reads from stdin.
+  // Built as text, so each value reaches the harness as its JSON text, `1.0` included.
+  const input = `{"cases":[${cases.map((c) => `{"type":${index.get(canonicalJson(c.target))},"value":${jsonOf(c)}}`).join(",")}]}`;
+  return JSON.parse(
+    runGoHarness(
+      sdkGo,
+      work,
+      "verdicts",
+      (pkg) => `// Command verdicts reports the Go SDK's verdicts on the cases it reads from stdin.
 package main
 
 import (
@@ -274,7 +279,7 @@ import (
 	"os"
 	"runtime/debug"
 
-	op "${module}/${pkg}"
+	op "${pkg}"
 )
 
 var types = map[int]op.Type{}
@@ -334,11 +339,282 @@ func main() {
 	}
 }
 `,
-  );
-  // Built as text, so each value reaches the harness as its JSON text, `1.0` included.
-  const input = `{"cases":[${cases.map((c) => `{"type":${index.get(canonicalJson(c.target))},"value":${jsonOf(c)}}`).join(",")}]}`;
+      input,
+    ),
+  ) as SdkRun;
+}
+
+/**
+ * Builds a Go command in `work`, whose `main.go` is `main` applied to the
+ * import path of the SDK's package, against the lock's Go module at `sdkGo`,
+ * by the module path its go.mod declares and the one folder of Go files it
+ * holds, and runs it with `input` on stdin, under the local toolchain.
+ * Returns what it writes to stdout.
+ */
+export function runGoHarness(sdkGo: string, work: string, name: string, main: (pkg: string) => string, input: string): string {
+  const module = /^module (\S+)$/m.exec(readFileSync(join(sdkGo, "go.mod"), "utf8"))?.[1];
+  if (module === undefined) throw new Error(`${sdkGo}/go.mod declares no module`);
+  const pkg = packageIn(sdkGo, (d) => readdirSync(d).some((f) => f.endsWith(".go")));
+  rmSync(work, { recursive: true, force: true });
+  mkdirSync(work, { recursive: true });
+  writeFileSync(join(work, "go.mod"), `module ${name}\n\ngo 1.25\n\nrequire ${module} v0.0.0\n\nreplace ${module} => ${sdkGo}\n`);
+  writeFileSync(join(work, "main.go"), main(`${module}/${pkg}`));
   const r = spawnWithInput("go", ["run", "."], input, { cwd: work, encoding: "utf8", maxBuffer: 64 * 1024 * 1024, env: { ...process.env, GOWORK: "off", GOFLAGS: "-mod=mod", GOTOOLCHAIN: "local" } });
   if (r.error) throw new Error(`go: ${r.error.message}`);
   if (r.status !== 0) throw new Error(`the Go harness failed: ${(r.stderr || r.stdout).trim().split("\n").slice(0, 5).join(" ")}`);
-  return JSON.parse(r.stdout) as SdkRun;
+  return r.stdout;
+}
+
+/** One place where an SDK rejects a payload: the path it reports, as its own list of keys, indices, and labels, and what it says is wrong there. */
+export interface SdkFinding {
+  path: (string | number)[];
+  message: string;
+}
+
+/** A payload an SDK checks, with the named type it is checked as. */
+export interface SdkPayload {
+  type: string;
+  value: unknown;
+}
+
+/** An SDK's findings on each of a list of payloads, in order: an empty list for a payload it accepts. */
+export interface SdkFindingsRun {
+  /** The engine and its version, as the parity run names it. */
+  engine: string;
+  findings: SdkFinding[][];
+}
+
+/** A JSON pointer's reference tokens, unescaped. */
+const tokensOf = (pointer: string): string[] => (pointer === "" ? [] : pointer.slice(1).split("/").map((t) => t.replace(/~1/g, "/").replace(/~0/g, "~")));
+
+const escapeToken = (t: string) => t.replace(/~/g, "~0").replace(/\//g, "~1");
+
+/**
+ * A path an SDK reports, as its list of keys and indices, as a JSON
+ * pointer. The path is followed through the payload for as long as each
+ * step is a member of the object there or an index of the array there; the
+ * first step that isn't ends it. So Pydantic's name of a union's branch,
+ * such as `constrained-str` in `committed_metrics.1.metric.constrained-str`,
+ * leaves the finding at the union, where the schemas report a value that
+ * matches no branch, and a missing member's name leaves it at the object
+ * that lacks it, where the schemas report `required`. A Go pointer and a Zod
+ * path are followed the same way.
+ */
+export function pointerIn(value: unknown, path: readonly (string | number)[]): string {
+  let at = value;
+  let out = "";
+  for (const step of path) {
+    if (Array.isArray(at)) {
+      const n = typeof step === "number" ? step : /^(0|[1-9][0-9]*)$/.test(step) ? Number(step) : -1;
+      if (n < 0 || n >= at.length) break;
+      at = at[n];
+      out += `/${n}`;
+    } else if (at !== null && typeof at === "object" && Object.hasOwn(at, String(step))) {
+      at = (at as Record<string, unknown>)[String(step)];
+      out += `/${escapeToken(String(step))}`;
+    } else break;
+  }
+  return out;
+}
+
+/** The distinct places an SDK rejects a payload at, as JSON pointers by `pointerIn`, each with what it says there, in the order it reports them. */
+export function locationsOf(value: unknown, findings: SdkFinding[]): Map<string, string[]> {
+  const at = new Map<string, string[]>();
+  for (const f of findings) {
+    const p = pointerIn(value, f.path);
+    const ms = at.get(p) ?? [];
+    if (!ms.includes(f.message)) ms.push(f.message);
+    at.set(p, ms);
+  }
+  return at;
+}
+
+/**
+ * The TypeScript SDK's findings, in this process: each payload parsed with
+ * the Zod schema the package exports under its type's name, as
+ * `LineItem.safeParse(value)`. Each issue is at its path; a closed object's
+ * `unrecognized_keys` issue, which Zod reports at the object, is one finding
+ * at each key it names.
+ */
+export async function findingsTypeScript(sdkTs: string, payloads: SdkPayload[]): Promise<SdkFindingsRun> {
+  type Issue = { code: string; path: PropertyKey[]; message: string; keys?: string[] };
+  type Schema = { safeParse?: (v: unknown) => { success: boolean; error?: { issues: Issue[] } } };
+  const sdk = (await import(pathToFileURL(join(sdkTs, "src", "index.ts")).href)) as Record<string, unknown>;
+  const findings = payloads.map((p) => {
+    const schema = sdk[p.type] as Schema | undefined;
+    if (typeof schema?.safeParse !== "function") throw new Error(`the TypeScript SDK exports no schema "${p.type}"`);
+    const r = schema.safeParse(p.value);
+    if (r.success) return [];
+    return r.error!.issues.flatMap((i) => {
+      const path = i.path.map((x) => (typeof x === "number" ? x : String(x)));
+      return i.code === "unrecognized_keys" && i.keys ? i.keys.map((k) => ({ path: [...path, k], message: i.message })) : [{ path, message: i.message }];
+    });
+  });
+  const { version } = (await import("zod/package.json", { with: { type: "json" } })).default as { version: string };
+  return { engine: `TypeScript with Zod ${version}`, findings };
+}
+
+/**
+ * The Python SDK's findings, under the venv's interpreter:
+ * tools/sdk/findings.py checks each payload's JSON text with the package's
+ * `parse_json(type, text)`, in the strict mode, and reports each Pydantic
+ * error's `loc`, which names a union's branch among the keys.
+ */
+export function findingsPython(root: string, sdkPython: string, payloads: SdkPayload[]): SdkFindingsRun {
+  const python = join(root, ".venv", "bin", "python");
+  const pkg = packageIn(sdkPython, (d) => existsSync(join(d, "__init__.py")));
+  const r = spawnWithInput(python, ["-I", "-B", join(root, "tools", "sdk", "findings.py"), sdkPython, pkg], JSON.stringify({ payloads: payloads.map((p) => ({ type: p.type, json: JSON.stringify(p.value) })) }), {
+    cwd: root,
+    encoding: "utf8",
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  if (r.error) throw new Error(`${python}: ${r.error.message}; run: npm run setup:oracle && npm run setup:sdk`);
+  if (r.status !== 0) throw new Error(`tools/sdk/findings.py failed: ${(r.stderr || r.stdout).trim().split("\n").slice(-3).join(" ")}; is Pydantic installed? run: npm run setup:sdk`);
+  return JSON.parse(r.stdout) as SdkFindingsRun;
+}
+
+/**
+ * The Go SDK's findings: a harness generated into `work` checks each
+ * payload's JSON text with `op.Validate[op.<type>]`, named statically for
+ * each type the payloads are, and reports each `op.Error` of the
+ * `op.Errors` it returns, whose `At` is a JSON pointer. Any other error,
+ * such as JSON it can't parse, is a finding at the root.
+ */
+export function findingsGo(sdkGo: string, work: string, payloads: SdkPayload[]): SdkFindingsRun {
+  const types = [...new Set(payloads.map((p) => p.type))].sort();
+  for (const t of types) if (!/^[A-Z][A-Za-z0-9]*$/.test(t)) throw new Error(`"${t}" is no Go type name`);
+  const cases = types.map((t) => `\tcase ${JSON.stringify(t)}:\n\t\treturn op.Validate[op.${t}](data)\n`).join("");
+  const out = runGoHarness(
+    sdkGo,
+    work,
+    "findings",
+    (pkg) => `// Command findings reports where the Go SDK rejects each payload it reads from stdin.
+package main
+
+import (
+	"encoding/json"
+	"errors"
+	"os"
+	"runtime/debug"
+
+	op "${pkg}"
+)
+
+type finding struct {
+	At      string \`json:"at"\`
+	Message string \`json:"message"\`
+}
+
+func validate(t string, data []byte) error {
+	switch t {
+${cases}	}
+	return errors.New("no type " + t)
+}
+
+func main() {
+	var in struct {
+		Payloads []struct {
+			Type  string          \`json:"type"\`
+			Value json.RawMessage \`json:"value"\`
+		} \`json:"payloads"\`
+	}
+	if err := json.NewDecoder(os.Stdin).Decode(&in); err != nil {
+		panic(err)
+	}
+	engine := "Go"
+	if info, ok := debug.ReadBuildInfo(); ok {
+		engine = "Go " + info.GoVersion
+	}
+	out := struct {
+		Engine   string      \`json:"engine"\`
+		Findings [][]finding \`json:"findings"\`
+	}{Engine: engine, Findings: [][]finding{}}
+	for _, p := range in.Payloads {
+		got := []finding{}
+		if err := validate(p.Type, p.Value); err != nil {
+			var errs op.Errors
+			if errors.As(err, &errs) {
+				for _, e := range errs {
+					got = append(got, finding{At: e.At, Message: e.Message})
+				}
+			} else {
+				got = append(got, finding{At: "", Message: err.Error()})
+			}
+		}
+		out.Findings = append(out.Findings, got)
+	}
+	if err := json.NewEncoder(os.Stdout).Encode(out); err != nil {
+		panic(err)
+	}
+}
+`,
+    `{"payloads":[${payloads.map((p) => `{"type":${JSON.stringify(p.type)},"value":${JSON.stringify(p.value)}}`).join(",")}]}`,
+  );
+  const r = JSON.parse(out) as { engine: string; findings: { at: string; message: string }[][] };
+  return { engine: r.engine, findings: r.findings.map((fs) => fs.map((f) => ({ path: tokensOf(f.at), message: f.message }))) };
+}
+
+/** A corpus mutant, with the places where the reference rejects it, which each SDK must reject it at. */
+export interface SdkLocationCase {
+  label: string;
+  type: string;
+  value: unknown;
+  /** The JSON pointers of the places in the value, sorted: its constraint's `path`, for `additionalProperties` the member the object doesn't name, and for a paired mutant the member it adds too. */
+  at: string[];
+}
+
+const valueAtPointer = (v: unknown, pointer: string): unknown =>
+  tokensOf(pointer).reduce<unknown>((x, t) => (Array.isArray(x) ? x[Number(t)] : isMap(x) ? x[t] : undefined), v);
+
+/** The member a paired mutant adds, which no type names. */
+export const UNNAMED_MEMBER = "undefined_member";
+
+/** Whether a constraint is one the SDKs check beside an object's members rather than as a member's type: a dependency, a condition, or a list's bounds, which the schema states on the object. */
+const onShape = (c: { at: string; keyword: string }) => /^\/(dependentSchemas|then|else)(\/|$)/.test(c.at) || ["dependentRequired", "dependentSchemas", "then", "minItems", "uniqueItems"].includes(c.keyword);
+
+/**
+ * Every mutant of a lock's corpus, each with the place its constraint's
+ * `path` names, where the reference validator rejects it. An
+ * `additionalProperties` mutant is rejected at the member the object doesn't
+ * name, the one its baseline lacks, as the examples and desk-tests gates
+ * locate it. Each mutant of a check on an object's shape, on a closed
+ * object that states no member count, is also paired with a member the
+ * object doesn't name, so it fails at two places, the shape's and the
+ * member's, and each SDK must report both: a runtime that stops at the
+ * first failure reports one.
+ */
+export function locationCases(corpus: CorpusDoc): SdkLocationCase[] {
+  const out: SdkLocationCase[] = [];
+  const closed = new Set(corpus.constraints.filter((c) => c.keyword === "additionalProperties" && c.path === "").map((c) => c.type));
+  const counted = new Set(corpus.constraints.filter((c) => c.keyword === "minProperties" || c.keyword === "maxProperties" || /\/maxProperties$/.test(c.at)).map((c) => c.type));
+  for (const c of corpus.constraints) {
+    let at = c.path;
+    if (c.keyword === "additionalProperties") {
+      const base = valueAtPointer(c.baseline, c.path);
+      const mut = valueAtPointer(c.mutant, c.path);
+      const added = isMap(mut) ? Object.keys(mut).filter((k) => !isMap(base) || !(k in base)) : [];
+      if (added.length !== 1) throw new Error(`corpus ${c.id}: the mutant adds ${added.length} members to the baseline, not one`);
+      at = `${c.path}/${escapeToken(added[0]!)}`;
+    }
+    out.push({ label: `corpus ${c.id} mutant`, type: c.type, value: c.mutant, at: [at] });
+    if ("newline" in c) out.push({ label: `corpus ${c.id} newline mutant`, type: c.type, value: c.newline, at: [c.path] });
+    if (onShape(c) && closed.has(c.type) && !counted.has(c.type) && isMap(c.mutant) && !(UNNAMED_MEMBER in c.mutant)) {
+      out.push({ label: `corpus ${c.id} mutant with a member the object doesn't name`, type: c.type, value: { ...c.mutant, [UNNAMED_MEMBER]: true }, at: [...new Set([at, `/${UNNAMED_MEMBER}`])].sort() });
+    }
+  }
+  return out;
+}
+
+/** The problems with where one SDK rejects the corpus mutants: each must be rejected at every place its constraints name, and nowhere else. */
+export function compareLocations(language: string, cases: SdkLocationCase[], run: SdkFindingsRun): { problems: string[]; note: string } {
+  if (run.findings.length !== cases.length) return { problems: [`${language}: ${run.findings.length} verdicts for ${cases.length} mutants`], note: "" };
+  const problems: string[] = [];
+  cases.forEach((c, i) => {
+    const got = [...locationsOf(c.value, run.findings[i]!).keys()];
+    const shown = (p: string) => (p === "" ? "/" : p);
+    if (got.length === c.at.length && [...got].sort().every((p, k) => p === c.at[k])) return;
+    problems.push(`${language}: ${c.label}: the reference rejects it at ${c.at.map(shown).join(", ")}, and the SDK ${got.length === 0 ? "accepts it" : `rejects it at ${got.map(shown).join(", ")}`}`);
+  });
+  const paired = cases.filter((c) => c.at.length > 1).length;
+  return { problems, note: `${run.engine}: ${cases.length} mutants, ${paired} of them failing at two places, each rejected at every place its constraints name and nowhere else` };
 }

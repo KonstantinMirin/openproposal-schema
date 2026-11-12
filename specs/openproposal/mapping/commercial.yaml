@@ -2629,6 +2629,16 @@ entries:
     locks: [ with-our-stack ]
     source: { rule: required-cell }
     as: { role: rule, object: CostParameters }
+  - ir: key:5.6.5:CostParameters.action_definition
+    digest: 858b77387c7188c06f10be2329f4bfa76c5a78d37ab01aa864a81b1e7a222d8d
+    locks: [ with-our-stack ]
+    source: { rule: typed-row }
+    as: { role: property, object: CostParameters, type: { kind: named, name: DocumentRef }, presence: optional }
+  - ir: rule:5.6.5:ae26d4ac
+    digest: 814467c559c502667f2c08060638f7eada41d83e4d7c52e62f788ab57d48b73f
+    locks: [ with-our-stack ]
+    source: { rule: required-cell }
+    as: { role: schema, in: CostParameters }
   - ir: key:5.6.5:CostParameters.rate_unit
     digest: 99a71ad7db93d2036ebdf72c80cc155ddbdc869d593e8057d71461fab5c456a8
     locks: [ with-our-stack ]
@@ -2653,8 +2663,8 @@ entries:
     locks: [ with-our-stack ]
     source: { rule: typed-row }
     as: { role: property, object: CostParameters, type: { kind: named, name: IanaZone }, presence: optional }
-  - ir: rule:5.6.5:ae26d4ac
-    digest: 059fd14e4ecbd8bfc4769fc96414e1dc339fed1cb49f8f50172039529be2f725
+  - ir: rule:5.6.5:ae26d4ac-2
+    digest: 067eb44807ed9b75effa6fcdb94325eec498001b9441df0eb7718b2d566b23e9
     locks: [ with-our-stack ]
     source: { rule: required-cell }
     as: { role: schema, in: CostParameters }

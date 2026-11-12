@@ -8,7 +8,8 @@ import re
 from collections.abc import Callable
 from typing import Annotated, Any, ClassVar, Literal
 
-from pydantic import BaseModel, ConfigDict, Strict, TypeAdapter, ValidationError, ValidationInfo, model_validator
+from pydantic import BaseModel, ConfigDict, ModelWrapValidatorHandler, Strict, TypeAdapter, ValidationError, ValidationInfo, model_validator
+from pydantic_core import InitErrorDetails, PydanticCustomError
 
 _FORMATS = {
     "date": re.compile("^([0-9]{4})-([0-9]{2})-([0-9]{2})$"),
@@ -134,6 +135,17 @@ def _json_equal(a: Any, b: Any) -> bool:
     return a == b
 
 
+def _error_at(loc: tuple[str | int, ...], message: str, value: Any) -> InitErrorDetails:
+    """An error at a place in the object a check reads, the object itself at `()`, so it has the location the schema's check reports."""
+    return InitErrorDetails(type=PydanticCustomError("value_error", "{message}", {"message": message}), loc=loc, input=value)
+
+
+def _again(error: Any, loc: tuple[str | int, ...] = (), why: str = "") -> InitErrorDetails:
+    """An error Pydantic reported, with its type, its message, and its place, under `loc`, to raise beside others."""
+    message = f"{error['msg']} {why}" if why else error["msg"]
+    return InitErrorDetails(type=PydanticCustomError(error["type"], "{message}", {"message": message}), loc=(*loc, *error["loc"]), input=error["input"])
+
+
 class Shape:
     """What an object's schema states beside its members' types: its member counts, what a member allows or requires beside it, and its conditions."""
 
@@ -159,55 +171,61 @@ class Shape:
         self.rejects = rejects
         self.absent = absent
 
-    def check(self, data: dict[str, Any], ctx: Any = None) -> None:
+    def errors(self, data: dict[str, Any], ctx: Any = None) -> list[InitErrorDetails]:
+        """Every place where the object breaks what its schema states beside its members' types, each at the location the schema's check reports."""
+        out: list[InitErrorDetails] = []
         n = len(data)
         if self.min_properties is not None and n < self.min_properties:
-            raise ValueError(f"holds {n} members, fewer than {self.min_properties}")
+            out.append(_error_at((), f"holds {n} members, fewer than {self.min_properties}", data))
         if self.max_properties is not None and n > self.max_properties:
-            raise ValueError(f"holds {n} members, more than {self.max_properties}")
+            out.append(_error_at((), f"holds {n} members, more than {self.max_properties}", data))
         for member, most in self.dependent:
             if member in data and n > most:
-                raise ValueError(f'holds "{member}" and {n - 1} other members; with "{member}" it holds at most {most}')
+                out.append(_error_at((), f'holds "{member}" and {n - 1} other members; with "{member}" it holds at most {most}', data))
         for member, names in self.requires:
             if member in data:
                 for r in names:
                     if r not in data:
-                        raise ValueError(f'lacks "{r}", which is required with "{member}"')
+                        out.append(_error_at((), f'lacks "{r}", which is required with "{member}"', data))
         for member, inner, names in self.within:
             m = data.get(member)
             if isinstance(m, dict) and all(i in m for i in inner):
                 for r in names:
                     if r not in data:
-                        raise ValueError(f'lacks "{r}", which is required with "{member}" holding {", ".join(inner)}')
+                        out.append(_error_at((), f'lacks "{r}", which is required with "{member}" holding {", ".join(inner)}', data))
         for member, least, unique in self.bounds:
             m = data.get(member)
             if isinstance(m, list):
                 if len(m) < least:
-                    raise ValueError(f'"{member}" holds {len(m)} items, fewer than {least}')
+                    out.append(_error_at((member,), f"holds {len(m)} items, fewer than {least}", m))
                 if unique and any(_json_equal(m[i], m[j]) for i in range(len(m)) for j in range(i)):
-                    raise ValueError(f'"{member}" holds an item twice')
+                    out.append(_error_at((member,), "holds an item twice", m))
         for sibling, value in self.rejects:
             if sibling in data and _json_equal(data[sibling], value):
-                raise ValueError(f'"{sibling}" is {value!r}, which it cannot be')
+                out.append(_error_at((), f'"{sibling}" is {value!r}, which it cannot be', data))
         for member, sibling, value, when in self.absent:
             if member not in data:
                 continue
             holds = sibling in data and _json_equal(data[sibling], value)
             if when and holds:
-                raise ValueError(f'holds "{member}", which is absent when "{sibling}" is {value!r}')
-            if not when and not holds:
-                raise ValueError(f'holds "{member}", which is absent unless "{sibling}" is {value!r}')
+                out.append(_error_at((sibling,), f'is {value!r}, while "{member}" is present, which is absent when "{sibling}" is {value!r}', data[sibling]))
+            elif not when and not holds:
+                if sibling not in data:
+                    out.append(_error_at((), f'holds "{member}", which is absent unless "{sibling}" is {value!r}', data))
+                else:
+                    out.append(_error_at((sibling,), f'is {data[sibling]!r}, while "{member}" is present, which is absent unless "{sibling}" is {value!r}', data[sibling]))
         for sibling, value, require, types in self.conditions:
             if sibling in data and _json_equal(data[sibling], value):
                 for r in require:
                     if r not in data:
-                        raise ValueError(f'lacks "{r}", which is required when "{sibling}" is {value!r}')
+                        out.append(_error_at((), f'lacks "{r}", which is required when "{sibling}" is {value!r}', data))
                 for m, adapter in types:
                     if m in data:
                         try:
                             adapter.validate_python(data[m], strict=True, context=ctx)
                         except ValidationError as e:
-                            raise ValueError(f'"{m}" is invalid while "{sibling}" is {value!r}: {e.errors()[0]["msg"]}') from None
+                            out.extend(_again(x, (m,), f'while "{sibling}" is {value!r}') for x in e.errors())
+        return out
 
 
 def _template_error(cls: type, unbound: tuple[Any, ...]) -> str:
@@ -230,20 +248,28 @@ class Model(BaseModel):
     __shape__: ClassVar[Shape] = Shape()
     __copies__: ClassVar[tuple[tuple[str, str], ...]] = ()
 
-    @model_validator(mode="before")
+    @model_validator(mode="wrap")
     @classmethod
-    def _check_shape(cls, data: Any, info: ValidationInfo) -> Any:
+    def _check_shape(cls, data: Any, handler: ModelWrapValidatorHandler[Any], info: ValidationInfo) -> Any:
+        """Checks the object's shape and its members together, so every place where it breaks its type is reported at once, as the schema reports them."""
         unbound = cls.__pydantic_generic_metadata__["parameters"]
         if unbound:
             raise TypeError(_template_error(cls, unbound))
-        if isinstance(data, dict):
-            if cls.model_config.get("extra") != "allow" and _receiving(info.context):
-                data = {k: v for k, v in data.items() if k in cls.model_fields}
-            for name in cls.model_fields:
-                if name in data and data[name] is None:
-                    raise ValueError(f'the member "{name}" is null')
-            cls.__shape__.check(data, info.context)
-        return data
+        if not isinstance(data, dict):
+            return handler(data)
+        if cls.model_config.get("extra") != "allow" and _receiving(info.context):
+            data = {k: v for k, v in data.items() if k in cls.model_fields}
+        for name in cls.model_fields:
+            if name in data and data[name] is None:
+                raise ValueError(f'the member "{name}" is null')
+        found = cls.__shape__.errors(data, info.context)
+        if not found:
+            return handler(data)
+        try:
+            handler(data)
+        except ValidationError as e:
+            found.extend(_again(x) for x in e.errors())
+        raise ValidationError.from_exception_data(cls.__name__, found)
 
 
 class Closed(Model):

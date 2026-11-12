@@ -6,14 +6,20 @@ Every screen, ID, coordinate, domain, and figure in them is invented, and the pr
 
 ## What they check
 
-[`expected.yaml`](expected.yaml) records the verdict each file must get on the `with-our-stack` lock. Two engines judge every file:
+[`expected.yaml`](expected.yaml) records the verdict each file must get on the `with-our-stack` lock. Five engines judge every file:
 
 - **Schemas and rules.** The lock's schemas, Ajv 2020 with `format` asserted, and every rule that one payload decides, as the examples gate checks an example.
 - **The stack's own checker.** `scripts/check_examples.py` at the lock's commit, which the lock pins by blob and keeps in its snapshot, run on the lock's specification and examples with these files added to `examples/`.
+- **The SDKs.** The TypeScript, Python, and Go types the lock's schemas generate, in [`sdk/proposed/with-our-stack/`](../../../../sdk/proposed/with-our-stack/), each through the entry point an implementer calls to check a received line item:
+  - TypeScript: `LineItem.safeParse(value)`, with the Zod schema the package exports.
+  - Python: `op.parse_json("LineItem", text)`, in its default, strict mode.
+  - Go: `op.Validate[op.LineItem]` on the JSON text.
 
-Nine files must be rejected, each at one location, the same in both engines. The other 14 must pass both. On every file, the rule that makes `format_specs` REQUIRED once the proposal leaves `draft` (`rule:5.4:3a677601`) is undecided, because a line item alone shows no proposal status.
+  Each SDK's path becomes the JSON pointer this file uses. Go's `op.Error.At` is one already. A Zod issue's path and a Pydantic error's `loc` are followed through the file for as long as each step is a member or an index there, so Pydantic's name of a union's branch, such as `constrained-str`, leaves the finding at the union, where the schemas report it. Zod reports a key the object doesn't name at the object, with the key in `keys`, so the key is added to the path, as the schemas report it.
 
-`npm run ci` runs the desk-tests gate, so a verdict that changes in either engine fails CI. After a lock move, review each verdict that changed before you change `expected.yaml`.
+Nine files must be rejected, each at one location. The schemas and rules and the checker reject all nine there. The SDKs reject eight there and accept `dooh-v2-p11-c-no-multiplier`, since its finding is a rule's, which no SDK type checks: the types check what the schemas check, and no schema states that `impression_multiplier` is REQUIRED when the line item counts impressions. `expected.yaml` records that file under `sdk_gaps`, with the reason. The other 14 files must pass every engine. On every file, the rule that makes `format_specs` REQUIRED once the proposal leaves `draft` (`rule:5.4:3a677601`) is undecided, because a line item alone shows no proposal status.
+
+`npm run ci` runs the desk-tests gate, so a verdict that changes in any engine fails CI. After a lock move, review each verdict that changed before you change `expected.yaml`.
 
 | File | What it tests | Verdict |
 |:--|:--|:--|
@@ -28,7 +34,7 @@ Nine files must be rejected, each at one location, the same in both engines. The
 | `dooh-v2-p9-demographic` | `demographic` on the multiplier, as a bare dataset code | Rejected at `/delivery_counting/impression_multiplier/demographic` |
 | `dooh-v2-p9b-demographic-domain` | The same, domain-qualified | Clean |
 | `dooh-v2-p10-screen-policy` | `creative_policy` on one screen | Rejected at `/properties/available/0/screens/0/creative_policy` |
-| `dooh-v2-p11-c-no-multiplier` | A line item that counts impressions with no multiplier | Rejected at `/delivery_counting` (`rule:5.6.4:e58650b7`) |
+| `dooh-v2-p11-c-no-multiplier` | A line item that counts impressions with no multiplier | Rejected at `/delivery_counting` (`rule:5.6.4:e58650b7`); the SDKs accept it, an SDK gap |
 | `dooh-v2-p12-offset-instant` | A flight start with a `+10:00` offset | Rejected at `/commitment/flight/start` |
 | `loopshare-s01-q01-a-pg-guaranteed` | `CPM`, 8,610 guaranteed impressions, more than the screen runs in its open hours | Clean: availability is the seller's check at commit, not a document rule |
 | `loopshare-s01-q01-b-pg-share-and-impressions` | A loop-time share of voice, a daypart, and an impressions commitment in one line item | Clean, as q01-a |

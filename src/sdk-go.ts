@@ -123,13 +123,24 @@ function objectParts(shape: Shape, ctx: Ctx): { fields: string; validate: string
   for (const d of shape.requires) lines.push(`\tcheckRequiredWith(m, at, errs, ${str(d.member)}, ${d.names.map(str).join(", ")})`);
   for (const d of shape.within) lines.push(`\tcheckRequiredWithin(m, at, errs, ${str(d.member)}, []string{${d.inner.map(str).join(", ")}}, ${d.names.map(str).join(", ")})`);
   for (const b of shape.bounds) lines.push(`\tcheckBounds(m, at, errs, ${str(b.member)}, ${b.minItems}, ${b.unique})`);
-  for (const r of shape.rejects) lines.push(`\tif x, ok := m[${str(r.sibling)}]; ok && jsonEqual(x, ${jsonLiteral(r.value)}) {`, `\t\terrs.add(member(at, ${str(r.sibling)}), "is %s, which it cannot be", ${str(JSON.stringify(r.value))})`, "\t}");
-  // A member absent unless a sibling equals a value: present, the sibling must hold the value. A member absent when a sibling
-  // equals a value: present, the sibling must not hold it.
+  // A value a member can't take is the object's failure, as the schema's `then: false` is.
+  for (const r of shape.rejects) lines.push(`\tif x, ok := m[${str(r.sibling)}]; ok && jsonEqual(x, ${jsonLiteral(r.value)}) {`, `\t\terrs.add(at, "holds %s %s, which it cannot be", ${str(JSON.stringify(r.sibling))}, ${str(JSON.stringify(r.value))})`, "\t}");
+  // A member absent unless a sibling equals a value: present, the sibling must hold the value, which fails at the sibling, or at
+  // the object where the sibling is absent, as the schema's dependency's `const` and `required` do. A member absent when a
+  // sibling equals a value: present, the sibling must not hold it, which fails at the sibling.
   for (const a of shape.absent) {
-    const test = a.when ? `ok && jsonEqual(x, ${jsonLiteral(a.value)})` : `!ok || !jsonEqual(x, ${jsonLiteral(a.value)})`;
-    lines.push(`\tif _, ok := m[${str(a.member)}]; ok {`, `\t\tif x, ok := m[${str(a.sibling)}]; ${test} {`);
-    lines.push(`\t\t\terrs.add(at, "holds %s, which is absent ${a.when ? "when" : "unless"} %s is %s", ${str(JSON.stringify(a.member))}, ${str(JSON.stringify(a.sibling))}, ${str(JSON.stringify(a.value))})`, "\t\t}", "\t}");
+    const [member, sibling, value] = [str(JSON.stringify(a.member)), str(JSON.stringify(a.sibling)), str(JSON.stringify(a.value))];
+    lines.push(`\tif _, ok := m[${str(a.member)}]; ok {`);
+    if (a.when) lines.push(`\t\tif x, ok := m[${str(a.sibling)}]; ok && jsonEqual(x, ${jsonLiteral(a.value)}) {`, `\t\t\terrs.add(member(at, ${str(a.sibling)}), "is %s, which it can't be while %s is present", ${value}, ${member})`, "\t\t}", "\t}");
+    else
+      lines.push(
+        `\t\tif x, ok := m[${str(a.sibling)}]; !ok {`,
+        `\t\t\terrs.add(at, "holds %s, which is absent unless %s is %s", ${member}, ${sibling}, ${value})`,
+        `\t\t} else if !jsonEqual(x, ${jsonLiteral(a.value)}) {`,
+        `\t\t\terrs.add(member(at, ${str(a.sibling)}), "is %v, not %s, which it must be while %s is present", x, ${value}, ${member})`,
+        "\t\t}",
+        "\t}",
+      );
   }
   for (const p of shape.properties) lines.push(`\tif x, ok := m[${str(p.name)}]; ok {`, `\t\t${check(p.expr, "x", `member(at, ${str(p.name)})`)}`, "\t}");
   for (const c of shape.conditions) {
