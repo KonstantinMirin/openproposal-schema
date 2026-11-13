@@ -39,7 +39,7 @@ export const Count: z.ZodType<Count> = z.number().gte(0).lte(9007199254740991).r
 
 /** An ISO 4217 alphabetic currency code, such as `USD`. */
 export type CurrencyCode = string;
-export const CurrencyCode: z.ZodType<CurrencyCode> = z.string().regex(new RegExp("^[A-Z]{3}$", "u"));
+export const CurrencyCode: z.ZodType<CurrencyCode> = z.string().regex(new RegExp("^[A-Z]{3}$", "u")).check(rt.scalarRules(["kernel:CurrencyCode:assigned"]));
 
 /** A day of the week, named in lowercase English, from `monday` to `sunday`. */
 export type DayName = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
@@ -144,7 +144,7 @@ export function Range<T>(t: z.ZodType<T>): z.ZodType<Range<T>> {
   return z.strictObject({
     max: t.optional(),
     min: t.optional(),
-  }).check(rt.memberCount(1, undefined));
+  }).check(rt.memberCount(1, undefined), rt.rules(["constructor:Range:ordered"]));
 }
 
 /**
@@ -170,7 +170,7 @@ export function Selectable<T, K extends string>(t: z.ZodType<T>, k: z.ZodType<K>
     included: z.array(k),
     max_select: Count.optional(),
     pricing: rt.map(k, PriceDelta).optional(),
-  });
+  }).check(rt.rules(["constructor:Selectable:options-named","constructor:Selectable:priced-beyond-included"]));
 }
 
 /**
@@ -237,11 +237,11 @@ export const DaypartWindow: z.ZodType<DaypartWindow> = z.strictObject({
   days: z.array(DayName),
   end: TimeOfDay,
   start: TimeOfDay,
-}).check(rt.bounds("days", 1, true), rt.rejects("start", "24:00"));
+}).check(rt.bounds("days", 1, true), rt.rejects("start", "24:00"), rt.rules(["kernel:DaypartWindow:ordered"]));
 
 /** The clock a line item's daypart and frequency cap period are read on, a zone name of the IANA time zone database, such as `America/New_York` or `UTC`, or `viewer_local`, the clock where the ad renders. A zone name follows the zone's daylight saving rules, which a fixed offset doesn't. */
 export type TimeZone = string;
-export const TimeZone: z.ZodType<TimeZone> = z.string().regex(new RegExp("^(viewer_local|[A-Z][A-Za-z0-9_+-]*(/[A-Za-z0-9_+-]+)*)$", "u"));
+export const TimeZone: z.ZodType<TimeZone> = z.string().regex(new RegExp("^(viewer_local|[A-Z][A-Za-z0-9_+-]*(/[A-Za-z0-9_+-]+)*)$", "u")).check(rt.scalarRules(["kernel:TimeZone:listed"]));
 
 /** A point in time, written as an RFC 3339 date-time with a UTC offset, such as `2026-10-25T09:00:00Z`, the start of a flight included. It follows RFC 3339's grammar, with a `T` or `t` between the date and the time and an offset of `Z`, `z`, `+hh:mm`, or `-hh:mm`, never a space, `+05`, or `+0500`. Several spellings name one instant, such as `Z` and `+00:00`, so a receiver compares two Timestamps as instants, not as strings. */
 export type Timestamp = string;

@@ -1,3 +1,4 @@
+import { checksOf as programChecksOf, loadKernelPrograms } from "../src/rule-programs.ts";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -193,9 +194,10 @@ test("the check fails a committed example its schema or a rule rejects, and a ty
   assert.ok(problems.some((p) => p.startsWith("FormatsSelection: the full example fails constructor:Selectable:priced-beyond-included")), problems.join("\n"));
   assert.ok(problems.includes("Amount: no examples"));
   assert.ok(problems.includes("Extra: no type the schemas emit has this name"));
-  // A list's code the generator's examples hold, no longer assigned, fails generation.
-  const codes = new Map([...CODES].map(([k, c]) => [k, k === "ISO 4217" ? new Set([...c].filter((x) => x !== "USD")) : c]));
-  const r = generateTypeExamples({ model: MAIN.model, files: MAIN.files, kernel: KERNEL, schemaDir: MAIN.schemaDir, codes, ruleChecks: RULE_CHECKS, spec: MAIN.spec, fields: FIELDS });
+  // A list's code the generator's examples hold, no longer assigned, fails generation: the programs carry the list's codes.
+  const kernel = loadKernelPrograms();
+  const unassigned = programChecksOf({ ...kernel, lists: { ...kernel.lists, "ISO 4217": kernel.lists!["ISO 4217"]!.filter((x) => x !== "USD") } });
+  const r = generateTypeExamples({ model: MAIN.model, files: MAIN.files, kernel: KERNEL, schemaDir: MAIN.schemaDir, codes: CODES, ruleChecks: { ...RULE_CHECKS, ...unassigned }, spec: MAIN.spec, fields: FIELDS });
   assert.ok(r.problems.some((p) => p.startsWith('CurrencyCode: the minimal example "USD" fails kernel:CurrencyCode:assigned')), r.problems.join("\n"));
 });
 

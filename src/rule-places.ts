@@ -89,29 +89,37 @@ export function valuesAt(value: unknown, place: Place): [string, unknown][] {
 /**
  * Every value of a named type in a value of a type, each with its JSON
  * pointer, by the model: the value itself where it is one, and those its
- * members hold. A list or map is walked by its items, a union by each of its
+ * members hold; a primitive's value, and a constructor's application under
+ * the constructor's name, as the template the SDKs check it by. A list or map is walked by its items, a union by each of its
  * types, and a member is walked where the value holds it; the walk doesn't
  * check the value, so a value its type rejects may still be walked.
  */
-export function instancesIn(model: ModelDoc, type: string, value: unknown): { type: string; path: string; value: unknown }[] {
+export function instancesIn(model: ModelDoc, type: string | TypeRef, value: unknown): { type: string; path: string; value: unknown }[] {
   const types: Types = new Map(model.types.map((t) => [t.name, t]));
   const out: { type: string; path: string; value: unknown }[] = [];
   const seen = new Set<string>();
+  const add = (name: string, path: string, v: unknown) => {
+    const k = `${name} ${path}`;
+    if (seen.has(k)) return false;
+    seen.add(k);
+    out.push({ type: name, path, value: v });
+    return true;
+  };
   const walk = (ref: TypeRef, path: string, v: unknown) => {
     if (ref.kind === "named") {
       const t = types.get(ref.name);
-      if (t && (t.kind === "object" || t.kind === "document" || t.kind === "copy") && v !== null && typeof v === "object" && !Array.isArray(v)) {
-        const k = `${ref.name} ${path}`;
-        if (seen.has(k)) return;
-        seen.add(k);
-        out.push({ type: ref.name, path, value: v });
-      }
+      if (t && (t.kind === "object" || t.kind === "document" || t.kind === "part" || t.kind === "copy") && v !== null && typeof v === "object" && !Array.isArray(v) && !add(ref.name, path, v)) return;
+      // A primitive's value is one of its type wherever it sits; a copy is its constructor's application.
+      if (t?.kind === "primitive") add(ref.name, path, v);
+      if (t?.kind === "copy") return walk(t.of, path, v);
     }
+    // An application of a constructor is a value of its template, which every application holds.
+    if (ref.kind === "apply" && v !== null && typeof v === "object" && !Array.isArray(v)) add(ref.constructor, path, v);
     const byKey = new Map<string, TypeRef[]>();
     for (const [k, c] of children(types, ref)) byKey.set(k, [...(byKey.get(k) ?? []), c]);
     for (const [k, refs] of byKey) for (const [p, x] of valuesAt(v, [k])) for (const c of refs) walk(c, `${path}${p}`, x);
   };
-  walk({ kind: "named", name: type }, "", value);
+  walk(typeof type === "string" ? { kind: "named", name: type } : type, "", value);
   return out;
 }
 
@@ -125,7 +133,8 @@ export function placedPrograms(model: ModelDoc, programs: Programs): { programs:
   const rules: Record<string, RuleProgram> = {};
   const runs = new Map<string, string[]>();
   const problems: string[] = [];
-  for (const r of [...model.rules].sort((a, b) => (a.ir < b.ir ? -1 : a.ir > b.ir ? 1 : 0))) {
+  const all = [...model.rules.map((r) => ({ ir: r.ir, owner: r.owner })), ...model.kernel_rules.map((r) => ({ ir: r.id, owner: r.owner }))];
+  for (const r of all.sort((a, b) => (a.ir < b.ir ? -1 : a.ir > b.ir ? 1 : 0))) {
     const program = programs.rules[r.ir];
     if (program === undefined) continue;
     if (program.owner !== r.owner) {
@@ -141,7 +150,7 @@ export function placedPrograms(model: ModelDoc, programs: Programs): { programs:
     rules[r.ir] = at.length > 0 ? { ...program, at } : program;
     runs.set(on, [...(runs.get(on) ?? []), r.ir]);
   }
-  return { programs: { defs: programs.defs, rules }, runs, problems };
+  return { programs: { ...programs, rules }, runs, problems };
 }
 
 /** The type each step of a place reaches from a holder, by the model: one per member of the place. */

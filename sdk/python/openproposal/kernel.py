@@ -47,7 +47,7 @@ Count = TypeAliasType("Count", Annotated[int, BeforeValidator(rt.integral), Stri
 """A whole number of things, never negative and at most 2^53 − 1, such as impressions, options, or a proposal's revisions, which its `version` counts."""
 
 
-CurrencyCode = TypeAliasType("CurrencyCode", Annotated[str, Strict(), Field(pattern="^[A-Z]{3}$")])
+CurrencyCode = TypeAliasType("CurrencyCode", Annotated[str, Strict(), Field(pattern="^[A-Z]{3}$"), AfterValidator(rt.ruled("kernel:CurrencyCode:assigned"))])
 """An ISO 4217 alphabetic currency code, such as `USD`."""
 
 
@@ -139,7 +139,7 @@ class Range(rt.Closed, Generic[T]):
 
     __copies__: ClassVar[tuple[tuple[str, str], ...]] = (("MaxRange", "Range[Count]"),)
 
-    __shape__: ClassVar[rt.Shape] = rt.Shape(min_properties=1)
+    __shape__: ClassVar[rt.Shape] = rt.Shape(min_properties=1, rules=("constructor:Range:ordered",))
 
     max: Optional[T] = None
     min: Optional[T] = None
@@ -152,6 +152,8 @@ class Selectable(rt.Closed, Generic[T, K]):
     - `K`: The type that names one option in `included[]` and the `pricing` keys. A string option is named by its value, so `K` is `T`, such as a format ID; an object option is named by its `id`, so `K` is the type of that `id`, the identity the seller mints for the option, and the option carries `id`, required."""
 
     __copies__: ClassVar[tuple[tuple[str, str], ...]] = (("ActivationRouteSelection", "Selectable[ActivationRoute, ActivationRoute]"), ("AudiencesSelection", "Selectable[CatalogRefOr[AudiencesOption], Identifier]"), ("CancellationPolicySelection", "Selectable[CancellationPolicyOption, Identifier]"), ("EnvironmentsSelection", "Selectable[Environment, Environment]"), ("ExclusivitySelection", "Selectable[ExclusivityOption, Identifier]"), ("FormatsSelection", "Selectable[FormatId, FormatId]"), ("MeasurementSourceSelection", "Selectable[MeasurementSourceOption, Identifier]"), ("ProductionSelection", "Selectable[ProductionOption, Identifier]"), ("PropertiesSelection", "Selectable[CatalogRefOr[PropertiesOption], Identifier]"), ("ReportingSelection", "Selectable[ReportingOption, Identifier]"), ("ShortfallRemedySelection", "Selectable[ShortfallRemedy, ShortfallRemedy]"), ("TransactionMechanismSelection", "Selectable[TransactionMechanism, TransactionMechanism]"))
+
+    __shape__: ClassVar[rt.Shape] = rt.Shape(rules=("constructor:Selectable:options-named", "constructor:Selectable:priced-beyond-included"))
 
     available: list[T]
     included: list[K]
@@ -197,7 +199,7 @@ TimeOfDay = TypeAliasType("TimeOfDay", Annotated[str, Strict(), Field(pattern="^
 class DaypartWindow(rt.Closed):
     """A window of the week in which a line item's ads may serve, read on the line item's clock, as Google Ad Manager writes a day part. On each day `days[]` names, the window runs from `start` up to `end`, which is exclusive and later than `start`. `start` is never `24:00`, the end of the day."""
 
-    __shape__: ClassVar[rt.Shape] = rt.Shape(bounds=(("days", 1, True),), rejects=(("start", "24:00"),))
+    __shape__: ClassVar[rt.Shape] = rt.Shape(bounds=(("days", 1, True),), rejects=(("start", "24:00"),), rules=("kernel:DaypartWindow:ordered",))
 
     days: list[DayName]
     end: TimeOfDay

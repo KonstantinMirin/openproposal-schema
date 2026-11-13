@@ -158,6 +158,7 @@ func (CurrencyCode) ValidateValue(v any, at string, errs *Errors) {
 		return
 	}
 	checkPattern(s, patternCurrencyCode, at, errs)
+	checkRules(v, at, errs, "kernel:CurrencyCode:assigned")
 }
 
 // DayName: A day of the week, named in lowercase English, from `monday` to `sunday`.
@@ -412,6 +413,7 @@ func (Range[T]) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkClosed(m, at, errs, "max", "min")
 	checkMemberCount(m, at, errs, 1, -1)
+	checkRules(v, at, errs, "constructor:Range:ordered")
 	if x, ok := m["max"]; ok {
 		validateAs[T](x, member(at, "max"), errs)
 	}
@@ -443,6 +445,7 @@ func (Selectable[T, K]) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkRequired(m, at, errs, "available", "included")
 	checkClosed(m, at, errs, "available", "included", "max_select", "pricing")
+	checkRules(v, at, errs, "constructor:Selectable:options-named", "constructor:Selectable:priced-beyond-included")
 	if x, ok := m["available"]; ok {
 		validateAs[List[T]](x, member(at, "available"), errs)
 	}
@@ -613,6 +616,7 @@ func (DaypartWindow) ValidateValue(v any, at string, errs *Errors) {
 	if x, ok := m["start"]; ok && jsonEqual(x, "24:00") {
 		errs.add(at, "holds %s %s, which it cannot be", "\"start\"", "\"24:00\"")
 	}
+	checkRules(v, at, errs, "kernel:DaypartWindow:ordered")
 	if x, ok := m["days"]; ok {
 		validateAs[List[DayName]](x, member(at, "days"), errs)
 	}
@@ -636,6 +640,7 @@ func (TimeZone) ValidateValue(v any, at string, errs *Errors) {
 		return
 	}
 	checkPattern(s, patternTimeZone, at, errs)
+	checkRules(v, at, errs, "kernel:TimeZone:listed")
 }
 
 // Timestamp: A point in time, written as an RFC 3339 date-time with a UTC offset, such as `2026-10-25T09:00:00Z`. It follows RFC 3339's grammar, with a `T` or `t` between the date and the time and an offset of `Z`, `z`, `+hh:mm`, or `-hh:mm`, never a space, `+05`, or `+0500`. Several spellings name one instant, such as `Z` and `+00:00`, so a receiver compares two Timestamps as instants, not as strings.

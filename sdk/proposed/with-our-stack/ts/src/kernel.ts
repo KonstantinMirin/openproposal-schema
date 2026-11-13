@@ -33,7 +33,7 @@ export const CalendarUnits = {
 
 /** An ISO 4217 alphabetic currency code, such as `USD`. */
 export type CurrencyCode = string;
-export const CurrencyCode: z.ZodType<CurrencyCode> = z.string().regex(new RegExp("^[A-Z]{3}$", "u"));
+export const CurrencyCode: z.ZodType<CurrencyCode> = z.string().regex(new RegExp("^[A-Z]{3}$", "u")).check(rt.scalarRules(["kernel:CurrencyCode:assigned"]));
 
 /** A day of the week, named in lowercase English, from `monday` to `sunday`. */
 export type DayName = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
@@ -292,7 +292,7 @@ export function Range<T>(t: z.ZodType<T>): z.ZodType<Range<T>> {
   return z.strictObject({
     max: t.optional(),
     min: t.optional(),
-  }).check(rt.memberCount(1, undefined));
+  }).check(rt.memberCount(1, undefined), rt.rules(["constructor:Range:duration-ordered","constructor:Range:ordered"]));
 }
 
 /** A domain that is the registrable domain of the Public Suffix List, taken over the whole list, its PRIVATE section included, written as a domain is, such as `examplepub.example`. It names a business. */
@@ -499,7 +499,7 @@ export const TimeUnits = {
 
 /** The clock a line item's daypart and frequency cap period are read on, a zone name of the IANA time zone database, such as `America/New_York` or `UTC`, or `viewer_local`, the clock where the ad renders. A zone name follows the zone's daylight saving rules, which a fixed offset doesn't. */
 export type TimeZone = string;
-export const TimeZone: z.ZodType<TimeZone> = z.string().regex(new RegExp("^(viewer_local|[A-Z][A-Za-z0-9_+-]*(/[A-Za-z0-9_+-]+)*)$", "u"));
+export const TimeZone: z.ZodType<TimeZone> = z.string().regex(new RegExp("^(viewer_local|[A-Z][A-Za-z0-9_+-]*(/[A-Za-z0-9_+-]+)*)$", "u")).check(rt.scalarRules(["kernel:TimeZone:listed"]));
 
 /** An absolute `http` or `https` URL, as RFC 3986 writes one, that a client can fetch. */
 export type Url = string;

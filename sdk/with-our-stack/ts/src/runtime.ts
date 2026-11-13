@@ -150,6 +150,15 @@ export const rules = (ids: string[]) => always((payload: Payload) => {
   for (const id of ids) for (const v of violations(id, payload.value)) fail(payload, v.message, v.path === "" ? [] : v.path.slice(1).split("/").map((t) => t.replace(/~1/g, "/").replace(/~0/g, "~")));
 });
 
+/** A check that a scalar breaks none of the rules whose programs check it (rules.ts), each violation at the scalar. */
+export const scalarRules = <T>(ids: string[]): z.core.$ZodCheck<T> => {
+  const ch = new z.core.$ZodCheck({ check: "custom", when: () => true }) as z.core.$ZodCheck<T>;
+  ch._zod.check = (payload) => {
+    for (const id of ids) for (const v of violations(id, payload.value)) fail(payload as unknown as Payload, v.message);
+  };
+  return ch;
+};
+
 /** A map: an object whose keys are values of `key` and whose members are values of `value`. */
 export function map<K extends string, V>(key: z.ZodType<K>, value: z.ZodType<V>): z.ZodType<Partial<Record<K, V>>> {
   return z.record(z.string(), value).check((payload) => {

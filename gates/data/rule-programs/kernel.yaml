@@ -1,0 +1,11 @@
+# A known-bad kernel rule-programs file for the rule-programs gate: a program for a rule the kernel doesn't state, reading a
+# list the kernel doesn't pin.
+format: 1
+defs: {}
+rules:
+  kernel:Planet:named:
+    owner: Planet
+    violations:
+      - when: [not, [listed, Planets of the Solar System, [$]]]
+        path: ""
+        message: "names no planet"

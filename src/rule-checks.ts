@@ -18,6 +18,7 @@
  * verdict turns on something the payload doesn't hold: the proposal's seller
  * for a line item alone, or a field a code block leaves out.
  */
+import { kernelProgramChecks } from "./rule-programs.ts";
 import type { ModelDoc } from "./model.ts";
 import type { Rule, RulesDoc, Vector } from "./rules.ts";
 
@@ -63,16 +64,6 @@ export function codesOf(lists: { lists: { name: string; codes: { code: string | 
   return new Map(lists.lists.map((l) => [l.name, new Set(l.codes.map((c) => c.code))]));
 }
 
-/** A check that a code is one its list holds; a value the schema rejects, by its pattern, compares as nothing. */
-const listed =
-  (rule: string, form: RegExp, what: string, except: string[] = []): Check =>
-  (v, ctx) => {
-    if (typeof v !== "string" || !form.test(v) || except.includes(v)) return [];
-    const codes = ctx.codes?.get(PINNED[rule]!);
-    if (codes === undefined) return null;
-    return codes.has(v) ? [] : [{ path: "", message: `${JSON.stringify(v)} is ${what}` }];
-  };
-
 export const isMap = (v: unknown): v is Record<string, unknown> => v !== null && typeof v === "object" && !Array.isArray(v);
 /** A member name as a JSON pointer token. */
 export const escape = (k: string) => k.replace(/~/g, "~0").replace(/\//g, "~1");
@@ -86,92 +77,14 @@ export const list = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
  */
 export const omits = (v: Record<string, unknown>, ctx: CheckContext, reads: string[], missing: string): boolean => ctx.part && !(missing in v) && reads.some((k) => k in v);
 
-/** A selectable value's options by name: a string option by its value, an object option by its `id`; a `catalog_ref` option has no name (D-007). */
-function optionNames(v: Record<string, unknown>): Set<string> {
-  return new Set(list(v.available).flatMap((o) => (typeof o === "string" ? [o] : isMap(o) && typeof o.id === "string" ? [o.id] : [])));
-}
-
-/** An RFC 3339 date-time, the form a `Timestamp` takes, with its parts. */
-const DATE_TIME = /^(\d{4})-(\d{2})-(\d{2})[Tt](\d{2}):(\d{2}):(\d{2})(\.\d+)?(?:([Zz])|([+-])(\d{2}):(\d{2}))$/;
-
-/** A date-time as the instant it names, in milliseconds since the epoch, or null for any other value. */
-export function instantOf(x: unknown): number | null {
-  if (typeof x !== "string") return null;
-  const m = DATE_TIME.exec(x);
-  if (!m) return null;
-  const [y, mo, d, h, mi, s] = m.slice(1, 7).map(Number) as [number, number, number, number, number, number];
-  const offset = m[8] ? 0 : (m[9] === "-" ? -1 : 1) * (Number(m[10]) * 60 + Number(m[11]));
-  const fraction = m[7] ? Number(`0${m[7]}`) * 1000 : 0;
-  return Date.UTC(y, mo - 1, d, h, mi, s) - offset * 60_000 + fraction;
-}
-
-/** A bound as its order compares it: a number as itself, a timestamp as its instant, and anything else, which the schema rejects, as nothing. */
-const bound = (x: unknown, order: Order): number | null => (order === "number" ? (typeof x === "number" ? x : null) : instantOf(x));
-/** A duration as its calendar part, in months, and its exact part, in seconds, or null for a value that isn't one. */
-const durationOf = (x: unknown): [number, number] | null => {
-  const m = typeof x === "string" ? /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/.exec(x) : null;
-  if (!m || x === "P" || String(x).endsWith("T")) return null;
-  const n = (i: number) => Number(m[i] ?? 0);
-  return [n(1) * 12 + n(2), ((n(3) * 7 + n(4)) * 24 + n(5)) * 3600 + n(6) * 60 + n(7)];
-};
-const ordered: Check = (v, ctx) => {
-  if (!isMap(v) || !("min" in v) || !("max" in v)) return [];
-  // The order is the parameter's: without it, two bounds can't be compared.
-  if (ctx.order === undefined) return null;
-  if (ctx.order === "duration") {
-    // One duration is no greater than another when neither of its parts is (D-062); a pair neither bounds, as P1M and P30D, isn't ordered.
-    const [a, b] = [durationOf(v.min), durationOf(v.max)];
-    if (a === null || b === null) return [];
-    if (a[0] <= b[0] && a[1] <= b[1]) return [];
-    if (a[0] >= b[0] && a[1] >= b[1]) return [{ path: "", message: "`min` is more than `max`" }];
-    return null;
-  }
-  const [min, max] = [bound(v.min, ctx.order), bound(v.max, ctx.order)];
-  return min !== null && max !== null && min > max ? [{ path: "", message: "`min` is more than `max`" }] : [];
-};
-
-/** A time of day, `HH:MM` from `00:00` to `24:00`, as minutes since midnight, or null for any other value. */
-const minutesOf = (x: unknown): number | null => {
-  const m = typeof x === "string" ? /^(\d{2}):(\d{2})$/.exec(x) : null;
-  if (!m) return null;
-  const [h, mi] = [Number(m[1]), Number(m[2])];
-  return (h < 24 && mi < 60) || (h === 24 && mi === 0) ? h * 60 + mi : null;
-};
-
 /**
- * The checks of the kernel's and the constructors' rules, by rule ID. A
- * specification's own rules' checks are its plugin's (`SpecPlugin.ruleChecks`),
- * as OpenProposal's are in src/specs/openproposal/rule-checks.ts.
+ * The checks of the kernel's and the constructors' rules, by rule ID: the
+ * programs of kernel/rule-programs.yaml, which the SDKs are generated with
+ * too. A specification's own rules' checks are its plugin's
+ * (`SpecPlugin.ruleChecks`), as OpenProposal's are in
+ * src/specs/openproposal/rule-checks.ts.
  */
-export const CHECKS: Record<string, Check> = {
-  // ISO 4217 List One, at its pinned publication: the alphabetic codes it assigns now.
-  "kernel:CurrencyCode:assigned": listed("kernel:CurrencyCode:assigned", /^[A-Z]{3}$/, "no code ISO 4217 assigns"),
-  // ISO 3166-1, as the iso-codes project lists it at its pinned release: the alpha-3 codes of the countries it assigns.
-  "kernel:CountryCode:assigned": listed("kernel:CountryCode:assigned", /^[A-Z]{3}$/, "no alpha-3 code ISO 3166-1 assigns"),
-  // The IANA time zone database, at its pinned release: the names of its zones and links; `viewer_local` is the text's own.
-  "kernel:TimeZone:listed": listed("kernel:TimeZone:listed", /^[A-Z][A-Za-z0-9_+-]*(\/[A-Za-z0-9_+-]+)*$/, "no zone the IANA time zone database lists", ["viewer_local"]),
-  "constructor:Selectable:options-named": (v) => {
-    if (!isMap(v)) return [];
-    const names = optionNames(v);
-    return [
-      ...list(v.included).flatMap((x, i) => (typeof x === "string" && names.has(x) ? [] : [{ path: `/included/${i}`, message: `names no option of \`available[]\`: ${JSON.stringify(x)}` }])),
-      ...Object.keys(isMap(v.pricing) ? v.pricing : {}).flatMap((k) => (names.has(k) ? [] : [{ path: `/pricing/${escape(k)}`, message: `the \`pricing\` key ${JSON.stringify(k)} names no option of \`available[]\`` }])),
-    ];
-  },
-  "constructor:Selectable:priced-beyond-included": (v) => {
-    if (!isMap(v)) return [];
-    const included = new Set(list(v.included).filter((x): x is string => typeof x === "string"));
-    return Object.keys(isMap(v.pricing) ? v.pricing : {}).flatMap((k) => (included.has(k) ? [{ path: `/pricing/${escape(k)}`, message: `prices ${JSON.stringify(k)}, which \`included[]\` holds` }] : []));
-  },
-  "constructor:Range:ordered": ordered,
-  "constructor:Range:duration-ordered": ordered,
-  // A window's times compare as times of day; a value the schema rejects, such as `9:00`, compares as nothing.
-  "kernel:DaypartWindow:ordered": (v) => {
-    if (!isMap(v)) return [];
-    const [start, end] = [minutesOf(v.start), minutesOf(v.end)];
-    return start !== null && end !== null && end <= start ? [{ path: "", message: `\`end\` ${String(v.end)} isn't later than \`start\` ${String(v.start)}` }] : [];
-  },
-};
+export const CHECKS: Record<string, Check> = kernelProgramChecks();
 
 /** How the bounds of each ordered type compare, by the model's type name: a number type's as numbers, a date-time's as instants. */
 export function ordersOf(types: { name: string; kind: string; schema?: unknown }[]): Map<string, Order> {

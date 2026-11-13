@@ -378,7 +378,7 @@ import { FIELD_EXAMPLES_FILE, loadFieldExamples } from "../src/field-examples.ts
 import { generateTypeExamples, renderTypeExamples, TYPE_EXAMPLES_DIR, TYPE_EXAMPLES_FILE, typeExamplesDirOf, type TypeExamplesDoc } from "../src/type-examples.ts";
 import { loadOracleGaps, pinnedOracle } from "../src/engines.ts";
 import { sdkDirOf } from "../src/sdk.ts";
-import { loadPrograms, loadZoneTable, ZONE_LIST, zoneTableFile } from "../src/rule-programs.ts";
+import { KERNEL_PROGRAMS_FILE, loadPrograms, loadZoneTable, ZONE_LIST, zoneTableFile } from "../src/rule-programs.ts";
 import { emitSdk, SDK_ROOTS } from "../src/sdk-emit.ts";
 import { findingsGo, findingsPython, findingsTypeScript, locationCases, ruleLocationCases, rulerOf, withRuleLocations, withRules, type Ruled, runGo, runPython, runTypeScript, sdkCases, type SdkCase, type SdkFindingsRun, type SdkRun } from "../src/sdk-parity.ts";
 import { EXEMPTIONS_FILE, type ExemptionsFile, loadExemptions, pinnedPlainGenerator, plainTarget } from "../src/plain-parity.ts";
@@ -737,7 +737,7 @@ async function checkRuleGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[]
     await gate(O.rulesCommitted, { file, want, committed: read(file), regenerate: "npm run rules" }, lock);
   }
   if (complete) await gate(O.rulesTracked, { dir: "rules", tracked: gitTracked("rules", SPEC), expected: [...expected], remedy: "remove it, or emit it from the model" });
-  if (complete) await gate(O.rulePrograms, { specDir: SPEC, rules: [...new Set([...emittedRules.values()].flatMap((d) => d.rules.map((r) => r.id)))].sort() });
+  if (complete) await gate(O.rulePrograms, { specDir: SPEC, rules: [...new Set([...emittedRules.values()].flatMap((d) => d.rules.map((r) => r.id)))].sort(), kernelFile: join(ROOT, KERNEL_PROGRAMS_FILE) });
   return { vectors, rules: emittedRules };
 }
 

@@ -71,6 +71,18 @@ def format(name: str) -> Callable[[str], str]:
     return check
 
 
+def ruled(*rules: str) -> Callable[[Any], Any]:
+    """A validator that a scalar breaks none of the rules whose programs check it (`_rules.py`)."""
+
+    def check(value: Any) -> Any:
+        for rule in rules:
+            for _, message in violations(rule, value):
+                raise ValueError(message)
+        return value
+
+    return check
+
+
 def integral(value: Any) -> Any:
     """An integer written with a fraction or an exponent, such as 1.0, is the integer: JSON Schema compares numbers by value."""
     if isinstance(value, float) and value.is_integer():

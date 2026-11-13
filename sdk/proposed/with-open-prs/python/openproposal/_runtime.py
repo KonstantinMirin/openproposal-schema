@@ -11,6 +11,8 @@ from typing import Annotated, Any, ClassVar, Literal
 from pydantic import BaseModel, ConfigDict, ModelWrapValidatorHandler, Strict, TypeAdapter, ValidationError, ValidationInfo, model_validator
 from pydantic_core import InitErrorDetails, PydanticCustomError
 
+from ._rules import violations
+
 _FORMATS = {
     "date": re.compile("^([0-9]{4})-([0-9]{2})-([0-9]{2})$"),
     "date-time": re.compile("^([0-9]{4})-([0-9]{2})-([0-9]{2})[Tt]([0-9]{2}):([0-9]{2}):([0-9]{2})(?:\\.[0-9]+)?(?:[Zz]|([+-])([0-9]{2}):([0-9]{2}))$"),
@@ -64,6 +66,18 @@ def format(name: str) -> Callable[[str], str]:
     def check(value: str) -> str:
         if not is_format(name, value):
             raise ValueError(f"isn't a valid {name}")
+        return value
+
+    return check
+
+
+def ruled(*rules: str) -> Callable[[Any], Any]:
+    """A validator that a scalar breaks none of the rules whose programs check it (`_rules.py`)."""
+
+    def check(value: Any) -> Any:
+        for rule in rules:
+            for _, message in violations(rule, value):
+                raise ValueError(message)
         return value
 
     return check
@@ -159,6 +173,7 @@ class Shape:
         within: tuple[tuple[str, tuple[str, ...], tuple[str, ...]], ...] = (),
         bounds: tuple[tuple[str, int, bool], ...] = (),
         rejects: tuple[tuple[str, Any], ...] = (),
+        rules: tuple[str, ...] = (),
     ) -> None:
         self.min_properties = min_properties
         self.max_properties = max_properties
@@ -168,6 +183,7 @@ class Shape:
         self.within = within
         self.bounds = bounds
         self.rejects = rejects
+        self.rules = rules
 
     def errors(self, data: dict[str, Any], ctx: Any = None) -> list[InitErrorDetails]:
         """Every place where the object breaks what its schema states beside its members' types, each at the location the schema's check reports."""
@@ -212,6 +228,9 @@ class Shape:
                             adapter.validate_python(data[m], strict=True, context=ctx)
                         except ValidationError as e:
                             out.extend(_again(x, (m,), f'while "{sibling}" is {value!r}') for x in e.errors())
+        for rule in self.rules:
+            for path, message in violations(rule, data):
+                out.append(_error_at(tuple(t.replace("~1", "/").replace("~0", "~") for t in path.split("/")[1:]), message, data))
         return out
 
 

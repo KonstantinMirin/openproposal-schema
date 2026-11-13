@@ -95,6 +95,7 @@ func (CurrencyCode) ValidateValue(v any, at string, errs *Errors) {
 		return
 	}
 	checkPattern(s, patternCurrencyCode, at, errs)
+	checkRules(v, at, errs, "kernel:CurrencyCode:assigned")
 }
 
 // DayName: A day of the week, named in lowercase English, from `monday` to `sunday`.
@@ -708,6 +709,7 @@ func (Range[T]) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkClosed(m, at, errs, "max", "min")
 	checkMemberCount(m, at, errs, 1, -1)
+	checkRules(v, at, errs, "constructor:Range:duration-ordered", "constructor:Range:ordered")
 	if x, ok := m["max"]; ok {
 		validateAs[T](x, member(at, "max"), errs)
 	}
@@ -1122,6 +1124,7 @@ func (TimeZone) ValidateValue(v any, at string, errs *Errors) {
 		return
 	}
 	checkPattern(s, patternTimeZone, at, errs)
+	checkRules(v, at, errs, "kernel:TimeZone:listed")
 }
 
 // Url: An absolute `http` or `https` URL, as RFC 3986 writes one, that a client can fetch.

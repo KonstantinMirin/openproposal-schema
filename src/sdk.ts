@@ -23,7 +23,7 @@
 import { Instantiator } from "./constructors.ts";
 import { canonicalJson } from "./canonical.ts";
 import { isTitledCodes } from "./conventions.ts";
-import { loadPrograms } from "./rule-programs.ts";
+import { loadPrograms, programsOf } from "./rule-programs.ts";
 import { placedPrograms } from "./rule-places.ts";
 import type { Programs, RuleProgram } from "./rule-program.ts";
 import { specRoot } from "./repo.ts";
@@ -140,7 +140,8 @@ interface Common {
 
 export type SdkType = Common &
   (
-    | { kind: "scalar"; scalar: Scalar }
+    /** `rules`: the rules whose programs check a value of the scalar, by ID (src/rule-program.ts). */
+    | { kind: "scalar"; scalar: Scalar; rules?: string[] }
     /** `extension` names the type an open vocabulary's other terms are: `NamespacedTerm`, or `VendorCode` for a list that reserves vendor codes. */
     | { kind: "enum"; json: "string" | "integer"; values: (string | number)[]; labels: (string | undefined)[]; open: boolean; extension: string }
     | { kind: "object"; role: "part" | "object" | "document" | "profile"; shape: Shape }
@@ -743,18 +744,21 @@ export function buildSdkModel(model: ModelDoc, short: string, programs: Programs
   const placing = placedPrograms(model, programs);
   problems.push(...placing.problems);
   const used: Record<string, RuleProgram> = {};
+  // A rule runs on an object's shape, a template's, which every application of the constructor holds, or a scalar's checks.
   for (const [on, ids] of placing.runs) {
     const runs = types.get(on);
-    if (runs?.kind !== "object") {
-      problems.push(`${ids.map((id) => `rule "${id}"`).join(", ")} ${ids.length === 1 ? "has a program" : "have programs"}, and the type ${ids.length === 1 ? "it runs" : "they run"} on, "${on}", is no object of the SDK`);
+    const template = templates.get(on);
+    const list = runs?.kind === "object" ? runs.shape.rules : runs?.kind === "scalar" ? (runs.rules ??= []) : template?.body.kind === "object" ? template.body.shape.rules : null;
+    if (list === null) {
+      problems.push(`${ids.map((id) => `rule "${id}"`).join(", ")} ${ids.length === 1 ? "has a program" : "have programs"}, and the type ${ids.length === 1 ? "it runs" : "they run"} on, "${on}", is no object, scalar, or object template of the SDK`);
       continue;
     }
     for (const id of ids) {
-      runs.shape.rules.push(id);
+      list.push(id);
       used[id] = placing.programs.rules[id]!;
     }
   }
-  const ruled = Object.keys(used).length > 0 ? { programs: { defs: programs.defs, rules: used } } : {};
+  const ruled = Object.keys(used).length > 0 ? { programs: programsOf({ ...programs, rules: { ...programs.rules, ...used } }, Object.keys(used).sort()) } : {};
   return { sdk: { input: { lock: model.input.lock, commit: model.input.commit, blob: model.input.blob, ...(model.input.variant ? { variant: model.input.variant } : {}) }, order, types, templates, modules, emitted: emitted.sort(byString), ...ruled }, problems };
 }
 

@@ -29,17 +29,33 @@
  *   is the decimal it writes, so `0.1 + 0.2` is `0.3`, and any operation on
  *   `null` gives `null`.
  * - lists and maps: `len`, `contains` (an item of a list, or text in
- *   text), `concat`, `values`, `keys` (a map's, sorted), `filter`, `sum`,
- *   `find`, each of the last three as `[op, list, name, expression]`.
+ *   text), `concat`, `values`, `keys` (a map's, sorted), `filter`, `map`,
+ *   `sum`, `find`, each of the last four as `[op, list, name, expression]`.
  * - time: `["instant", s]` the seconds since the epoch an `Instant` names,
- *   or `null`; `["local_day", seconds, zone]` the day number, since
- *   1970-01-01, of the civil date in a zone of the pinned time zone table,
- *   or `null` for a zone it doesn't hold or an instant outside it.
+ *   or `null`; `["moment", s]` those an RFC 3339 date-time names, with its
+ *   offset and its fraction of a second, or `null`; `["local_day", seconds,
+ *   zone]` the day number, since 1970-01-01, of the civil date in a zone of
+ *   the pinned time zone table, or `null` for a zone it doesn't hold or an
+ *   instant outside it; `["duration", s]` an ISO 8601 duration as its
+ *   calendar part, in months, and its exact part, in seconds, a list of two,
+ *   or `null`.
  * - text: `["str", ...]`, each part's text, a number in its shortest
+ *   decimal form; `["matches", s, pattern]`, whether the whole text matches
+ *   a pattern, which uses only what JavaScript, Python, and Go regular
+ *   expressions read alike; `["split", s, separator]`; `["num", s]`, a
+ *   decimal's text as the number, or `null`; `["pointer", ...]`, a JSON
+ *   pointer of its parts, each a member or an index; `["json", x]`, a
+ *   value's JSON text, with a map's keys sorted and a number in its shortest
  *   decimal form.
+ * - lists another body keeps: `["listed", list, code]`, whether the pinned
+ *   list holds the code, as kernel/lists.yaml pins it; the programs carry the
+ *   codes of each list they read.
  *
  * A violation applies when its `when` is `true`; any other value, `null`
- * included, means it doesn't.
+ * included, means it doesn't. A violation with `each` applies once per item
+ * of a list, or member of a map, by key order, binding the names `as` gives
+ * to the index or key and to the item; its `path` is then an expression,
+ * as any violation's may be.
  */
 
 export type Expr = null | boolean | number | string | Expr[] | { [k: string]: Expr };
@@ -50,8 +66,9 @@ export const OPERATIONS: Record<string, [number, number]> = {
   has: [2, 2], ismap: [1, 1], islist: [1, 1], isnum: [1, 1], isstr: [1, 1], eq: [2, 2], ne: [2, 2], lt: [2, 2], le: [2, 2], gt: [2, 2], ge: [2, 2],
   and: [1, Infinity], or: [1, Infinity], not: [1, 1], if: [3, 3], coalesce: [1, Infinity],
   add: [2, Infinity], sub: [2, 2], mul: [2, Infinity], div: [2, 2], floor: [1, 1],
-  len: [1, 1], contains: [2, 2], concat: [1, Infinity], values: [1, 1], keys: [1, 1], filter: [3, 3], sum: [3, 3], find: [3, 3],
-  instant: [1, 1], local_day: [2, 2], str: [1, Infinity],
+  len: [1, 1], contains: [2, 2], concat: [1, Infinity], values: [1, 1], keys: [1, 1], filter: [3, 3], map: [3, 3], sum: [3, 3], find: [3, 3],
+  instant: [1, 1], moment: [1, 1], local_day: [2, 2], duration: [1, 1], str: [1, Infinity],
+  matches: [2, 2], split: [2, 2], num: [1, 1], pointer: [1, Infinity], json: [1, 1], listed: [2, 2],
 };
 
 /**
@@ -81,9 +98,14 @@ export function programProblems(p: Programs): string[] {
       walk(args[0]!, where, bound);
       return;
     }
-    if (op === "filter" || op === "sum" || op === "find") {
+    if (op === "filter" || op === "map" || op === "sum" || op === "find") {
       walk(args[0]!, where, bound);
       walk(args[2]!, where, new Set([...bound, String(args[1])]));
+      return;
+    }
+    if (op === "listed" && (typeof args[0] !== "string" || !(args[0] in (p.lists ?? {})))) out.push(`${where}: the programs carry no codes of the list ${JSON.stringify(args[0])}`);
+    if (op === "listed") {
+      walk(args[1]!, where, bound);
       return;
     }
     if (op === "def" || op === "var" || op === "given") return;
@@ -92,7 +114,14 @@ export function programProblems(p: Programs): string[] {
   for (const [k, e] of Object.entries(p.defs)) walk(e, `defs.${k}`, new Set());
   for (const [id, r] of Object.entries(p.rules)) {
     if (r.undecided !== undefined) walk(r.undecided, `${id} undecided`, new Set());
-    r.violations.forEach((v, i) => (walk(v.when, `${id} violation ${i + 1} when`, new Set()), walk(v.message, `${id} violation ${i + 1} message`, new Set())));
+    r.violations.forEach((v, i) => {
+      const names = new Set(v.as ?? []);
+      if (v.each !== undefined) walk(v.each, `${id} violation ${i + 1} each`, new Set());
+      if ((v.each === undefined) !== (v.as === undefined)) out.push(`${id} violation ${i + 1}: \`each\` and \`as\` go together`);
+      walk(v.when, `${id} violation ${i + 1} when`, names);
+      walk(v.message, `${id} violation ${i + 1} message`, names);
+      walk(v.path, `${id} violation ${i + 1} path`, names);
+    });
   }
   return out;
 }
@@ -106,7 +135,16 @@ export interface RuleProgram {
   at?: string[][];
   /** Where it holds, the rule can't decide: the gates' check is undecided, and an SDK reports no violation. */
   undecided?: Expr;
-  violations: { when: Expr; path: string; message: Expr }[];
+  violations: Violation[];
+}
+
+/** One way a value breaks a rule: where `when` holds, at `path`, with `message`; with `each`, once per item of a list or member of a map, binding the names `as` gives to the index or key and the item. */
+export interface Violation {
+  each?: Expr;
+  as?: [string, string];
+  when: Expr;
+  path: Expr;
+  message: Expr;
 }
 
 /** The holder of an owner's value: its value, and whether it is whole, as an SDK's is, or the members a vector gives. */
@@ -127,6 +165,8 @@ const escapeToken = (t: string) => t.replace(/~/g, "~0").replace(/\//g, "~1");
 export interface Programs {
   defs: Record<string, Expr>;
   rules: Record<string, RuleProgram>;
+  /** The codes of each pinned list a program reads with `listed`, by the list's name in kernel/lists.yaml. */
+  lists?: Record<string, (string | number)[]>;
 }
 
 /** The UTC offsets of a time zone database release: each zone's offsets and changes, encoded, and each name's zone. */
@@ -219,6 +259,8 @@ const daysFromCivil = (y: number, m: number, d: number): number => {
 };
 
 const INSTANT = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z$/;
+const MOMENT = /^([0-9]{4})-([0-9]{2})-([0-9]{2})[Tt]([0-9]{2}):([0-9]{2}):([0-9]{2})(\.[0-9]+)?(?:([Zz])|([+-])([0-9]{2}):([0-9]{2}))$/;
+const DURATION = /^P(?:([0-9]+)Y)?(?:([0-9]+)M)?(?:([0-9]+)W)?(?:([0-9]+)D)?(?:T(?:([0-9]+)H)?(?:([0-9]+)M)?(?:([0-9]+)S)?)?$/;
 
 /** A zone's changes, decoded from the table once. */
 const decoded = new Map<string, { at: number[]; offset: number[] }>();
@@ -260,6 +302,13 @@ export function localDay(table: ZoneTable, seconds: number, zone: string): numbe
 }
 
 const num = (x: Value): Rat | null => (isRat(x) ? x : null);
+/** A value's JSON text: a map's keys sorted, a number in its shortest decimal form. */
+const jsonText = (v: Value): string => {
+  if (isRat(v)) return ratText(v);
+  if (Array.isArray(v)) return `[${v.map(jsonText).join(",")}]`;
+  if (isObj(v)) return `{${Object.keys(v).sort().map((k) => `${JSON.stringify(k)}:${jsonText(v[k]!)}`).join(",")}}`;
+  return JSON.stringify(v);
+};
 const arith = (args: Value[], f: (a: Rat, b: Rat) => Rat | null): Value => {
   let acc: Rat | null = num(args[0] ?? null);
   for (const x of args.slice(1)) {
@@ -294,11 +343,24 @@ export class RuleEvaluator {
     if (p.undecided !== undefined && this.eval(p.undecided, env, {}) === true) return null;
     const out: { path: string; message: string }[] = [];
     for (const v of p.violations) {
-      if (this.eval(v.when, env, {}) !== true) continue;
-      const m = this.eval(v.message, env, {});
-      out.push({ path: v.path, message: typeof m === "string" ? m : "violates the rule" });
+      for (const vars of this.bindings(v, env)) {
+        if (this.eval(v.when, env, vars) !== true) continue;
+        const m = this.eval(v.message, env, vars);
+        const at = this.eval(v.path, env, vars);
+        out.push({ path: typeof at === "string" ? at : "", message: typeof m === "string" ? m : "violates the rule" });
+      }
     }
     return out;
+  }
+
+  /** The names a violation binds, once per item of its `each`; once, binding none, without one. */
+  private bindings(v: Violation, env: Env): Record<string, Value>[] {
+    if (v.each === undefined || v.as === undefined) return [{}];
+    const x = this.eval(v.each, env, {});
+    const [k, item] = v.as;
+    if (Array.isArray(x)) return x.map((y, i) => ({ [k]: rat(BigInt(i)), [item]: y }));
+    if (isObj(x)) return Object.keys(x).sort().map((key) => ({ [k]: key, [item]: x[key]! }));
+    return [];
   }
 
   /**
@@ -446,12 +508,14 @@ export class RuleEvaluator {
         return isObj(x) ? Object.keys(x).sort() : null;
       }
       case "filter":
+      case "map":
       case "sum":
       case "find": {
         const x = ev(args[0]!);
         if (!Array.isArray(x)) return op === "sum" ? rat(0n) : null;
         const name = args[1] as string;
         if (op === "filter") return x.filter((y) => ev(args[2]!, { [name]: y }) === true);
+        if (op === "map") return x.map((y) => ev(args[2]!, { [name]: y }));
         if (op === "find") return x.find((y) => ev(args[2]!, { [name]: y }) === true) ?? null;
         return arith([rat(0n), ...x.map((y) => ev(args[2]!, { [name]: y }))], (a, b) => rat(a.n * b.d + b.n * a.d, a.d * b.d));
       }
@@ -461,6 +525,52 @@ export class RuleEvaluator {
         if (!m) return null;
         const [y, mo, d, h, mi, s] = m.slice(1).map(Number) as [number, number, number, number, number, number];
         return rat(BigInt(daysFromCivil(y, mo, d) * 86400 + h * 3600 + mi * 60 + s));
+      }
+      case "moment": {
+        const x = ev(args[0]!);
+        const m = typeof x === "string" ? MOMENT.exec(x) : null;
+        if (!m) return null;
+        const [y, mo, d, h, mi, s] = m.slice(1, 7).map(Number) as [number, number, number, number, number, number];
+        const offset = m[8] ? 0 : (m[9] === "-" ? -1 : 1) * (Number(m[10]) * 60 + Number(m[11])) * 60;
+        const whole = rat(BigInt(daysFromCivil(y, mo, d) * 86400 + h * 3600 + mi * 60 + s - offset));
+        const fraction = m[7] ? decimal(`0${m[7]}`)! : rat(0n);
+        return rat(whole.n * fraction.d + fraction.n * whole.d, whole.d * fraction.d);
+      }
+      case "duration": {
+        const x = ev(args[0]!);
+        const m = typeof x === "string" ? DURATION.exec(x) : null;
+        if (!m || x === "P" || (x as string).endsWith("T")) return null;
+        const n = (i: number) => BigInt(m[i] ?? 0);
+        return [rat(n(1) * 12n + n(2)), rat(((n(3) * 7n + n(4)) * 24n + n(5)) * 3600n + n(6) * 60n + n(7))];
+      }
+      case "matches": {
+        const x = ev(args[0]!);
+        const pattern = ev(args[1]!);
+        return typeof x === "string" && typeof pattern === "string" && new RegExp(`^(?:${pattern})$`, "u").test(x);
+      }
+      case "split": {
+        const x = ev(args[0]!);
+        const sep = ev(args[1]!);
+        return typeof x === "string" && typeof sep === "string" && sep !== "" ? x.split(sep) : null;
+      }
+      case "num": {
+        const x = ev(args[0]!);
+        return typeof x === "string" ? decimal(x) : null;
+      }
+      case "pointer":
+        return args
+          .map((a) => {
+            const v = ev(a);
+            return `/${(isRat(v) ? ratText(v) : String(v)).replace(/~/g, "~0").replace(/\//g, "~1")}`;
+          })
+          .join("");
+      case "json":
+        return jsonText(ev(args[0]!));
+      case "listed": {
+        const codes = this.programs.lists?.[args[0] as string];
+        const x = ev(args[1]!);
+        if (codes === undefined) return null;
+        return codes.some((c) => (typeof c === "number" ? isRat(x) && same(x, rat(BigInt(c))) : c === x));
       }
       case "local_day": {
         const t = num(ev(args[0]!));

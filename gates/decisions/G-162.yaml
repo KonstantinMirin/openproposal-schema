@@ -1,0 +1,79 @@
+format: 1
+id: G-162
+date: 2026-11-13
+question: How do the kernel's and the constructors' rules, which every spec's types share, come to run in every SDK, on every lock, from one definition each?
+decision: >-
+  The checks of src/rule-checks.ts for the kernel's and the constructors'
+  rules are programs in kernel/rule-programs.yaml, and the written ones are
+  gone: CurrencyCode and CountryCode assigned and TimeZone listed, which
+  read a pinned list, Range ordered and duration-ordered, Selectable's
+  options named and priced beyond included, and DaypartWindow ordered. The
+  gates' checks of those rules are the programs. A primitive's rule runs on
+  the primitive's every value, in each SDK's scalar check, and a
+  constructor's on every application of its template, in the template's
+  shape. A program that reads a pinned list reads its codes from the
+  programs, which carry each list a program reads, from kernel/lists.yaml,
+  so each SDK holds the codes it checks; a lock whose rules count no
+  calendar day carries a time zone table with no zones. A range's bounds
+  compare by their kind, numbers as numbers, timestamps as the instants
+  they name, offsets and fractions of a second included, and durations
+  part by part (D-062), so the check needs no parameter type, which no SDK
+  is given; a range whose `T` the model doesn't order is now decided by its
+  bounds, where it was undecided. The evaluators gain the operations these
+  read, `moment`, `duration`, `matches`, `split`, `num`, `pointer`, `json`,
+  `listed`, and `map`, and a violation may apply once per item of a list
+  or member of a map, at a path an expression gives. The parity cases count
+  the rules on a template's application, by its copy or its template, and
+  the sdk-rules gate holds each SDK to a constructor rule's vectors in the
+  copy its arguments make. The rule-programs gate checks the kernel's file
+  too, with two fixtures: a program for a rule the kernel doesn't state,
+  and one that reads a list the kernel doesn't pin. The rule-checks
+  fixture that removed a range's parameter type now gives a duration range
+  neither part of which bounds the other, and the type-examples fixture
+  that dropped USD from the codes now drops it from the programs' list.
+rationale: >-
+  No check is weaker: each program decides every vector of its rule as the
+  written check did, and the rule-checks gate holds it to them; the SDKs
+  reject what these rules reject, which they accepted before, on every
+  lock. Counting the single-payload rule vectors on which each SDK reaches
+  the gates' own verdict, `main` passes 22 of 23 where it passed 13,
+  `with-open-prs` 42 of 52 where it passed 29, and the stack 208 of 208
+  where it passed 199; the ten left are the six rules of OpenProposal's
+  src/specs/openproposal/rule-checks.ts. The generated code changes on
+  every lock, and for `main` and `with-open-prs` only in the SDKs, in
+  their four trees, `sdk/`, `sdk/proposed/`, `sdk/with-open-prs/`, and
+  `sdk/proposed/with-open-prs/`: the
+  TypeScript `kernel.ts` (CurrencyCode's, and on `with-open-prs`
+  TimeZone's, scalar check, and Range's, Selectable's, and DaypartWindow's
+  shape) and `runtime.ts` (the rule checks), with `rules.ts` and
+  `tzdata.ts`, a table with no zones, new; the Python `kernel.py` and
+  `_runtime.py`, with `_rules.py` new; and the Go `kernel_types.go`, with
+  `rules.go` new. Their schemas, rules, corpus, and every other output are
+  byte-identical.
+accepts:
+  - { gate: comparison, fingerprint: 230f2465820d6fa3dbd06e23e447ffa7e5327a005e2c3deecaf2f008c9a64f4f }
+  - { gate: desk-tests, fingerprint: d21371d647f8442e49c69349d502420964414d7080ee383309d5c092b68df085 }
+  - { gate: examples-validate, fingerprint: 1ac6c714102c74ec44a2e3be031d217cd2f6b8b53bff5befbff245657a168bbd }
+  - { gate: extraction, fingerprint: 44bca4183f2a127dced2402f2a6ba1751c58cf20ac1dee832d93f90975716a2e }
+  - { gate: feedback, fingerprint: bb1b6718f94771cfeefc9be5f631b9059e750670f18661012b337959a9dd4491 }
+  - { gate: fidelity, fingerprint: b762d7f6a98dd63243a6cc46423eb84120cf133d07c3eb904fd604adec90a6b6 }
+  - { gate: field-examples, fingerprint: 1aea9d800734eb004783d23f016e1ca374e5fb11c735f2e3824d1d3a5a1db9a2 }
+  - { gate: guard, fingerprint: e698fe0b9e80ac1016617d6a44dbe785597e82808f39b89161af5445977c5c14 }
+  - { gate: kernel-check, fingerprint: cc8c1c9abac21d1ad05e6bedbdfd494749eb975db40a48183605760cfd1cff52 }
+  - { gate: map-drift, fingerprint: 6fd64eedfb7bc290d451d0a0fbb15921e78ad06c46f6dfdbdc58800bdb4f5d84 }
+  - { gate: mapping-bijection, fingerprint: 3ccf2426181dad8a64ceba3b36ed854825e03475fc4b0ac46f7f47969d2b5a55 }
+  - { gate: mapping-location, fingerprint: 9dcabbeebb2f1444d2ceef8517423703fbf4fe7a425094f96e0144b24d54eb2a }
+  - { gate: mapping-rules, fingerprint: 41e097de2a0e541aed210d32393aa31900ee7f11811d7036a4712d835a34a71b }
+  - { gate: npm-test, fingerprint: 5be31159123244421e0a232abcf749221bfae0d642d898a2ebc26f96ff6559ba }
+  - { gate: record-wording, fingerprint: 0374efbd6292cc2118589dfa89419ac7acb1e6aed157294138dd40fc313c1da3 }
+  - { gate: round-trip, fingerprint: 3d1c7e96414601c48e3c1b694467708e0c92ca94e4fe27b3e12c4d7133e7a97c }
+  - { gate: rule-checks, fingerprint: 6e2c01c96322ef2a766c479e3a3edf1bbc7778adbce65549fe119f4cc9e10a4a }
+  - { gate: rule-programs, fingerprint: 74abe9b9bc88bb7d29212f7fd813dc1897a1faf5a0253ad28592ec5d91d4de2a }
+  - { gate: sdk-generate, fingerprint: b102950ccec51ac1ff33c847d87d489fea97e067204b9f2ccfd315da6f4f3ac8 }
+  - { gate: sdk-rules, fingerprint: 3465f01057ee69daf3120ae2564c5ab319e428524a0480ad5c9d236a791eaca8 }
+  - { gate: site-builds, fingerprint: bf60481e4f327e6978e78c61d8061a2f041456330c720342aba6196c59b1082e }
+  - { gate: spec-profile, fingerprint: e46457c767fff8e6070d091c6836cf873b1bdcd81276042d75e5ea8f290d9df3 }
+  - { gate: type-examples-generate, fingerprint: 26b721cd46dca5d238a4ce986be6cda49c77f05acbafe0cbb877489d143ee45f }
+  - { gate: type-examples-valid, fingerprint: abc9604977e73206aae34b03d49f9524690b0320ac5db7e24c905bc534e667c2 }
+  - { gate: variant-check, fingerprint: 22d0032a201ea1b2d1b5a8d8c49367e1b4713b314698bf60f413ac66db118297 }
+  - { gate: variant-examples, fingerprint: f8f517f178403a2e2f2195e6ebb441a31e4ac3779b4e046e76a2a3b9d538c537 }

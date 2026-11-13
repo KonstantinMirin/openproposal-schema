@@ -54,7 +54,7 @@ class CalendarUnits:
     MONTH: Final = "month"
 
 
-CurrencyCode = TypeAliasType("CurrencyCode", Annotated[str, Strict(), Field(pattern="^[A-Z]{3}$")])
+CurrencyCode = TypeAliasType("CurrencyCode", Annotated[str, Strict(), Field(pattern="^[A-Z]{3}$"), AfterValidator(rt.ruled("kernel:CurrencyCode:assigned"))])
 """An ISO 4217 alphabetic currency code, such as `USD`."""
 
 
@@ -307,7 +307,7 @@ class Range(rt.Closed, Generic[T]):
 
     __copies__: ClassVar[tuple[tuple[str, str], ...]] = (("RequestedRetentionRange", "Range[Duration]"), ("RequestedUnitBoundsRange", "Range[SafeInteger]"), ("RetentionRange", "Range[Duration]"), ("SpendRange", "Range[Amount]"), ("UnitBoundsRange", "Range[SafeInteger]"))
 
-    __shape__: ClassVar[rt.Shape] = rt.Shape(min_properties=1)
+    __shape__: ClassVar[rt.Shape] = rt.Shape(min_properties=1, rules=("constructor:Range:duration-ordered", "constructor:Range:ordered"))
 
     max: Optional[T] = None
     min: Optional[T] = None
@@ -471,7 +471,7 @@ class TimeUnits:
     FLIGHT: Final = "flight"
 
 
-TimeZone = TypeAliasType("TimeZone", Annotated[str, Strict(), Field(pattern="^(viewer_local|[A-Z][A-Za-z0-9_+-]*(/[A-Za-z0-9_+-]+)*)$")])
+TimeZone = TypeAliasType("TimeZone", Annotated[str, Strict(), Field(pattern="^(viewer_local|[A-Z][A-Za-z0-9_+-]*(/[A-Za-z0-9_+-]+)*)$"), AfterValidator(rt.ruled("kernel:TimeZone:listed"))])
 """The clock a line item's daypart and frequency cap period are read on, a zone name of the IANA time zone database, such as `America/New_York` or `UTC`, or `viewer_local`, the clock where the ad renders. A zone name follows the zone's daylight saving rules, which a fixed offset doesn't."""
 
 

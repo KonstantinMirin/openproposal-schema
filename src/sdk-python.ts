@@ -12,7 +12,7 @@
  */
 import { FORMAT_PATTERNS } from "./sdk-formats.ts";
 import { readFileSync } from "node:fs";
-import { zoneTableFile } from "./rule-programs.ts";
+import { zoneTableText } from "./rule-programs.ts";
 import { PYTHON_EVALUATOR } from "./sdk-rules-python.ts";
 import { allConstants, constantsDoc, lockPhrase, provenanceDocs, usesAbsent, type Constants, type Expr, type Provenance, type SdkFile, type SdkModel, type SdkTemplate, type SdkType, type Shape } from "./sdk.ts";
 import { sdkNames, type SpecNames } from "./profile.ts";
@@ -124,8 +124,11 @@ function scalarType(t: Extract<SdkType, { kind: "scalar" }>): string {
 function declaration(t: SdkType, problems: string[]): string {
   const alias = (body: string) => `${t.name} = TypeAliasType(${str(t.name)}, ${body})\n${docstring(t.doc, "")}`;
   switch (t.kind) {
-    case "scalar":
-      return alias(scalarType(t));
+    case "scalar": {
+      // A scalar's rules run after its checks, each violation as the value's error.
+      const body = scalarType(t);
+      return alias(t.rules && t.rules.length > 0 ? (body.startsWith("Annotated[") ? `${body.slice(0, -1)}, AfterValidator(rt.ruled(${t.rules.map(str).join(", ")}))]` : `Annotated[${body}, AfterValidator(rt.ruled(${t.rules.map(str).join(", ")}))]`) : body);
+    }
     case "enum": {
       // An open vocabulary whose core terms the specification doesn't list accepts namespaced terms only.
       if (t.open && t.values.length === 0) return `${t.name} = TypeAliasType(${str(t.name)}, NamespacedTerm)\n${docstring(t.doc, "")}`;
@@ -195,6 +198,21 @@ const ABSENT_CHECK = [
   "                        out.append(_error_at((member, k), f'is present while \"{sibling}\" is {data[sibling]!r}, where it is absent', m[k]))",
   "",
 ].join("\n");
+
+/** The runtime's check of the rules whose programs check a scalar, which a runtime holds only where a type has one. */
+const SCALAR_RULES = `def ruled(*rules: str) -> Callable[[Any], Any]:
+    """A validator that a scalar breaks none of the rules whose programs check it (\`_rules.py\`)."""
+
+    def check(value: Any) -> Any:
+        for rule in rules:
+            for _, message in violations(rule, value):
+                raise ValueError(message)
+        return value
+
+    return check
+
+
+`;
 
 /** The runtime's check of the rules whose programs check an object (`_rules.py`), which a runtime holds only where a type has one. */
 const RULES_PARAM = "        rules: tuple[str, ...] = (),\n";
@@ -270,7 +288,7 @@ def format(name: str) -> Callable[[str], str]:
     return check
 
 
-def integral(value: Any) -> Any:
+${ruled ? SCALAR_RULES : ""}def integral(value: Any) -> Any:
     """An integer written with a fraction or an exponent, such as 1.0, is the integer: JSON Schema compares numbers by value."""
     if isinstance(value, float) and value.is_integer():
         return int(value)
@@ -658,7 +676,7 @@ ${["ExtensionRegistry", "Mode", "TEMPLATES", "TYPES", "adapter", "dump", "dump_j
 PROGRAMS: dict[str, Any] = json.loads(${pyString(JSON.stringify(sdk.programs))})
 """The programs of the rules the types check, and their shared definitions."""
 
-ZONES: dict[str, Any] = json.loads(${pyString(readFileSync(zoneTableFile(), "utf8").trim())})
+ZONES: dict[str, Any] = json.loads(${pyString(zoneTableText(sdk.programs))})
 """The UTC offsets of the IANA time zone database release the schemas pin."""
 `,
     });

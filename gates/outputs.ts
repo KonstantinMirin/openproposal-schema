@@ -1,7 +1,7 @@
 /** The gates on each lock's emitted schemas, rules, and conformance corpus. */
 import { inScope } from "../src/mapping.ts";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { buildZoneTable, RULE_PROGRAMS_SCHEMA, rulesProgramsProblems } from "../src/rule-programs.ts";
+import { buildZoneTable, checksOf, KERNEL_PROGRAMS_FILE, loadKernelPrograms, kernelRuleIds, RULE_PROGRAMS_FILE, RULE_PROGRAMS_SCHEMA, rulesProgramsProblems } from "../src/rule-programs.ts";
 import { compileSchema } from "../src/pipeline.ts";
 import { join } from "node:path";
 import { checkCorpus, generateCorpus, oracleLabels, type CorpusDoc, type CorpusInput } from "../src/corpus.ts";
@@ -182,19 +182,23 @@ export const ruleVectors = defineGate<{ doc: RulesDoc; model: ModelDoc; files: E
   ],
 });
 
-export const rulePrograms = defineGate<{ specDir: string; rules: string[] }>({
+export const rulePrograms = defineGate<{ specDir: string; rules: string[]; kernelFile: string }>({
   id: "rule-programs",
-  title: "rule programs: the file is schema-valid, every operation and definition is one the evaluators know, and every program checks a rule some lock lists",
-  code: ["src/rule-programs.ts#rulesProgramsProblems", "src/rule-program.ts#programProblems", "src/rule-program.ts#OPERATIONS"],
+  title: "rule programs: each file is schema-valid, every operation and definition is one the evaluators know, every list a program reads is one the kernel pins, and every program checks a rule some lock lists, or, in the kernel's file, a rule the kernel or a constructor states",
+  code: ["src/rule-programs.ts#rulesProgramsProblems", "src/rule-programs.ts#kernelRuleIds", "src/rule-program.ts#programProblems", "src/rule-program.ts#OPERATIONS"],
   files: ["specs/rule-programs.schema.json"],
-  exemptions: ["specs/*/rule-programs.yaml"],
+  exemptions: ["specs/*/rule-programs.yaml", "kernel/rule-programs.yaml"],
   check: (i) => {
-    const r = rulesProgramsProblems(i.specDir, new Set(i.rules), compileSchema(join(ROOT, RULE_PROGRAMS_SCHEMA)));
-    return { problems: r.problems, note: `${r.programs} rule programs` };
+    const validate = compileSchema(join(ROOT, RULE_PROGRAMS_SCHEMA));
+    const spec = rulesProgramsProblems(join(i.specDir, RULE_PROGRAMS_FILE), new Set(i.rules), validate);
+    const kernel = rulesProgramsProblems(i.kernelFile, kernelRuleIds(ROOT), validate, ROOT, KERNEL_PROGRAMS_FILE, "neither the kernel nor a constructor states the rule");
+    return { problems: [...spec.problems, ...kernel.problems], note: `${spec.programs} rule programs of the spec's, ${kernel.programs} of the kernel's` };
   },
   fixtures: [
     { name: "a program for a rule no lock lists", mutate: (i) => ({ ...i, rules: i.rules.filter((r) => r !== "sentence:5.6.5:aa43e614") }), expect: "sentence:5.6.5:aa43e614 has a program, and no lock lists the rule" },
     { name: "a program that names no operation", mutate: (i) => ({ ...i, specDir: join(ROOT, "gates/data/rule-programs") }), expect: '"days_between" is no operation' },
+    { name: "a kernel program for a rule the kernel doesn't state", mutate: (i) => ({ ...i, kernelFile: join(ROOT, "gates/data/rule-programs/kernel.yaml") }), expect: "kernel:Planet:named has a program, and neither the kernel nor a constructor states the rule" },
+    { name: "a program that reads a list the kernel doesn't pin", mutate: (i) => ({ ...i, kernelFile: join(ROOT, "gates/data/rule-programs/kernel.yaml") }), expect: 'the programs carry no codes of the list "Planets of the Solar System"' },
   ],
 });
 
@@ -240,8 +244,8 @@ export const ruleChecks = defineGate<{ doc: RulesDoc; model: ModelDoc; codes: Re
       expect: "rule:9.9:00000000: one payload decides it, and it has no check",
     },
     {
-      name: "a range whose bounds' type the model doesn't say, so the check can't compare them",
-      mutate: (i) => ({ ...i, model: { ...i.model, types: i.model.types.filter((t) => t.name !== "Count") } }),
+      name: "a range of two durations neither part of which bounds the other, so the check can't compare them",
+      mutate: (i) => ({ ...i, doc: { ...i.doc, rules: i.doc.rules.map((r) => (r.id === "constructor:Range:ordered" ? { ...r, vectors: { ...r.vectors, valid: [{ value: { min: "P1M", max: "P30D" } }, ...r.vectors.valid.slice(1)] } } : r)) } }),
       expect: "constructor:Range:ordered: valid vector 1: the check can't decide it",
     },
     {
@@ -380,7 +384,15 @@ export const typeExamplesGenerate = defineGate<TypeExamplesInput>({
   },
   fixtures: [
     { name: "a schema that rejects its primitive's showcase values and first valid vector", mutate: (i) => ({ ...i, files: withFile(i.files, KERNEL_FILE, (s) => withAmount(s, { minimum: 5000 })) }), expect: "Amount: the minimal example 0 fails the schema" },
-    { name: "a currency code the pinned list no longer assigns", mutate: (i) => ({ ...i, codes: withCodes(i.codes, "ISO 4217", (c) => (c.delete("USD"), c)) }), expect: "CurrencyCode: the minimal example \"USD\" fails kernel:CurrencyCode:assigned" },
+    {
+      name: "a currency code the pinned list no longer assigns",
+      // The rule's program carries the list's codes, so the list it reads is the one that changes.
+      mutate: (i) => {
+        const kernel = loadKernelPrograms(ROOT);
+        return { ...i, ruleChecks: { ...i.ruleChecks, ...checksOf({ ...kernel, lists: { ...kernel.lists, "ISO 4217": kernel.lists!["ISO 4217"]!.filter((c) => c !== "USD") } }, ROOT) } };
+      },
+      expect: "CurrencyCode: the minimal example \"USD\" fails kernel:CurrencyCode:assigned",
+    },
   ],
 });
 

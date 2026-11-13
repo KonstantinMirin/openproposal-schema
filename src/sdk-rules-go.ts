@@ -22,15 +22,18 @@ type ruleProgram struct {
 	At         [][]string \`json:"at"\`
 	Undecided  any        \`json:"undecided"\`
 	Violations []struct {
-		When    any    \`json:"when"\`
-		Path    string \`json:"path"\`
-		Message any    \`json:"message"\`
+		Each    any      \`json:"each"\`
+		As      []string \`json:"as"\`
+		When    any      \`json:"when"\`
+		Path    any      \`json:"path"\`
+		Message any      \`json:"message"\`
 	} \`json:"violations"\`
 }
 
 type programSet struct {
 	Defs  map[string]any         \`json:"defs"\`
 	Rules map[string]ruleProgram \`json:"rules"\`
+	Lists map[string][]any       \`json:"lists"\`
 }
 
 type zoneTable struct {
@@ -229,6 +232,65 @@ func localDay(seconds int64, zone string) (int64, bool) {
 }
 
 var instantPattern = regexp.MustCompile(\`^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})Z$\`)
+
+var momentPattern = regexp.MustCompile(\`^([0-9]{4})-([0-9]{2})-([0-9]{2})[Tt]([0-9]{2}):([0-9]{2}):([0-9]{2})(\\.[0-9]+)?(?:([Zz])|([+-])([0-9]{2}):([0-9]{2}))$\`)
+var durationPattern = regexp.MustCompile(\`^P(?:([0-9]+)Y)?(?:([0-9]+)M)?(?:([0-9]+)W)?(?:([0-9]+)D)?(?:T(?:([0-9]+)H)?(?:([0-9]+)M)?(?:([0-9]+)S)?)?$\`)
+var decimalPattern = regexp.MustCompile(\`^-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$\`)
+
+var (
+	patternsMu sync.Mutex
+	patterns   = map[string]*regexp.Regexp{}
+)
+
+// compiledPattern is a program's pattern, matched against the whole text.
+func compiledPattern(p string) *regexp.Regexp {
+	patternsMu.Lock()
+	defer patternsMu.Unlock()
+	re, ok := patterns[p]
+	if !ok {
+		re = regexp.MustCompile(\`^(?:\` + p + \`)$\`)
+		patterns[p] = re
+	}
+	return re
+}
+
+// jsonText is a value's JSON text: a map's keys sorted, a number in its shortest decimal form.
+func jsonText(v any) string {
+	switch x := v.(type) {
+	case *big.Rat:
+		return ratText(x)
+	case []any:
+		parts := make([]string, len(x))
+		for i, y := range x {
+			parts[i] = jsonText(y)
+		}
+		return "[" + strings.Join(parts, ",") + "]"
+	case map[string]any:
+		keys := make([]string, 0, len(x))
+		for k := range x {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		parts := make([]string, len(keys))
+		for i, k := range keys {
+			parts[i] = jsonString(k) + ":" + jsonText(x[k])
+		}
+		return "{" + strings.Join(parts, ",") + "}"
+	case string:
+		return jsonString(x)
+	case bool:
+		return strconv.FormatBool(x)
+	}
+	return "null"
+}
+
+func jsonString(s string) string {
+	var b strings.Builder
+	enc := json.NewEncoder(&b)
+	enc.SetEscapeHTML(false)
+	_ = enc.Encode(s)
+	return strings.TrimSuffix(b.String(), "\\n")
+}
 
 func ruleRat(v any) *big.Rat {
 	r, _ := v.(*big.Rat)
@@ -485,7 +547,7 @@ func (e *evaluation) eval(x any, vars map[string]any) any {
 				out[i] = k
 			}
 			return out
-		case "filter", "sum", "find":
+		case "filter", "map", "sum", "find":
 			l, ok := ev(args[0]).([]any)
 			if !ok {
 				if op == "sum" {
@@ -495,6 +557,12 @@ func (e *evaluation) eval(x any, vars map[string]any) any {
 			}
 			name := args[1].(string)
 			switch op {
+			case "map":
+				out := make([]any, len(l))
+				for i, y := range l {
+					out[i] = with(args[2], name, y)
+				}
+				return out
 			case "filter":
 				out := []any{}
 				for _, y := range l {
@@ -527,6 +595,121 @@ func (e *evaluation) eval(x any, vars map[string]any) any {
 				n[i], _ = strconv.ParseInt(m[i+1], 10, 64)
 			}
 			return intRat(daysFromCivil(n[0], n[1], n[2])*86400 + n[3]*3600 + n[4]*60 + n[5])
+		case "moment":
+			s, ok := ev(args[0]).(string)
+			m := momentPattern.FindStringSubmatch(s)
+			if !ok || m == nil {
+				return nil
+			}
+			n := make([]int64, 6)
+			for i := range n {
+				n[i], _ = strconv.ParseInt(m[i+1], 10, 64)
+			}
+			var offset int64
+			if m[8] == "" {
+				h, _ := strconv.ParseInt(m[10], 10, 64)
+				mi, _ := strconv.ParseInt(m[11], 10, 64)
+				offset = (h*60 + mi) * 60
+				if m[9] == "-" {
+					offset = -offset
+				}
+			}
+			r := intRat(daysFromCivil(n[0], n[1], n[2])*86400 + n[3]*3600 + n[4]*60 + n[5] - offset)
+			if m[7] != "" {
+				f, _ := new(big.Rat).SetString("0" + m[7])
+				r.Add(r, f)
+			}
+			return r
+		case "duration":
+			s, ok := ev(args[0]).(string)
+			m := durationPattern.FindStringSubmatch(s)
+			if !ok || m == nil || s == "P" || strings.HasSuffix(s, "T") {
+				return nil
+			}
+			n := make([]*big.Int, 8)
+			for i := 1; i <= 7; i++ {
+				n[i] = new(big.Int)
+				if m[i] != "" {
+					n[i].SetString(m[i], 10)
+				}
+			}
+			months := new(big.Int).Add(new(big.Int).Mul(n[1], big.NewInt(12)), n[2])
+			days := new(big.Int).Add(new(big.Int).Mul(n[3], big.NewInt(7)), n[4])
+			hours := new(big.Int).Add(new(big.Int).Mul(days, big.NewInt(24)), n[5])
+			secs := new(big.Int).Add(new(big.Int).Add(new(big.Int).Mul(hours, big.NewInt(3600)), new(big.Int).Mul(n[6], big.NewInt(60))), n[7])
+			return []any{new(big.Rat).SetInt(months), new(big.Rat).SetInt(secs)}
+		case "matches":
+			s, ok := ev(args[0]).(string)
+			p, ok2 := ev(args[1]).(string)
+			if !ok || !ok2 {
+				return false
+			}
+			return compiledPattern(p).MatchString(s)
+		case "split":
+			s, ok := ev(args[0]).(string)
+			sep, ok2 := ev(args[1]).(string)
+			if !ok || !ok2 || sep == "" {
+				return nil
+			}
+			parts := strings.Split(s, sep)
+			out := make([]any, len(parts))
+			for i, x := range parts {
+				out[i] = x
+			}
+			return out
+		case "num":
+			s, ok := ev(args[0]).(string)
+			if !ok || !decimalPattern.MatchString(s) {
+				return nil
+			}
+			r, ok := new(big.Rat).SetString(s)
+			if !ok {
+				return nil
+			}
+			return r
+		case "pointer":
+			var b strings.Builder
+			for _, a := range args {
+				var t string
+				switch w := ev(a).(type) {
+				case *big.Rat:
+					t = ratText(w)
+				case string:
+					t = w
+				case nil:
+					t = "null"
+				case bool:
+					t = strconv.FormatBool(w)
+				default:
+					t = jsonText(w)
+				}
+				b.WriteString("/" + pointerToken(t))
+			}
+			return b.String()
+		case "json":
+			return jsonText(ev(args[0]))
+		case "listed":
+			name, _ := args[0].(string)
+			codes, found := programs.Lists[name]
+			x := ev(args[1])
+			if !found {
+				return nil
+			}
+			for _, c := range codes {
+				switch cv := c.(type) {
+				case string:
+					if s, ok := x.(string); ok && s == cv {
+						return true
+					}
+				case json.Number:
+					r, ok := x.(*big.Rat)
+					want, ok2 := new(big.Rat).SetString(string(cv))
+					if ok && ok2 && r.Cmp(want) == 0 {
+						return true
+					}
+				}
+			}
+			return false
 		case "local_day":
 			t := ruleRat(ev(args[0]))
 			z, ok := ev(args[1]).(string)
@@ -578,14 +761,41 @@ func check(id string, v any, holder any) []ruleViolation {
 	}
 	var out []ruleViolation
 	for _, w := range p.Violations {
-		if e.eval(w.When, map[string]any{}) != true {
-			continue
+		for _, names := range e.bindings(w.Each, w.As) {
+			if e.eval(w.When, names) != true {
+				continue
+			}
+			msg, ok := e.eval(w.Message, names).(string)
+			if !ok {
+				msg = "violates the rule"
+			}
+			path, _ := e.eval(w.Path, names).(string)
+			out = append(out, ruleViolation{path, msg})
 		}
-		msg, ok := e.eval(w.Message, map[string]any{}).(string)
-		if !ok {
-			msg = "violates the rule"
+	}
+	return out
+}
+
+// bindings gives the names a violation binds, once per item of its each; once, binding none, without one.
+func (e *evaluation) bindings(each any, as []string) []map[string]any {
+	if each == nil || len(as) != 2 {
+		return []map[string]any{{}}
+	}
+	var out []map[string]any
+	switch x := e.eval(each, map[string]any{}).(type) {
+	case []any:
+		for i, y := range x {
+			out = append(out, map[string]any{as[0]: intRat(int64(i)), as[1]: y})
 		}
-		out = append(out, ruleViolation{w.Path, msg})
+	case map[string]any:
+		keys := make([]string, 0, len(x))
+		for k := range x {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		for _, k := range keys {
+			out = append(out, map[string]any{as[0]: k, as[1]: x[k]})
+		}
 	}
 	return out
 }

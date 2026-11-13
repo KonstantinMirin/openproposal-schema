@@ -40,6 +40,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { canonicalJson } from "./canonical.ts";
+import type { TypeRef } from "./mapping.ts";
 import type { Constructors } from "./constructors.ts";
 import type { CorpusDoc } from "./corpus.ts";
 import type { Kernel } from "./kernel.ts";
@@ -625,14 +626,14 @@ export function compareLocations(language: string, cases: SdkLocationCase[], run
 }
 
 /** The places, below a value of a type, where the rules the SDKs check reject it, sorted: none for a type that holds no value such a rule runs on. With the programs, as the SDKs hold them, and the evaluator. */
-export type Ruled = ((type: string, value: unknown) => string[]) & { model: ModelDoc; programs: Programs; evaluator: RuleEvaluator };
+export type Ruled = ((type: string | TypeRef, value: unknown) => string[]) & { model: ModelDoc; programs: Programs; evaluator: RuleEvaluator };
 
 /** The rules the SDKs check, each on every value of the type it runs on, its owner or the owner's holder, by the programs every SDK is generated with and the gates' own evaluator. */
 export function rulerOf(model: ModelDoc, programs: Programs, zones: ZoneTable): Ruled {
   const placed = placedPrograms(model, programs);
   const evaluator = new RuleEvaluator(placed.programs, zones);
   // Each SDK runs a rule on every value of the type that runs it, wherever the value sits.
-  const ruled = (type: string, value: unknown) => {
+  const ruled = (type: string | TypeRef, value: unknown) => {
     const out = new Set<string>();
     for (const i of placed.runs.size === 0 ? [] : instancesIn(model, type, value)) for (const id of placed.runs.get(i.type) ?? []) for (const v of evaluator.violations(id, i.value)) out.add(i.path + v.path);
     return [...out].sort();
@@ -640,9 +641,14 @@ export function rulerOf(model: ModelDoc, programs: Programs, zones: ZoneTable): 
   return Object.assign(ruled, { model, programs: placed.programs, evaluator });
 }
 
-/** The parity cases with the rules the SDKs check: a case that a rule rejects is invalid for the SDKs, which check the rule, though its schema accepts it. */
+/** The parity cases with the rules the SDKs check: a case of a named type or a template's application that a rule rejects is invalid for the SDKs, which check the rule, though its schema accepts it. */
 export function withRules(cases: SdkCase[], ruled: Ruled): SdkCase[] {
-  return cases.map((c) => (c.valid && c.target.k === "ref" && ruled(c.target.name, c.value).length > 0 ? { ...c, valid: false } : c));
+  // An application the schema names by a copy is that copy; one it doesn't is its template's, whose rules run on it.
+  const typeOf = (t: Expr): string | TypeRef | null => (t.k === "ref" ? t.name : t.k === "apply" ? (t.copy ?? { kind: "apply", constructor: t.template, arguments: {} }) : null);
+  return cases.map((c) => {
+    const type = c.valid ? typeOf(c.target) : null;
+    return type !== null && ruled(type, c.value).length > 0 ? { ...c, valid: false } : c;
+  });
 }
 
 /** The location cases with the rules the SDKs check: a value also fails at each place a rule rejects it. */
@@ -666,14 +672,18 @@ export function ruleLocationCases(corpus: CorpusDoc, ruled: Ruled, examples: Rec
   const out: SdkLocationCase[] = [];
   for (const r of corpus.rules) {
     const p = ruled.programs.rules[r.rule];
-    if (p === undefined || r.type === undefined) continue;
+    if (p === undefined) continue;
+    // A constructor's rule reads the copy its vectors' arguments make, as the gates' check does.
+    const args = r.arguments === undefined ? null : canonicalJson(r.arguments);
+    const type = r.type ?? ruled.model.types.find((t) => t.kind === "copy" && t.of.constructor === r.owner && canonicalJson(t.of.arguments) === args)?.name;
+    if (type === undefined) continue;
     const on = p.on ?? p.owner;
     for (const [label, list] of [["valid", r.valid], ["invalid", r.invalid]] as const) {
       list.forEach((x, i) => {
         for (const [part, owned] of payloadsOf(x)) {
           const name = `rule "${r.rule}" ${label} vector ${i + 1} ${part}`;
           if (on === p.owner) {
-            out.push({ label: name, type: r.type!, value: owned, at: ruled(r.type!, owned) });
+            out.push({ label: name, type, value: owned, at: ruled(type, owned) });
             continue;
           }
           const place = p.at![0]!;

@@ -14,7 +14,7 @@
  * the first branch the value is valid in.
  */
 import { readFileSync } from "node:fs";
-import { zoneTableFile } from "./rule-programs.ts";
+import { zoneTableText } from "./rule-programs.ts";
 import { GO_EVALUATOR } from "./sdk-rules-go.ts";
 import { FORMAT_PATTERNS } from "./sdk-formats.ts";
 import { lockPhrase, provenanceDocs, type Expr, type Provenance, type SdkFile, type SdkModel, type SdkTemplate, type SdkType, type Shape } from "./sdk.ts";
@@ -283,6 +283,8 @@ function scalarDecl(t: Extract<SdkType, { kind: "scalar" }>, ctx: Ctx, consts: S
   if (s.enum) terms = s.listed !== undefined ? `\n// terms${t.name} holds the names of ${s.listed}.\nvar terms${t.name} = []any{${s.enum.map((v) => jsonLiteral(v)).join(", ")}}\n` : enumConsts(t.name, s.enum, ctx, consts);
   // A value with nothing to check beyond its JSON type keeps no variable.
   if (s.json !== "boolean" && !lines.slice(4).some((l) => /\((s|r), /.test(l))) lines.splice(0, 4, `\t${s.json === "string" ? "stringValue" : s.json === "integer" ? "integerValue" : "numberValue"}(v, at, errs)`);
+  // A scalar's rules run after its checks (rules.go).
+  if (t.rules && t.rules.length > 0) lines.push(`\tcheckRules(v, at, errs, ${t.rules.map(str).join(", ")})`);
   return `${comment(`${t.name}: ${t.doc}`)}type ${t.name} ${base}
 ${terms}
 ${pre}// ValidateValue implements Value.
@@ -1075,7 +1077,7 @@ ${PROVENANCE_NAMES.map(([k, c]) => `${comment(`${c} is ${docs[k][0]!.toLowerCase
     const raw = (text: string) => text.split("`").map((part) => `\`${part}\``).join(' + "`" + ');
     files.push({
       path: `${n.pkg}/rules.go`,
-      text: `${header(lock, n.short)}package ${n.pkg}\n\n// The rule programs the types check, and the evaluator that reads them (the\n// repository's src/rule-program.ts, in Go), with the UTC offsets of the IANA\n// time zone database release the schemas pin.\n\n${GO_EVALUATOR}\n// programsJSON holds the programs of the rules the types check, and their shared definitions.\nconst programsJSON = ${raw(JSON.stringify(sdk.programs))}\n\n// zonesJSON holds the UTC offsets of the IANA time zone database release the schemas pin.\nconst zonesJSON = ${raw(readFileSync(zoneTableFile(), "utf8").trim())}\n`,
+      text: `${header(lock, n.short)}package ${n.pkg}\n\n// The rule programs the types check, and the evaluator that reads them (the\n// repository's src/rule-program.ts, in Go), with the UTC offsets of the IANA\n// time zone database release the schemas pin.\n\n${GO_EVALUATOR}\n// programsJSON holds the programs of the rules the types check, and their shared definitions.\nconst programsJSON = ${raw(JSON.stringify(sdk.programs))}\n\n// zonesJSON holds the UTC offsets of the IANA time zone database release the schemas pin.\nconst zonesJSON = ${raw(zoneTableText(sdk.programs!))}\n`,
     });
   }
   files.push({ path: `${n.pkg}/registry.go`, text: REGISTRY(lock, n) });

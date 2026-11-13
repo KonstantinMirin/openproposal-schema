@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { CHECKS, checkProblems, checksOf, codesOf, instantOf } from "../src/rule-checks.ts";
+import { CHECKS, checkProblems, checksOf, codesOf } from "../src/rule-checks.ts";
 import { loadLists } from "../src/lists.ts";
 import type { RulesDoc } from "../src/rules.ts";
 import { ROOT, RULE_CHECKS, SPEC } from "./helpers.ts";
@@ -57,7 +57,7 @@ test("a check names options by value or by id, never a catalog reference, and co
   assert.deepEqual(env({ channel: "audio", environments: { available: ["ctv", "dooh", "examplepub.example:car"] } }, ctx)!.map((v) => v.path), ["/environments/available/1"]);
 });
 
-test("a range compares its bounds by its parameter's type, and never parses text that isn't a timestamp", () => {
+test("a range compares its bounds by their kind, numbers, timestamps, or durations, and never parses text that isn't one", () => {
   const ordered = RULE_CHECKS["constructor:Range:ordered"]!;
   const numbers = { context: {}, part: false, order: "number" as const };
   const instants = { context: {}, part: false, order: "instant" as const };
@@ -69,11 +69,14 @@ test("a range compares its bounds by its parameter's type, and never parses text
   assert.deepEqual(ordered({ min: "2026-10-07", max: "2026-10-06T23:00:00Z" }, instants), [], "a calendar date isn't a timestamp");
   assert.deepEqual(ordered({ min: 5, max: "2026-01-01T00:00:00Z" }, instants), []);
   assert.equal(ordered({ min: "2026-10-06T00:00:00.5Z", max: "2026-10-06T00:00:00.25Z" }, instants)!.length, 1, "fractions of a second count");
-  // Without the parameter's type, two bounds can't be compared; one bound needs no comparison.
-  assert.equal(ordered({ min: 5, max: 1 }, { context: {}, part: false }), null);
-  assert.deepEqual(ordered({ min: 5 }, { context: {}, part: false }), []);
-  assert.equal(instantOf("2026-10-06T00:00:00+02:00"), Date.UTC(2026, 9, 5, 22));
-  assert.equal(instantOf("2026-10-06"), null);
+  // The bounds' own kind orders them, as the rule's program runs in every SDK, where no check is given the parameter's type.
+  assert.equal(ordered({ min: 5, max: 1 }, { context: {}, part: false })!.length, 1);
+  assert.equal(ordered({ min: "2026-10-06T00:00:00+02:00", max: "2026-10-05T21:59:59Z" }, { context: {}, part: false })!.length, 1, "an offset moves the instant");
+  assert.deepEqual(ordered({ min: 5 }, { context: {}, part: false }), [], "one bound needs no comparison");
+  // Durations compare part by part (D-062): one is no greater than another when neither of its parts is.
+  assert.equal(ordered({ min: "P2D", max: "P1D" }, { context: {}, part: false })!.length, 1);
+  assert.deepEqual(ordered({ min: "P1D", max: "PT36H" }, { context: {}, part: false }), []);
+  assert.equal(ordered({ min: "P1M", max: "P30D" }, { context: {}, part: false }), null, "a pair neither part bounds isn't ordered");
 });
 
 test("a daypart window compares times of day, and a time the schema rejects compares as nothing", () => {
@@ -115,7 +118,7 @@ test("a rule a code block can't decide is undecided: it shows a member the rule 
   assert.equal(measured({ ...base, placement: { api: [6] }, measurement_source: { available: [{ catalog_ref: "ias@1" }] } }, { ...seller, part: false }), null, "a vendor a reference stands for");
 });
 
-test("a currency code and a zone name are ones the pinned lists hold, and without the lists the checks can't decide", () => {
+test("a currency code and a zone name are ones the pinned lists hold, whose codes the programs carry", () => {
   const currency = RULE_CHECKS["kernel:CurrencyCode:assigned"]!;
   const zone = RULE_CHECKS["kernel:TimeZone:listed"]!;
   const ctx = { context: {}, part: false, codes: CODES };
@@ -126,7 +129,9 @@ test("a currency code and a zone name are ones the pinned lists hold, and withou
   assert.deepEqual(zone("US/Eastern", ctx), [], "a link the database keeps is a name it lists");
   assert.deepEqual(zone("viewer_local", ctx), []);
   assert.equal(zone("Mars/Olympus_Mons", ctx)!.length, 1);
-  assert.equal(currency("USD", { context: {}, part: false }), null);
+  // The programs carry the codes of the lists they read, as each SDK does, so the check decides with no codes given.
+  assert.deepEqual(currency("USD", { context: {}, part: false }), []);
+  assert.equal(currency("QQQ", { context: {}, part: false })!.length, 1);
   const lists = loadLists(ROOT);
   for (const name of ["ISO 4217", "IANA time zone database"]) {
     const l = lists.lists.find((x) => x.name === name)!;

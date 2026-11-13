@@ -13,7 +13,7 @@
 import { readFileSync } from "node:fs";
 import { FORMAT_PATTERNS } from "./sdk-formats.ts";
 import type { Programs } from "./rule-program.ts";
-import { zoneTableFile } from "./rule-programs.ts";
+import { zoneTableText } from "./rule-programs.ts";
 import { allConstants, constantsDoc, lockPhrase, provenanceDocs, usesAbsent, type Constants, type Expr, type Provenance, type SdkFile, type SdkModel, type SdkTemplate, type SdkType, type Shape } from "./sdk.ts";
 import { sdkNames, type SpecNames } from "./profile.ts";
 
@@ -125,7 +125,8 @@ function declaration(t: SdkType): string {
   switch (t.kind) {
     case "scalar": {
       const { type, schema } = scalarSchema(t);
-      return `${head}export type ${t.name} = ${type};\nexport const ${t.name}: z.ZodType<${t.name}> = ${schema};\n`;
+      const ruled = t.rules && t.rules.length > 0 ? `.check(rt.scalarRules(${JSON.stringify(t.rules)}))` : "";
+      return `${head}export type ${t.name} = ${type};\nexport const ${t.name}: z.ZodType<${t.name}> = ${schema}${ruled};\n`;
     }
     case "enum": {
       // An open vocabulary whose core terms the specification doesn't list accepts namespaced terms only.
@@ -197,6 +198,15 @@ const RULES_CHECK = [
   "export const rules = (ids: string[]) => always((payload: Payload) => {",
   "  for (const id of ids) for (const v of violations(id, payload.value)) fail(payload, v.message, v.path === \"\" ? [] : v.path.slice(1).split(\"/\").map((t) => t.replace(/~1/g, \"/\").replace(/~0/g, \"~\")));",
   "});",
+  "",
+  "/** A check that a scalar breaks none of the rules whose programs check it (rules.ts), each violation at the scalar. */",
+  "export const scalarRules = <T>(ids: string[]): z.core.$ZodCheck<T> => {",
+  "  const ch = new z.core.$ZodCheck({ check: \"custom\", when: () => true }) as z.core.$ZodCheck<T>;",
+  "  ch._zod.check = (payload) => {",
+  "    for (const id of ids) for (const v of violations(id, payload.value)) fail(payload as unknown as Payload, v.message);",
+  "  };",
+  "  return ch;",
+  "};",
   "",
   "",
 ].join("\n");
@@ -466,7 +476,7 @@ ${templates}};
   files.push({ path: "src/runtime.ts", text: RUNTIME(lock, short, usesAbsent(sdk), sdk.programs !== undefined) });
   if (sdk.programs !== undefined) {
     files.push({ path: "src/rules.ts", text: rulesFile(lock, short, sdk.programs) });
-    files.push({ path: "src/tzdata.ts", text: `${banner(lock, short)}/** The UTC offsets of the IANA time zone database release the schemas pin, as the rule programs read them (rules.ts). */\nexport const ZONES = ${readFileSync(zoneTableFile(), "utf8").trim()};\n` });
+    files.push({ path: "src/tzdata.ts", text: `${banner(lock, short)}/** The UTC offsets of the IANA time zone database release the schemas pin, as the rule programs read them (rules.ts). */\nexport const ZONES = ${zoneTableText(sdk.programs!)};\n` });
   }
   files.push({ path: "src/registry.ts", text: REGISTRY(lock, short) });
   files.push({

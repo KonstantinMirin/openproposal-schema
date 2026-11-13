@@ -31,17 +31,33 @@
  *   is the decimal it writes, so `0.1 + 0.2` is `0.3`, and any operation on
  *   `null` gives `null`.
  * - lists and maps: `len`, `contains` (an item of a list, or text in
- *   text), `concat`, `values`, `keys` (a map's, sorted), `filter`, `sum`,
- *   `find`, each of the last three as `[op, list, name, expression]`.
+ *   text), `concat`, `values`, `keys` (a map's, sorted), `filter`, `map`,
+ *   `sum`, `find`, each of the last four as `[op, list, name, expression]`.
  * - time: `["instant", s]` the seconds since the epoch an `Instant` names,
- *   or `null`; `["local_day", seconds, zone]` the day number, since
- *   1970-01-01, of the civil date in a zone of the pinned time zone table,
- *   or `null` for a zone it doesn't hold or an instant outside it.
+ *   or `null`; `["moment", s]` those an RFC 3339 date-time names, with its
+ *   offset and its fraction of a second, or `null`; `["local_day", seconds,
+ *   zone]` the day number, since 1970-01-01, of the civil date in a zone of
+ *   the pinned time zone table, or `null` for a zone it doesn't hold or an
+ *   instant outside it; `["duration", s]` an ISO 8601 duration as its
+ *   calendar part, in months, and its exact part, in seconds, a list of two,
+ *   or `null`.
  * - text: `["str", ...]`, each part's text, a number in its shortest
+ *   decimal form; `["matches", s, pattern]`, whether the whole text matches
+ *   a pattern, which uses only what JavaScript, Python, and Go regular
+ *   expressions read alike; `["split", s, separator]`; `["num", s]`, a
+ *   decimal's text as the number, or `null`; `["pointer", ...]`, a JSON
+ *   pointer of its parts, each a member or an index; `["json", x]`, a
+ *   value's JSON text, with a map's keys sorted and a number in its shortest
  *   decimal form.
+ * - lists another body keeps: `["listed", list, code]`, whether the pinned
+ *   list holds the code, as kernel/lists.yaml pins it; the programs carry the
+ *   codes of each list they read.
  *
  * A violation applies when its `when` is `true`; any other value, `null`
- * included, means it doesn't.
+ * included, means it doesn't. A violation with `each` applies once per item
+ * of a list, or member of a map, by key order, binding the names `as` gives
+ * to the index or key and to the item; its `path` is then an expression,
+ * as any violation's may be.
  */
 
 export type Expr = null | boolean | number | string | Expr[] | { [k: string]: Expr };
@@ -52,8 +68,9 @@ export const OPERATIONS: Record<string, [number, number]> = {
   has: [2, 2], ismap: [1, 1], islist: [1, 1], isnum: [1, 1], isstr: [1, 1], eq: [2, 2], ne: [2, 2], lt: [2, 2], le: [2, 2], gt: [2, 2], ge: [2, 2],
   and: [1, Infinity], or: [1, Infinity], not: [1, 1], if: [3, 3], coalesce: [1, Infinity],
   add: [2, Infinity], sub: [2, 2], mul: [2, Infinity], div: [2, 2], floor: [1, 1],
-  len: [1, 1], contains: [2, 2], concat: [1, Infinity], values: [1, 1], keys: [1, 1], filter: [3, 3], sum: [3, 3], find: [3, 3],
-  instant: [1, 1], local_day: [2, 2], str: [1, Infinity],
+  len: [1, 1], contains: [2, 2], concat: [1, Infinity], values: [1, 1], keys: [1, 1], filter: [3, 3], map: [3, 3], sum: [3, 3], find: [3, 3],
+  instant: [1, 1], moment: [1, 1], local_day: [2, 2], duration: [1, 1], str: [1, Infinity],
+  matches: [2, 2], split: [2, 2], num: [1, 1], pointer: [1, Infinity], json: [1, 1], listed: [2, 2],
 };
 
 /**
@@ -83,9 +100,14 @@ export function programProblems(p: Programs): string[] {
       walk(args[0]!, where, bound);
       return;
     }
-    if (op === "filter" || op === "sum" || op === "find") {
+    if (op === "filter" || op === "map" || op === "sum" || op === "find") {
       walk(args[0]!, where, bound);
       walk(args[2]!, where, new Set([...bound, String(args[1])]));
+      return;
+    }
+    if (op === "listed" && (typeof args[0] !== "string" || !(args[0] in (p.lists ?? {})))) out.push(`${where}: the programs carry no codes of the list ${JSON.stringify(args[0])}`);
+    if (op === "listed") {
+      walk(args[1]!, where, bound);
       return;
     }
     if (op === "def" || op === "var" || op === "given") return;
@@ -94,7 +116,14 @@ export function programProblems(p: Programs): string[] {
   for (const [k, e] of Object.entries(p.defs)) walk(e, `defs.${k}`, new Set());
   for (const [id, r] of Object.entries(p.rules)) {
     if (r.undecided !== undefined) walk(r.undecided, `${id} undecided`, new Set());
-    r.violations.forEach((v, i) => (walk(v.when, `${id} violation ${i + 1} when`, new Set()), walk(v.message, `${id} violation ${i + 1} message`, new Set())));
+    r.violations.forEach((v, i) => {
+      const names = new Set(v.as ?? []);
+      if (v.each !== undefined) walk(v.each, `${id} violation ${i + 1} each`, new Set());
+      if ((v.each === undefined) !== (v.as === undefined)) out.push(`${id} violation ${i + 1}: \`each\` and \`as\` go together`);
+      walk(v.when, `${id} violation ${i + 1} when`, names);
+      walk(v.message, `${id} violation ${i + 1} message`, names);
+      walk(v.path, `${id} violation ${i + 1} path`, names);
+    });
   }
   return out;
 }
@@ -108,7 +137,16 @@ export interface RuleProgram {
   at?: string[][];
   /** Where it holds, the rule can't decide: the gates' check is undecided, and an SDK reports no violation. */
   undecided?: Expr;
-  violations: { when: Expr; path: string; message: Expr }[];
+  violations: Violation[];
+}
+
+/** One way a value breaks a rule: where `when` holds, at `path`, with `message`; with `each`, once per item of a list or member of a map, binding the names `as` gives to the index or key and the item. */
+export interface Violation {
+  each?: Expr;
+  as?: [string, string];
+  when: Expr;
+  path: Expr;
+  message: Expr;
 }
 
 /** The holder of an owner's value: its value, and whether it is whole, as an SDK's is, or the members a vector gives. */
@@ -129,6 +167,8 @@ const escapeToken = (t: string) => t.replace(/~/g, "~0").replace(/\//g, "~1");
 export interface Programs {
   defs: Record<string, Expr>;
   rules: Record<string, RuleProgram>;
+  /** The codes of each pinned list a program reads with `listed`, by the list's name in kernel/lists.yaml. */
+  lists?: Record<string, (string | number)[]>;
 }
 
 /** The UTC offsets of a time zone database release: each zone's offsets and changes, encoded, and each name's zone. */
@@ -221,6 +261,8 @@ const daysFromCivil = (y: number, m: number, d: number): number => {
 };
 
 const INSTANT = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z$/;
+const MOMENT = /^([0-9]{4})-([0-9]{2})-([0-9]{2})[Tt]([0-9]{2}):([0-9]{2}):([0-9]{2})(\.[0-9]+)?(?:([Zz])|([+-])([0-9]{2}):([0-9]{2}))$/;
+const DURATION = /^P(?:([0-9]+)Y)?(?:([0-9]+)M)?(?:([0-9]+)W)?(?:([0-9]+)D)?(?:T(?:([0-9]+)H)?(?:([0-9]+)M)?(?:([0-9]+)S)?)?$/;
 
 /** A zone's changes, decoded from the table once. */
 const decoded = new Map<string, { at: number[]; offset: number[] }>();
@@ -262,6 +304,13 @@ export function localDay(table: ZoneTable, seconds: number, zone: string): numbe
 }
 
 const num = (x: Value): Rat | null => (isRat(x) ? x : null);
+/** A value's JSON text: a map's keys sorted, a number in its shortest decimal form. */
+const jsonText = (v: Value): string => {
+  if (isRat(v)) return ratText(v);
+  if (Array.isArray(v)) return `[${v.map(jsonText).join(",")}]`;
+  if (isObj(v)) return `{${Object.keys(v).sort().map((k) => `${JSON.stringify(k)}:${jsonText(v[k]!)}`).join(",")}}`;
+  return JSON.stringify(v);
+};
 const arith = (args: Value[], f: (a: Rat, b: Rat) => Rat | null): Value => {
   let acc: Rat | null = num(args[0] ?? null);
   for (const x of args.slice(1)) {
@@ -296,11 +345,24 @@ export class RuleEvaluator {
     if (p.undecided !== undefined && this.eval(p.undecided, env, {}) === true) return null;
     const out: { path: string; message: string }[] = [];
     for (const v of p.violations) {
-      if (this.eval(v.when, env, {}) !== true) continue;
-      const m = this.eval(v.message, env, {});
-      out.push({ path: v.path, message: typeof m === "string" ? m : "violates the rule" });
+      for (const vars of this.bindings(v, env)) {
+        if (this.eval(v.when, env, vars) !== true) continue;
+        const m = this.eval(v.message, env, vars);
+        const at = this.eval(v.path, env, vars);
+        out.push({ path: typeof at === "string" ? at : "", message: typeof m === "string" ? m : "violates the rule" });
+      }
     }
     return out;
+  }
+
+  /** The names a violation binds, once per item of its `each`; once, binding none, without one. */
+  private bindings(v: Violation, env: Env): Record<string, Value>[] {
+    if (v.each === undefined || v.as === undefined) return [{}];
+    const x = this.eval(v.each, env, {});
+    const [k, item] = v.as;
+    if (Array.isArray(x)) return x.map((y, i) => ({ [k]: rat(BigInt(i)), [item]: y }));
+    if (isObj(x)) return Object.keys(x).sort().map((key) => ({ [k]: key, [item]: x[key]! }));
+    return [];
   }
 
   /**
@@ -448,12 +510,14 @@ export class RuleEvaluator {
         return isObj(x) ? Object.keys(x).sort() : null;
       }
       case "filter":
+      case "map":
       case "sum":
       case "find": {
         const x = ev(args[0]!);
         if (!Array.isArray(x)) return op === "sum" ? rat(0n) : null;
         const name = args[1] as string;
         if (op === "filter") return x.filter((y) => ev(args[2]!, { [name]: y }) === true);
+        if (op === "map") return x.map((y) => ev(args[2]!, { [name]: y }));
         if (op === "find") return x.find((y) => ev(args[2]!, { [name]: y }) === true) ?? null;
         return arith([rat(0n), ...x.map((y) => ev(args[2]!, { [name]: y }))], (a, b) => rat(a.n * b.d + b.n * a.d, a.d * b.d));
       }
@@ -463,6 +527,52 @@ export class RuleEvaluator {
         if (!m) return null;
         const [y, mo, d, h, mi, s] = m.slice(1).map(Number) as [number, number, number, number, number, number];
         return rat(BigInt(daysFromCivil(y, mo, d) * 86400 + h * 3600 + mi * 60 + s));
+      }
+      case "moment": {
+        const x = ev(args[0]!);
+        const m = typeof x === "string" ? MOMENT.exec(x) : null;
+        if (!m) return null;
+        const [y, mo, d, h, mi, s] = m.slice(1, 7).map(Number) as [number, number, number, number, number, number];
+        const offset = m[8] ? 0 : (m[9] === "-" ? -1 : 1) * (Number(m[10]) * 60 + Number(m[11])) * 60;
+        const whole = rat(BigInt(daysFromCivil(y, mo, d) * 86400 + h * 3600 + mi * 60 + s - offset));
+        const fraction = m[7] ? decimal(`0${m[7]}`)! : rat(0n);
+        return rat(whole.n * fraction.d + fraction.n * whole.d, whole.d * fraction.d);
+      }
+      case "duration": {
+        const x = ev(args[0]!);
+        const m = typeof x === "string" ? DURATION.exec(x) : null;
+        if (!m || x === "P" || (x as string).endsWith("T")) return null;
+        const n = (i: number) => BigInt(m[i] ?? 0);
+        return [rat(n(1) * 12n + n(2)), rat(((n(3) * 7n + n(4)) * 24n + n(5)) * 3600n + n(6) * 60n + n(7))];
+      }
+      case "matches": {
+        const x = ev(args[0]!);
+        const pattern = ev(args[1]!);
+        return typeof x === "string" && typeof pattern === "string" && new RegExp(`^(?:${pattern})$`, "u").test(x);
+      }
+      case "split": {
+        const x = ev(args[0]!);
+        const sep = ev(args[1]!);
+        return typeof x === "string" && typeof sep === "string" && sep !== "" ? x.split(sep) : null;
+      }
+      case "num": {
+        const x = ev(args[0]!);
+        return typeof x === "string" ? decimal(x) : null;
+      }
+      case "pointer":
+        return args
+          .map((a) => {
+            const v = ev(a);
+            return `/${(isRat(v) ? ratText(v) : String(v)).replace(/~/g, "~0").replace(/\//g, "~1")}`;
+          })
+          .join("");
+      case "json":
+        return jsonText(ev(args[0]!));
+      case "listed": {
+        const codes = this.programs.lists?.[args[0] as string];
+        const x = ev(args[1]!);
+        if (codes === undefined) return null;
+        return codes.some((c) => (typeof c === "number" ? isRat(x) && same(x, rat(BigInt(c))) : c === x));
       }
       case "local_day": {
         const t = num(ev(args[0]!));
@@ -489,150 +599,6 @@ import { ZONES } from "./tzdata.js";
 /** The programs of the rules the types check, and their shared definitions. */
 export const PROGRAMS: Programs = {
   "defs": {
-    "commitment": [
-      "get",
-      [
-        "$"
-      ],
-      "commitment"
-    ],
-    "entries": [
-      "coalesce",
-      [
-        "get",
-        [
-          "$"
-        ],
-        "pricing"
-      ],
-      [
-        "list"
-      ]
-    ],
-    "committed": [
-      "if",
-      [
-        "not",
-        [
-          "ismap",
-          [
-            "def",
-            "commitment"
-          ]
-        ]
-      ],
-      null,
-      [
-        "if",
-        [
-          "has",
-          [
-            "def",
-            "commitment"
-          ],
-          "pricing_id"
-        ],
-        [
-          "find",
-          [
-            "def",
-            "entries"
-          ],
-          "e",
-          [
-            "eq",
-            [
-              "get",
-              [
-                "var",
-                "e"
-              ],
-              "pricing_id"
-            ],
-            [
-              "get",
-              [
-                "def",
-                "commitment"
-              ],
-              "pricing_id"
-            ]
-          ]
-        ],
-        [
-          "if",
-          [
-            "eq",
-            [
-              "len",
-              [
-                "def",
-                "entries"
-              ]
-            ],
-            1
-          ],
-          [
-            "at",
-            [
-              "def",
-              "entries"
-            ],
-            0
-          ],
-          null
-        ]
-      ]
-    ],
-    "figured": [
-      "and",
-      [
-        "ismap",
-        [
-          "def",
-          "commitment"
-        ]
-      ],
-      [
-        "ismap",
-        [
-          "def",
-          "committed"
-        ]
-      ],
-      [
-        "has",
-        [
-          "def",
-          "committed"
-        ],
-        "agreed_rate"
-      ]
-    ],
-    "method": [
-      "get",
-      [
-        "def",
-        "committed"
-      ],
-      "cost_method"
-    ],
-    "rate": [
-      "get",
-      [
-        "def",
-        "committed"
-      ],
-      "agreed_rate"
-    ],
-    "basis": [
-      "get",
-      [
-        "def",
-        "commitment"
-      ],
-      "basis"
-    ],
     "amount": [
       "coalesce",
       [
@@ -644,6 +610,52 @@ export const PROGRAMS: Programs = {
         "amount"
       ],
       0
+    ],
+    "baseline_line_item_id": [
+      "get",
+      [
+        "get",
+        [
+          "$"
+        ],
+        "baseline"
+      ],
+      "line_item_id"
+    ],
+    "basis": [
+      "get",
+      [
+        "def",
+        "commitment"
+      ],
+      "basis"
+    ],
+    "calendar": [
+      "and",
+      [
+        "def",
+        "timed"
+      ],
+      [
+        "has",
+        [
+          "def",
+          "params"
+        ],
+        "calendar_zone"
+      ],
+      [
+        "eq",
+        [
+          "get",
+          [
+            "def",
+            "params"
+          ],
+          "rate_unit"
+        ],
+        "day"
+      ]
     ],
     "charges": [
       "sum",
@@ -771,443 +783,6 @@ export const PROGRAMS: Programs = {
         ]
       ]
     ],
-    "rate_per": [
-      "coalesce",
-      [
-        "get",
-        [
-          "def",
-          "committed"
-        ],
-        "rate_per"
-      ],
-      [
-        "table",
-        [
-          "def",
-          "method"
-        ],
-        {
-          "CPM": 1000,
-          "CPMV": 1000,
-          "CPC": 1,
-          "CPCV": 1,
-          "CPV": 1,
-          "CPP": 1,
-          "CPA": 1,
-          "PLAY": 1000,
-          "TIME": 1,
-          "FLAT": 1
-        }
-      ],
-      1
-    ],
-    "params": [
-      "if",
-      [
-        "ismap",
-        [
-          "get",
-          [
-            "def",
-            "committed"
-          ],
-          "cost_parameters"
-        ]
-      ],
-      [
-        "get",
-        [
-          "def",
-          "committed"
-        ],
-        "cost_parameters"
-      ],
-      null
-    ],
-    "size": [
-      "table",
-      [
-        "get",
-        [
-          "def",
-          "params"
-        ],
-        "rate_unit"
-      ],
-      {
-        "hour": 3600,
-        "day": 86400,
-        "week": 604800
-      }
-    ],
-    "starts": [
-      "instant",
-      [
-        "get",
-        [
-          "get",
-          [
-            "def",
-            "commitment"
-          ],
-          "flight"
-        ],
-        "start"
-      ]
-    ],
-    "ends": [
-      "instant",
-      [
-        "get",
-        [
-          "get",
-          [
-            "def",
-            "commitment"
-          ],
-          "flight"
-        ],
-        "end"
-      ]
-    ],
-    "timed": [
-      "and",
-      [
-        "eq",
-        [
-          "def",
-          "method"
-        ],
-        "TIME"
-      ],
-      [
-        "isnum",
-        [
-          "def",
-          "starts"
-        ]
-      ],
-      [
-        "isnum",
-        [
-          "def",
-          "ends"
-        ]
-      ],
-      [
-        "isnum",
-        [
-          "def",
-          "size"
-        ]
-      ]
-    ],
-    "calendar": [
-      "and",
-      [
-        "def",
-        "timed"
-      ],
-      [
-        "has",
-        [
-          "def",
-          "params"
-        ],
-        "calendar_zone"
-      ],
-      [
-        "eq",
-        [
-          "get",
-          [
-            "def",
-            "params"
-          ],
-          "rate_unit"
-        ],
-        "day"
-      ]
-    ],
-    "zone": [
-      "get",
-      [
-        "def",
-        "params"
-      ],
-      "calendar_zone"
-    ],
-    "unknown_zone": [
-      "and",
-      [
-        "def",
-        "calendar"
-      ],
-      [
-        "eq",
-        [
-          "local_day",
-          [
-            "def",
-            "starts"
-          ],
-          [
-            "def",
-            "zone"
-          ]
-        ],
-        null
-      ]
-    ],
-    "elapsed": [
-      "if",
-      [
-        "def",
-        "calendar"
-      ],
-      [
-        "add",
-        [
-          "sub",
-          [
-            "local_day",
-            [
-              "def",
-              "ends"
-            ],
-            [
-              "def",
-              "zone"
-            ]
-          ],
-          [
-            "local_day",
-            [
-              "def",
-              "starts"
-            ],
-            [
-              "def",
-              "zone"
-            ]
-          ]
-        ],
-        1
-      ],
-      [
-        "if",
-        [
-          "def",
-          "timed"
-        ],
-        [
-          "floor",
-          [
-            "div",
-            [
-              "add",
-              [
-                "sub",
-                [
-                  "def",
-                  "ends"
-                ],
-                [
-                  "def",
-                  "starts"
-                ]
-              ],
-              1,
-              [
-                "div",
-                [
-                  "def",
-                  "size"
-                ],
-                2
-              ]
-            ],
-            [
-              "def",
-              "size"
-            ]
-          ]
-        ],
-        null
-      ]
-    ],
-    "flat": [
-      "eq",
-      [
-        "def",
-        "method"
-      ],
-      "FLAT"
-    ],
-    "units": [
-      "if",
-      [
-        "def",
-        "flat"
-      ],
-      null,
-      [
-        "if",
-        [
-          "isnum",
-          [
-            "def",
-            "elapsed"
-          ]
-        ],
-        [
-          "def",
-          "elapsed"
-        ],
-        [
-          "if",
-          [
-            "eq",
-            [
-              "def",
-              "basis"
-            ],
-            "spend"
-          ],
-          [
-            "if",
-            [
-              "gt",
-              [
-                "def",
-                "rate"
-              ],
-              0
-            ],
-            [
-              "floor",
-              [
-                "mul",
-                [
-                  "div",
-                  [
-                    "sub",
-                    [
-                      "def",
-                      "amount"
-                    ],
-                    [
-                      "def",
-                      "charges"
-                    ]
-                  ],
-                  [
-                    "def",
-                    "rate"
-                  ]
-                ],
-                [
-                  "def",
-                  "rate_per"
-                ]
-              ]
-            ],
-            null
-          ],
-          [
-            "def",
-            "amount"
-          ]
-        ]
-      ]
-    ],
-    "total": [
-      "if",
-      [
-        "def",
-        "flat"
-      ],
-      [
-        "add",
-        [
-          "def",
-          "rate"
-        ],
-        [
-          "def",
-          "charges"
-        ]
-      ],
-      [
-        "if",
-        [
-          "isnum",
-          [
-            "def",
-            "elapsed"
-          ]
-        ],
-        [
-          "add",
-          [
-            "mul",
-            [
-              "def",
-              "elapsed"
-            ],
-            [
-              "def",
-              "rate"
-            ]
-          ],
-          [
-            "def",
-            "charges"
-          ]
-        ],
-        [
-          "if",
-          [
-            "eq",
-            [
-              "def",
-              "basis"
-            ],
-            "spend"
-          ],
-          [
-            "def",
-            "amount"
-          ],
-          [
-            "add",
-            [
-              "mul",
-              [
-                "div",
-                [
-                  "def",
-                  "amount"
-                ],
-                [
-                  "def",
-                  "rate_per"
-                ]
-              ],
-              [
-                "def",
-                "rate"
-              ]
-            ],
-            [
-              "def",
-              "charges"
-            ]
-          ]
-        ]
-      ]
-    ],
     "checked": [
       "and",
       [
@@ -1222,174 +797,85 @@ export const PROGRAMS: Programs = {
         ]
       ]
     ],
-    "derived": [
+    "commitment": [
       "get",
       [
-        "def",
-        "commitment"
+        "$"
       ],
-      "derived_units"
+      "commitment"
     ],
-    "baseline_line_item_id": [
-      "get",
+    "committed": [
+      "if",
       [
-        "get",
+        "not",
         [
-          "$"
-        ],
-        "baseline"
-      ],
-      "line_item_id"
-    ],
-    "requested_line_item": [
-      "coalesce",
-      [
-        "find",
-        [
-          "coalesce",
+          "ismap",
           [
-            "get",
-            [
-              "up"
-            ],
-            "line_items"
-          ],
-          [
-            "list"
-          ]
-        ],
-        "x",
-        [
-          "and",
-          [
-            "ismap",
-            [
-              "var",
-              "x"
-            ]
-          ],
-          [
-            "eq",
-            [
-              "get",
-              [
-                "var",
-                "x"
-              ],
-              "line_item_id"
-            ],
-            [
-              "def",
-              "baseline_line_item_id"
-            ]
+            "def",
+            "commitment"
           ]
         ]
       ],
+      null,
       [
-        "find",
+        "if",
         [
-          "get",
+          "has",
           [
-            "find",
-            [
-              "coalesce",
-              [
-                "get",
-                [
-                  "up"
-                ],
-                "packages"
-              ],
-              [
-                "list"
-              ]
-            ],
-            "p",
-            [
-              "and",
-              [
-                "ismap",
-                [
-                  "var",
-                  "p"
-                ]
-              ],
-              [
-                "ne",
-                [
-                  "find",
-                  [
-                    "coalesce",
-                    [
-                      "get",
-                      [
-                        "var",
-                        "p"
-                      ],
-                      "line_items"
-                    ],
-                    [
-                      "list"
-                    ]
-                  ],
-                  "x",
-                  [
-                    "and",
-                    [
-                      "ismap",
-                      [
-                        "var",
-                        "x"
-                      ]
-                    ],
-                    [
-                      "eq",
-                      [
-                        "get",
-                        [
-                          "var",
-                          "x"
-                        ],
-                        "line_item_id"
-                      ],
-                      [
-                        "def",
-                        "baseline_line_item_id"
-                      ]
-                    ]
-                  ]
-                ],
-                null
-              ]
-            ]
+            "def",
+            "commitment"
           ],
-          "line_items"
+          "pricing_id"
         ],
-        "x",
         [
-          "and",
+          "find",
           [
-            "ismap",
-            [
-              "var",
-              "x"
-            ]
+            "def",
+            "entries"
           ],
+          "e",
           [
             "eq",
             [
               "get",
               [
                 "var",
-                "x"
+                "e"
               ],
-              "line_item_id"
+              "pricing_id"
             ],
             [
-              "def",
-              "baseline_line_item_id"
+              "get",
+              [
+                "def",
+                "commitment"
+              ],
+              "pricing_id"
             ]
           ]
+        ],
+        [
+          "if",
+          [
+            "eq",
+            [
+              "len",
+              [
+                "def",
+                "entries"
+              ]
+            ],
+            1
+          ],
+          [
+            "at",
+            [
+              "def",
+              "entries"
+            ],
+            0
+          ],
+          null
         ]
       ]
     ],
@@ -1564,9 +1050,1053 @@ export const PROGRAMS: Programs = {
         ],
         null
       ]
+    ],
+    "derived": [
+      "get",
+      [
+        "def",
+        "commitment"
+      ],
+      "derived_units"
+    ],
+    "duration_max": [
+      "duration",
+      [
+        "def",
+        "range_max"
+      ]
+    ],
+    "duration_min": [
+      "duration",
+      [
+        "def",
+        "range_min"
+      ]
+    ],
+    "durations_ordered": [
+      "and",
+      [
+        "le",
+        [
+          "at",
+          [
+            "def",
+            "duration_min"
+          ],
+          0
+        ],
+        [
+          "at",
+          [
+            "def",
+            "duration_max"
+          ],
+          0
+        ]
+      ],
+      [
+        "le",
+        [
+          "at",
+          [
+            "def",
+            "duration_min"
+          ],
+          1
+        ],
+        [
+          "at",
+          [
+            "def",
+            "duration_max"
+          ],
+          1
+        ]
+      ]
+    ],
+    "durations_reversed": [
+      "and",
+      [
+        "ge",
+        [
+          "at",
+          [
+            "def",
+            "duration_min"
+          ],
+          0
+        ],
+        [
+          "at",
+          [
+            "def",
+            "duration_max"
+          ],
+          0
+        ]
+      ],
+      [
+        "ge",
+        [
+          "at",
+          [
+            "def",
+            "duration_min"
+          ],
+          1
+        ],
+        [
+          "at",
+          [
+            "def",
+            "duration_max"
+          ],
+          1
+        ]
+      ]
+    ],
+    "elapsed": [
+      "if",
+      [
+        "def",
+        "calendar"
+      ],
+      [
+        "add",
+        [
+          "sub",
+          [
+            "local_day",
+            [
+              "def",
+              "ends"
+            ],
+            [
+              "def",
+              "zone"
+            ]
+          ],
+          [
+            "local_day",
+            [
+              "def",
+              "starts"
+            ],
+            [
+              "def",
+              "zone"
+            ]
+          ]
+        ],
+        1
+      ],
+      [
+        "if",
+        [
+          "def",
+          "timed"
+        ],
+        [
+          "floor",
+          [
+            "div",
+            [
+              "add",
+              [
+                "sub",
+                [
+                  "def",
+                  "ends"
+                ],
+                [
+                  "def",
+                  "starts"
+                ]
+              ],
+              1,
+              [
+                "div",
+                [
+                  "def",
+                  "size"
+                ],
+                2
+              ]
+            ],
+            [
+              "def",
+              "size"
+            ]
+          ]
+        ],
+        null
+      ]
+    ],
+    "ends": [
+      "instant",
+      [
+        "get",
+        [
+          "get",
+          [
+            "def",
+            "commitment"
+          ],
+          "flight"
+        ],
+        "end"
+      ]
+    ],
+    "entries": [
+      "coalesce",
+      [
+        "get",
+        [
+          "$"
+        ],
+        "pricing"
+      ],
+      [
+        "list"
+      ]
+    ],
+    "figured": [
+      "and",
+      [
+        "ismap",
+        [
+          "def",
+          "commitment"
+        ]
+      ],
+      [
+        "ismap",
+        [
+          "def",
+          "committed"
+        ]
+      ],
+      [
+        "has",
+        [
+          "def",
+          "committed"
+        ],
+        "agreed_rate"
+      ]
+    ],
+    "flat": [
+      "eq",
+      [
+        "def",
+        "method"
+      ],
+      "FLAT"
+    ],
+    "method": [
+      "get",
+      [
+        "def",
+        "committed"
+      ],
+      "cost_method"
+    ],
+    "params": [
+      "if",
+      [
+        "ismap",
+        [
+          "get",
+          [
+            "def",
+            "committed"
+          ],
+          "cost_parameters"
+        ]
+      ],
+      [
+        "get",
+        [
+          "def",
+          "committed"
+        ],
+        "cost_parameters"
+      ],
+      null
+    ],
+    "range_bounded": [
+      "and",
+      [
+        "ismap",
+        [
+          "$"
+        ]
+      ],
+      [
+        "has",
+        [
+          "$"
+        ],
+        "min"
+      ],
+      [
+        "has",
+        [
+          "$"
+        ],
+        "max"
+      ]
+    ],
+    "range_durations": [
+      "and",
+      [
+        "islist",
+        [
+          "duration",
+          [
+            "def",
+            "range_min"
+          ]
+        ]
+      ],
+      [
+        "islist",
+        [
+          "duration",
+          [
+            "def",
+            "range_max"
+          ]
+        ]
+      ]
+    ],
+    "range_instants": [
+      "and",
+      [
+        "isnum",
+        [
+          "moment",
+          [
+            "def",
+            "range_min"
+          ]
+        ]
+      ],
+      [
+        "isnum",
+        [
+          "moment",
+          [
+            "def",
+            "range_max"
+          ]
+        ]
+      ]
+    ],
+    "range_max": [
+      "get",
+      [
+        "$"
+      ],
+      "max"
+    ],
+    "range_min": [
+      "get",
+      [
+        "$"
+      ],
+      "min"
+    ],
+    "range_numbers": [
+      "and",
+      [
+        "isnum",
+        [
+          "def",
+          "range_min"
+        ]
+      ],
+      [
+        "isnum",
+        [
+          "def",
+          "range_max"
+        ]
+      ]
+    ],
+    "range_reversed": [
+      "and",
+      [
+        "def",
+        "range_bounded"
+      ],
+      [
+        "or",
+        [
+          "and",
+          [
+            "def",
+            "range_numbers"
+          ],
+          [
+            "gt",
+            [
+              "def",
+              "range_min"
+            ],
+            [
+              "def",
+              "range_max"
+            ]
+          ]
+        ],
+        [
+          "and",
+          [
+            "def",
+            "range_instants"
+          ],
+          [
+            "gt",
+            [
+              "moment",
+              [
+                "def",
+                "range_min"
+              ]
+            ],
+            [
+              "moment",
+              [
+                "def",
+                "range_max"
+              ]
+            ]
+          ]
+        ],
+        [
+          "and",
+          [
+            "def",
+            "range_durations"
+          ],
+          [
+            "not",
+            [
+              "def",
+              "durations_ordered"
+            ]
+          ],
+          [
+            "def",
+            "durations_reversed"
+          ]
+        ]
+      ]
+    ],
+    "range_unordered": [
+      "and",
+      [
+        "def",
+        "range_bounded"
+      ],
+      [
+        "def",
+        "range_durations"
+      ],
+      [
+        "not",
+        [
+          "def",
+          "durations_ordered"
+        ]
+      ],
+      [
+        "not",
+        [
+          "def",
+          "durations_reversed"
+        ]
+      ]
+    ],
+    "rate": [
+      "get",
+      [
+        "def",
+        "committed"
+      ],
+      "agreed_rate"
+    ],
+    "rate_per": [
+      "coalesce",
+      [
+        "get",
+        [
+          "def",
+          "committed"
+        ],
+        "rate_per"
+      ],
+      [
+        "table",
+        [
+          "def",
+          "method"
+        ],
+        {
+          "CPM": 1000,
+          "CPMV": 1000,
+          "CPC": 1,
+          "CPCV": 1,
+          "CPV": 1,
+          "CPP": 1,
+          "CPA": 1,
+          "PLAY": 1000,
+          "TIME": 1,
+          "FLAT": 1
+        }
+      ],
+      1
+    ],
+    "requested_line_item": [
+      "coalesce",
+      [
+        "find",
+        [
+          "coalesce",
+          [
+            "get",
+            [
+              "up"
+            ],
+            "line_items"
+          ],
+          [
+            "list"
+          ]
+        ],
+        "x",
+        [
+          "and",
+          [
+            "ismap",
+            [
+              "var",
+              "x"
+            ]
+          ],
+          [
+            "eq",
+            [
+              "get",
+              [
+                "var",
+                "x"
+              ],
+              "line_item_id"
+            ],
+            [
+              "def",
+              "baseline_line_item_id"
+            ]
+          ]
+        ]
+      ],
+      [
+        "find",
+        [
+          "get",
+          [
+            "find",
+            [
+              "coalesce",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "packages"
+              ],
+              [
+                "list"
+              ]
+            ],
+            "p",
+            [
+              "and",
+              [
+                "ismap",
+                [
+                  "var",
+                  "p"
+                ]
+              ],
+              [
+                "ne",
+                [
+                  "find",
+                  [
+                    "coalesce",
+                    [
+                      "get",
+                      [
+                        "var",
+                        "p"
+                      ],
+                      "line_items"
+                    ],
+                    [
+                      "list"
+                    ]
+                  ],
+                  "x",
+                  [
+                    "and",
+                    [
+                      "ismap",
+                      [
+                        "var",
+                        "x"
+                      ]
+                    ],
+                    [
+                      "eq",
+                      [
+                        "get",
+                        [
+                          "var",
+                          "x"
+                        ],
+                        "line_item_id"
+                      ],
+                      [
+                        "def",
+                        "baseline_line_item_id"
+                      ]
+                    ]
+                  ]
+                ],
+                null
+              ]
+            ]
+          ],
+          "line_items"
+        ],
+        "x",
+        [
+          "and",
+          [
+            "ismap",
+            [
+              "var",
+              "x"
+            ]
+          ],
+          [
+            "eq",
+            [
+              "get",
+              [
+                "var",
+                "x"
+              ],
+              "line_item_id"
+            ],
+            [
+              "def",
+              "baseline_line_item_id"
+            ]
+          ]
+        ]
+      ]
+    ],
+    "size": [
+      "table",
+      [
+        "get",
+        [
+          "def",
+          "params"
+        ],
+        "rate_unit"
+      ],
+      {
+        "hour": 3600,
+        "day": 86400,
+        "week": 604800
+      }
+    ],
+    "starts": [
+      "instant",
+      [
+        "get",
+        [
+          "get",
+          [
+            "def",
+            "commitment"
+          ],
+          "flight"
+        ],
+        "start"
+      ]
+    ],
+    "timed": [
+      "and",
+      [
+        "eq",
+        [
+          "def",
+          "method"
+        ],
+        "TIME"
+      ],
+      [
+        "isnum",
+        [
+          "def",
+          "starts"
+        ]
+      ],
+      [
+        "isnum",
+        [
+          "def",
+          "ends"
+        ]
+      ],
+      [
+        "isnum",
+        [
+          "def",
+          "size"
+        ]
+      ]
+    ],
+    "total": [
+      "if",
+      [
+        "def",
+        "flat"
+      ],
+      [
+        "add",
+        [
+          "def",
+          "rate"
+        ],
+        [
+          "def",
+          "charges"
+        ]
+      ],
+      [
+        "if",
+        [
+          "isnum",
+          [
+            "def",
+            "elapsed"
+          ]
+        ],
+        [
+          "add",
+          [
+            "mul",
+            [
+              "def",
+              "elapsed"
+            ],
+            [
+              "def",
+              "rate"
+            ]
+          ],
+          [
+            "def",
+            "charges"
+          ]
+        ],
+        [
+          "if",
+          [
+            "eq",
+            [
+              "def",
+              "basis"
+            ],
+            "spend"
+          ],
+          [
+            "def",
+            "amount"
+          ],
+          [
+            "add",
+            [
+              "mul",
+              [
+                "div",
+                [
+                  "def",
+                  "amount"
+                ],
+                [
+                  "def",
+                  "rate_per"
+                ]
+              ],
+              [
+                "def",
+                "rate"
+              ]
+            ],
+            [
+              "def",
+              "charges"
+            ]
+          ]
+        ]
+      ]
+    ],
+    "units": [
+      "if",
+      [
+        "def",
+        "flat"
+      ],
+      null,
+      [
+        "if",
+        [
+          "isnum",
+          [
+            "def",
+            "elapsed"
+          ]
+        ],
+        [
+          "def",
+          "elapsed"
+        ],
+        [
+          "if",
+          [
+            "eq",
+            [
+              "def",
+              "basis"
+            ],
+            "spend"
+          ],
+          [
+            "if",
+            [
+              "gt",
+              [
+                "def",
+                "rate"
+              ],
+              0
+            ],
+            [
+              "floor",
+              [
+                "mul",
+                [
+                  "div",
+                  [
+                    "sub",
+                    [
+                      "def",
+                      "amount"
+                    ],
+                    [
+                      "def",
+                      "charges"
+                    ]
+                  ],
+                  [
+                    "def",
+                    "rate"
+                  ]
+                ],
+                [
+                  "def",
+                  "rate_per"
+                ]
+              ]
+            ],
+            null
+          ],
+          [
+            "def",
+            "amount"
+          ]
+        ]
+      ]
+    ],
+    "unknown_zone": [
+      "and",
+      [
+        "def",
+        "calendar"
+      ],
+      [
+        "eq",
+        [
+          "local_day",
+          [
+            "def",
+            "starts"
+          ],
+          [
+            "def",
+            "zone"
+          ]
+        ],
+        null
+      ]
+    ],
+    "zone": [
+      "get",
+      [
+        "def",
+        "params"
+      ],
+      "calendar_zone"
     ]
   },
   "rules": {
+    "constructor:Range:duration-ordered": {
+      "owner": "Range",
+      "undecided": [
+        "def",
+        "range_unordered"
+      ],
+      "violations": [
+        {
+          "when": [
+            "def",
+            "range_reversed"
+          ],
+          "path": "",
+          "message": "`min` is more than `max`"
+        }
+      ]
+    },
+    "constructor:Range:ordered": {
+      "owner": "Range",
+      "undecided": [
+        "def",
+        "range_unordered"
+      ],
+      "violations": [
+        {
+          "when": [
+            "def",
+            "range_reversed"
+          ],
+          "path": "",
+          "message": "`min` is more than `max`"
+        }
+      ]
+    },
+    "kernel:CurrencyCode:assigned": {
+      "owner": "CurrencyCode",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "isstr",
+              [
+                "$"
+              ]
+            ],
+            [
+              "matches",
+              [
+                "$"
+              ],
+              "[A-Z]{3}"
+            ],
+            [
+              "not",
+              [
+                "listed",
+                "ISO 4217",
+                [
+                  "$"
+                ]
+              ]
+            ]
+          ],
+          "path": "",
+          "message": [
+            "str",
+            [
+              "json",
+              [
+                "$"
+              ]
+            ],
+            " is no code ISO 4217 assigns"
+          ]
+        }
+      ]
+    },
+    "kernel:TimeZone:listed": {
+      "owner": "TimeZone",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "isstr",
+              [
+                "$"
+              ]
+            ],
+            [
+              "ne",
+              [
+                "$"
+              ],
+              "viewer_local"
+            ],
+            [
+              "matches",
+              [
+                "$"
+              ],
+              "[A-Z][A-Za-z0-9_+-]*(/[A-Za-z0-9_+-]+)*"
+            ],
+            [
+              "not",
+              [
+                "listed",
+                "IANA time zone database",
+                [
+                  "$"
+                ]
+              ]
+            ]
+          ],
+          "path": "",
+          "message": [
+            "str",
+            [
+              "json",
+              [
+                "$"
+              ]
+            ],
+            " is no zone the IANA time zone database lists"
+          ]
+        }
+      ]
+    },
     "rule:4.1:1ef7cbec": {
       "owner": "Proposal",
       "violations": [
@@ -1658,6 +2188,41 @@ export const PROGRAMS: Programs = {
           ],
           "path": "",
           "message": "`line_items` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:4.1:71a584ca": {
+      "owner": "HistoryPath",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "has",
+              [
+                "$"
+              ],
+              "requested_value"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "line_item_id"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`line_item_id` is REQUIRED here"
         }
       ]
     },
@@ -1765,6 +2330,71 @@ export const PROGRAMS: Programs = {
         }
       ]
     },
+    "rule:4.1:d31e02ee": {
+      "owner": "HistoryPath",
+      "on": "HistoryEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "action"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "action"
+              ],
+              "requested"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "requested_value"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`requested_value` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "paths",
+          "*"
+        ]
+      ]
+    },
     "rule:4.4:9754e43c": {
       "owner": "ChangeRequest",
       "on": "Proposal",
@@ -1866,203 +2496,6 @@ export const PROGRAMS: Programs = {
       "at": [
         [
           "change_requests",
-          "*"
-        ]
-      ]
-    },
-    "rule:5.4:3a677601": {
-      "owner": "LineItem",
-      "on": "Proposal",
-      "undecided": [
-        "and",
-        [
-          "ismap",
-          [
-            "$"
-          ]
-        ],
-        [
-          "and",
-          [
-            "has",
-            [
-              "$"
-            ],
-            "formats"
-          ],
-          [
-            "not",
-            [
-              "has",
-              [
-                "up"
-              ],
-              "status"
-            ]
-          ]
-        ]
-      ],
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "and",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "formats"
-              ],
-              [
-                "ne",
-                [
-                  "get",
-                  [
-                    "up"
-                  ],
-                  "status"
-                ],
-                "draft"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "format_specs"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`format_specs` is REQUIRED here"
-        }
-      ],
-      "at": [
-        [
-          "line_items",
-          "*"
-        ],
-        [
-          "packages",
-          "*",
-          "add_ons",
-          "*"
-        ],
-        [
-          "packages",
-          "*",
-          "line_items",
-          "*"
-        ]
-      ]
-    },
-    "rule:4.1:71a584ca": {
-      "owner": "HistoryPath",
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "has",
-              [
-                "$"
-              ],
-              "requested_value"
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "line_item_id"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`line_item_id` is REQUIRED here"
-        }
-      ]
-    },
-    "rule:4.1:d31e02ee": {
-      "owner": "HistoryPath",
-      "on": "HistoryEntry",
-      "undecided": [
-        "and",
-        [
-          "ismap",
-          [
-            "$"
-          ]
-        ],
-        [
-          "not",
-          [
-            "has",
-            [
-              "up"
-            ],
-            "action"
-          ]
-        ]
-      ],
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "eq",
-              [
-                "get",
-                [
-                  "up"
-                ],
-                "action"
-              ],
-              "requested"
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "requested_value"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`requested_value` is REQUIRED here"
-        }
-      ],
-      "at": [
-        [
-          "paths",
           "*"
         ]
       ]
@@ -2412,6 +2845,82 @@ export const PROGRAMS: Programs = {
         ]
       ]
     },
+    "rule:5.2.4:65ca47c9": {
+      "owner": "PropertyOption",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "domains"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "apps"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`apps` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.2.4:c8e6720e": {
+      "owner": "PropertyOption",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "apps"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "domains"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`domains` is REQUIRED here"
+        }
+      ]
+    },
     "rule:5.2.4:ea387bb0": {
       "owner": "PropertyOption",
       "on": "LineItem",
@@ -2596,6 +3105,324 @@ export const PROGRAMS: Programs = {
         }
       ]
     },
+    "rule:5.3:153027ca": {
+      "owner": "AudienceSelectable",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "gt",
+                [
+                  "len",
+                  [
+                    "get",
+                    [
+                      "$"
+                    ],
+                    "available"
+                  ]
+                ],
+                1
+              ],
+              [
+                "or",
+                [
+                  "not",
+                  [
+                    "has",
+                    [
+                      "$"
+                    ],
+                    "max_select"
+                  ]
+                ],
+                [
+                  "gt",
+                  [
+                    "get",
+                    [
+                      "$"
+                    ],
+                    "max_select"
+                  ],
+                  1
+                ]
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "combine"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`combine` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.4:3a677601": {
+      "owner": "LineItem",
+      "on": "Proposal",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "and",
+          [
+            "has",
+            [
+              "$"
+            ],
+            "formats"
+          ],
+          [
+            "not",
+            [
+              "has",
+              [
+                "up"
+              ],
+              "status"
+            ]
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "formats"
+              ],
+              [
+                "ne",
+                [
+                  "get",
+                  [
+                    "up"
+                  ],
+                  "status"
+                ],
+                "draft"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "format_specs"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`format_specs` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "line_items",
+          "*"
+        ],
+        [
+          "packages",
+          "*",
+          "add_ons",
+          "*"
+        ],
+        [
+          "packages",
+          "*",
+          "line_items",
+          "*"
+        ]
+      ]
+    },
+    "rule:5.4:45b02f49": {
+      "owner": "Asset",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "url"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "markup"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`markup` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.4:58ab1d09": {
+      "owner": "MaterialsDue",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "before_start"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "at"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`at` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.4:7a6f2ac4": {
+      "owner": "MaterialsDue",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "at"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "before_start"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`before_start` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.4:e2c0968b": {
+      "owner": "Asset",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "markup"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "url"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`url` is REQUIRED here"
+        }
+      ]
+    },
     "rule:5.5:4a35bd89": {
       "owner": "LineItem",
       "violations": [
@@ -2711,6 +3538,89 @@ export const PROGRAMS: Programs = {
           "requested_terms",
           "commitment"
         ]
+      ]
+    },
+    "rule:5.6.1:94be9998": {
+      "owner": "CommitResult",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "ne",
+              [
+                "find",
+                [
+                  "coalesce",
+                  [
+                    "get",
+                    [
+                      "$"
+                    ],
+                    "entries"
+                  ],
+                  [
+                    "list"
+                  ]
+                ],
+                "e",
+                [
+                  "and",
+                  [
+                    "ismap",
+                    [
+                      "var",
+                      "e"
+                    ]
+                  ],
+                  [
+                    "eq",
+                    [
+                      "get",
+                      [
+                        "var",
+                        "e"
+                      ],
+                      "role"
+                    ],
+                    "decline"
+                  ],
+                  [
+                    "eq",
+                    [
+                      "get",
+                      [
+                        "var",
+                        "e"
+                      ],
+                      "ground"
+                    ],
+                    "availability"
+                  ]
+                ]
+              ],
+              null
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "availability"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`availability` is REQUIRED here"
+        }
       ]
     },
     "rule:5.6.4:615bf228": {
@@ -2832,6 +3742,55 @@ export const PROGRAMS: Programs = {
         ]
       ]
     },
+    "rule:5.6.4:b6f5be4c": {
+      "owner": "ImpressionMultiplier",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "source_type"
+              ],
+              [
+                "ne",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "source_type"
+                ],
+                2
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "vendor"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`vendor` is REQUIRED here"
+        }
+      ]
+    },
     "rule:5.6.4:e58650b7": {
       "owner": "DeliveryCounting",
       "on": "LineItem",
@@ -2905,6 +3864,723 @@ export const PROGRAMS: Programs = {
         [
           "delivery_counting"
         ]
+      ]
+    },
+    "rule:5.6.5:119b216f": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "cost_method"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "cost_method"
+              ],
+              "TIME"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "rate_unit"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`rate_unit` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.5:1f435d20": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "cost_method"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "cost_method"
+              ],
+              "CPMV"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "viewability_standard"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`viewability_standard` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.5:26b080e2": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "and",
+          [
+            "not",
+            [
+              "has",
+              [
+                "$"
+              ],
+              "view_s"
+            ]
+          ],
+          [
+            "not",
+            [
+              "has",
+              [
+                "up"
+              ],
+              "cost_method"
+            ]
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "not",
+                [
+                  "has",
+                  [
+                    "$"
+                  ],
+                  "view_s"
+                ]
+              ],
+              [
+                "eq",
+                [
+                  "get",
+                  [
+                    "up"
+                  ],
+                  "cost_method"
+                ],
+                "CPV"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "view_fraction"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`view_fraction` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.5:449027fe": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "cost_method"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "cost_method"
+              ],
+              "CPA"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "action_type"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`action_type` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.5:449027fe-2": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "cost_method"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "cost_method"
+              ],
+              "CPA"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "attribution_window"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`attribution_window` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.5:449027fe-3": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "cost_method"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "cost_method"
+              ],
+              "CPA"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "action_source"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`action_source` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.5:acca3c1c": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "cost_method"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "cost_method"
+              ],
+              "CPP"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "demographic"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`demographic` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.5:acca3c1c-2": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "cost_method"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "cost_method"
+              ],
+              "CPP"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "rating_source"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`rating_source` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.5:f959ab87": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "and",
+          [
+            "not",
+            [
+              "has",
+              [
+                "$"
+              ],
+              "view_fraction"
+            ]
+          ],
+          [
+            "not",
+            [
+              "has",
+              [
+                "up"
+              ],
+              "cost_method"
+            ]
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "not",
+                [
+                  "has",
+                  [
+                    "$"
+                  ],
+                  "view_fraction"
+                ]
+              ],
+              [
+                "eq",
+                [
+                  "get",
+                  [
+                    "up"
+                  ],
+                  "cost_method"
+                ],
+                "CPV"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "view_s"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`view_s` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.6:11a40445": {
+      "owner": "Fee",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "contains",
+              [
+                "list",
+                "cancelled",
+                "commitment"
+              ],
+              [
+                "get",
+                [
+                  "$"
+                ],
+                "calculation"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "share"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`share` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.6:0f8d396f": {
+      "owner": "PricingEntry",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "contains",
+              [
+                "list",
+                "CPMV",
+                "CPV",
+                "CPP",
+                "CPA",
+                "TIME"
+              ],
+              [
+                "get",
+                [
+                  "$"
+                ],
+                "cost_method"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "cost_parameters"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`cost_parameters` is REQUIRED here"
+        }
       ]
     },
     "rule:5.6:62e21e38": {
@@ -3004,6 +4680,224 @@ export const PROGRAMS: Programs = {
           "pricing",
           "*"
         ]
+      ]
+    },
+    "rule:5.6:7235466d": {
+      "owner": "PricingEntry",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "isstr",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "cost_method"
+                ]
+              ],
+              [
+                "contains",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "cost_method"
+                ],
+                ":"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "rate_per"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`rate_per` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.6:7235466d-2": {
+      "owner": "PricingEntry",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "isstr",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "cost_method"
+                ]
+              ],
+              [
+                "contains",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "cost_method"
+                ],
+                ":"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "unit_label"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`unit_label` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.6:7235466d-3": {
+      "owner": "PricingEntry",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "isstr",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "cost_method"
+                ]
+              ],
+              [
+                "contains",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "cost_method"
+                ],
+                ":"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "cost_definition"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`cost_definition` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.6:8288302a": {
+      "owner": "PricingEntry",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "ne",
+              [
+                "find",
+                [
+                  "coalesce",
+                  [
+                    "get",
+                    [
+                      "$"
+                    ],
+                    "transaction_mechanisms"
+                  ],
+                  [
+                    "list"
+                  ]
+                ],
+                "m",
+                [
+                  "contains",
+                  [
+                    "list",
+                    "programmatic_guaranteed",
+                    "preferred_deal",
+                    "private_auction"
+                  ],
+                  [
+                    "var",
+                    "m"
+                  ]
+                ]
+              ],
+              null
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "price_type"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`price_type` is REQUIRED here"
+        }
       ]
     },
     "rule:5.7:76df804b": {
@@ -3861,1371 +5755,789 @@ export const PROGRAMS: Programs = {
           ]
         }
       ]
-    },
-    "rule:5.2.4:65ca47c9": {
-      "owner": "PropertyOption",
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "domains"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "apps"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`apps` is REQUIRED here"
-        }
-      ]
-    },
-    "rule:5.2.4:c8e6720e": {
-      "owner": "PropertyOption",
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "apps"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "domains"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`domains` is REQUIRED here"
-        }
-      ]
-    },
-    "rule:5.3:153027ca": {
-      "owner": "AudienceSelectable",
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "and",
-              [
-                "gt",
-                [
-                  "len",
-                  [
-                    "get",
-                    [
-                      "$"
-                    ],
-                    "available"
-                  ]
-                ],
-                1
-              ],
-              [
-                "or",
-                [
-                  "not",
-                  [
-                    "has",
-                    [
-                      "$"
-                    ],
-                    "max_select"
-                  ]
-                ],
-                [
-                  "gt",
-                  [
-                    "get",
-                    [
-                      "$"
-                    ],
-                    "max_select"
-                  ],
-                  1
-                ]
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "combine"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`combine` is REQUIRED here"
-        }
-      ]
-    },
-    "rule:5.4:45b02f49": {
-      "owner": "Asset",
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "url"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "markup"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`markup` is REQUIRED here"
-        }
-      ]
-    },
-    "rule:5.4:e2c0968b": {
-      "owner": "Asset",
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "markup"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "url"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`url` is REQUIRED here"
-        }
-      ]
-    },
-    "rule:5.4:58ab1d09": {
-      "owner": "MaterialsDue",
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "before_start"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "at"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`at` is REQUIRED here"
-        }
-      ]
-    },
-    "rule:5.4:7a6f2ac4": {
-      "owner": "MaterialsDue",
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "at"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "before_start"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`before_start` is REQUIRED here"
-        }
-      ]
-    },
-    "rule:5.6.1:94be9998": {
-      "owner": "CommitResult",
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "ne",
-              [
-                "find",
-                [
-                  "coalesce",
-                  [
-                    "get",
-                    [
-                      "$"
-                    ],
-                    "entries"
-                  ],
-                  [
-                    "list"
-                  ]
-                ],
-                "e",
-                [
-                  "and",
-                  [
-                    "ismap",
-                    [
-                      "var",
-                      "e"
-                    ]
-                  ],
-                  [
-                    "eq",
-                    [
-                      "get",
-                      [
-                        "var",
-                        "e"
-                      ],
-                      "role"
-                    ],
-                    "decline"
-                  ],
-                  [
-                    "eq",
-                    [
-                      "get",
-                      [
-                        "var",
-                        "e"
-                      ],
-                      "ground"
-                    ],
-                    "availability"
-                  ]
-                ]
-              ],
-              null
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "availability"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`availability` is REQUIRED here"
-        }
-      ]
-    },
-    "rule:5.6.4:b6f5be4c": {
-      "owner": "ImpressionMultiplier",
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "and",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "source_type"
-              ],
-              [
-                "ne",
-                [
-                  "get",
-                  [
-                    "$"
-                  ],
-                  "source_type"
-                ],
-                2
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "vendor"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`vendor` is REQUIRED here"
-        }
-      ]
-    },
-    "rule:5.6.5:119b216f": {
-      "owner": "CostParameters",
-      "on": "PricingEntry",
-      "undecided": [
-        "and",
-        [
-          "ismap",
-          [
-            "$"
-          ]
-        ],
-        [
-          "not",
-          [
-            "has",
-            [
-              "up"
-            ],
-            "cost_method"
-          ]
-        ]
-      ],
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "eq",
-              [
-                "get",
-                [
-                  "up"
-                ],
-                "cost_method"
-              ],
-              "TIME"
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "rate_unit"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`rate_unit` is REQUIRED here"
-        }
-      ],
-      "at": [
-        [
-          "cost_parameters"
-        ]
-      ]
-    },
-    "rule:5.6.5:1f435d20": {
-      "owner": "CostParameters",
-      "on": "PricingEntry",
-      "undecided": [
-        "and",
-        [
-          "ismap",
-          [
-            "$"
-          ]
-        ],
-        [
-          "not",
-          [
-            "has",
-            [
-              "up"
-            ],
-            "cost_method"
-          ]
-        ]
-      ],
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "eq",
-              [
-                "get",
-                [
-                  "up"
-                ],
-                "cost_method"
-              ],
-              "CPMV"
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "viewability_standard"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`viewability_standard` is REQUIRED here"
-        }
-      ],
-      "at": [
-        [
-          "cost_parameters"
-        ]
-      ]
-    },
-    "rule:5.6.5:26b080e2": {
-      "owner": "CostParameters",
-      "on": "PricingEntry",
-      "undecided": [
-        "and",
-        [
-          "ismap",
-          [
-            "$"
-          ]
-        ],
-        [
-          "and",
-          [
-            "not",
-            [
-              "has",
-              [
-                "$"
-              ],
-              "view_s"
-            ]
-          ],
-          [
-            "not",
-            [
-              "has",
-              [
-                "up"
-              ],
-              "cost_method"
-            ]
-          ]
-        ]
-      ],
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "and",
-              [
-                "not",
-                [
-                  "has",
-                  [
-                    "$"
-                  ],
-                  "view_s"
-                ]
-              ],
-              [
-                "eq",
-                [
-                  "get",
-                  [
-                    "up"
-                  ],
-                  "cost_method"
-                ],
-                "CPV"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "view_fraction"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`view_fraction` is REQUIRED here"
-        }
-      ],
-      "at": [
-        [
-          "cost_parameters"
-        ]
-      ]
-    },
-    "rule:5.6.5:449027fe": {
-      "owner": "CostParameters",
-      "on": "PricingEntry",
-      "undecided": [
-        "and",
-        [
-          "ismap",
-          [
-            "$"
-          ]
-        ],
-        [
-          "not",
-          [
-            "has",
-            [
-              "up"
-            ],
-            "cost_method"
-          ]
-        ]
-      ],
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "eq",
-              [
-                "get",
-                [
-                  "up"
-                ],
-                "cost_method"
-              ],
-              "CPA"
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "action_type"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`action_type` is REQUIRED here"
-        }
-      ],
-      "at": [
-        [
-          "cost_parameters"
-        ]
-      ]
-    },
-    "rule:5.6.5:449027fe-2": {
-      "owner": "CostParameters",
-      "on": "PricingEntry",
-      "undecided": [
-        "and",
-        [
-          "ismap",
-          [
-            "$"
-          ]
-        ],
-        [
-          "not",
-          [
-            "has",
-            [
-              "up"
-            ],
-            "cost_method"
-          ]
-        ]
-      ],
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "eq",
-              [
-                "get",
-                [
-                  "up"
-                ],
-                "cost_method"
-              ],
-              "CPA"
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "attribution_window"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`attribution_window` is REQUIRED here"
-        }
-      ],
-      "at": [
-        [
-          "cost_parameters"
-        ]
-      ]
-    },
-    "rule:5.6.5:449027fe-3": {
-      "owner": "CostParameters",
-      "on": "PricingEntry",
-      "undecided": [
-        "and",
-        [
-          "ismap",
-          [
-            "$"
-          ]
-        ],
-        [
-          "not",
-          [
-            "has",
-            [
-              "up"
-            ],
-            "cost_method"
-          ]
-        ]
-      ],
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "eq",
-              [
-                "get",
-                [
-                  "up"
-                ],
-                "cost_method"
-              ],
-              "CPA"
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "action_source"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`action_source` is REQUIRED here"
-        }
-      ],
-      "at": [
-        [
-          "cost_parameters"
-        ]
-      ]
-    },
-    "rule:5.6.5:acca3c1c": {
-      "owner": "CostParameters",
-      "on": "PricingEntry",
-      "undecided": [
-        "and",
-        [
-          "ismap",
-          [
-            "$"
-          ]
-        ],
-        [
-          "not",
-          [
-            "has",
-            [
-              "up"
-            ],
-            "cost_method"
-          ]
-        ]
-      ],
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "eq",
-              [
-                "get",
-                [
-                  "up"
-                ],
-                "cost_method"
-              ],
-              "CPP"
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "demographic"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`demographic` is REQUIRED here"
-        }
-      ],
-      "at": [
-        [
-          "cost_parameters"
-        ]
-      ]
-    },
-    "rule:5.6.5:acca3c1c-2": {
-      "owner": "CostParameters",
-      "on": "PricingEntry",
-      "undecided": [
-        "and",
-        [
-          "ismap",
-          [
-            "$"
-          ]
-        ],
-        [
-          "not",
-          [
-            "has",
-            [
-              "up"
-            ],
-            "cost_method"
-          ]
-        ]
-      ],
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "eq",
-              [
-                "get",
-                [
-                  "up"
-                ],
-                "cost_method"
-              ],
-              "CPP"
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "rating_source"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`rating_source` is REQUIRED here"
-        }
-      ],
-      "at": [
-        [
-          "cost_parameters"
-        ]
-      ]
-    },
-    "rule:5.6.5:f959ab87": {
-      "owner": "CostParameters",
-      "on": "PricingEntry",
-      "undecided": [
-        "and",
-        [
-          "ismap",
-          [
-            "$"
-          ]
-        ],
-        [
-          "and",
-          [
-            "not",
-            [
-              "has",
-              [
-                "$"
-              ],
-              "view_fraction"
-            ]
-          ],
-          [
-            "not",
-            [
-              "has",
-              [
-                "up"
-              ],
-              "cost_method"
-            ]
-          ]
-        ]
-      ],
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "and",
-              [
-                "not",
-                [
-                  "has",
-                  [
-                    "$"
-                  ],
-                  "view_fraction"
-                ]
-              ],
-              [
-                "eq",
-                [
-                  "get",
-                  [
-                    "up"
-                  ],
-                  "cost_method"
-                ],
-                "CPV"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "view_s"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`view_s` is REQUIRED here"
-        }
-      ],
-      "at": [
-        [
-          "cost_parameters"
-        ]
-      ]
-    },
-    "rule:5.6:0f8d396f": {
-      "owner": "PricingEntry",
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "contains",
-              [
-                "list",
-                "CPMV",
-                "CPV",
-                "CPP",
-                "CPA",
-                "TIME"
-              ],
-              [
-                "get",
-                [
-                  "$"
-                ],
-                "cost_method"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "cost_parameters"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`cost_parameters` is REQUIRED here"
-        }
-      ]
-    },
-    "rule:5.6:7235466d": {
-      "owner": "PricingEntry",
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "and",
-              [
-                "isstr",
-                [
-                  "get",
-                  [
-                    "$"
-                  ],
-                  "cost_method"
-                ]
-              ],
-              [
-                "contains",
-                [
-                  "get",
-                  [
-                    "$"
-                  ],
-                  "cost_method"
-                ],
-                ":"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "rate_per"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`rate_per` is REQUIRED here"
-        }
-      ]
-    },
-    "rule:5.6:7235466d-2": {
-      "owner": "PricingEntry",
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "and",
-              [
-                "isstr",
-                [
-                  "get",
-                  [
-                    "$"
-                  ],
-                  "cost_method"
-                ]
-              ],
-              [
-                "contains",
-                [
-                  "get",
-                  [
-                    "$"
-                  ],
-                  "cost_method"
-                ],
-                ":"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "unit_label"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`unit_label` is REQUIRED here"
-        }
-      ]
-    },
-    "rule:5.6:7235466d-3": {
-      "owner": "PricingEntry",
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "and",
-              [
-                "isstr",
-                [
-                  "get",
-                  [
-                    "$"
-                  ],
-                  "cost_method"
-                ]
-              ],
-              [
-                "contains",
-                [
-                  "get",
-                  [
-                    "$"
-                  ],
-                  "cost_method"
-                ],
-                ":"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "cost_definition"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`cost_definition` is REQUIRED here"
-        }
-      ]
-    },
-    "rule:5.6:8288302a": {
-      "owner": "PricingEntry",
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "ne",
-              [
-                "find",
-                [
-                  "coalesce",
-                  [
-                    "get",
-                    [
-                      "$"
-                    ],
-                    "transaction_mechanisms"
-                  ],
-                  [
-                    "list"
-                  ]
-                ],
-                "m",
-                [
-                  "contains",
-                  [
-                    "list",
-                    "programmatic_guaranteed",
-                    "preferred_deal",
-                    "private_auction"
-                  ],
-                  [
-                    "var",
-                    "m"
-                  ]
-                ]
-              ],
-              null
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "price_type"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`price_type` is REQUIRED here"
-        }
-      ]
-    },
-    "rule:5.6.6:11a40445": {
-      "owner": "Fee",
-      "violations": [
-        {
-          "when": [
-            "and",
-            [
-              "ismap",
-              [
-                "$"
-              ]
-            ],
-            [
-              "contains",
-              [
-                "list",
-                "cancelled",
-                "commitment"
-              ],
-              [
-                "get",
-                [
-                  "$"
-                ],
-                "calculation"
-              ]
-            ],
-            [
-              "not",
-              [
-                "has",
-                [
-                  "$"
-                ],
-                "share"
-              ]
-            ]
-          ],
-          "path": "",
-          "message": "`share` is REQUIRED here"
-        }
-      ]
     }
+  },
+  "lists": {
+    "IANA time zone database": [
+      "Africa/Abidjan",
+      "Africa/Accra",
+      "Africa/Addis_Ababa",
+      "Africa/Algiers",
+      "Africa/Asmara",
+      "Africa/Asmera",
+      "Africa/Bamako",
+      "Africa/Bangui",
+      "Africa/Banjul",
+      "Africa/Bissau",
+      "Africa/Blantyre",
+      "Africa/Brazzaville",
+      "Africa/Bujumbura",
+      "Africa/Cairo",
+      "Africa/Casablanca",
+      "Africa/Ceuta",
+      "Africa/Conakry",
+      "Africa/Dakar",
+      "Africa/Dar_es_Salaam",
+      "Africa/Djibouti",
+      "Africa/Douala",
+      "Africa/El_Aaiun",
+      "Africa/Freetown",
+      "Africa/Gaborone",
+      "Africa/Harare",
+      "Africa/Johannesburg",
+      "Africa/Juba",
+      "Africa/Kampala",
+      "Africa/Khartoum",
+      "Africa/Kigali",
+      "Africa/Kinshasa",
+      "Africa/Lagos",
+      "Africa/Libreville",
+      "Africa/Lome",
+      "Africa/Luanda",
+      "Africa/Lubumbashi",
+      "Africa/Lusaka",
+      "Africa/Malabo",
+      "Africa/Maputo",
+      "Africa/Maseru",
+      "Africa/Mbabane",
+      "Africa/Mogadishu",
+      "Africa/Monrovia",
+      "Africa/Nairobi",
+      "Africa/Ndjamena",
+      "Africa/Niamey",
+      "Africa/Nouakchott",
+      "Africa/Ouagadougou",
+      "Africa/Porto-Novo",
+      "Africa/Sao_Tome",
+      "Africa/Timbuktu",
+      "Africa/Tripoli",
+      "Africa/Tunis",
+      "Africa/Windhoek",
+      "America/Adak",
+      "America/Anchorage",
+      "America/Anguilla",
+      "America/Antigua",
+      "America/Araguaina",
+      "America/Argentina/Buenos_Aires",
+      "America/Argentina/Catamarca",
+      "America/Argentina/ComodRivadavia",
+      "America/Argentina/Cordoba",
+      "America/Argentina/Jujuy",
+      "America/Argentina/La_Rioja",
+      "America/Argentina/Mendoza",
+      "America/Argentina/Rio_Gallegos",
+      "America/Argentina/Salta",
+      "America/Argentina/San_Juan",
+      "America/Argentina/San_Luis",
+      "America/Argentina/Tucuman",
+      "America/Argentina/Ushuaia",
+      "America/Aruba",
+      "America/Asuncion",
+      "America/Atikokan",
+      "America/Atka",
+      "America/Bahia",
+      "America/Bahia_Banderas",
+      "America/Barbados",
+      "America/Belem",
+      "America/Belize",
+      "America/Blanc-Sablon",
+      "America/Boa_Vista",
+      "America/Bogota",
+      "America/Boise",
+      "America/Buenos_Aires",
+      "America/Cambridge_Bay",
+      "America/Campo_Grande",
+      "America/Cancun",
+      "America/Caracas",
+      "America/Catamarca",
+      "America/Cayenne",
+      "America/Cayman",
+      "America/Chicago",
+      "America/Chihuahua",
+      "America/Ciudad_Juarez",
+      "America/Coral_Harbour",
+      "America/Cordoba",
+      "America/Costa_Rica",
+      "America/Coyhaique",
+      "America/Creston",
+      "America/Cuiaba",
+      "America/Curacao",
+      "America/Danmarkshavn",
+      "America/Dawson",
+      "America/Dawson_Creek",
+      "America/Denver",
+      "America/Detroit",
+      "America/Dominica",
+      "America/Edmonton",
+      "America/Eirunepe",
+      "America/El_Salvador",
+      "America/Ensenada",
+      "America/Fort_Nelson",
+      "America/Fort_Wayne",
+      "America/Fortaleza",
+      "America/Glace_Bay",
+      "America/Godthab",
+      "America/Goose_Bay",
+      "America/Grand_Turk",
+      "America/Grenada",
+      "America/Guadeloupe",
+      "America/Guatemala",
+      "America/Guayaquil",
+      "America/Guyana",
+      "America/Halifax",
+      "America/Havana",
+      "America/Hermosillo",
+      "America/Indiana/Indianapolis",
+      "America/Indiana/Knox",
+      "America/Indiana/Marengo",
+      "America/Indiana/Petersburg",
+      "America/Indiana/Tell_City",
+      "America/Indiana/Vevay",
+      "America/Indiana/Vincennes",
+      "America/Indiana/Winamac",
+      "America/Indianapolis",
+      "America/Inuvik",
+      "America/Iqaluit",
+      "America/Jamaica",
+      "America/Jujuy",
+      "America/Juneau",
+      "America/Kentucky/Louisville",
+      "America/Kentucky/Monticello",
+      "America/Knox_IN",
+      "America/Kralendijk",
+      "America/La_Paz",
+      "America/Lima",
+      "America/Los_Angeles",
+      "America/Louisville",
+      "America/Lower_Princes",
+      "America/Maceio",
+      "America/Managua",
+      "America/Manaus",
+      "America/Marigot",
+      "America/Martinique",
+      "America/Matamoros",
+      "America/Mazatlan",
+      "America/Mendoza",
+      "America/Menominee",
+      "America/Merida",
+      "America/Metlakatla",
+      "America/Mexico_City",
+      "America/Miquelon",
+      "America/Moncton",
+      "America/Monterrey",
+      "America/Montevideo",
+      "America/Montreal",
+      "America/Montserrat",
+      "America/Nassau",
+      "America/New_York",
+      "America/Nipigon",
+      "America/Nome",
+      "America/Noronha",
+      "America/North_Dakota/Beulah",
+      "America/North_Dakota/Center",
+      "America/North_Dakota/New_Salem",
+      "America/Nuuk",
+      "America/Ojinaga",
+      "America/Panama",
+      "America/Pangnirtung",
+      "America/Paramaribo",
+      "America/Phoenix",
+      "America/Port-au-Prince",
+      "America/Port_of_Spain",
+      "America/Porto_Acre",
+      "America/Porto_Velho",
+      "America/Puerto_Rico",
+      "America/Punta_Arenas",
+      "America/Rainy_River",
+      "America/Rankin_Inlet",
+      "America/Recife",
+      "America/Regina",
+      "America/Resolute",
+      "America/Rio_Branco",
+      "America/Rosario",
+      "America/Santa_Isabel",
+      "America/Santarem",
+      "America/Santiago",
+      "America/Santo_Domingo",
+      "America/Sao_Paulo",
+      "America/Scoresbysund",
+      "America/Shiprock",
+      "America/Sitka",
+      "America/St_Barthelemy",
+      "America/St_Johns",
+      "America/St_Kitts",
+      "America/St_Lucia",
+      "America/St_Thomas",
+      "America/St_Vincent",
+      "America/Swift_Current",
+      "America/Tegucigalpa",
+      "America/Thule",
+      "America/Thunder_Bay",
+      "America/Tijuana",
+      "America/Toronto",
+      "America/Tortola",
+      "America/Vancouver",
+      "America/Virgin",
+      "America/Whitehorse",
+      "America/Winnipeg",
+      "America/Yakutat",
+      "America/Yellowknife",
+      "Antarctica/Casey",
+      "Antarctica/Davis",
+      "Antarctica/DumontDUrville",
+      "Antarctica/Macquarie",
+      "Antarctica/Mawson",
+      "Antarctica/McMurdo",
+      "Antarctica/Palmer",
+      "Antarctica/Rothera",
+      "Antarctica/South_Pole",
+      "Antarctica/Syowa",
+      "Antarctica/Troll",
+      "Antarctica/Vostok",
+      "Arctic/Longyearbyen",
+      "Asia/Aden",
+      "Asia/Almaty",
+      "Asia/Amman",
+      "Asia/Anadyr",
+      "Asia/Aqtau",
+      "Asia/Aqtobe",
+      "Asia/Ashgabat",
+      "Asia/Ashkhabad",
+      "Asia/Atyrau",
+      "Asia/Baghdad",
+      "Asia/Bahrain",
+      "Asia/Baku",
+      "Asia/Bangkok",
+      "Asia/Barnaul",
+      "Asia/Beirut",
+      "Asia/Bishkek",
+      "Asia/Brunei",
+      "Asia/Calcutta",
+      "Asia/Chita",
+      "Asia/Choibalsan",
+      "Asia/Chongqing",
+      "Asia/Chungking",
+      "Asia/Colombo",
+      "Asia/Dacca",
+      "Asia/Damascus",
+      "Asia/Dhaka",
+      "Asia/Dili",
+      "Asia/Dubai",
+      "Asia/Dushanbe",
+      "Asia/Famagusta",
+      "Asia/Gaza",
+      "Asia/Harbin",
+      "Asia/Hebron",
+      "Asia/Ho_Chi_Minh",
+      "Asia/Hong_Kong",
+      "Asia/Hovd",
+      "Asia/Irkutsk",
+      "Asia/Istanbul",
+      "Asia/Jakarta",
+      "Asia/Jayapura",
+      "Asia/Jerusalem",
+      "Asia/Kabul",
+      "Asia/Kamchatka",
+      "Asia/Karachi",
+      "Asia/Kashgar",
+      "Asia/Kathmandu",
+      "Asia/Katmandu",
+      "Asia/Khandyga",
+      "Asia/Kolkata",
+      "Asia/Krasnoyarsk",
+      "Asia/Kuala_Lumpur",
+      "Asia/Kuching",
+      "Asia/Kuwait",
+      "Asia/Macao",
+      "Asia/Macau",
+      "Asia/Magadan",
+      "Asia/Makassar",
+      "Asia/Manila",
+      "Asia/Muscat",
+      "Asia/Nicosia",
+      "Asia/Novokuznetsk",
+      "Asia/Novosibirsk",
+      "Asia/Omsk",
+      "Asia/Oral",
+      "Asia/Phnom_Penh",
+      "Asia/Pontianak",
+      "Asia/Pyongyang",
+      "Asia/Qatar",
+      "Asia/Qostanay",
+      "Asia/Qyzylorda",
+      "Asia/Rangoon",
+      "Asia/Riyadh",
+      "Asia/Saigon",
+      "Asia/Sakhalin",
+      "Asia/Samarkand",
+      "Asia/Seoul",
+      "Asia/Shanghai",
+      "Asia/Singapore",
+      "Asia/Srednekolymsk",
+      "Asia/Taipei",
+      "Asia/Tashkent",
+      "Asia/Tbilisi",
+      "Asia/Tehran",
+      "Asia/Tel_Aviv",
+      "Asia/Thimbu",
+      "Asia/Thimphu",
+      "Asia/Tokyo",
+      "Asia/Tomsk",
+      "Asia/Ujung_Pandang",
+      "Asia/Ulaanbaatar",
+      "Asia/Ulan_Bator",
+      "Asia/Urumqi",
+      "Asia/Ust-Nera",
+      "Asia/Vientiane",
+      "Asia/Vladivostok",
+      "Asia/Yakutsk",
+      "Asia/Yangon",
+      "Asia/Yekaterinburg",
+      "Asia/Yerevan",
+      "Atlantic/Azores",
+      "Atlantic/Bermuda",
+      "Atlantic/Canary",
+      "Atlantic/Cape_Verde",
+      "Atlantic/Faeroe",
+      "Atlantic/Faroe",
+      "Atlantic/Jan_Mayen",
+      "Atlantic/Madeira",
+      "Atlantic/Reykjavik",
+      "Atlantic/South_Georgia",
+      "Atlantic/St_Helena",
+      "Atlantic/Stanley",
+      "Australia/ACT",
+      "Australia/Adelaide",
+      "Australia/Brisbane",
+      "Australia/Broken_Hill",
+      "Australia/Canberra",
+      "Australia/Currie",
+      "Australia/Darwin",
+      "Australia/Eucla",
+      "Australia/Hobart",
+      "Australia/LHI",
+      "Australia/Lindeman",
+      "Australia/Lord_Howe",
+      "Australia/Melbourne",
+      "Australia/NSW",
+      "Australia/North",
+      "Australia/Perth",
+      "Australia/Queensland",
+      "Australia/South",
+      "Australia/Sydney",
+      "Australia/Tasmania",
+      "Australia/Victoria",
+      "Australia/West",
+      "Australia/Yancowinna",
+      "Brazil/Acre",
+      "Brazil/DeNoronha",
+      "Brazil/East",
+      "Brazil/West",
+      "CET",
+      "CST6CDT",
+      "Canada/Atlantic",
+      "Canada/Central",
+      "Canada/Eastern",
+      "Canada/Mountain",
+      "Canada/Newfoundland",
+      "Canada/Pacific",
+      "Canada/Saskatchewan",
+      "Canada/Yukon",
+      "Chile/Continental",
+      "Chile/EasterIsland",
+      "Cuba",
+      "EET",
+      "EST",
+      "EST5EDT",
+      "Egypt",
+      "Eire",
+      "Etc/GMT",
+      "Etc/GMT+0",
+      "Etc/GMT+1",
+      "Etc/GMT+10",
+      "Etc/GMT+11",
+      "Etc/GMT+12",
+      "Etc/GMT+2",
+      "Etc/GMT+3",
+      "Etc/GMT+4",
+      "Etc/GMT+5",
+      "Etc/GMT+6",
+      "Etc/GMT+7",
+      "Etc/GMT+8",
+      "Etc/GMT+9",
+      "Etc/GMT-0",
+      "Etc/GMT-1",
+      "Etc/GMT-10",
+      "Etc/GMT-11",
+      "Etc/GMT-12",
+      "Etc/GMT-13",
+      "Etc/GMT-14",
+      "Etc/GMT-2",
+      "Etc/GMT-3",
+      "Etc/GMT-4",
+      "Etc/GMT-5",
+      "Etc/GMT-6",
+      "Etc/GMT-7",
+      "Etc/GMT-8",
+      "Etc/GMT-9",
+      "Etc/GMT0",
+      "Etc/Greenwich",
+      "Etc/UCT",
+      "Etc/UTC",
+      "Etc/Universal",
+      "Etc/Zulu",
+      "Europe/Amsterdam",
+      "Europe/Andorra",
+      "Europe/Astrakhan",
+      "Europe/Athens",
+      "Europe/Belfast",
+      "Europe/Belgrade",
+      "Europe/Berlin",
+      "Europe/Bratislava",
+      "Europe/Brussels",
+      "Europe/Bucharest",
+      "Europe/Budapest",
+      "Europe/Busingen",
+      "Europe/Chisinau",
+      "Europe/Copenhagen",
+      "Europe/Dublin",
+      "Europe/Gibraltar",
+      "Europe/Guernsey",
+      "Europe/Helsinki",
+      "Europe/Isle_of_Man",
+      "Europe/Istanbul",
+      "Europe/Jersey",
+      "Europe/Kaliningrad",
+      "Europe/Kiev",
+      "Europe/Kirov",
+      "Europe/Kyiv",
+      "Europe/Lisbon",
+      "Europe/Ljubljana",
+      "Europe/London",
+      "Europe/Luxembourg",
+      "Europe/Madrid",
+      "Europe/Malta",
+      "Europe/Mariehamn",
+      "Europe/Minsk",
+      "Europe/Monaco",
+      "Europe/Moscow",
+      "Europe/Nicosia",
+      "Europe/Oslo",
+      "Europe/Paris",
+      "Europe/Podgorica",
+      "Europe/Prague",
+      "Europe/Riga",
+      "Europe/Rome",
+      "Europe/Samara",
+      "Europe/San_Marino",
+      "Europe/Sarajevo",
+      "Europe/Saratov",
+      "Europe/Simferopol",
+      "Europe/Skopje",
+      "Europe/Sofia",
+      "Europe/Stockholm",
+      "Europe/Tallinn",
+      "Europe/Tirane",
+      "Europe/Tiraspol",
+      "Europe/Ulyanovsk",
+      "Europe/Uzhgorod",
+      "Europe/Vaduz",
+      "Europe/Vatican",
+      "Europe/Vienna",
+      "Europe/Vilnius",
+      "Europe/Volgograd",
+      "Europe/Warsaw",
+      "Europe/Zagreb",
+      "Europe/Zaporozhye",
+      "Europe/Zurich",
+      "Factory",
+      "GB",
+      "GB-Eire",
+      "GMT",
+      "GMT+0",
+      "GMT-0",
+      "GMT0",
+      "Greenwich",
+      "HST",
+      "Hongkong",
+      "Iceland",
+      "Indian/Antananarivo",
+      "Indian/Chagos",
+      "Indian/Christmas",
+      "Indian/Cocos",
+      "Indian/Comoro",
+      "Indian/Kerguelen",
+      "Indian/Mahe",
+      "Indian/Maldives",
+      "Indian/Mauritius",
+      "Indian/Mayotte",
+      "Indian/Reunion",
+      "Iran",
+      "Israel",
+      "Jamaica",
+      "Japan",
+      "Kwajalein",
+      "Libya",
+      "MET",
+      "MST",
+      "MST7MDT",
+      "Mexico/BajaNorte",
+      "Mexico/BajaSur",
+      "Mexico/General",
+      "NZ",
+      "NZ-CHAT",
+      "Navajo",
+      "PRC",
+      "PST8PDT",
+      "Pacific/Apia",
+      "Pacific/Auckland",
+      "Pacific/Bougainville",
+      "Pacific/Chatham",
+      "Pacific/Chuuk",
+      "Pacific/Easter",
+      "Pacific/Efate",
+      "Pacific/Enderbury",
+      "Pacific/Fakaofo",
+      "Pacific/Fiji",
+      "Pacific/Funafuti",
+      "Pacific/Galapagos",
+      "Pacific/Gambier",
+      "Pacific/Guadalcanal",
+      "Pacific/Guam",
+      "Pacific/Honolulu",
+      "Pacific/Johnston",
+      "Pacific/Kanton",
+      "Pacific/Kiritimati",
+      "Pacific/Kosrae",
+      "Pacific/Kwajalein",
+      "Pacific/Majuro",
+      "Pacific/Marquesas",
+      "Pacific/Midway",
+      "Pacific/Nauru",
+      "Pacific/Niue",
+      "Pacific/Norfolk",
+      "Pacific/Noumea",
+      "Pacific/Pago_Pago",
+      "Pacific/Palau",
+      "Pacific/Pitcairn",
+      "Pacific/Pohnpei",
+      "Pacific/Ponape",
+      "Pacific/Port_Moresby",
+      "Pacific/Rarotonga",
+      "Pacific/Saipan",
+      "Pacific/Samoa",
+      "Pacific/Tahiti",
+      "Pacific/Tarawa",
+      "Pacific/Tongatapu",
+      "Pacific/Truk",
+      "Pacific/Wake",
+      "Pacific/Wallis",
+      "Pacific/Yap",
+      "Poland",
+      "Portugal",
+      "ROC",
+      "ROK",
+      "Singapore",
+      "Turkey",
+      "UCT",
+      "US/Alaska",
+      "US/Aleutian",
+      "US/Arizona",
+      "US/Central",
+      "US/East-Indiana",
+      "US/Eastern",
+      "US/Hawaii",
+      "US/Indiana-Starke",
+      "US/Michigan",
+      "US/Mountain",
+      "US/Pacific",
+      "US/Samoa",
+      "UTC",
+      "Universal",
+      "W-SU",
+      "WET",
+      "Zulu"
+    ],
+    "ISO 4217": [
+      "AED",
+      "AFN",
+      "ALL",
+      "AMD",
+      "AOA",
+      "ARS",
+      "AUD",
+      "AWG",
+      "AZN",
+      "BAM",
+      "BBD",
+      "BDT",
+      "BHD",
+      "BIF",
+      "BMD",
+      "BND",
+      "BOB",
+      "BOV",
+      "BRL",
+      "BSD",
+      "BTN",
+      "BWP",
+      "BYN",
+      "BZD",
+      "CAD",
+      "CDF",
+      "CHE",
+      "CHF",
+      "CHW",
+      "CLF",
+      "CLP",
+      "CNY",
+      "COP",
+      "COU",
+      "CRC",
+      "CUP",
+      "CVE",
+      "CZK",
+      "DJF",
+      "DKK",
+      "DOP",
+      "DZD",
+      "EGP",
+      "ERN",
+      "ETB",
+      "EUR",
+      "FJD",
+      "FKP",
+      "GBP",
+      "GEL",
+      "GHS",
+      "GIP",
+      "GMD",
+      "GNF",
+      "GTQ",
+      "GYD",
+      "HKD",
+      "HNL",
+      "HTG",
+      "HUF",
+      "IDR",
+      "ILS",
+      "INR",
+      "IQD",
+      "IRR",
+      "ISK",
+      "JMD",
+      "JOD",
+      "JPY",
+      "KES",
+      "KGS",
+      "KHR",
+      "KMF",
+      "KPW",
+      "KRW",
+      "KWD",
+      "KYD",
+      "KZT",
+      "LAK",
+      "LBP",
+      "LKR",
+      "LRD",
+      "LSL",
+      "LYD",
+      "MAD",
+      "MDL",
+      "MGA",
+      "MKD",
+      "MMK",
+      "MNT",
+      "MOP",
+      "MRU",
+      "MUR",
+      "MVR",
+      "MWK",
+      "MXN",
+      "MXV",
+      "MYR",
+      "MZN",
+      "NAD",
+      "NGN",
+      "NIO",
+      "NOK",
+      "NPR",
+      "NZD",
+      "OMR",
+      "PAB",
+      "PEN",
+      "PGK",
+      "PHP",
+      "PKR",
+      "PLN",
+      "PYG",
+      "QAR",
+      "RON",
+      "RSD",
+      "RUB",
+      "RWF",
+      "SAR",
+      "SBD",
+      "SCR",
+      "SDG",
+      "SEK",
+      "SGD",
+      "SHP",
+      "SLE",
+      "SOS",
+      "SRD",
+      "SSP",
+      "STN",
+      "SVC",
+      "SYP",
+      "SZL",
+      "THB",
+      "TJS",
+      "TMT",
+      "TND",
+      "TOP",
+      "TRY",
+      "TTD",
+      "TWD",
+      "TZS",
+      "UAH",
+      "UGX",
+      "USD",
+      "USN",
+      "UYI",
+      "UYU",
+      "UYW",
+      "UZS",
+      "VED",
+      "VES",
+      "VND",
+      "VUV",
+      "WST",
+      "XAD",
+      "XAF",
+      "XAG",
+      "XAU",
+      "XBA",
+      "XBB",
+      "XBC",
+      "XBD",
+      "XCD",
+      "XCG",
+      "XDR",
+      "XOF",
+      "XPD",
+      "XPF",
+      "XPT",
+      "XSU",
+      "XTS",
+      "XUA",
+      "XXX",
+      "YER",
+      "ZAR",
+      "ZMW",
+      "ZWG"
+    ]
   }
 };
 
