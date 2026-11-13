@@ -1,3 +1,4 @@
+import { loadPrograms } from "../src/rule-programs.ts";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -77,7 +78,7 @@ test("a second desk-test set in its own folder is judged by every engine with no
         { example: "s-phases.yaml", path: "/commitment/phases", kind: "undefined_key", reason: "`Commitment` has no `phases`." },
       ],
       undecided: copies.map(([, to]) => ({ example: to, path: "", rule: "rule:5.4:3a677601", reason: "A line item alone shows no proposal status." })),
-      sdk_gaps: [{ example: "s-no-multiplier.yaml", path: "/delivery_counting", rule: "rule:5.6.4:e58650b7", reason: "No schema states the condition." }],
+      sdk_gaps: [],
       checker_only: [],
     };
     writeFileSync(join(set, "expected.yaml"), stringify(expected));
@@ -95,23 +96,24 @@ test("a second desk-test set in its own folder is judged by every engine with no
       sdks.map((s) => s.label.replace(/ \(.*\)$/, "")),
       ["the TypeScript SDK", "the Python SDK", "the Go SDK"],
     );
-    const input = { set: loaded, model: MODEL, files: FILES, schemaDir: SCHEMA_DIR, payloads, codes: codesOf(KERNEL.lists!), ruleChecks: RULE_CHECKS, checker, sdks };
+    const sdkRules = new Set(Object.keys(loadPrograms(SPEC).rules));
+    const input = { set: loaded, model: MODEL, files: FILES, schemaDir: SCHEMA_DIR, payloads, codes: codesOf(KERNEL.lists!), ruleChecks: RULE_CHECKS, checker, sdks, sdkRules };
     const r = checkDeskTests(input);
     assert.deepEqual(r.problems, []);
     for (const v of r.verdicts) {
       const want = v.example === "s-clean.yaml" ? [] : v.example === "s-phases.yaml" ? ["/commitment/phases"] : ["/delivery_counting"];
       assert.equal(v.checker, want.length === 0 ? "clean" : `rejected at ${want.join(", ")}`, v.example);
-      // The SDKs accept the rule's finding, as the schema does; the SDK gap records it.
-      const sdkWant = v.example === "s-phases.yaml" ? "rejected at /commitment/phases" : "clean";
+      // The SDKs reject the rule's finding too: they run its program on the line item.
+      const sdkWant = want.length === 0 ? "clean" : `rejected at ${want.join(", ")}`;
       assert.deepEqual(Object.values(v.sdks), [sdkWant, sdkWant, sdkWant], v.example);
     }
 
     // A verdict an SDK doesn't reach fails the set, named by that SDK.
     const accepting: CheckerRun[] = sdks.map((s) => (s.label.startsWith("the Go SDK") ? { ...s, failures: s.failures.filter((f) => f.example !== "s-phases.yaml") } : s));
     assert.match(checkDeskTests({ ...input, sdks: accepting }).problems.join("\n"), /^s-phases\.yaml \/commitment\/phases: the Go SDK \(go[0-9.]+\) doesn't reject it there$/m);
-    // An expected file that drops the SDK gap holds the SDKs to the rule they don't check.
-    const noGap = checkDeskTests({ ...input, set: { ...loaded, sdk_gaps: [] } }).problems;
-    assert.equal(noGap.filter((p) => p.includes("so record rule:5.6.4:e58650b7 there under sdk_gaps")).length, 3, noGap.join("\n"));
+    // An expected file that records an SDK gap for the rule fails: the SDKs check it, from its program.
+    const gap = checkDeskTests({ ...input, set: { ...loaded, sdk_gaps: [{ example: "s-no-multiplier.yaml", path: "/delivery_counting", rule: "rule:5.6.4:e58650b7", reason: "No schema states the condition." }] } }).problems;
+    assert.ok(gap.some((p) => p.includes("records an SDK gap for rule:5.6.4:e58650b7, which the SDKs check now, from its program")), gap.join("\n"));
 
     // The gate takes every set of the lock in one run, the second set first, and passes on both.
     const iab = loadDeskTests(join(IAB, "expected.yaml"));
@@ -119,7 +121,7 @@ test("a second desk-test set in its own folder is judged by every engine with no
     const iabInput = { ...input, set: iab, payloads: iabPayloads, checker: await runDeskChecker(lock, iab, join(work, "iab-checker")), sdks: await runDeskSdks(iab, iabPayloads, SDKS, join(work, "iab-sdks")) };
     const gate = await deskTests.check({ sets: [input, iabInput] });
     assert.deepEqual(gate.problems, []);
-    assert.match(gate.note ?? "", /^a-second-set: 3 payloads, 1 clean and 2 rejected, .*; iab-au-2026-11: 23 payloads, 14 clean and 9 rejected, .* and the Go SDK \(go[0-9.]+\); 1 recorded SDK gap; 0 recorded checker-only findings; 23 recorded undecided; 0 mismatches$/);
+    assert.match(gate.note ?? "", /^a-second-set: 3 payloads, 1 clean and 2 rejected, .*; iab-au-2026-11: 23 payloads, 14 clean and 9 rejected, .* and the Go SDK \(go[0-9.]+\); 0 recorded SDK gaps; 0 recorded checker-only findings; 23 recorded undecided; 0 mismatches$/);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
@@ -175,7 +177,8 @@ test("desk:add copies a folder's payloads, judges them with every engine, and dr
       ["dooh-v2-p11-c-no-multiplier.yaml", "/delivery_counting", "rule", REVIEW_MARK],
       ["dooh-v2-p8-phases.yaml", "/commitment/phases", "undefined_key", REVIEW_MARK],
     ]);
-    assert.deepEqual(set.sdk_gaps.map((g) => [g.example, g.path, g.rule]), [["dooh-v2-p11-c-no-multiplier.yaml", "/delivery_counting", "rule:5.6.4:e58650b7"]]);
+    // Every SDK runs p11's rule, from its program, so the draft records no SDK gap.
+    assert.deepEqual(set.sdk_gaps, []);
     assert.ok(set.undecided.every((u) => u.reason === REVIEW_MARK) && set.undecided.length === 4);
     // The README quotes what the files say of themselves, and leaves the attribution to the reviewer.
     assert.match(set.readme ?? "", /^> THEORETICAL\. Every screen, id, coordinate, domain and figure is invented\.$/m);
@@ -187,15 +190,15 @@ test("desk:add copies a folder's payloads, judges them with every engine, and dr
     const checker = await runDeskChecker(lock, set, join(dir, "work", "gate-checker"));
     const sdks = await runDeskSdks(set, payloads, SDKS, join(dir, "work", "gate-sdks"));
     const problems = checkDeskTests({ set, model: MODEL, files: FILES, schemaDir: SCHEMA_DIR, payloads, codes: codesOf(KERNEL.lists!), ruleChecks: RULE_CHECKS, checker, sdks }).problems;
-    assert.equal(problems.filter((p) => p.includes(`the reason is "${REVIEW_MARK}"`)).length, 2 + 1 + 4, problems.join("\n"));
+    assert.equal(problems.filter((p) => p.includes(`the reason is "${REVIEW_MARK}"`)).length, 2 + 4, problems.join("\n"));
     assert.ok(problems.some((p) => p.includes(`README.md: holds "${REVIEW_MARK}"`)));
-    assert.equal(problems.length, 2 + 1 + 4 + 1, problems.join("\n"));
+    assert.equal(problems.length, 2 + 4 + 1, problems.join("\n"));
 
     // A payload the engines disagree on, as the integral float was before 6d5a6f9, where the checker rejected it: the draft
     // leaves it out, and reports where each engine rejects it.
     const schemas = checkExamples({ model: MODEL, files: FILES, schemaDir: SCHEMA_DIR, examples: set.examples.map((id) => ({ id, ir: "desk:a-new-set", object: "LineItem", part: false })), values: payloads, codes: codesOf(KERNEL.lists!), ruleChecks: RULE_CHECKS });
     const older = { ...checker, failures: [...checker.failures, { example: "float-code.yaml", path: "/pricing/0/price_type", message: "is not Integer" }] };
-    const d = draftExpected({ set: { ...set, findings: [], undecided: [], sdk_gaps: [], checker_only: [] }, failures: schemas.failures, undecided: schemas.checks.undecided, checker: older, sdks });
+    const d = draftExpected({ set: { ...set, findings: [], undecided: [], sdk_gaps: [], checker_only: [] }, failures: schemas.failures, undecided: schemas.checks.undecided, checker: older, sdks, sdkRules: new Set(Object.keys(loadPrograms(SPEC).rules)) });
     assert.deepEqual(d.disagreements.map((x) => [x.example, x.engines.map((e) => e.paths.join(" "))]), [["float-code.yaml", ["", "/pricing/0/price_type", "", "", ""]]]);
     assert.deepEqual(d.expected.examples, ["dooh-v2-b-pg.yaml", "dooh-v2-p11-c-no-multiplier.yaml", "dooh-v2-p8-phases.yaml"]);
     // A set is added once.

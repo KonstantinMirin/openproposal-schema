@@ -166,7 +166,7 @@ func (LineItem) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkRequired(m, at, errs, "channel", "line_item_id", "pricing", "status", "transaction_mechanism", "visibility")
 	checkClosed(m, at, errs, "accepted_exclusions", "activation_route", "addressable_scale", "agreement", "approval", "assets", "audiences", "availability", "billing", "break_position", "buyer_requirements", "buyer_supplied", "cancellation_policy", "channel", "commitment", "commitment_bounds", "committed_metrics", "controlling_measurement", "creative_delivery", "creative_policy", "daypart", "deal_origin", "delivery_counting", "device", "eligible_buyers", "eligible_seats", "environments", "episodes", "exclusions", "exclusivity", "ext", "external_references", "format_specs", "formats", "frequency_cap", "geo", "hold", "hold_terms", "line_item_id", "markets", "materials_due", "measurement_source", "placement", "preemption", "pricing", "production", "programs", "properties", "renewal_right", "reporting", "required_credentials", "retention", "serving_mode", "serving_platform", "shortfall_remedy", "sov_basis", "sov_share", "status", "terms_refs", "time_zone", "transaction_mechanism", "visibility")
-	checkRules(v, at, errs, "sentence:5.6.1:78efd2ce", "sentence:5.6.5:03d899cb", "sentence:5.6.5:10182d60", "sentence:5.6.5:4804c1fd", "sentence:5.6.5:aa43e614", "sentence:5.6.5:d956510e")
+	checkRules(v, at, errs, "rule:5.6.4:e58650b7", "sentence:5.6.1:78efd2ce", "sentence:5.6.5:03d899cb", "sentence:5.6.5:10182d60", "sentence:5.6.5:4804c1fd", "sentence:5.6.5:aa43e614", "sentence:5.6.5:d956510e")
 	if x, ok := m["accepted_exclusions"]; ok {
 		validateAs[AcceptedExclusions](x, member(at, "accepted_exclusions"), errs)
 	}

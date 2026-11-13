@@ -1071,10 +1071,8 @@ ${PROVENANCE_NAMES.map(([k, c]) => `${comment(`${c} is ${docs[k][0]!.toLowerCase
   });
   files.push({ path: `${n.pkg}/runtime.go`, text: RUNTIME(lock, n) });
   if (sdk.programs !== undefined) {
-    const raw = (text: string) => {
-      if (text.includes("`")) throw new Error("a rule program or the time zone table holds a backtick, which a Go raw string can't");
-      return `\`${text}\``;
-    };
+    // A raw string can't hold a backtick, so each one, as a message's code span, is a quoted "`" between raw strings.
+    const raw = (text: string) => text.split("`").map((part) => `\`${part}\``).join(' + "`" + ');
     files.push({
       path: `${n.pkg}/rules.go`,
       text: `${header(lock, n.short)}package ${n.pkg}\n\n// The rule programs the types check, and the evaluator that reads them (the\n// repository's src/rule-program.ts, in Go), with the UTC offsets of the IANA\n// time zone database release the schemas pin.\n\n${GO_EVALUATOR}\n// programsJSON holds the programs of the rules the types check, and their shared definitions.\nconst programsJSON = ${raw(JSON.stringify(sdk.programs))}\n\n// zonesJSON holds the UTC offsets of the IANA time zone database release the schemas pin.\nconst zonesJSON = ${raw(readFileSync(zoneTableFile(), "utf8").trim())}\n`,

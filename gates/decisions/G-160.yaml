@@ -1,0 +1,68 @@
+format: 1
+id: G-160
+date: 2026-11-13
+question: How does a rule whose check reads the value that holds its owner, as § 5.6.4's `impression_multiplier`, run in every SDK, and how does CI hold the SDKs to its vectors, which give that holder as context?
+decision: >-
+  A rule program may name its owner's holder, `on`, as `LineItem` for a
+  rule on its `delivery_counting` that reads its `pricing`: the program
+  reads the holder's value as ["up"], and ["given", key] says whether the
+  holder shows a member. The SDK emitters attach the rule to the holder's
+  type, with the places of the owner's values in it, which the model gives
+  (src/rule-places.ts: each the members from the holder, `*` for a list's
+  items or a map's values, stopping at a nested holder); each runtime runs
+  the program on every owner value at those places and reports each
+  violation at its place. The gates' check gives the program its holder
+  from the check's context: the nearest holder whole, as the examples gate
+  gives a value's holders, or the members a vector gives, such as
+  `LineItem.pricing`; a program's `undecided`, where it holds, makes the
+  check undecided and the SDK silent, so a vector that shows too little
+  stays undecided as it was. The sdk-rules gate checks each vector of such
+  a rule in its holder's least type example, with the members the context
+  gives and the vector's value at the owner's first place, and fails where
+  the rule's own verdict doesn't hold there; the parity and location cases
+  count the programs on every value of a type a program runs on, wherever
+  it sits. `rule:5.6.4:e58650b7` is the first such program, and its check
+  written in TypeScript is gone; a rule with a program and a written check
+  throws, so one definition decides each rule. The operations gain `up`,
+  `given`, `keys`, and `contains` on text. IAB Australia's p11 is rejected
+  at `/delivery_counting` by all five engines, and its SDK gap is gone; the
+  desk-test fixtures for SDK gaps start from a copy of the set as it stood
+  with the gap.
+rationale: >-
+  No check is weaker: the rule's vectors keep their verdicts in the rules
+  gate, now from its program; the SDKs reject what it rejects, which they
+  accepted before, three more of the stack's 208 single-payload rule
+  vectors, 152 in each SDK; the gate that held the gap now holds the SDKs
+  to the finding; and each SDK-gap fixture still fails its gate. The other
+  fingerprints change because their code includes the rule checks or the
+  evaluator. The generated code that changes is the two stack trees': the
+  line item runs the rule on `delivery_counting` in each SDK, each SDK's
+  evaluator reads holders and places, and the Go programs are written as
+  raw strings joined around each backtick a message holds. The `main` and
+  `with-open-prs` outputs are byte-identical.
+accepts:
+  - { gate: comparison, fingerprint: e300b1ac4f704ca2c9c78ebaf46fcc31a0b8edc521e330515f4fec35f7586d0b }
+  - { gate: desk-tests, fingerprint: 15f6b63c624d072374c10eed79ca6c29deb3376219ab8d607672d399216cc284 }
+  - { gate: examples-validate, fingerprint: c1dbde3fc34238db2118499a64f5cd445050d35793322ea4ff647d37fd0b1b82 }
+  - { gate: extraction, fingerprint: 9c7d319ad5a85170cc848480971e2a2fb8fdb50ee87e3bbd40205a862c26f430 }
+  - { gate: feedback, fingerprint: 5483fa466f7af5dd1f005a3aa75978c28772e611a0e2a21c2c08b305f09e2633 }
+  - { gate: fidelity, fingerprint: 0815f7e4e384c6810a8e78612d9d7f556c6dad07823cf7e46cfec0c0cdab0781 }
+  - { gate: field-examples, fingerprint: 8fd615b290fad4d2c5c5c7f7322a07e4a0ba1ce863496ef4b581e19bfb586a61 }
+  - { gate: guard, fingerprint: 3823758ab27ab9cbbc5c7650908274c7cf3e2f68bbf2e2ca9e758dad02283d61 }
+  - { gate: map-drift, fingerprint: e7c50e46ea911f8efa9cb60f4eae7d31311acdcd28ce3df668d457c53bb9bf40 }
+  - { gate: mapping-bijection, fingerprint: b08dfbd70609ffbc2d1131982efc4c177b86f84add03bc68e2e935f4d53028b6 }
+  - { gate: mapping-location, fingerprint: 1715a13cf895c576c3e4d05c051e4bfd05d3598ef46f81c09778e51fc772e891 }
+  - { gate: mapping-rules, fingerprint: 749294fb4cf550168305c94c7f25189e4b615548808b75c661bc37100de2197a }
+  - { gate: npm-test, fingerprint: 5744a68f91294bfd4f4882d0004bf3b7e82d9d9bba4a4f19a80e96d3ce9831f8 }
+  - { gate: record-wording, fingerprint: 292454a9339c063ccc82306342e9bd21c56edc49b761061ed4d1d8b8f2003daf }
+  - { gate: round-trip, fingerprint: 7ac9a1fd4af4d1406bcbac25a3cdfad3bc6c7716458cd1fce985ea0816315f4a }
+  - { gate: rule-checks, fingerprint: fd79a4e5751d1a97de98a071b3d0d7e3c0434b7fcbac4cc5fcac3d4383df0850 }
+  - { gate: rule-programs, fingerprint: 246a3232dfd17fe5039493810a7c113e4d07acd32cbccd96d73ab1c736fe8fc7 }
+  - { gate: sdk-generate, fingerprint: 84ba4775a4ace2d778fa255d07d92de0d980554def4c2951bfd56e04765cc0cf }
+  - { gate: sdk-locations, fingerprint: a7685d547eddac78b480d13e77304a4c616a2053e9598f26108e2bcdc0ed8b5e }
+  - { gate: sdk-rules, fingerprint: 6199d01f420d8f91f0f56404c1e7b348f889e637c9a0bba42ad9eec652b7d99b }
+  - { gate: site-builds, fingerprint: de0e54b2e439c65870aa2ac4a9cb44072bb275dbc430e8843152a5744751da22 }
+  - { gate: spec-profile, fingerprint: 36038ac6efa6fed31d818c853513abbdde207a0ceb76d94cb5009724242121d6 }
+  - { gate: type-examples-generate, fingerprint: c804a5481c260ad2c7d326d8e60309a67b4eb5438f947d6886c9bcafc197e190 }
+  - { gate: type-examples-valid, fingerprint: 117103b7d9f584751815aedcab671ac00cdea5ade4d32fe7fae8056500d43a5e }
+  - { gate: variant-examples, fingerprint: 85cae90c49743bf050cc60099794f234ee455eb301859c89e3b4c516efbddc8b }

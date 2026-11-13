@@ -24,6 +24,8 @@
         "required": ["owner", "violations"],
         "properties": {
           "owner": { "description": "The type whose values the rule reads, its owner in rules.json.", "type": "string", "pattern": "^[A-Z][A-Za-z0-9]*$" },
+          "on": { "description": "The type that holds the owner's values and whose value the rule reads too, as [\"up\"]; the places of the owner's values in it are the model's.", "type": "string", "pattern": "^[A-Z][A-Za-z0-9]*$" },
+          "undecided": { "description": "Where it holds, the rule can't decide: the holder shows too little of what the rule reads.", "$ref": "#/$defs/expr" },
           "violations": {
             "type": "array",
             "minItems": 1,

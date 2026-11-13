@@ -12,7 +12,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse } from "yaml";
 import { REPO_ROOT } from "./repo.ts";
-import { programProblems, RuleEvaluator, type Programs, type ZoneTable } from "./rule-program.ts";
+import { programProblems, RuleEvaluator, type Holder, type Programs, type ZoneTable } from "./rule-program.ts";
 import type { Check } from "./rule-checks.ts";
 
 export const RULE_PROGRAMS_FILE = "rule-programs.yaml";
@@ -47,12 +47,29 @@ export function loadPrograms(specDir: string): Programs {
   return { defs: doc.defs ?? {}, rules: doc.rules ?? {} };
 }
 
-/** The checks a spec's programs give, by rule ID: each evaluates its rule's program, with the pinned time zone table, read on the first check. */
+/**
+ * The holder a check's context gives a program that names one: the nearest
+ * value of the holder's type whole, where the context holds it, as the
+ * examples gate gives each value's holders, or else the members it gives,
+ * as `LineItem.pricing` in a vector's context.
+ */
+export function holderOf(on: string, context: Record<string, unknown>): Holder {
+  const whole = context[on];
+  if (whole !== null && typeof whole === "object" && !Array.isArray(whole)) return { value: whole, whole: true };
+  const prefix = `${on}.`;
+  return { value: Object.fromEntries(Object.entries(context).filter(([k]) => k.startsWith(prefix)).map(([k, x]) => [k.slice(prefix.length), x])), whole: false };
+}
+
+/** The checks a spec's programs give, by rule ID: each evaluates its rule's program on the owner's value, with its holder from the check's context, and with the pinned time zone table, read on the first check. */
 export function programChecks(specDir: string, root: string = REPO_ROOT): Record<string, Check> {
   const programs = loadPrograms(specDir);
   let ev: RuleEvaluator | null = null;
   const evaluator = () => (ev ??= new RuleEvaluator(programs, loadZoneTable(root)));
-  return Object.fromEntries(Object.keys(programs.rules).sort().map((id) => [id, ((v: unknown) => evaluator().check(id, v)) as Check]));
+  return Object.fromEntries(
+    Object.entries(programs.rules)
+      .sort(([a], [b]) => (a < b ? -1 : 1))
+      .map(([id, p]) => [id, ((v, ctx) => evaluator().check(id, v, p.on === undefined || p.on === p.owner ? null : holderOf(p.on, ctx.context))) as Check]),
+  );
 }
 
 /**

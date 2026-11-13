@@ -112,7 +112,7 @@ def _arith(args: list[Any], f: Any) -> Any:
     return acc
 
 
-def _eval(e: Any, root: Any, vars: dict[str, Any], memo: dict[str, Any]) -> Any:
+def _eval(e: Any, env: dict[str, Any], vars: dict[str, Any]) -> Any:
     if e is None or isinstance(e, (bool, str)):
         return e
     if isinstance(e, (int, float)):
@@ -122,14 +122,19 @@ def _eval(e: Any, root: Any, vars: dict[str, Any], memo: dict[str, Any]) -> Any:
     op, args = e[0], e[1:]
 
     def ev(x: Any, more: dict[str, Any] | None = None) -> Any:
-        return _eval(x, root, {**vars, **(more or {})}, memo)
+        return _eval(x, env, {**vars, **(more or {})})
 
     if op == "$":
-        return root
+        return env["root"]
+    if op == "up":
+        return env["up"]
+    if op == "given":
+        return env["whole"] or (isinstance(env["up"], dict) and args[0] in env["up"])
     if op == "def":
         name = args[0]
+        memo = env["memo"]
         if name not in memo:
-            memo[name] = _eval(PROGRAMS["defs"][name], root, {}, memo)
+            memo[name] = _eval(PROGRAMS["defs"][name], env, {})
         return memo[name]
     if op == "var":
         return vars.get(args[0])
@@ -194,6 +199,8 @@ def _eval(e: Any, root: Any, vars: dict[str, Any], memo: dict[str, Any]) -> Any:
         return Fraction(len(x)) if isinstance(x, list) else None
     if op == "contains":
         x, y = ev(args[0]), ev(args[1])
+        if isinstance(x, str):
+            return isinstance(y, str) and y in x
         return isinstance(x, list) and any(_same(z, y) for z in x)
     if op == "concat":
         parts = [ev(x) for x in args]
@@ -201,6 +208,9 @@ def _eval(e: Any, root: Any, vars: dict[str, Any], memo: dict[str, Any]) -> Any:
     if op == "values":
         x = ev(args[0])
         return [x[k] for k in sorted(x)] if isinstance(x, dict) else None
+    if op == "keys":
+        x = ev(args[0])
+        return sorted(x) if isinstance(x, dict) else None
     if op in ("filter", "sum", "find"):
         x = ev(args[0])
         if not isinstance(x, list):
@@ -228,15 +238,46 @@ def _eval(e: Any, root: Any, vars: dict[str, Any], memo: dict[str, Any]) -> Any:
     raise ValueError(f"no operation {op!r}")
 
 
-def violations(rule: str, value: Any) -> list[tuple[str, str]]:
-    """The violations of one rule on a value of its owner, each as a JSON pointer below the value and a message."""
+def _check(rule: str, value: Any, holder: Any) -> list[tuple[str, str]]:
+    """The violations of one rule on a value of its owner, below it, with its holder's whole value; none where the rule can't decide."""
+    p = PROGRAMS["rules"][rule]
     root = _from_json(value)
-    memo: dict[str, Any] = {}
+    env = {"root": root, "up": root if holder is None else _from_json(holder), "whole": True, "memo": {}}
+    if "undecided" in p and _eval(p["undecided"], env, {}) is True:
+        return []
     out = []
-    for v in PROGRAMS["rules"][rule]["violations"]:
-        if _eval(v["when"], root, {}, memo) is not True:
+    for v in p["violations"]:
+        if _eval(v["when"], env, {}) is not True:
             continue
-        m = _eval(v["message"], root, {}, memo)
+        m = _eval(v["message"], env, {})
         out.append((v["path"], m if isinstance(m, str) else "violates the rule"))
+    return out
+
+
+def _token(k: str) -> str:
+    return k.replace("~", "~0").replace("/", "~1")
+
+
+def violations(rule: str, value: Any) -> list[tuple[str, str]]:
+    """The violations of one rule on a value of the type that runs it, its owner or the owner's holder, each as a JSON pointer below the value and a message."""
+    p = PROGRAMS["rules"][rule]
+    if p.get("on", p["owner"]) == p["owner"]:
+        return _check(rule, value, None)
+    out = []
+    for place in p.get("at", []):
+        here = [("", value)]
+        for seg in place:
+            nxt = []
+            for at, v in here:
+                if seg == "*":
+                    if isinstance(v, list):
+                        nxt.extend((f"{at}/{i}", x) for i, x in enumerate(v))
+                    elif isinstance(v, dict):
+                        nxt.extend((f"{at}/{_token(k)}", v[k]) for k in sorted(v))
+                elif isinstance(v, dict) and seg in v:
+                    nxt.append((f"{at}/{_token(seg)}", v[seg]))
+            here = nxt
+        for at, v in here:
+            out.extend((at + path, m) for path, m in _check(rule, v, value))
     return out
 `;

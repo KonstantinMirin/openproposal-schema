@@ -7,11 +7,19 @@
  * it as it is, and the Python and Go runtimes implement the same semantics.
  *
  * A program reads the value of the rule's owner, `["$"]`, and gives its
- * violations, each at a JSON pointer below the value with a message. An
- * expression is a JSON literal, which is itself, or an operation, an array
- * whose first item names it:
+ * violations, each at a JSON pointer below the value with a message. A rule
+ * whose check reads more than its owner's value names the type that holds
+ * it, `on`, as `LineItem` for a rule on its `delivery_counting` that reads
+ * its `pricing`: the program reads the holder's value as `["up"]`, and runs
+ * on each of the owner's values at the places `at` lists in it. A program's
+ * `undecided`, where it holds, says the rule can't decide: the holder shows
+ * too little of what the rule reads. An expression is a JSON literal, which
+ * is itself, or an operation, an array whose first item names it:
  *
- * - values: `["$"]` the owner's value; `["def", name]` a shared definition,
+ * - values: `["$"]` the owner's value; `["up"]` the holder's, the owner's
+ *   where the program names no holder; `["given", key]` whether the holder
+ *   shows the member, as a whole value does every member, and a holder a
+ *   vector gives in part only those it gives; `["def", name]` a shared definition,
  *   read on the same value; `["var", name]` a name a list operation binds;
  *   `["get", x, key]` a member, `["at", x, i]` an item, absent as `null`;
  *   `["list", ...]` a list; `["table", key, {k: v}]` a literal map's value
@@ -22,7 +30,8 @@
  * - numbers, exact: `add`, `sub`, `mul`, `div`, `floor`; a number from JSON
  *   is the decimal it writes, so `0.1 + 0.2` is `0.3`, and any operation on
  *   `null` gives `null`.
- * - lists and maps: `len`, `contains`, `concat`, `values`, `filter`, `sum`,
+ * - lists and maps: `len`, `contains` (an item of a list, or text in
+ *   text), `concat`, `values`, `keys` (a map's, sorted), `filter`, `sum`,
  *   `find`, each of the last three as `[op, list, name, expression]`.
  * - time: `["instant", s]` the seconds since the epoch an `Instant` names,
  *   or `null`; `["local_day", seconds, zone]` the day number, since
@@ -39,11 +48,11 @@ export type Expr = null | boolean | number | string | Expr[] | { [k: string]: Ex
 
 /** Every operation a program may name, with how many arguments it takes, as [least, most]; `Infinity` for any number. */
 export const OPERATIONS: Record<string, [number, number]> = {
-  $: [0, 0], def: [1, 1], var: [1, 1], get: [2, 2], at: [2, 2], list: [0, Infinity], table: [2, 2],
+  $: [0, 0], up: [0, 0], given: [1, 1], def: [1, 1], var: [1, 1], get: [2, 2], at: [2, 2], list: [0, Infinity], table: [2, 2],
   has: [2, 2], ismap: [1, 1], islist: [1, 1], isnum: [1, 1], isstr: [1, 1], eq: [2, 2], ne: [2, 2], lt: [2, 2], le: [2, 2], gt: [2, 2], ge: [2, 2],
   and: [1, Infinity], or: [1, Infinity], not: [1, 1], if: [3, 3], coalesce: [1, Infinity],
   add: [2, Infinity], sub: [2, 2], mul: [2, Infinity], div: [2, 2], floor: [1, 1],
-  len: [1, 1], contains: [2, 2], concat: [1, Infinity], values: [1, 1], filter: [3, 3], sum: [3, 3], find: [3, 3],
+  len: [1, 1], contains: [2, 2], concat: [1, Infinity], values: [1, 1], keys: [1, 1], filter: [3, 3], sum: [3, 3], find: [3, 3],
   instant: [1, 1], local_day: [2, 2], str: [1, Infinity],
 };
 
@@ -79,19 +88,43 @@ export function programProblems(p: Programs): string[] {
       walk(args[2]!, where, new Set([...bound, String(args[1])]));
       return;
     }
-    if (op === "def" || op === "var") return;
+    if (op === "def" || op === "var" || op === "given") return;
     for (const a of args) walk(a, where, bound);
   };
   for (const [k, e] of Object.entries(p.defs)) walk(e, `defs.${k}`, new Set());
-  for (const [id, r] of Object.entries(p.rules)) r.violations.forEach((v, i) => (walk(v.when, `${id} violation ${i + 1} when`, new Set()), walk(v.message, `${id} violation ${i + 1} message`, new Set())));
+  for (const [id, r] of Object.entries(p.rules)) {
+    if (r.undecided !== undefined) walk(r.undecided, `${id} undecided`, new Set());
+    r.violations.forEach((v, i) => (walk(v.when, `${id} violation ${i + 1} when`, new Set()), walk(v.message, `${id} violation ${i + 1} message`, new Set())));
+  }
   return out;
 }
 
 export interface RuleProgram {
   /** The type whose values the rule reads, its owner in rules.json. */
   owner: string;
+  /** The type that holds the owner's values and whose value the rule reads too, as `["up"]`; the owner where absent. */
+  on?: string;
+  /** The places of the owner's values in a value of `on`, each the members from it, `*` for any item of a list or value of a map, as the model gives them (src/rule-places.ts); written into the SDKs' programs, and absent where `on` is the owner. */
+  at?: string[][];
+  /** Where it holds, the rule can't decide: the gates' check is undecided, and an SDK reports no violation. */
+  undecided?: Expr;
   violations: { when: Expr; path: string; message: Expr }[];
 }
+
+/** The holder of an owner's value: its value, and whether it is whole, as an SDK's is, or the members a vector gives. */
+export interface Holder {
+  value: unknown;
+  whole: boolean;
+}
+
+interface Env {
+  root: Value;
+  up: Value;
+  whole: boolean;
+  memo: Map<string, Value>;
+}
+
+const escapeToken = (t: string) => t.replace(/~/g, "~0").replace(/\//g, "~1");
 
 export interface Programs {
   defs: Record<string, Expr>;
@@ -250,38 +283,75 @@ export class RuleEvaluator {
     return Object.keys(this.programs.rules).sort();
   }
 
-  /** The violations of one rule on one value, each at a JSON pointer below it. */
-  check(rule: string, value: unknown): { path: string; message: string }[] {
+  /**
+   * The violations of one rule on one value of its owner, each at a JSON
+   * pointer below it, with the owner's holder, where the program names one;
+   * null where the rule can't decide.
+   */
+  check(rule: string, value: unknown, holder: Holder | null = null): { path: string; message: string }[] | null {
     const p = this.programs.rules[rule];
     if (!p) throw new Error(`no program for ${rule}`);
     const root = fromJson(value);
-    const memo = new Map<string, Value>();
+    const env: Env = holder === null ? { root, up: root, whole: true, memo: new Map() } : { root, up: fromJson(holder.value), whole: holder.whole, memo: new Map() };
+    if (p.undecided !== undefined && this.eval(p.undecided, env, {}) === true) return null;
     const out: { path: string; message: string }[] = [];
     for (const v of p.violations) {
-      if (this.eval(v.when, root, {}, memo) !== true) continue;
-      const m = this.eval(v.message, root, {}, memo);
+      if (this.eval(v.when, env, {}) !== true) continue;
+      const m = this.eval(v.message, env, {});
       out.push({ path: v.path, message: typeof m === "string" ? m : "violates the rule" });
     }
     return out;
   }
 
-  private eval(e: Expr, root: Value, vars: Record<string, Value>, memo: Map<string, Value>): Value {
+  /**
+   * The violations of one rule on a value of the type that runs it, its
+   * holder, `on`, or its owner: on each of the owner's values at each place
+   * `at` lists, each at a JSON pointer below the holder; none where the rule
+   * can't decide, as an SDK reports.
+   */
+  violations(rule: string, value: unknown): { path: string; message: string }[] {
+    const p = this.programs.rules[rule];
+    if (!p) throw new Error(`no program for ${rule}`);
+    if (p.on === undefined || p.on === p.owner) return this.check(rule, value) ?? [];
+    const out: { path: string; message: string }[] = [];
+    for (const place of p.at ?? []) {
+      let here: [string, unknown][] = [["", value]];
+      for (const seg of place) {
+        const next: [string, unknown][] = [];
+        for (const [at, v] of here) {
+          if (seg === "*") {
+            if (Array.isArray(v)) v.forEach((x, i) => next.push([`${at}/${i}`, x]));
+            else if (v !== null && typeof v === "object") for (const k of Object.keys(v).sort()) next.push([`${at}/${escapeToken(k)}`, (v as Record<string, unknown>)[k]]);
+          } else if (v !== null && typeof v === "object" && !Array.isArray(v) && seg in v) next.push([`${at}/${escapeToken(seg)}`, (v as Record<string, unknown>)[seg]]);
+        }
+        here = next;
+      }
+      for (const [at, v] of here) for (const x of this.check(rule, v, { value, whole: true }) ?? []) out.push({ path: at + x.path, message: x.message });
+    }
+    return out;
+  }
+
+  private eval(e: Expr, env: Env, vars: Record<string, Value>): Value {
     if (e === null || typeof e === "boolean" || typeof e === "string") return e;
     if (typeof e === "number") return decimal(String(e));
     if (!Array.isArray(e)) return fromJson(e);
     const [op, ...args] = e as [string, ...Expr[]];
-    const ev = (x: Expr, more: Record<string, Value> = {}) => this.eval(x, root, { ...vars, ...more }, memo);
+    const ev = (x: Expr, more: Record<string, Value> = {}) => this.eval(x, env, { ...vars, ...more });
     switch (op) {
       case "$":
-        return root;
+        return env.root;
+      case "up":
+        return env.up;
+      case "given":
+        return env.whole || (isObj(env.up) && (args[0] as string) in env.up);
       case "def": {
         const name = args[0] as string;
-        if (!memo.has(name)) {
+        if (!env.memo.has(name)) {
           const d = this.programs.defs[name];
           if (d === undefined) throw new Error(`no definition ${name}`);
-          memo.set(name, this.eval(d, root, {}, memo));
+          env.memo.set(name, this.eval(d, env, {}));
         }
-        return memo.get(name)!;
+        return env.memo.get(name)!;
       }
       case "var":
         return vars[args[0] as string] ?? null;
@@ -362,6 +432,7 @@ export class RuleEvaluator {
       case "contains": {
         const x = ev(args[0]!);
         const y = ev(args[1]!);
+        if (typeof x === "string") return typeof y === "string" && x.includes(y);
         return Array.isArray(x) && x.some((z) => same(z, y));
       }
       case "concat": {
@@ -371,6 +442,10 @@ export class RuleEvaluator {
       case "values": {
         const x = ev(args[0]!);
         return isObj(x) ? Object.keys(x).sort().map((k) => x[k]!) : null;
+      }
+      case "keys": {
+        const x = ev(args[0]!);
+        return isObj(x) ? Object.keys(x).sort() : null;
       }
       case "filter":
       case "sum":
@@ -1154,9 +1229,209 @@ export const PROGRAMS: Programs = {
         "commitment"
       ],
       "derived_units"
+    ],
+    "counts_impressions": [
+      "or",
+      [
+        "ne",
+        [
+          "find",
+          [
+            "coalesce",
+            [
+              "get",
+              [
+                "up"
+              ],
+              "pricing"
+            ],
+            [
+              "list"
+            ]
+          ],
+          "e",
+          [
+            "and",
+            [
+              "ismap",
+              [
+                "var",
+                "e"
+              ]
+            ],
+            [
+              "contains",
+              [
+                "list",
+                "CPM",
+                "CPMV"
+              ],
+              [
+                "get",
+                [
+                  "var",
+                  "e"
+                ],
+                "cost_method"
+              ]
+            ]
+          ]
+        ],
+        null
+      ],
+      [
+        "and",
+        [
+          "ismap",
+          [
+            "get",
+            [
+              "up"
+            ],
+            "availability"
+          ]
+        ],
+        [
+          "contains",
+          [
+            "list",
+            "impressions",
+            "viewable_impressions"
+          ],
+          [
+            "get",
+            [
+              "get",
+              [
+                "up"
+              ],
+              "availability"
+            ],
+            "unit"
+          ]
+        ]
+      ],
+      [
+        "ne",
+        [
+          "find",
+          [
+            "coalesce",
+            [
+              "get",
+              [
+                "up"
+              ],
+              "committed_metrics"
+            ],
+            [
+              "list"
+            ]
+          ],
+          "m",
+          [
+            "and",
+            [
+              "ismap",
+              [
+                "var",
+                "m"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "var",
+                  "m"
+                ],
+                "metric"
+              ],
+              "impressions"
+            ]
+          ]
+        ],
+        null
+      ]
     ]
   },
   "rules": {
+    "rule:5.6.4:e58650b7": {
+      "owner": "DeliveryCounting",
+      "on": "LineItem",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "def",
+            "counts_impressions"
+          ]
+        ],
+        [
+          "not",
+          [
+            "and",
+            [
+              "given",
+              "pricing"
+            ],
+            [
+              "given",
+              "availability"
+            ],
+            [
+              "given",
+              "committed_metrics"
+            ]
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "def",
+              "counts_impressions"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "impression_multiplier"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": [
+            "str",
+            "`impression_multiplier` is REQUIRED here"
+          ]
+        }
+      ],
+      "at": [
+        [
+          "delivery_counting"
+        ]
+      ]
+    },
     "sentence:5.6.1:78efd2ce": {
       "owner": "LineItem",
       "violations": [
@@ -1634,5 +1909,5 @@ export const PROGRAMS: Programs = {
 
 const evaluator = new RuleEvaluator(PROGRAMS, ZONES as ZoneTable);
 
-/** The violations of one rule on a value of its owner, each at a JSON pointer below the value. */
-export const violations = (rule: string, value: unknown): { path: string; message: string }[] => evaluator.check(rule, value);
+/** The violations of one rule on a value of the type that runs it, its owner or the owner's holder, each at a JSON pointer below the value. */
+export const violations = (rule: string, value: unknown): { path: string; message: string }[] => evaluator.violations(rule, value);

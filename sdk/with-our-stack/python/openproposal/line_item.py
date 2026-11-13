@@ -42,7 +42,7 @@ class MediaChannels:
 class LineItem(rt.Closed):
     """The OpenProposal `LineItem` document."""
 
-    __shape__: ClassVar[rt.Shape] = rt.Shape(rules=("sentence:5.6.1:78efd2ce", "sentence:5.6.5:03d899cb", "sentence:5.6.5:10182d60", "sentence:5.6.5:4804c1fd", "sentence:5.6.5:aa43e614", "sentence:5.6.5:d956510e"), conditions=(("channel", "dooh", ("delivery_counting",), ()),))
+    __shape__: ClassVar[rt.Shape] = rt.Shape(rules=("rule:5.6.4:e58650b7", "sentence:5.6.1:78efd2ce", "sentence:5.6.5:03d899cb", "sentence:5.6.5:10182d60", "sentence:5.6.5:4804c1fd", "sentence:5.6.5:aa43e614", "sentence:5.6.5:d956510e"), conditions=(("channel", "dooh", ("delivery_counting",), ()),))
 
     accepted_exclusions: Optional[AcceptedExclusions] = None
     """What the seller can enforce. See below"""

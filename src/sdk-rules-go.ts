@@ -17,6 +17,10 @@ export const GO_EVALUATOR = `import (
 )
 
 type ruleProgram struct {
+	Owner      string     \`json:"owner"\`
+	On         string     \`json:"on"\`
+	At         [][]string \`json:"at"\`
+	Undecided  any        \`json:"undecided"\`
 	Violations []struct {
 		When    any    \`json:"when"\`
 		Path    string \`json:"path"\`
@@ -256,6 +260,7 @@ func arith(args []any, f func(a, b *big.Rat) *big.Rat) any {
 
 type evaluation struct {
 	root any
+	up   any
 	memo map[string]any
 }
 
@@ -282,6 +287,11 @@ func (e *evaluation) eval(x any, vars map[string]any) any {
 		switch op {
 		case "$":
 			return e.root
+		case "up":
+			return e.up
+		case "given":
+			// An SDK's holder is whole: it shows every member.
+			return true
 		case "def":
 			name := args[0].(string)
 			if r, ok := e.memo[name]; ok {
@@ -416,8 +426,13 @@ func (e *evaluation) eval(x any, vars map[string]any) any {
 			}
 			return nil
 		case "contains":
-			l, ok := ev(args[0]).([]any)
+			c := ev(args[0])
 			y := ev(args[1])
+			if s, ok := c.(string); ok {
+				t, ok := y.(string)
+				return ok && strings.Contains(s, t)
+			}
+			l, ok := c.([]any)
 			if !ok {
 				return false
 			}
@@ -453,6 +468,21 @@ func (e *evaluation) eval(x any, vars map[string]any) any {
 			out := make([]any, len(keys))
 			for i, k := range keys {
 				out[i] = m[k]
+			}
+			return out
+		case "keys":
+			m, ok := ev(args[0]).(map[string]any)
+			if !ok {
+				return nil
+			}
+			keys := make([]string, 0, len(m))
+			for k := range m {
+				keys = append(keys, k)
+			}
+			sort.Strings(keys)
+			out := make([]any, len(keys))
+			for i, k := range keys {
+				out[i] = k
 			}
 			return out
 		case "filter", "sum", "find":
@@ -530,20 +560,95 @@ func (e *evaluation) eval(x any, vars map[string]any) any {
 	return nil
 }
 
-// checkRules adds to errs each violation of the rules on v, a value of their owner at at.
+type ruleViolation struct {
+	path    string
+	message string
+}
+
+// check gives the violations of one rule on a value of its owner, below it, with its holder's whole value; none where the rule can't decide.
+func check(id string, v any, holder any) []ruleViolation {
+	p := programs.Rules[id]
+	root := fromJSON(v)
+	e := &evaluation{root: root, up: root, memo: map[string]any{}}
+	if holder != nil {
+		e.up = fromJSON(holder)
+	}
+	if p.Undecided != nil && e.eval(p.Undecided, map[string]any{}) == true {
+		return nil
+	}
+	var out []ruleViolation
+	for _, w := range p.Violations {
+		if e.eval(w.When, map[string]any{}) != true {
+			continue
+		}
+		msg, ok := e.eval(w.Message, map[string]any{}).(string)
+		if !ok {
+			msg = "violates the rule"
+		}
+		out = append(out, ruleViolation{w.Path, msg})
+	}
+	return out
+}
+
+func pointerToken(k string) string {
+	return strings.ReplaceAll(strings.ReplaceAll(k, "~", "~0"), "/", "~1")
+}
+
+// ruleViolations gives the violations of one rule on a value of the type that runs it, its owner or the owner's holder, each at a JSON pointer below the value.
+func ruleViolations(id string, v any) []ruleViolation {
+	p := programs.Rules[id]
+	if p.On == "" || p.On == p.Owner {
+		return check(id, v, nil)
+	}
+	type placed struct {
+		at string
+		v  any
+	}
+	var out []ruleViolation
+	for _, place := range p.At {
+		here := []placed{{"", v}}
+		for _, seg := range place {
+			var next []placed
+			for _, h := range here {
+				switch x := h.v.(type) {
+				case []any:
+					if seg == "*" {
+						for i, y := range x {
+							next = append(next, placed{h.at + "/" + strconv.Itoa(i), y})
+						}
+					}
+				case map[string]any:
+					if seg == "*" {
+						keys := make([]string, 0, len(x))
+						for k := range x {
+							keys = append(keys, k)
+						}
+						sort.Strings(keys)
+						for _, k := range keys {
+							next = append(next, placed{h.at + "/" + pointerToken(k), x[k]})
+						}
+					} else if y, ok := x[seg]; ok {
+						next = append(next, placed{h.at + "/" + pointerToken(seg), y})
+					}
+				}
+			}
+			here = next
+		}
+		for _, h := range here {
+			for _, w := range check(id, h.v, v) {
+				out = append(out, ruleViolation{h.at + w.path, w.message})
+			}
+		}
+	}
+	return out
+}
+
+// checkRules adds to errs each violation of the rules on v, a value of the type that runs them at at.
 func checkRules(v any, at string, errs *Errors, rules ...string) {
 	loadRules()
-	e := &evaluation{root: fromJSON(v), memo: map[string]any{}}
 	for _, id := range rules {
-		for _, w := range programs.Rules[id].Violations {
-			if e.eval(w.When, map[string]any{}) != true {
-				continue
-			}
-			msg, ok := e.eval(w.Message, map[string]any{}).(string)
-			if !ok {
-				msg = "violates the rule"
-			}
-			errs.add(at+w.Path, "%s", msg)
+		for _, w := range ruleViolations(id, v) {
+			errs.add(at+w.path, "%s", w.message)
 		}
 	}
 }

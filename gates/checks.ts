@@ -264,6 +264,22 @@ const onSdk = (language: string, change: (r: CheckerRun) => CheckerRun) => (i: {
     return { ...s, sdks: s.sdks.map((r) => (r.label.startsWith(`the ${language} SDK`) ? change(r) : r)) };
   });
 
+/** p11's finding, `impression_multiplier` REQUIRED on a line item that counts impressions, the SDK gap the set recorded until the SDKs ran the rule's program. */
+const P11 = "dooh-v2-p11-c-no-multiplier.yaml";
+const MULTIPLIER = "rule:5.6.4:e58650b7";
+/**
+ * The IAB set as it stood with an SDK gap, which the gap fixtures change: as
+ * though no program checked p11's rule, so no SDK rejects p11 at
+ * `/delivery_counting`, and the set records the gap.
+ */
+const withGap = (i: { sets: DeskTestsInput[] }) =>
+  onIab(i, (s) => ({
+    ...s,
+    sdkRules: new Set([...(s.sdkRules ?? [])].filter((r) => r !== MULTIPLIER)),
+    sdks: s.sdks.map((r) => ({ ...r, failures: r.failures.filter((f) => !(f.example === P11 && f.path === "/delivery_counting")) })),
+    set: { ...s.set, sdk_gaps: [{ example: P11, path: "/delivery_counting", rule: MULTIPLIER, reason: "No schema states the condition." }] },
+  }));
+
 export const deskTests = defineGate<{ sets: DeskTestsInput[] }>({
   id: "desk-tests",
   title: "desk tests: each payload of each set gets its recorded verdict from the schemas and rules, from the lock's own checker, and from each SDK",
@@ -378,7 +394,7 @@ export const deskTests = defineGate<{ sets: DeskTestsInput[] }>({
     },
     {
       name: "a drafted SDK gap left for review",
-      mutate: (i) => onIab(i, (s) => ({ ...s, set: { ...s.set, sdk_gaps: s.set.sdk_gaps.map((g) => ({ ...g, reason: REVIEW_MARK })) } })),
+      mutate: (i) => onIab(withGap(i), (s) => ({ ...s, set: { ...s.set, sdk_gaps: s.set.sdk_gaps.map((g) => ({ ...g, reason: REVIEW_MARK })) } })),
       expect: 'dooh-v2-p11-c-no-multiplier.yaml /delivery_counting (rule:5.6.4:e58650b7): the reason is "TODO: review"',
     },
     {
@@ -408,17 +424,17 @@ export const deskTests = defineGate<{ sets: DeskTestsInput[] }>({
     },
     {
       name: "an SDK that rejects a payload at a recorded SDK gap",
-      mutate: onSdk("TypeScript", (r) => ({ ...r, failures: [...r.failures, { example: "dooh-v2-p11-c-no-multiplier.yaml", path: "/delivery_counting", message: "a rule the SDK checks now" }] })),
+      mutate: (i) => onSdk("TypeScript", (r) => ({ ...r, failures: [...r.failures, { example: P11, path: "/delivery_counting", message: "a rule the SDK checks now" }] }))(withGap(i)),
       expect: "records under sdk_gaps that no SDK type checks rule:5.6.4:e58650b7; review the verdict and remove the entry",
     },
     {
       name: "a rule's finding the SDK gaps don't record",
-      mutate: (i) => onIab(i, (s) => ({ ...s, set: { ...s.set, sdk_gaps: [] } })),
+      mutate: (i) => onIab(withGap(i), (s) => ({ ...s, set: { ...s.set, sdk_gaps: [] } })),
       expect: "so record rule:5.6.4:e58650b7 there under sdk_gaps, with the reason",
     },
     {
       name: "an SDK gap recorded for a schema's finding",
-      mutate: (i) => onIab(i, (s) => ({ ...s, set: { ...s.set, sdk_gaps: [...s.set.sdk_gaps, { example: "dooh-v2-p8-phases.yaml", path: "/commitment/phases", rule: "rule:5.6.4:e58650b7", reason: "a gap that isn't one" }] } })),
+      mutate: (i) => onIab(withGap(i), (s) => ({ ...s, set: { ...s.set, sdk_gaps: [...s.set.sdk_gaps, { example: "dooh-v2-p8-phases.yaml", path: "/commitment/phases", rule: MULTIPLIER, reason: "a gap that isn't one" }] } })),
       expect: "dooh-v2-p8-phases.yaml /commitment/phases: iab-au-2026-11/expected.yaml records an SDK gap for rule:5.6.4:e58650b7, and the file has no finding of that rule there",
     },
     {

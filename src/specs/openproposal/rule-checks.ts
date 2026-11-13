@@ -36,10 +36,11 @@ function catalogRefs(v: unknown, path: string): string[] {
 const MEASUREMENT_READS = ["placement", "committed_metrics", "environments", "measurement_source"];
 
 
-/** OpenProposal's rule checks, by rule ID. */
-export const RULE_CHECKS: Record<string, Check> = {
-  // The rules whose checks are programs, specs/openproposal/rule-programs.yaml, which the SDKs are generated with too.
-  ...programChecks(specRoot("openproposal")),
+/** The rules whose checks are programs, specs/openproposal/rule-programs.yaml, which the SDKs are generated with too. */
+const PROGRAM_CHECKS = programChecks(specRoot("openproposal"));
+
+/** OpenProposal's rule checks written in TypeScript, by rule ID, which the SDKs don't run. */
+const WRITTEN: Record<string, Check> = {
   // The stack's presence rules (src/specs/openproposal/stack-checks.ts).
   ...STACK_CHECKS,
   // § 2.2: at `agreed`, every `catalog_ref` is resolved into the stored record. A code block that leaves out `status` can't say.
@@ -112,3 +113,9 @@ export const RULE_CHECKS: Record<string, Check> = {
     return types.flatMap((k) => (accepted.has(k) ? [] : [{ path: `/exclusions/${escape(k)}`, message: `\`exclusions_accepted.types\` doesn't list \`${k}\`` }]));
   },
 };
+
+const twice = Object.keys(WRITTEN).filter((id) => id in PROGRAM_CHECKS);
+if (twice.length > 0) throw new Error(`${twice.join(", ")}: a program in specs/openproposal/rule-programs.yaml checks the rule, and so does a check written in TypeScript; one definition decides a rule, so remove the written one`);
+
+/** OpenProposal's rule checks, by rule ID: its programs' and those written in TypeScript. */
+export const RULE_CHECKS: Record<string, Check> = { ...PROGRAM_CHECKS, ...WRITTEN };

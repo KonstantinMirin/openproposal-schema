@@ -24,6 +24,7 @@ import { Instantiator } from "./constructors.ts";
 import { canonicalJson } from "./canonical.ts";
 import { isTitledCodes } from "./conventions.ts";
 import { loadPrograms } from "./rule-programs.ts";
+import { placedPrograms } from "./rule-places.ts";
 import type { Programs, RuleProgram } from "./rule-program.ts";
 import { specRoot } from "./repo.ts";
 import { absenceOf, absenceOnCoreOf, fieldOfSources, localSchemas, locationOf, nestedIf, templatesOf } from "./emit.ts";
@@ -737,18 +738,21 @@ export function buildSdkModel(model: ModelDoc, short: string, programs: Programs
   const modules = [...new Set([...[...types.values()].map((t) => t.module), ...[...templates.values()].map((t) => t.module)])].sort((a, b) =>
     a === KERNEL_MODULE ? -1 : b === KERNEL_MODULE ? 1 : byString(a, b),
   );
-  // Each rule whose check is a program runs on its owner: the owner's shape lists it, and the SDK holds the programs.
+  // Each rule whose check is a program runs on its owner, or on the owner's holder where the program names one, at each place
+  // the model gives the owner's values in it: that type's shape lists it, and the SDK holds the programs, with the places.
+  const placing = placedPrograms(model, programs);
+  problems.push(...placing.problems);
   const used: Record<string, RuleProgram> = {};
-  for (const r of [...model.rules].sort((a, b) => byString(a.ir, b.ir))) {
-    const program = programs.rules[r.ir];
-    const owner = types.get(r.owner);
-    if (program === undefined) continue;
-    if (owner?.kind !== "object") {
-      problems.push(`rule "${r.ir}" has a program, and its owner "${r.owner}" is no object of the SDK`);
+  for (const [on, ids] of placing.runs) {
+    const runs = types.get(on);
+    if (runs?.kind !== "object") {
+      problems.push(`${ids.map((id) => `rule "${id}"`).join(", ")} ${ids.length === 1 ? "has a program" : "have programs"}, and the type ${ids.length === 1 ? "it runs" : "they run"} on, "${on}", is no object of the SDK`);
       continue;
     }
-    owner.shape.rules.push(r.ir);
-    used[r.ir] = program;
+    for (const id of ids) {
+      runs.shape.rules.push(id);
+      used[id] = placing.programs.rules[id]!;
+    }
   }
   const ruled = Object.keys(used).length > 0 ? { programs: { defs: programs.defs, rules: used } } : {};
   return { sdk: { input: { lock: model.input.lock, commit: model.input.commit, blob: model.input.blob, ...(model.input.variant ? { variant: model.input.variant } : {}) }, order, types, templates, modules, emitted: emitted.sort(byString), ...ruled }, problems };

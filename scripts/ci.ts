@@ -914,7 +914,7 @@ async function checkSdkGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[],
       }
       await gate(S.sdkParity, { language, cases: sdkCasesRuled, run: r }, lock);
     }
-    await checkSdkLocations(lock, dir, JSON.parse(readFileSync(join(SPEC, corpusFile), "utf8")) as CorpusDoc, "", ruled);
+    await checkSdkLocations(lock, dir, JSON.parse(readFileSync(join(SPEC, corpusFile), "utf8")) as CorpusDoc, "", ruled, posix.join(typeExamplesDirOf(lock.ir_dir), TYPE_EXAMPLES_FILE));
     if (exemptions) await checkPlainGates(lock, doc, cases, exemptions, absent, checked);
   }
   if (exemptions && checked.size === locks.length) {
@@ -1396,16 +1396,18 @@ async function checkVariantOutputGates(variants: VariantBuilds[], vectors: Vecto
         }
         await gate(S.sdkParity, { language, cases, run: r }, at);
       }
-      await checkSdkLocations(at, sdkDir, corpus, tag, ruled);
+      await checkSdkLocations(at, sdkDir, corpus, tag, ruled, posix.join(b.dirOf(typeExamplesDirOf(b.lock.ir_dir)), TYPE_EXAMPLES_FILE));
     }
   }
 }
 
 /** Where each SDK of a tree rejects every mutant of the build's corpus: at its constraint's location, as the reference does. */
-async function checkSdkLocations(lock: SpecLock, dir: string, corpus: CorpusDoc, tag: string, ruled: Ruled): Promise<void> {
-  // The corpus's mutants, each also at each place a rule the SDKs check rejects it, and every payload of those rules' vectors.
+async function checkSdkLocations(lock: SpecLock, dir: string, corpus: CorpusDoc, tag: string, ruled: Ruled, typeExamples: string): Promise<void> {
+  // The corpus's mutants, each also at each place a rule the SDKs check rejects it, and every payload of those rules' vectors,
+  // a vector of a rule that runs on its owner's holder in the holder's least type example.
   const cases = withRuleLocations(locationCases(corpus), ruled);
-  const rules = ruleLocationCases(corpus, loadPrograms(SPEC), ruled);
+  const examples = (JSON.parse(readFileSync(join(SPEC, typeExamples), "utf8")) as TypeExamplesDoc).types;
+  const rules = ruleLocationCases(corpus, ruled, (type) => (examples[type] as { minimal?: unknown } | undefined)?.minimal);
   const all = [...cases, ...rules];
   const items = all.map((c) => ({ type: c.type, value: c.value }));
   const legs: [string, () => Promise<SdkFindingsRun> | SdkFindingsRun][] = [

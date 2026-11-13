@@ -65,6 +65,13 @@ defs:
           [add, [mul, [div, [def, amount], [def, rate_per]], [def, rate]], [def, charges]]]]]
   checked: [and, [def, figured], [not, [def, unknown_zone]]]
   derived: [get, [def, commitment], derived_units]
+  # § 5.6.4, read on the line item that holds the rule's owner: whether any of its counts is in impressions, a `pricing[]`
+  # entry's cost method, `availability`'s `unit`, or a `committed_metrics[]` metric.
+  counts_impressions:
+    [or,
+      [ne, [find, [coalesce, [get, [up], pricing], [list]], e, [and, [ismap, [var, e]], [contains, [list, CPM, CPMV], [get, [var, e], cost_method]]]], null],
+      [and, [ismap, [get, [up], availability]], [contains, [list, impressions, viewable_impressions], [get, [get, [up], availability], unit]]],
+      [ne, [find, [coalesce, [get, [up], committed_metrics], [list]], m, [and, [ismap, [var, m]], [eq, [get, [var, m], metric], impressions]]], null]]
 rules:
   # § 5.6.5: "`FLAT` and `TIME` set these figures from the rate and the flight instead": a FLAT amount is the rate plus the
   # charges, and a TIME amount is the units the flight counts, or their seller total.
@@ -125,3 +132,14 @@ rules:
               [gt, [def, units], [get, [get, [def, committed], unit_bounds], max]]]]
         path: ""
         message: [str, [def, units], " units are outside unit_bounds"]
+  # § 5.6.4: `DeliveryCounting.impression_multiplier` is "REQUIRED when the line item counts impressions": when any of its
+  # counts is in impressions, a `pricing[]` entry's cost method, `availability`'s `unit`, or a `committed_metrics[]` metric
+  # (D-060). A vector that shows some of the line item's counts, none in impressions, can't say.
+  rule:5.6.4:e58650b7:
+    owner: DeliveryCounting
+    on: LineItem
+    undecided: [and, [ismap, [$]], [not, [def, counts_impressions]], [not, [and, [given, pricing], [given, availability], [given, committed_metrics]]]]
+    violations:
+      - when: [and, [ismap, [$]], [def, counts_impressions], [not, [has, [$], impression_multiplier]]]
+        path: ""
+        message: [str, "`impression_multiplier` is REQUIRED here"]

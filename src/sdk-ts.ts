@@ -513,7 +513,7 @@ export const PROGRAMS: Programs = ${JSON.stringify(programs, null, 2)};
 
 const evaluator = new RuleEvaluator(PROGRAMS, ZONES as ZoneTable);
 
-/** The violations of one rule on a value of its owner, each at a JSON pointer below the value. */
-export const violations = (rule: string, value: unknown): { path: string; message: string }[] => evaluator.check(rule, value);
+/** The violations of one rule on a value of the type that runs it, its owner or the owner's holder, each at a JSON pointer below the value. */
+export const violations = (rule: string, value: unknown): { path: string; message: string }[] => evaluator.violations(rule, value);
 `;
 }

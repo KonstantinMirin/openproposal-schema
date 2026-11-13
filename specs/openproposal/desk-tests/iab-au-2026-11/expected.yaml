@@ -80,7 +80,8 @@ findings:
     reason: >-
       The line item counts impressions with no `impression_multiplier`, which
       is REQUIRED when it does (§ 5.6.4); no schema states the condition, so
-      the rule's check rejects it.
+      the rule's program rejects it, in the gates and in every SDK, which
+      runs it on the line item.
   - example: dooh-v2-p12-offset-instant.yaml
     path: /commitment/flight/start
     kind: invalid
@@ -192,12 +193,5 @@ undecided:
     path: ""
     rule: rule:5.4:3a677601
     reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
-sdk_gaps:
-  - example: dooh-v2-p11-c-no-multiplier.yaml
-    path: /delivery_counting
-    rule: rule:5.6.4:e58650b7
-    reason: >-
-      No schema states that `impression_multiplier` is REQUIRED when the line
-      item counts impressions, so the SDK types, which check what the schemas
-      check, accept the file; only the rule's check rejects it.
+sdk_gaps: []
 checker_only: []
