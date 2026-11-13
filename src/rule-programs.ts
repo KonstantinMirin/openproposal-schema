@@ -109,7 +109,7 @@ export function checksOf(programs: Programs, root: string = REPO_ROOT): Record<s
   return Object.fromEntries(
     Object.entries(programs.rules)
       .sort(([a], [b]) => (a < b ? -1 : 1))
-      .map(([id, p]) => [id, ((v, ctx) => evaluator().check(id, v, p.on === undefined || p.on === p.owner ? null : holderOf(p.on, ctx.context))) as Check]),
+      .map(([id, p]) => [id, ((v, ctx) => evaluator().check(id, v, p.on === undefined || p.on === p.owner ? null : holderOf(p.on, ctx.context), ctx.part)) as Check]),
   );
 }
 

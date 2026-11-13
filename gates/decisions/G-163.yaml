@@ -1,0 +1,70 @@
+format: 1
+id: G-163
+date: 2026-11-13
+question: How do OpenProposal's last rules checked in TypeScript, the six of src/specs/openproposal/rule-checks.ts on `main` and `with-open-prs`, come to run in every SDK, and does any rule check written in TypeScript remain?
+decision: >-
+  The six checks are programs in specs/openproposal/rule-programs.yaml, and
+  the written ones are gone; the spec plugin's checks are its programs:
+  § 2.2's agreed line item with a `catalog_ref`, § 5.2.1's environments that
+  hold no impression of the channel, § 5.2.2's viewability measured by the
+  seller only without OMID 1.0, § 5.2's `plcmt` for video, and § 5.5's
+  hash-pinned `list_ref` and accepted exclusion types. Each keeps its
+  messages, its places, and its undecided cases. The evaluators gain
+  `["part"]`, whether the value is the part of a document a code block of
+  the specification shows, which the examples gate gives and no SDK's
+  payload is, and `["places", x, key]`, every member of a name at any
+  depth, which § 2.2's rule reads for its references; and `table` reads a
+  key a table holds, never one an object inherits. § 5.2.2's rule reads the
+  seller of the proposal that holds the line item, so it runs on the
+  proposal; on `with-open-prs` no proposal holds a line item, line items
+  being documents of their own, so no value an SDK checks holds both, and
+  the program says so (`unheld`): no SDK of that lock runs it, the gates
+  read the seller a vector's context gives, and the sdk-rules gate names
+  the rule. A holder that holds no value of its rule's owner, with no such
+  reason, fails SDK generation, a fixture of the sdk-generate gate. The
+  guard's fixture for a spec's rule check that finds nothing now weakens a
+  program, which the rule-programs gate's fingerprint holds.
+rationale: >-
+  No check is weaker: each program decides every vector of its rule as the
+  written check did, which the rule-checks gate and the rule-checks tests
+  hold, and the SDKs reject what five of the six reject, which they
+  accepted before; the sixth, § 5.2.2's, no SDK on `with-open-prs` could
+  decide before or now, for want of the seller, and its two invalid
+  vectors count as unreached. Counting the single-payload rule vectors on
+  which each SDK reaches the gates' own verdict, an unreached vector as
+  failed, `main` passes 23 of 23, `with-open-prs` 50 of 52, and the stack
+  208 of 208. No rule check written in TypeScript remains for OpenProposal,
+  the kernel, or the constructors; the Deals API's eight, in
+  src/specs/dealsapi/rule-checks.ts, remain, and that spec has no SDK. The
+  generated code changes in the SDKs alone: on `main` and `with-open-prs`,
+  in each of their four trees, the line item's file, which runs the rules
+  (on `main` § 2.2's, on `with-open-prs` § 2.2's, § 5.2.1's, § 5.2's, and
+  § 5.5's two), and the rules file, which holds their programs and the
+  evaluator's new operations; on the stack, the rules file's evaluator.
+  Every other output of `main` and `with-open-prs` is byte-identical.
+accepts:
+  - { gate: comparison, fingerprint: ea468220659ea4db6722583bce08e20760cfc3b0c8b83755b347ee9a06e79ac5 }
+  - { gate: desk-tests, fingerprint: 5153bb898576b3a7b54fbfce07c69d2e434ab93f25ad3191c65806c602bff60c }
+  - { gate: examples-validate, fingerprint: 3a5ef31d8ca8a914fa11bff9503855ebe4f1d1ede1f177b22ecbc9a7d443a84b }
+  - { gate: extraction, fingerprint: 5110f4d12abff86bd8330e1cf93ddf753e4f9e2b4da5316ab631e3df63002173 }
+  - { gate: feedback, fingerprint: 955c821d124220ddd779069688a2992da69bf137e5866ec7fb9d5419b5308fab }
+  - { gate: fidelity, fingerprint: 6a0849f2dacee06d5f1772016ad1f2fe7f0ff9e8b8729a3b47cda18783b68bdc }
+  - { gate: field-examples, fingerprint: 6b4cd3ad825759885460c81afe0de90f8a998f6f37b8d2a63904d100ced4a9b8 }
+  - { gate: guard, fingerprint: 94726541b624dacf05b1baca908fadc0969b4cad90d14df4c8cc767b4258c4b8 }
+  - { gate: kernel-check, fingerprint: 49fe632a17c8726b46c19b2079c58f7f1488b2c061b840d98b0efb785615570e }
+  - { gate: map-drift, fingerprint: 2d0aa7cb1b35b2221018e462d8f7e392750396b1f193ff60415bf548aa5edf7e }
+  - { gate: mapping-bijection, fingerprint: 433355b52372f854a40e33ea1af5c1790fea27180254d6a615ac8a81e126e75a }
+  - { gate: mapping-location, fingerprint: 766871182e39759e312fd0d41e69f64e98cc90a6e0cc1ffa6caabf413cc826f5 }
+  - { gate: mapping-rules, fingerprint: 5afc6095eeeb71d49ff5da3cee34e53c11de31d7d454777b6042cf0b907d8657 }
+  - { gate: record-wording, fingerprint: 7367fae23edbd73067dc34c2415e5ec691d04fc37536515978ea6b7def4ab275 }
+  - { gate: round-trip, fingerprint: e09776d8f54f5347fddb1a978ace73be81d7549538d365177df5c6e20c36dc59 }
+  - { gate: rule-checks, fingerprint: 08650a3e3f9cf44adbef18546d758d88443e55b3ae3980f929acf92213878348 }
+  - { gate: rule-programs, fingerprint: 35ddc0bd49496297be8fc07680a5e7e292b0dbf8195f8c16bb782d99709e6b9a }
+  - { gate: sdk-generate, fingerprint: 0ea8ee91fc4b6c46a322fe20251abadbb9b2b8e31194a9991ad6091c1c8545b1 }
+  - { gate: sdk-rules, fingerprint: a7ea7a70c3a1650d2689657c1890c77f8a9959ce27c5422fa6955c88d866d52d }
+  - { gate: site-builds, fingerprint: 30895bea62e17a5979eebbc126af6e4408986e467811aaeab23173ed0265977a }
+  - { gate: spec-profile, fingerprint: 0801c288a13361f02d7547a6e895462a0a869aa2837902d4be0be34aae6e9b51 }
+  - { gate: type-examples-generate, fingerprint: 302fcc830968f6667bbeabe70353d4f9ede2f32cb4cc477a91a2ccb6d4e48e9d }
+  - { gate: type-examples-valid, fingerprint: 10cff6d96dbca2f7777bb2ecb467f091565eb0c17bec9ab80a55284768f88ee0 }
+  - { gate: variant-check, fingerprint: 7dbff39dfbda0f23ac8d16e2bd5c320b36503eaff4cb28932b9fb9b8011837ad }
+  - { gate: variant-examples, fingerprint: d24d72801050ddc3ca4a4848745b94f9936486b12241ca2c7a8d723bc12da78a }

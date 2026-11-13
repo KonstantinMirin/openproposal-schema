@@ -19,7 +19,12 @@
  * - values: `["$"]` the owner's value; `["up"]` the holder's, the owner's
  *   where the program names no holder; `["given", key]` whether the holder
  *   shows the member, as a whole value does every member, and a holder a
- *   vector gives in part only those it gives; `["def", name]` a shared definition,
+ *   vector gives in part only those it gives; `["part"]` whether the value
+ *   is the part of a document a code block of the specification shows, which
+ *   the gates' examples check reads, and never in an SDK, which reads whole
+ *   payloads; `["places", x, key]` the JSON pointer, below `x`, of every
+ *   member named `key` at any depth, not below one such member, by list
+ *   order and key order; `["def", name]` a shared definition,
  *   read on the same value; `["var", name]` a name a list operation binds;
  *   `["get", x, key]` a member, `["at", x, i]` an item, absent as `null`;
  *   `["list", ...]` a list; `["table", key, {k: v}]` a literal map's value
@@ -64,7 +69,7 @@ export type Expr = null | boolean | number | string | Expr[] | { [k: string]: Ex
 
 /** Every operation a program may name, with how many arguments it takes, as [least, most]; `Infinity` for any number. */
 export const OPERATIONS: Record<string, [number, number]> = {
-  $: [0, 0], up: [0, 0], given: [1, 1], def: [1, 1], var: [1, 1], get: [2, 2], at: [2, 2], list: [0, Infinity], table: [2, 2],
+  $: [0, 0], up: [0, 0], given: [1, 1], part: [0, 0], places: [2, 2], def: [1, 1], var: [1, 1], get: [2, 2], at: [2, 2], list: [0, Infinity], table: [2, 2],
   has: [2, 2], ismap: [1, 1], islist: [1, 1], isnum: [1, 1], isstr: [1, 1], eq: [2, 2], ne: [2, 2], lt: [2, 2], le: [2, 2], gt: [2, 2], ge: [2, 2],
   and: [1, Infinity], or: [1, Infinity], not: [1, 1], if: [3, 3], coalesce: [1, Infinity],
   add: [2, Infinity], sub: [2, 2], mul: [2, Infinity], div: [2, 2], floor: [1, 1],
@@ -137,6 +142,8 @@ export interface RuleProgram {
   at?: string[][];
   /** Where it holds, the rule can't decide: the gates' check is undecided, and an SDK reports no violation. */
   undecided?: Expr;
+  /** Why a lock's holder may hold no value of the owner, as a proposal on `main` holds no line item: there the rule runs in no SDK, and the gates' check reads the holder a vector's context gives. */
+  unheld?: string;
   violations: Violation[];
 }
 
@@ -159,6 +166,7 @@ interface Env {
   root: Value;
   up: Value;
   whole: boolean;
+  part: boolean;
   memo: Map<string, Value>;
 }
 
@@ -337,11 +345,11 @@ export class RuleEvaluator {
    * pointer below it, with the owner's holder, where the program names one;
    * null where the rule can't decide.
    */
-  check(rule: string, value: unknown, holder: Holder | null = null): { path: string; message: string }[] | null {
+  check(rule: string, value: unknown, holder: Holder | null = null, part = false): { path: string; message: string }[] | null {
     const p = this.programs.rules[rule];
     if (!p) throw new Error(`no program for ${rule}`);
     const root = fromJson(value);
-    const env: Env = holder === null ? { root, up: root, whole: true, memo: new Map() } : { root, up: fromJson(holder.value), whole: holder.whole, memo: new Map() };
+    const env: Env = holder === null ? { root, up: root, whole: true, part, memo: new Map() } : { root, up: fromJson(holder.value), whole: holder.whole, part, memo: new Map() };
     if (p.undecided !== undefined && this.eval(p.undecided, env, {}) === true) return null;
     const out: { path: string; message: string }[] = [];
     for (const v of p.violations) {
@@ -406,6 +414,23 @@ export class RuleEvaluator {
         return env.up;
       case "given":
         return env.whole || (isObj(env.up) && (args[0] as string) in env.up);
+      case "part":
+        return env.part;
+      case "places": {
+        const key = ev(args[1]!);
+        const out: Value[] = [];
+        const walk = (x: Value, at: string) => {
+          if (Array.isArray(x)) x.forEach((y, i) => walk(y, `${at}/${i}`));
+          else if (isObj(x))
+            for (const k of Object.keys(x).sort()) {
+              const here = `${at}/${escapeToken(k)}`;
+              if (k === key) out.push(here);
+              else walk(x[k]!, here);
+            }
+        };
+        walk(ev(args[0]!), "");
+        return out;
+      }
       case "def": {
         const name = args[0] as string;
         if (!env.memo.has(name)) {
@@ -431,7 +456,7 @@ export class RuleEvaluator {
       case "table": {
         const k = ev(args[0]!);
         const t = args[1] as { [k: string]: Expr };
-        return typeof k === "string" && k in t ? fromJson(t[k]) : null;
+        return typeof k === "string" && Object.prototype.hasOwnProperty.call(t, k) ? fromJson(t[k]) : null;
       }
       case "has": {
         const x = ev(args[0]!);
@@ -718,6 +743,125 @@ export const PROGRAMS: Programs = {
         ]
       ]
     ],
+    "environments_fit": [
+      "table",
+      [
+        "get",
+        [
+          "$"
+        ],
+        "channel"
+      ],
+      {
+        "dooh": [
+          "dooh"
+        ],
+        "audio": [
+          "web_desktop",
+          "web_mobile",
+          "app_mobile",
+          "ctv"
+        ],
+        "ctv": [
+          "ctv"
+        ],
+        "native": [
+          "web_desktop",
+          "web_mobile",
+          "app_mobile"
+        ],
+        "video": [
+          "web_desktop",
+          "web_mobile",
+          "app_mobile"
+        ],
+        "display": [
+          "web_desktop",
+          "web_mobile",
+          "app_mobile"
+        ]
+      }
+    ],
+    "environments_known": [
+      "list",
+      "dooh",
+      "web_desktop",
+      "web_mobile",
+      "app_mobile",
+      "ctv"
+    ],
+    "environments_offered": [
+      "if",
+      [
+        "and",
+        [
+          "ismap",
+          [
+            "get",
+            [
+              "$"
+            ],
+            "environments"
+          ]
+        ],
+        [
+          "islist",
+          [
+            "get",
+            [
+              "get",
+              [
+                "$"
+              ],
+              "environments"
+            ],
+            "available"
+          ]
+        ]
+      ],
+      [
+        "get",
+        [
+          "get",
+          [
+            "$"
+          ],
+          "environments"
+        ],
+        "available"
+      ],
+      [
+        "list"
+      ]
+    ],
+    "exclusion_types": [
+      "filter",
+      [
+        "coalesce",
+        [
+          "keys",
+          [
+            "get",
+            [
+              "$"
+            ],
+            "exclusions"
+          ]
+        ],
+        [
+          "list"
+        ]
+      ],
+      "k",
+      [
+        "ne",
+        [
+          "var",
+          "k"
+        ],
+        "list_ref"
+      ]
+    ],
     "included_names": [
       "filter",
       [
@@ -749,6 +893,43 @@ export const PROGRAMS: Programs = {
         [
           "var",
           "n"
+        ]
+      ]
+    ],
+    "list_ref": [
+      "get",
+      [
+        "get",
+        [
+          "$"
+        ],
+        "exclusions"
+      ],
+      "list_ref"
+    ],
+    "list_ref_given": [
+      "and",
+      [
+        "ismap",
+        [
+          "$"
+        ]
+      ],
+      [
+        "ismap",
+        [
+          "get",
+          [
+            "$"
+          ],
+          "exclusions"
+        ]
+      ],
+      [
+        "ismap",
+        [
+          "def",
+          "list_ref"
         ]
       ]
     ],
@@ -806,6 +987,30 @@ export const PROGRAMS: Programs = {
             "n"
           ]
         ]
+      ]
+    ],
+    "plcmt_given": [
+      "and",
+      [
+        "ismap",
+        [
+          "get",
+          [
+            "$"
+          ],
+          "placement"
+        ]
+      ],
+      [
+        "has",
+        [
+          "get",
+          [
+            "$"
+          ],
+          "placement"
+        ],
+        "plcmt"
       ]
     ],
     "priced": [
@@ -1605,6 +1810,690 @@ export const PROGRAMS: Programs = {
               ]
             ],
             " is no zone the IANA time zone database lists"
+          ]
+        }
+      ]
+    },
+    "rule:2.2:06ccee9f": {
+      "owner": "LineItem",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "part"
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "$"
+            ],
+            "status"
+          ]
+        ],
+        [
+          "gt",
+          [
+            "len",
+            [
+              "places",
+              [
+                "$"
+              ],
+              "catalog_ref"
+            ]
+          ],
+          0
+        ]
+      ],
+      "violations": [
+        {
+          "each": [
+            "if",
+            [
+              "and",
+              [
+                "ismap",
+                [
+                  "$"
+                ]
+              ],
+              [
+                "eq",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "status"
+                ],
+                "agreed"
+              ]
+            ],
+            [
+              "places",
+              [
+                "$"
+              ],
+              "catalog_ref"
+            ],
+            null
+          ],
+          "as": [
+            "i",
+            "at"
+          ],
+          "when": true,
+          "path": [
+            "var",
+            "at"
+          ],
+          "message": "a `catalog_ref` in an agreed line item"
+        }
+      ]
+    },
+    "rule:5.2.1:cc42a1f8": {
+      "owner": "LineItem",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "part"
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "$"
+            ],
+            "channel"
+          ]
+        ],
+        [
+          "has",
+          [
+            "$"
+          ],
+          "environments"
+        ],
+        [
+          "ne",
+          [
+            "find",
+            [
+              "def",
+              "environments_offered"
+            ],
+            "e",
+            [
+              "contains",
+              [
+                "def",
+                "environments_known"
+              ],
+              [
+                "var",
+                "e"
+              ]
+            ]
+          ],
+          null
+        ]
+      ],
+      "violations": [
+        {
+          "each": [
+            "if",
+            [
+              "and",
+              [
+                "ismap",
+                [
+                  "$"
+                ]
+              ],
+              [
+                "islist",
+                [
+                  "def",
+                  "environments_fit"
+                ]
+              ],
+              [
+                "ismap",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "environments"
+                ]
+              ]
+            ],
+            [
+              "def",
+              "environments_offered"
+            ],
+            null
+          ],
+          "as": [
+            "i",
+            "e"
+          ],
+          "when": [
+            "and",
+            [
+              "isstr",
+              [
+                "var",
+                "e"
+              ]
+            ],
+            [
+              "contains",
+              [
+                "def",
+                "environments_known"
+              ],
+              [
+                "var",
+                "e"
+              ]
+            ],
+            [
+              "not",
+              [
+                "contains",
+                [
+                  "def",
+                  "environments_fit"
+                ],
+                [
+                  "var",
+                  "e"
+                ]
+              ]
+            ]
+          ],
+          "path": [
+            "pointer",
+            "environments",
+            "available",
+            [
+              "var",
+              "i"
+            ]
+          ],
+          "message": [
+            "str",
+            "`",
+            [
+              "var",
+              "e"
+            ],
+            "` holds no `",
+            [
+              "get",
+              [
+                "$"
+              ],
+              "channel"
+            ],
+            "` impression"
+          ]
+        }
+      ]
+    },
+    "rule:5.2:f3d3f9e8": {
+      "owner": "LineItem",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "def",
+            "plcmt_given"
+          ]
+        ],
+        [
+          "or",
+          [
+            "and",
+            [
+              "part"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "channel"
+              ]
+            ],
+            [
+              "has",
+              [
+                "$"
+              ],
+              "placement"
+            ]
+          ],
+          [
+            "eq",
+            [
+              "get",
+              [
+                "$"
+              ],
+              "channel"
+            ],
+            "ctv"
+          ],
+          [
+            "and",
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "$"
+                ],
+                "channel"
+              ],
+              "video"
+            ],
+            [
+              "part"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "placement"
+              ]
+            ]
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "not",
+              [
+                "def",
+                "plcmt_given"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "$"
+                ],
+                "channel"
+              ],
+              "video"
+            ],
+            [
+              "not",
+              [
+                "and",
+                [
+                  "part"
+                ],
+                [
+                  "not",
+                  [
+                    "has",
+                    [
+                      "$"
+                    ],
+                    "placement"
+                  ]
+                ]
+              ]
+            ]
+          ],
+          "path": [
+            "if",
+            [
+              "ismap",
+              [
+                "get",
+                [
+                  "$"
+                ],
+                "placement"
+              ]
+            ],
+            "/placement",
+            ""
+          ],
+          "message": "a video line item's `placement` gives no `plcmt`"
+        }
+      ]
+    },
+    "rule:5.5:16494a1a": {
+      "owner": "LineItem",
+      "undecided": [
+        "and",
+        [
+          "def",
+          "list_ref_given"
+        ],
+        [
+          "part"
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "$"
+            ],
+            "status"
+          ]
+        ],
+        [
+          "has",
+          [
+            "def",
+            "list_ref"
+          ],
+          "sha256"
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "def",
+              "list_ref_given"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "def",
+                  "list_ref"
+                ],
+                "sha256"
+              ]
+            ]
+          ],
+          "path": "/exclusions/list_ref",
+          "message": "a `list_ref` with no `sha256`"
+        },
+        {
+          "when": [
+            "and",
+            [
+              "def",
+              "list_ref_given"
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "$"
+                ],
+                "status"
+              ],
+              "agreed"
+            ]
+          ],
+          "path": "/exclusions/list_ref",
+          "message": "a `list_ref` in an agreed line item"
+        }
+      ]
+    },
+    "rule:5.5:2eab2842": {
+      "owner": "LineItem",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "ismap",
+          [
+            "get",
+            [
+              "$"
+            ],
+            "exclusions"
+          ]
+        ],
+        [
+          "gt",
+          [
+            "len",
+            [
+              "def",
+              "exclusion_types"
+            ]
+          ],
+          0
+        ],
+        [
+          "not",
+          [
+            "ismap",
+            [
+              "get",
+              [
+                "$"
+              ],
+              "exclusions_accepted"
+            ]
+          ]
+        ],
+        [
+          "part"
+        ]
+      ],
+      "violations": [
+        {
+          "each": [
+            "if",
+            [
+              "and",
+              [
+                "ismap",
+                [
+                  "$"
+                ]
+              ],
+              [
+                "ismap",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "exclusions"
+                ]
+              ],
+              [
+                "not",
+                [
+                  "ismap",
+                  [
+                    "get",
+                    [
+                      "$"
+                    ],
+                    "exclusions_accepted"
+                  ]
+                ]
+              ]
+            ],
+            [
+              "def",
+              "exclusion_types"
+            ],
+            null
+          ],
+          "as": [
+            "i",
+            "k"
+          ],
+          "when": true,
+          "path": [
+            "pointer",
+            "exclusions",
+            [
+              "var",
+              "k"
+            ]
+          ],
+          "message": [
+            "str",
+            "the seller accepts no exclusion type, and the buyer supplies `",
+            [
+              "var",
+              "k"
+            ],
+            "`"
+          ]
+        },
+        {
+          "each": [
+            "if",
+            [
+              "and",
+              [
+                "ismap",
+                [
+                  "$"
+                ]
+              ],
+              [
+                "ismap",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "exclusions"
+                ]
+              ],
+              [
+                "ismap",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "exclusions_accepted"
+                ]
+              ]
+            ],
+            [
+              "def",
+              "exclusion_types"
+            ],
+            null
+          ],
+          "as": [
+            "i",
+            "k"
+          ],
+          "when": [
+            "not",
+            [
+              "contains",
+              [
+                "if",
+                [
+                  "islist",
+                  [
+                    "get",
+                    [
+                      "get",
+                      [
+                        "$"
+                      ],
+                      "exclusions_accepted"
+                    ],
+                    "types"
+                  ]
+                ],
+                [
+                  "get",
+                  [
+                    "get",
+                    [
+                      "$"
+                    ],
+                    "exclusions_accepted"
+                  ],
+                  "types"
+                ],
+                [
+                  "list"
+                ]
+              ],
+              [
+                "var",
+                "k"
+              ]
+            ]
+          ],
+          "path": [
+            "pointer",
+            "exclusions",
+            [
+              "var",
+              "k"
+            ]
+          ],
+          "message": [
+            "str",
+            "`exclusions_accepted.types` doesn't list `",
+            [
+              "var",
+              "k"
+            ],
+            "`"
           ]
         }
       ]

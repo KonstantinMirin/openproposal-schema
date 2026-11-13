@@ -170,6 +170,7 @@ func (LineItem) ValidateValue(v any, at string, errs *Errors) {
 		return
 	}
 	checkClosed(m, at, errs, "activation_route", "addressable_scale", "approval", "assets", "audiences", "availability", "billing", "buyer_requirements", "buyer_supplied", "buying_route", "cancellation_policy", "channel", "commitment", "commitment_bounds", "committed_metrics", "content_detail", "correlation_id", "creative_delivery", "creative_policy", "daypart", "deal_id_issuance", "device", "eligible_bidders", "environments", "exclusivity", "external_references", "formats", "frequency_cap", "geo", "hold_status", "line_item_id", "materials_due", "measurement_source", "min_spend", "pricing", "production", "properties", "reporting", "required_credentials", "serving_mode", "serving_platform", "shortfall_remedy", "specs", "status", "supported_order_systems", "terms_acceptance_required", "third_party_tags", "transaction_mechanism", "visibility")
+	checkRules(v, at, errs, "rule:2.2:06ccee9f")
 	if x, ok := m["activation_route"]; ok {
 		validateAs[Selectable[ActivationRoute, ActivationRoute]](x, member(at, "activation_route"), errs)
 	}

@@ -370,9 +370,6 @@ export const corpusTracked = defineGate<TrackedInput>({
 
 // Type examples ------------------------------------------------------------------
 
-/** The pinned lists' codes with one list's codes changed. */
-const withCodes = (codes: ReadonlyMap<string, ReadonlySet<string | number>>, list: string, change: (c: Set<string | number>) => Set<string | number>) => new Map([...codes].map(([k, v]) => [k, k === list ? change(new Set(v)) : v]));
-
 export const typeExamplesGenerate = defineGate<TypeExamplesInput>({
   id: "type-examples-generate",
   title: "type examples generate: every named type has a minimal and a full example, with the specification's values where they hold, each valid against its schema and breaking no rule one payload decides",

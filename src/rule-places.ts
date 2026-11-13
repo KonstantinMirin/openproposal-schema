@@ -127,9 +127,12 @@ export function instancesIn(model: ModelDoc, type: string | TypeRef, value: unkn
  * The programs of a model's rules, each with the type it runs on, its
  * holder or its owner, and the places of the owner's values in a holder, as
  * the SDKs hold them; with the problems: a program whose owner isn't its
- * rule's, and a holder that holds no value of the owner.
+ * rule's, and a holder that holds no value of the owner, where the program
+ * says no reason it may; a rule whose holder holds none on the lock, and
+ * whose program says why, is `unheld`, and runs in no SDK of the lock.
  */
-export function placedPrograms(model: ModelDoc, programs: Programs): { programs: Programs; runs: Map<string, string[]>; problems: string[] } {
+export function placedPrograms(model: ModelDoc, programs: Programs): { programs: Programs; runs: Map<string, string[]>; unheld: string[]; problems: string[] } {
+  const unheld: string[] = [];
   const rules: Record<string, RuleProgram> = {};
   const runs = new Map<string, string[]>();
   const problems: string[] = [];
@@ -144,13 +147,15 @@ export function placedPrograms(model: ModelDoc, programs: Programs): { programs:
     const on = program.on ?? r.owner;
     const at = on === r.owner ? [] : placesOf(model, on, r.owner);
     if (on !== r.owner && at.length === 0) {
-      problems.push(`rule "${r.ir}": its program runs on "${on}", which holds no value of its owner "${r.owner}"`);
+      // A lock whose holder holds no value of the owner, as `main`'s proposal holds no line item, runs the rule in no SDK; the program says why.
+      if (program.unheld !== undefined) unheld.push(r.ir);
+      else problems.push(`rule "${r.ir}": its program runs on "${on}", which holds no value of its owner "${r.owner}", and the program says no reason it may (\`unheld\`)`);
       continue;
     }
     rules[r.ir] = at.length > 0 ? { ...program, at } : program;
     runs.set(on, [...(runs.get(on) ?? []), r.ir]);
   }
-  return { programs: { ...programs, rules }, runs, problems };
+  return { programs: { ...programs, rules }, runs, unheld, problems };
 }
 
 /** The type each step of a place reaches from a holder, by the model: one per member of the place. */

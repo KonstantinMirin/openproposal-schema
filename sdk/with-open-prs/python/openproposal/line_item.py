@@ -59,7 +59,7 @@ class Channels:
 class LineItem(rt.Closed):
     """The OpenProposal `LineItem` document."""
 
-    __shape__: ClassVar[rt.Shape] = rt.Shape(requires=(("daypart", ("time_zone",)),), within=(("frequency_cap", ("period",), ("time_zone",)),), conditions=(("terms_acceptance_required", True, ("terms_ref",), ()),))
+    __shape__: ClassVar[rt.Shape] = rt.Shape(requires=(("daypart", ("time_zone",)),), within=(("frequency_cap", ("period",), ("time_zone",)),), rules=("rule:2.2:06ccee9f", "rule:5.2.1:cc42a1f8", "rule:5.2:f3d3f9e8", "rule:5.5:16494a1a", "rule:5.5:2eab2842"), conditions=(("terms_acceptance_required", True, ("terms_ref",), ()),))
 
     activation_route: Optional[Selectable[ActivationRoute, ActivationRoute]] = None
     """`available[]` from `publisher_side` | `clean_room` | `id_partner`, `included[]`, `pricing`"""

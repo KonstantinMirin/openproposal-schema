@@ -42,6 +42,20 @@ export const sdkGenerate = defineGate<{ model: ModelDoc; dir: string; schemaDir:
       }),
       expect: "NoSuchType",
     },
+    {
+      name: "a holder that holds no value of its rule's owner, with no reason it may",
+      lock: "with-our-stack",
+      mutate: (i) =>
+        ({
+          ...i,
+          model: withType(i.model, "LineItem", (t) => {
+            const o = t as Extract<typeof t, { kind: "document" }>;
+            const { delivery_counting: _, ...rest } = o.properties;
+            return { ...o, properties: rest };
+          }),
+        }),
+      expect: 'rule "rule:5.6.4:e58650b7": its program runs on "LineItem", which holds no value of its owner "DeliveryCounting", and the program says no reason it may',
+    },
   ],
 });
 
@@ -187,11 +201,15 @@ export const sdkLocations = defineGate<{ language: string; cases: SdkLocationCas
   ],
 });
 
-export const sdkRules = defineGate<{ language: string; cases: SdkLocationCase[]; run: SdkFindingsRun }>({
+export const sdkRules = defineGate<{ language: string; cases: SdkLocationCase[]; run: SdkFindingsRun; unheld?: string[] }>({
   id: "sdk-rules",
   title: (i) => `SDK rules: the ${i.language} types reach every vector's verdict on each rule they check, from its program, at each place the gates' own evaluator rejects it, and nowhere else`,
-  code: ["src/sdk-parity.ts#compareLocations", "src/sdk-parity.ts#ruleLocationCases", "src/sdk-parity.ts#rulerOf", "src/rule-program.ts#RuleEvaluator"],
-  check: (i) => compareLocations(i.language, i.cases, i.run),
+  code: ["src/sdk-parity.ts#compareLocations", "src/sdk-parity.ts#ruleLocationCases", "src/sdk-parity.ts#rulerOf", "src/rule-places.ts#placedPrograms", "src/rule-program.ts#RuleEvaluator"],
+  check: (i) => {
+    const r = compareLocations(i.language, i.cases, i.run);
+    const unheld = i.unheld ?? [];
+    return unheld.length === 0 ? r : { ...r, note: `${r.note}; no SDK of the lock runs ${unheld.join(", ")}, whose holder holds no value of its owner here, as its program says` };
+  },
   fixtures: [
     {
       name: "an SDK that accepts a rule's invalid vector",

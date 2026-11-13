@@ -626,7 +626,7 @@ export function compareLocations(language: string, cases: SdkLocationCase[], run
 }
 
 /** The places, below a value of a type, where the rules the SDKs check reject it, sorted: none for a type that holds no value such a rule runs on. With the programs, as the SDKs hold them, and the evaluator. */
-export type Ruled = ((type: string | TypeRef, value: unknown) => string[]) & { model: ModelDoc; programs: Programs; evaluator: RuleEvaluator };
+export type Ruled = ((type: string | TypeRef, value: unknown) => string[]) & { model: ModelDoc; programs: Programs; evaluator: RuleEvaluator; unheld: string[] };
 
 /** The rules the SDKs check, each on every value of the type it runs on, its owner or the owner's holder, by the programs every SDK is generated with and the gates' own evaluator. */
 export function rulerOf(model: ModelDoc, programs: Programs, zones: ZoneTable): Ruled {
@@ -638,7 +638,7 @@ export function rulerOf(model: ModelDoc, programs: Programs, zones: ZoneTable): 
     for (const i of placed.runs.size === 0 ? [] : instancesIn(model, type, value)) for (const id of placed.runs.get(i.type) ?? []) for (const v of evaluator.violations(id, i.value)) out.add(i.path + v.path);
     return [...out].sort();
   };
-  return Object.assign(ruled, { model, programs: placed.programs, evaluator });
+  return Object.assign(ruled, { model, programs: placed.programs, evaluator, unheld: placed.unheld });
 }
 
 /** The parity cases with the rules the SDKs check: a case of a named type or a template's application that a rule rejects is invalid for the SDKs, which check the rule, though its schema accepts it. */

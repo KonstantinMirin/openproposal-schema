@@ -59,6 +59,8 @@ class Channels:
 class LineItem(rt.Closed):
     """The OpenProposal `LineItem` document."""
 
+    __shape__: ClassVar[rt.Shape] = rt.Shape(rules=("rule:2.2:06ccee9f",))
+
     activation_route: Optional[Selectable[ActivationRoute, ActivationRoute]] = None
     """`available[]` from `publisher_side` | `clean_room` | `id_partner`, `included[]`, `pricing`"""
     addressable_scale: Optional[Count] = None

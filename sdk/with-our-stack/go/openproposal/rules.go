@@ -355,6 +355,37 @@ func (e *evaluation) eval(x any, vars map[string]any) any {
 		case "given":
 			// An SDK's holder is whole: it shows every member.
 			return true
+		case "part":
+			// An SDK reads whole payloads, never a part of a document a code block shows.
+			return false
+		case "places":
+			key, _ := ev(args[1]).(string)
+			out := []any{}
+			var walk func(x any, at string)
+			walk = func(x any, at string) {
+				switch y := x.(type) {
+				case []any:
+					for i, z := range y {
+						walk(z, at+"/"+strconv.Itoa(i))
+					}
+				case map[string]any:
+					keys := make([]string, 0, len(y))
+					for k := range y {
+						keys = append(keys, k)
+					}
+					sort.Strings(keys)
+					for _, k := range keys {
+						here := at + "/" + pointerToken(k)
+						if k == key {
+							out = append(out, here)
+						} else {
+							walk(y[k], here)
+						}
+					}
+				}
+			}
+			walk(ev(args[0]), "")
+			return out
 		case "def":
 			name := args[0].(string)
 			if r, ok := e.memo[name]; ok {

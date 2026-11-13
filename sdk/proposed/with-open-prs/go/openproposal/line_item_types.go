@@ -186,6 +186,7 @@ func (LineItem) ValidateValue(v any, at string, errs *Errors) {
 	checkClosed(m, at, errs, "activation_route", "addressable_scale", "agreement_ref", "approval", "assets", "audiences", "availability", "billing", "buyer_requirements", "buyer_supplied", "buying_route", "cancellation_policy", "channel", "commitment", "commitment_bounds", "committed_metrics", "content_detail", "correlation_id", "creative_delivery", "creative_policy", "daypart", "deal_id_issuance", "device", "eligible_bidders", "environments", "exclusions", "exclusions_accepted", "exclusivity", "external_references", "formats", "frequency_cap", "geo", "hold_status", "line_item_id", "materials_due", "measurement_source", "min_spend", "placement", "pricing", "production", "properties", "reporting", "required_credentials", "requires", "serving_mode", "serving_platform", "shortfall_remedy", "specs", "status", "supported_order_systems", "terms_acceptance_required", "terms_ref", "third_party_tags", "time_zone", "transaction_mechanism", "visibility")
 	checkRequiredWith(m, at, errs, "daypart", "time_zone")
 	checkRequiredWithin(m, at, errs, "frequency_cap", []string{"period"}, "time_zone")
+	checkRules(v, at, errs, "rule:2.2:06ccee9f", "rule:5.2.1:cc42a1f8", "rule:5.2:f3d3f9e8", "rule:5.5:16494a1a", "rule:5.5:2eab2842")
 	if x, ok := m["activation_route"]; ok {
 		validateAs[Selectable[ActivationRoute, ActivationRoute]](x, member(at, "activation_route"), errs)
 	}

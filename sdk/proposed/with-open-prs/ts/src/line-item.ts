@@ -215,4 +215,4 @@ export const LineItem: z.ZodType<LineItem> = z.strictObject({
   time_zone: TimeZone.optional(),
   transaction_mechanism: TransactionMechanismSelection.optional(),
   visibility: Visibility.optional(),
-}).check(rt.requires("daypart", ["time_zone"]), rt.requiresWithin("frequency_cap", ["period"], ["time_zone"]), rt.condition("terms_acceptance_required", true, ["terms_ref"]));
+}).check(rt.requires("daypart", ["time_zone"]), rt.requiresWithin("frequency_cap", ["period"], ["time_zone"]), rt.rules(["rule:2.2:06ccee9f","rule:5.2.1:cc42a1f8","rule:5.2:f3d3f9e8","rule:5.5:16494a1a","rule:5.5:2eab2842"]), rt.condition("terms_acceptance_required", true, ["terms_ref"]));

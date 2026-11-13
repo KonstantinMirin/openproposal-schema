@@ -169,6 +169,26 @@ def _eval(e: Any, env: dict[str, Any], vars: dict[str, Any]) -> Any:
         return env["up"]
     if op == "given":
         return env["whole"] or (isinstance(env["up"], dict) and args[0] in env["up"])
+    if op == "part":
+        # An SDK reads whole payloads, never a part of a document a code block shows.
+        return False
+    if op == "places":
+        key, out = ev(args[1]), []
+
+        def walk(x: Any, at: str) -> None:
+            if isinstance(x, list):
+                for i, y in enumerate(x):
+                    walk(y, f"{at}/{i}")
+            elif isinstance(x, dict):
+                for k in sorted(x):
+                    here = f"{at}/{_token(k)}"
+                    if k == key:
+                        out.append(here)
+                    else:
+                        walk(x[k], here)
+
+        walk(ev(args[0]), "")
+        return out
     if op == "def":
         name = args[0]
         memo = env["memo"]

@@ -1424,7 +1424,7 @@ async function checkSdkLocations(lock: SpecLock, dir: string, corpus: CorpusDoc,
       continue;
     }
     await gate(S.sdkLocations, { language, cases, run: { ...r, findings: r.findings.slice(0, cases.length) } }, lock);
-    if (rules.length > 0) await gate(S.sdkRules, { language, cases: rules, run: { ...r, findings: r.findings.slice(cases.length) } }, lock);
+    if (rules.length > 0 || ruled.unheld.length > 0) await gate(S.sdkRules, { language, cases: rules, run: { ...r, findings: r.findings.slice(cases.length) }, unheld: ruled.unheld }, lock);
   }
 }
 

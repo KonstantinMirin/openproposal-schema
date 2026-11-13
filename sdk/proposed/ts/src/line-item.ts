@@ -2,6 +2,7 @@
 
 /** The OpenProposal `line-item` module's types. */
 import { z } from "zod";
+import * as rt from "./runtime.js";
 import { ActivationRoute, ActivationRouteSelection, AudiencesOption, AudiencesOptionOrCatalogRef, AudiencesSelection, BuyerSupplied } from "./audience.js";
 import { Availability, CancellationPolicyOption, CancellationPolicySelection, Commitment, CommitmentBounds, CreativePolicy, ExclusivityOption, ExclusivitySelection, HoldStatus, PricingEntry } from "./commercial.js";
 import { Approval, AssetsEntry, CreativeDelivery, FormatsSelection, MaterialsDue, ProductionOption, ProductionSelection, Specs, ThirdPartyTags } from "./creative.js";
@@ -193,4 +194,4 @@ export const LineItem: z.ZodType<LineItem> = z.strictObject({
   third_party_tags: ThirdPartyTags.optional(),
   transaction_mechanism: TransactionMechanismSelection.optional(),
   visibility: Visibility.optional(),
-});
+}).check(rt.rules(["rule:2.2:06ccee9f"]));

@@ -13,7 +13,6 @@
  * A union is a struct with one pointer per branch, of which decoding sets
  * the first branch the value is valid in.
  */
-import { readFileSync } from "node:fs";
 import { zoneTableText } from "./rule-programs.ts";
 import { GO_EVALUATOR } from "./sdk-rules-go.ts";
 import { FORMAT_PATTERNS } from "./sdk-formats.ts";

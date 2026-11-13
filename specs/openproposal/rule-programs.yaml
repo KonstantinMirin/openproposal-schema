@@ -82,6 +82,41 @@ defs:
   committed_id:
     [coalesce, [get, [get, [up], commitment], pricing_id],
       [if, [eq, [len, [get, [up], pricing]], 1], [get, [at, [get, [up], pricing], 0], pricing_id], null]]
+  # § 5.2.1: the environments that hold an impression § 5.1.1 gives each channel, from the § 5.2.1 rows: a channel is the
+  # first § 5.1.1 row an impression matches, so a `dooh` impression is `dooh` whatever its ad, an audio ad is `audio` on any
+  # device, a Connected TV, Connected Device, or Set Top Box impression is `ctv`, and native, video, and display ads are
+  # what is left, the site and app impressions on a computer, a phone, or a tablet.
+  environments_fit:
+    [table, [get, [$], channel],
+      {dooh: [dooh], audio: [web_desktop, web_mobile, app_mobile, ctv], ctv: [ctv], native: [web_desktop, web_mobile, app_mobile], video: [web_desktop, web_mobile, app_mobile], display: [web_desktop, web_mobile, app_mobile]}]
+  environments_known: [list, dooh, web_desktop, web_mobile, app_mobile, ctv]
+  environments_offered: [if, [and, [ismap, [get, [$], environments]], [islist, [get, [get, [$], environments], available]]], [get, [get, [$], environments], available], [list]]
+  # § 5.2.2: the members the measurement rule reads, each of which a code block may leave out; a member it leaves out while
+  # it shows another is unknown.
+  measured_shown: [or, [has, [$], placement], [has, [$], committed_metrics], [has, [$], environments], [has, [$], measurement_source]]
+  measured_unknown_placement: [and, [part], [not, [has, [$], placement]], [def, measured_shown]]
+  measured_unknown_metrics: [and, [part], [not, [has, [$], committed_metrics]], [def, measured_shown]]
+  measured_unknown_environments: [and, [part], [not, [has, [$], environments]], [def, measured_shown]]
+  measured_unknown_sources: [and, [part], [not, [has, [$], measurement_source]], [def, measured_shown]]
+  measured_unknown: [or, [def, measured_unknown_placement], [def, measured_unknown_metrics], [def, measured_unknown_environments], [def, measured_unknown_sources]]
+  measured_options: [if, [and, [ismap, [get, [$], measurement_source]], [islist, [get, [get, [$], measurement_source], available]]], [get, [get, [$], measurement_source], available], [list]]
+  # Any one condition known to be false decides the rule: OMID 1.0 offered, no viewability committed, no app or CTV
+  # environment, or no measurement source.
+  measured_clean:
+    [or,
+      [and, [not, [def, measured_unknown_placement]], [contains, [if, [islist, [get, [get, [$], placement], api]], [get, [get, [$], placement], api], [list]], 7]],
+      [and, [not, [def, measured_unknown_metrics]], [eq, [find, [if, [islist, [get, [$], committed_metrics]], [get, [$], committed_metrics], [list]], m, [and, [ismap, [var, m]], [eq, [get, [var, m], metric], viewable_rate]]], null]],
+      [and, [not, [def, measured_unknown_environments]], [eq, [find, [def, environments_offered], e, [contains, [list, app_mobile, ctv], [var, e]]], null]],
+      [and, [not, [def, measured_unknown_sources]], [eq, [len, [def, measured_options]], 0]]]
+  measured_vendors: [ne, [find, [def, measured_options], o, [isstr, [get, [var, o], vendor]]], null]
+  measured_referenced: [ne, [find, [def, measured_options], o, [and, [ismap, [var, o]], [has, [var, o], catalog_ref]]], null]
+  measured_mismatch: [ne, [find, [def, measured_options], o, [and, [isstr, [get, [var, o], vendor]], [ne, [get, [var, o], vendor], [get, [up], seller_id]]]], null]
+  # § 5.2: a placement that gives `plcmt`.
+  plcmt_given: [and, [ismap, [get, [$], placement]], [has, [get, [$], placement], plcmt]]
+  # § 5.5: the exclusions' `list_ref`, where they give one, and the exclusion types the buyer supplies.
+  list_ref: [get, [get, [$], exclusions], list_ref]
+  list_ref_given: [and, [ismap, [$]], [ismap, [get, [$], exclusions]], [ismap, [def, list_ref]]]
+  exclusion_types: [filter, [coalesce, [keys, [get, [$], exclusions]], [list]], k, [ne, [var, k], list_ref]]
   # § 5.6.4, read on the line item that holds the rule's owner: whether any of its counts is in impressions, a `pricing[]`
   # entry's cost method, `availability`'s `unit`, or a `committed_metrics[]` metric.
   counts_impressions:
@@ -542,3 +577,93 @@ rules:
       - when: [and, [ismap, [$]], [ismap, [get, [up], commitment]], [eq, [def, committed_id], [get, [$], pricing_id]], [not, [has, [$], agreed_rate]]]
         path: ""
         message: "`agreed_rate` is REQUIRED here"
+  # § 2.2: at `agreed`, every `catalog_ref` is resolved into the stored record. A code block that leaves out `status`, and
+  # shows a reference, can't say.
+  rule:2.2:06ccee9f:
+    owner: LineItem
+    undecided: [and, [ismap, [$]], [part], [not, [has, [$], status]], [gt, [len, [places, [$], catalog_ref]], 0]]
+    violations:
+      - each: [if, [and, [ismap, [$]], [eq, [get, [$], status], agreed]], [places, [$], catalog_ref], null]
+        as: [i, at]
+        when: true
+        path: [var, at]
+        message: "a `catalog_ref` in an agreed line item"
+  # § 5.2.1: each environment offered holds an impression of the line item's channel, the first § 5.1.1 row an impression
+  # matches. An environment or a channel the tables don't define is an extension, which the rule leaves alone. A code block
+  # that shows the environments and leaves out the channel can't say.
+  rule:5.2.1:cc42a1f8:
+    owner: LineItem
+    undecided:
+      [and, [ismap, [$]], [part], [not, [has, [$], channel]], [has, [$], environments],
+        [ne, [find, [def, environments_offered], e, [contains, [def, environments_known], [var, e]]], null]]
+    violations:
+      - each: [if, [and, [ismap, [$]], [islist, [def, environments_fit]], [ismap, [get, [$], environments]]], [def, environments_offered], null]
+        as: [i, e]
+        when: [and, [isstr, [var, e]], [contains, [def, environments_known], [var, e]], [not, [contains, [def, environments_fit], [var, e]]]]
+        path: [pointer, environments, available, [var, i]]
+        message: [str, "`", [var, e], "` holds no `", [get, [$], channel], "` impression"]
+  # § 5.2.2: without OMID 1.0 (7), viewability in app and CTV is measured by the seller only, the seller the proposal that
+  # holds the line item names. Each condition is true, false, or, where a code block leaves its member out, unknown; one
+  # false condition decides it, and an unknown one, a vendor a catalog reference stands for, or a seller the line item's
+  # holder doesn't show, leaves it undecided.
+  rule:5.2.2:f9a1a6d5:
+    owner: LineItem
+    on: Proposal
+    unheld: >-
+      On a lock whose proposal holds no line item, as `with-open-prs`, where line items are documents of their own, no
+      value an SDK checks holds both the line item and the seller, so no SDK decides the rule there; the gates read the
+      seller a vector's context gives.
+    undecided:
+      [and, [ismap, [$]], [not, [def, measured_clean]],
+        [or, [def, measured_unknown],
+          [and, [not, [isstr, [get, [up], seller_id]]], [or, [def, measured_vendors], [def, measured_referenced]]],
+          [and, [isstr, [get, [up], seller_id]], [def, measured_referenced], [not, [def, measured_mismatch]]]]]
+    violations:
+      - each: [if, [and, [ismap, [$]], [not, [def, measured_clean]], [not, [def, measured_unknown]], [isstr, [get, [up], seller_id]]], [def, measured_options], null]
+        as: [i, o]
+        when: [and, [isstr, [get, [var, o], vendor]], [ne, [get, [var, o], vendor], [get, [up], seller_id]]]
+        path: [pointer, measurement_source, available, [var, i]]
+        message: [str, "offers the vendor ", [json, [get, [var, o], vendor]], ", not the seller, without OMID 1.0 (7)"]
+  # § 5.2, as the § 5.2.2 key row states it: "`plcmt` | REQUIRED for video ads (`channel` `video`, or video on `channel`
+  # `ctv`); otherwise OPTIONAL". A `ctv` line item says in no field whether its ads are video (D-035, D-041), so a `ctv` line
+  # item with no `plcmt` is undecided, and so is a code block that leaves out the channel or the placement.
+  rule:5.2:f3d3f9e8:
+    owner: LineItem
+    undecided:
+      [and, [ismap, [$]], [not, [def, plcmt_given]],
+        [or,
+          [and, [part], [not, [has, [$], channel]], [has, [$], placement]],
+          [eq, [get, [$], channel], ctv],
+          [and, [eq, [get, [$], channel], video], [part], [not, [has, [$], placement]]]]]
+    violations:
+      - when: [and, [ismap, [$]], [not, [def, plcmt_given]], [eq, [get, [$], channel], video], [not, [and, [part], [not, [has, [$], placement]]]]]
+        path: [if, [ismap, [get, [$], placement]], /placement, ""]
+        message: "a video line item's `placement` gives no `plcmt`"
+  # § 5.5: a `list_ref` is hash-pinned, and resolved into the stored record at `agreed`. A code block that leaves out
+  # `status` decides the pin only.
+  rule:5.5:16494a1a:
+    owner: LineItem
+    undecided: [and, [def, list_ref_given], [part], [not, [has, [$], status]], [has, [def, list_ref], sha256]]
+    violations:
+      - when: [and, [def, list_ref_given], [not, [has, [def, list_ref], sha256]]]
+        path: /exclusions/list_ref
+        message: "a `list_ref` with no `sha256`"
+      - when: [and, [def, list_ref_given], [eq, [get, [$], status], agreed]]
+        path: /exclusions/list_ref
+        message: "a `list_ref` in an agreed line item"
+  # § 5.5: the buyer supplies only the exclusion types the seller accepts. A code block that shows the exclusions and leaves
+  # out what the seller accepts can't say.
+  rule:5.5:2eab2842:
+    owner: LineItem
+    undecided: [and, [ismap, [$]], [ismap, [get, [$], exclusions]], [gt, [len, [def, exclusion_types]], 0], [not, [ismap, [get, [$], exclusions_accepted]]], [part]]
+    violations:
+      - each: [if, [and, [ismap, [$]], [ismap, [get, [$], exclusions]], [not, [ismap, [get, [$], exclusions_accepted]]]], [def, exclusion_types], null]
+        as: [i, k]
+        when: true
+        path: [pointer, exclusions, [var, k]]
+        message: [str, "the seller accepts no exclusion type, and the buyer supplies `", [var, k], "`"]
+      - each: [if, [and, [ismap, [$]], [ismap, [get, [$], exclusions]], [ismap, [get, [$], exclusions_accepted]]], [def, exclusion_types], null]
+        as: [i, k]
+        when: [not, [contains, [if, [islist, [get, [get, [$], exclusions_accepted], types]], [get, [get, [$], exclusions_accepted], types], [list]], [var, k]]]
+        path: [pointer, exclusions, [var, k]]
+        message: [str, "`exclusions_accepted.types` doesn't list `", [var, k], "`"]

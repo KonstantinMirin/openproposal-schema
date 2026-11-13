@@ -11,7 +11,6 @@
  * require members or narrow a member's type.
  */
 import { FORMAT_PATTERNS } from "./sdk-formats.ts";
-import { readFileSync } from "node:fs";
 import { zoneTableText } from "./rule-programs.ts";
 import { PYTHON_EVALUATOR } from "./sdk-rules-python.ts";
 import { allConstants, constantsDoc, lockPhrase, provenanceDocs, usesAbsent, type Constants, type Expr, type Provenance, type SdkFile, type SdkModel, type SdkTemplate, type SdkType, type Shape } from "./sdk.ts";
