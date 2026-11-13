@@ -211,6 +211,15 @@ export const sdkRules = defineGate<{ language: string; cases: SdkLocationCase[];
       },
       expect: 'rule "sentence:5.6.5:10182d60" valid vector 2 value: the reference accepts it, and the SDK rejects it at /',
     },
+    {
+      name: "an SDK that accepts a rule's invalid vector in its holder",
+      lock: "with-our-stack",
+      mutate: (i) => {
+        const n = i.cases.findIndex((c) => c.label.startsWith('rule "rule:5.6.4:e58650b7" invalid vector 1 value in its holder'));
+        return { ...i, run: { ...i.run, findings: i.run.findings.map((f, k) => (k === n ? [] : f)) } };
+      },
+      expect: 'rule "rule:5.6.4:e58650b7" invalid vector 1 value in its holder: the reference rejects it at /delivery_counting, and the SDK accepts it',
+    },
   ],
 });
 

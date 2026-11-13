@@ -120,7 +120,7 @@ class Screen(rt.Closed):
 class PropertyOption(rt.Closed):
     """The `PropertyOption` object of the `properties` module."""
 
-    __shape__: ClassVar[rt.Shape] = rt.Shape(conditions=(("child_audience", "mixed", ("child_treatment",), ()),))
+    __shape__: ClassVar[rt.Shape] = rt.Shape(rules=("rule:5.2.4:65ca47c9", "rule:5.2.4:c8e6720e"), conditions=(("child_audience", "mixed", ("child_treatment",), ()),))
 
     allocation: Optional[PropertyOptionAllocation] = None
     """`all` | `seller_allocated`. Absent means `all`. With `all`, the line item runs on every listed screen. With `seller_allocated`, the seller picks the screens: `screens[]`, when present, is the pool it picks from and is seller-set, and the proof-of-play log names the screens used"""

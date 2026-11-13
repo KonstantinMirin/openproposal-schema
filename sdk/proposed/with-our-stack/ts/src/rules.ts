@@ -1230,6 +1230,216 @@ export const PROGRAMS: Programs = {
       ],
       "derived_units"
     ],
+    "baseline_line_item_id": [
+      "get",
+      [
+        "get",
+        [
+          "$"
+        ],
+        "baseline"
+      ],
+      "line_item_id"
+    ],
+    "requested_line_item": [
+      "coalesce",
+      [
+        "find",
+        [
+          "coalesce",
+          [
+            "get",
+            [
+              "up"
+            ],
+            "line_items"
+          ],
+          [
+            "list"
+          ]
+        ],
+        "x",
+        [
+          "and",
+          [
+            "ismap",
+            [
+              "var",
+              "x"
+            ]
+          ],
+          [
+            "eq",
+            [
+              "get",
+              [
+                "var",
+                "x"
+              ],
+              "line_item_id"
+            ],
+            [
+              "def",
+              "baseline_line_item_id"
+            ]
+          ]
+        ]
+      ],
+      [
+        "find",
+        [
+          "get",
+          [
+            "find",
+            [
+              "coalesce",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "packages"
+              ],
+              [
+                "list"
+              ]
+            ],
+            "p",
+            [
+              "and",
+              [
+                "ismap",
+                [
+                  "var",
+                  "p"
+                ]
+              ],
+              [
+                "ne",
+                [
+                  "find",
+                  [
+                    "coalesce",
+                    [
+                      "get",
+                      [
+                        "var",
+                        "p"
+                      ],
+                      "line_items"
+                    ],
+                    [
+                      "list"
+                    ]
+                  ],
+                  "x",
+                  [
+                    "and",
+                    [
+                      "ismap",
+                      [
+                        "var",
+                        "x"
+                      ]
+                    ],
+                    [
+                      "eq",
+                      [
+                        "get",
+                        [
+                          "var",
+                          "x"
+                        ],
+                        "line_item_id"
+                      ],
+                      [
+                        "def",
+                        "baseline_line_item_id"
+                      ]
+                    ]
+                  ]
+                ],
+                null
+              ]
+            ]
+          ],
+          "line_items"
+        ],
+        "x",
+        [
+          "and",
+          [
+            "ismap",
+            [
+              "var",
+              "x"
+            ]
+          ],
+          [
+            "eq",
+            [
+              "get",
+              [
+                "var",
+                "x"
+              ],
+              "line_item_id"
+            ],
+            [
+              "def",
+              "baseline_line_item_id"
+            ]
+          ]
+        ]
+      ]
+    ],
+    "committed_id": [
+      "coalesce",
+      [
+        "get",
+        [
+          "get",
+          [
+            "up"
+          ],
+          "commitment"
+        ],
+        "pricing_id"
+      ],
+      [
+        "if",
+        [
+          "eq",
+          [
+            "len",
+            [
+              "get",
+              [
+                "up"
+              ],
+              "pricing"
+            ]
+          ],
+          1
+        ],
+        [
+          "get",
+          [
+            "at",
+            [
+              "get",
+              [
+                "up"
+              ],
+              "pricing"
+            ],
+            0
+          ],
+          "pricing_id"
+        ],
+        null
+      ]
+    ],
     "counts_impressions": [
       "or",
       [
@@ -1357,6 +1567,1271 @@ export const PROGRAMS: Programs = {
     ]
   },
   "rules": {
+    "rule:4.1:1ef7cbec": {
+      "owner": "Proposal",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "or",
+              [
+                "eq",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "type"
+                ],
+                "custom"
+              ],
+              [
+                "gt",
+                [
+                  "len",
+                  [
+                    "get",
+                    [
+                      "$"
+                    ],
+                    "assent"
+                  ]
+                ],
+                0
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "buyer"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`buyer` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:4.1:22f5a51a": {
+      "owner": "Proposal",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "packages"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "line_items"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`line_items` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:4.1:94b23ce1": {
+      "owner": "Proposal",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "line_items"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "packages"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`packages` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:4.1:9c98396c": {
+      "owner": "Proposal",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "or",
+              [
+                "and",
+                [
+                  "has",
+                  [
+                    "$"
+                  ],
+                  "status"
+                ],
+                [
+                  "ne",
+                  [
+                    "get",
+                    [
+                      "$"
+                    ],
+                    "status"
+                  ],
+                  "draft"
+                ]
+              ],
+              [
+                "gt",
+                [
+                  "len",
+                  [
+                    "get",
+                    [
+                      "$"
+                    ],
+                    "assent"
+                  ]
+                ],
+                0
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "negotiation_history"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`negotiation_history` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:4.4:9754e43c": {
+      "owner": "ChangeRequest",
+      "on": "Proposal",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "ismap",
+            [
+              "def",
+              "requested_line_item"
+            ]
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "ismap",
+              [
+                "def",
+                "requested_line_item"
+              ]
+            ],
+            [
+              "ne",
+              [
+                "find",
+                [
+                  "coalesce",
+                  [
+                    "get",
+                    [
+                      "def",
+                      "requested_line_item"
+                    ],
+                    "external_references"
+                  ],
+                  [
+                    "list"
+                  ]
+                ],
+                "r",
+                [
+                  "and",
+                  [
+                    "ismap",
+                    [
+                      "var",
+                      "r"
+                    ]
+                  ],
+                  [
+                    "eq",
+                    [
+                      "get",
+                      [
+                        "var",
+                        "r"
+                      ],
+                      "reference_type"
+                    ],
+                    "order"
+                  ]
+                ]
+              ],
+              null
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "orderid"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`orderid` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "change_requests",
+          "*"
+        ]
+      ]
+    },
+    "rule:5.4:3a677601": {
+      "owner": "LineItem",
+      "on": "Proposal",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "and",
+          [
+            "has",
+            [
+              "$"
+            ],
+            "formats"
+          ],
+          [
+            "not",
+            [
+              "has",
+              [
+                "up"
+              ],
+              "status"
+            ]
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "formats"
+              ],
+              [
+                "ne",
+                [
+                  "get",
+                  [
+                    "up"
+                  ],
+                  "status"
+                ],
+                "draft"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "format_specs"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`format_specs` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "line_items",
+          "*"
+        ],
+        [
+          "packages",
+          "*",
+          "add_ons",
+          "*"
+        ],
+        [
+          "packages",
+          "*",
+          "line_items",
+          "*"
+        ]
+      ]
+    },
+    "rule:4.1:71a584ca": {
+      "owner": "HistoryPath",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "has",
+              [
+                "$"
+              ],
+              "requested_value"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "line_item_id"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`line_item_id` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:4.1:d31e02ee": {
+      "owner": "HistoryPath",
+      "on": "HistoryEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "action"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "action"
+              ],
+              "requested"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "requested_value"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`requested_value` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "paths",
+          "*"
+        ]
+      ]
+    },
+    "rule:5.2.2:40e6089f": {
+      "owner": "Placement",
+      "on": "LineItem",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "channel"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "channel"
+              ],
+              "video"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "plcmt"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`plcmt` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "placement"
+        ]
+      ]
+    },
+    "rule:5.2.2:87d20470": {
+      "owner": "Placement",
+      "on": "LineItem",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "channel"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "channel"
+              ],
+              "audio"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "feed"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`feed` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "placement"
+        ]
+      ]
+    },
+    "rule:5.2.4:02c220b8": {
+      "owner": "PropertyOption",
+      "on": "LineItem",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "channel"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "channel"
+              ],
+              "dooh"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "venue_type"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`venue_type` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "properties",
+          "available",
+          "*"
+        ]
+      ]
+    },
+    "rule:5.2.4:45d0b1fa": {
+      "owner": "PropertyOption",
+      "on": "LineItem",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "and",
+          [
+            "ne",
+            [
+              "get",
+              [
+                "$"
+              ],
+              "seller_relationship"
+            ],
+            "reseller"
+          ],
+          [
+            "not",
+            [
+              "has",
+              [
+                "up"
+              ],
+              "transaction_mechanism"
+            ]
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "or",
+              [
+                "eq",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "seller_relationship"
+                ],
+                "reseller"
+              ],
+              [
+                "ne",
+                [
+                  "find",
+                  [
+                    "coalesce",
+                    [
+                      "if",
+                      [
+                        "ismap",
+                        [
+                          "get",
+                          [
+                            "up"
+                          ],
+                          "transaction_mechanism"
+                        ]
+                      ],
+                      [
+                        "get",
+                        [
+                          "get",
+                          [
+                            "up"
+                          ],
+                          "transaction_mechanism"
+                        ],
+                        "available"
+                      ],
+                      [
+                        "list"
+                      ]
+                    ],
+                    [
+                      "list"
+                    ]
+                  ],
+                  "o",
+                  [
+                    "and",
+                    [
+                      "ismap",
+                      [
+                        "var",
+                        "o"
+                      ]
+                    ],
+                    [
+                      "contains",
+                      [
+                        "list",
+                        "programmatic_guaranteed",
+                        "preferred_deal",
+                        "private_auction"
+                      ],
+                      [
+                        "get",
+                        [
+                          "var",
+                          "o"
+                        ],
+                        "id"
+                      ]
+                    ]
+                  ]
+                ],
+                null
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "seller_accounts"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`seller_accounts` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "properties",
+          "available",
+          "*"
+        ]
+      ]
+    },
+    "rule:5.2.4:ea387bb0": {
+      "owner": "PropertyOption",
+      "on": "LineItem",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "and",
+          [
+            "eq",
+            [
+              "get",
+              [
+                "$"
+              ],
+              "allocation"
+            ],
+            "all"
+          ],
+          [
+            "not",
+            [
+              "has",
+              [
+                "up"
+              ],
+              "channel"
+            ]
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "eq",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "allocation"
+                ],
+                "all"
+              ],
+              [
+                "eq",
+                [
+                  "get",
+                  [
+                    "up"
+                  ],
+                  "channel"
+                ],
+                "dooh"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "screens"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`screens` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "properties",
+          "available",
+          "*"
+        ]
+      ]
+    },
+    "rule:5.2:2f4f1aa3": {
+      "owner": "LineItem",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "contains",
+              [
+                "list",
+                3,
+                4
+              ],
+              [
+                "get",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "placement"
+                ],
+                "feed"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "episodes"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`episodes` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.2:f8f39d84": {
+      "owner": "LineItem",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "contains",
+              [
+                "list",
+                "video",
+                "audio"
+              ],
+              [
+                "get",
+                [
+                  "$"
+                ],
+                "channel"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "placement"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`placement` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.5:4a35bd89": {
+      "owner": "LineItem",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "or",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "daypart"
+              ],
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "frequency_cap"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "time_zone"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`time_zone` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.6.1:7b200076": {
+      "owner": "Commitment",
+      "on": "LineItem",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "pricing"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "gt",
+              [
+                "len",
+                [
+                  "get",
+                  [
+                    "up"
+                  ],
+                  "pricing"
+                ]
+              ],
+              1
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "pricing_id"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`pricing_id` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "commitment"
+        ],
+        [
+          "hold",
+          "requested_terms",
+          "commitment"
+        ]
+      ]
+    },
+    "rule:5.6.4:615bf228": {
+      "owner": "DeliveryCounting",
+      "on": "LineItem",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "properties"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "ne",
+              [
+                "find",
+                [
+                  "coalesce",
+                  [
+                    "if",
+                    [
+                      "ismap",
+                      [
+                        "get",
+                        [
+                          "up"
+                        ],
+                        "properties"
+                      ]
+                    ],
+                    [
+                      "get",
+                      [
+                        "get",
+                        [
+                          "up"
+                        ],
+                        "properties"
+                      ],
+                      "available"
+                    ],
+                    [
+                      "list"
+                    ]
+                  ],
+                  [
+                    "list"
+                  ]
+                ],
+                "o",
+                [
+                  "and",
+                  [
+                    "ismap",
+                    [
+                      "var",
+                      "o"
+                    ]
+                  ],
+                  [
+                    "gt",
+                    [
+                      "len",
+                      [
+                        "get",
+                        [
+                          "var",
+                          "o"
+                        ],
+                        "sync_groups"
+                      ]
+                    ],
+                    0
+                  ]
+                ]
+              ],
+              null
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "partial_play_credit"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`partial_play_credit` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "delivery_counting"
+        ]
+      ]
+    },
     "rule:5.6.4:e58650b7": {
       "owner": "DeliveryCounting",
       "on": "LineItem",
@@ -1430,6 +2905,489 @@ export const PROGRAMS: Programs = {
         [
           "delivery_counting"
         ]
+      ]
+    },
+    "rule:5.6:62e21e38": {
+      "owner": "PricingEntry",
+      "on": "LineItem",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "or",
+          [
+            "not",
+            [
+              "given",
+              "commitment"
+            ]
+          ],
+          [
+            "and",
+            [
+              "ismap",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "commitment"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "def",
+                "committed_id"
+              ],
+              null
+            ]
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "ismap",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "commitment"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "def",
+                "committed_id"
+              ],
+              [
+                "get",
+                [
+                  "$"
+                ],
+                "pricing_id"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "agreed_rate"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`agreed_rate` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "pricing",
+          "*"
+        ]
+      ]
+    },
+    "rule:5.7:76df804b": {
+      "owner": "LineItem",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "or",
+              [
+                "eq",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "serving_mode"
+                ],
+                "embedded"
+              ],
+              [
+                "gt",
+                [
+                  "len",
+                  [
+                    "get",
+                    [
+                      "$"
+                    ],
+                    "committed_metrics"
+                  ]
+                ],
+                0
+              ],
+              [
+                "and",
+                [
+                  "ismap",
+                  [
+                    "get",
+                    [
+                      "$"
+                    ],
+                    "commitment_bounds"
+                  ]
+                ],
+                [
+                  "has",
+                  [
+                    "get",
+                    [
+                      "$"
+                    ],
+                    "commitment_bounds"
+                  ],
+                  "spend"
+                ]
+              ],
+              [
+                "ne",
+                [
+                  "find",
+                  [
+                    "coalesce",
+                    [
+                      "get",
+                      [
+                        "$"
+                      ],
+                      "pricing"
+                    ],
+                    [
+                      "list"
+                    ]
+                  ],
+                  "e",
+                  [
+                    "and",
+                    [
+                      "ismap",
+                      [
+                        "var",
+                        "e"
+                      ]
+                    ],
+                    [
+                      "has",
+                      [
+                        "var",
+                        "e"
+                      ],
+                      "unit_bounds"
+                    ]
+                  ]
+                ],
+                null
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "controlling_measurement"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`controlling_measurement` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.9:c0f7b8ce": {
+      "owner": "LineItem",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "ne",
+              [
+                "find",
+                [
+                  "coalesce",
+                  [
+                    "if",
+                    [
+                      "ismap",
+                      [
+                        "get",
+                        [
+                          "$"
+                        ],
+                        "transaction_mechanism"
+                      ]
+                    ],
+                    [
+                      "get",
+                      [
+                        "get",
+                        [
+                          "$"
+                        ],
+                        "transaction_mechanism"
+                      ],
+                      "available"
+                    ],
+                    [
+                      "list"
+                    ]
+                  ],
+                  [
+                    "list"
+                  ]
+                ],
+                "o",
+                [
+                  "and",
+                  [
+                    "ismap",
+                    [
+                      "var",
+                      "o"
+                    ]
+                  ],
+                  [
+                    "eq",
+                    [
+                      "get",
+                      [
+                        "var",
+                        "o"
+                      ],
+                      "delivery_type"
+                    ],
+                    "share_of_voice"
+                  ]
+                ]
+              ],
+              null
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "sov_basis"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`sov_basis` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.9:cc571473": {
+      "owner": "LineItem",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "ne",
+              [
+                "find",
+                [
+                  "coalesce",
+                  [
+                    "if",
+                    [
+                      "ismap",
+                      [
+                        "get",
+                        [
+                          "$"
+                        ],
+                        "transaction_mechanism"
+                      ]
+                    ],
+                    [
+                      "get",
+                      [
+                        "get",
+                        [
+                          "$"
+                        ],
+                        "transaction_mechanism"
+                      ],
+                      "available"
+                    ],
+                    [
+                      "list"
+                    ]
+                  ],
+                  [
+                    "list"
+                  ]
+                ],
+                "o",
+                [
+                  "and",
+                  [
+                    "ismap",
+                    [
+                      "var",
+                      "o"
+                    ]
+                  ],
+                  [
+                    "contains",
+                    [
+                      "list",
+                      "programmatic_guaranteed",
+                      "preferred_deal",
+                      "private_auction"
+                    ],
+                    [
+                      "get",
+                      [
+                        "var",
+                        "o"
+                      ],
+                      "id"
+                    ]
+                  ]
+                ]
+              ],
+              null
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "deal_origin"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`deal_origin` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.9:ceef2a21": {
+      "owner": "LineItem",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "$"
+                ],
+                "sov_basis"
+              ],
+              "impressions"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "sov_share"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`sov_share` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.9:d8611936": {
+      "owner": "LineItem",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "$"
+                ],
+                "serving_mode"
+              ],
+              "embedded"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "retention"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`retention` is REQUIRED here"
+        }
       ]
     },
     "sentence:5.6.1:78efd2ce": {
@@ -1901,6 +3859,1370 @@ export const PROGRAMS: Programs = {
               "elapsed"
             ]
           ]
+        }
+      ]
+    },
+    "rule:5.2.4:65ca47c9": {
+      "owner": "PropertyOption",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "domains"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "apps"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`apps` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.2.4:c8e6720e": {
+      "owner": "PropertyOption",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "apps"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "domains"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`domains` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.3:153027ca": {
+      "owner": "AudienceSelectable",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "gt",
+                [
+                  "len",
+                  [
+                    "get",
+                    [
+                      "$"
+                    ],
+                    "available"
+                  ]
+                ],
+                1
+              ],
+              [
+                "or",
+                [
+                  "not",
+                  [
+                    "has",
+                    [
+                      "$"
+                    ],
+                    "max_select"
+                  ]
+                ],
+                [
+                  "gt",
+                  [
+                    "get",
+                    [
+                      "$"
+                    ],
+                    "max_select"
+                  ],
+                  1
+                ]
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "combine"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`combine` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.4:45b02f49": {
+      "owner": "Asset",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "url"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "markup"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`markup` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.4:e2c0968b": {
+      "owner": "Asset",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "markup"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "url"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`url` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.4:58ab1d09": {
+      "owner": "MaterialsDue",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "before_start"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "at"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`at` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.4:7a6f2ac4": {
+      "owner": "MaterialsDue",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "at"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "before_start"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`before_start` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.6.1:94be9998": {
+      "owner": "CommitResult",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "ne",
+              [
+                "find",
+                [
+                  "coalesce",
+                  [
+                    "get",
+                    [
+                      "$"
+                    ],
+                    "entries"
+                  ],
+                  [
+                    "list"
+                  ]
+                ],
+                "e",
+                [
+                  "and",
+                  [
+                    "ismap",
+                    [
+                      "var",
+                      "e"
+                    ]
+                  ],
+                  [
+                    "eq",
+                    [
+                      "get",
+                      [
+                        "var",
+                        "e"
+                      ],
+                      "role"
+                    ],
+                    "decline"
+                  ],
+                  [
+                    "eq",
+                    [
+                      "get",
+                      [
+                        "var",
+                        "e"
+                      ],
+                      "ground"
+                    ],
+                    "availability"
+                  ]
+                ]
+              ],
+              null
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "availability"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`availability` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.6.4:b6f5be4c": {
+      "owner": "ImpressionMultiplier",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "source_type"
+              ],
+              [
+                "ne",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "source_type"
+                ],
+                2
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "vendor"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`vendor` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.6.5:119b216f": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "cost_method"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "cost_method"
+              ],
+              "TIME"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "rate_unit"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`rate_unit` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.5:1f435d20": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "cost_method"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "cost_method"
+              ],
+              "CPMV"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "viewability_standard"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`viewability_standard` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.5:26b080e2": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "and",
+          [
+            "not",
+            [
+              "has",
+              [
+                "$"
+              ],
+              "view_s"
+            ]
+          ],
+          [
+            "not",
+            [
+              "has",
+              [
+                "up"
+              ],
+              "cost_method"
+            ]
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "not",
+                [
+                  "has",
+                  [
+                    "$"
+                  ],
+                  "view_s"
+                ]
+              ],
+              [
+                "eq",
+                [
+                  "get",
+                  [
+                    "up"
+                  ],
+                  "cost_method"
+                ],
+                "CPV"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "view_fraction"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`view_fraction` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.5:449027fe": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "cost_method"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "cost_method"
+              ],
+              "CPA"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "action_type"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`action_type` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.5:449027fe-2": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "cost_method"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "cost_method"
+              ],
+              "CPA"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "attribution_window"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`attribution_window` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.5:449027fe-3": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "cost_method"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "cost_method"
+              ],
+              "CPA"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "action_source"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`action_source` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.5:acca3c1c": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "cost_method"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "cost_method"
+              ],
+              "CPP"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "demographic"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`demographic` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.5:acca3c1c-2": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "not",
+          [
+            "has",
+            [
+              "up"
+            ],
+            "cost_method"
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "eq",
+              [
+                "get",
+                [
+                  "up"
+                ],
+                "cost_method"
+              ],
+              "CPP"
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "rating_source"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`rating_source` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6.5:f959ab87": {
+      "owner": "CostParameters",
+      "on": "PricingEntry",
+      "undecided": [
+        "and",
+        [
+          "ismap",
+          [
+            "$"
+          ]
+        ],
+        [
+          "and",
+          [
+            "not",
+            [
+              "has",
+              [
+                "$"
+              ],
+              "view_fraction"
+            ]
+          ],
+          [
+            "not",
+            [
+              "has",
+              [
+                "up"
+              ],
+              "cost_method"
+            ]
+          ]
+        ]
+      ],
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "not",
+                [
+                  "has",
+                  [
+                    "$"
+                  ],
+                  "view_fraction"
+                ]
+              ],
+              [
+                "eq",
+                [
+                  "get",
+                  [
+                    "up"
+                  ],
+                  "cost_method"
+                ],
+                "CPV"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "view_s"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`view_s` is REQUIRED here"
+        }
+      ],
+      "at": [
+        [
+          "cost_parameters"
+        ]
+      ]
+    },
+    "rule:5.6:0f8d396f": {
+      "owner": "PricingEntry",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "contains",
+              [
+                "list",
+                "CPMV",
+                "CPV",
+                "CPP",
+                "CPA",
+                "TIME"
+              ],
+              [
+                "get",
+                [
+                  "$"
+                ],
+                "cost_method"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "cost_parameters"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`cost_parameters` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.6:7235466d": {
+      "owner": "PricingEntry",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "isstr",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "cost_method"
+                ]
+              ],
+              [
+                "contains",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "cost_method"
+                ],
+                ":"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "rate_per"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`rate_per` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.6:7235466d-2": {
+      "owner": "PricingEntry",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "isstr",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "cost_method"
+                ]
+              ],
+              [
+                "contains",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "cost_method"
+                ],
+                ":"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "unit_label"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`unit_label` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.6:7235466d-3": {
+      "owner": "PricingEntry",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "and",
+              [
+                "isstr",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "cost_method"
+                ]
+              ],
+              [
+                "contains",
+                [
+                  "get",
+                  [
+                    "$"
+                  ],
+                  "cost_method"
+                ],
+                ":"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "cost_definition"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`cost_definition` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.6:8288302a": {
+      "owner": "PricingEntry",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "ne",
+              [
+                "find",
+                [
+                  "coalesce",
+                  [
+                    "get",
+                    [
+                      "$"
+                    ],
+                    "transaction_mechanisms"
+                  ],
+                  [
+                    "list"
+                  ]
+                ],
+                "m",
+                [
+                  "contains",
+                  [
+                    "list",
+                    "programmatic_guaranteed",
+                    "preferred_deal",
+                    "private_auction"
+                  ],
+                  [
+                    "var",
+                    "m"
+                  ]
+                ]
+              ],
+              null
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "price_type"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`price_type` is REQUIRED here"
+        }
+      ]
+    },
+    "rule:5.6.6:11a40445": {
+      "owner": "Fee",
+      "violations": [
+        {
+          "when": [
+            "and",
+            [
+              "ismap",
+              [
+                "$"
+              ]
+            ],
+            [
+              "contains",
+              [
+                "list",
+                "cancelled",
+                "commitment"
+              ],
+              [
+                "get",
+                [
+                  "$"
+                ],
+                "calculation"
+              ]
+            ],
+            [
+              "not",
+              [
+                "has",
+                [
+                  "$"
+                ],
+                "share"
+              ]
+            ]
+          ],
+          "path": "",
+          "message": "`share` is REQUIRED here"
         }
       ]
     }

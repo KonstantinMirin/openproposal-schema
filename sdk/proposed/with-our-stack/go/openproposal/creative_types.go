@@ -17,6 +17,7 @@ func (MaterialsDue) ValidateValue(v any, at string, errs *Errors) {
 		return
 	}
 	checkClosed(m, at, errs, "at", "before_start")
+	checkRules(v, at, errs, "rule:5.4:58ab1d09", "rule:5.4:7a6f2ac4")
 	if x, ok := m["at"]; ok {
 		validateAs[Instant](x, member(at, "at"), errs)
 	}
@@ -181,6 +182,7 @@ func (Asset) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkRequired(m, at, errs, "asset_id", "format_id")
 	checkClosed(m, at, errs, "approval_status", "asset_id", "built_by", "format_id", "markup", "provenance", "submitted_at", "url")
+	checkRules(v, at, errs, "rule:5.4:45b02f49", "rule:5.4:e2c0968b")
 	if x, ok := m["approval_status"]; ok {
 		validateAs[ApprovalStatus](x, member(at, "approval_status"), errs)
 	}

@@ -156,6 +156,8 @@ CombineSelection = Selectable[CombineOperator]
 class AudienceSelectable(rt.Closed):
     """The `AudienceSelectable` object of the `audience` module."""
 
+    __shape__: ClassVar[rt.Shape] = rt.Shape(rules=("rule:5.3:153027ca",))
+
     available: list[AudienceOption]
     combine: Optional[Selectable[CombineOperator]] = None
     """The operators the seller supports. `max_select: 1`. `included[]` MUST name exactly one option. It carries no `deltas`"""

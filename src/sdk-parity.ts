@@ -49,7 +49,7 @@ import { applicationExpr, renderExpr, type Expr } from "./sdk.ts";
 import { locationOf } from "./emit.ts";
 import { spawnWithInput } from "./spawn.ts";
 import { RuleEvaluator, type Programs, type ZoneTable } from "./rule-program.ts";
-import { inHolder, instancesIn, placedPrograms } from "./rule-places.ts";
+import { inHolder, instancesIn, leastExample, placedPrograms, typesAlong } from "./rule-places.ts";
 
 export interface SdkCase {
   label: string;
@@ -658,11 +658,11 @@ export function withRuleLocations(cases: SdkLocationCase[], ruled: Ruled): SdkLo
  * case: each SDK must reject it at each place the rules it checks reject it,
  * by the gates' own evaluator, and nowhere else. A vector of a rule that
  * runs on its owner's holder is the holder's value that holds the vector's
- * (`inHolder`), from the holder's least example (`minimal`); and its own
+ * (`inHolder`), from the holder's least type example, each object on the way its type's; and its own
  * rule must give it its verdict there, a valid vector none of its
  * violations and an invalid one some, or the case names the problem.
  */
-export function ruleLocationCases(corpus: CorpusDoc, ruled: Ruled, minimal: (type: string) => unknown): SdkLocationCase[] {
+export function ruleLocationCases(corpus: CorpusDoc, ruled: Ruled, examples: Record<string, { minimal?: unknown }>): SdkLocationCase[] {
   const out: SdkLocationCase[] = [];
   for (const r of corpus.rules) {
     const p = ruled.programs.rules[r.rule];
@@ -676,7 +676,9 @@ export function ruleLocationCases(corpus: CorpusDoc, ruled: Ruled, minimal: (typ
             out.push({ label: name, type: r.type!, value: owned, at: ruled(r.type!, owned) });
             continue;
           }
-          const value = inHolder(minimal(on), on, p.at![0]!, owned, (x as { context?: Record<string, unknown> }).context ?? {});
+          const place = p.at![0]!;
+          const along = typesAlong(ruled.model, on, place).map((t) => leastExample(ruled.model, examples, t));
+          const value = inHolder(examples[on]?.minimal, on, place, owned, (x as { context?: Record<string, unknown> }).context ?? {}, along);
           const own = ruled.evaluator.violations(r.rule, value);
           const problem = label === "valid" && own.length > 0 ? `in its holder, \`${on}\`, its rule finds ${own.map((v) => `${v.path || "/"}: ${v.message}`).join("; ")}` : label === "invalid" && own.length === 0 ? `in its holder, \`${on}\`, its rule finds no violation` : undefined;
           out.push({ label: `${name} in its holder`, type: on, value, at: ruled(on, value), ...(problem ? { problem } : {}) });

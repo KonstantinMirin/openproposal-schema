@@ -257,6 +257,7 @@ func (PropertyOption) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkRequired(m, at, errs, "child_audience", "id", "seller_relationship")
 	checkClosed(m, at, errs, "allocation", "apps", "child_audience", "child_treatment", "domains", "id", "inventory_partner_domain", "min_screens", "name", "screens", "seller_accounts", "seller_relationship", "slots_per_loop", "sync_groups", "tv_channel", "tv_network", "venue_type")
+	checkRules(v, at, errs, "rule:5.2.4:65ca47c9", "rule:5.2.4:c8e6720e")
 	if x, ok := m["allocation"]; ok {
 		validateAs[PropertyOptionAllocation](x, member(at, "allocation"), errs)
 	}

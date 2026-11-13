@@ -88,7 +88,7 @@ export const Fee: z.ZodType<Fee> = z.strictObject({
   before_reference: Duration.optional(),
   calculation: FeeCalculation,
   share: Fraction.optional(),
-}).check(rt.condition("calculation", "fixed", ["amount"]));
+}).check(rt.rules(["rule:5.6.6:11a40445"]), rt.condition("calculation", "fixed", ["amount"]));
 
 /** The `HoldStatus` vocabulary: `requested`, `held`, `declined`, `expired`, `released`, `converted`. */
 export type HoldStatus = "requested" | "held" | "declined" | "expired" | "released" | "converted";
@@ -551,7 +551,7 @@ export interface CommitResult {
 export const CommitResult: z.ZodType<CommitResult> = z.strictObject({
   availability: rt.map(PlainString, Availability).optional(),
   entries: z.array(AssentEntry),
-});
+}).check(rt.rules(["rule:5.6.1:94be9998"]));
 
 /** The `Commitment` object of the `commercial` module. */
 export interface Commitment {
@@ -602,7 +602,7 @@ export const ImpressionMultiplier: z.ZodType<ImpressionMultiplier> = z.strictObj
   settles_on: ImpressionMultiplierSettlesOn,
   source_type: SafeInteger,
   vendor: RegistrableDomain.optional(),
-});
+}).check(rt.rules(["rule:5.6.4:b6f5be4c"]));
 
 /** The `BuyerWritesDeviceBounds` object of the `commercial` module. */
 export interface BuyerWritesDeviceBounds {
@@ -990,4 +990,4 @@ export const PricingEntry: z.ZodType<PricingEntry> = z.strictObject({
   transaction_mechanisms: z.array(TransactionMechanism).optional(),
   unit_bounds: UnitBoundsRange.optional(),
   unit_label: PlainString.optional(),
-}).check(rt.absentOn("cost_parameters", "cost_method", ["CPM","CPMV","CPC","CPCV","CPV","CPP","PLAY","TIME","FLAT"], ["action_definition"]));
+}).check(rt.absentOn("cost_parameters", "cost_method", ["CPM","CPMV","CPC","CPCV","CPV","CPP","PLAY","TIME","FLAT"], ["action_definition"]), rt.rules(["rule:5.6.5:119b216f","rule:5.6.5:1f435d20","rule:5.6.5:26b080e2","rule:5.6.5:449027fe","rule:5.6.5:449027fe-2","rule:5.6.5:449027fe-3","rule:5.6.5:acca3c1c","rule:5.6.5:acca3c1c-2","rule:5.6.5:f959ab87","rule:5.6:0f8d396f","rule:5.6:7235466d","rule:5.6:7235466d-2","rule:5.6:7235466d-3","rule:5.6:8288302a"]));

@@ -8,6 +8,7 @@
  * value of a map. The SDK emitters write the places into the programs, and
  * the gates read them the same way.
  */
+import { canonicalJson } from "./canonical.ts";
 import type { TypeRef } from "./mapping.ts";
 import type { ModelDoc } from "./model.ts";
 import type { Programs, RuleProgram } from "./rule-program.ts";
@@ -143,16 +144,43 @@ export function placedPrograms(model: ModelDoc, programs: Programs): { programs:
   return { programs: { defs: programs.defs, rules }, runs, problems };
 }
 
+/** The type each step of a place reaches from a holder, by the model: one per member of the place. */
+export function typesAlong(model: ModelDoc, holder: string, place: Place): (TypeRef | null)[] {
+  const types: Types = new Map(model.types.map((t) => [t.name, t]));
+  const out: (TypeRef | null)[] = [];
+  let here: TypeRef | null = { kind: "named", name: holder };
+  for (const seg of place) {
+    here = here === null ? null : (children(types, here).find(([k]) => k === seg)?.[1] ?? null);
+    out.push(here);
+  }
+  return out;
+}
+
+/**
+ * The least type example of a type reference: a named type's own, and an
+ * application's, as `Selectable<PropertyOption>`, its copy's, the named type
+ * the model gives it; undefined where the examples hold none.
+ */
+export function leastExample(model: ModelDoc, examples: Record<string, { minimal?: unknown }>, ref: TypeRef | null): unknown {
+  if (ref === null) return undefined;
+  if (ref.kind === "named") return examples[ref.name]?.minimal;
+  if (ref.kind !== "apply") return undefined;
+  const key = canonicalJson({ constructor: ref.constructor, arguments: ref.arguments });
+  const copy = model.types.find((t) => t.kind === "copy" && canonicalJson({ constructor: t.of.constructor, arguments: t.of.arguments }) === key);
+  return copy ? examples[copy.name]?.minimal : undefined;
+}
+
 /**
  * A vector's value of a rule's owner in a value of its holder, as an SDK
  * reads it: the holder's whole value where the vector's context gives it,
- * or else the holder's least example (`minimal`, which the schema accepts)
- * with each member the context gives, and the owner's value at the place,
- * with each list on the way holding the one value, and each object on the
- * way the least the walk gives it. The context names the holder's members
- * as `<holder>.<member>`, as a check's context does.
+ * or else the holder's least type example with each member the context
+ * gives, and the owner's value at the place. Each object on the way that
+ * the holder lacks is its type's least example (`along`, one per member of
+ * the place but the last), and each list on the way holds the one value.
+ * The context names the holder's members as `<holder>.<member>`, as a
+ * check's context does.
  */
-export function inHolder(minimal: unknown, on: string, place: Place, value: unknown, context: Record<string, unknown>): unknown {
+export function inHolder(minimal: unknown, on: string, place: Place, value: unknown, context: Record<string, unknown>, along: unknown[] = []): unknown {
   const whole = context[on];
   const base: unknown = whole !== null && typeof whole === "object" && !Array.isArray(whole) ? whole : minimal;
   const out = JSON.parse(JSON.stringify(base ?? {})) as Record<string, unknown>;
@@ -160,7 +188,7 @@ export function inHolder(minimal: unknown, on: string, place: Place, value: unkn
   let here: unknown = out;
   place.forEach((seg, i) => {
     const last = i === place.length - 1;
-    const fresh = (): unknown => (last ? value : place[i + 1] === "*" ? [] : {});
+    const fresh = (): unknown => (last ? value : along[i] !== undefined ? JSON.parse(JSON.stringify(along[i])) : place[i + 1] === "*" ? [] : {});
     if (Array.isArray(here)) {
       const item = here.length > 0 && !last ? here[0] : fresh();
       here.splice(0, here.length, item);

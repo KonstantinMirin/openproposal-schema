@@ -3,7 +3,6 @@
  * by rule ID: the rules of its sections that one payload decides.
  */
 import { escape, isMap, list, omits, type Check, type Violation } from "../../rule-checks.ts";
-import { STACK_CHECKS } from "./stack-checks.ts";
 import { programChecks } from "../../rule-programs.ts";
 import { specRoot } from "../../repo.ts";
 
@@ -41,8 +40,6 @@ const PROGRAM_CHECKS = programChecks(specRoot("openproposal"));
 
 /** OpenProposal's rule checks written in TypeScript, by rule ID, which the SDKs don't run. */
 const WRITTEN: Record<string, Check> = {
-  // The stack's presence rules (src/specs/openproposal/stack-checks.ts).
-  ...STACK_CHECKS,
   // § 2.2: at `agreed`, every `catalog_ref` is resolved into the stored record. A code block that leaves out `status` can't say.
   "rule:2.2:06ccee9f": (v, ctx) => {
     if (!isMap(v)) return [];

@@ -177,4 +177,4 @@ export const AudienceSelectable: z.ZodType<AudienceSelectable> = z.strictObject(
   included: z.array(PlainString),
   max_select: SafeInteger.optional(),
   selected: z.array(PlainString).optional(),
-});
+}).check(rt.rules(["rule:5.3:153027ca"]));

@@ -135,6 +135,7 @@ func (Fee) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkRequired(m, at, errs, "calculation")
 	checkClosed(m, at, errs, "amount", "before_reference", "calculation", "share")
+	checkRules(v, at, errs, "rule:5.6.6:11a40445")
 	if x, ok := m["amount"]; ok {
 		validateAs[Amount](x, member(at, "amount"), errs)
 	}
@@ -1083,6 +1084,7 @@ func (CommitResult) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkRequired(m, at, errs, "entries")
 	checkClosed(m, at, errs, "availability", "entries")
+	checkRules(v, at, errs, "rule:5.6.1:94be9998")
 	if x, ok := m["availability"]; ok {
 		validateAs[Map[PlainString, Availability]](x, member(at, "availability"), errs)
 	}
@@ -1161,6 +1163,7 @@ func (ImpressionMultiplier) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkRequired(m, at, errs, "dataset", "impression_type", "settles_on", "source_type")
 	checkClosed(m, at, errs, "accreditation", "dataset", "demographic", "impression_type", "settles_on", "source_type", "vendor")
+	checkRules(v, at, errs, "rule:5.6.4:b6f5be4c")
 	if x, ok := m["accreditation"]; ok {
 		validateAs[ImpressionMultiplierAccreditation](x, member(at, "accreditation"), errs)
 	}
@@ -1838,6 +1841,7 @@ func (PricingEntry) ValidateValue(v any, at string, errs *Errors) {
 			}
 		}
 	}
+	checkRules(v, at, errs, "rule:5.6.5:119b216f", "rule:5.6.5:1f435d20", "rule:5.6.5:26b080e2", "rule:5.6.5:449027fe", "rule:5.6.5:449027fe-2", "rule:5.6.5:449027fe-3", "rule:5.6.5:acca3c1c", "rule:5.6.5:acca3c1c-2", "rule:5.6.5:f959ab87", "rule:5.6:0f8d396f", "rule:5.6:7235466d", "rule:5.6:7235466d-2", "rule:5.6:7235466d-3", "rule:5.6:8288302a")
 	if x, ok := m["agreed_rate"]; ok {
 		validateAs[Amount](x, member(at, "agreed_rate"), errs)
 	}

@@ -169,4 +169,4 @@ export const PropertyOption: z.ZodType<PropertyOption> = z.strictObject({
   tv_channel: OpenObject.optional(),
   tv_network: OpenObject.optional(),
   venue_type: TaxonomyCodes.optional(),
-}).check(rt.condition("child_audience", "mixed", ["child_treatment"]));
+}).check(rt.rules(["rule:5.2.4:65ca47c9","rule:5.2.4:c8e6720e"]), rt.condition("child_audience", "mixed", ["child_treatment"]));

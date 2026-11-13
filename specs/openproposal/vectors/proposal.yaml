@@ -137,13 +137,16 @@ rules:
       - {"value": {"pointer": "/creative_delivery"}, "context": {"HistoryEntry.action": "requested"}}
 
   # `ChangeRequest.orderid` REQUIRED when the line item has an `order` reference (§ 5.10) (D-060).
+  # The line item is the one the request's baseline names, in the proposal that holds the request, as each vector's
+  # context gives it. Rewritten 2026-11-13: the context named `LineItem.external_references`, and no line item holds a
+  # change request, so no SDK could read it there.
   - rule: rule:4.4:9754e43c
     digest: 0d7152995f7b35be29f0c40654ff3d42d787cf1aa62453b9d62527cf0dfc3d6d
     locks: [with-our-stack]
     decision: D-060
     sources: ["key:4.4:ChangeRequest.orderid"]
     valid:
-      - {"value": {"actor": "buyer", "at": "2026-11-02T15:20:00Z", "baseline": {"proposal_id": "examplepub-agencya-custom-q4-2026", "version": 2}, "id": "67853"}, "context": {"LineItem.external_references": []}}
-      - {"value": {"actor": "buyer", "at": "2026-11-02T15:20:00Z", "baseline": {"proposal_id": "examplepub-agencya-custom-q4-2026", "version": 2}, "id": "67853", "orderid": "345233"}, "context": {"LineItem.external_references": [{"id": "345233", "namespace": "examplepub-q4-sports", "reference_type": "order", "system": "orders.examplepub.example"}]}}
+      - {"value": {"actor": "buyer", "at": "2026-11-02T15:20:00Z", "baseline": {"line_item_id": "examplepub-q4-sports", "proposal_id": "examplepub-agencya-custom-q4-2026", "version": 2}, "id": "67853"}, "context": {"Proposal.line_items": [{"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "external_references": []}]}}
+      - {"value": {"actor": "buyer", "at": "2026-11-02T15:20:00Z", "baseline": {"line_item_id": "examplepub-q4-sports", "proposal_id": "examplepub-agencya-custom-q4-2026", "version": 2}, "id": "67853", "orderid": "345233"}, "context": {"Proposal.line_items": [{"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "external_references": [{"id": "345233", "namespace": "examplepub-q4-sports", "reference_type": "order", "system": "orders.examplepub.example"}]}]}}
     invalid:
-      - {"value": {"actor": "buyer", "at": "2026-11-02T15:20:00Z", "baseline": {"proposal_id": "examplepub-agencya-custom-q4-2026", "version": 2}, "id": "67853"}, "context": {"LineItem.external_references": [{"id": "345233", "namespace": "examplepub-q4-sports", "reference_type": "order", "system": "orders.examplepub.example"}]}}
+      - {"value": {"actor": "buyer", "at": "2026-11-02T15:20:00Z", "baseline": {"line_item_id": "examplepub-q4-sports", "proposal_id": "examplepub-agencya-custom-q4-2026", "version": 2}, "id": "67853"}, "context": {"Proposal.line_items": [{"channel": "dooh", "line_item_id": "examplepub-q4-sports", "pricing": [], "status": "draft", "transaction_mechanism": {"available": [], "included": []}, "visibility": "public", "delivery_counting": {"play_tolerance_ms": 0, "proof_of_performance": {"evidence": [], "logged_by": "buyer"}}, "external_references": [{"id": "345233", "namespace": "examplepub-q4-sports", "reference_type": "order", "system": "orders.examplepub.example"}]}]}}

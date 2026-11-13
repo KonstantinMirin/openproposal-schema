@@ -142,6 +142,7 @@ func (HistoryPath) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkRequired(m, at, errs, "pointer")
 	checkClosed(m, at, errs, "line_item_id", "pointer", "requested_value")
+	checkRules(v, at, errs, "rule:4.1:71a584ca")
 	if x, ok := m["line_item_id"]; ok {
 		validateAs[PlainString](x, member(at, "line_item_id"), errs)
 	}
@@ -175,6 +176,7 @@ func (HistoryEntry) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkRequired(m, at, errs, "action", "actor", "at", "paths", "version")
 	checkClosed(m, at, errs, "action", "actor", "at", "paths", "version")
+	checkRules(v, at, errs, "rule:4.1:d31e02ee")
 	if x, ok := m["action"]; ok {
 		validateAs[HistoryEntryAction](x, member(at, "action"), errs)
 	}
@@ -366,6 +368,7 @@ func (Proposal) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkRequired(m, at, errs, "description", "proposal_id", "seller", "spec_version", "status", "type", "version")
 	checkClosed(m, at, errs, "assent", "best_for", "brief_id", "buyer", "change_requests", "description", "ext", "issued_from", "line_items", "media_kit_detail", "negotiation_history", "not_suitable_for", "offer_window", "packages", "proposal_id", "proposal_template_id", "seasonality_notes", "seller", "spec_version", "status", "type", "version")
+	checkRules(v, at, errs, "rule:4.1:1ef7cbec", "rule:4.1:22f5a51a", "rule:4.1:94b23ce1", "rule:4.1:9c98396c", "rule:4.4:9754e43c", "rule:5.4:3a677601")
 	if x, ok := m["assent"]; ok {
 		validateAs[List[AssentEntry]](x, member(at, "assent"), errs)
 	}

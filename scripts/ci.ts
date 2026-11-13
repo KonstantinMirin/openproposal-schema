@@ -1407,7 +1407,7 @@ async function checkSdkLocations(lock: SpecLock, dir: string, corpus: CorpusDoc,
   // a vector of a rule that runs on its owner's holder in the holder's least type example.
   const cases = withRuleLocations(locationCases(corpus), ruled);
   const examples = (JSON.parse(readFileSync(join(SPEC, typeExamples), "utf8")) as TypeExamplesDoc).types;
-  const rules = ruleLocationCases(corpus, ruled, (type) => (examples[type] as { minimal?: unknown } | undefined)?.minimal);
+  const rules = ruleLocationCases(corpus, ruled, examples as Record<string, { minimal?: unknown }>);
   const all = [...cases, ...rules];
   const items = all.map((c) => ({ type: c.type, value: c.value }));
   const legs: [string, () => Promise<SdkFindingsRun> | SdkFindingsRun][] = [

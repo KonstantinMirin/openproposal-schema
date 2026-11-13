@@ -100,7 +100,7 @@ class FeeCalculations:
 class Fee(rt.Closed):
     """The `Fee` object of the `commercial` module."""
 
-    __shape__: ClassVar[rt.Shape] = rt.Shape(conditions=(("calculation", "fixed", ("amount",), ()),))
+    __shape__: ClassVar[rt.Shape] = rt.Shape(rules=("rule:5.6.6:11a40445",), conditions=(("calculation", "fixed", ("amount",), ()),))
 
     amount: Optional[Amount] = None
     """The fee as money"""
@@ -565,6 +565,8 @@ class BuyerWritesFrequencyCap(rt.Closed):
 class CommitResult(rt.Closed):
     """The `CommitResult` object of the `commercial` module."""
 
+    __shape__: ClassVar[rt.Shape] = rt.Shape(rules=("rule:5.6.1:94be9998",))
+
     availability: Optional[dict[PlainString, Availability]] = None
     """The figures that `decline` states, keyed by `line_item_id`. They are not part of the entry"""
     entries: list[AssentEntry]
@@ -590,6 +592,8 @@ class Commitment(rt.Closed):
 
 class ImpressionMultiplier(rt.Closed):
     """The `ImpressionMultiplier` object of the `commercial` module."""
+
+    __shape__: ClassVar[rt.Shape] = rt.Shape(rules=("rule:5.6.4:b6f5be4c",))
 
     accreditation: Optional[ImpressionMultiplierAccreditation] = None
     """The standing of the multiplier's source in the market. Core terms: `industry_currency` (the market's joint industry currency, such as Geopath in the US or Route in the UK) | `publisher_reported` (the publisher's own figure). A receiver that doesn't know a term reads the multiplier without it"""
@@ -860,7 +864,7 @@ UnitBoundsRange = Range[SafeInteger]
 class PricingEntry(rt.Closed):
     """The `PricingEntry` object of the `commercial` module."""
 
-    __shape__: ClassVar[rt.Shape] = rt.Shape(absent_on=(("cost_parameters", "cost_method", ("CPM", "CPMV", "CPC", "CPCV", "CPV", "CPP", "PLAY", "TIME", "FLAT"), ("action_definition",)),))
+    __shape__: ClassVar[rt.Shape] = rt.Shape(absent_on=(("cost_parameters", "cost_method", ("CPM", "CPMV", "CPC", "CPCV", "CPV", "CPP", "PLAY", "TIME", "FLAT"), ("action_definition",)),), rules=("rule:5.6.5:119b216f", "rule:5.6.5:1f435d20", "rule:5.6.5:26b080e2", "rule:5.6.5:449027fe", "rule:5.6.5:449027fe-2", "rule:5.6.5:449027fe-3", "rule:5.6.5:acca3c1c", "rule:5.6.5:acca3c1c-2", "rule:5.6.5:f959ab87", "rule:5.6:0f8d396f", "rule:5.6:7235466d", "rule:5.6:7235466d-2", "rule:5.6:7235466d-3", "rule:5.6:8288302a"))
 
     agreed_rate: Optional[Amount] = None
     """The transacted rate (below). Absent on every other entry"""

@@ -42,7 +42,7 @@ class MediaChannels:
 class LineItem(rt.Closed):
     """The OpenProposal `LineItem` document."""
 
-    __shape__: ClassVar[rt.Shape] = rt.Shape(rules=("rule:5.6.4:e58650b7", "sentence:5.6.1:78efd2ce", "sentence:5.6.5:03d899cb", "sentence:5.6.5:10182d60", "sentence:5.6.5:4804c1fd", "sentence:5.6.5:aa43e614", "sentence:5.6.5:d956510e"), conditions=(("channel", "dooh", ("delivery_counting",), ()),))
+    __shape__: ClassVar[rt.Shape] = rt.Shape(rules=("rule:5.2.2:40e6089f", "rule:5.2.2:87d20470", "rule:5.2.4:02c220b8", "rule:5.2.4:45d0b1fa", "rule:5.2.4:ea387bb0", "rule:5.2:2f4f1aa3", "rule:5.2:f8f39d84", "rule:5.5:4a35bd89", "rule:5.6.1:7b200076", "rule:5.6.4:615bf228", "rule:5.6.4:e58650b7", "rule:5.6:62e21e38", "rule:5.7:76df804b", "rule:5.9:c0f7b8ce", "rule:5.9:cc571473", "rule:5.9:ceef2a21", "rule:5.9:d8611936", "sentence:5.6.1:78efd2ce", "sentence:5.6.5:03d899cb", "sentence:5.6.5:10182d60", "sentence:5.6.5:4804c1fd", "sentence:5.6.5:aa43e614", "sentence:5.6.5:d956510e"), conditions=(("channel", "dooh", ("delivery_counting",), ()),))
 
     accepted_exclusions: Optional[AcceptedExclusions] = None
     """What the seller can enforce. See below"""

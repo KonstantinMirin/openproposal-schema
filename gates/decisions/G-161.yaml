@@ -1,0 +1,58 @@
+format: 1
+id: G-161
+date: 2026-11-13
+question: How do the stack's other single-payload rules, the presence rules of D-060, come to run in every SDK, from one definition each?
+decision: >-
+  Each of the 48 presence rules that src/specs/openproposal/stack-checks.ts
+  checked in TypeScript is now a program in rule-programs.yaml, and the file
+  is gone: 24 read their owner's value alone, and 24 its holder's (a
+  history entry's `action`, a line item's `channel`, `pricing`,
+  `properties`, or `transaction_mechanism`, a pricing entry's
+  `cost_method`, a proposal's `status`, and, for a change request, the
+  proposal's line items). Each requires its key where its condition holds,
+  at the owner, with the message the written check gave, and is undecided
+  where the written check was. The vectors of two rules named a context no
+  SDK can read, a member of a type that doesn't hold the owner, and are
+  rewritten to name the holder's members: rule:5.6:62e21e38, whose context
+  was `Commitment.pricing_id`, now gives `LineItem.commitment`, and
+  rule:4.4:9754e43c, whose context was `LineItem.external_references`, now
+  gives `Proposal.line_items`, with each change request's baseline naming
+  its line item. Each vectors entry says so. A vector of a rule on a holder
+  is built in the holder with each object on the way its type's least
+  example, so the holder the SDKs read is one its schema accepts. The
+  sdk-rules gate gains a fixture: an SDK that accepts an invalid vector in
+  its holder.
+rationale: >-
+  No check is weaker: each program decides every vector as the written
+  check did, in the rules gate, and the SDKs now reject what the 48 rules
+  reject, which they accepted before. Counting the stack's 208
+  single-payload rule vectors on which each SDK reaches the gates' own
+  verdict, the schemas and every rule check as the examples gate gives
+  it, 199 pass in each SDK, where 161 did before step 2; the nine left are
+  the kernel's and the constructors' rules. The two rewritten vectors keep
+  their verdicts, and still break only their rule. The other fingerprints
+  change because their code includes the rule checks. The generated code
+  that changes is the two stack trees': the types that run the rules call
+  them: `Proposal`, `HistoryEntry`, `HistoryPath`, `LineItem`,
+  `PricingEntry`, `PropertyOption`, `Asset`, `MaterialsDue`,
+  `AudienceSelectable`, `Fee`, `CommitResult`, and `ImpressionMultiplier`; and each SDK's programs hold them. The `main` and
+  `with-open-prs` outputs are byte-identical.
+accepts:
+  - { gate: comparison, fingerprint: 4a5401792dbdec341a7b3d47fbed98d74a6e22dbc55a4464875f738ee6f32a4f }
+  - { gate: desk-tests, fingerprint: bf59c93e7e88d20319eecf2605f6b906bd43a3ab9fd85627a4cbfef6602fb22b }
+  - { gate: examples-validate, fingerprint: 782af1a2cc91f39c07f0165a5a6a1aec38992c740330beeabdca610def535f2a }
+  - { gate: extraction, fingerprint: 919001c3c585e2990d198949bb25bbbb8d2da8f183b229a01e3326eb34c37574 }
+  - { gate: feedback, fingerprint: 4e454162def17f377203ba960f5f2ac76cc30e9ec908ceb83c4cf0f31d942c8c }
+  - { gate: fidelity, fingerprint: 8c8be0e98c4100d22986a768a25a02def62c9883d0e02bd8a2e7d31e6ccc9dc2 }
+  - { gate: field-examples, fingerprint: 6f53ef2fc97b2607760034fcfa0cb065ad00c8f5831050e5d7b16a7209d5bbc2 }
+  - { gate: guard, fingerprint: 642b91af362833d7d0666b521ac80f1b75f69a1013037bfa46bb0fe5b98357d3 }
+  - { gate: record-wording, fingerprint: edf8dbfacc00ec98f03244ad19dccbe7e47952b298944d62c5e0ff47c7c7c9a7 }
+  - { gate: round-trip, fingerprint: c573a862caff861f76a84afb85460a461a4fc18dd1ab3f9e61e42b928720bd93 }
+  - { gate: rule-checks, fingerprint: ff4f5febc964de733d888233a45bae928d873071e8dd4e0fef694bfce570317c }
+  - { gate: rule-programs, fingerprint: efb59e827441338b1335cb8d7a690f5d8f0597df1598b25986a0a70b9c47488a }
+  - { gate: sdk-rules, fingerprint: ef4028cd279d371b5c5122003a48666572011983bf3a7bfe991e40ee681e3c4f }
+  - { gate: site-builds, fingerprint: 5fbd0a370e2dcd7aa83dfb5ddd4c3f55a9cd2c42833d33acbb42144fd30fac57 }
+  - { gate: spec-profile, fingerprint: c98568154feb652cc16a05e4b42e8631c12607bb0154e63da8b30acb222917e3 }
+  - { gate: type-examples-generate, fingerprint: b71f36f239bd05c88c1fba832434c56f9d4d93d542e4206cb8f6a7aec56a61a3 }
+  - { gate: type-examples-valid, fingerprint: f8823e67e2e18fe8eec97fe80a120f51d31b2781deb61388de0a504cf597474f }
+  - { gate: variant-examples, fingerprint: 3991d28b8e56995aefd21f11d3aed080a99106d657d919f32a4e7195436265df }

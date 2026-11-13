@@ -295,6 +295,7 @@ func (AudienceSelectable) ValidateValue(v any, at string, errs *Errors) {
 	}
 	checkRequired(m, at, errs, "available", "included")
 	checkClosed(m, at, errs, "available", "combine", "deltas", "excluded", "included", "max_select", "selected")
+	checkRules(v, at, errs, "rule:5.3:153027ca")
 	if x, ok := m["available"]; ok {
 		validateAs[List[AudienceOption]](x, member(at, "available"), errs)
 	}

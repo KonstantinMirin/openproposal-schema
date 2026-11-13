@@ -2,6 +2,7 @@
 
 /** The OpenProposal `creative` module's types. */
 import { z } from "zod";
+import * as rt from "./runtime.js";
 import { ApprovalStatus, Digest, DocumentRef, Duration, EntryRef, FormatId, Instant, NamespacedTerm, OpenObject, PlainString, SafeInteger, Selectable, Side, Url } from "./kernel.js";
 
 /** The `MaterialsDue` object of the `creative` module. */
@@ -14,7 +15,7 @@ export interface MaterialsDue {
 export const MaterialsDue: z.ZodType<MaterialsDue> = z.strictObject({
   at: Instant.optional(),
   before_start: Duration.optional(),
-});
+}).check(rt.rules(["rule:5.4:58ab1d09","rule:5.4:7a6f2ac4"]));
 
 /** The `AssetProvenanceDisclosureMethod` vocabulary: `c2pa_manifest`, `watermark`, `audible_notice`, `visible_label`, or a namespaced term (`NamespacedTerm`), since the vocabulary is open. */
 export type AssetProvenanceDisclosureMethod = "c2pa_manifest" | "watermark" | "audible_notice" | "visible_label" | NamespacedTerm;
@@ -117,7 +118,7 @@ export const Asset: z.ZodType<Asset> = z.strictObject({
   provenance: AssetProvenance.optional(),
   submitted_at: Instant.optional(),
   url: PlainString.optional(),
-});
+}).check(rt.rules(["rule:5.4:45b02f49","rule:5.4:e2c0968b"]));
 
 /** The `ProductionOption` object of the `creative` module. */
 export interface ProductionOption {

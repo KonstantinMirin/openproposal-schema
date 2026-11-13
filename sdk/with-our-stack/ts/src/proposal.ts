@@ -93,7 +93,7 @@ export const HistoryPath: z.ZodType<HistoryPath> = z.strictObject({
   line_item_id: PlainString.optional(),
   pointer: FieldPointer,
   requested_value: RequestedValue.optional(),
-});
+}).check(rt.rules(["rule:4.1:71a584ca"]));
 
 /** The `HistoryEntry` object of the `proposal` module. */
 export interface HistoryEntry {
@@ -114,7 +114,7 @@ export const HistoryEntry: z.ZodType<HistoryEntry> = z.strictObject({
   at: Instant,
   paths: z.array(HistoryPath),
   version: SafeInteger,
-});
+}).check(rt.rules(["rule:4.1:d31e02ee"]));
 
 /** The `Package` object of the `proposal` module. */
 export interface Package {
@@ -252,4 +252,4 @@ export const Proposal: z.ZodType<Proposal> = z.strictObject({
   status: ProposalStatus,
   type: ProposalType,
   version: SafeInteger,
-}).check(rt.condition("type", "custom", ["brief_id"]));
+}).check(rt.rules(["rule:4.1:1ef7cbec","rule:4.1:22f5a51a","rule:4.1:94b23ce1","rule:4.1:9c98396c","rule:4.4:9754e43c","rule:5.4:3a677601"]), rt.condition("type", "custom", ["brief_id"]));

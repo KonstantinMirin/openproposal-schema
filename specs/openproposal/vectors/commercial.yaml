@@ -35,16 +35,19 @@ rules:
       - {"value": {"cost_method": "TIME", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}}
 
   # `pricing[].agreed_rate` REQUIRED when this is the committed entry (D-060).
+  # The committed entry is the one the line item's `commitment` names, as each vector's context gives it. Rewritten
+  # 2026-11-13: the context named `Commitment.pricing_id`, and a commitment doesn't hold a pricing entry; the line item holds
+  # both.
   - rule: rule:5.6:62e21e38
     digest: a5fc7801d7e0e75f77186ffcfb53329a8c87fb0c4580a2f7d3cfb3eac828a00a
     locks: [with-our-stack]
     decision: D-060
     sources: ["field:5.6:pricing[].agreed_rate"]
     valid:
-      - {"value": {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}, "context": {"Commitment.pricing_id": "other-entry"}}
-      - {"value": {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "agreed_rate": 18}, "context": {"Commitment.pricing_id": "audio-cpm-usd"}}
+      - {"value": {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}, "context": {"LineItem.commitment": {"advertisers": [], "amount": 80000, "basis": "spend", "flight": {"end": "2026-12-31T23:59:59Z", "start": "2026-10-01T00:00:00Z"}, "pricing_id": "other-entry"}}}
+      - {"value": {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd", "agreed_rate": 18}, "context": {"LineItem.commitment": {"advertisers": [], "amount": 80000, "basis": "spend", "flight": {"end": "2026-12-31T23:59:59Z", "start": "2026-10-01T00:00:00Z"}, "pricing_id": "audio-cpm-usd"}}}
     invalid:
-      - {"value": {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}, "context": {"Commitment.pricing_id": "audio-cpm-usd"}}
+      - {"value": {"cost_method": "CPM", "currency": "USD", "list_rate": 18, "pricing_id": "audio-cpm-usd"}, "context": {"LineItem.commitment": {"advertisers": [], "amount": 80000, "basis": "spend", "flight": {"end": "2026-12-31T23:59:59Z", "start": "2026-10-01T00:00:00Z"}, "pricing_id": "audio-cpm-usd"}}}
 
   # `pricing[].rate_per` REQUIRED when `cost_method` is an extension term (D-060).
   - rule: rule:5.6:7235466d

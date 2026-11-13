@@ -85,6 +85,8 @@ class RequestedValue(rt.Closed):
 class HistoryPath(rt.Closed):
     """The `HistoryPath` object of the `proposal` module."""
 
+    __shape__: ClassVar[rt.Shape] = rt.Shape(rules=("rule:4.1:71a584ca",))
+
     line_item_id: Optional[PlainString] = None
     """The line item. When absent, `pointer` is into the proposal"""
     pointer: FieldPointer
@@ -95,6 +97,8 @@ class HistoryPath(rt.Closed):
 
 class HistoryEntry(rt.Closed):
     """The `HistoryEntry` object of the `proposal` module."""
+
+    __shape__: ClassVar[rt.Shape] = rt.Shape(rules=("rule:4.1:d31e02ee",))
 
     action: HistoryEntryAction
     """`published` | `requested` | `granted` | `countered` | `declined` | `withdrawn`. § 4.3.1 says which interaction writes each"""
@@ -157,7 +161,7 @@ class ChangeRequest(rt.Closed):
 class Proposal(rt.Closed):
     """The OpenProposal `Proposal` document."""
 
-    __shape__: ClassVar[rt.Shape] = rt.Shape(conditions=(("type", "custom", ("brief_id",), ()),))
+    __shape__: ClassVar[rt.Shape] = rt.Shape(rules=("rule:4.1:1ef7cbec", "rule:4.1:22f5a51a", "rule:4.1:94b23ce1", "rule:4.1:9c98396c", "rule:4.4:9754e43c", "rule:5.4:3a677601"), conditions=(("type", "custom", ("brief_id",), ()),))
 
     assent: Optional[list[AssentEntry]] = None
     """The parties' acts (§ 4.1.2). Each entry is written whole by the party its `role` implies. Entries MUST NOT be edited or removed"""

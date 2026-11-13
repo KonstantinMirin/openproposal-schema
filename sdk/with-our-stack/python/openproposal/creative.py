@@ -15,6 +15,8 @@ from .kernel import ApprovalStatus, Digest, DocumentRef, Duration, EntryRef, For
 class MaterialsDue(rt.Closed):
     """The `MaterialsDue` object of the `creative` module."""
 
+    __shape__: ClassVar[rt.Shape] = rt.Shape(rules=("rule:5.4:58ab1d09", "rule:5.4:7a6f2ac4"))
+
     at: Optional[Instant] = None
     """The deadline"""
     before_start: Optional[Duration] = None
@@ -97,6 +99,8 @@ FormatsSelection = Selectable[FormatId]
 
 class Asset(rt.Closed):
     """The `Asset` object of the `creative` module."""
+
+    __shape__: ClassVar[rt.Shape] = rt.Shape(rules=("rule:5.4:45b02f49", "rule:5.4:e2c0968b"))
 
     approval_status: Optional[ApprovalStatus] = None
     """The seller's review outcome. The seller moves it"""

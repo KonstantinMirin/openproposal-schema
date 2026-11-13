@@ -2549,12 +2549,32 @@
         "invalid": [
           {
             "context": {
-              "LineItem.external_references": [
+              "Proposal.line_items": [
                 {
-                  "id": "345233",
-                  "namespace": "examplepub-q4-sports",
-                  "reference_type": "order",
-                  "system": "orders.examplepub.example"
+                  "channel": "dooh",
+                  "delivery_counting": {
+                    "play_tolerance_ms": 0,
+                    "proof_of_performance": {
+                      "evidence": [],
+                      "logged_by": "buyer"
+                    }
+                  },
+                  "external_references": [
+                    {
+                      "id": "345233",
+                      "namespace": "examplepub-q4-sports",
+                      "reference_type": "order",
+                      "system": "orders.examplepub.example"
+                    }
+                  ],
+                  "line_item_id": "examplepub-q4-sports",
+                  "pricing": [],
+                  "status": "draft",
+                  "transaction_mechanism": {
+                    "available": [],
+                    "included": []
+                  },
+                  "visibility": "public"
                 }
               ]
             },
@@ -2562,6 +2582,7 @@
               "actor": "buyer",
               "at": "2026-11-02T15:20:00Z",
               "baseline": {
+                "line_item_id": "examplepub-q4-sports",
                 "proposal_id": "examplepub-agencya-custom-q4-2026",
                 "version": 2
               },
@@ -2574,12 +2595,33 @@
         "valid": [
           {
             "context": {
-              "LineItem.external_references": []
+              "Proposal.line_items": [
+                {
+                  "channel": "dooh",
+                  "delivery_counting": {
+                    "play_tolerance_ms": 0,
+                    "proof_of_performance": {
+                      "evidence": [],
+                      "logged_by": "buyer"
+                    }
+                  },
+                  "external_references": [],
+                  "line_item_id": "examplepub-q4-sports",
+                  "pricing": [],
+                  "status": "draft",
+                  "transaction_mechanism": {
+                    "available": [],
+                    "included": []
+                  },
+                  "visibility": "public"
+                }
+              ]
             },
             "value": {
               "actor": "buyer",
               "at": "2026-11-02T15:20:00Z",
               "baseline": {
+                "line_item_id": "examplepub-q4-sports",
                 "proposal_id": "examplepub-agencya-custom-q4-2026",
                 "version": 2
               },
@@ -2588,12 +2630,32 @@
           },
           {
             "context": {
-              "LineItem.external_references": [
+              "Proposal.line_items": [
                 {
-                  "id": "345233",
-                  "namespace": "examplepub-q4-sports",
-                  "reference_type": "order",
-                  "system": "orders.examplepub.example"
+                  "channel": "dooh",
+                  "delivery_counting": {
+                    "play_tolerance_ms": 0,
+                    "proof_of_performance": {
+                      "evidence": [],
+                      "logged_by": "buyer"
+                    }
+                  },
+                  "external_references": [
+                    {
+                      "id": "345233",
+                      "namespace": "examplepub-q4-sports",
+                      "reference_type": "order",
+                      "system": "orders.examplepub.example"
+                    }
+                  ],
+                  "line_item_id": "examplepub-q4-sports",
+                  "pricing": [],
+                  "status": "draft",
+                  "transaction_mechanism": {
+                    "available": [],
+                    "included": []
+                  },
+                  "visibility": "public"
                 }
               ]
             },
@@ -2601,6 +2663,7 @@
               "actor": "buyer",
               "at": "2026-11-02T15:20:00Z",
               "baseline": {
+                "line_item_id": "examplepub-q4-sports",
                 "proposal_id": "examplepub-agencya-custom-q4-2026",
                 "version": 2
               },
@@ -4902,7 +4965,16 @@
         "invalid": [
           {
             "context": {
-              "Commitment.pricing_id": "audio-cpm-usd"
+              "LineItem.commitment": {
+                "advertisers": [],
+                "amount": 80000,
+                "basis": "spend",
+                "flight": {
+                  "end": "2026-12-31T23:59:59Z",
+                  "start": "2026-10-01T00:00:00Z"
+                },
+                "pricing_id": "audio-cpm-usd"
+              }
             },
             "value": {
               "cost_method": "CPM",
@@ -4917,7 +4989,16 @@
         "valid": [
           {
             "context": {
-              "Commitment.pricing_id": "other-entry"
+              "LineItem.commitment": {
+                "advertisers": [],
+                "amount": 80000,
+                "basis": "spend",
+                "flight": {
+                  "end": "2026-12-31T23:59:59Z",
+                  "start": "2026-10-01T00:00:00Z"
+                },
+                "pricing_id": "other-entry"
+              }
             },
             "value": {
               "cost_method": "CPM",
@@ -4928,7 +5009,16 @@
           },
           {
             "context": {
-              "Commitment.pricing_id": "audio-cpm-usd"
+              "LineItem.commitment": {
+                "advertisers": [],
+                "amount": 80000,
+                "basis": "spend",
+                "flight": {
+                  "end": "2026-12-31T23:59:59Z",
+                  "start": "2026-10-01T00:00:00Z"
+                },
+                "pricing_id": "audio-cpm-usd"
+              }
             },
             "value": {
               "agreed_rate": 18,
