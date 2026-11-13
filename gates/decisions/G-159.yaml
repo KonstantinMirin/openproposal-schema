@@ -1,0 +1,27 @@
+format: 1
+id: G-159
+date: 2026-11-13
+question: Why did the zone-table gate fail on the public CI runner, and how is the time zone table made the same on every machine?
+decision: >-
+  tools/tzdata/build.py read each zone with `zoneinfo.ZoneInfo(name)`, which
+  looks in the system's zoneinfo before the `tzdata` package, so the table
+  was the machine's: the committed one came from macOS's zoneinfo, at 2026f,
+  where Cuba's offsets differ from 2026e's, and the CI runner's system data
+  gave other bytes. The builder now reads only the pinned package: it
+  refuses to run unless the installed `tzdata` is the version
+  tools/oracle/requirements.txt hash-locks, which `npm run setup:oracle`
+  installs with --require-hashes in the workflow, and its IANA release is
+  the one kernel/lists.yaml pins; it clears the zoneinfo search path, and
+  reads each zone from the package's own file, checked against the SHA-256
+  the package's RECORD gives. The table is rebuilt from 2026e: America/Havana
+  and Cuba change; every other zone is the same.
+rationale: >-
+  No check is weaker: the gate still rebuilds the table and compares it byte
+  for byte, now from the one source every machine has, and it gains a
+  fixture, a name the pinned package holds no zone for. Rebuilt in a clean
+  venv with only the pinned package, and on a machine whose system zoneinfo
+  is 2026f, the table is the same bytes. The generated code that changes is
+  the two stack trees' copies of the table, `tzdata.ts`, `_rules.py`, and
+  `rules.go`; `main` and `with-open-prs` are byte-identical.
+accepts:
+  - { gate: zone-table, fingerprint: e6939b105b0ef26df2ec68dea2c6a3c23a7060e38a0ab761d36ab89ab9922f3a }

@@ -200,7 +200,7 @@ export const rulePrograms = defineGate<{ specDir: string; rules: string[] }>({
 
 export const zoneTable = defineGate<{ file: string; release: string; names: string[] }>({
   id: "zone-table",
-  title: "time zone table: the UTC offsets the rule programs read are those the pinned tzdata package compiles for the pinned release's names",
+  title: "time zone table: the UTC offsets the rule programs read are those the pinned tzdata package compiles for the pinned release's names, read from the package alone, never the system's zoneinfo",
   code: ["src/rule-programs.ts#buildZoneTable"],
   files: ["tools/tzdata/build.py"],
   check: (i) => {
@@ -213,6 +213,7 @@ export const zoneTable = defineGate<{ file: string; release: string; names: stri
   fixtures: [
     { name: "a table of another release", mutate: (i) => ({ ...i, release: "2025a" }), expect: "the tzdata package holds release 2026e, not 2025a" },
     { name: "a table that isn't what the package compiles", mutate: (i) => ({ ...i, names: i.names.filter((n) => n !== "Australia/Sydney") }), expect: "isn't what tools/tzdata/build.py writes for release 2026e" },
+    { name: "a name the pinned package holds no zone for", mutate: (i) => ({ ...i, names: [...i.names, "Mars/Olympus_Mons"] }), expect: "the tzdata package's RECORD lists no zone Mars/Olympus_Mons" },
   ],
 });
 
