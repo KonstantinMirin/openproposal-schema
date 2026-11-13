@@ -57,6 +57,21 @@ export interface DeskSdkGap {
   reason: string;
 }
 
+/**
+ * A finding only the lock's checker makes: an arithmetic the specification
+ * states in a sentence with no RFC 2119 keyword, which no rule carries, so
+ * neither the rules nor the SDKs compute it yet, as § 5.6.5's `TIME`
+ * units. The checker rejects the payload there, and the schemas, the rules,
+ * and the SDKs accept it, until the rules compute the arithmetic.
+ */
+export interface DeskCheckerOnly {
+  example: string;
+  path: string;
+  /** The elements of the lock's IR the checker's check reads, such as `sentence:5.6.5:d956510e`. */
+  elements: string[];
+  reason: string;
+}
+
 export interface DeskTests {
   format: 1;
   /** The lock whose text the payloads test. */
@@ -70,6 +85,7 @@ export interface DeskTests {
   findings: DeskFinding[];
   undecided: DeskUndecided[];
   sdk_gaps: DeskSdkGap[];
+  checker_only: DeskCheckerOnly[];
   /** The set's README, as its folder holds it, or null where it holds none. */
   readme?: string | null;
   /** The expected file's path, and its folder, which holds the payloads. */
@@ -283,7 +299,15 @@ export interface DeskTestsInput {
   checker: CheckerRun;
   /** Each SDK's run, by `runDeskSdks`; none for a spec whose profile names no SDK packages. */
   sdks: CheckerRun[];
+  /** The IDs of the lock's IR elements, which a checker-only finding's `elements` must name. */
+  elements?: ReadonlySet<string>;
+  /** The rules the SDKs check, whose programs they are generated with, which no SDK gap may name. */
+  sdkRules?: ReadonlySet<string>;
 }
+
+/** Every element ID of an IR: each entry with an `id` of each of its lists. */
+export const elementIdsOf = (ir: Record<string, unknown>): Set<string> =>
+  new Set(Object.values(ir).flatMap((v) => (Array.isArray(v) ? v.flatMap((x) => (x !== null && typeof x === "object" && typeof (x as { id?: unknown }).id === "string" ? [(x as { id: string }).id] : [])) : [])));
 
 /** One payload's verdict from each engine, for a report line. */
 export interface DeskVerdict {
@@ -314,17 +338,23 @@ export function checkDeskTests(i: DeskTestsInput): { problems: string[]; verdict
   const expectedFile = set.file.split("/").slice(-2).join("/");
   for (const name of i.payloads.keys()) if (!listed.has(name)) problems.push(`${set.file}: ${name} is in the folder and isn't listed under examples`);
   for (const name of set.examples) if (!i.payloads.has(name)) problems.push(`${set.file}: lists ${name}, which isn't in the folder`);
-  for (const f of [...set.findings, ...set.undecided, ...set.sdk_gaps]) if (!listed.has(f.example)) problems.push(`${set.file}: ${f.example} isn't listed under examples`);
+  for (const f of [...set.findings, ...set.undecided, ...set.sdk_gaps, ...set.checker_only]) if (!listed.has(f.example)) problems.push(`${set.file}: ${f.example} isn't listed under examples`);
   // A draft's marks: every reason and the README are written by a reviewer, never by the intake.
-  for (const f of [...set.findings, ...set.undecided, ...set.sdk_gaps]) {
+  for (const f of [...set.findings, ...set.undecided, ...set.sdk_gaps, ...set.checker_only]) {
     if (f.reason.includes(REVIEW_MARK)) problems.push(`${expectedFile}: ${f.example} ${f.path === "" ? "/" : f.path}${"rule" in f && f.rule ? ` (${f.rule})` : ""}: the reason is "${REVIEW_MARK}"; write why the payload gets this verdict, with the section or issue that says so`);
   }
   if (set.readme === null) problems.push(`${set.file.split("/").slice(-2)[0]}/${DESK_TESTS_README}: missing; a set's README says where its payloads come from`);
   else if (set.readme !== undefined && set.readme.includes(REVIEW_MARK)) problems.push(`${set.file.split("/").slice(-2)[0]}/${DESK_TESTS_README}: holds "${REVIEW_MARK}"; write what it marks: who wrote the payloads, the permission, and what each tests`);
   const gapAt = (example: string, path: string) => set.sdk_gaps.find((g) => g.example === example && g.path === path);
   for (const g of set.sdk_gaps) {
+    if (i.sdkRules?.has(g.rule)) problems.push(`${g.example} ${where({ path: g.path })}: ${expectedFile} records an SDK gap for ${g.rule}, which the SDKs check now, from its program; move the finding to every engine and remove the entry`);
     if (!set.findings.some((f) => f.example === g.example && f.path === g.path && f.kind === "rule" && f.rule === g.rule))
       problems.push(`${g.example} ${where({ path: g.path })}: ${expectedFile} records an SDK gap for ${g.rule}, and the file has no finding of that rule there; only a rule's finding is beyond the SDK types, which check what the schemas check (gate 11)`);
+  }
+  const checkerOnlyAt = (example: string, path: string) => set.checker_only.find((c) => c.example === example && c.path === path);
+  for (const c of set.checker_only) {
+    for (const e of c.elements) if (i.elements !== undefined && !i.elements.has(e)) problems.push(`${c.example} ${where({ path: c.path })}: ${expectedFile} records a checker-only finding that reads ${e}, which is no element of lock "${set.lock}"'s IR`);
+    if (set.findings.some((f) => f.example === c.example && f.path === c.path)) problems.push(`${c.example} ${where({ path: c.path })}: ${expectedFile} records it under findings and as checker only; a finding the schemas or the rules make is no checker-only finding`);
   }
   const examples: ModelExample[] = set.examples.filter((n) => i.payloads.has(n)).map((id) => ({ id, ir: `desk:${basename(set.dir)}`, object: set.document, part: false }));
   const r = checkExamples({ model: i.model, files: i.files, schemaDir: i.schemaDir, examples, values: i.payloads, codes: i.codes, ruleChecks: i.ruleChecks });
@@ -335,10 +365,17 @@ export function checkDeskTests(i: DeskTestsInput): { problems: string[]; verdict
     const schemaGot = r.failures.filter((f) => f.example === name);
     const checkerGot = i.checker.failures.filter((f) => f.example === name);
     const key = (f: { path: string; kind?: string; rule?: string }) => `${f.path} ${f.kind ?? ""} ${f.rule ?? ""}`;
-    for (const f of schemaGot) if (!want.some((w) => key(w) === key(f))) problems.push(`${name} ${where(f)}: the schemas and rules on lock "${set.lock}" reject it, and ${expectedFile} expects ${want.length === 0 ? "the file clean" : `it rejected only at ${want.map(where).join(", ")}`}: ${f.message}`);
+    for (const f of schemaGot) {
+      if (want.some((w) => key(w) === key(f))) continue;
+      if (checkerOnlyAt(name, f.path)) problems.push(`${name} ${where(f)}: the schemas and rules on lock "${set.lock}" reject it, where ${expectedFile} records it as checker only; record the finding under findings and remove the entry: ${f.message}`);
+      else problems.push(`${name} ${where(f)}: the schemas and rules on lock "${set.lock}" reject it, and ${expectedFile} expects ${want.length === 0 ? "the file clean" : `it rejected only at ${want.map(where).join(", ")}`}: ${f.message}`);
+    }
     for (const w of want) if (!schemaGot.some((f) => key(w) === key(f))) problems.push(`${name} ${where(w)}: the schemas and rules on lock "${set.lock}" no longer reject it there`);
-    for (const f of checkerGot) if (!want.some((w) => w.path === f.path)) problems.push(`${name} ${where(f)}: ${i.checker.label} rejects it, and ${expectedFile} expects ${want.length === 0 ? "the file clean" : `it rejected only at ${want.map((w) => where({ path: w.path })).join(", ")}`}: ${f.message}`);
+    // The checker is held to every finding and to each checker-only finding too.
+    const checkerWant = [...want.map((w) => w.path), ...set.checker_only.filter((c) => c.example === name).map((c) => c.path)];
+    for (const f of checkerGot) if (!checkerWant.includes(f.path)) problems.push(`${name} ${where(f)}: ${i.checker.label} rejects it, and ${expectedFile} expects ${checkerWant.length === 0 ? "the file clean" : `it rejected only at ${checkerWant.map((p) => where({ path: p })).join(", ")}`}: ${f.message}`);
     for (const w of want) if (!checkerGot.some((f) => f.path === w.path)) problems.push(`${name} ${where({ path: w.path })}: ${i.checker.label} no longer rejects it there`);
+    for (const c of set.checker_only.filter((x) => x.example === name)) if (!checkerGot.some((f) => f.path === c.path)) problems.push(`${name} ${where({ path: c.path })}: ${i.checker.label} no longer rejects it there, where ${expectedFile} records a checker-only finding; review the verdict and remove the entry`);
     // An SDK is held to every finding but a recorded SDK gap, a rule's, which it accepts, as the schema does.
     const sdkWant = want.filter((w) => !gapAt(name, w.path));
     const sdkVerdicts: Record<string, string> = {};
@@ -347,7 +384,8 @@ export function checkDeskTests(i: DeskTestsInput): { problems: string[]; verdict
       for (const f of got) {
         if (sdkWant.some((w) => w.path === f.path)) continue;
         const gap = gapAt(name, f.path);
-        if (gap) problems.push(`${name} ${where(f)}: ${sdk.label} rejects it, where ${expectedFile} records under sdk_gaps that no SDK type checks ${gap.rule}; review the verdict and remove the entry: ${f.message}`);
+        if (checkerOnlyAt(name, f.path)) problems.push(`${name} ${where(f)}: ${sdk.label} rejects it, where ${expectedFile} records it as checker only; record the finding under findings and remove the entry: ${f.message}`);
+        else if (gap) problems.push(`${name} ${where(f)}: ${sdk.label} rejects it, where ${expectedFile} records under sdk_gaps that no SDK type checks ${gap.rule}; review the verdict and remove the entry: ${f.message}`);
         else problems.push(`${name} ${where(f)}: ${sdk.label} rejects it, and ${expectedFile} expects ${sdkWant.length === 0 ? "the SDKs to accept it" : `it rejected only at ${sdkWant.map((w) => where({ path: w.path })).join(", ")}`}: ${f.message}`);
       }
       for (const w of sdkWant) {
@@ -357,7 +395,7 @@ export function checkDeskTests(i: DeskTestsInput): { problems: string[]; verdict
       sdkVerdicts[sdk.label] = got.length === 0 ? "clean" : `rejected at ${got.map((f) => where({ path: f.path })).join(", ")}`;
     }
     const show = (fs: { path: string; kind?: string; rule?: string }[]) => (fs.length === 0 ? "clean" : `rejected at ${fs.map(where).join(", ")}`);
-    verdicts.push({ example: name, expected: show(want), schemas: show(schemaGot), checker: show(checkerGot.map((f) => ({ path: f.path }))), sdks: sdkVerdicts });
+    verdicts.push({ example: name, expected: show([...want, ...set.checker_only.filter((c) => c.example === name).map((c) => ({ path: c.path, kind: "checker only" }))]), schemas: show(schemaGot), checker: show(checkerGot.map((f) => ({ path: f.path }))), sdks: sdkVerdicts });
   }
   const ukey = (u: { example: string; path: string; rule: string }) => `${u.example} ${u.path === "" ? "/" : u.path} (${u.rule})`;
   for (const u of r.checks.undecided) if (!set.undecided.some((x) => ukey(x) === ukey(u))) problems.push(`${ukey(u)}: undecided on lock "${set.lock}"; record it under undecided with what the verdict turns on`);

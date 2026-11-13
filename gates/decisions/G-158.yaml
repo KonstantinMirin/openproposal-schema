@@ -1,0 +1,20 @@
+format: 1
+id: G-158
+date: 2026-11-13
+question: What changes in the gates when the with-our-stack lock moves to `711b34c`, which carries IAB's `main` at `ebb9fb8` and #146's inclusive-end sentence on `calendar_zone`?
+decision: >-
+  The lock reads op30-packages at `711b34c`, after round 27, in which all
+  17 of our heads moved, and its `base` is `ebb9fb8`, the upstream `main`
+  the stack now contains, where it was `44dfaaf`. The specification gains
+  one sentence in the `calendar_zone` row of § 5.6.5; the examples and the
+  checker are unchanged. The npm-test gate's golden counts for the stack
+  gain the sentence's two code spans, 2505 where they were 2503; no other
+  gate's code, fixtures, data, or exemptions change.
+rationale: >-
+  No check is weaker: the golden test still compares every count of the
+  stack's IR with the committed one, and the new counts are what the
+  extractor reads from the new row. The sentence says what the rule
+  programs of D-065 already count, an `end` at the next midnight adding
+  that day, so the desk tests keep every verdict in all five engines.
+accepts:
+  - { gate: npm-test, fingerprint: 4dc3f0190c9c331e18d9b371454ad22d655a0a00ea89b0c956a468de728f08d1 }

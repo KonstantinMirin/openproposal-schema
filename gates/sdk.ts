@@ -187,6 +187,33 @@ export const sdkLocations = defineGate<{ language: string; cases: SdkLocationCas
   ],
 });
 
+export const sdkRules = defineGate<{ language: string; cases: SdkLocationCase[]; run: SdkFindingsRun }>({
+  id: "sdk-rules",
+  title: (i) => `SDK rules: the ${i.language} types reach every vector's verdict on each rule they check, from its program, at each place the gates' own evaluator rejects it, and nowhere else`,
+  code: ["src/sdk-parity.ts#compareLocations", "src/sdk-parity.ts#ruleLocationCases", "src/sdk-parity.ts#rulerOf", "src/rule-program.ts#RuleEvaluator"],
+  check: (i) => compareLocations(i.language, i.cases, i.run),
+  fixtures: [
+    {
+      name: "an SDK that accepts a rule's invalid vector",
+      lock: "with-our-stack",
+      mutate: (i) => {
+        const n = i.cases.findIndex((c) => c.label.startsWith('rule "sentence:5.6.5:10182d60" invalid vector 2'));
+        return { ...i, run: { ...i.run, findings: i.run.findings.map((f, k) => (k === n ? [] : f)) } };
+      },
+      expect: 'rule "sentence:5.6.5:10182d60" invalid vector 2 value: the reference rejects it at /, and the SDK accepts it',
+    },
+    {
+      name: "an SDK that rejects a rule's valid vector",
+      lock: "with-our-stack",
+      mutate: (i) => {
+        const n = i.cases.findIndex((c) => c.label.startsWith('rule "sentence:5.6.5:10182d60" valid vector 2'));
+        return { ...i, run: { ...i.run, findings: i.run.findings.map((f, k) => (k === n ? [{ path: [], message: "a day too many" }] : f)) } };
+      },
+      expect: 'rule "sentence:5.6.5:10182d60" valid vector 2 value: the reference accepts it, and the SDK rejects it at /',
+    },
+  ],
+});
+
 export const plainGenerates = defineGate<{ schemaDir: string; out: string }>({
   id: "plain-generates",
   title: "plain generator: classes generate from each published schema file alone",

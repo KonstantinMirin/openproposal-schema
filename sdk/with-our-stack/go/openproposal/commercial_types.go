@@ -1238,7 +1238,7 @@ type CostParameters struct {
 	ActionType *CostParametersActionType `json:"action_type,omitempty"`
 	// AttributionWindow: How long after exposure an action counts
 	AttributionWindow *Duration `json:"attribution_window,omitempty"`
-	// CalendarZone: Absent unless `rate_unit` is `day`. The zone whose calendar days the rate buys: each calendar day in that zone that the flight touches is one unit
+	// CalendarZone: Absent unless `rate_unit` is `day`. The zone whose calendar days the rate buys: each calendar day in that zone that the flight touches is one unit. The flight's `end` is its last second, inclusive (§ 2.2), so a flight to the end of a day ends at 23:59:59 in that zone, and an `end` at the next midnight adds that day
 	CalendarZone *IanaZone `json:"calendar_zone,omitempty"`
 	// Demographic: The rated demographic, such as `ratings.example:adults_25_54`. Its definition states whether co-viewers and impressions of unknown age count, or says `unknown`. This version lists no core terms
 	Demographic *CostParametersDemographic `json:"demographic,omitempty"`

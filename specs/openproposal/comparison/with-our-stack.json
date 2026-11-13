@@ -5636,6 +5636,54 @@
     {
       "change": "added-rule",
       "class": "breaking",
+      "detail": "the rule sentence:5.6.1:78efd2ce is added at error severity on LineItem, which the last release had",
+      "member": "sentence:5.6.1:78efd2ce",
+      "type": "LineItem",
+      "view": "rules"
+    },
+    {
+      "change": "added-rule",
+      "class": "breaking",
+      "detail": "the rule sentence:5.6.5:03d899cb is added at error severity on LineItem, which the last release had",
+      "member": "sentence:5.6.5:03d899cb",
+      "type": "LineItem",
+      "view": "rules"
+    },
+    {
+      "change": "added-rule",
+      "class": "breaking",
+      "detail": "the rule sentence:5.6.5:10182d60 is added at error severity on LineItem, which the last release had",
+      "member": "sentence:5.6.5:10182d60",
+      "type": "LineItem",
+      "view": "rules"
+    },
+    {
+      "change": "added-rule",
+      "class": "breaking",
+      "detail": "the rule sentence:5.6.5:4804c1fd is added at error severity on LineItem, which the last release had",
+      "member": "sentence:5.6.5:4804c1fd",
+      "type": "LineItem",
+      "view": "rules"
+    },
+    {
+      "change": "added-rule",
+      "class": "breaking",
+      "detail": "the rule sentence:5.6.5:aa43e614 is added at error severity on LineItem, which the last release had",
+      "member": "sentence:5.6.5:aa43e614",
+      "type": "LineItem",
+      "view": "rules"
+    },
+    {
+      "change": "added-rule",
+      "class": "breaking",
+      "detail": "the rule sentence:5.6.5:d956510e is added at error severity on LineItem, which the last release had",
+      "member": "sentence:5.6.5:d956510e",
+      "type": "LineItem",
+      "view": "rules"
+    },
+    {
+      "change": "added-rule",
+      "class": "breaking",
       "detail": "the rule marker:3:asserted is added at error severity on LineItem.addressable_scale, LineItem.availability, LineItemSummary.addressable_scale, which the last release had",
       "member": "marker:3:asserted",
       "type": "Marker",
@@ -8185,6 +8233,16 @@
       {
         "id": "D-063",
         "question": "§ 5.6.5 gives `action_type` the core terms of another standard: ECAPI 1.0's `event_type` values, from its Standard Events and Additional Events tables both, other than `custom`. Which terms does the vocabulary hold, and what does its schema accept?",
+        "status": "proposed"
+      },
+      {
+        "id": "D-064",
+        "question": "§ 2.2 types `IanaZone` as \"a name in the IANA time zone database\". Which names does a schema accept, from which release of the database, and which engines check them?",
+        "status": "proposed"
+      },
+      {
+        "id": "D-065",
+        "question": "§ 5.6.5 states how a commitment's figures follow from its entry and its flight in sentences with no RFC 2119 keyword, and § 5.6.1 that a commitment resolves only when it fits its bounds. Which of them are rules one line item decides, and what does each check?",
         "status": "proposed"
       }
     ],
@@ -11102,7 +11160,7 @@
       {
         "id": "key:5.6.5:CostParameters.calendar_zone",
         "kind": "key",
-        "text": "`calendar_zone` | OPTIONAL | Absent unless `rate_unit` is `day`. The zone whose calendar days the rate buys: each calendar day in that zone that the flight touches is one unit"
+        "text": "`calendar_zone` | OPTIONAL | Absent unless `rate_unit` is `day`. The zone whose calendar days the rate buys: each calendar day in that zone that the flight touches is one unit. The flight's `end` is its last second, inclusive (§ 2.2), so a flight to the end of a day ends at 23:59:59 in that zone, and an `end` at the next midnight adds that day"
       },
       {
         "id": "key:5.6.5:CostParameters.demographic",
@@ -22046,10 +22104,10 @@
   },
   "format": 1,
   "lock": {
-    "blob": "8e91771f0bc1121e7b23a4611e15f400ea511c53",
-    "commit": "6d5a6f9b66a49b9bca2abbdcca9d861bae76027a",
+    "blob": "c395ca84688d49807e5d3318445da4b4c4b79e29",
+    "commit": "711b34cf2fdc209d46b832013bfb1f1cc8727ba5",
     "counts": {
-      "decisions": 19,
+      "decisions": 21,
       "elements.appendix_a": 98,
       "elements.appendix_b": 11,
       "elements.code_block": 12,
@@ -22067,11 +22125,11 @@
       "findings.spec": 296,
       "findings.spec_open": 295,
       "properties": 525,
-      "rules": 67,
+      "rules": 73,
       "schema_files": 21,
       "statements.example": 12,
       "statements.obligation": 183,
-      "statements.rule": 53,
+      "statements.rule": 59,
       "statements.schema": 504,
       "types.constructor": 7,
       "types.copy": 27,
@@ -22083,7 +22141,7 @@
       "types.union": 3,
       "types.vocabulary": 70
     },
-    "ir_sha256": "b8ace1d4944b074d416a07c8efe6bd72132f1f0cd3f8c99a2c219fd06f5b7a6e",
+    "ir_sha256": "943d8f8d5338d98ea0fa87d624af233afcdde79bdd84d0864449cb81334abac0",
     "lock": "with-our-stack"
   },
   "statements": {
@@ -26361,6 +26419,36 @@
         "ir": "sentence:3.2:f5da1fc4",
         "placed": "schema Settable",
         "text": "A field marked `settable` declares its bounds in one of two forms, and the buyer writes one key, `value`."
+      },
+      {
+        "ir": "sentence:5.6.1:78efd2ce",
+        "placed": "rule LineItem",
+        "text": "A `commitment` resolves under § 3 when the buyer is eligible (§ 5.8), every `selected[]`, `excluded[]`, and `value` on the line item is within what the seller declared (§ 3.1, § 3.2, § 5.3), and the commitment fits `commitment_bounds.spend` and the committed entry's `unit_bounds`, is not stale (§ 4.1.3), and meets the package rules (§ 4.1.4)."
+      },
+      {
+        "ir": "sentence:5.6.5:03d899cb",
+        "placed": "rule LineItem",
+        "text": "When `commitment.basis` is `units`, `derived_units` is `amount`, and the seller total is `amount` ÷ rate per × `agreed_rate` plus those charges."
+      },
+      {
+        "ir": "sentence:5.6.5:10182d60",
+        "placed": "rule LineItem",
+        "text": "When `calendar_zone` is present, `derived_units` is instead the number of calendar days in that zone from the day of `commitment.flight.start` through the day of `commitment.flight.end`."
+      },
+      {
+        "ir": "sentence:5.6.5:4804c1fd",
+        "placed": "rule LineItem",
+        "text": "`derived_units` = (`amount` − those charges) ÷ `agreed_rate` × rate per, rounded down to a whole unit, where rate per comes from the table for a core term and from `rate_per` for an extension term."
+      },
+      {
+        "ir": "sentence:5.6.5:aa43e614",
+        "placed": "rule LineItem",
+        "text": "`FLAT` and `TIME` set these figures from the rate and the flight instead, and a rule that reads `commitment.amount` on such an entry reads them: the seller total when `commitment.basis` is `spend`, `derived_units` when it is `units`."
+      },
+      {
+        "ir": "sentence:5.6.5:d956510e",
+        "placed": "rule LineItem",
+        "text": "`derived_units` is the time from `commitment.flight.start` through `commitment.flight.end`, inclusive, in `rate_unit`s rounded to the nearest whole unit, half up, so a clock change inside the flight doesn't change it."
       },
       {
         "ir": "sentence:6.10:2d916e96",

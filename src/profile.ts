@@ -110,7 +110,7 @@ export const STAGE_ENTRIES: Readonly<Record<Stage, readonly string[]>> = {
   input: ["spec.yaml", "spec-input", "build"],
   extract: ["ir"],
   model: ["mapping", "decisions", "kernel-binding.yaml"],
-  schemas: ["vectors", "schemas", "rules"],
+  schemas: ["vectors", "rule-programs.yaml", "schemas", "rules"],
   outputs: ["corpus", "type-examples", "comparison", "feedback", "variants", "examples", "desk-tests", "releases", "roundtrip", "field-examples", "plain-generator", "enum-drift", "proto"],
 };
 

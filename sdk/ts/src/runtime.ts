@@ -46,6 +46,16 @@ export const format = (f: Format) => (s: string) => isFormat(f, s);
 export const codePoints = (s: string) => [...s].length;
 
 type Payload = z.core.ParsePayload<object>;
+
+/**
+ * A check that runs on an object whatever its members' own checks found, as JSON Schema reports every keyword's failure at
+ * once: Zod skips a plain check once a member's issue aborts, as an `enum` member's does.
+ */
+const always = (fn: (payload: Payload) => void): z.core.$ZodCheck<object> => {
+  const ch = new z.core.$ZodCheck({ check: "custom", when: (p: z.core.ParsePayload) => p.value !== null && typeof p.value === "object" && !Array.isArray(p.value) }) as z.core.$ZodCheck<object>;
+  ch._zod.check = fn;
+  return ch;
+};
 /** Adds an issue at the object a check reads, or at the place `path` names under it, as the schema's check reports it. */
 const fail = (payload: Payload, message: string, path: PropertyKey[] = []) => payload.issues.push({ code: "custom", message, input: payload.value, path });
 
@@ -54,54 +64,54 @@ const memberTotal = (payload: Payload) =>
   Object.keys(payload.value).length + payload.issues.reduce((n, i) => n + (i.code === "unrecognized_keys" && (i.path === undefined || i.path.length === 0) ? i.keys.length : 0), 0);
 
 /** A check that an object holds at least `min` and at most `max` members. */
-export const memberCount = (min: number | undefined, max: number | undefined) => (payload: Payload) => {
+export const memberCount = (min: number | undefined, max: number | undefined) => always((payload: Payload) => {
   const n = memberTotal(payload);
   if (min !== undefined && n < min) fail(payload, `holds ${n} members, fewer than ${min}`);
   if (max !== undefined && n > max) fail(payload, `holds ${n} members, more than ${max}`);
-};
+});
 
 /** A check that an object that holds `member` holds at most `max` members. */
-export const dependent = (member: string, max: number) => (payload: Payload) => {
+export const dependent = (member: string, max: number) => always((payload: Payload) => {
   const n = memberTotal(payload);
   if (member in payload.value && n > max) fail(payload, `holds "${member}" and ${n - 1} other members; with "${member}" it holds at most ${max}`);
-};
+});
 
 /** A check that an object that holds `member` holds each of `names`, as a money value holds its currency. */
-export const requires = (member: string, names: string[]) => (payload: Payload) => {
+export const requires = (member: string, names: string[]) => always((payload: Payload) => {
   const v = payload.value as Record<string, unknown>;
   if (!(member in v)) return;
   for (const n of names) if (!(n in v)) fail(payload, `lacks "${n}", which is required with "${member}"`);
-};
+});
 
 /** A check that an object whose `member` is an object holding each of `inner` holds each of `names`, as a line item whose frequency cap has a period holds its time zone. */
-export const requiresWithin = (member: string, inner: string[], names: string[]) => (payload: Payload) => {
+export const requiresWithin = (member: string, inner: string[], names: string[]) => always((payload: Payload) => {
   const v = payload.value as Record<string, unknown>;
   const m = v[member];
   if (m === null || typeof m !== "object" || Array.isArray(m) || !inner.every((i) => i in m)) return;
   for (const n of names) if (!(n in v)) fail(payload, `lacks "${n}", which is required with "${member}.${inner.join(`", "${member}.`)}"`);
-};
+});
 
 /** A JSON value with its object keys sorted, so two equal values have one spelling. */
 const canonical = (x: unknown): string =>
   Array.isArray(x) ? `[${x.map(canonical).join(",")}]` : x !== null && typeof x === "object" ? `{${Object.keys(x).sort().map((k) => `${JSON.stringify(k)}:${canonical((x as Record<string, unknown>)[k])}`).join(",")}}` : JSON.stringify(x);
 
 /** A check that an object's list `member` holds at least `minItems` items, each once where `unique`, as a daypart window's `days`. */
-export const bounds = (member: string, minItems: number, unique: boolean) => (payload: Payload) => {
+export const bounds = (member: string, minItems: number, unique: boolean) => always((payload: Payload) => {
   const v = payload.value as Record<string, unknown>;
   const m = v[member];
   if (!Array.isArray(m)) return;
   if (m.length < minItems) fail(payload, `holds ${m.length} items, fewer than ${minItems}`, [member]);
   if (unique && new Set(m.map(canonical)).size !== m.length) fail(payload, "holds an item twice", [member]);
-};
+});
 
 /** A check that an object's `sibling` isn't `value`, a value the member can't take, as a daypart window's `start` can't be `24:00`. */
-export const rejects = (sibling: string, value: string | number | boolean) => (payload: Payload) => {
+export const rejects = (sibling: string, value: string | number | boolean) => always((payload: Payload) => {
   const v = payload.value as Record<string, unknown>;
   if (sibling in v && v[sibling] === value) fail(payload, `"${sibling}" is ${JSON.stringify(value)}, which it cannot be`);
-};
+});
 
 /** A check that an object whose `sibling` equals `value` holds each of `require`, and that each member `types` names is a value of its type. */
-export const condition = (sibling: string, value: string | number | boolean, require: string[], types: Record<string, z.ZodType> = {}) => (payload: Payload) => {
+export const condition = (sibling: string, value: string | number | boolean, require: string[], types: Record<string, z.ZodType> = {}) => always((payload: Payload) => {
   const v = payload.value as Record<string, unknown>;
   if (!(sibling in v) || v[sibling] !== value) return;
   for (const r of require) if (!(r in v)) fail(payload, `lacks "${r}", which is required when "${sibling}" is ${JSON.stringify(value)}`);
@@ -110,7 +120,7 @@ export const condition = (sibling: string, value: string | number | boolean, req
     const r = t.safeParse(v[m]);
     if (!r.success) for (const i of r.error.issues) fail(payload, `${i.message} while "${sibling}" is ${JSON.stringify(value)}`, [m, ...i.path]);
   }
-};
+});
 
 /** A map: an object whose keys are values of `key` and whose members are values of `value`. */
 export function map<K extends string, V>(key: z.ZodType<K>, value: z.ZodType<V>): z.ZodType<Partial<Record<K, V>>> {

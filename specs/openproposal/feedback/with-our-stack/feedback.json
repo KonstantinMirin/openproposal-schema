@@ -8227,6 +8227,21 @@
             "key:5.8:RequiredCredential.credential_type"
           ],
           "status": "proposed"
+        },
+        {
+          "feedback": "The row could say which release a name comes from, or that any release's name is valid: a receiver's own copy of the database decides what its `zoneinfo` accepts, so two receivers can read one name differently after a release adds or renames a zone.",
+          "id": "D-064",
+          "kind": "gap",
+          "locks": [
+            "with-our-stack"
+          ],
+          "number": 6,
+          "question": "§ 2.2 types `IanaZone` as \"a name in the IANA time zone database\". Which names does a schema accept, from which release of the database, and which engines check them?",
+          "reading": "The schema lists the zone and link names of one release of the database, 2026e, pinned by its URL and SHA-256, as the type's `enum`, so the schemas, the reference validator, and every SDK reject a name the release doesn't list, such as `Sydney/Australia`.",
+          "rests_on": [
+            "def:2.2:IanaZone"
+          ],
+          "status": "proposed"
         }
       ],
       "id": "formats",
@@ -8242,7 +8257,7 @@
           "locks": [
             "with-our-stack"
           ],
-          "number": 6,
+          "number": 7,
           "question": "How do the stack's § 3.1 `Selectable[T]` and § 3.2 `Settable[T]`, `Narrowing[T]`, and `SettableRange[T]` map, where the kernel's `Selectable` and `Settable` hold other keys?",
           "reading": "Constructors with the keys the stack's tables list: editions of `Selectable` and `Settable` on the stack's lock, and `Narrowing`, `SettableRange`, and the part `Delta`, which exist only there.",
           "rests_on": [
@@ -8264,7 +8279,7 @@
           "locks": [
             "with-our-stack"
           ],
-          "number": 7,
+          "number": 8,
           "question": "§ 2.2 says a range's `min` is no greater than its `max`, and § 5.9 types `retention` as a range of durations. When is one duration no greater than another, given that `P1M` and `P30D` can be the same length or not?",
           "reading": "One duration is no greater than another when it has no more years and months, and no more days, hours, minutes and seconds. `P14D` is no greater than `P30D`, and `PT48H` no greater than `P3D`. A pair where each is greater in one part, such as `P1M` and `P30D`, has no order, and a range with those bounds is neither accepted nor refused by the check.",
           "rests_on": [
@@ -8287,7 +8302,7 @@
           "locks": [
             "with-our-stack"
           ],
-          "number": 8,
+          "number": 9,
           "question": "Is each type the text writes as a list of values, in a § 2.2 row such as `Side` or in a sentence such as \"`HoldStatus` is `requested` | …\", a closed vocabulary?",
           "reading": "Each is a closed vocabulary of the values its row or sentence lists, named as the text names it. A value outside the list is invalid.",
           "rests_on": [
@@ -8315,7 +8330,7 @@
           "locks": [
             "with-our-stack"
           ],
-          "number": 9,
+          "number": 10,
           "question": "What are the § 2.2 types whose Form adds a value or a type to another, a line item's status, a time unit, and a measurer?",
           "reading": "A line item's status is a closed list of a proposal's statuses and `sold_out`; a time unit one of the calendar units and `flight`; and a measurer a union of a side and a registrable domain.",
           "rests_on": [
@@ -8335,7 +8350,7 @@
           "locks": [
             "with-our-stack"
           ],
-          "number": 10,
+          "number": 11,
           "question": "Does each `role` of a § 4.1.2 `AssentEntry` make a type of its own?",
           "reading": "One `AssentEntry` object, whose `idempotency_key` is required when `role` is `commitment` and whose `ground` is required when `role` is `decline`, as its rows state.",
           "rests_on": [
@@ -8352,7 +8367,7 @@
           "locks": [
             "with-our-stack"
           ],
-          "number": 11,
+          "number": 12,
           "question": "What are the stack's `LineItemSummary`, `ProposalSummary`, and `BuyerWrites`, which a lead-in says list paths of a document?",
           "reading": "Profiles: each projects the paths its `text` block lists from the document, with the keys a table adds, and `BuyerWrites` reads `<selectable>` as each field marked `selectable` and `<settable>` as each marked `settable` but `frequency_cap`, every path optional.",
           "rests_on": [
@@ -8374,7 +8389,7 @@
           "locks": [
             "with-our-stack"
           ],
-          "number": 12,
+          "number": 13,
           "question": "What do the stack's prose lists, examples, and tables that restate or illustrate another definition map to?",
           "reading": "A list or a table that writes the terms of a list the text defines elsewhere restates it, which that list's schema expresses: the core error codes, `cost_method`'s terms, the metrics, and the `transaction_mechanism` tables. A list of the values a transition moves between, a code block that shows one field or a formula, a `unit` column's terms, a list of the keys of an `Object` another definition sets, and a field's core terms for options typed `VocabularyTerm` are informative. `RequestedValue.unit_bounds` repeats the requestable field's form, a `Range[Integer]`, and `RequestedValue.retention` the line item's `retention`, a `Range[Duration]`, each named after `RequestedValue`. Appendix B's \"What the distribution says\" restates the counts of the field rows' markers, so its figures are what the rows give, and a figure the paragraph writes otherwise would be a round-trip difference.",
           "rests_on": [
@@ -8425,7 +8440,7 @@
           "locks": [
             "with-our-stack"
           ],
-          "number": 13,
+          "number": 14,
           "question": "What is an `ExclusionList`, the value of each `exclusions` key?",
           "reading": "A union of a list of entries and a `DocumentRef` to a JSON array of them, where an entry is a string, as a `Domain` or a keyword is, an `AppId`, or a `TaxonomyCodes`, the forms the Entry column gives.",
           "rests_on": [
@@ -8444,7 +8459,7 @@
           "locks": [
             "with-our-stack"
           ],
-          "number": 14,
+          "number": 15,
           "question": "Where a member name recurs with different types across the locks, or within the stack, is it one concept?",
           "reading": "No: each object's row gives its key its type, as the text writes it on that lock, so a name that recurs with different types is a homonym, each meaning what its own row says.",
           "rests_on": [
@@ -8461,7 +8476,7 @@
           "locks": [
             "with-our-stack"
           ],
-          "number": 15,
+          "number": 16,
           "question": "§ 5.6.5 gives `action_type` the core terms of another standard: ECAPI 1.0's `event_type` values, from its Standard Events and Additional Events tables both, other than `custom`. Which terms does the vocabulary hold, and what does its schema accept?",
           "reading": "The vocabulary takes ECAPI 1.0's `event_type` list as ECAPI writes it at the commit the row's link pins: the 27 standard events, `custom`, and the 17 additional events, all under the list's `eventtypes` anchor. Its core terms are the 44 codes other than `custom`, and it is open, so any other action is a namespaced term. The schema accepts `purchase`, `install`, or `add_to_cart`, and `shop.example:store_visit`, and refuses `custom` and an unknown bare term.",
           "rests_on": [
@@ -8483,7 +8498,7 @@
           "locks": [
             "with-our-stack"
           ],
-          "number": 16,
+          "number": 17,
           "question": "Which schema type expresses each § 2.2 and § 3 element that more than one schema type rests on, or that none does?",
           "reading": "The schema that states what the element says:\n- the selectable structure of § 3.1, for the `available[]` key and the price-delta sentence\n- the price delta of each `pricing` entry, for the delta object\n- the reference grammar of `catalog_ref`, for the grammar\n- the choice of an inline value or a `catalog_ref`, for \"never both\"\n- the settable bounds with a `min` / `max` range, for the bounds sentence\n- the settable bounds, for their bare-value fallback",
           "rests_on": [
@@ -8498,7 +8513,7 @@
           "locks": [
             "with-our-stack"
           ],
-          "number": 17,
+          "number": 18,
           "question": "How is each § 2 and § 3 statement checked, as a schema, a rule on payloads, or an obligation on a party's behavior?",
           "reading": "A statement about one payload, or about two versions and the acting party, is a rule. A statement about what a party does, which no payload shows, is an obligation. A statement the schema already says maps to the schema.",
           "rests_on": [
@@ -8514,7 +8529,7 @@
           "locks": [
             "with-our-stack"
           ],
-          "number": 18,
+          "number": 19,
           "question": "How is each § 4 and § 5 field statement checked, as a schema, a rule on payloads, or an obligation on a party's behavior?",
           "reading": "A statement about one line item's or proposal's fields, or about two versions, is a rule owned by the smallest object it mentions. A statement about delivery, disclosure, or how a seller treats a request is an obligation. A statement the schema already says maps to the schema.",
           "rests_on": [
@@ -8529,7 +8544,7 @@
           "locks": [
             "with-our-stack"
           ],
-          "number": 19,
+          "number": 20,
           "question": "Which of the stack's RFC 2119 statements outside the tables does a schema check, and which bind a party?",
           "reading": "Each binds the party its subject names: a seller, a buyer, or a receiver, and otherwise every implementation; the conformance of a party's behavior is checked by its tests, not by a payload's schema. What a schema can check, each row's type and presence, its tables state, and the schemas take from them.",
           "rests_on": [
@@ -8732,7 +8747,7 @@
           "locks": [
             "with-our-stack"
           ],
-          "number": 20,
+          "number": 21,
           "question": "What change does each mutability rule allow, between two versions and the party that made it, where the specification states the rule only in prose?",
           "reading": "Read each rule as narrowly as its words allow, and give it the vectors that reading decides:\n- A field's status is the status of the document that holds it.\n- A settable value is bounds the buyer narrows.\n- Seller assent is the seller's version.\n- A MAY grants only the change it names.\n- A derived field changes only with the fields it is computed from.",
           "rests_on": [
@@ -8758,7 +8773,7 @@
           "locks": [
             "with-our-stack"
           ],
-          "number": 21,
+          "number": 22,
           "question": "How do the stack's presence conditions that a schema can't state, such as \"REQUIRED when the line item offers a deal mechanism\", read, and what payloads does each accept?",
           "reading": "Each is a rule of the row's object, with vectors, and the check reads the condition as the text states it: on the value, on what the object's container holds, or, for a request, on what the receiver does. Where the text names a reading, the rule takes it: a deal mechanism is one the § 5.9 table marks Yes, a line item counts impressions where any of its counts is in impressions, as § 5.6.4 defines it: a `pricing[]` entry whose cost method's unit is impressions or viewable impressions (`CPM` or `CPMV`), and so a `commitment` under it, an `availability` whose `unit` is one of those, or a `committed_metrics[]` tuple whose `metric` is `impressions`, a term requires keys where its § 5.6.5 row names `cost_parameters`, a version is frozen once the proposal leaves `draft` or `assent[]` holds an entry, the committed entry is the one the line item's `commitment.pricing_id` names, or its only entry, and a line item with no `commitment` has none, and more than one seller audience can be in effect where there are two options and `max_select` allows two.",
           "rests_on": [
@@ -8867,6 +8882,26 @@
             "rule:5.9:d8611936"
           ],
           "status": "proposed"
+        },
+        {
+          "feedback": "§ 5.6.5 could mark these definitions as requirements, such as \"`derived_units` MUST equal …\", so a reader sees that a figure that disagrees is invalid, and the `derived_units` row could say whether a written copy that differs is an error or is overridden.",
+          "id": "D-065",
+          "kind": "gap",
+          "locks": [
+            "with-our-stack"
+          ],
+          "number": 23,
+          "question": "§ 5.6.5 states how a commitment's figures follow from its entry and its flight in sentences with no RFC 2119 keyword, and § 5.6.1 that a commitment resolves only when it fits its bounds. Which of them are rules one line item decides, and what does each check?",
+          "reading": "Each sentence is a rule on the line item, which holds every field it reads: a `FLAT` or `TIME` amount is the figure its rate and flight set; a written `derived_units` is the count its sentence defines, for `spend`, for `units`, for a `TIME` flight in elapsed units, and for one in calendar days of its `calendar_zone`; and a commitment's seller total and units fit `commitment_bounds.spend` and the committed entry's `unit_bounds`, the clause of § 5.6.1 one line item decides. Each fails at the line item, the rule's owner, as the specification's own checker reports them.",
+          "rests_on": [
+            "sentence:5.6.1:78efd2ce",
+            "sentence:5.6.5:03d899cb",
+            "sentence:5.6.5:10182d60",
+            "sentence:5.6.5:4804c1fd",
+            "sentence:5.6.5:aa43e614",
+            "sentence:5.6.5:d956510e"
+          ],
+          "status": "proposed"
         }
       ],
       "id": "readings",
@@ -8876,9 +8911,9 @@
   "issue": "https://github.com/IABTechLab/OpenProposal/issues/121",
   "locks": [
     {
-      "blob": "8e91771f0bc1121e7b23a4611e15f400ea511c53",
+      "blob": "c395ca84688d49807e5d3318445da4b4c4b79e29",
       "branches": 0,
-      "commit": "6d5a6f9b66a49b9bca2abbdcca9d861bae76027a",
+      "commit": "711b34cf2fdc209d46b832013bfb1f1cc8727ba5",
       "edits": [],
       "heads": [
         {
@@ -8938,75 +8973,75 @@
           "pr": 123
         },
         {
-          "head": "c7192f790cada6af1a6f65f188b6de887054e505",
+          "head": "e25dc09775d676e9bbf2476981578aa57ac5a2eb",
           "pr": 137
         },
         {
-          "head": "a73d71e9e8e564a269d92b40bb48d686680b3c09",
+          "head": "f9e6db90e7e61add81bf8cf6a180667966647227",
           "pr": 138
         },
         {
-          "head": "d1da1e0cbfdf6b6b85d94c29735ed8b75fa35f8f",
+          "head": "5b754cca54225e163cc3e23d4a250ea8d3a0cbb8",
           "pr": 139
         },
         {
-          "head": "44535cfed5afce7bd3ca25a8a0ba705a00c443fa",
+          "head": "e6b100cf43f1f0ce8a0bfcee3e668ebcff58ac5d",
           "pr": 140
         },
         {
-          "head": "e15329e7ba2bf015c0649bd879617eed819f8cb7",
+          "head": "e793435a80082bd0fab9bad78143ad27de9fb4c6",
           "pr": 141
         },
         {
-          "head": "c679074beb506526be44cca30c4e7e105d3ece9f",
+          "head": "79601cea368cbee7206bbbc39d1b1f54ea6ad478",
           "pr": 142
         },
         {
-          "head": "9b9ca684c7c1738a89f2547768c347251437643c",
+          "head": "6b08faf49565ba0d6b442dc715ddb160efaed7f2",
           "pr": 143
         },
         {
-          "head": "9dad3655a3f4e7c83910b3c187bc6197a33022d1",
+          "head": "dad072c08c1a4138b688470d02a7c8377a4e1c23",
           "pr": 144
         },
         {
-          "head": "a3aa930650970f9294f4fb8d1b5022e43ec8dd43",
+          "head": "579e31542277967f20953f9ece6180268caf1395",
           "pr": 145
         },
         {
-          "head": "4c74e386d4cd930085552434b78a5ba66572efd1",
+          "head": "73d465dd7f66c5a2442437e602f2dd96177257e6",
           "pr": 146
         },
         {
-          "head": "861d26963df680bb47c97003a52b557c865cc2db",
+          "head": "6972a772a2009ffda51fcd00fe793b2cebeae7f8",
           "pr": 147
         },
         {
-          "head": "b8bd7b707665a2301e4705a11aacfcb864fa20e5",
+          "head": "f0509a08a2d67fd89dc05afac4486681f74543e2",
           "pr": 148
         },
         {
-          "head": "7ce8914c1016b4cac68310c2044449f3b1096004",
+          "head": "2e9fd38a820a4706af5470f2e7d9491a61dd7380",
           "pr": 149
         },
         {
-          "head": "5546fff0d5cd1214d13921b132b06d2989d3daaf",
+          "head": "ab76c8038d8771efdb7c588588691c3d7dcbb0bb",
           "pr": 150
         },
         {
-          "head": "759e8f4ec466560539e6209054cbe8d85dd23381",
+          "head": "17d5e48619e72c5c17133d440524a554c8ec162e",
           "pr": 151
         },
         {
-          "head": "86f41a3cea7c9c9cbcb7f550950ddee38b8fd4ce",
+          "head": "55ce0f6e2b464a93e96db21ef29dee6d1c8d7413",
           "pr": 152
         },
         {
-          "head": "6d5a6f9b66a49b9bca2abbdcca9d861bae76027a",
+          "head": "711b34cf2fdc209d46b832013bfb1f1cc8727ba5",
           "pr": 154
         }
       ],
-      "heads_on": "2026-11-12",
+      "heads_on": "2026-11-13",
       "label": "With our stack",
       "name": "with-our-stack",
       "ours": [

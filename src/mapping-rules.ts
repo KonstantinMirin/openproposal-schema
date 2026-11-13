@@ -36,6 +36,8 @@ export interface RuleContext {
   moduleOf: (section: string) => string | undefined;
   /** Whether the module that owns a section is one the mapping leaves for a later phase (`deferred` in its file). */
   deferred: (section: string) => boolean;
+  /** The owner of each rule whose check is a program, by rule ID, from the spec's `rule-programs.yaml`. */
+  programs?: Record<string, { owner: string }>;
 }
 
 /** The module whose sections define the kernel's own types: § 2.2 and § 3. */
@@ -736,6 +738,15 @@ export const ENTRY_RULES: EntryRule[] = [
       const last = title.split(/[^a-z]+/).filter(Boolean).pop();
       const ending = named.length === 0 && last !== undefined ? docs.filter((d) => words(d).split(" ").pop() === last) : [];
       return ending.length === 1 ? { role: "example", object: ending[0]! } : null;
+    },
+  },
+  {
+    id: "programmed-sentence",
+    says: "A prose sentence with no RFC 2119 keyword whose check a rule program states, as § 5.6.5's definitions of a commitment's figures (D-065), is a rule on the program's owner: the program says what the sentence requires of one payload, and the decision its vectors cite says why the sentence is a requirement.",
+    derive: (e, ctx) => {
+      if (e.kind !== "sentence") return null;
+      const owner = ctx.programs?.[e.element.id]?.owner;
+      return owner === undefined ? null : { role: "rule", object: owner };
     },
   },
   {

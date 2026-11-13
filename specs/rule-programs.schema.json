@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KonstantinMirin/openproposal-schema/specs/rule-programs.schema.json",
+  "title": "Rule programs",
+  "description": "A spec's rule checks written as data (src/rule-program.ts): the gates run each one as its rule's check, and the SDK emitters write each into every SDK, so one definition decides a rule everywhere.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "defs", "rules"],
+  "properties": {
+    "format": { "const": 1 },
+    "defs": {
+      "description": "Shared definitions, by name, each an expression read on the rule owner's value.",
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9_]*$" },
+      "additionalProperties": { "$ref": "#/$defs/expr" }
+    },
+    "rules": {
+      "description": "Each rule's program, by its ID in rules.json.",
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z-]*:\\S+$" },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["owner", "violations"],
+        "properties": {
+          "owner": { "description": "The type whose values the rule reads, its owner in rules.json.", "type": "string", "pattern": "^[A-Z][A-Za-z0-9]*$" },
+          "violations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["when", "path", "message"],
+              "properties": {
+                "when": { "$ref": "#/$defs/expr" },
+                "path": { "description": "The JSON pointer of the violation below the owner's value.", "type": "string", "pattern": "^(/[^/]*)*$" },
+                "message": { "$ref": "#/$defs/expr" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "expr": {
+      "description": "A JSON literal, or an operation: an array whose first item names it (src/rule-program.ts).",
+      "anyOf": [
+        { "type": "null" },
+        { "type": "boolean" },
+        { "type": "number" },
+        { "type": "string" },
+        { "type": "object" },
+        { "description": "An operation: its name, then its arguments; the evaluator fails on a name it doesn't know.", "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/expr" } }
+      ]
+    }
+  }
+}

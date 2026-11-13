@@ -1,0 +1,127 @@
+# Rule programs (src/rule-program.ts): each rule's check as data, which the
+# gates run and every SDK is generated with, so one definition decides a
+# rule everywhere. A rule here takes the place of a check written in
+# TypeScript; the rules gate holds each program to its rule's vectors, and
+# the SDK gates hold each SDK to them. `defs` are shared definitions, read on
+# the rule owner's value.
+format: 1
+defs:
+  # § 5.6.1: the pricing entry the commitment is under: the one `pricing_id` names, or the only entry.
+  commitment: [get, [$], commitment]
+  entries: [coalesce, [get, [$], pricing], [list]]
+  committed:
+    [if, [not, [ismap, [def, commitment]]], null,
+      [if, [has, [def, commitment], pricing_id],
+        [find, [def, entries], e, [eq, [get, [var, e], pricing_id], [get, [def, commitment], pricing_id]]],
+        [if, [eq, [len, [def, entries]], 1], [at, [def, entries], 0], null]]]
+  # The figures the commitment reads; a commitment with no committed entry, or no `agreed_rate`, has none.
+  figured: [and, [ismap, [def, commitment]], [ismap, [def, committed]], [has, [def, committed], agreed_rate]]
+  method: [get, [def, committed], cost_method]
+  rate: [get, [def, committed], agreed_rate]
+  basis: [get, [def, commitment], basis]
+  amount: [coalesce, [get, [def, commitment], amount], 0]
+  # § 3.1: the `delta_flat` of each option selected beyond `included[]`, and of each excluded one, in every selectable member.
+  charges:
+    [sum, [filter, [values, [$]], v, [and, [ismap, [var, v]], [has, [var, v], available]]], v,
+      [sum,
+        [concat,
+          [filter, [coalesce, [get, [var, v], selected], [get, [var, v], included], [list]], n,
+            [not, [contains, [coalesce, [get, [var, v], included], [list]], [var, n]]]],
+          [coalesce, [get, [var, v], excluded], [list]]],
+        n,
+        [coalesce, [get, [get, [get, [var, v], deltas], [var, n]], delta_flat], 0]]]
+  # § 5.6.5's table: the rate per of a core term; an extension term writes its own `rate_per`.
+  rate_per:
+    [coalesce, [get, [def, committed], rate_per],
+      [table, [def, method], {CPM: 1000, CPMV: 1000, CPC: 1, CPCV: 1, CPV: 1, CPP: 1, CPA: 1, PLAY: 1000, TIME: 1, FLAT: 1}], 1]
+  params: [if, [ismap, [get, [def, committed], cost_parameters]], [get, [def, committed], cost_parameters], null]
+  size: [table, [get, [def, params], rate_unit], {hour: 3600, day: 86400, week: 604800}]
+  starts: [instant, [get, [get, [def, commitment], flight], start]]
+  ends: [instant, [get, [get, [def, commitment], flight], end]]
+  timed: [and, [eq, [def, method], TIME], [isnum, [def, starts]], [isnum, [def, ends]], [isnum, [def, size]]]
+  calendar: [and, [def, timed], [has, [def, params], calendar_zone], [eq, [get, [def, params], rate_unit], day]]
+  zone: [get, [def, params], calendar_zone]
+  # A zone the table doesn't hold leaves the count to the zone's own type check.
+  unknown_zone: [and, [def, calendar], [eq, [local_day, [def, starts], [def, zone]], null]]
+  # § 5.6.5, `TIME`: the calendar days in the zone the flight touches, or the flight's time, inclusive, in `rate_unit`s, half up.
+  elapsed:
+    [if, [def, calendar],
+      [add, [sub, [local_day, [def, ends], [def, zone]], [local_day, [def, starts], [def, zone]]], 1],
+      [if, [def, timed],
+        [floor, [div, [add, [sub, [def, ends], [def, starts]], 1, [div, [def, size], 2]], [def, size]]],
+        null]]
+  flat: [eq, [def, method], FLAT]
+  # § 5.6.5: the committed units, and the seller total.
+  units:
+    [if, [def, flat], null,
+      [if, [isnum, [def, elapsed]], [def, elapsed],
+        [if, [eq, [def, basis], spend],
+          [if, [gt, [def, rate], 0], [floor, [mul, [div, [sub, [def, amount], [def, charges]], [def, rate]], [def, rate_per]]], null],
+          [def, amount]]]]
+  total:
+    [if, [def, flat], [add, [def, rate], [def, charges]],
+      [if, [isnum, [def, elapsed]], [add, [mul, [def, elapsed], [def, rate]], [def, charges]],
+        [if, [eq, [def, basis], spend], [def, amount],
+          [add, [mul, [div, [def, amount], [def, rate_per]], [def, rate]], [def, charges]]]]]
+  checked: [and, [def, figured], [not, [def, unknown_zone]]]
+  derived: [get, [def, commitment], derived_units]
+rules:
+  # § 5.6.5: "`FLAT` and `TIME` set these figures from the rate and the flight instead": a FLAT amount is the rate plus the
+  # charges, and a TIME amount is the units the flight counts, or their seller total.
+  sentence:5.6.5:aa43e614:
+    owner: LineItem
+    violations:
+      - when: [and, [def, checked], [def, flat], [ne, [def, amount], [def, total]]]
+        path: ""
+        message: [str, "a FLAT amount is ", [def, total]]
+      - when: [and, [def, checked], [isnum, [def, elapsed]], [ne, [def, amount], [if, [eq, [def, basis], units], [def, elapsed], [def, total]]]]
+        path: ""
+        message: [str, "a TIME commitment is for ", [def, elapsed], " units, ", [def, total], " in all"]
+  # § 5.6.5, `spend`: "`derived_units` = (`amount` − those charges) ÷ `agreed_rate` × rate per, rounded down".
+  sentence:5.6.5:4804c1fd:
+    owner: LineItem
+    violations:
+      - when: [and, [def, checked], [not, [def, flat]], [not, [isnum, [def, elapsed]]], [eq, [def, basis], spend], [isnum, [def, units]], [has, [def, commitment], derived_units], [ne, [def, derived], [def, units]]]
+        path: ""
+        message: [str, "derived_units recomputes to ", [def, units]]
+  # § 5.6.5, `units`: "`derived_units` is `amount`".
+  sentence:5.6.5:03d899cb:
+    owner: LineItem
+    violations:
+      - when: [and, [def, checked], [not, [def, flat]], [not, [isnum, [def, elapsed]]], [eq, [def, basis], units], [has, [def, commitment], derived_units], [ne, [def, derived], [def, units]]]
+        path: ""
+        message: [str, "derived_units recomputes to ", [def, units]]
+  # § 5.6.5, `TIME`: "`derived_units` is the time from `commitment.flight.start` through `commitment.flight.end`, inclusive,
+  # in `rate_unit`s rounded to the nearest whole unit, half up".
+  sentence:5.6.5:d956510e:
+    owner: LineItem
+    violations:
+      - when: [and, [def, checked], [def, timed], [not, [def, calendar]], [has, [def, commitment], derived_units], [ne, [def, derived], [def, elapsed]]]
+        path: ""
+        message: [str, "derived_units recomputes to ", [def, elapsed]]
+  # § 5.6.5, `TIME` with `calendar_zone`: "the number of calendar days in that zone from the day of
+  # `commitment.flight.start` through the day of `commitment.flight.end`".
+  sentence:5.6.5:10182d60:
+    owner: LineItem
+    violations:
+      - when: [and, [def, checked], [def, calendar], [has, [def, commitment], derived_units], [ne, [def, derived], [def, elapsed]]]
+        path: ""
+        message: [str, "derived_units recomputes to ", [def, elapsed]]
+  # § 5.6.1: a commitment resolves only when it "fits `commitment_bounds.spend` and the committed entry's `unit_bounds`".
+  sentence:5.6.1:78efd2ce:
+    owner: LineItem
+    violations:
+      - when:
+          [and, [def, checked],
+            [or,
+              [lt, [def, total], [get, [get, [get, [$], commitment_bounds], spend], min]],
+              [gt, [def, total], [get, [get, [get, [$], commitment_bounds], spend], max]]]]
+        path: ""
+        message: [str, "seller total ", [def, total], " is outside commitment_bounds.spend"]
+      - when:
+          [and, [def, checked], [isnum, [def, units]],
+            [or,
+              [lt, [def, units], [get, [get, [def, committed], unit_bounds], min]],
+              [gt, [def, units], [get, [get, [def, committed], unit_bounds], max]]]]
+        path: ""
+        message: [str, [def, units], " units are outside unit_bounds"]

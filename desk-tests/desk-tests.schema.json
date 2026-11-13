@@ -5,7 +5,7 @@
   "description": "The verdict each payload of a desk-test set must get on one lock: payloads that someone outside this repository wrote to test the lock's text, kept beside this file in `desk-tests/<set>/`. A payload with a finding is rejected at that location, and only there, by the schemas and rules, by the lock's own checker, and by each SDK the lock's schemas generate, except where an SDK gap records a rule's finding that no SDK type checks; every other payload passes every engine. The desk-tests gate fails on any other verdict, on an undecided check or an SDK gap not recorded here, and on a recorded one that no longer holds.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["format", "lock", "document", "checker", "examples", "findings", "undecided", "sdk_gaps"],
+  "required": ["format", "lock", "document", "checker", "examples", "findings", "undecided", "sdk_gaps", "checker_only"],
   "properties": {
     "format": {
       "description": "Version of this format.",
@@ -47,6 +47,11 @@
       "description": "The findings the SDKs don't make: each is a rule's, which no SDK type checks, since the types check what the schemas check (type rules § 9), so each SDK accepts the payload there, as the schema does.",
       "type": "array",
       "items": { "$ref": "#/$defs/sdk_gap" }
+    },
+    "checker_only": {
+      "description": "The findings only the lock's checker makes: an arithmetic the specification states in a sentence with no RFC 2119 keyword, which no rule carries, so neither the rules nor the SDKs compute it yet, as § 5.6.5's `TIME` units. The checker rejects the payload there, and the schemas, the rules, and the SDKs accept it.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/checker_only" }
     }
   },
   "$defs": {
@@ -103,6 +108,30 @@
         "rule": { "$ref": "#/$defs/rule" },
         "reason": {
           "description": "What the verdict turns on that the payload leaves out.",
+          "type": "string",
+          "minLength": 12
+        }
+      }
+    },
+    "checker_only": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["example", "path", "elements", "reason"],
+      "properties": {
+        "example": { "$ref": "#/$defs/example" },
+        "path": {
+          "description": "The JSON pointer of the location the checker rejects, `\"\"` for the whole payload.",
+          "$ref": "#/$defs/pointer"
+        },
+        "elements": {
+          "description": "The elements of the lock's IR the checker's check reads, such as `sentence:5.6.5:d956510e`.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z-]*:\\S+$" }
+        },
+        "reason": {
+          "description": "What the checker computes that the rules don't yet, and why the payload fails it.",
           "type": "string",
           "minLength": 12
         }

@@ -1,0 +1,41 @@
+format: 1
+id: D-064
+status: proposed
+kind: gap
+author: agent
+question: "§ 2.2 types `IanaZone` as \"a name in the IANA time zone database\". Which names does a schema accept, from which release of the database, and which engines check them?"
+covers:
+  - ir: def:2.2:IanaZone
+    digest: a155797aac910548f8d5856f94bb63c7d3737a3a343dfac0a13179481951f330
+    quote: "`IanaZone` | String: a name in the IANA time zone database, such as `America/New_York` or `UTC` | A time zone"
+    locks: [with-our-stack]
+options:
+  - id: pinned-names
+    summary: "The schema lists the zone and link names of one release of the database, 2026e, pinned by its URL and SHA-256, as the type's `enum`, so the schemas, the reference validator, and every SDK reject a name the release doesn't list, such as `Sydney/Australia`."
+  - id: shaped-names
+    summary: "The schema checks only the shape of a name, `Area/Location`, as before, and a name the release doesn't list passes every engine but the stack's own checker."
+  - id: listed-rule
+    summary: "A rule checks the name against the pinned release, as one does for a line item's clock, `ZoneName`, so the rules reject an unlisted name and the SDKs, which hold no rules, accept it."
+chosen: pinned-names
+rationale: >-
+  The row names the database, so a value is one of its names, and a name
+  the database doesn't hold, as `Sydney/Australia`, isn't an `IanaZone`;
+  the stack's own checker rejects it so, through Python's `zoneinfo`. The
+  database changes over time, so the schema needs one release, and the
+  schemas already pin one for `ZoneName`'s rule, 2026e, with its zone and
+  link names as the default build installs them, the `backward` file's
+  links included, since a receiver's `zoneinfo` accepts those too. Stating
+  the names as the type's `enum` puts the check where every engine reads
+  it: the schemas, the reference validator, and the TypeScript, Python, and
+  Go SDKs. A shape check alone passes an unlisted name, and a rule leaves
+  the SDKs without the check. `ZoneName` keeps its rule over the same
+  release, as the schemas of the specification as it stands and of its open
+  PRs state it, so their schemas don't change.
+evidence:
+  - https://www.iana.org/time-zones
+  - https://data.iana.org/time-zones/releases/tzdata2026e.tar.gz
+feedback: >-
+  The row could say which release a name comes from, or that any release's
+  name is valid: a receiver's own copy of the database decides what its
+  `zoneinfo` accepts, so two receivers can read one name differently after a
+  release adds or renames a zone.

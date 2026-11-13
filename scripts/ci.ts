@@ -370,7 +370,7 @@ import type { FindingsDoc } from "../src/pipeline.ts";
 import { FINDING_KINDS } from "../src/lint.ts";
 import { DIFFERENCES_FILE, type DifferencesFile, loadDifferences } from "../src/render.ts";
 import { checkExamples, FINDINGS_FILE, type FindingsFile, loadFindings, lockExamples } from "../src/examples.ts";
-import { deskSdks, deskTestFiles, loadDeskPayloads, loadDeskTests, runDeskChecker, runDeskSdks, type CheckerRun, type DeskTests, type DeskTestsInput } from "../src/desk-tests.ts";
+import { deskSdks, deskTestFiles, elementIdsOf, loadDeskPayloads, loadDeskTests, runDeskChecker, runDeskSdks, type CheckerRun, type DeskTests, type DeskTestsInput } from "../src/desk-tests.ts";
 import { buildRelease, FROZEN_MODEL, FROZEN_RULES, FROZEN_SCHEMAS, loadFrozen, RELEASE_FILE, RELEASE_SCHEMA, RELEASES_DIR, renderRelease, type Frozen, type OracleCheck, type ReleaseDoc } from "../src/release.ts";
 import { canonicalJson } from "../src/canonical.ts";
 import { CORPUS_FILE, corpusDirOf, generateCorpus, renderCorpus, type CorpusDoc } from "../src/corpus.ts";
@@ -378,8 +378,9 @@ import { FIELD_EXAMPLES_FILE, loadFieldExamples } from "../src/field-examples.ts
 import { generateTypeExamples, renderTypeExamples, TYPE_EXAMPLES_DIR, TYPE_EXAMPLES_FILE, typeExamplesDirOf, type TypeExamplesDoc } from "../src/type-examples.ts";
 import { loadOracleGaps, pinnedOracle } from "../src/engines.ts";
 import { sdkDirOf } from "../src/sdk.ts";
+import { loadPrograms, loadZoneTable, ZONE_LIST, zoneTableFile } from "../src/rule-programs.ts";
 import { emitSdk, SDK_ROOTS } from "../src/sdk-emit.ts";
-import { findingsGo, findingsPython, findingsTypeScript, locationCases, runGo, runPython, runTypeScript, sdkCases, type SdkCase, type SdkFindingsRun, type SdkRun } from "../src/sdk-parity.ts";
+import { findingsGo, findingsPython, findingsTypeScript, locationCases, ruleLocationCases, rulerOf, withRuleLocations, withRules, type Ruled, runGo, runPython, runTypeScript, sdkCases, type SdkCase, type SdkFindingsRun, type SdkRun } from "../src/sdk-parity.ts";
 import { EXEMPTIONS_FILE, type ExemptionsFile, loadExemptions, pinnedPlainGenerator, plainTarget } from "../src/plain-parity.ts";
 import { trackedGoMods } from "../src/toolchain.ts";
 import { buildLock, COMPARISON_DIR, compareLocks, DEFAULT_LOCK_FILE, renderComparison, renderComparisonMarkdown, type LockBuild } from "../src/compare.ts";
@@ -574,6 +575,9 @@ async function checkKernelGates(locks: SpecLock[], loaded: Loaded | null): Promi
   else skipped(K.kernelCheck, "the decision records didn't load");
   await gate(K.kernelEngines, { kernel, gaps: loadOracleGaps(ROOT) });
   for (const lock of locks) await gate(K.kernelSources, { ir: committedIr(lock), lock: lock.name, kernel }, lock);
+  // The time zone table the rule programs read, for the release and the names the kernel pins.
+  const zones = kernel.lists?.lists.find((l) => l.name === ZONE_LIST);
+  if (zones?.version && SPEC === specRoot()) await gate(O.zoneTable, { file: zoneTableFile(), release: zones.version, names: zones.codes.map((c) => String(c.code)) });
   return kernel;
 }
 
@@ -733,6 +737,7 @@ async function checkRuleGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[]
     await gate(O.rulesCommitted, { file, want, committed: read(file), regenerate: "npm run rules" }, lock);
   }
   if (complete) await gate(O.rulesTracked, { dir: "rules", tracked: gitTracked("rules", SPEC), expected: [...expected], remedy: "remove it, or emit it from the model" });
+  if (complete) await gate(O.rulePrograms, { specDir: SPEC, rules: [...new Set([...emittedRules.values()].flatMap((d) => d.rules.map((r) => r.id)))].sort() });
   return { vectors, rules: emittedRules };
 }
 
@@ -891,22 +896,25 @@ async function checkSdkGates(models: Map<SpecLock, ModelDoc>, locks: SpecLock[],
       continue;
     }
     const cases: SdkCase[] = sdkCases(doc, JSON.parse(readFileSync(join(SPEC, corpusFile), "utf8")) as CorpusDoc, kernelEditionsOn(model.kernel, lock.name), constructorEditionsOn(model.constructors, lock.name));
+    // The SDKs check the rules whose programs they are generated with, so a case such a rule rejects is invalid for them.
+    const ruled = rulerOf(doc, loadPrograms(SPEC), loadZoneTable());
+    const sdkCasesRuled = withRules(cases, ruled);
     const legs: [string, () => Promise<SdkRun> | SdkRun][] = [
-      ["TypeScript", () => runTypeScript(join(ROOT, dir, "ts"), cases)],
-      ["Python", () => runPython(ROOT, join(ROOT, dir, "python"), cases)],
-      ["Go", () => runGo(join(ROOT, dir, "go"), join(ROOT, "build", "ci", lock.name, "sdk-go-verdicts"), cases)],
+      ["TypeScript", () => runTypeScript(join(ROOT, dir, "ts"), sdkCasesRuled)],
+      ["Python", () => runPython(ROOT, join(ROOT, dir, "python"), sdkCasesRuled)],
+      ["Go", () => runGo(join(ROOT, dir, "go"), join(ROOT, "build", "ci", lock.name, "sdk-go-verdicts"), sdkCasesRuled)],
     ];
     for (const [language, leg] of legs) {
       let r: SdkRun;
       try {
         r = await leg();
       } catch (e) {
-        record(label(lock, S.sdkParity.title instanceof Function ? S.sdkParity.title({ language, cases, run: { engine: "", verdicts: [], dumps: [], errors: [] } }) : S.sdkParity.title), false, (e as Error).message);
+        record(label(lock, S.sdkParity.title instanceof Function ? S.sdkParity.title({ language, cases: sdkCasesRuled, run: { engine: "", verdicts: [], dumps: [], errors: [] } }) : S.sdkParity.title), false, (e as Error).message);
         continue;
       }
-      await gate(S.sdkParity, { language, cases, run: r }, lock);
+      await gate(S.sdkParity, { language, cases: sdkCasesRuled, run: r }, lock);
     }
-    await checkSdkLocations(lock, dir, JSON.parse(readFileSync(join(SPEC, corpusFile), "utf8")) as CorpusDoc, "");
+    await checkSdkLocations(lock, dir, JSON.parse(readFileSync(join(SPEC, corpusFile), "utf8")) as CorpusDoc, "", ruled);
     if (exemptions) await checkPlainGates(lock, doc, cases, exemptions, absent, checked);
   }
   if (exemptions && checked.size === locks.length) {
@@ -988,7 +996,7 @@ async function checkExampleGates(models: Map<SpecLock, ModelDoc>, locks: SpecLoc
       const payloads = loadDeskPayloads(set.dir);
       // The SDKs of the build the lock's schemas are, ours: the as-written tree is another build, with schemas of its own.
       const sdks = NAMES.sdk ? await runDeskSdks(set, payloads, deskSdks(join(ROOT, sdkDirOf(lock.ir_dir, PROPOSED))), work) : [];
-      deskInputs.push({ set, model, files: emitted.files, schemaDir, payloads, codes: specCodes(), ruleChecks: ruleChecks(), checker, sdks });
+      deskInputs.push({ set, model, files: emitted.files, schemaDir, payloads, codes: specCodes(), ruleChecks: ruleChecks(), checker, sdks, elements: elementIdsOf(committedIr(lock)), sdkRules: new Set(Object.keys(loadPrograms(SPEC).rules)) });
     }
     if (deskInputs.length > 0) await gate(C.deskTests, { sets: deskInputs }, lock);
   }
@@ -1371,7 +1379,8 @@ async function checkVariantOutputGates(variants: VariantBuilds[], vectors: Vecto
       const corpusInput = { model: b.model, files: emitted.files, rules, kernel: b.kernel, schemaDir, oracle: pinned };
       if (!(await gate(O.corpusGenerates, corpusInput, at))) continue;
       const corpus = generateCorpus(corpusInput).doc;
-      const cases: SdkCase[] = sdkCases(b.model, corpus, b.kernel, b.constructors);
+      const ruled = rulerOf(b.model, loadPrograms(SPEC), loadZoneTable());
+      const cases: SdkCase[] = withRules(sdkCases(b.model, corpus, b.kernel, b.constructors), ruled);
       const legs: [string, () => Promise<SdkRun> | SdkRun][] = [
         ["TypeScript", () => runTypeScript(join(ROOT, sdkDir, "ts"), cases)],
         ["Python", () => runPython(ROOT, join(ROOT, sdkDir, "python"), cases)],
@@ -1387,15 +1396,18 @@ async function checkVariantOutputGates(variants: VariantBuilds[], vectors: Vecto
         }
         await gate(S.sdkParity, { language, cases, run: r }, at);
       }
-      await checkSdkLocations(at, sdkDir, corpus, tag);
+      await checkSdkLocations(at, sdkDir, corpus, tag, ruled);
     }
   }
 }
 
 /** Where each SDK of a tree rejects every mutant of the build's corpus: at its constraint's location, as the reference does. */
-async function checkSdkLocations(lock: SpecLock, dir: string, corpus: CorpusDoc, tag: string): Promise<void> {
-  const cases = locationCases(corpus);
-  const items = cases.map((c) => ({ type: c.type, value: c.value }));
+async function checkSdkLocations(lock: SpecLock, dir: string, corpus: CorpusDoc, tag: string, ruled: Ruled): Promise<void> {
+  // The corpus's mutants, each also at each place a rule the SDKs check rejects it, and every payload of those rules' vectors.
+  const cases = withRuleLocations(locationCases(corpus), ruled);
+  const rules = ruleLocationCases(corpus, loadPrograms(SPEC), ruled);
+  const all = [...cases, ...rules];
+  const items = all.map((c) => ({ type: c.type, value: c.value }));
   const legs: [string, () => Promise<SdkFindingsRun> | SdkFindingsRun][] = [
     ["TypeScript", () => findingsTypeScript(join(ROOT, dir, "ts"), items)],
     ["Python", () => findingsPython(ROOT, join(ROOT, dir, "python"), items)],
@@ -1409,7 +1421,8 @@ async function checkSdkLocations(lock: SpecLock, dir: string, corpus: CorpusDoc,
       record(label(lock, titleOf(S.sdkLocations, { language, cases, run: { engine: "", findings: [] } })), false, (e as Error).message);
       continue;
     }
-    await gate(S.sdkLocations, { language, cases, run: r }, lock);
+    await gate(S.sdkLocations, { language, cases, run: { ...r, findings: r.findings.slice(0, cases.length) } }, lock);
+    if (rules.length > 0) await gate(S.sdkRules, { language, cases: rules, run: { ...r, findings: r.findings.slice(cases.length) } }, lock);
   }
 }
 

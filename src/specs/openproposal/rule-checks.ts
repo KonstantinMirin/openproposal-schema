@@ -4,6 +4,8 @@
  */
 import { escape, isMap, list, omits, type Check, type Violation } from "../../rule-checks.ts";
 import { STACK_CHECKS } from "./stack-checks.ts";
+import { programChecks } from "../../rule-programs.ts";
+import { specRoot } from "../../repo.ts";
 
 /**
  * The environments that hold an impression § 5.1.1 gives each channel, from
@@ -36,6 +38,8 @@ const MEASUREMENT_READS = ["placement", "committed_metrics", "environments", "me
 
 /** OpenProposal's rule checks, by rule ID. */
 export const RULE_CHECKS: Record<string, Check> = {
+  // The rules whose checks are programs, specs/openproposal/rule-programs.yaml, which the SDKs are generated with too.
+  ...programChecks(specRoot("openproposal")),
   // The stack's presence rules (src/specs/openproposal/stack-checks.ts).
   ...STACK_CHECKS,
   // § 2.2: at `agreed`, every `catalog_ref` is resolved into the stored record. A code block that leaves out `status` can't say.

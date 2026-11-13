@@ -11,6 +11,9 @@
  * require members or narrow a member's type.
  */
 import { FORMAT_PATTERNS } from "./sdk-formats.ts";
+import { readFileSync } from "node:fs";
+import { zoneTableFile } from "./rule-programs.ts";
+import { PYTHON_EVALUATOR } from "./sdk-rules-python.ts";
 import { allConstants, constantsDoc, lockPhrase, provenanceDocs, usesAbsent, type Constants, type Expr, type Provenance, type SdkFile, type SdkModel, type SdkTemplate, type SdkType, type Shape } from "./sdk.ts";
 import { sdkNames, type SpecNames } from "./profile.ts";
 
@@ -66,6 +69,7 @@ function shapeLine(shape: Shape, indent: string): string {
   if (shape.rejects.length > 0) args.push(`rejects=${tuple(shape.rejects.map((r) => `(${str(r.sibling)}, ${literal(r.value)})`))}`);
   if (shape.absent.length > 0) args.push(`absent=${tuple(shape.absent.map((a) => `(${str(a.member)}, ${str(a.sibling)}, ${literal(a.value)}, ${a.when ? "True" : "False"})`))}`);
   if (shape.absentOn.length > 0) args.push(`absent_on=${tuple(shape.absentOn.map((a) => `(${str(a.member)}, ${str(a.sibling)}, ${tuple(a.values.map(literal))}, ${tuple(a.keys.map(str))})`))}`);
+  if (shape.rules.length > 0) args.push(`rules=${tuple(shape.rules.map(str))}`);
   if (shape.conditions.length > 0) {
     const one = (c: Shape["conditions"][number]) => `(${str(c.sibling)}, ${literal(c.value)}, ${tuple(c.require.map(str))}, ${tuple(c.types.map((x) => `(${str(x.name)}, ${typeOf(x.expr)})`))})`;
     args.push(`conditions=${tuple(shape.conditions.map(one))}`);
@@ -192,14 +196,24 @@ const ABSENT_CHECK = [
   "",
 ].join("\n");
 
-const RUNTIME = (lock: string, n: PythonNames, absent: boolean) => `${header(lock, "The checks the generated types share, where Pydantic doesn't state a check the way JSON Schema 2020-12 does.", n.short)}import json
+/** The runtime's check of the rules whose programs check an object (`_rules.py`), which a runtime holds only where a type has one. */
+const RULES_PARAM = "        rules: tuple[str, ...] = (),\n";
+const RULES_FIELD = "        self.rules = rules\n";
+const RULES_CHECK = [
+  "        for rule in self.rules:",
+  "            for path, message in violations(rule, data):",
+  "                out.append(_error_at(tuple(t.replace(\"~1\", \"/\").replace(\"~0\", \"~\") for t in path.split(\"/\")[1:]), message, data))",
+  "",
+].join("\n");
+
+const RUNTIME = (lock: string, n: PythonNames, absent: boolean, ruled: boolean) => `${header(lock, "The checks the generated types share, where Pydantic doesn't state a check the way JSON Schema 2020-12 does.", n.short)}import json
 import re
 from collections.abc import Callable
 from typing import Annotated, Any, ClassVar, Literal
 
 from pydantic import BaseModel, ConfigDict, ModelWrapValidatorHandler, Strict, TypeAdapter, ValidationError, ValidationInfo, model_validator
 from pydantic_core import InitErrorDetails, PydanticCustomError
-
+${ruled ? "\nfrom ._rules import violations\n" : ""}
 _FORMATS = {
 ${Object.entries(FORMAT_PATTERNS)
   .map(([k, v]) => `    ${str(k)}: re.compile(${str(v)}),`)
@@ -346,7 +360,7 @@ class Shape:
         within: tuple[tuple[str, tuple[str, ...], tuple[str, ...]], ...] = (),
         bounds: tuple[tuple[str, int, bool], ...] = (),
         rejects: tuple[tuple[str, Any], ...] = (),
-${absent ? ABSENT_PARAM : ""}    ) -> None:
+${absent ? ABSENT_PARAM : ""}${ruled ? RULES_PARAM : ""}    ) -> None:
         self.min_properties = min_properties
         self.max_properties = max_properties
         self.dependent = dependent
@@ -355,7 +369,7 @@ ${absent ? ABSENT_PARAM : ""}    ) -> None:
         self.within = within
         self.bounds = bounds
         self.rejects = rejects
-${absent ? ABSENT_FIELD : ""}
+${absent ? ABSENT_FIELD : ""}${ruled ? RULES_FIELD : ""}
     def errors(self, data: dict[str, Any], ctx: Any = None) -> list[InitErrorDetails]:
         """Every place where the object breaks what its schema states beside its members' types, each at the location the schema's check reports."""
         out: list[InitErrorDetails] = []
@@ -399,7 +413,7 @@ ${absent ? ABSENT_CHECK : ""}        for sibling, value, require, types in self.
                             adapter.validate_python(data[m], strict=True, context=ctx)
                         except ValidationError as e:
                             out.extend(_again(x, (m,), f'while "{sibling}" is {value!r}') for x in e.errors())
-        return out
+${ruled ? RULES_CHECK : ""}        return out
 
 
 def _template_error(cls: type, unbound: tuple[Any, ...]) -> str:
@@ -635,9 +649,25 @@ ${["ExtensionRegistry", "Mode", "TEMPLATES", "TYPES", "adapter", "dump", "dump_j
 ]
 `,
   });
-  files.push({ path: `${n.package}/_runtime.py`, text: RUNTIME(lock, n, usesAbsent(sdk)) });
+  files.push({ path: `${n.package}/_runtime.py`, text: RUNTIME(lock, n, usesAbsent(sdk), sdk.programs !== undefined) });
+  if (sdk.programs !== undefined) {
+    files.push({
+      path: `${n.package}/_rules.py`,
+      text: `${header(lock, "The rule programs the types check, and the evaluator that reads them (the repository's src/rule-program.ts, in Python), with the UTC offsets of the IANA time zone database release the schemas pin.", n.short)}${PYTHON_EVALUATOR}
+
+PROGRAMS: dict[str, Any] = json.loads(${pyString(JSON.stringify(sdk.programs))})
+"""The programs of the rules the types check, and their shared definitions."""
+
+ZONES: dict[str, Any] = json.loads(${pyString(readFileSync(zoneTableFile(), "utf8").trim())})
+"""The UTC offsets of the IANA time zone database release the schemas pin."""
+`,
+    });
+  }
   files.push({ path: `${n.package}/registry.py`, text: REGISTRY(lock, n) });
   files.push({ path: `${n.package}/py.typed`, text: "" });
   files.push({ path: "requirements.in", text: `# The ${n.short} Python types need Pydantic; tools/sdk/requirements.txt hash-locks it for the gates.\npydantic==${PYDANTIC_VERSION}\n` });
   return { files, problems };
 }
+
+/** A Python string literal of a text, as a raw triple-quoted string where it can be, else a JSON string, which Python reads as its own. */
+const pyString = (text: string): string => (text.includes('"""') || text.includes("\\") || text.endsWith('"') ? JSON.stringify(text) : `r"""${text}"""`);

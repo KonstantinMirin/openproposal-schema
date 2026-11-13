@@ -30,10 +30,10 @@ from .settlement import Agreement, AgreementAgreementType, AgreementAgreementTyp
 from .targeting import AcceptedExclusions, CountSettableRange, DaypartBounds, DeviceBounds, ExclusionEntry, ExclusionList, ExclusionTerms, ExclusionTermsEnforcement, ExclusionTermsEnforcements, ExclusionType, ExclusionTypes, FrequencyCap, FrequencyCapPer, FrequencyCapPers, GeoBounds, MarketsSelection
 from .registry import ExtensionRegistry
 
-SPEC_COMMIT: Final = "6d5a6f9b66a49b9bca2abbdcca9d861bae76027a"
+SPEC_COMMIT: Final = "711b34cf2fdc209d46b832013bfb1f1cc8727ba5"
 """The commit of the OpenProposal specification repository that the types are generated from."""
 
-SPEC_BLOB: Final = "8e91771f0bc1121e7b23a4611e15f400ea511c53"
+SPEC_BLOB: Final = "c395ca84688d49807e5d3318445da4b4c4b79e29"
 """The Git blob SHA of the specification file at that commit."""
 
 LOCK: Final = "with-our-stack"
@@ -42,7 +42,7 @@ LOCK: Final = "with-our-stack"
 VARIANT: Final = "as-written"
 """The build: `as-written`, the specification as its text and examples write it, or `proposed`, with the changes we propose."""
 
-SCHEMA_RELEASE: Final = "58b9ef08e85f3e20de75744877d5dbc6540244212ccdf0e1b5295046662d453c"
+SCHEMA_RELEASE: Final = "3306620e8a906bd140af54b562694ee801564928e8a2e439281bff0633f29613"
 """The schema files the types match, by the digest of the whole tree: the SHA-256 of the JCS (RFC 8785) bytes of `{ <path>: <schema> }` over every file, as a release manifest's `digest` records it."""
 
 TYPES: dict[str, Any] = {

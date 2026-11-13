@@ -36,6 +36,11 @@
           "enum": ["string", "number", "integer"]
         },
         "constraints": { "$ref": "#/$defs/constraints" },
+        "listed": {
+          "description": "A list of `kernel/lists.yaml`, by name, whose codes are the primitive's values: the kernel writes them into the constraint set's `enum` as it loads, in the list's order, so the list is defined once and every validator and SDK checks it. The constraint set states no `enum` and no `pattern` beside it.",
+          "type": "string",
+          "minLength": 1
+        },
         "concept": {
           "description": "The concept of `kernel/domains.yaml` the primitive represents: the concept's type, or one of its components. Two primitives with the same structure are distinct when they represent different concepts, whose meanings the domain model states.",
           "$ref": "#/$defs/conceptName"

@@ -54,6 +54,8 @@ export interface Primitive {
   /** The locks the primitive is published on; every lock when absent. */
   locks?: string[];
   constraints: Constraints;
+  /** A list of `kernel/lists.yaml` whose codes are the values, which `loadKernel` writes into `constraints.enum`. */
+  listed?: string;
   decision?: string;
   /** The locks `decision` applies on; without it, every lock. */
   decision_locks?: string[];
@@ -97,7 +99,20 @@ export function loadKernel(root: string, spec: string | null, file = join(root, 
   const doc = bound("primitives", file, readYaml(file), binding);
   const errors = compileSchema(join(REPO_ROOT, KERNEL_SCHEMA))(doc);
   if (errors.length > 0) throw new Error(`${file}${binding ? ` with ${binding.file}` : ""}: not a valid kernel file: ${errors.join("; ")}`);
-  return { ...(doc as Omit<Kernel, "file" | "binding" | "domains" | "lists">), file, ...(binding ? { binding: binding.file } : {}), domains: loadDomains(root, binding), lists: withImports(loadLists(root), spec) };
+  const lists = withImports(loadLists(root), spec);
+  const primitives = (doc as { primitives: Primitive[] }).primitives.map((p) => withListed(p, lists, file));
+  return { ...(doc as Omit<Kernel, "file" | "binding" | "domains" | "lists">), primitives, file, ...(binding ? { binding: binding.file } : {}), domains: loadDomains(root, binding), lists };
+}
+
+/** A primitive whose values are a list's codes, with them as its `enum`, in the list's order; any other primitive as it is. */
+function withListed(p: Primitive, lists: Lists, file: string): Primitive {
+  if (p.listed === undefined) return p;
+  const list = lists.lists.find((l) => l.name === p.listed);
+  if (!list) throw new Error(`${file}: ${p.name} is listed in "${p.listed}", which kernel/lists.yaml doesn't keep`);
+  if ("enum" in p.constraints || "pattern" in p.constraints) throw new Error(`${file}: ${p.name} is listed in "${p.listed}", which gives its values, and states an enum or a pattern beside it`);
+  const codes = list.codes.map((c) => c.code);
+  if (!codes.every((c) => typeof c === (p.type === "string" ? "string" : "number"))) throw new Error(`${file}: ${p.name} is a ${p.type}, and "${p.listed}" holds codes of another type`);
+  return { ...p, constraints: { ...p.constraints, enum: codes as string[] } };
 }
 
 /** The kernel's lists, with the lists of every registry a spec's profile imports; a list the kernel keeps and a registry keeps too fails, since the spec would copy it. */

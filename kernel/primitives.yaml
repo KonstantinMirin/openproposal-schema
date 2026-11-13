@@ -628,15 +628,15 @@ primitives:
     description: A time zone, named as the IANA time zone database names it, such as `America/New_York` or `UTC`.
     type: string
     concept: iana-zone
-    constraints:
-      pattern: '^[A-Z][A-Za-z0-9_+-]*(/[A-Za-z0-9_+-]+)*$'
+    constraints: {}
+    listed: IANA time zone database
     sources:
       standards:
         - name: IANA Time Zone Database
           url: https://www.iana.org/time-zones
     vectors:
-      valid: ["America/New_York", "UTC", "Etc/GMT+5"]
-      invalid: ["viewer_local", "america/new_york", "", "America//New_York", 5]
+      valid: ["America/New_York", "UTC", "Etc/GMT+5", "Australia/Sydney", "Australia/NSW"]
+      invalid: ["viewer_local", "america/new_york", "", "America//New_York", "Sydney/Australia", "America/Springfield", "UTC+11", 5]
     showcase: ["America/New_York", "Europe/London"]
 
   - name: GeoCode

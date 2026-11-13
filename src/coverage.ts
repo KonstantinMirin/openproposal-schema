@@ -11,6 +11,8 @@
  *   and no entry cites a decision where a rule applies;
  * - types: every type the mapping names is defined exactly once.
  */
+import { dirname } from "node:path";
+import { loadPrograms } from "./rule-programs.ts";
 import { canonicalJson } from "./canonical.ts";
 import type { Constructors } from "./constructors.ts";
 import { indexElements } from "./elements.ts";
@@ -50,7 +52,20 @@ export function ruleContext(ir: SpecIR, lock: string, mappings: MappingFile[], k
   const owners = sectionOwners(mappings, []);
   const entries = new Map([...inScopeEntries(mappings, lock)].map(([id, x]) => [id, x.entry]));
   const deferred = new Set(mappings.filter((m) => m.deferred).map((m) => m.module));
-  return { lock, declared: inScopeDeclarations(mappings, lock).map((d) => ({ name: d.decl.name, kind: d.decl.kind, ...(d.decl.terms ? { terms: d.decl.terms } : {}) })), ir, elements: indexElements(ir), kernel: kernelEditionsOn(kernel, lock), constructors: constructorEditionsOn(constructors, lock), entries, moduleOf: (s) => owners.get(s), deferred: (s) => deferred.has(owners.get(s) ?? "") };
+  // The spec's rule programs, beside its kernel binding in the spec's folder.
+  const programs = kernel.binding ? loadPrograms(dirname(kernel.binding)).rules : {};
+  return {
+    lock,
+    declared: inScopeDeclarations(mappings, lock).map((d) => ({ name: d.decl.name, kind: d.decl.kind, ...(d.decl.terms ? { terms: d.decl.terms } : {}) })),
+    ir,
+    elements: indexElements(ir),
+    kernel: kernelEditionsOn(kernel, lock),
+    constructors: constructorEditionsOn(constructors, lock),
+    entries,
+    moduleOf: (s) => owners.get(s),
+    deferred: (s) => deferred.has(owners.get(s) ?? ""),
+    programs: Object.fromEntries(Object.entries(programs).map(([id, p]) => [id, { owner: p.owner }])),
+  };
 }
 
 export interface CoverageResult {

@@ -1,8 +1,8 @@
 {
   "format": 1,
   "input": {
-    "blob": "8e91771f0bc1121e7b23a4611e15f400ea511c53",
-    "commit": "6d5a6f9b66a49b9bca2abbdcca9d861bae76027a",
+    "blob": "c395ca84688d49807e5d3318445da4b4c4b79e29",
+    "commit": "711b34cf2fdc209d46b832013bfb1f1cc8727ba5",
     "lock": "with-our-stack"
   },
   "rules": [
@@ -5585,6 +5585,4047 @@
                 "included": []
               },
               "visibility": "public"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem"
+      ],
+      "decisions": [
+        "D-065"
+      ],
+      "id": "sentence:5.6.1:78efd2ce",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "sentence:5.6.1:78efd2ce"
+      ],
+      "statement": "A `commitment` resolves under § 3 when the buyer is eligible (§ 5.8), every `selected[]`, `excluded[]`, and `value` on the line item is within what the seller declared (§ 3.1, § 3.2, § 5.3), and the commitment fits `commitment_bounds.spend` and the committed entry's `unit_bounds`, is not stale (§ 4.1.3), and meets the package rules (§ 4.1.4).",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 0,
+                "basis": "spend",
+                "derived_units": 0,
+                "flight": {
+                  "end": "2027-02-28T23:59:59Z",
+                  "start": "2027-02-28T22:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud",
+                  "unit_bounds": {
+                    "min": 1
+                  }
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 3000,
+                "basis": "spend",
+                "flight": {
+                  "end": "2027-04-04T19:59:59Z",
+                  "start": "2027-04-03T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud",
+                  "unit_bounds": {
+                    "max": 1
+                  }
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1500,
+                "basis": "spend",
+                "derived_units": 1,
+                "flight": {
+                  "end": "2027-03-01T06:59:59Z",
+                  "start": "2027-02-28T19:00:00Z"
+                }
+              },
+              "commitment_bounds": {
+                "spend": {
+                  "min": 2000
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
+        "type": "LineItem",
+        "valid": [
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 0,
+                "basis": "spend",
+                "derived_units": 0,
+                "flight": {
+                  "end": "2027-02-28T23:59:59Z",
+                  "start": "2027-02-28T22:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1500,
+                "basis": "spend",
+                "derived_units": 1,
+                "flight": {
+                  "end": "2027-03-01T06:59:59Z",
+                  "start": "2027-02-28T19:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud",
+                  "unit_bounds": {
+                    "min": 1
+                  }
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1500,
+                "basis": "spend",
+                "derived_units": 1,
+                "flight": {
+                  "end": "2027-03-01T06:59:59Z",
+                  "start": "2027-02-28T19:00:00Z"
+                }
+              },
+              "commitment_bounds": {
+                "spend": {
+                  "max": 2000,
+                  "min": 1000
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem"
+      ],
+      "decisions": [
+        "D-065"
+      ],
+      "id": "sentence:5.6.5:03d899cb",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "sentence:5.6.5:03d899cb"
+      ],
+      "statement": "When `commitment.basis` is `units`, `derived_units` is `amount`, and the seller total is `amount` ÷ rate per × `agreed_rate` plus those charges.",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 100000,
+                "basis": "units",
+                "derived_units": 99999,
+                "flight": {
+                  "end": "2027-03-01T06:59:59Z",
+                  "start": "2027-02-28T19:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 18,
+                  "cost_method": "CPM",
+                  "currency": "AUD",
+                  "list_rate": 18,
+                  "pricing_id": "home-cpm-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
+        "type": "LineItem",
+        "valid": [
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 100000,
+                "basis": "units",
+                "derived_units": 100000,
+                "flight": {
+                  "end": "2027-03-01T06:59:59Z",
+                  "start": "2027-02-28T19:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 18,
+                  "cost_method": "CPM",
+                  "currency": "AUD",
+                  "list_rate": 18,
+                  "pricing_id": "home-cpm-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 100000,
+                "basis": "units",
+                "flight": {
+                  "end": "2027-03-01T06:59:59Z",
+                  "start": "2027-02-28T19:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 18,
+                  "cost_method": "CPM",
+                  "currency": "AUD",
+                  "list_rate": 18,
+                  "pricing_id": "home-cpm-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem"
+      ],
+      "decisions": [
+        "D-065"
+      ],
+      "id": "sentence:5.6.5:10182d60",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "sentence:5.6.5:10182d60"
+      ],
+      "statement": "When `calendar_zone` is present, `derived_units` is instead the number of calendar days in that zone from the day of `commitment.flight.start` through the day of `commitment.flight.end`.",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 3000,
+                "basis": "spend",
+                "derived_units": 1,
+                "flight": {
+                  "end": "2027-03-01T18:59:59Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "calendar_zone": "Australia/Sydney",
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 3000,
+                "basis": "spend",
+                "derived_units": 1,
+                "flight": {
+                  "end": "2027-03-01T13:00:00Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "calendar_zone": "Australia/Sydney",
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 4500,
+                "basis": "spend",
+                "derived_units": 2,
+                "flight": {
+                  "end": "2027-04-04T19:59:59Z",
+                  "start": "2027-04-03T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "calendar_zone": "Australia/Sydney",
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
+        "type": "LineItem",
+        "valid": [
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 3000,
+                "basis": "spend",
+                "derived_units": 2,
+                "flight": {
+                  "end": "2027-03-01T18:59:59Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "calendar_zone": "Australia/Sydney",
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 3000,
+                "basis": "spend",
+                "derived_units": 2,
+                "flight": {
+                  "end": "2027-03-01T13:00:00Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "calendar_zone": "Australia/Sydney",
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1500,
+                "basis": "spend",
+                "derived_units": 1,
+                "flight": {
+                  "end": "2027-03-01T12:59:59Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "calendar_zone": "Australia/Sydney",
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 4500,
+                "basis": "spend",
+                "derived_units": 3,
+                "flight": {
+                  "end": "2027-04-04T19:59:59Z",
+                  "start": "2027-04-03T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "calendar_zone": "Australia/Sydney",
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1500,
+                "basis": "spend",
+                "derived_units": 1,
+                "flight": {
+                  "end": "2027-03-01T14:00:00Z",
+                  "start": "2027-03-01T12:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "calendar_zone": "America/Los_Angeles",
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem"
+      ],
+      "decisions": [
+        "D-065"
+      ],
+      "id": "sentence:5.6.5:4804c1fd",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "sentence:5.6.5:4804c1fd"
+      ],
+      "statement": "`derived_units` = (`amount` − those charges) ÷ `agreed_rate` × rate per, rounded down to a whole unit, where rate per comes from the table for a core term and from `rate_per` for an extension term.",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1800,
+                "basis": "spend",
+                "derived_units": 99999,
+                "flight": {
+                  "end": "2027-03-01T06:59:59Z",
+                  "start": "2027-02-28T19:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 18,
+                  "cost_method": "CPM",
+                  "currency": "AUD",
+                  "list_rate": 18,
+                  "pricing_id": "home-cpm-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1800.5,
+                "basis": "spend",
+                "derived_units": 100028,
+                "flight": {
+                  "end": "2027-03-01T06:59:59Z",
+                  "start": "2027-02-28T19:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 18,
+                  "cost_method": "CPM",
+                  "currency": "AUD",
+                  "list_rate": 18,
+                  "pricing_id": "home-cpm-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
+        "type": "LineItem",
+        "valid": [
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1800,
+                "basis": "spend",
+                "derived_units": 100000,
+                "flight": {
+                  "end": "2027-03-01T06:59:59Z",
+                  "start": "2027-02-28T19:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 18,
+                  "cost_method": "CPM",
+                  "currency": "AUD",
+                  "list_rate": 18,
+                  "pricing_id": "home-cpm-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1800.5,
+                "basis": "spend",
+                "derived_units": 100027,
+                "flight": {
+                  "end": "2027-03-01T06:59:59Z",
+                  "start": "2027-02-28T19:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 18,
+                  "cost_method": "CPM",
+                  "currency": "AUD",
+                  "list_rate": 18,
+                  "pricing_id": "home-cpm-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1800,
+                "basis": "spend",
+                "flight": {
+                  "end": "2027-03-01T06:59:59Z",
+                  "start": "2027-02-28T19:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 18,
+                  "cost_method": "CPM",
+                  "currency": "AUD",
+                  "list_rate": 18,
+                  "pricing_id": "home-cpm-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem"
+      ],
+      "decisions": [
+        "D-065"
+      ],
+      "id": "sentence:5.6.5:aa43e614",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "sentence:5.6.5:aa43e614"
+      ],
+      "statement": "`FLAT` and `TIME` set these figures from the rate and the flight instead, and a rule that reads `commitment.amount` on such an entry reads them: the seller total when `commitment.basis` is `spend`, `derived_units` when it is `units`.",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 3000,
+                "basis": "spend",
+                "flight": {
+                  "end": "2027-03-01T18:59:59Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 2,
+                "basis": "units",
+                "flight": {
+                  "end": "2027-03-01T18:59:59Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1500,
+                "basis": "spend",
+                "flight": {
+                  "end": "2027-03-01T18:59:59Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "calendar_zone": "Australia/Sydney",
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1,
+                "basis": "units",
+                "flight": {
+                  "end": "2027-03-01T18:59:59Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "calendar_zone": "Australia/Sydney",
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1500,
+                "basis": "spend",
+                "flight": {
+                  "end": "2027-03-01T13:00:00Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "calendar_zone": "Australia/Sydney",
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 4000,
+                "basis": "spend",
+                "flight": {
+                  "end": "2027-03-01T06:59:59Z",
+                  "start": "2027-02-28T19:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 5000,
+                  "cost_method": "FLAT",
+                  "currency": "AUD",
+                  "list_rate": 5000,
+                  "pricing_id": "home-flat-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
+        "type": "LineItem",
+        "valid": [
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1500,
+                "basis": "spend",
+                "derived_units": 1,
+                "flight": {
+                  "end": "2027-03-01T06:59:59Z",
+                  "start": "2027-02-28T19:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1500,
+                "basis": "spend",
+                "flight": {
+                  "end": "2027-03-01T18:59:59Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 3000,
+                "basis": "spend",
+                "flight": {
+                  "end": "2027-03-01T18:59:59Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "calendar_zone": "Australia/Sydney",
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 2,
+                "basis": "units",
+                "flight": {
+                  "end": "2027-03-01T18:59:59Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "calendar_zone": "Australia/Sydney",
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 3000,
+                "basis": "spend",
+                "flight": {
+                  "end": "2027-03-01T13:00:00Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "calendar_zone": "Australia/Sydney",
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1500,
+                "basis": "spend",
+                "flight": {
+                  "end": "2027-03-01T12:59:59Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "calendar_zone": "Australia/Sydney",
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 4500,
+                "basis": "spend",
+                "flight": {
+                  "end": "2027-04-04T19:59:59Z",
+                  "start": "2027-04-03T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "calendar_zone": "Australia/Sydney",
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 5000,
+                "basis": "spend",
+                "flight": {
+                  "end": "2027-03-01T06:59:59Z",
+                  "start": "2027-02-28T19:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 5000,
+                  "cost_method": "FLAT",
+                  "currency": "AUD",
+                  "list_rate": 5000,
+                  "pricing_id": "home-flat-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "applies_to": [
+        "LineItem"
+      ],
+      "decisions": [
+        "D-065"
+      ],
+      "id": "sentence:5.6.5:d956510e",
+      "owner": "LineItem",
+      "severity": "error",
+      "sources": [
+        "sentence:5.6.5:d956510e"
+      ],
+      "statement": "`derived_units` is the time from `commitment.flight.start` through `commitment.flight.end`, inclusive, in `rate_unit`s rounded to the nearest whole unit, half up, so a clock change inside the flight doesn't change it.",
+      "vectors": {
+        "invalid": [
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1500,
+                "basis": "spend",
+                "derived_units": 2,
+                "flight": {
+                  "end": "2027-03-01T18:59:59Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 18000,
+                "basis": "spend",
+                "derived_units": 11,
+                "flight": {
+                  "end": "2027-03-01T18:59:59Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "hour"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          }
+        ],
+        "schema": "https://openproposal.noetis.dev/schemas/as-written/with-our-stack/documents/1/composition.json#/$defs/LineItem",
+        "type": "LineItem",
+        "valid": [
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1500,
+                "basis": "spend",
+                "derived_units": 1,
+                "flight": {
+                  "end": "2027-03-01T06:59:59Z",
+                  "start": "2027-02-28T19:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 1500,
+                "basis": "spend",
+                "derived_units": 1,
+                "flight": {
+                  "end": "2027-03-01T18:59:59Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 0,
+                "basis": "spend",
+                "derived_units": 0,
+                "flight": {
+                  "end": "2027-02-28T23:59:59Z",
+                  "start": "2027-02-28T22:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 3000,
+                "basis": "spend",
+                "derived_units": 2,
+                "flight": {
+                  "end": "2027-04-04T19:59:59Z",
+                  "start": "2027-04-03T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "day"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
+            }
+          },
+          {
+            "value": {
+              "channel": "display",
+              "commitment": {
+                "advertisers": [
+                  {
+                    "domain": "brand-a.example"
+                  }
+                ],
+                "amount": 18000,
+                "basis": "spend",
+                "derived_units": 12,
+                "flight": {
+                  "end": "2027-03-01T18:59:59Z",
+                  "start": "2027-03-01T07:00:00Z"
+                }
+              },
+              "creative_delivery": {
+                "method": "buyer_hosted",
+                "other_protocols": [
+                  "javascript_tag"
+                ],
+                "secure_required": true
+              },
+              "eligible_buyers": [
+                "agency-a.example"
+              ],
+              "environments": {
+                "available": [
+                  "web_desktop",
+                  "web_mobile"
+                ],
+                "included": [
+                  "web_desktop",
+                  "web_mobile"
+                ]
+              },
+              "formats": {
+                "available": [
+                  "display/970x250"
+                ],
+                "included": [
+                  "display/970x250"
+                ]
+              },
+              "line_item_id": "a1-mon-0600-1800",
+              "pricing": [
+                {
+                  "agreed_rate": 1500,
+                  "cost_method": "TIME",
+                  "cost_parameters": {
+                    "rate_unit": "hour"
+                  },
+                  "currency": "AUD",
+                  "list_rate": 1500,
+                  "pricing_id": "home-day-aud"
+                }
+              ],
+              "properties": {
+                "available": [
+                  {
+                    "child_audience": "general",
+                    "domains": [
+                      "sports-news.example"
+                    ],
+                    "id": "sports-news-home",
+                    "seller_relationship": "owner"
+                  }
+                ],
+                "included": [
+                  "sports-news-home"
+                ]
+              },
+              "sov_basis": "impressions",
+              "sov_share": 1,
+              "status": "published",
+              "transaction_mechanism": {
+                "available": [
+                  {
+                    "delivery_type": "share_of_voice",
+                    "id": "direct_io"
+                  }
+                ],
+                "included": [
+                  "direct_io"
+                ],
+                "max_select": 1
+              },
+              "visibility": "named"
             }
           }
         ]

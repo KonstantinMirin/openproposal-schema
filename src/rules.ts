@@ -167,6 +167,8 @@ export const severityOf = (level: string | undefined): Rule["severity"] => (leve
 function textOf(e: Element, elements: Map<string, Element>): { text: string; also: string[]; identifiers: string[] } {
   if (e.kind === "statement") return { text: e.element.text, also: [], identifiers: e.element.identifiers };
   if (e.kind === "marker") return { text: e.element.meaning.text, also: [], identifiers: [] };
+  // A sentence with no RFC 2119 keyword that a decision reads as a rule, as § 5.6.5's definitions of a commitment's figures (D-065).
+  if (e.kind === "sentence") return { text: e.element.text, also: [], identifiers: e.element.identifiers };
   if (e.kind === "value_list" && e.element.origin === "prose") {
     const { host, loc } = e.element;
     const holders = [...elements.values()].flatMap((x) => ((x.kind === "sentence" || x.kind === "statement") && x.element.host === host && x.element.loc.line === loc.line ? [x.element] : []));

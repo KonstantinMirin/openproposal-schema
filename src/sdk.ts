@@ -23,6 +23,9 @@
 import { Instantiator } from "./constructors.ts";
 import { canonicalJson } from "./canonical.ts";
 import { isTitledCodes } from "./conventions.ts";
+import { loadPrograms } from "./rule-programs.ts";
+import type { Programs, RuleProgram } from "./rule-program.ts";
+import { specRoot } from "./repo.ts";
 import { absenceOf, absenceOnCoreOf, fieldOfSources, localSchemas, locationOf, nestedIf, templatesOf } from "./emit.ts";
 import type { TypeRef } from "./mapping.ts";
 import { KERNEL_MODULE } from "./mapping-rules.ts";
@@ -93,6 +96,8 @@ export interface Shape {
    * value once, chained through `else`, so at most one of them holds.
    */
   conditions: { sibling: string; value: string | number | boolean; require: string[]; types: { name: string; expr: Expr }[] }[];
+  /** The rules whose programs check a value of the type, by ID, which run beside its shape (src/rule-program.ts). */
+  rules: string[];
 }
 
 /** Whether a type or template of the SDK leaves a member absent unless, or when, a sibling equals a value, which only then needs its check in the runtime. */
@@ -111,6 +116,8 @@ export type Format = (typeof FORMATS)[number];
 export interface Scalar {
   json: "string" | "number" | "integer" | "boolean";
   enum?: (string | number)[];
+  /** The external list the `enum` copies, such as the IANA time zone database's names: names a reader writes as values, not terms, so no constants. */
+  listed?: string;
   pattern?: string;
   format?: Format;
   minimum?: number;
@@ -215,9 +222,9 @@ export function plural(name: string): string {
 export const constantName = (term: string | number): string =>
   typeof term === "number" ? `CODE_${term < 0 ? `MINUS_${-term}` : term}` : term.replace(/[^A-Za-z0-9]+/g, "_").replace(/^_+|_+$/g, "").toUpperCase();
 
-/** A type's constants, or null for a type that isn't a vocabulary with terms. */
+/** A type's constants, or null for a type that isn't a vocabulary with terms, or whose values are an external list's names, as `IanaZone`'s. */
 export function constantsOf(t: SdkType): Constants | null {
-  const values = t.kind === "enum" ? t.values : t.kind === "scalar" ? (t.scalar.enum ?? []) : [];
+  const values = t.kind === "enum" ? t.values : t.kind === "scalar" && t.scalar.listed === undefined ? (t.scalar.enum ?? []) : [];
   if (values.length === 0) return null;
   const labels = t.kind === "enum" ? t.labels : [];
   return {
@@ -264,6 +271,8 @@ export interface SdkModel {
   modules: string[];
   /** The names the gate sends a value of a type under: every named type the schema emits. */
   emitted: string[];
+  /** The programs of the rules the SDK checks, each on its owner (src/rule-program.ts); absent where it checks none. */
+  programs?: Programs;
 }
 
 type Schema = Record<string, unknown>;
@@ -323,7 +332,7 @@ export function renderExpr(e: Expr): string {
  * means no SDK is to be written.
  */
 /** The SDK model of a build, whose descriptions name the specification as `short` (the profile's `names.short`). */
-export function buildSdkModel(model: ModelDoc, short: string): { sdk: SdkModel; problems: string[] } {
+export function buildSdkModel(model: ModelDoc, short: string, programs: Programs = loadPrograms(specRoot())): { sdk: SdkModel; problems: string[] } {
   const problems: string[] = [];
   const local = localSchemas(model);
   problems.push(...local.problems);
@@ -433,6 +442,7 @@ export function buildSdkModel(model: ModelDoc, short: string): { sdk: SdkModel; 
       absent: [],
       absentOn: [],
       conditions: [],
+      rules: [],
     };
     if (s.minProperties !== undefined) shape.minProperties = Number(s.minProperties);
     if (s.maxProperties !== undefined) shape.maxProperties = Number(s.maxProperties);
@@ -645,7 +655,7 @@ export function buildSdkModel(model: ModelDoc, short: string): { sdk: SdkModel; 
       switch (t.kind) {
         case "primitive":
           if (schema.type === "object") throw new Error(`${where}: a primitive object`);
-          add({ ...common, deps: [], kind: "scalar", scalar: scalarOf(schema, where) });
+          add({ ...common, deps: [], kind: "scalar", scalar: { ...scalarOf(schema, where), ...(t.listed !== undefined ? { listed: t.listed } : {}) } });
           break;
         case "part": {
           const shape = shapeOf(schema, (key, node) => exprOfSchema(node, `${where}: property "${key}"`), where);
@@ -727,7 +737,21 @@ export function buildSdkModel(model: ModelDoc, short: string): { sdk: SdkModel; 
   const modules = [...new Set([...[...types.values()].map((t) => t.module), ...[...templates.values()].map((t) => t.module)])].sort((a, b) =>
     a === KERNEL_MODULE ? -1 : b === KERNEL_MODULE ? 1 : byString(a, b),
   );
-  return { sdk: { input: { lock: model.input.lock, commit: model.input.commit, blob: model.input.blob, ...(model.input.variant ? { variant: model.input.variant } : {}) }, order, types, templates, modules, emitted: emitted.sort(byString) }, problems };
+  // Each rule whose check is a program runs on its owner: the owner's shape lists it, and the SDK holds the programs.
+  const used: Record<string, RuleProgram> = {};
+  for (const r of [...model.rules].sort((a, b) => byString(a.ir, b.ir))) {
+    const program = programs.rules[r.ir];
+    const owner = types.get(r.owner);
+    if (program === undefined) continue;
+    if (owner?.kind !== "object") {
+      problems.push(`rule "${r.ir}" has a program, and its owner "${r.owner}" is no object of the SDK`);
+      continue;
+    }
+    owner.shape.rules.push(r.ir);
+    used[r.ir] = program;
+  }
+  const ruled = Object.keys(used).length > 0 ? { programs: { defs: programs.defs, rules: used } } : {};
+  return { sdk: { input: { lock: model.input.lock, commit: model.input.commit, blob: model.input.blob, ...(model.input.variant ? { variant: model.input.variant } : {}) }, order, types, templates, modules, emitted: emitted.sort(byString), ...ruled }, problems };
 }
 
 /** The expression of a template applied to a model type, for a case that names an application rather than a named type, such as a constructor vector. */

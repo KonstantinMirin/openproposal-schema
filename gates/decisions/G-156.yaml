@@ -1,0 +1,106 @@
+format: 1
+id: G-156
+date: 2026-11-13
+question: How do IAB Australia's 30 billable-day and calendar_zone line items join CI, with an unlisted zone name rejected by every engine and the TIME arithmetic only the checker computes recorded as such?
+decision: >-
+  The second desk-test set, `iab-au-2026-11-calendar`, holds Jonas
+  Jaanimagi's 30 line items, gist `945498af` at revision `18af0615`, with
+  their verdicts on the stack lock. Three are rejected by every engine at
+  one location: `d09` and `d10` at the `rate_unit` a `calendar_zone`'s
+  condition reads, and `d11` at its `calendar_zone`, `Sydney/Australia`.
+  For `d11`, a primitive may take a pinned list's codes as its values,
+  `listed:`, which the kernel writes into its `enum`; `IanaZone` takes the
+  zone and link names of tzdata 2026e that the kernel already pins with
+  its SHA-256 for `ZoneName`'s rule (D-064), so the schemas, the reference
+  validator, and the three SDKs reject a name it doesn't list, and no
+  constants are generated for the names. Five files are rejected by the
+  checker alone, at the line item: `a3`, `a4`, `b3`, `d06`, and `d08`,
+  whose `TIME` units § 5.6.5 states in sentences with no RFC 2119
+  keyword, so no rule carries them. The expected file gains
+  `checker_only`, required, as `sdk_gaps` is, each entry with the IR
+  elements its check reads and the reason: the checker must reject the
+  payload there, the schemas, the rules, and the SDKs must accept it, an
+  element must be one of the lock's IR, and an entry beside a finding at
+  the same place fails. The other 22 pass every engine, `d13` and `d14`
+  among them. The TypeScript runtime's object checks now run whatever a
+  member's own check found, as Zod skips a plain check once a member's
+  issue aborts, as an `enum` member's does: without it, a `calendar_zone`
+  outside the list hid the `rate_unit` failure beside it.
+rationale: >-
+  No check is weaker: the gate gains a set of 30 payloads in five engines
+  and the checker-only record with checks of its own, and five fixtures: a
+  checker-only finding not recorded, one the checker no longer makes, an
+  SDK that makes one, one that reads no element of the IR, and one beside
+  a schemas finding. `IanaZone` rejects more: every name tzdata 2026e
+  doesn't list, which the stack's checker rejects too, and its vectors
+  gain `Sydney/Australia`, `America/Springfield`, and `UTC+11` as invalid
+  and `Australia/Sydney` and the link `Australia/NSW` as valid. The test
+  that holds every SDK to a dependency's failure beside a member's own
+  failed on the TypeScript runtime until its object checks ran always. The
+  `main` and `with-open-prs` outputs are byte-identical but for the
+  TypeScript runtime, `runtime.ts`, in their four trees, whose object
+  checks now run as Zod checks that always run on an object; their schemas,
+  models, and every other SDK file are unchanged.
+accepts:
+  - { gate: comparison, fingerprint: 7372af006fedd9f85f31fa2c4f5c04e72effc882bf5997bb3f4f2ff550bba4d8 }
+  - { gate: constructors-applied, fingerprint: f5440607410dddec36015080972eea5db2b0beea56dd76974cf5a4603f1d4d36 }
+  - { gate: constructors-check, fingerprint: 0729969fb3ffffd4e0168191d6aaba1fb559ac039c07fa4bfefba8bb6b9850c8 }
+  - { gate: convention-beside-reference, fingerprint: e30336555a8224214557d6a79b99367983ae2064327e52e4209c0878d96209aa }
+  - { gate: convention-inline, fingerprint: 9ad40f7606b4665a0d21ef2ec1df8db237a14adb5edd5a68588048623642fa9f }
+  - { gate: convention-keywords, fingerprint: 3925dc4784cedcd481f1b3ca5f8109dbcebe2f7a3bd07470cf1748e5f755d944 }
+  - { gate: convention-layers, fingerprint: 421370c099762a02a430335b39e3d0cec9d818a610fbbe398f4f1e194e421144 }
+  - { gate: convention-lists, fingerprint: 4b1f5e31b8bf343c5531db7a017c5c6d89eabb877c5e105a3afed081b35f0a7f }
+  - { gate: convention-modules, fingerprint: c227b9e5a21a9646400e4caa492f7be00066dcaaa9bd80f232498accd121c07c }
+  - { gate: convention-unions, fingerprint: f6273cb6d018e0419371c887866fb31dad68a5ea703b0f6bc2a0442e03000ae6 }
+  - { gate: corpus-generates, fingerprint: f4def4b0694dcf419771ebc4ee9919cc30174072175f2ef8ee26df2d789db409 }
+  - { gate: corpus-isolation, fingerprint: b6b4bcdf5c414362f1a7ca38e4b0a434d16e54903a175ab002c060f0d1ba4cfc }
+  - { gate: desk-tests, fingerprint: 6d29a726be9aab675c567279b54c205a861dd60ebfbf1298c917795ca2422adb }
+  - { gate: desk-tests-load, fingerprint: 0ce31cfdfd38607586f29e455c729f6af3a50f5d97ba4c9fd318b248b8b79273 }
+  - { gate: domains-homonyms, fingerprint: 8f9c178edc19886f666c124a626a5967af37da48f65bcdabbd94e552b95ad65d }
+  - { gate: domains-properties, fingerprint: 1902b57bb99b64dce6f7be1c6e71f8d1557446643d53371111c5c3fe43bf6d3c }
+  - { gate: domains-used, fingerprint: 6df070d30bf71986fd0df301c4c07e44061ea4762ff8723b91ac6e7cba2eea86 }
+  - { gate: duplication-kernel, fingerprint: 59fd9375dd7dfacb54b12f830e716cce54030c54da6a89d91f031cc5fd2874fe }
+  - { gate: duplication-model, fingerprint: e06ddab94aabca4955fb6d07175a886b0b0c569e5bfba6a494ff979077f6a4a4 }
+  - { gate: enum-drift-sources, fingerprint: b6de730665d76d6e6e147b9808ee6889ec0774861ebd91f9588d240c6e4ad0ef }
+  - { gate: examples-listing, fingerprint: b5f322fb3cf696b160f91db191872fd639491da04e2b1403e0bd85c6f5d41be9 }
+  - { gate: examples-validate, fingerprint: 31953fd73d768e3360eee00f159d30d84636a574f3b33f53dca4b74201027896 }
+  - { gate: extraction, fingerprint: d24c671577d6a331e979923064b7fa0ac0cf8718e7ec38b08e88703dcba558fb }
+  - { gate: feedback, fingerprint: 9dca49ab9c6e89a59cee868bc969dc10adde64f662a61f2a32447534ed0a18f9 }
+  - { gate: fidelity, fingerprint: acb4e230a8820233b3f2bbdf8a4bd5c65d314d6c25d330ce87ff01f8820bc48a }
+  - { gate: field-examples, fingerprint: faaf1e14cc762ac3dbc8831b5f8c3608cfccba19adc8134c02c24ca8f6dfa919 }
+  - { gate: frozen-releases, fingerprint: e244cccf8ac7c8b1bc4b320dd97132095c72de3439f6c558d523417ffe4130b4 }
+  - { gate: frozen-reviewed, fingerprint: f7f81c8f27a87e1d4db07c339b7168aece53d231d998213a73b0a01837a3b3fc }
+  - { gate: guard, fingerprint: 91cf5945ffecd7ae7097b0abbbab0cfcdda0ad2b0f4bc4356137c7fba6aec817 }
+  - { gate: kernel-check, fingerprint: 982d75347716e5258da2ac47c789824e28f831426b9f09959dd95ff061ed4efc }
+  - { gate: kernel-engines, fingerprint: 33b045770360f41da8c821f7ebef0b73a3366c4d755ac83ed210c9365dd55e34 }
+  - { gate: kernel-load, fingerprint: e41bcada71d6a5dc94c591b2f3970a9cad565a2b530018e5be8bfb776c9b6916 }
+  - { gate: kernel-sources, fingerprint: 61b10e1bc2ccd0122fe6c1040e5d23c90edbe0de78c06e3336506cb09b7f7ad8 }
+  - { gate: map-drift, fingerprint: 9941d65614f98ba7ac056c58b38447bddb5387f82c2b7c8937b110d59d01a021 }
+  - { gate: mapping-bijection, fingerprint: 94fb3a9a1dc7d41089ddee59ce106cb0a646cbac40f87e99994330fa7a06a16b }
+  - { gate: mapping-constructors, fingerprint: 899390b232af4ec1b41e4b8e1976cbc0653ee85f29fccf5607a633c89646495e }
+  - { gate: mapping-location, fingerprint: aba71fc0a8a1bb7239c44523e284624302231d3a59b6250e3cb9ab09f28d6963 }
+  - { gate: mapping-rules, fingerprint: a0778b599ce7a76a4815000e863005bef7c5f50e3b2e954bf43fcb9435a4ebdb }
+  - { gate: model-resolves, fingerprint: 55eb5f6f6124598090a14fc9b05a5e6b754ca88bc61e9a3d4053340157e74115 }
+  - { gate: modules-depends, fingerprint: 0850f22369cd83eb09bbec75c9d494d2e9938943eaa44aade7ed7c040efc7be9 }
+  - { gate: nesting, fingerprint: c23ca04d38d87d8c52b4400534a1084c5438e86fbd282ec016722931a229721f }
+  - { gate: npm-test, fingerprint: 2e72850d0ec6cb0a2a140a4dfe0658113a67efd5a4c8937bbe5eb0a1a14038d2 }
+  - { gate: record-wording, fingerprint: d84e029ae6bae28724019e3b389a1a837ad223b77eaa15c071163cb24abf32be }
+  - { gate: registry-agreement, fingerprint: 35d6d236344bdf145f3835d7209ab910b9f12dfad12e78478155bc5583b7a4d3 }
+  - { gate: release-breaking, fingerprint: 3b9ae4d666e80fbbc7f5f8f91ed75fc2ef606dc72234201d1336952019738804 }
+  - { gate: release-builds, fingerprint: a57089c563b77b03a186a1284ece8e2980e4232ed431017d8fdc14e1fece203b }
+  - { gate: release-digests, fingerprint: c2478ca0008d9e4e1f6cb3a629908909ec4d6f4cecd642e4c0c15479124f9813 }
+  - { gate: round-trip, fingerprint: 8f258115579305abfcd96c616a3fcfcc7cae52f5478ffcd400008841700019a1 }
+  - { gate: rule-checks, fingerprint: 15cdc4b6f594bfc854cac4f75048422cd60336be23bc7ea84f6a1af70f76c7a9 }
+  - { gate: rule-vectors, fingerprint: 37fbb6edffb67b163295ec56c6ecf82ef50a7632b85cbe5d5d0ab7950b512db9 }
+  - { gate: rules-emit, fingerprint: 542c970fca2ac420d708ed955ef88c2960dcfd7c27b55834d3be5d5e46a5d8d1 }
+  - { gate: schemas-conventions, fingerprint: 7d18f76c2c252f0663f65cea9a636f293e9aa54a75f38bb3ea88078b225d7425 }
+  - { gate: schemas-emit, fingerprint: 3aaeb8bae38ed8ebc1bef05608cb1368a172df881e92c9864bb85798162018dd }
+  - { gate: sdk-generate, fingerprint: 3035a21ef24d7d76eb35d4f6a521353a88ca63ec691161d9890cef45ce93a643 }
+  - { gate: site-builds, fingerprint: e0c047277a54563fb0e6c4b34a3af986a5b85a411536356fe0180272376c1465 }
+  - { gate: spec-profile, fingerprint: 5a6c2611e9e9e064f9ef8902eb34f628166cde2079021c44e7435b433e6de51f }
+  - { gate: type-examples-generate, fingerprint: 27d7fefcfa8d23ed97a078f54e21e3a1968bc95fae81607770c8e8b354a964fb }
+  - { gate: type-examples-valid, fingerprint: ab25a76cb13d0982075723639689973ff4b94282963354786d7d19be9012267d }
+  - { gate: variant-check, fingerprint: 6032f26e7ee8e009344e732faeac0d970aac390c4d272a7319093a3a97a30255 }
+  - { gate: variant-diff, fingerprint: ad33f401ef2b92fef14c6db6c5545f89a8edd10d14959ec44fdcf1bd90d62fab }
+  - { gate: variant-examples, fingerprint: 48e71992fa22470e1d51a50fdd20cb7d0b88ea04b06acc715abd3d67ee2d05e7 }
+  - { gate: variant-load, fingerprint: 986634f337e1609e71916c4387da74e5a360efbc4aaeae88fc87747557592580 }

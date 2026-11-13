@@ -641,7 +641,7 @@ class CostParameters(rt.Closed):
     attribution_window: Optional[Duration] = None
     """How long after exposure an action counts"""
     calendar_zone: Optional[IanaZone] = None
-    """Absent unless `rate_unit` is `day`. The zone whose calendar days the rate buys: each calendar day in that zone that the flight touches is one unit"""
+    """Absent unless `rate_unit` is `day`. The zone whose calendar days the rate buys: each calendar day in that zone that the flight touches is one unit. The flight's `end` is its last second, inclusive (§ 2.2), so a flight to the end of a day ends at 23:59:59 in that zone, and an `end` at the next midnight adds that day"""
     demographic: Optional[CostParametersDemographic] = None
     """The rated demographic, such as `ratings.example:adults_25_54`. Its definition states whether co-viewers and impressions of unknown age count, or says `unknown`. This version lists no core terms"""
     rate_unit: Optional[CostParametersRateUnit] = None

@@ -1,0 +1,52 @@
+# b2 with unit_bounds min 1
+line_item_id: "b3-mon-0900-1100-min1"
+status: published
+channel: display
+properties:
+  available:
+    - id: "sports-news-home"
+      domains: ["sports-news.example"]
+      child_audience: general
+      seller_relationship: owner
+  included: ["sports-news-home"]
+environments:
+  available: ["web_desktop", "web_mobile"]
+  included: ["web_desktop", "web_mobile"]
+formats:
+  available: ["display/970x250"]
+  included: ["display/970x250"]
+format_specs:
+  "display/970x250":
+    spec: { w: 970, h: 250 }
+creative_delivery: { method: buyer_hosted, other_protocols: [javascript_tag], secure_required: true }
+controlling_measurement:
+  available:
+    - { id: seller-count, counted_by: seller, discrepancy_threshold: 0.10, final_after: "P10D" }
+  included: ["seller-count"]
+  max_select: 1
+pricing:
+  - pricing_id: "home-day-aud"
+    cost_method: TIME
+    cost_parameters: { rate_unit: day }
+    list_rate: 1500.00
+    agreed_rate: 1500.00
+    currency: AUD
+    unit_bounds: { min: 1 }
+commitment:
+  basis: spend
+  amount: 0.00
+  flight:
+    start: "2027-02-28T22:00:00Z"
+    end: "2027-02-28T23:59:59Z"
+  derived_units: 0
+  advertisers:
+    - domain: brand-a.example
+visibility: named
+eligible_buyers: ["agency-a.example"]
+transaction_mechanism:
+  available:
+    - { id: direct_io, delivery_type: share_of_voice }
+  included: ["direct_io"]
+  max_select: 1
+sov_basis: impressions
+sov_share: 1

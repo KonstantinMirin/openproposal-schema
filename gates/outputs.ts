@@ -1,6 +1,8 @@
 /** The gates on each lock's emitted schemas, rules, and conformance corpus. */
 import { inScope } from "../src/mapping.ts";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { buildZoneTable, RULE_PROGRAMS_SCHEMA, rulesProgramsProblems } from "../src/rule-programs.ts";
+import { compileSchema } from "../src/pipeline.ts";
 import { join } from "node:path";
 import { checkCorpus, generateCorpus, oracleLabels, type CorpusDoc, type CorpusInput } from "../src/corpus.ts";
 import { checkEmitted, emitSchemas, type EmittedFile, type SchemaNames } from "../src/emit.ts";
@@ -177,6 +179,40 @@ export const ruleVectors = defineGate<{ doc: RulesDoc; model: ModelDoc; files: E
       },
       expect: "a rule vector passes the schema, so the rule alone decides it",
     },
+  ],
+});
+
+export const rulePrograms = defineGate<{ specDir: string; rules: string[] }>({
+  id: "rule-programs",
+  title: "rule programs: the file is schema-valid, every operation and definition is one the evaluators know, and every program checks a rule some lock lists",
+  code: ["src/rule-programs.ts#rulesProgramsProblems", "src/rule-program.ts#programProblems", "src/rule-program.ts#OPERATIONS"],
+  files: ["specs/rule-programs.schema.json"],
+  exemptions: ["specs/*/rule-programs.yaml"],
+  check: (i) => {
+    const r = rulesProgramsProblems(i.specDir, new Set(i.rules), compileSchema(join(ROOT, RULE_PROGRAMS_SCHEMA)));
+    return { problems: r.problems, note: `${r.programs} rule programs` };
+  },
+  fixtures: [
+    { name: "a program for a rule no lock lists", mutate: (i) => ({ ...i, rules: i.rules.filter((r) => r !== "sentence:5.6.5:aa43e614") }), expect: "sentence:5.6.5:aa43e614 has a program, and no lock lists the rule" },
+    { name: "a program that names no operation", mutate: (i) => ({ ...i, specDir: join(ROOT, "gates/data/rule-programs") }), expect: '"days_between" is no operation' },
+  ],
+});
+
+export const zoneTable = defineGate<{ file: string; release: string; names: string[] }>({
+  id: "zone-table",
+  title: "time zone table: the UTC offsets the rule programs read are those the pinned tzdata package compiles for the pinned release's names",
+  code: ["src/rule-programs.ts#buildZoneTable"],
+  files: ["tools/tzdata/build.py"],
+  check: (i) => {
+    const built = buildZoneTable(ROOT, i.release, i.names);
+    if ("problem" in built) return { problems: [built.problem] };
+    const committed = existsSync(i.file) ? readFileSync(i.file, "utf8") : "";
+    const zones = (JSON.parse(built.text) as { zones: object }).zones;
+    return committed === built.text ? { problems: [], note: `release ${i.release}: ${i.names.length} names, ${Object.keys(zones).length} distinct zones` } : { problems: [`${i.file.replace(`${ROOT}/`, "")} isn't what tools/tzdata/build.py writes for release ${i.release}; regenerate it`] };
+  },
+  fixtures: [
+    { name: "a table of another release", mutate: (i) => ({ ...i, release: "2025a" }), expect: "the tzdata package holds release 2026e, not 2025a" },
+    { name: "a table that isn't what the package compiles", mutate: (i) => ({ ...i, names: i.names.filter((n) => n !== "Australia/Sydney") }), expect: "isn't what tools/tzdata/build.py writes for release 2026e" },
   ],
 });
 

@@ -96,7 +96,8 @@ interface Base {
 
 export type ModelType = Base &
   (
-    | { kind: "primitive"; description: string; schema: Record<string, unknown>; rules: string[] }
+    /** `listed`: the list of `kernel/lists.yaml` whose codes are the values, as the IANA time zone database's names are `IanaZone`'s. */
+    | { kind: "primitive"; description: string; schema: Record<string, unknown>; rules: string[]; listed?: string }
     | { kind: "constructor"; description: string; parameters: Constructor["parameters"]; naming: Constructor["naming"]; shell: Record<string, unknown>; fallback?: Constructor["fallback"]; rules: string[] }
     | { kind: "part"; description: string; schema: Record<string, unknown> }
     | { kind: "copy"; of: Extract<TypeRef, { kind: "apply" }>; application: string; fallback: boolean; schema: Record<string, unknown> }
@@ -327,6 +328,7 @@ export function resolveModel(input: ResolveInput): { model: ModelDoc; problems: 
         description: p.description,
         schema: { description: p.description, ...primitiveStructure(p) },
         rules: (p.rules ?? []).map((r) => r.id),
+        ...(p.listed !== undefined ? { listed: p.listed } : {}),
       },
       kernel.file,
     );

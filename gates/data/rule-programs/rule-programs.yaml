@@ -1,0 +1,10 @@
+# A known-bad rule-programs file for the rule-programs gate: a program that names an operation no evaluator knows.
+format: 1
+defs: {}
+rules:
+  sentence:5.6.5:aa43e614:
+    owner: LineItem
+    violations:
+      - when: [days_between, [$], [$]]
+        path: ""
+        message: [str, "a TIME count"]

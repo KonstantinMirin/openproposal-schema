@@ -1,19 +1,24 @@
 # Optional extractor input: upstream `main` plus the open PRs of the with-open-prs lock,
 # plus our stack of 17 PRs, #137 to #152 and #154, at the stack's tip.
-# The stack is one branch, op30-packages on github.com/KonstantinMirin/OpenProposal: each
-# of our PRs is a commit range on top of the one before it, and the first starts from
-# the with-open-prs integration tip, 292bb51, so every head that lock merges is an
-# ancestor of `commit`. `merge_order` lists those 14 heads, then our 17 in stack order.
+# The stack is op30-packages on github.com/KonstantinMirin/OpenProposal: each of our PRs
+# is a branch merged up from the ones it builds on, the first starts from the open PRs'
+# integration, and every head the with-open-prs lock merges is an ancestor of `commit`.
+# `merge_order` lists those 14 heads, then our 17 in stack order.
+# `base` is the upstream `main` the stack contains: since round 27, IAB's `main` at
+# ebb9fb8 (#162, Contribution Terms) is merged into op30-shared-types and carried up, so
+# every commit of `commit` that no head in `merge_order` holds is `main`'s at ebb9fb8 or
+# the stack's own. The with-open-prs lock, built on 44dfaaf, keeps that base, and the
+# `main` lock stays at 44dfaaf: #162 changes no line of spec/, examples/, or scripts/.
 # The stack exists in a fork, so the lock carries a snapshot of the specification and
 # examples/ at `commit`, and the scripts it pins, which `npm run fetch -- --lock
 # specs/openproposal/spec-input/with-our-stack.lock.yaml --snapshot` writes from the clone;
 # CI runs every gate from it.
 name: with-our-stack
 upstream: https://github.com/IABTechLab/OpenProposal
-base: 44dfaaf618736219426c311ec997b6d37e94b950
-commit: 6d5a6f9b66a49b9bca2abbdcca9d861bae76027a
+base: ebb9fb88841ae0b5eda38b017c609fb26b0da3ec
+commit: 711b34cf2fdc209d46b832013bfb1f1cc8727ba5
 path: spec/openproposal-3.0.md
-blob: 8e91771f0bc1121e7b23a4611e15f400ea511c53
+blob: c395ca84688d49807e5d3318445da4b4c4b79e29
 ir_dir: ir/with-our-stack
 required: false
 # The example files at `commit`, by path, with their git blob SHAs.
@@ -34,8 +39,8 @@ examples:
 # The day on which the heads below were their PRs' live heads. The first 14 are the
 # with-open-prs lock's heads, live on 2026-10-26; by 2026-11-07, #17, #18, #70, and #73
 # had moved on, and the stack still carries the heads listed here. Our 17 are the heads
-# of the stack's branches on 2026-11-12, each its PR's live head that day.
-heads_on: "2026-11-12"
+# of the stack's branches on 2026-11-13, each its PR's live head that day.
+heads_on: "2026-11-13"
 merge_order:
   - { pr: 17, head: dc0e37c8890b1ad6f197fd4a9418b7b231fab454 }
   - { pr: 18, head: ff53dc5a7d436ac42995f9842394369901e9eb70 }
@@ -51,23 +56,23 @@ merge_order:
   - { pr: 119, head: 0125d5549c4cc1790bd3ab847e8d5826b66de82d }
   - { pr: 120, head: 81de4d827440cc42d8e027d5f88843e8da109bdd }
   - { pr: 123, head: 9783ec87d102ccb60c106f4b6782650aa1f0a249 }
-  - { pr: 137, head: c7192f790cada6af1a6f65f188b6de887054e505 }
-  - { pr: 138, head: a73d71e9e8e564a269d92b40bb48d686680b3c09 }
-  - { pr: 139, head: d1da1e0cbfdf6b6b85d94c29735ed8b75fa35f8f }
-  - { pr: 140, head: 44535cfed5afce7bd3ca25a8a0ba705a00c443fa }
-  - { pr: 141, head: e15329e7ba2bf015c0649bd879617eed819f8cb7 }
-  - { pr: 142, head: c679074beb506526be44cca30c4e7e105d3ece9f }
-  - { pr: 143, head: 9b9ca684c7c1738a89f2547768c347251437643c }
-  - { pr: 144, head: 9dad3655a3f4e7c83910b3c187bc6197a33022d1 }
-  - { pr: 145, head: a3aa930650970f9294f4fb8d1b5022e43ec8dd43 }
-  - { pr: 146, head: 4c74e386d4cd930085552434b78a5ba66572efd1 }
-  - { pr: 147, head: 861d26963df680bb47c97003a52b557c865cc2db }
-  - { pr: 148, head: b8bd7b707665a2301e4705a11aacfcb864fa20e5 }
-  - { pr: 149, head: 7ce8914c1016b4cac68310c2044449f3b1096004 }
-  - { pr: 150, head: 5546fff0d5cd1214d13921b132b06d2989d3daaf }
-  - { pr: 151, head: 759e8f4ec466560539e6209054cbe8d85dd23381 }
-  - { pr: 152, head: 86f41a3cea7c9c9cbcb7f550950ddee38b8fd4ce }
-  - { pr: 154, head: 6d5a6f9b66a49b9bca2abbdcca9d861bae76027a }
+  - { pr: 137, head: e25dc09775d676e9bbf2476981578aa57ac5a2eb }
+  - { pr: 138, head: f9e6db90e7e61add81bf8cf6a180667966647227 }
+  - { pr: 139, head: 5b754cca54225e163cc3e23d4a250ea8d3a0cbb8 }
+  - { pr: 140, head: e6b100cf43f1f0ce8a0bfcee3e668ebcff58ac5d }
+  - { pr: 141, head: e793435a80082bd0fab9bad78143ad27de9fb4c6 }
+  - { pr: 142, head: 79601cea368cbee7206bbbc39d1b1f54ea6ad478 }
+  - { pr: 143, head: 6b08faf49565ba0d6b442dc715ddb160efaed7f2 }
+  - { pr: 144, head: dad072c08c1a4138b688470d02a7c8377a4e1c23 }
+  - { pr: 145, head: 579e31542277967f20953f9ece6180268caf1395 }
+  - { pr: 146, head: 73d465dd7f66c5a2442437e602f2dd96177257e6 }
+  - { pr: 147, head: 6972a772a2009ffda51fcd00fe793b2cebeae7f8 }
+  - { pr: 148, head: f0509a08a2d67fd89dc05afac4486681f74543e2 }
+  - { pr: 149, head: 2e9fd38a820a4706af5470f2e7d9491a61dd7380 }
+  - { pr: 150, head: ab76c8038d8771efdb7c588588691c3d7dcbb0bb }
+  - { pr: 151, head: 17d5e48619e72c5c17133d440524a554c8ec162e }
+  - { pr: 152, head: 55ce0f6e2b464a93e96db21ef29dee6d1c8d7413 }
+  - { pr: 154, head: 711b34cf2fdc209d46b832013bfb1f1cc8727ba5 }
 # The git tree SHA of examples/ at `commit`, which pins the directory's listing.
 examples_tree: d44395f01494ecae8e273324047ccef664913ab2
 # The stack's own checker at `commit`, by blob, which the desk tests run on the snapshot

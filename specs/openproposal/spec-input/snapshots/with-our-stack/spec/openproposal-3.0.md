@@ -2647,7 +2647,7 @@ open: the term sets its keys.
 | `action_source` | Measurer | REQUIRED when `cost_method` is `CPA` | Who reports the action |
 | `action_definition` | DocumentRef | OPTIONAL | Absent on a core term other than `CPA`. The rules that make an action billable: the evidence that confirms it, which content or context gets credit, and how cancellations, returns, fraud, and duplicate reports change the count. Where the document conflicts with a typed field of the binding record (§ 4.1.1), such as `action_type`, `attribution_window`, or `action_source`, the typed field governs |
 | `rate_unit` | Enum | REQUIRED when `cost_method` is `TIME` | `hour` \| `day` \| `week`. The unit the rate buys, counted in elapsed units unless `calendar_zone` is present |
-| `calendar_zone` | IanaZone | OPTIONAL | Absent unless `rate_unit` is `day`. The zone whose calendar days the rate buys: each calendar day in that zone that the flight touches is one unit |
+| `calendar_zone` | IanaZone | OPTIONAL | Absent unless `rate_unit` is `day`. The zone whose calendar days the rate buys: each calendar day in that zone that the flight touches is one unit. The flight's `end` is its last second, inclusive (§ 2.2), so a flight to the end of a day ends at 23:59:59 in that zone, and an `end` at the next midnight adds that day |
 
 A seller's own extension terms MUST use its `seller.domain` as the `<domain>`. The host
 of `cost_definition.url` MUST be the term's `<domain>` or a subdomain of it.

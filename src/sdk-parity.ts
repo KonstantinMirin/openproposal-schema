@@ -48,6 +48,7 @@ import { payloadsOf } from "./rules.ts";
 import { applicationExpr, renderExpr, type Expr } from "./sdk.ts";
 import { locationOf } from "./emit.ts";
 import { spawnWithInput } from "./spawn.ts";
+import { RuleEvaluator, type Programs, type ZoneTable } from "./rule-program.ts";
 
 export interface SdkCase {
   label: string;
@@ -613,8 +614,51 @@ export function compareLocations(language: string, cases: SdkLocationCase[], run
     const got = [...locationsOf(c.value, run.findings[i]!).keys()];
     const shown = (p: string) => (p === "" ? "/" : p);
     if (got.length === c.at.length && [...got].sort().every((p, k) => p === c.at[k])) return;
-    problems.push(`${language}: ${c.label}: the reference rejects it at ${c.at.map(shown).join(", ")}, and the SDK ${got.length === 0 ? "accepts it" : `rejects it at ${got.map(shown).join(", ")}`}`);
+    problems.push(`${language}: ${c.label}: the reference ${c.at.length === 0 ? "accepts it" : `rejects it at ${c.at.map(shown).join(", ")}`}, and the SDK ${got.length === 0 ? "accepts it" : `rejects it at ${got.map(shown).join(", ")}`}`);
   });
   const paired = cases.filter((c) => c.at.length > 1).length;
   return { problems, note: `${run.engine}: ${cases.length} mutants, ${paired} of them failing at two places, each rejected at every place its constraints name and nowhere else` };
+}
+
+/** The places, below a value of a type, where the rules the SDKs check reject it, sorted: none for a type no such rule owns. */
+export type Ruled = (type: string, value: unknown) => string[];
+
+/** The rules the SDKs check, each on values of its owner, by the programs every SDK is generated with and the gates' own evaluator. */
+export function rulerOf(model: ModelDoc, programs: Programs, zones: ZoneTable): Ruled {
+  const owned = new Map<string, string[]>();
+  for (const r of model.rules) if (programs.rules[r.ir] !== undefined) owned.set(r.owner, [...(owned.get(r.owner) ?? []), r.ir]);
+  const ev = new RuleEvaluator(programs, zones);
+  return (type, value) => [...new Set((owned.get(type) ?? []).flatMap((id) => ev.check(id, value).map((v) => v.path)))].sort();
+}
+
+/** The parity cases with the rules the SDKs check: a case of an owner's type that a rule rejects is invalid for the SDKs, which check the rule, though its schema accepts it. */
+export function withRules(cases: SdkCase[], ruled: Ruled): SdkCase[] {
+  return cases.map((c) => (c.valid && c.target.k === "ref" && ruled(c.target.name, c.value).length > 0 ? { ...c, valid: false } : c));
+}
+
+/** The location cases with the rules the SDKs check: a value also fails at each place a rule rejects it. */
+export function withRuleLocations(cases: SdkLocationCase[], ruled: Ruled): SdkLocationCase[] {
+  return cases.map((c) => {
+    const more = ruled(c.type, c.value);
+    return more.length === 0 ? c : { ...c, at: [...new Set([...c.at, ...more])].sort() };
+  });
+}
+
+/**
+ * Every payload of every vector of a rule the SDKs check, as a location
+ * case: each SDK must reject it at each place the rules it checks reject it,
+ * by the gates' own evaluator, and nowhere else; a valid vector its own rule
+ * accepts, and an invalid one its own rule rejects.
+ */
+export function ruleLocationCases(corpus: CorpusDoc, programs: Programs, ruled: Ruled): SdkLocationCase[] {
+  const out: SdkLocationCase[] = [];
+  for (const r of corpus.rules) {
+    if (programs.rules[r.rule] === undefined || r.type === undefined) continue;
+    for (const [label, list] of [["valid", r.valid], ["invalid", r.invalid]] as const) {
+      list.forEach((x, i) => {
+        for (const [part, value] of payloadsOf(x)) out.push({ label: `rule "${r.rule}" ${label} vector ${i + 1} ${part}`, type: r.type!, value, at: ruled(r.type!, value) });
+      });
+    }
+  }
+  return out;
 }

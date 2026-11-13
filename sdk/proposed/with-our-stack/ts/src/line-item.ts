@@ -219,7 +219,7 @@ export const LineItem: z.ZodType<LineItem> = z.strictObject({
   time_zone: TimeZone.optional(),
   transaction_mechanism: TransactionMechanismSelection,
   visibility: LineItemVisibility,
-}).check(rt.condition("channel", "dooh", ["delivery_counting"]));
+}).check(rt.rules(["sentence:5.6.1:78efd2ce","sentence:5.6.5:03d899cb","sentence:5.6.5:10182d60","sentence:5.6.5:4804c1fd","sentence:5.6.5:aa43e614","sentence:5.6.5:d956510e"]), rt.condition("channel", "dooh", ["delivery_counting"]));
 
 /** The `AvailabilityRead` object of the `line-item` module. */
 export interface AvailabilityRead {

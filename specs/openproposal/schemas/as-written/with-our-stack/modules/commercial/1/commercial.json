@@ -426,7 +426,7 @@
         },
         "calendar_zone": {
           "$ref": "../../../kernel/1/kernel.json#/$defs/IanaZone",
-          "description": "Absent unless `rate_unit` is `day`. The zone whose calendar days the rate buys: each calendar day in that zone that the flight touches is one unit"
+          "description": "Absent unless `rate_unit` is `day`. The zone whose calendar days the rate buys: each calendar day in that zone that the flight touches is one unit. The flight's `end` is its last second, inclusive (§ 2.2), so a flight to the end of a day ends at 23:59:59 in that zone, and an `end` at the next midnight adds that day"
         },
         "demographic": {
           "$ref": "#/$defs/CostParametersDemographic",

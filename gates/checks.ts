@@ -249,6 +249,14 @@ const onIab = (i: { sets: DeskTestsInput[] }, change: (s: DeskTestsInput) => Des
   if (!i.sets.some((s) => basename(s.set.dir) === IAB_SET)) throw new Error(`the lock has no desk-test set ${IAB_SET}`);
   return { ...i, sets: i.sets.map((s) => (basename(s.set.dir) === IAB_SET ? change(s) : s)) };
 };
+/** The second set, IAB Australia's billable-day and `calendar_zone` line items, whose checker-only findings the fixtures below change. */
+const CALENDAR_SET = "iab-au-2026-11-calendar";
+const onCalendar = (i: { sets: DeskTestsInput[] }, change: (s: DeskTestsInput) => DeskTestsInput) => {
+  if (!i.sets.some((s) => basename(s.set.dir) === CALENDAR_SET)) throw new Error(`the lock has no desk-test set ${CALENDAR_SET}`);
+  return { ...i, sets: i.sets.map((s) => (basename(s.set.dir) === CALENDAR_SET ? change(s) : s)) };
+};
+const A3 = "billable-day-a3-mon-1800-tue-0600-two-days-spend.yaml";
+const D01 = "calendar-zone-d01-mon-0600-1800.yaml";
 /** A fixture's change to one SDK's run of the IAB set. */
 const onSdk = (language: string, change: (r: CheckerRun) => CheckerRun) => (i: { sets: DeskTestsInput[] }) =>
   onIab(i, (s) => {
@@ -270,10 +278,12 @@ export const deskTests = defineGate<{ sets: DeskTestsInput[] }>({
       const name = basename(s.set.dir);
       const r = checkDeskTests(s);
       problems.push(...r.problems.map((p) => `${name}: ${p}`));
-      const rejected = new Set(s.set.findings.map((f) => f.example)).size;
+      const findings = new Set(s.set.findings.map((f) => f.example));
+      const rejected = findings.size;
+      const checkerOnly = new Set(s.set.checker_only.map((c) => c.example).filter((x) => !findings.has(x))).size;
       const engines = [`the schemas and rules`, s.checker.label, ...s.sdks.map((x) => x.label)];
       notes.push(
-        `${name}: ${s.set.examples.length} payloads, ${s.set.examples.length - rejected} clean and ${rejected} rejected, each at its recorded location, by ${engines.slice(0, -1).join(", ")}, and ${engines.at(-1)}; ${s.set.sdk_gaps.length} recorded SDK gap${s.set.sdk_gaps.length === 1 ? "" : "s"}; ${s.set.undecided.length} recorded undecided`,
+        `${name}: ${s.set.examples.length} payloads, ${s.set.examples.length - rejected - checkerOnly} clean and ${rejected} rejected, each at its recorded location, by ${engines.slice(0, -1).join(", ")}, and ${engines.at(-1)}${checkerOnly > 0 ? `, and ${checkerOnly} rejected by the checker alone` : ""}; ${s.set.sdk_gaps.length} recorded SDK gap${s.set.sdk_gaps.length === 1 ? "" : "s"}; ${s.set.checker_only.length} recorded checker-only finding${s.set.checker_only.length === 1 ? "" : "s"}; ${s.set.undecided.length} recorded undecided`,
       );
     }
     return { problems, note: `${notes.join("; ")}; 0 mismatches` };
@@ -324,6 +334,42 @@ export const deskTests = defineGate<{ sets: DeskTestsInput[] }>({
       name: "a checker run that failed",
       mutate: (i) => onIab(i, (s) => ({ ...s, checker: { ...s.checker, problems: ["scripts/check_examples.py exited 2: Traceback"] } })),
       expect: "exited 2",
+    },
+    {
+      name: "a checker-only finding the checker doesn't make",
+      mutate: (i) => onCalendar(i, (s) => ({ ...s, set: { ...s.set, checker_only: [...s.set.checker_only, { example: D01, path: "", elements: ["sentence:5.6.5:10182d60"], reason: "a finding no engine makes" }] } })),
+      expect: "no longer rejects it there, where iab-au-2026-11-calendar/expected.yaml records a checker-only finding",
+    },
+    {
+      name: "an SDK that makes a checker-only finding",
+      mutate: (i) =>
+        onCalendar(i, (s) => ({
+          ...s,
+          set: { ...s.set, checker_only: [...s.set.checker_only, { example: D01, path: "", elements: ["sentence:5.6.5:10182d60"], reason: "a finding the checker makes" }] },
+          checker: { ...s.checker, failures: [...s.checker.failures, { example: D01, path: "", message: "a TIME count" }] },
+          sdks: s.sdks.map((r, n) => (n === 0 ? { ...r, failures: [...r.failures, { example: D01, path: "", message: "a TIME count" }] } : r)),
+        })),
+      expect: "records it as checker only; record the finding under findings and remove the entry",
+    },
+    {
+      name: "a checker-only finding that reads no element of the IR",
+      mutate: (i) =>
+        onCalendar(i, (s) => ({
+          ...s,
+          set: { ...s.set, checker_only: [...s.set.checker_only, { example: D01, path: "", elements: ["sentence:5.6.5:00000000"], reason: "a finding the checker makes" }] },
+          checker: { ...s.checker, failures: [...s.checker.failures, { example: D01, path: "", message: "a TIME count" }] },
+        })),
+      expect: "reads sentence:5.6.5:00000000, which is no element of lock",
+    },
+    {
+      name: "a checker-only finding that is a schemas finding too",
+      mutate: (i) => onCalendar(i, (s) => ({ ...s, set: { ...s.set, checker_only: [...s.set.checker_only, { example: "calendar-zone-d09-zone-with-hour.yaml", path: "/pricing/0/cost_parameters/rate_unit", elements: ["sentence:5.6.5:10182d60"], reason: "a finding twice over" }] } })),
+      expect: "records it under findings and as checker only",
+    },
+    {
+      name: "an SDK gap for a rule the SDKs check from its program",
+      mutate: (i) => onCalendar(i, (s) => ({ ...s, set: { ...s.set, sdk_gaps: [...s.set.sdk_gaps, { example: A3, path: "", rule: "sentence:5.6.5:aa43e614", reason: "a gap the SDKs closed" }] } })),
+      expect: "records an SDK gap for sentence:5.6.5:aa43e614, which the SDKs check now, from its program",
     },
     {
       name: "a drafted reason left for review",

@@ -32,6 +32,7 @@ import { loadDecisions, loadMappings } from "./mapping.ts";
 import { resolveModel } from "./model.ts";
 import { codesOf } from "./rule-checks.ts";
 import { sdkDirOf } from "./sdk.ts";
+import { loadPrograms } from "./rule-programs.ts";
 import { ruleChecksOf, schemaNamesOfLock } from "./specs/index.ts";
 
 /** Where a set's files come from: a gist at one revision, or a local folder that stands in for one. */
@@ -142,6 +143,8 @@ export function draftExpected(input: {
   undecided: { example: string; path: string; rule: string }[];
   checker: CheckerRun;
   sdks: CheckerRun[];
+  /** The rules the SDKs check, whose programs they are generated with; a rule's finding beyond them is an SDK gap. */
+  sdkRules?: ReadonlySet<string>;
 }): { expected: Omit<DeskTests, "file" | "dir">; clean: string[]; rejected: string[]; disagreements: DeskDisagreement[] } {
   const { set } = input;
   const findings: DeskFinding[] = [];
@@ -154,7 +157,7 @@ export function draftExpected(input: {
     const schemaFailures = input.failures.filter((f) => f.example === name);
     const schemaPaths = sorted(schemaFailures.map((f) => f.path));
     // A place where every schemas finding is a rule's is beyond the SDK types, which check what the schemas check.
-    const rulePaths = schemaPaths.filter((p) => schemaFailures.filter((f) => f.path === p).every((f) => f.kind === "rule"));
+    const rulePaths = schemaPaths.filter((p) => schemaFailures.filter((f) => f.path === p).every((f) => f.kind === "rule" && !input.sdkRules?.has(f.rule ?? "")));
     const sdkWant = schemaPaths.filter((p) => !rulePaths.includes(p));
     const checkerPaths = sorted(input.checker.failures.filter((f) => f.example === name).map((f) => f.path));
     const sdkPaths = input.sdks.map((s) => ({ engine: s.label, paths: sorted(s.failures.filter((f) => f.example === name).map((f) => f.path)) }));
@@ -270,7 +273,7 @@ export async function deskAdd(i: {
 
 async function judge(i: Parameters<typeof deskAdd>[0], dir: string, payloads: string[], skipped: string[], checker: string): Promise<DeskAddResult> {
   for (const n of payloads) writeFileSync(join(dir, n), i.source.files.get(n)!);
-  const base: Omit<DeskTests, "file" | "dir"> = { format: 1, lock: i.lock.name, document: i.document ?? "LineItem", checker, examples: payloads, findings: [], undecided: [], sdk_gaps: [] };
+  const base: Omit<DeskTests, "file" | "dir"> = { format: 1, lock: i.lock.name, document: i.document ?? "LineItem", checker, examples: payloads, findings: [], undecided: [], sdk_gaps: [], checker_only: [] };
   const set: DeskTests = { ...base, file: join(dir, DESK_TESTS_FILE), dir };
   const values = loadDeskPayloads(dir);
 
@@ -300,7 +303,7 @@ async function judge(i: Parameters<typeof deskAdd>[0], dir: string, payloads: st
   const problems = [...checkerRun.problems, ...sdks.flatMap((s) => s.problems)];
   if (problems.length > 0) throw new Error(`an engine didn't run: ${problems.join("; ")}`);
 
-  const draft = draftExpected({ set: base, failures: r.failures, undecided: r.checks.undecided, checker: checkerRun, sdks });
+  const draft = draftExpected({ set: base, failures: r.failures, undecided: r.checks.undecided, checker: checkerRun, sdks, sdkRules: new Set(Object.keys(loadPrograms(i.specDir).rules)) });
   writeFileSync(set.file, HEADER(i.set, i.lock.name) + stringify(draft.expected, { lineWidth: 0 }));
   const verdicts = new Map<string, string>();
   for (const n of draft.clean) verdicts.set(n, "Clean");

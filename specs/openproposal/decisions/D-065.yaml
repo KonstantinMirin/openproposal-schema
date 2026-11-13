@@ -1,0 +1,62 @@
+format: 1
+id: D-065
+status: proposed
+kind: gap
+author: agent
+question: "§ 5.6.5 states how a commitment's figures follow from its entry and its flight in sentences with no RFC 2119 keyword, and § 5.6.1 that a commitment resolves only when it fits its bounds. Which of them are rules one line item decides, and what does each check?"
+covers:
+  - ir: sentence:5.6.5:aa43e614
+    digest: a34200e2c36d1691f7f06029a6fda1c4101a0c32011cfa87c39c396b031c6511
+    quote: "`FLAT` and `TIME` set these figures from the rate and the flight instead, and a rule that reads `commitment.amount` on such an entry reads them: the seller total when `commitment.basis` is `spend`, `derived_units` when it is `units`."
+    locks: [with-our-stack]
+  - ir: sentence:5.6.5:4804c1fd
+    digest: a0ba537677fddc88f352a2c9bf71f7079328e194b12747ff60e468aec0eb675e
+    quote: "`derived_units` = (`amount` − those charges) ÷ `agreed_rate` × rate per, rounded down to a whole unit, where rate per comes from the table for a core term and from `rate_per` for an extension term."
+    locks: [with-our-stack]
+  - ir: sentence:5.6.5:03d899cb
+    digest: 8ad5ecdc184f5759685a0ed446bd3f73463695964bf95f18d134be2b59654953
+    quote: "When `commitment.basis` is `units`, `derived_units` is `amount`, and the seller total is `amount` ÷ rate per × `agreed_rate` plus those charges."
+    locks: [with-our-stack]
+  - ir: sentence:5.6.5:d956510e
+    digest: a135311b7f79473c91dab53326907396f1adfb9d14ba0f99af25e6378df3bbdf
+    quote: "`derived_units` is the time from `commitment.flight.start` through `commitment.flight.end`, inclusive, in `rate_unit`s rounded to the nearest whole unit, half up, so a clock change inside the flight doesn't change it."
+    locks: [with-our-stack]
+  - ir: sentence:5.6.5:10182d60
+    digest: 93247afb9a94d39f375350a0c014c489a4795ff8c6d971b21d216161de521820
+    quote: "When `calendar_zone` is present, `derived_units` is instead the number of calendar days in that zone from the day of `commitment.flight.start` through the day of `commitment.flight.end`."
+    locks: [with-our-stack]
+  - ir: sentence:5.6.1:78efd2ce
+    digest: e304bb62d6ce7a3e356d9a809e4a1092264ef85202cce5f4c3e3e0cb0399dc8f
+    quote: "A `commitment` resolves under § 3 when the buyer is eligible (§ 5.8), every `selected[]`, `excluded[]`, and `value` on the line item is within what the seller declared (§ 3.1, § 3.2, § 5.3), and the commitment fits `commitment_bounds.spend` and the committed entry's `unit_bounds`, is not stale (§ 4.1.3), and meets the package rules (§ 4.1.4)."
+    locks: [with-our-stack]
+options:
+  - id: arithmetic-rules
+    summary: "Each sentence is a rule on the line item, which holds every field it reads: a `FLAT` or `TIME` amount is the figure its rate and flight set; a written `derived_units` is the count its sentence defines, for `spend`, for `units`, for a `TIME` flight in elapsed units, and for one in calendar days of its `calendar_zone`; and a commitment's seller total and units fit `commitment_bounds.spend` and the committed entry's `unit_bounds`, the clause of § 5.6.1 one line item decides. Each fails at the line item, the rule's owner, as the specification's own checker reports them."
+  - id: informative
+    summary: "The sentences stay informative, as a sentence with no RFC 2119 keyword is elsewhere, so no rule checks a commitment's arithmetic and only the specification's checker rejects a figure that disagrees with the flight."
+chosen: arithmetic-rules
+rationale: >-
+  These sentences define the figures a commitment holds: what `derived_units`
+  is, what the seller total is, and that a `TIME` or `FLAT` amount is set
+  from the rate and the flight. A payload whose figures disagree with them
+  states a commitment the text doesn't allow, and the specification's own
+  checker rejects such a payload on every one of them, so a definition is a
+  rule as surely as a sentence with MUST. Leaving them informative leaves
+  every SDK accepting a two-day calendar flight written as one day. The
+  `derived_units` row calls a written value a copy, which the § 5.6.5
+  result overrides where it differs; a copy that differs is still a
+  payload that disagrees with itself, so the rule rejects it, as the
+  checker does. § 5.6.1 lists five conditions of a commitment that
+  resolves; one line item decides only its bounds, so the rule checks
+  those, and the others stay with the rules and the receiver behavior that
+  state them. The calendar days of a zone are those of the IANA time zone
+  database release the schemas pin, 2026e (D-064), so every engine counts
+  the same days. The charges are each selectable option's `delta_flat`
+  beyond `included[]`, and each excluded option's, as § 3.1 adds them.
+evidence:
+  - https://www.iana.org/time-zones
+feedback: >-
+  § 5.6.5 could mark these definitions as requirements, such as "`derived_units`
+  MUST equal …", so a reader sees that a figure that disagrees is invalid,
+  and the `derived_units` row could say whether a written copy that differs
+  is an error or is overridden.

@@ -1,0 +1,243 @@
+# The verdict each of IAB Australia's billable-day and calendar_zone desk-test
+# line items must get on the with-our-stack lock (README.md says where the
+# files come from). Five engines judge every file: the lock's schemas and
+# rules, as the examples gate checks an example; the stack's own checker,
+# scripts/check_examples.py at the lock's commit, run on the lock's
+# specification and examples with these files added to examples/; and the
+# TypeScript, Python, and Go SDKs the lock's schemas generate, under
+# sdk/proposed/with-our-stack/. A file with a finding is rejected at its
+# `path`, and only there, by every engine; the TIME arithmetic of § 5.6.5
+# is a rule on the line item (D-065), whose program every SDK is generated
+# with. Every other file passes every engine.
+# The desk-tests gate in `npm run ci` fails on any other verdict, on an
+# undecided check or a gap not recorded here, and on a recorded one that no
+# longer holds. After a lock move, review each verdict that changed before
+# you change this file.
+format: 1
+lock: with-our-stack
+document: LineItem
+checker: scripts/check_examples.py
+examples:
+  - billable-day-a1-mon-0600-1800.yaml
+  - billable-day-a2-mon-1800-tue-0600.yaml
+  - billable-day-a3-mon-1800-tue-0600-two-days-spend.yaml
+  - billable-day-a4-mon-1800-tue-0600-two-days-units.yaml
+  - billable-day-b1-mon-2300-tue-0100.yaml
+  - billable-day-b2-mon-0900-1100.yaml
+  - billable-day-b3-mon-0900-1100-min1.yaml
+  - billable-day-b4-mon-full-calendar-day.yaml
+  - billable-day-b5-mon-1200-tue-1200.yaml
+  - billable-day-b6-mon-1800-wed-0600.yaml
+  - billable-day-c1-calendar-day-flight-daypart.yaml
+  - billable-day-c2-extension-term-billable-day.yaml
+  - billable-day-c3-extension-term-seven-units.yaml
+  - calendar-zone-d01-mon-0600-1800.yaml
+  - calendar-zone-d02-mon-1800-tue-0600.yaml
+  - calendar-zone-d03-mon-2300-tue-0100.yaml
+  - calendar-zone-d04-mon-1200-tue-1200.yaml
+  - calendar-zone-d05-mon-1800-wed-0600.yaml
+  - calendar-zone-d06-two-day-flight-one-unit-spend.yaml
+  - calendar-zone-d07-two-day-flight-units-2.yaml
+  - calendar-zone-d08-two-day-flight-units-1.yaml
+  - calendar-zone-d09-zone-with-hour.yaml
+  - calendar-zone-d10-zone-with-week.yaml
+  - calendar-zone-d11-bad-zone-name.yaml
+  - calendar-zone-d12-utc-zone-same-flight.yaml
+  - calendar-zone-d13-end-exactly-tue-0000.yaml
+  - calendar-zone-d14-end-mon-235959.yaml
+  - calendar-zone-d15-dst-sat-1800-mon-0600.yaml
+  - calendar-zone-d16-la-zone-mon-2300-tue-0100.yaml
+  - calendar-zone-d17-no-zone-d15-flight-elapsed.yaml
+findings:
+  - example: calendar-zone-d09-zone-with-hour.yaml
+    path: /pricing/0/cost_parameters/rate_unit
+    kind: invalid
+    reason: >-
+      `calendar_zone` beside `rate_unit: hour`: `calendar_zone` is absent
+      unless `rate_unit` is `day` (§ 5.6.5), so the file fails at the
+      `rate_unit` the condition reads.
+  - example: calendar-zone-d10-zone-with-week.yaml
+    path: /pricing/0/cost_parameters/rate_unit
+    kind: invalid
+    reason: >-
+      `calendar_zone` beside `rate_unit: week`: `calendar_zone` is absent
+      unless `rate_unit` is `day` (§ 5.6.5), so the file fails at the
+      `rate_unit` the condition reads.
+  - example: calendar-zone-d11-bad-zone-name.yaml
+    path: /pricing/0/cost_parameters/calendar_zone
+    kind: invalid
+    reason: >-
+      `Sydney/Australia` is no name in the IANA time zone database, which an
+      `IanaZone` names (§ 2.2); the schemas list the names of release 2026e
+      (D-064).
+  - example: billable-day-a3-mon-1800-tue-0600-two-days-spend.yaml
+    path: ""
+    kind: rule
+    rule: sentence:5.6.5:aa43e614
+    reason: >-
+      The flight, Monday 18:00 to Tuesday 06:00 Sydney, is 12 hours, so with
+      no `calendar_zone` § 5.6.5 counts 1 elapsed day, rounded half up, and a
+      `TIME` amount on `spend` is that day's seller total, A$1,500; the file
+      commits A$3,000 (D-065).
+  - example: billable-day-a3-mon-1800-tue-0600-two-days-spend.yaml
+    path: ""
+    kind: rule
+    rule: sentence:5.6.5:d956510e
+    reason: >-
+      The same 12-hour flight counts 1 elapsed day, and the file writes
+      `derived_units: 2` (§ 5.6.5, D-065).
+  - example: billable-day-a4-mon-1800-tue-0600-two-days-units.yaml
+    path: ""
+    kind: rule
+    rule: sentence:5.6.5:aa43e614
+    reason: >-
+      The `a3` flight with `basis: units` and an `amount` of 2: with no
+      `calendar_zone` § 5.6.5 counts 1 elapsed day, and a `TIME` amount on
+      `units` is that count (D-065).
+  - example: billable-day-b3-mon-0900-1100-min1.yaml
+    path: ""
+    kind: rule
+    rule: sentence:5.6.1:78efd2ce
+    reason: >-
+      A 2-hour flight on a day rate counts 0 elapsed days, rounded half up (§
+      5.6.5), and a commitment fits the committed entry's `unit_bounds` (§
+      5.6.1), which `min: 1` sets above 0 (D-065).
+  - example: calendar-zone-d06-two-day-flight-one-unit-spend.yaml
+    path: ""
+    kind: rule
+    rule: sentence:5.6.5:aa43e614
+    reason: >-
+      With `calendar_zone: Australia/Sydney`, the Monday 18:00 to Tuesday
+      06:00 flight touches two calendar days, so § 5.6.5 counts 2 units and a
+      seller total of A$3,000; the file commits A$1,500 (D-065).
+  - example: calendar-zone-d08-two-day-flight-units-1.yaml
+    path: ""
+    kind: rule
+    rule: sentence:5.6.5:aa43e614
+    reason: >-
+      The `d06` flight with `basis: units` and an `amount` of 1: the flight
+      touches two Sydney calendar days, so § 5.6.5 counts 2 units, and a
+      `TIME` amount on `units` is that count (D-065).
+undecided:
+  - example: billable-day-a1-mon-0600-1800.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: billable-day-a2-mon-1800-tue-0600.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: billable-day-a3-mon-1800-tue-0600-two-days-spend.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: billable-day-a4-mon-1800-tue-0600-two-days-units.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: billable-day-b1-mon-2300-tue-0100.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: billable-day-b2-mon-0900-1100.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: billable-day-b3-mon-0900-1100-min1.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: billable-day-b4-mon-full-calendar-day.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: billable-day-b5-mon-1200-tue-1200.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: billable-day-b6-mon-1800-wed-0600.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: billable-day-c1-calendar-day-flight-daypart.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: billable-day-c2-extension-term-billable-day.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: billable-day-c3-extension-term-seven-units.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d01-mon-0600-1800.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d02-mon-1800-tue-0600.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d03-mon-2300-tue-0100.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d04-mon-1200-tue-1200.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d05-mon-1800-wed-0600.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d06-two-day-flight-one-unit-spend.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d07-two-day-flight-units-2.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d08-two-day-flight-units-1.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d09-zone-with-hour.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d10-zone-with-week.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d11-bad-zone-name.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d12-utc-zone-same-flight.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d13-end-exactly-tue-0000.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d14-end-mon-235959.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d15-dst-sat-1800-mon-0600.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d16-la-zone-mon-2300-tue-0100.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+  - example: calendar-zone-d17-no-zone-d15-flight-elapsed.yaml
+    path: ""
+    rule: rule:5.4:3a677601
+    reason: A line item alone shows no proposal status, which decides whether `format_specs` is REQUIRED.
+sdk_gaps: []
+checker_only: []

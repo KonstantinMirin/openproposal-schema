@@ -1,0 +1,75 @@
+format: 1
+id: G-157
+date: 2026-11-13
+question: How do the SDKs check a rule JSON Schema can't state, from one definition, and how does CI hold every SDK to the rule's vectors, starting with § 5.6.5's TIME arithmetic?
+decision: >-
+  A rule's check may be a program, `rule-programs.yaml` in a spec's
+  folder: a small expression language (src/rule-program.ts) read on a
+  value of the rule's owner, with exact decimal arithmetic and the calendar
+  day of an instant in a zone. The gates run each program as its rule's
+  check, and the SDK emitters write the programs into every SDK that has
+  the rule's owner, with an evaluator in each runtime: TypeScript's is that
+  file as it is, and Python's and Go's are ports of it. A zone's calendar
+  day is the one IANA tzdata 2026e gives, the release the kernel pins:
+  tools/tzdata/build.py writes the UTC offsets of every zone and link name
+  from 1970 to 2100 from the hash-locked `tzdata` package into
+  kernel/sources/tzdata-2026e.json, which every engine reads. A sentence
+  with no RFC 2119 keyword whose check a program states is a rule on the
+  program's owner, by the mapping rule `programmed-sentence`, and D-065
+  reads § 5.6.5's definitions of a commitment's figures and § 5.6.1's
+  bounds so: six rules on the line item, with vectors from IAB Australia's
+  a3, a4, b3, d06, and d08 as invalid ones and the inclusive ends d13 and
+  d14 as valid ones. Three gates are new: rule-programs, the file
+  schema-valid, every operation and definition known, and every program a
+  rule some lock lists; zone-table, the committed table what the builder
+  writes for the pinned release and names; and sdk-rules, each SDK on every
+  payload of every vector of a rule it checks, rejected at each place the
+  gates' own evaluator rejects it and nowhere else. The parity and location
+  cases of an owner's type count the programs' verdicts, so a case a rule
+  rejects is invalid for the SDKs, as the plain generator's classes, which
+  check no rule, aren't held to. The desk-tests gate fails an SDK gap for
+  a rule the SDKs check, and the intake drafts a rule's finding the SDKs
+  check as every engine's. IAB Australia's a3, a4, b3, d06, and d08 move
+  from checker_only to findings in every engine.
+rationale: >-
+  No check is weaker: the rules gate holds each program to its rule's
+  vectors as it holds a check written in TypeScript; the SDKs reject what
+  the six rules reject, which they accepted before; three gates are new,
+  each with fixtures: a program for a rule no lock lists, an operation no
+  evaluator knows, a table of another release, a table that isn't what the
+  package compiles, an SDK that accepts a rule's invalid vector, and one
+  that rejects a valid one; and the desk-tests gate gains a fixture for an
+  SDK gap the SDKs closed, beside the checker-only fixtures, which now add
+  their entries. The generated code that changes is the two stack trees':
+  every SDK's line item runs the six programs, the TypeScript and Python
+  runtimes hold the rule check, and each tree gains its rules file and the
+  time zone table, `rules.ts` and `tzdata.ts`, `_rules.py`, and `rules.go`.
+  The `main` and `with-open-prs` outputs are byte-identical: no rule of
+  theirs has a program.
+accepts:
+  - { gate: comparison, fingerprint: 3890ff9b49fabf6647e62d0e050ad83d5896d6af144de7e881469f53629753b5 }
+  - { gate: desk-tests, fingerprint: 856e81fa6bd0904ba653998fd728019871c54bb51da8a551712a4b4d0d90a430 }
+  - { gate: examples-validate, fingerprint: 701f09529224a0f433a3776f857b1e4e1a4b766f2617d91d8cb1bfdc56b32ae7 }
+  - { gate: extraction, fingerprint: a7691b2350b74ae1a38cbad8241797722094bf9530e14459a78392a21bcb6978 }
+  - { gate: feedback, fingerprint: c4449ef5f9a3b5a0c707e4b215a24b8aa5ccd5836e4c5e6bcd749a0966f3a8bb }
+  - { gate: fidelity, fingerprint: 389f3aa05a6299e407ec5b764023310cc06ddc329799a3b930bc048ede21477d }
+  - { gate: field-examples, fingerprint: 9e3bd600ba22ee4db6cdbc43509f8b4bb0ea1a1b81901907f54744ba152e2a0b }
+  - { gate: guard, fingerprint: 6b15ac48ead77bd48868dc00bf27ded148cff30c0da1489317c420db514c610a }
+  - { gate: map-drift, fingerprint: db963f9ad9c1670863008f734e6ca12aade3560ed428dff17c96cd8397a5d910 }
+  - { gate: mapping-bijection, fingerprint: deda75c67f79e1e6864d1b3c734cab1428a4b9a1e8c546ea7716b0618984236d }
+  - { gate: mapping-location, fingerprint: 732531b2d03216bf35a5da57e70f6ce19e86f0ac6c1ce69e0c3097f0e6813bfc }
+  - { gate: mapping-rules, fingerprint: 067649809b7015191c2afc89e38534570279afdae08f3cfee5b4e825e8a5e2f4 }
+  - { gate: record-wording, fingerprint: 0ad26146685e39d2bb8b2018a756a6cf97229d178eb8b6fcd4f2211342f39642 }
+  - { gate: round-trip, fingerprint: 561385f569d592e911e8e7ef23c1295ed2125b61b8ee504da6231d640754b8f7 }
+  - { gate: rule-checks, fingerprint: 9bc1276270548d40323fe68e27e77f290b72d2cdf4bdfcdc05e29aca08999f8d }
+  - { gate: rule-programs, fingerprint: 87acde5d5c9c0b66430312d0f0b222a53fcb53bf442f78b46ce03d1f7612a471 }
+  - { gate: rules-emit, fingerprint: 2b4dad2307738b5deb63a795fdda6836243bf45d5673ba6d943225a4c4d7d4e5 }
+  - { gate: sdk-generate, fingerprint: 5b53dd6b2450ba6f625567b39fcb7c59b29e8a13aebe1deb15ea9fc3319d3afc }
+  - { gate: sdk-locations, fingerprint: 284fa3df7818ac0f3d1acbc4a5f3832422c616e2e10fd4f42e1d4d0bd4473dcb }
+  - { gate: sdk-rules, fingerprint: f67c6b3ef43efa783916f67aa401a8e147a73b4acebd93b93d719a8b5b77c384 }
+  - { gate: site-builds, fingerprint: 3b2d334838de5ebf3e409dfd7859f55491d06e8eaa0200c3619121c75025c700 }
+  - { gate: spec-profile, fingerprint: 731e83c7e2472d2a3e9de1c59c9fb367961e05a725e004fc965bfb9bc6766087 }
+  - { gate: type-examples-generate, fingerprint: ea4de5d4fe739c356320d3ed32d1d86c2e0fa2339325c80e51eb72c2426fc2cc }
+  - { gate: type-examples-valid, fingerprint: 1fc780dd203b7b80ce007b3f56b42eca25ccd4d7a7467b4c246f7dd28c298db5 }
+  - { gate: variant-examples, fingerprint: 50752875c441d4f7c9b9c392de6942757642ef0bc17b09a5bf4feec3624a0ae3 }
+  - { gate: zone-table, fingerprint: 75878439376bbe0be7c3f54bc648dbf490c9dc0239ad40a908a99125e7dc49d2 }

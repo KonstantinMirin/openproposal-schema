@@ -78,6 +78,7 @@ test("a second desk-test set in its own folder is judged by every engine with no
       ],
       undecided: copies.map(([, to]) => ({ example: to, path: "", rule: "rule:5.4:3a677601", reason: "A line item alone shows no proposal status." })),
       sdk_gaps: [{ example: "s-no-multiplier.yaml", path: "/delivery_counting", rule: "rule:5.6.4:e58650b7", reason: "No schema states the condition." }],
+      checker_only: [],
     };
     writeFileSync(join(set, "expected.yaml"), stringify(expected));
 
@@ -118,7 +119,7 @@ test("a second desk-test set in its own folder is judged by every engine with no
     const iabInput = { ...input, set: iab, payloads: iabPayloads, checker: await runDeskChecker(lock, iab, join(work, "iab-checker")), sdks: await runDeskSdks(iab, iabPayloads, SDKS, join(work, "iab-sdks")) };
     const gate = await deskTests.check({ sets: [input, iabInput] });
     assert.deepEqual(gate.problems, []);
-    assert.match(gate.note ?? "", /^a-second-set: 3 payloads, 1 clean and 2 rejected, .*; iab-au-2026-11: 23 payloads, 14 clean and 9 rejected, .* and the Go SDK \(go[0-9.]+\); 1 recorded SDK gap; 23 recorded undecided; 0 mismatches$/);
+    assert.match(gate.note ?? "", /^a-second-set: 3 payloads, 1 clean and 2 rejected, .*; iab-au-2026-11: 23 payloads, 14 clean and 9 rejected, .* and the Go SDK \(go[0-9.]+\); 1 recorded SDK gap; 0 recorded checker-only findings; 23 recorded undecided; 0 mismatches$/);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
@@ -194,7 +195,7 @@ test("desk:add copies a folder's payloads, judges them with every engine, and dr
     // leaves it out, and reports where each engine rejects it.
     const schemas = checkExamples({ model: MODEL, files: FILES, schemaDir: SCHEMA_DIR, examples: set.examples.map((id) => ({ id, ir: "desk:a-new-set", object: "LineItem", part: false })), values: payloads, codes: codesOf(KERNEL.lists!), ruleChecks: RULE_CHECKS });
     const older = { ...checker, failures: [...checker.failures, { example: "float-code.yaml", path: "/pricing/0/price_type", message: "is not Integer" }] };
-    const d = draftExpected({ set: { ...set, findings: [], undecided: [], sdk_gaps: [] }, failures: schemas.failures, undecided: schemas.checks.undecided, checker: older, sdks });
+    const d = draftExpected({ set: { ...set, findings: [], undecided: [], sdk_gaps: [], checker_only: [] }, failures: schemas.failures, undecided: schemas.checks.undecided, checker: older, sdks });
     assert.deepEqual(d.disagreements.map((x) => [x.example, x.engines.map((e) => e.paths.join(" "))]), [["float-code.yaml", ["", "/pricing/0/price_type", "", "", ""]]]);
     assert.deepEqual(d.expected.examples, ["dooh-v2-b-pg.yaml", "dooh-v2-p11-c-no-multiplier.yaml", "dooh-v2-p8-phases.yaml"]);
     // A set is added once.
